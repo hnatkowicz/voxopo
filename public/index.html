@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Voxopo Live Scoreboard TV</title>
+    <style>
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; 
+            background: #121214; 
+            color: #fff; 
+            text-align: center; 
+            padding: 50px; 
+            margin: 0;
+        }
+        .box { 
+            background: #202024;
+            border: 2px dashed #323238; 
+            border-radius: 8px;
+            padding: 30px; 
+            margin: 20px auto; 
+            max-width: 600px; 
+        }
+        .timer { font-size: 4rem; color: #ff4757; font-weight: bold; margin-top: 20px; }
+        .highlight { color: #00e676; font-weight: bold; }
+    </style>
+</head>
+<body>
+
+    <h1 style="letter-spacing: 2px; margin-bottom: 30px;">VOXOPO LIVE TV STREAM</h1>
+    
+    <!-- 1. Room Status Indicator Box -->
+    <div class="box">
+        <h3>Current Room Status</h3>
+        <p id="room-status" style="font-weight: bold; color: #ffa500;">Connecting to live game stream...</p>
+    </div>
+
+    <!-- 2. Master Trivia Question & Vector Display Box -->
+    <div class="box">
+        <h2 id="question-title">Waiting for Host...</h2>
+        <p id="question-text" style="font-size: 1.2rem; color: #a0a0b2;">Text your <span class="highlight">4-digit room code</span> followed by your name to join the match!</p>
+        
+        <!-- Reusable Inline Vector Graphic Container -->
+        <div id="visual-asset-container" style="min-height: 100px; margin: 20px auto; display: flex; justify-content: center; align-items: center;"></div>
+        
+        <div class="timer" id="countdown-clock">--</div>
+    </div>
+
+    <script>
+        const socket = new WebSocket(`ws://${window.location.host}`);
+
+        socket.onopen = () => {
+            document.getElementById('room-status').innerText = "🟢 Connected Live to Voxopo Engine";
+            document.getElementById('room-status').style.color = "#00e676";
+
+            // Automatically check this TV layout into test room 1234
+            const registrationEvent = {
+                type: 'REGISTER_SCREEN',
+                roomCode: '1234'
+            };
+            socket.send(JSON.stringify(registrationEvent));
+        };
+
+        socket.onmessage = (event) => {
+            const data = JSON.parse(event.data);
+            console.log("[WebSocket Event Received]", data);
+
+            if (data.type === 'NEW_QUESTION') {
+                document.getElementById('question-title').innerText = `Question #${data.number}`;
+                document.getElementById('question-text').innerText = data.text;
+                document.getElementById('countdown-clock').innerText = "30";
+                document.getElementById('countdown-clock').style.color = "#ff4757";
+
+                const assetContainer = document.getElementById('visual-asset-container');
+                if (data.visualAsset) {
+                    assetContainer.innerHTML = data.visualAsset;
+                } else {
+                    assetContainer.innerHTML = ""; // Clear container for standard text trivia
+                }
+            }
+
+            if (data.type === 'TIMER_TICK') {
+                document.getElementById('countdown-clock').innerText = data.secondsLeft;
+            }
+
+            if (data.type === 'GAME_PAUSED') {
+                document.getElementById('room-status').innerText = "⚠️ GAME PAUSED BY DEMOCRATIC PLAYER VOTE";
+                document.getElementById('room-status').style.color = "#ffa500";
+                document.getElementById('countdown-clock').style.color = "#ffa500";
+            }
+        };
+
+        socket.onclose = () => {
+            document.getElementById('room-status').innerText = "🔴 Disconnected from Server";
+            document.getElementById('room-status').style.color = "#ff4757";
+        };
+    </script>
+</body>
+</html>
