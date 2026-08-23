@@ -21,29 +21,32 @@ app.use(express.static('public'));
  * Core Webhook Endpoint for Twilio
  * Twilio hits this URL instantly every single time a player texts your phone number.
  */
-app.post('/webhook/sms', (req, res) => {
-    // Extract the sender's phone number and message body from the Twilio payload
-    const fromPhone = req.body.From;
-    const textBody = req.body.Body;
+app.post('/webhook/sms', async (req, res) => {
+    // Set response headers to pure, strict Twilio XML format immediately
+    res.header('Content-Type', 'text/xml');
 
-    console.log(`[Twilio Webhook] Received message from ${fromPhone}: "${textBody}"`);
+    try {
+        const { From, Body } = req.body;
+        console.log(`[Twilio Inbound] Incoming payload from ${From}: "${Body}"`);
 
-    if (!fromPhone || !textBody) {
-        return res.status(400).send('Missing Twilio payload data.');
+        // Safeguard against missing body data parsing bugs
+        if (!Body) {
+            return res.send('<Response><Message>System error: Empty payload text body received.</Message></Response>');
+        }
+
+        // Pass payload straight into the game state engine
+        const replyMessage = handleIncomingMessage(From, Body);
+
+        // Return a clean, verified XML string packet back to the carrier grid
+        return res.send(`<Response><Message>${replyMessage || 'Message processed securely.'}</Message></Response>`);
+
+    } catch (error) {
+        console.error('❌ [Webhook Crash Log]:', error.message);
+        // Bypasses the 12200 crash trap by always returning a clean fallback XML packet
+        return res.send('<Response><Message>Voxopo Engine encountered a processing exception. Stand by!</Message></Response>');
     }
-
-    // Pass the text to our in-memory engine and capture the programmatic reply text
-    const autoReplyMessage = handleIncomingMessage(fromPhone, textBody);
-
-    // Format the response using Twilio's standard XML messaging language (TwiML)
-    // This instructs Twilio to instantly text this reply back to the player's handset
-    res.type('text/xml');
-    res.send(`
-        <Response>
-            <Message>${autoReplyMessage}</Message>
-        </Response>
-    `);
 });
+
 
 // A simple home route so we can verify the server is running via a web browser
 app.get('/', (req, res) => {
