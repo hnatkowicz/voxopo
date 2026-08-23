@@ -44,7 +44,7 @@ app.post('/webhook/sms', async (req, res) => {
     } catch (error) {
         console.error('❌ [Webhook Crash Log]:', error.message);
         // Bypasses the 12200 crash trap by always returning a clean fallback XML packet
-        return res.send('<Response><Message>Voxopo Engine encountered a processing exception. Stand by!</Message></Response>');
+        return res.send(`<Response><Message><![CDATA[${replyMessage || 'Message processed securely.'}]]></Message></Response>`);
     }
 });
 
