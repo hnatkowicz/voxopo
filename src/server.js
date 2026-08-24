@@ -18,6 +18,28 @@ app.use(express.json());
 app.use(express.static('public'));
 app.use(express.urlencoded({ extended: true }));
 
+// New High-Utility Web Intake Gateway Route
+app.post('/api/message', (req, res) => {
+    try {
+        const { From, Body } = req.body;
+        console.log(`[Web Intake API] Packet received from ID ${From}: "${Body}"`);
+
+        if (!From || !Body) {
+            return res.status(400).json({ success: false, reply: 'Missing transaction parameters.' });
+        }
+
+        // Pass variables directly into our existing game engine layout
+        const engineResponse = handleIncomingMessage(From, Body);
+
+        // Return a clean web-ready JSON string object instead of messy telecom XML
+        return res.json({ success: true, reply: engineResponse });
+
+    } catch (error) {
+        console.error('❌ [Web API Gateway Exception]:', error.message);
+        return res.status(500).json({ success: false, reply: 'Engine processing error.' });
+    }
+});
+
 /**
  * Core Webhook Endpoint for Twilio
  * Twilio hits this URL instantly every single time a player texts your phone number.
