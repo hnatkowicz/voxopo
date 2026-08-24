@@ -40,37 +40,6 @@ app.post('/api/message', (req, res) => {
     }
 });
 
-/**
- * Core Webhook Endpoint for Twilio
- * Twilio hits this URL instantly every single time a player texts your phone number.
- */
-app.post('/webhook/sms', async (req, res) => {
-    // Set response headers to pure, strict Twilio XML format immediately
-    res.header('Content-Type', 'text/xml');
-
-    try {
-        const { From, Body } = req.body;
-        console.log(`[Twilio Inbound] Incoming payload from ${From}: "${Body}"`);
-
-        // Safeguard against missing body data parsing bugs
-        if (!Body) {
-            return res.send('<Response><Message>System error: Empty payload text body received.</Message></Response>');
-        }
-
-        // Pass payload straight into the game state engine
-        const replyMessage = handleIncomingMessage(From, Body);
-
-        // Return a clean, verified XML string packet back to the carrier grid
-        return res.send(`<Response><Message>${replyMessage || 'Message processed securely.'}</Message></Response>`);
-
-    } catch (error) {
-        console.error('❌ [Webhook Crash Log]:', error.message);
-        // Bypasses the 12200 crash trap by always returning a clean fallback XML packet
-        return res.send(`<Response><Message><![CDATA[${replyMessage || 'Message processed securely.'}]]></Message></Response>`);
-    }
-});
-
-
 // A simple home route so we can verify the server is running via a web browser
 app.get('/', (req, res) => {
     res.send('Voxopo Backend Engine is Active and Running Locally!');
@@ -111,9 +80,10 @@ async function startServer() {
         initializeWebSocketServer(serverInstance);
 
     } catch (error) {
-        console.error('❌ [Critical Error] Server failed to boot due to database failure:', error.message);
-        process.exit(1);
+        console.error('❌ [Web API Gateway Exception]:', error.message);
+        return res.status(500).json({ success: false, reply: 'Engine processing error.' });
     }
+
 }
 
 startServer();
