@@ -64,7 +64,6 @@ export function handleIncomingMessage(fromPhone, bodyText) {
     const cleanText = bodyText.trim();
     const parts = cleanText.split(' ');
     
-    // Safety check: ensure we actually have text data to read
     if (parts.length === 0 || !parts[0]) {
         return "⚠️ Error: Received an empty payload input text body.";
     }
@@ -72,11 +71,9 @@ export function handleIncomingMessage(fromPhone, bodyText) {
     const firstWord = parts[0].toUpperCase();
 
     // 1. Handle incoming room check-in / player registration fields
-    // Checks if the user's first word parameter reads like a standard 4-digit numeric room registration code
     if (!isNaN(firstWord) && firstWord.length === 4) {
         const roomCode = firstWord;
         
-        // Initialize room structure array container slot on the fly if empty
         if (!activeRooms[roomCode]) {
             activeRooms[roomCode] = {
                 gameState: 'LOBBY',
@@ -91,13 +88,10 @@ export function handleIncomingMessage(fromPhone, bodyText) {
 
         const currentRoom = activeRooms[roomCode];
 
-        // Process space-separated onboarding credentials string
-        // Web UI Form Layout text construction layout: "1234 Nickname Emoji"
         if (parts.length >= 2) {
             const playerNickname = parts[1];
-            const playerEmoji = parts[2] || '👤'; // Default to standard profile avatar asset if empty
+            const playerEmoji = parts[2] || '👤';
 
-            // Inject account credentials directly into our room state dictionary mapping block
             currentRoom.players[fromPhone] = {
                 name: playerNickname,
                 emoji: playerEmoji,
@@ -107,7 +101,6 @@ export function handleIncomingMessage(fromPhone, bodyText) {
 
             console.log(`[Onboarding System] Player "${playerNickname} ${playerEmoji}" checked into Room ${roomCode}`);
 
-            // Direct real-time layout broadcast push up to synchronize our split-screen TV table!
             broadcastToRoom(roomCode, {
                 type: 'LEADERBOARD_UPDATE',
                 players: Object.values(currentRoom.players)
@@ -135,20 +128,9 @@ export function handleIncomingMessage(fromPhone, bodyText) {
 
     // 3. Process game host operation administration commands
     if (cleanText.toUpperCase() === 'START') {
-        // Query target Question #2 row elements straight from your Neon database pool
-        return pool.query('SELECT * FROM questions WHERE question_number = 2;')
-            .then((result) => {
-                if (result.rows.length > 0) {
-                    startQuestionCountdown(associatedRoomCode, result.rows[0]);
-                    return "🚀 Trivia Question #2 broadcasted live to TV layout grid canvas!";
-                } else {
-                    return "❌ Database response warning: Question #2 row object data target not found inside table schema.";
-                }
-            })
-            .catch((err) => {
-                console.error('❌ [Neon SQL Engine Crash]:', err.message);
-                return "⚠️ System error: Failed to pull question content from Cloud Database infrastructure layers.";
-            });
+        // Run database operation inside an async task execution block to prevent syntax short-circuits
+        executeDatabaseQuery(associatedRoomCode);
+        return "🚀 Querying Neon database for game text data fields... Look up at the TV screen canvas!";
     }
 
     // 4. Handle default incoming trivia response submissions based on turn active state window rules
@@ -156,50 +138,19 @@ export function handleIncomingMessage(fromPhone, bodyText) {
         return `Sorry, ${player.name}, the response submission window is closed right now! Wait for the next round clock to boot up.`;
     }
 
-    // Record answer submission and notify player state has saved
     return `Got it, ${player.name}! Input transaction logged securely. Stand by for scoring evaluation!`;
 }
 
-
-    // 2. Global cross-reference search to locate which room container this tracking phone ID belongs to
-    let associatedRoomCode = null;
-    for (const code in activeRooms) {
-        if (activeRooms[code].players[fromPhone]) {
-            associatedRoomCode = code;
-            break;
+// Separate helper utility function to encapsulate asynchronous database calls perfectly
+async function executeDatabaseQuery(roomCode) {
+    try {
+        const result = await pool.query('SELECT * FROM questions WHERE question_number = 2;');
+        if (result.rows.length > 0) {
+            startQuestionCountdown(roomCode, result.rows[0]);
+        } else {
+            console.warn("❌ Database response warning: Question #2 data target not found.");
         }
+    } catch (err) {
+        console.error('❌ [Neon SQL Engine Crash]:', err.message);
     }
-
-    if (!associatedRoomCode) {
-        return "⚠️ Setup Warning: Register your device into a room session first! Type your 4-digit room code followed by your nickname.";
-    }
-
-    const currentRoom = activeRooms[associatedRoomCode];
-    const player = currentRoom.players[fromPhone];
-
-    // 3. Process game host operation administration commands
-    if (cleanText.toUpperCase() === 'START') {
-        // Query target Question #2 row elements straight from your Neon database pool
-        return pool.query('SELECT * FROM questions WHERE question_number = 2;')
-            .then((result) => {
-                if (result.rows.length > 0) {
-                    startQuestionCountdown(associatedRoomCode, result.rows[0]);
-                    return "🚀 Trivia Question #2 broadcasted live to TV layout grid canvas!";
-                } else {
-                    return "❌ Database response warning: Question #2 row object data target not found inside table schema.";
-                }
-            })
-            .catch((err) => {
-                console.error('❌ [Neon SQL Engine Crash]:', err.message);
-                return "⚠️ System error: Failed to pull question content from Cloud Database infrastructure layers.";
-            });
-    }
-
-    // 4. Handle default incoming trivia response submissions based on turn active state window rules
-    if (currentRoom.gameState !== 'QUESTION') {
-        return `Sorry, ${player.name}, the response submission window is closed right now! Wait for the next round clock to boot up.`;
-    }
-
-    // Record answer submission and notify player state has saved
-    return `Got it, ${player.name}! Input transaction logged securely. Stand by for scoring evaluation!`;
 }
