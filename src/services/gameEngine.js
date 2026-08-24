@@ -1,164 +1,153 @@
-// src/services/gameEngine.js
-import { broadcastToRoom } from '../socket/connection.js';
-import pool from '../config/database.js';
+import pkg from 'pg';
+const { Pool } = pkg;
 
-// This global object acts as our in-memory data bucket for all active rooms
-const activeRooms = {};
+// Initialize connection routing to your Neon PostgreSQL Cloud infrastructure
+const pool = new Pool({
+    connectionString: process.env.DATABASE_URL,
+    ssl: { rejectUnauthorized: false }
+});
 
-/**
- * Creates a brand new 4-digit room instance in memory
- * @param {string} roomCode - The unique 4-digit room code
- */
-export function initializeRoom(roomCode) {
-    if (!activeRooms[roomCode]) {
-        activeRooms[roomCode] = {
-            players: {},       // Key: Phone number, Value: Player object
-            gameState: 'LOBBY', // LOBBY, QUESTION, LEADERBOARD, PAUSED
-            currentQuestion: 0,
-            answers: {},        // Track responses for the active question
-            timerId: null       // Reference to clear the running interval clock
-        };
-        console.log(`[Engine] Room ${roomCode} successfully initialized.`);
+// Primary global storage bucket to track rooms, players, scores, and timer state windows in memory
+export const activeRooms = {};
+
+// Helper broadcast agent to shoot secure WebSocket text payloads straight to client browsers
+function broadcastToRoom(roomCode, payload) {
+    const room = activeRooms[roomCode];
+    if (room && room.screens) {
+        room.screens.forEach(socket => {
+            if (socket.readyState === 1) { // 1 explicitly means OPEN state connection
+                socket.send(JSON.stringify(payload));
+            }
+        });
     }
-    return activeRooms[roomCode];
 }
 
-/**
- * Kicks off a hands-free 30-second automated countdown loop for a specific room
- * @param {string} roomCode - The target 4-digit room ID
- * @param {object} questionData - The raw row question block from PostgreSQL
- */
+// Automated multi-room clock countdown machinery tracker
 function startQuestionCountdown(roomCode, questionData) {
     const room = activeRooms[roomCode];
     if (!room) return;
 
-    // Set the state parameters
+    // Cache the active database row variables safely inside the room object frame
     room.gameState = 'QUESTION';
-    room.currentQuestion = questionData.question_number;
-    room.answers = {}; // Wipe any previous question answer logs clean
+    room.activeQuestionData = questionData;
+    room.answers = {}; // Reset text submissions table slice for this round
 
-    // Broadcast the initial question data and visual vector assets to the TV screen via WebSockets
+    // Clear any loose trailing ghost intervals running in background tasks
+    if (room.timerInterval) clearInterval(room.timerInterval);
+
+    let count = 30;
+    
+    // Shoot the baseline NEW_QUESTION event containing vector graphic data to client browsers
     broadcastToRoom(roomCode, {
         type: 'NEW_QUESTION',
         number: questionData.question_number,
         text: questionData.question_text,
-        gameMode: questionData.game_mode,
-        visualAsset: questionData.visual_asset // Pushes your raw inline vector SVG code directly to the TV!
+        visualAsset: questionData.visual_asset,
+        gameMode: questionData.game_mode
     });
 
-    let secondsLeft = 30;
-
-    // Clear any loose background ticking clocks if they accidentally exist
-    if (room.timerId) clearInterval(room.timerId);
-
-    // Initialize an automated 1-second ticking loop on the server
-    room.timerId = setInterval(() => {
-        secondsLeft--;
-
-        // Push the new countdown tick out to the venue display screen live
-        broadcastToRoom(roomCode, {
-            type: 'TIMER_TICK',
-            secondsLeft: secondsLeft
-        });
-
-        // When the timer ticks down to 0, close the submission window automatically
-        if (secondsLeft <= 0) {
-            clearInterval(room.timerId);
-            room.timerId = null;
-            room.gameState = 'LEADERBOARD';
-
-            console.log(`[Engine] Room ${roomCode} Question #${room.currentQuestion} submission window closed.`);
-            
-            // Broadcast a transition signal to show the scoring update on the venue monitor
-            broadcastToRoom(roomCode, {
-                type: 'TIMER_TICK',
-                secondsLeft: 'TIME\'S UP!'
-            });
+    room.timerInterval = setInterval(() => {
+        count--;
+        if (count > 0) {
+            broadcastToRoom(roomCode, { type: 'TIMER_TICK', secondsLeft: count });
+        } else {
+            clearInterval(room.timerInterval);
+            room.gameState = 'LOBBY';
+            broadcastToRoom(roomCode, { type: 'TIMER_TICK', secondsLeft: "TIME'S UP!" });
+            console.log(`[Timer Clock Engine] Room ${roomCode} turn evaluation window closed.`);
         }
     }, 1000);
 }
 
-/**
- * Processes an incoming player's SMS message payload
- * @param {string} fromPhone - The sender's unique phone identification number
- * @param {string} textBody - The message body content string
- */
-export function handleIncomingMessage(fromPhone, textBody) {
-    const cleanText = textBody.trim();
+// The core core intake processor called by your /api/message route endpoint
+export function handleIncomingMessage(fromPhone, bodyText) {
+    const cleanText = bodyText.trim();
+    const parts = cleanText.split(' ');
+    const firstWord = parts[0].toUpperCase();
 
-    // 1. Check if the player is text-joining a room using a 4-digit code
-    // Format: "1234 Randy"
-    const joinMatch = cleanText.match(/^(\d{4})\s+(.+)$/);
+    // 1. Establish room structure on the fly if it doesn't exist in state properties
+    // Checks if the user's first input parameter reads like a standard 4-digit numeric room registration code
+    if (!isNaN(firstWord) && firstWord.length === 4) {
+        const roomCode = firstWord;
+        if (!activeRooms[roomCode]) {
+            activeRooms[roomCode] = {
+                gameState: 'LOBBY',
+                players: {},
+                screens: [],
+                timerInterval: null,
+                activeQuestionData: null,
+                answers: {}
+            };
+            console.log(`[Room Infrastructure Engine] Initialized Room Container Slot: ${roomCode}`);
+        }
 
-    if (joinMatch) {
-        const roomCode = joinMatch[1];
-        const playerName = joinMatch[2].trim();
+        const currentRoom = activeRooms[roomCode];
 
-        const room = initializeRoom(roomCode);
+        // Process space-separated onboarding credentials string
+        // Web UI Form Layout text construction layout: "1234 Nickname Emoji"
+        if (parts.length >= 2) {
+            const playerNickname = parts[1];
+            const playerEmoji = parts[2] || '👤'; // Default to standard profile avatar asset if empty
 
-        // Map player phone identifier to their username bucket
-        room.players[fromPhone] = {
-            name: playerName,
-            joinedAt: Date.now()
-        };
+            // Inject account credentials directly into our room state dictionary mapping block
+            currentRoom.players[fromPhone] = {
+                name: playerNickname,
+                emoji: playerEmoji,
+                score: 0,
+                joinedAt: new Date()
+            };
 
-        return `Welcome to Voxopo, ${playerName}! You are checked into Room ${roomCode}. Stand by for the game to begin!`;
+            console.log(`[Onboarding System] Player "${playerNickname} ${playerEmoji}" checked into Room ${roomCode}`);
+
+            // Direct real-time layout broadcast push up to synchronize our split-screen TV table!
+            broadcastToRoom(roomCode, {
+                type: 'LEADERBOARD_UPDATE',
+                players: Object.values(currentRoom.players)
+            });
+
+            return `Welcome to Voxopo, ${playerNickname}! Check the TV screen scoreboard—your row is live.`;
+        }
     }
 
-    // 2. Identify if the sender is currently checked into a live room instance
-    const associatedRoomCode = Object.keys(activeRooms).find(code => 
-        activeRooms[code].players[fromPhone]
-    );
+    // 2. Global cross-reference search to locate which room container this tracking phone ID belongs to
+    let associatedRoomCode = null;
+    for (const code in activeRooms) {
+        if (activeRooms[code].players[fromPhone]) {
+            associatedRoomCode = code;
+            break;
+        }
+    }
 
     if (!associatedRoomCode) {
-        return "Welcome to Voxopo! To join a live game, please text your 4-digit room code followed by your name (e.g., 1234 Randy).";
+        return "⚠️ Setup Warning: Register your device into a room session first! Type your 4-digit room code followed by your nickname.";
     }
 
     const currentRoom = activeRooms[associatedRoomCode];
     const player = currentRoom.players[fromPhone];
 
-    // [HOST COMMAND] Handle "START" trigger to fetch the custom SVG Flag row from Neon and test our asset engine
+    // 3. Process game host operation administration commands
     if (cleanText.toUpperCase() === 'START') {
-        // Querying question_number = 2 to explicitly test your vector asset rendering!
-        pool.query('SELECT * FROM questions WHERE question_number = 2;').then((result) => {
-            if (result.rows.length > 0) {
-                // Pass your cloud data object row directly into our automated countdown function
-                startQuestionCountdown(associatedRoomCode, result.rows[0]);
-            }
-        }).catch(err => console.error('[Engine Database Error]', err.message));
-
-        return `[Host Action] Triggered Question #2 visual loop for Room ${associatedRoomCode}! Watch the TV monitor!`;
+        // Query target Question #2 row elements straight from your Neon database pool
+        return pool.query('SELECT * FROM questions WHERE question_number = 2;')
+            .then((result) => {
+                if (result.rows.length > 0) {
+                    startQuestionCountdown(associatedRoomCode, result.rows[0]);
+                    return "🚀 Trivia Question #2 broadcasted live to TV layout grid canvas!";
+                } else {
+                    return "❌ Database response warning: Question #2 row object data target not found inside table schema.";
+                }
+            })
+            .catch((err) => {
+                console.error('❌ [Neon SQL Engine Crash]:', err.message);
+                return "⚠️ System error: Failed to pull question content from Cloud Database infrastructure layers.";
+            });
     }
 
-        // 3. Handle incoming room check-in / player registration registration fields
-    // Expects space-separated parameters. SMS Layout: "1234 Randy" or Web Form Layout: "1234 Randy 🦬"
-    const messageParts = cleanText.split(' ');
-    const targetRoomCode = messageParts[0];
-    const playerNickname = messageParts[1];
-    
-    // Dynamically grab the third parameter row piece if an emoji exists, fallback to default avatar if blank
-    const playerEmoji = messageParts[2] || '👤';
-
-    // Verify code block safeguards
-    if (!targetRoomCode || !playerNickname) {
-        return "⚠️ Setup error: Ensure you type the correct room code followed by your nickname name!";
+    // 4. Handle default incoming trivia response submissions based on turn active state window rules
+    if (currentRoom.gameState !== 'QUESTION') {
+        return `Sorry, ${player.name}, the response submission window is closed right now! Wait for the next round clock to boot up.`;
     }
 
-    // Initialize player structure in persistent memory state
-    currentRoom.players[fromPhone] = {
-        name: playerNickname,
-        emoji: playerEmoji,
-        score: 0,
-        joinedAt: new Date()
-    };
-
-    console.log(`[Onboarding Engine] ${playerNickname} ${playerEmoji} checked securely into Room ${targetRoomCode}`);
-
-    // Trigger an instantaneous WebSocket transmission push up to update the TV layout!
-    broadcastToRoom(targetRoomCode, {
-        type: 'LEADERBOARD_UPDATE',
-        players: Object.values(currentRoom.players)
-    });
-
-    return `Welcome to Voxopo, ${playerNickname}! Look up at the TV screen—your player profile row has been checked into the live match.`;
-
+    // Record answer submission and notify player state has saved
+    return `Got it, ${player.name}! Input transaction logged securely. Stand by for scoring evaluation!`;
+}
