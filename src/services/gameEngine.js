@@ -130,23 +130,35 @@ export function handleIncomingMessage(fromPhone, textBody) {
         return `[Host Action] Triggered Question #2 visual loop for Room ${associatedRoomCode}! Watch the TV monitor!`;
     }
 
-    // 3. Handle democratic pause activation request
-    if (cleanText.toUpperCase() === 'PAUSE') {
-        if (currentRoom.timerId) {
-            clearInterval(currentRoom.timerId); // Freeze the master background ticker loop process
-            currentRoom.timerId = null;
-        }
-        currentRoom.gameState = 'PAUSED';
-        broadcastToRoom(associatedRoomCode, { type: 'GAME_PAUSED' });
-        return `[Vote Confirmed] ${player.name} activated the Democratic Pause Button. The countdown timer has frozen.`;
+        // 3. Handle incoming room check-in / player registration registration fields
+    // Expects space-separated parameters. SMS Layout: "1234 Randy" or Web Form Layout: "1234 Randy 🦬"
+    const messageParts = cleanText.split(' ');
+    const targetRoomCode = messageParts[0];
+    const playerNickname = messageParts[1];
+    
+    // Dynamically grab the third parameter row piece if an emoji exists, fallback to default avatar if blank
+    const playerEmoji = messageParts[2] || '👤';
+
+    // Verify code block safeguards
+    if (!targetRoomCode || !playerNickname) {
+        return "⚠️ Setup error: Ensure you type the correct room code followed by your nickname name!";
     }
 
-    // 4. Handle incoming trivia answer inputs based on active state window rules
-    if (currentRoom.gameState !== 'QUESTION') {
-        return `Sorry, ${player.name}, the answer window is closed right now! Wait for the next question to appear on screen.`;
-    }
+    // Initialize player structure in persistent memory state
+    currentRoom.players[fromPhone] = {
+        name: playerNickname,
+        emoji: playerEmoji,
+        score: 0,
+        joinedAt: new Date()
+    };
 
-    // Save their text submission under their number bucket for server-side score updates later
-    currentRoom.answers[fromPhone] = cleanText;
-    return `Got it, ${player.name}! Answer recorded for Question #${currentRoom.currentQuestion}: "${cleanText}"`;
-}
+    console.log(`[Onboarding Engine] ${playerNickname} ${playerEmoji} checked securely into Room ${targetRoomCode}`);
+
+    // Trigger an instantaneous WebSocket transmission push up to update the TV layout!
+    broadcastToRoom(targetRoomCode, {
+        type: 'LEADERBOARD_UPDATE',
+        players: Object.values(currentRoom.players)
+    });
+
+    return `Welcome to Voxopo, ${playerNickname}! Look up at the TV screen—your player profile row has been checked into the live match.`;
+
