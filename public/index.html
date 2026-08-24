@@ -5,60 +5,154 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Voxopo Live Scoreboard TV</title>
     <style>
-        body { 
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; 
-            background: #121214; 
-            color: #fff; 
-            text-align: center; 
-            padding: 50px; 
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background: #121214;
+            color: #fff;
             margin: 0;
+            padding: 30px;
+            box-sizing: border-box;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
         }
-        .box { 
+        h1.main-title {
+            letter-spacing: 2px;
+            margin-bottom: 20px;
+            text-align: center;
+            font-size: 1.8rem;
+        }
+        /* The Master Split-Screen Layout Container */
+        .split-container {
+            display: flex;
+            gap: 25px;
+            flex: 1;
+            min-height: 0;
+        }
+        /* Left Column: Trivia Operations (65%) */
+        .left-column {
+            flex: 65;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        /* Right Column: Leaderboard Panel (35%) */
+        .right-column {
+            flex: 35;
+            background: #18181c;
+            border: 1px solid #323238;
+            border-radius: 12px;
+            padding: 25px;
+            display: flex;
+            flex-direction: column;
+        }
+        .box {
             background: #202024;
-            border: 2px dashed #323238; 
-            border-radius: 8px;
-            padding: 30px; 
-            margin: 20px auto; 
-            max-width: 600px; 
+            border: 1px solid #323238;
+            border-radius: 12px;
+            padding: 25px;
         }
-        .timer { font-size: 4rem; color: #ff4757; font-weight: bold; margin-top: 20px; }
-        .highlight { color: #00e676; font-weight: bold; }
+        .timer {
+            font-size: 5rem;
+            color: #ff4757;
+            font-weight: bold;
+            margin-top: 15px;
+            text-align: center;
+        }
+        .highlight {
+            color: #00e676;
+            font-weight: bold;
+        }
+        /* Leaderboard Components styling */
+        h2.board-title {
+            margin: 0 0 20px 0;
+            color: #00e676;
+            font-size: 1.4rem;
+            letter-spacing: 1px;
+            border-bottom: 1px solid #323238;
+            padding-bottom: 10px;
+        }
+        .leaderboard-table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+        }
+        .leaderboard-table th {
+            color: #a0a0b2;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            padding-bottom: 12px;
+            border-bottom: 1px solid #202024;
+        }
+        .leaderboard-table td {
+            padding: 14px 0;
+            border-bottom: 1px solid #202024;
+            font-size: 1.1rem;
+        }
+        .rank-col { width: 10%; color: #ffa500; font-weight: bold; }
+        .emoji-col { width: 15%; font-size: 1.3rem; text-align: center; }
+        .name-col { width: 50%; font-weight: 500; }
+        .score-col { width: 25%; text-align: right; color: #00e676; font-weight: bold; }
     </style>
 </head>
 <body>
 
-    <h1 style="letter-spacing: 2px; margin-bottom: 30px;">VOXOPO LIVE TV STREAM</h1>
-    
-    <!-- 1. Room Status Indicator Box -->
-    <div class="box">
-        <h3>Current Room Status</h3>
-        <p id="room-status" style="font-weight: bold; color: #ffa500;">Connecting to live game stream...</p>
-    </div>
+    <h1 class="main-title">VOXOPO LIVE TV STREAM</h1>
 
-    <!-- 2. Master Trivia Question & Vector Display Box -->
-    <div class="box">
-        <h2 id="question-title">Waiting for Host...</h2>
-        <p id="question-text" style="font-size: 1.2rem; color: #a0a0b2;">Text your <span class="highlight">4-digit room code</span> followed by your name to join the match!</p>
+    <div class="split-container">
         
-        <!-- Reusable Inline Vector Graphic Container -->
-        <div id="visual-asset-container" style="min-height: 100px; margin: 20px auto; display: flex; justify-content: center; align-items: center;"></div>
-        
-        <div class="timer" id="countdown-clock">--</div>
+        <!-- LEFT COLUMN: GAME AND TRIVIA CONTENT -->
+        <div class="left-column">
+            <div class="box">
+                <h3 style="margin-top: 0;">Current Room Status</h3>
+                <p id="room-status" style="font-weight: bold; color: #ffa500; margin-bottom: 0;">Connecting to live game stream...</p>
+            </div>
+
+            <div class="box" style="flex: 1; display: flex; flex-direction: column; justify-content: center;">
+                <h2 id="question-title" style="text-align: center;">Waiting for Host...</h2>
+                <p id="question-text" style="font-size: 1.2rem; color: #a0a0b2; text-align: center;">
+                    Log into Room Code <span class="highlight">1234</span> using your mobile controller to join the match!
+                </p>
+                <div id="visual-asset-container" style="min-height: 120px; margin: 20px auto; display: flex; justify-content: center; align-items: center;"></div>
+                <div class="timer" id="countdown-clock">--</div>
+            </div>
+        </div>
+
+        <!-- RIGHT COLUMN: DYNAMIC LEADERBOARD -->
+        <div class="right-column">
+            <h2 class="board-title">🏆 LEADERBOARD</h2>
+            <div style="flex: 1; overflow-y: auto;">
+                <table class="leaderboard-table">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th style="text-align: center;">Id</th>
+                            <th>Player</th>
+                            <th style="text-align: right;">Score</th>
+                        </tr>
+                    </thead>
+                    <tbody id="leaderboard-rows">
+                        <!-- Dynamic rows will look exactly like this placeholder structure -->
+                        <tr>
+                            <td class="rank-col">1</td>
+                            <td class="emoji-col">👤</td>
+                            <td class="name-col">Waiting...</td>
+                            <td class="score-col">0</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
     </div>
 
     <script>
         const socket = new WebSocket(`wss://${window.location.host}`);
-
+        
         socket.onopen = () => {
             document.getElementById('room-status').innerText = "🟢 Connected Live to Voxopo Engine";
             document.getElementById('room-status').style.color = "#00e676";
-
-            // Automatically check this TV layout into test room 1234
-            const registrationEvent = {
-                type: 'REGISTER_SCREEN',
-                roomCode: '1234'
-            };
-            socket.send(JSON.stringify(registrationEvent));
+            socket.send(JSON.stringify({ type: 'REGISTER_SCREEN', roomCode: '1234' }));
         };
 
         socket.onmessage = (event) => {
@@ -70,12 +164,12 @@
                 document.getElementById('question-text').innerText = data.text;
                 document.getElementById('countdown-clock').innerText = "30";
                 document.getElementById('countdown-clock').style.color = "#ff4757";
-
+                
                 const assetContainer = document.getElementById('visual-asset-container');
                 if (data.visualAsset) {
                     assetContainer.innerHTML = data.visualAsset;
                 } else {
-                    assetContainer.innerHTML = ""; // Clear container for standard text trivia
+                    assetContainer.innerHTML = "";
                 }
             }
 
@@ -83,12 +177,30 @@
                 document.getElementById('countdown-clock').innerText = data.secondsLeft;
             }
 
-            if (data.type === 'GAME_PAUSED') {
-                document.getElementById('room-status').innerText = "⚠️ GAME PAUSED BY DEMOCRATIC PLAYER VOTE";
-                document.getElementById('room-status').style.color = "#ffa500";
-                document.getElementById('countdown-clock').style.color = "#ffa500";
+            // Real-Time Leaderboard Update Listener Entry
+            if (data.type === 'LEADERBOARD_UPDATE') {
+                updateLeaderboardUI(data.players);
             }
         };
+
+        function updateLeaderboardUI(playersList) {
+            const tbody = document.getElementById('leaderboard-rows');
+            tbody.innerHTML = ''; // Clear stale rendering
+
+            // Sort players high score to low score natively
+            playersList.sort((a, b) => b.score - a.score);
+
+            playersList.forEach((player, index) => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td class="rank-col">${index + 1}</td>
+                    <td class="emoji-col">${player.emoji || '👤'}</td>
+                    <td class="name-col">${player.name}</td>
+                    <td class="score-col">${player.score || 0}</td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
 
         socket.onclose = () => {
             document.getElementById('room-status').innerText = "🔴 Disconnected from Server";
