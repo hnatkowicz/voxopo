@@ -63,7 +63,11 @@ function startQuestionCountdown(roomCode, questionData) {
 export function handleIncomingMessage(fromPhone, bodyText) {
     const cleanText = bodyText.trim();
     const parts = cleanText.split(' ');
-    const firstWord = parts[0].toUpperCase();
+        const targetRoomCode = parts[0];
+    const playerNickname = parts[1];
+    
+    // Dynamically grab the third piece if an emoji exists
+    const playerEmoji = parts[2] || '👤';
 
     // 1. Establish room structure on the fly if it doesn't exist in state properties
     // Checks if the user's first input parameter reads like a standard 4-digit numeric room registration code
