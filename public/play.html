@@ -3,84 +3,142 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Voxopo | Player Input Controller</title>
+    <title>Voxopo Mobile Controller</title>
     <style>
         body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background: #121214; color: #fff; text-align: center; padding: 30px 15px; margin: 0; }
-        .controller-card { background: #202024; border: 1px solid #323238; border-radius: 12px; padding: 25px; max-width: 400px; margin: 0 auto; box-shadow: 0 4px 12px rgba(0,0,0,0.3); }
-        h1 { color: #00e676; margin: 0 0 5px 0; letter-spacing: 1px; font-size: 1.8rem; }
-        p { color: #a0a0b2; margin: 0 0 25px 0; font-size: 0.9rem; }
-        .input-group { margin-bottom: 20px; text-align: left; }
-        label { display: block; margin-bottom: 8px; font-size: 0.85rem; color: #a0a0b2; text-transform: uppercase; font-weight: bold; }
+        .card { background: #202024; border: 1px solid #323238; border-radius: 12px; padding: 25px; max-width: 400px; margin: 20px auto; box-shadow: 0 4px 12px rgba(0,0,0,0.3); }
+        h1 { color: #00e676; margin: 0 0 5px 0; letter-spacing: 1px; font-size: 1.6rem; }
+        p { color: #a0a0b2; margin: 0 0 20px 0; font-size: 0.9rem; }
+        .input-group { margin-bottom: 18px; text-align: left; }
+        label { display: block; margin-bottom: 8px; font-size: 0.8rem; color: #a0a0b2; text-transform: uppercase; font-weight: bold; }
         input[type="text"] { width: 100%; padding: 14px; background: #18181c; border: 1px solid #323238; border-radius: 6px; color: #fff; font-size: 1.1rem; box-sizing: border-box; }
         input[type="text"]:focus { border-color: #00e676; outline: none; }
-        .submit-btn { background: #00e676; color: #121214; border: none; padding: 16px; border-radius: 6px; font-size: 1.1rem; font-weight: bold; width: 100%; cursor: pointer; transition: background 0.1s; }
-        .submit-btn:hover { background: #00c862; }
-        #feedback { margin-top: 20px; font-weight: bold; font-size: 1rem; color: #ffa500; display: none; padding: 12px; border-radius: 6px; background: rgba(255,165,0,0.1); }
+        .btn { background: #00e676; color: #121214; border: none; padding: 16px; border-radius: 6px; font-size: 1.1rem; font-weight: bold; width: 100%; cursor: pointer; }
+        .btn:hover { background: #00c862; }
+        .feedback { margin-top: 15px; font-weight: bold; padding: 10px; border-radius: 6px; display: none; font-size: 0.95rem; }
+        
+        /* State Screens Dynamic Display Rules */
+        #game-screen { display: none; }
+        .player-badge { background: #18181c; padding: 10px; border-radius: 6px; border: 1px solid #323238; margin-bottom: 20px; font-size: 0.9rem; color: #00e676; }
     </style>
 </head>
 <body>
-    <div class="controller-card">
-        <h1>VOXOPO CONTROLLER</h1>
-        <p>Type your room command or trivia answer below!</p>
+
+    <!-- SCREEN 1: THE INITIAL LOCK-IN LOGIN PORTAL -->
+    <div id="login-screen" class="card">
+        <h1>ROOM LOGIN</h1>
+        <p>Connect your mobile device to the live TV venue stream</p>
         
         <div class="input-group">
-            <label>Your Phone Number (Acts as your unique Player ID)</label>
-            <input type="text" id="player-id" placeholder="e.g., 7175551234">
+            <label>4-Digit Room Code</label>
+            <input type="text" id="room-code" placeholder="e.g., 1234">
+        </div>
+        <div class="input-group">
+            <label>Your Name</label>
+            <input type="text" id="player-name" placeholder="e.g., Randy">
+        </div>
+        <div class="input-group">
+            <label>Your Phone String (Unique tracking key)</label>
+            <input type="text" id="player-phone" placeholder="e.g., randy1">
+        </div>
+
+        <button class="btn" onclick="executeRoomLogin()">Join Live Stream</button>
+        <div id="login-feedback" class="feedback"></div>
+    </div>
+
+    <!-- SCREEN 2: GAMEPLAY INPUT MODE (Revealed only after successful auth check) -->
+    <div id="game-screen" class="card">
+        <h1>VOXOPO CONTROLLER</h1>
+        <div class="player-badge">
+            🟢 Signed In As: <span id="badge-name" style="font-weight:bold; color:#fff;">-</span> 
+            (Room: <span id="badge-room" style="font-weight:bold; color:#fff;">-</span>)
         </div>
 
         <div class="input-group">
-            <label>Command or Answer Input</label>
-            <input type="text" id="payload-body" placeholder="e.g., 1234 Randy or START or A">
+            <label>Submit Game Action or Trivia Answer</label>
+            <input type="text" id="game-input" placeholder="e.g., START, PAUSE, or your answer">
         </div>
 
-        <button class="submit-btn" onclick="sendInputPayload()">Submit Action</button>
-        <div id="feedback"></div>
+        <button class="btn" onclick="submitGameAction()">Submit Input</button>
+        <div id="game-feedback" class="feedback"></div>
     </div>
 
     <script>
-        // Check local storage so players don't have to keep re-typing their phone number ID
-        if(localStorage.getItem('voxopo_pid')) {
-            document.getElementById('player-id').value = localStorage.getItem('voxopo_pid');
-        }
+        // Temporary holding memory variables for the active session
+        let activeRoom = '';
+        let activePhone = '';
+        let activeName = '';
 
-        async function sendInputPayload() {
-            const fromPhone = document.getElementById('player-id').value.trim();
-            const bodyText = document.getElementById('payload-body').value.trim();
-            const feedbackBox = document.getElementById('feedback');
+        async function executeRoomLogin() {
+            const room = document.getElementById('room-code').value.trim();
+            const name = document.getElementById('player-name').value.trim();
+            const phone = document.getElementById('player-phone').value.trim();
+            const feedback = document.getElementById('login-feedback');
 
-            if (!fromPhone || !bodyText) {
-                feedbackBox.style.display = "block";
-                feedbackBox.innerText = "⚠️ Please fill in both input fields!";
+            if (!room || !name || !phone) {
+                showFeedback(feedback, "⚠️ All login fields are required!", "#ffa500", "rgba(255,165,0,0.1)");
                 return;
             }
 
-            // Save phone number ID locally for frictionless testing
-            localStorage.setItem('voxopo_pid', fromPhone);
-            feedbackBox.style.display = "block";
-            feedbackBox.style.color = "#ffa500";
-            feedbackBox.style.background = "rgba(255,165,0,0.1)";
-            feedbackBox.innerText = "Transmitting to game server...";
+            showFeedback(feedback, "Verifying credentials with server...", "#ffa500", "rgba(255,165,0,0.1)");
 
             try {
-                // Post directly to our fresh web intake API gateway route
+                // Re-create the space-separated text layout under the hood to completely protect your server rules!
+                const completeBodyText = `${room} ${name}`;
+
                 const response = await fetch('/api/message', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ From: fromPhone, Body: bodyText })
+                    body: JSON.stringify({ From: phone, Body: completeBodyText })
                 });
-                
                 const data = await response.json();
+
+                // Lock memory properties and shift state screens
+                activeRoom = room;
+                activePhone = phone;
+                activeName = name;
+
+                document.getElementById('badge-name').innerText = name;
+                document.getElementById('badge-room').innerText = room;
                 
-                feedbackBox.style.color = "#00e676";
-                feedbackBox.style.background = "rgba(0,230,118,0.1)";
-                feedbackBox.innerText = `📡 Server Reply: ${data.reply}`;
-                document.getElementById('payload-body').value = ""; // Clear entry box for fast next inputs
+                document.getElementById('login-screen').style.display = "none";
+                document.getElementById('game-screen').style.display = "block";
 
             } catch (error) {
-                feedbackBox.style.color = "#ff4757";
-                feedbackBox.style.background = "rgba(255,71,87,0.1)";
-                feedbackBox.innerText = "❌ Connection failed. Ensure server is online!";
+                showFeedback(feedback, "❌ Connection failed. Check backend deployment.", "#ff4757", "rgba(255,71,87,0.1)");
             }
+        }
+
+        async function submitGameAction() {
+            const actionText = document.getElementById('game-input').value.trim();
+            const feedback = document.getElementById('game-feedback');
+
+            if (!actionText) return;
+
+            showFeedback(feedback, "Transmitting text action...", "#ffa500", "rgba(255,165,0,0.1)");
+
+            try {
+                const response = await fetch('/api/message', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ From: activePhone, Body: actionText })
+                });
+                const data = await response.json();
+
+                showFeedback(feedback, `📡 Server: ${data.reply}`, "#00e676", "rgba(0,230,118,0.1)");
+                document.getElementById('game-input').value = ""; // Auto-wipe entry field for lightning fast next turns
+
+            } catch (error) {
+                showFeedback(feedback, "❌ Action failed to transmit.", "#ff4757", "rgba(255,71,87,0.1)");
+            }
+        }
+
+        function showFeedback(element, text, color, bg) {
+            element.style.display = "block";
+            element.style.text = text;
+            element.style.color = color;
+            element.style.background = bg;
+            element.innerText = text;
         }
     </script>
 </body>
