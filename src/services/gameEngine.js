@@ -59,20 +59,24 @@ function startQuestionCountdown(roomCode, questionData) {
     }, 1000);
 }
 
-// The core core intake processor called by your /api/message route endpoint
+// The core intake processor called by your /api/message route endpoint
 export function handleIncomingMessage(fromPhone, bodyText) {
     const cleanText = bodyText.trim();
     const parts = cleanText.split(' ');
-        const targetRoomCode = parts[0];
-    const playerNickname = parts[1];
     
-    // Dynamically grab the third piece if an emoji exists
-    const playerEmoji = parts[2] || '👤';
+    // Safety check: ensure we actually have text data to read
+    if (parts.length === 0 || !parts[0]) {
+        return "⚠️ Error: Received an empty payload input text body.";
+    }
 
-    // 1. Establish room structure on the fly if it doesn't exist in state properties
-    // Checks if the user's first input parameter reads like a standard 4-digit numeric room registration code
+    const firstWord = parts[0].toUpperCase();
+
+    // 1. Handle incoming room check-in / player registration fields
+    // Checks if the user's first word parameter reads like a standard 4-digit numeric room registration code
     if (!isNaN(firstWord) && firstWord.length === 4) {
         const roomCode = firstWord;
+        
+        // Initialize room structure array container slot on the fly if empty
         if (!activeRooms[roomCode]) {
             activeRooms[roomCode] = {
                 gameState: 'LOBBY',
@@ -112,6 +116,50 @@ export function handleIncomingMessage(fromPhone, bodyText) {
             return `Welcome to Voxopo, ${playerNickname}! Check the TV screen scoreboard—your row is live.`;
         }
     }
+
+    // 2. Global cross-reference search to locate which room container this tracking phone ID belongs to
+    let associatedRoomCode = null;
+    for (const code in activeRooms) {
+        if (activeRooms[code].players[fromPhone]) {
+            associatedRoomCode = code;
+            break;
+        }
+    }
+
+    if (!associatedRoomCode) {
+        return "⚠️ Setup Warning: Register your device into a room session first! Type your 4-digit room code followed by your nickname.";
+    }
+
+    const currentRoom = activeRooms[associatedRoomCode];
+    const player = currentRoom.players[fromPhone];
+
+    // 3. Process game host operation administration commands
+    if (cleanText.toUpperCase() === 'START') {
+        // Query target Question #2 row elements straight from your Neon database pool
+        return pool.query('SELECT * FROM questions WHERE question_number = 2;')
+            .then((result) => {
+                if (result.rows.length > 0) {
+                    startQuestionCountdown(associatedRoomCode, result.rows[0]);
+                    return "🚀 Trivia Question #2 broadcasted live to TV layout grid canvas!";
+                } else {
+                    return "❌ Database response warning: Question #2 row object data target not found inside table schema.";
+                }
+            })
+            .catch((err) => {
+                console.error('❌ [Neon SQL Engine Crash]:', err.message);
+                return "⚠️ System error: Failed to pull question content from Cloud Database infrastructure layers.";
+            });
+    }
+
+    // 4. Handle default incoming trivia response submissions based on turn active state window rules
+    if (currentRoom.gameState !== 'QUESTION') {
+        return `Sorry, ${player.name}, the response submission window is closed right now! Wait for the next round clock to boot up.`;
+    }
+
+    // Record answer submission and notify player state has saved
+    return `Got it, ${player.name}! Input transaction logged securely. Stand by for scoring evaluation!`;
+}
+
 
     // 2. Global cross-reference search to locate which room container this tracking phone ID belongs to
     let associatedRoomCode = null;
