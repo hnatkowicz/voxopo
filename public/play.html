@@ -13,18 +13,24 @@
         label { display: block; margin-bottom: 8px; font-size: 0.8rem; color: #a0a0b2; text-transform: uppercase; font-weight: bold; }
         input[type="text"] { width: 100%; padding: 14px; background: #18181c; border: 1px solid #323238; border-radius: 6px; color: #fff; font-size: 1.1rem; box-sizing: border-box; }
         input[type="text"]:focus { border-color: #00e676; outline: none; }
-        .btn { background: #00e676; color: #121214; border: none; padding: 16px; border-radius: 6px; font-size: 1.1rem; font-weight: bold; width: 100%; cursor: pointer; }
+        
+        /* Interactive Emoji Tap Grid Layout Styles */
+        .emoji-grid { display: flex; justify-content: space-between; gap: 8px; margin-bottom: 12px; overflow-x: auto; padding: 5px 0; }
+        .emoji-btn { background: #18181c; border: 1px solid #323238; font-size: 1.6rem; padding: 10px; border-radius: 8px; cursor: pointer; flex: 1; transition: all 0.1s ease; }
+        .emoji-btn:hover { background: #282830; border-color: #a0a0b2; }
+        .emoji-btn.selected { background: rgba(0,230,118,0.1); border-color: #00e676; transform: scale(1.05); }
+
+        .btn { background: #00e676; color: #121214; border: none; padding: 16px; border-radius: 6px; font-size: 1.1rem; font-weight: bold; width: 100%; cursor: pointer; margin-top: 10px; }
         .btn:hover { background: #00c862; }
         .feedback { margin-top: 15px; font-weight: bold; padding: 10px; border-radius: 6px; display: none; font-size: 0.95rem; }
         
-        /* State Screens Dynamic Display Rules */
         #game-screen { display: none; }
-        .player-badge { background: #18181c; padding: 10px; border-radius: 6px; border: 1px solid #323238; margin-bottom: 20px; font-size: 0.9rem; color: #00e676; }
+        .player-badge { background: #18181c; padding: 12px; border-radius: 6px; border: 1px solid #323238; margin-bottom: 20px; font-size: 1rem; color: #00e676; }
     </style>
 </head>
 <body>
 
-    <!-- SCREEN 1: THE INITIAL LOCK-IN LOGIN PORTAL -->
+    <!-- SCREEN 1: THE UPDATED EMOJI LOGIN PORTAL -->
     <div id="login-screen" class="card">
         <h1>ROOM LOGIN</h1>
         <p>Connect your mobile device to the live TV venue stream</p>
@@ -42,15 +48,31 @@
             <input type="text" id="player-phone" placeholder="e.g., randy1">
         </div>
 
+        <!-- NEW: THE MULTI-MODE EMOJI AVATAR CONTROLLER SECTION -->
+        <div class="input-group">
+            <label>Tap a Quick Avatar Emoji</label>
+            <div class="emoji-grid">
+                <button class="emoji-btn" onclick="selectQuickEmoji(this, '👑')">👑</button>
+                <button class="emoji-btn" onclick="selectQuickEmoji(this, '🦬')">🦬</button>
+                <button class="emoji-btn" onclick="selectQuickEmoji(this, '🦊')">🦊</button>
+                <button class="emoji-btn" onclick="selectQuickEmoji(this, '🚀')">🚀</button>
+                <button class="emoji-btn" onclick="selectQuickEmoji(this, '👽')">👽</button>
+            </button>
+            </div>
+            
+            <label>Or Type Custom Emoji (Optional)</label>
+            <input type="text" id="player-emoji" placeholder="e.g., 🎲">
+        </div>
+
         <button class="btn" onclick="executeRoomLogin()">Join Live Stream</button>
         <div id="login-feedback" class="feedback"></div>
     </div>
 
-    <!-- SCREEN 2: GAMEPLAY INPUT MODE (Revealed only after successful auth check) -->
+    <!-- SCREEN 2: GAMEPLAY INPUT MODE -->
     <div id="game-screen" class="card">
         <h1>VOXOPO CONTROLLER</h1>
         <div class="player-badge">
-            🟢 Signed In As: <span id="badge-name" style="font-weight:bold; color:#fff;">-</span> 
+            🟢 Signed In As: <span id="badge-emoji">-</span> <span id="badge-name" style="font-weight:bold; color:#fff;">-</span> 
             (Room: <span id="badge-room" style="font-weight:bold; color:#fff;">-</span>)
         </div>
 
@@ -64,15 +86,28 @@
     </div>
 
     <script>
-        // Temporary holding memory variables for the active session
         let activeRoom = '';
         let activePhone = '';
         let activeName = '';
+        let chosenEmoji = '👤'; // Default fallback emoji symbol if none chosen
+
+        function selectQuickEmoji(element, emojiCharacter) {
+            // Remove selection class state from all buttons in row grid
+            const buttons = document.getElementsByClassName("emoji-btn");
+            for (let i = 0; i < buttons.length; i++) {
+                buttons[i].classList.remove("selected");
+            }
+            // Highlight selected button target element block
+            element.classList.add("selected");
+            document.getElementById("player-emoji").value = emojiCharacter;
+            chosenEmoji = emojiCharacter;
+        }
 
         async function executeRoomLogin() {
             const room = document.getElementById('room-code').value.trim();
             const name = document.getElementById('player-name').value.trim();
             const phone = document.getElementById('player-phone').value.trim();
+            const customEmoji = document.getElementById('player-emoji').value.trim();
             const feedback = document.getElementById('login-feedback');
 
             if (!room || !name || !phone) {
@@ -80,11 +115,17 @@
                 return;
             }
 
+            // Capture custom input field box string if they chose not to use tap row grid
+            if (customEmoji) {
+                chosenEmoji = customEmoji;
+            }
+
             showFeedback(feedback, "Verifying credentials with server...", "#ffa500", "rgba(255,165,0,0.1)");
 
             try {
-                // Re-create the space-separated text layout under the hood to completely protect your server rules!
-                const completeBodyText = `${room} ${name}`;
+                // Unpack variables and glue them into space-separated string for gameEngine parsing logic
+                // Layout: "ROOM NAME EMOJI" -> e.g., "1234 Randy 🦬"
+                const completeBodyText = `${room} ${name} ${chosenEmoji}`;
 
                 const response = await fetch('/api/message', {
                     method: 'POST',
@@ -93,13 +134,13 @@
                 });
                 const data = await response.json();
 
-                // Lock memory properties and shift state screens
                 activeRoom = room;
                 activePhone = phone;
                 activeName = name;
 
                 document.getElementById('badge-name').innerText = name;
                 document.getElementById('badge-room').innerText = room;
+                document.getElementById('badge-emoji').innerText = chosenEmoji;
                 
                 document.getElementById('login-screen').style.display = "none";
                 document.getElementById('game-screen').style.display = "block";
@@ -126,7 +167,7 @@
                 const data = await response.json();
 
                 showFeedback(feedback, `📡 Server: ${data.reply}`, "#00e676", "rgba(0,230,118,0.1)");
-                document.getElementById('game-input').value = ""; // Auto-wipe entry field for lightning fast next turns
+                document.getElementById('game-input').value = ""; 
 
             } catch (error) {
                 showFeedback(feedback, "❌ Action failed to transmit.", "#ff4757", "rgba(255,71,87,0.1)");
@@ -135,7 +176,6 @@
 
         function showFeedback(element, text, color, bg) {
             element.style.display = "block";
-            element.style.text = text;
             element.style.color = color;
             element.style.background = bg;
             element.innerText = text;
