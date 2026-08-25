@@ -270,8 +270,11 @@
     <script>
         let currentActiveRoomCode = '----';
         let socket = null;
+        let toastQueue = [];
+        let isToastPlaying = false;
+        let cachedPlayersSnapshot = [];
 
-        // Lifecycle step: Fetch a randomized code from the server on demand automatically on load
+        // Fetch a randomized code from the server on demand automatically on load
         async function initializeDynamicRoomSession() {
             try {
                 const response = await fetch('/api/create-room');
@@ -280,7 +283,7 @@
                 if (data && data.success) {
                     currentActiveRoomCode = data.roomCode;
                     
-                    // Rewrite the top HUD display string visually hands-free!
+                    // Rewrite the top HUD display string visually hands-free
                     document.getElementById('display-room-code-badge').innerText = currentActiveRoomCode;
                     
                     // Fire up the WebSocket pipeline and pass the newly generated room token
@@ -326,88 +329,23 @@
             };
         }
 
-        // Trigger dynamic assignment protocols on page wakeup
-        initializeDynamicRoomSession();
-
-        // Keeps a local memory snapshot to identify exactly who just clicked join
-        let cachedPlayersSnapshot = [];
-
-        function detectNewPlayerArrival(freshPlayersList) {
-            // Find who is in the fresh list but missing from our old snapshot array
-            freshPlayersList.forEach(player => {
-                const exists = cachedPlayersSnapshot.some(p => p.name === player.name);
-                if (!exists && cachedPlayersSnapshot.length > 0) {
-                    // Push the fresh profile data прямо inside our toast queue!
-                    toastQueue.push(player);
-                    processToastQueuePipeline();
-                }
-            });
-            // Update our local tracking memory cache channel
-            cachedPlayersSnapshot = [...freshPlayersList];
-            if (cachedPlayersSnapshot.length === 1 && toastQueue.length === 0) {
-                // Handle the very first player loading onto an empty screen grid
-                toastQueue.push(freshPlayersList[0]);
-                processToastQueuePipeline();
-            }
-        }
-
-        function processToastQueuePipeline() {
-            if (isToastPlaying || toastQueue.length === 0) return;
-
-            isToastPlaying = true;
-            const nextPlayer = toastQueue.shift();
-            const slot = document.getElementById('onboarding-text-slot');
-
-            // 1. Smoothly fade out the baseline text instructions row
-            slot.style.opacity = "0";
-
-            setTimeout(() => {
-                // 2. Overwrite the interior markup with your custom centered player profile block
-                slot.innerHTML = `
-                    <div style="display: flex; align-items: center; gap: 14px; transition: transform 0.3s ease; transform: scale(0.95); opacity: 0;" id="inline-toast-card">
-                        <span style="font-size: 1.6rem; background: #1e222b; padding: 6px 12px; border-radius: 6px; border: 1px solid #222630;">${nextPlayer.emoji || '👤'}</span>
-                        <div>
-                            <div style="font-size: 1.1rem; font-weight: 600; color: #00e676; letter-spacing: -0.01em; text-transform: uppercase;">New Entry Arrival</div>
-                            <div style="font-size: 0.9rem; color: #ffffff; font-weight: 500;"><span style="font-weight: 700; text-decoration: underline;">${nextPlayer.name}</span> has locked into the match!</div>
-                        </div>
-                    </div>
-                `;
-
-                // 3. Trigger frame rendering animation to pop the entry badge out crisply
-                const badge = document.getElementById('inline-toast-card');
-                slot.style.opacity = "1";
-                if (badge) {
-                    badge.style.opacity = "1";
-                    badge.style.transform = "scale(1)";
-                }
-            }, 300);
-
-            // 4. Hold the alert centered inside the panel for exactly 3 seconds
-            setTimeout(() => {
-                slot.style.opacity = "0";
-
-                setTimeout(() => {
-                    // 5. Re-render the initial base instructions text block seamlessly
-                    slot.innerHTML = `
-                        <div style="font-size: 1rem; font-weight: 600; color: #ffffff; margin-bottom: 4px; letter-spacing: -0.01em;">SCAN TO JOIN THE LOBBY NOW</div>
-                        <div style="font-size: 0.85rem; color: #64748b; font-weight: 500;">Or open your phone browser and type: <br><span style="color: #00e676; font-weight: 600;">https://voxopo.onrender.com/play.html</span></div>
-                    `;
-                    slot.style.opacity = "1";
-
-                    // 6. Pause briefly to allow the return fade to resolve before unlocking the queue channel gate
-                    setTimeout(() => {
-                        isToastPlaying = false;
-                        processToastQueuePipeline();
-                    }, 300);
-                }, 300);
-            }, 3000);
-        }
-
         function updateLeaderboardUI(playersList) {
             document.getElementById('lobby-player-count').innerText = playersList.length;
             const tbody = document.getElementById('leaderboard-rows');
-            tbody.innerHTML = '';
+            
+            if (!playersList || playersList.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td class="rank-col" style="color: #222630;">—</td>
+                        <td class="emoji-col" style="color: #222630;">👤</td>
+                        <td class="name-col" style="color: #64748b; font-style: italic;">Lobby is empty...</td>
+                        <td class="score-col" style="color: #222630;">0</td>
+                    </tr>
+                `;
+                return;
+            }
 
+            tbody.innerHTML = '';
             playersList.sort((a, b) => b.score - a.score);
 
             playersList.forEach((player, index) => {
@@ -424,69 +362,121 @@
 
         function updateModuleElectionUI(votes, totalVotes) {
             if (!totalVotes || totalVotes === 0) return;
-
             const keys = ['TRIVI_YEAH', 'COUNTRY_MONKEY', 'EMPOSSDURR', 'FLAG_ME_DOWN', 'ON_THE_SPECTRUM'];
-
             keys.forEach(key => {
                 const count = votes[key] || 0;
                 const percentage = Math.round((count / totalVotes) * 100);
-                
-                                // Align IDs perfectly to completely resolve the rendering block
                 document.getElementById(`vbar-${key}`).style.width = `${percentage}%`;
                 document.getElementById(`vcount-${key}`).innerText = `${count} votes (${percentage}%)`;
             });
         }
 
-                function switchToCategoryVotingUI(winnerModule) {
+        function detectNewPlayerArrival(freshPlayersList) {
+            freshPlayersList.forEach(player => {
+                const exists = cachedPlayersSnapshot.some(p => p.name === player.name);
+                if (!exists && cachedPlayersSnapshot.length > 0) {
+                    toastQueue.push(player);
+                    processToastQueuePipeline();
+                }
+            });
+            cachedPlayersSnapshot = [...freshPlayersList];
+            if (cachedPlayersSnapshot.length === 1 && toastQueue.length === 0) {
+                toastQueue.push(freshPlayersList[0]); // Fixes passing the exact player node instead of the array list!
+                processToastQueuePipeline();
+            }
+        }
+
+        function processToastQueuePipeline() {
+            if (isToastPlaying || toastQueue.length === 0) return;
+
+            isToastPlaying = true;
+            const nextPlayer = toastQueue.shift();
+            const slot = document.getElementById('onboarding-text-slot');
+
+            if (!slot) {
+                isToastPlaying = false;
+                return;
+            }
+
+            slot.style.opacity = "0";
+
+            setTimeout(() => {
+                slot.innerHTML = `
+                    <div style="display: flex; align-items: center; gap: 14px; transition: transform 0.3s ease; transform: scale(0.95); opacity: 0;" id="inline-toast-card">
+                        <span style="font-size: 1.6rem; background: #1e222b; padding: 6px 12px; border-radius: 6px; border: 1px solid #222630;">${nextPlayer.emoji || '👤'}</span>
+                        <div>
+                            <div style="font-size: 1.1rem; font-weight: 600; color: #00e676; letter-spacing: -0.01em; text-transform: uppercase;">New Entry Arrival</div>
+                            <div style="font-size: 0.9rem; color: #ffffff; font-weight: 500;"><span style="font-weight: 700; text-decoration: underline;">${nextPlayer.name}</span> has locked into the match!</div>
+                        </div>
+                    </div>
+                `;
+
+                const badge = document.getElementById('inline-toast-card');
+                slot.style.opacity = "1";
+                if (badge) {
+                    badge.style.opacity = "1";
+                    badge.style.transform = "scale(1)";
+                }
+            }, 300);
+
+            setTimeout(() => {
+                slot.style.opacity = "0";
+
+                setTimeout(() => {
+                    slot.innerHTML = `
+                        <div style="font-size: 1rem; font-weight: 600; color: #ffffff; margin-bottom: 4px; letter-spacing: -0.01em;">SCAN TO JOIN THE LOBBY MATCH NOW</div>
+                        <div style="font-size: 0.85rem; color: #64748b; font-weight: 500;">Or open your phone browser and type: <span style="color: #00e676; font-weight: 600;">://onrender.com</span></div>
+                    `;
+                    slot.style.opacity = "1";
+
+                    setTimeout(() => {
+                        isToastPlaying = false;
+                        processToastQueuePipeline();
+                    }, 300);
+                }, 300);
+            }, 3000);
+        }
+
+        function switchToCategoryVotingUI(winnerModule, label1, label2, label3) {
             const panel = document.getElementById('main-trivia-panel');
+            const displayGameName = winnerModule.replace('_', ' ').toLowerCase().replace(/\b\w/g, c => c.toUpperCase());
             
-            // Cleanly reformat the internal string name to make it look premium on the screen
-            const displayGameName = winnerModule === 'TRIVI_YEAH' ? 'Trivi-yeah!' : 'Country Monkey';
-            
-            // Overwrite the left column panel box to draw the 3 clean custom sub-category tracks
             panel.innerHTML = `
                 <div class="panel-box" style="padding: 40px; flex: 1; display: flex; flex-direction: column; justify-content: center;">
                     <h2 class="panel-title" style="margin-bottom: 8px;">🎮 Winner: ${displayGameName}</h2>
-                    <p style="color: #64748b; font-size: 0.95rem; margin: 0 0 32px 0; font-weight: 500;">Select your family sub-deck preference on your phone now</p>
+                    <p style="color: #64748b; font-size: 0.95rem; margin: 0 0 32px 0; font-weight: 500;">Select your sub-deck preference on your phone now</p>
                     
                     <div style="display: flex; flex-direction: column;">
-                        <!-- Sub-Category 1: WWII History -->
                         <div class="vote-row">
-                            <div class="vote-meta"><span>🎖️ WWII History</span><span id="ccount-CAT_1" style="color: #64748b;">0 votes (0%)</span></div>
+                            <div class="vote-meta"><span id="lbl-cat1">${label1 || 'Category 1'}</span><span id="ccount-CAT_1" style="color: #64748b;">0 votes (0%)</span></div>
                             <div class="progress-track"><div id="cbar-CAT_1" class="progress-fill" style="background: #ffa500;"></div></div>
                         </div>
-
-                        <!-- Sub-Category 2: Primary School -->
                         <div class="vote-row">
-                            <div class="vote-meta"><span>🎒 Primary School</span><span id="ccount-CAT_2" style="color: #64748b;">0 votes (0%)</span></div>
+                            <div class="vote-meta"><span id="lbl-cat2">${label2 || 'Category 2'}</span><span id="ccount-CAT_2" style="color: #64748b;">0 votes (0%)</span></div>
                             <div class="progress-track"><div id="cbar-CAT_2" class="progress-fill" style="background: #00e676;"></div></div>
                         </div>
-
-                        <!-- Sub-Category 3: Pop Culture -->
                         <div class="vote-row">
-                            <div class="vote-meta"><span>🎬 Pop Culture</span><span id="ccount-CAT_3" style="color: #64748b;">0 votes (0%)</span></div>
+                            <div class="vote-meta"><span id="lbl-cat3">${label3 || 'Category 3'}</span><span id="ccount-CAT_3" style="color: #64748b;">0 votes (0%)</span></div>
                             <div class="progress-track"><div id="cbar-CAT_3" class="progress-fill" style="background: #ff4757;"></div></div>
                         </div>
                     </div>
                 </div>
             `;
         }
-
-        function updateCategorySubElectionUI(votes, totalVotes) {
+                function updateCategorySubElectionUI(votes, totalVotes) {
             if (!totalVotes || totalVotes === 0) return;
             const subKeys = ['CAT_1', 'CAT_2', 'CAT_3'];
-
             subKeys.forEach(key => {
                 const count = votes[key] || 0;
                 const percentage = Math.round((count / totalVotes) * 100);
-                
-                // Repaint the width of the sub-category bars dynamically
                 document.getElementById(`cbar-${key}`).style.width = `${percentage}%`;
                 document.getElementById(`ccount-${key}`).innerText = `${count} votes (${percentage}%)`;
             });
         }
+
+        // Trigger dynamic assignment protocols on page wakeup
+        initializeDynamicRoomSession();
     </script>
-    <!-- Sliding Toast Notification Anchor Node -->
-    <div class="toast-container" id="toast-anchor"></div>
 </body>
 </html>
+
