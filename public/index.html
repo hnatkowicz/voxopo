@@ -265,6 +265,10 @@
             if (data.type === 'VOTE_UPDATE') {
                 updateModuleElectionUI(data.votes, data.totalVotes);
             }
+            if (data.type === 'LOBBY_TIMER_TICK') {
+                // Update the countdown digit text inside the top HUD banner frame in real-time
+                document.getElementById('lobby-countdown').innerText = data.secondsLeft;
+            }
         };
 
         // Keeps a local memory snapshot to identify exactly who just clicked join
