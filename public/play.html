@@ -3,129 +3,231 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Voxopo Mobile Controller</title>
+    <title>RandoMania | Mobile Controller</title>
     <style>
-        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background: #121214; color: #fff; text-align: center; padding: 30px 15px; margin: 0; }
-        .card { background: #202024; border: 1px solid #323238; border-radius: 12px; padding: 25px; max-width: 400px; margin: 20px auto; box-shadow: 0 4px 12px rgba(0,0,0,0.3); }
-        h1 { color: #00e676; margin: 0 0 5px 0; letter-spacing: 1px; font-size: 1.6rem; }
-        p { color: #a0a0b2; margin: 0 0 20px 0; font-size: 0.9rem; }
-        .input-group { margin-bottom: 18px; text-align: left; }
-        label { display: block; margin-bottom: 8px; font-size: 0.8rem; color: #a0a0b2; text-transform: uppercase; font-weight: bold; }
-        input[type="text"] { width: 100%; padding: 14px; background: #18181c; border: 1px solid #323238; border-radius: 6px; color: #fff; font-size: 1.1rem; box-sizing: border-box; }
-        input[type="text"]:focus { border-color: #00e676; outline: none; }
+        /* Understated Retro Dark Theme Scheme */
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; 
+            background: #141416; 
+            color: #f4f4f6; 
+            text-align: center; 
+            padding: 25px 15px; 
+            margin: 0; 
+        }
+        .card { 
+            background: #202024; 
+            border: 2px solid #36363e; 
+            border-radius: 12px; 
+            padding: 25px; 
+            max-width: 420px; 
+            margin: 15px auto; 
+            box-shadow: 0 6px 16px rgba(0,0,0,0.4); 
+        }
+        h1 { color: #ffa500; font-family: sans-serif; letter-spacing: 2px; margin: 0 0 5px 0; font-size: 1.8rem; }
+        p.subtitle { color: #a0a0b2; margin: 0 0 25px 0; font-size: 0.9rem; }
         
-        /* Interactive Emoji Tap Grid Layout Styles */
-        .emoji-grid { display: flex; justify-content: space-between; gap: 8px; margin-bottom: 12px; overflow-x: auto; padding: 5px 0; }
-        .emoji-btn { background: #18181c; border: 1px solid #323238; font-size: 1.6rem; padding: 10px; border-radius: 8px; cursor: pointer; flex: 1; transition: all 0.1s ease; }
-        .emoji-btn:hover { background: #282830; border-color: #a0a0b2; }
-        .emoji-btn.selected { background: rgba(0,230,118,0.1); border-color: #00e676; transform: scale(1.05); }
+        .input-group { margin-bottom: 20px; text-align: left; }
+        label { display: block; margin-bottom: 8px; font-size: 0.8rem; color: #a0a0b2; text-transform: uppercase; font-weight: bold; letter-spacing: 1px; }
+        input[type="text"] { width: 100%; padding: 14px; background: #18181c; border: 1px solid #36363e; border-radius: 6px; color: #fff; font-size: 1.1rem; box-sizing: border-box; }
+        input[type="text"]:focus { border-color: #ffa500; outline: none; }
+        
+        /* Curated 24-Emoji Avatar Grid Layout */
+        .emoji-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 8px; margin-bottom: 15px; }
+        .emoji-btn { background: #18181c; border: 1px solid #36363e; font-size: 1.4rem; padding: 10px 0; border-radius: 6px; cursor: pointer; transition: all 0.1s ease; }
+        .emoji-btn.selected { background: rgba(255, 165, 0, 0.15); border-color: #ffa500; transform: scale(1.05); }
 
-        .btn { background: #00e676; color: #121214; border: none; padding: 16px; border-radius: 6px; font-size: 1.1rem; font-weight: bold; width: 100%; cursor: pointer; margin-top: 10px; }
-        .btn:hover { background: #00c862; }
+        /* The 1970s Vinyl Record Selection Crate */
+        .crate-container { display: flex; flex-direction: column; gap: 12px; margin-top: 10px; }
+        .record-tile {
+            background: #18181c;
+            border: 2px solid #36363e;
+            border-radius: 8px;
+            padding: 15px;
+            text-align: left;
+            cursor: pointer;
+            transition: all 0.15s ease;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        .record-icon { font-size: 2rem; color: #545464; transition: color 0.15s; }
+        .record-text h3 { margin: 0 0 4px 0; color: #fff; font-size: 1.1rem; letter-spacing: 0.5px; }
+        .record-text p { margin: 0; color: #a0a0b2; font-size: 0.8rem; line-height: 1.3; }
+        
+        /* Interactive selection state color block */
+        .record-tile.selected { border-color: #00e676; background: rgba(0, 230, 118, 0.05); }
+        .record-tile.selected .record-icon { color: #00e676; }
+        .record-tile.selected h3 { color: #00e676; }
+
+        .btn { background: #ffa500; color: #141416; border: none; padding: 16px; border-radius: 6px; font-size: 1.1rem; font-weight: bold; width: 100%; cursor: pointer; margin-top: 15px; letter-spacing: 1px; }
+        .btn:hover { background: #e09200; }
         .feedback { margin-top: 15px; font-weight: bold; padding: 10px; border-radius: 6px; display: none; font-size: 0.95rem; }
         
         #game-screen { display: none; }
-        .player-badge { background: #18181c; padding: 12px; border-radius: 6px; border: 1px solid #323238; margin-bottom: 20px; font-size: 1rem; color: #00e676; }
+        .player-badge { background: #18181c; padding: 12px; border-radius: 6px; border: 1px solid #36363e; margin-bottom: 20px; font-size: 1rem; color: #ffa500; }
     </style>
 </head>
 <body>
 
-    <!-- SCREEN 1: THE UPDATED EMOJI LOGIN PORTAL -->
+    <!-- SCREEN 1: THE RETRO COMPLIANT LOBBY CRATE -->
     <div id="login-screen" class="card">
-        <h1>ROOM LOGIN</h1>
-        <p>Connect your mobile device to the live TV venue stream</p>
+        <h1>RANDOMANIA LOBBY</h1>
+        <p class="subtitle">Drop your needle into the live venue match pool</p>
         
         <div class="input-group">
             <label>4-Digit Room Code</label>
             <input type="text" id="room-code" placeholder="e.g., 1234">
         </div>
         <div class="input-group">
-            <label>Your Name</label>
+            <label>Your Nickname</label>
             <input type="text" id="player-name" placeholder="e.g., Randy">
         </div>
         <div class="input-group">
-            <label>Your Phone String (Unique tracking key)</label>
-            <input type="text" id="player-phone" placeholder="e.g., randy1">
+            <label>Device Identifier (Unique key)</label>
+            <input type="text" id="player-phone" placeholder="e.g., player1">
         </div>
 
-        <!-- NEW: THE MULTI-MODE EMOJI AVATAR CONTROLLER SECTION -->
+        <!-- THE CURATED 24-AVATAR ELEMENT BLOCKS -->
         <div class="input-group">
-            <label>Tap a Quick Avatar Emoji</label>
+            <label>Select Your Avatar Emoji</label>
             <div class="emoji-grid">
-                <button class="emoji-btn" onclick="selectQuickEmoji(this, '👑')">👑</button>
-                <button class="emoji-btn" onclick="selectQuickEmoji(this, '🦬')">🦬</button>
-                <button class="emoji-btn" onclick="selectQuickEmoji(this, '🦊')">🦊</button>
-                <button class="emoji-btn" onclick="selectQuickEmoji(this, '🚀')">🚀</button>
-                <button class="emoji-btn" onclick="selectQuickEmoji(this, '👽')">👽</button>
-            </button>
+                <button class="emoji-btn" onclick="selectAvatar(this, '👑')">👑</button>
+                <button class="emoji-btn" onclick="selectAvatar(this, '🦬')">🦬</button>
+                <button class="emoji-btn" onclick="selectAvatar(this, '🦊')">🦊</button>
+                <button class="emoji-btn" onclick="selectAvatar(this, '🚀')">🚀</button>
+                <button class="emoji-btn" onclick="selectAvatar(this, '👽')">👽</button>
+                <button class="emoji-btn" onclick="selectAvatar(this, '🎯')">🎯</button>
+                <button class="emoji-btn" onclick="selectAvatar(this, '🎲')">🎲</button>
+                <button class="emoji-btn" onclick="selectAvatar(this, '🔥')">🔥</button>
+                <button class="emoji-btn" onclick="selectAvatar(this, '🐯')">🐯</button>
+                <button class="emoji-btn" onclick="selectAvatar(this, '🦕')">🦕</button>
+                <button class="emoji-btn" onclick="selectAvatar(this, '🦉')">🦉</button>
+                <button class="emoji-btn" onclick="selectAvatar(this, '🍄')">🍄</button>
+                <button class="emoji-btn" onclick="selectAvatar(this, '🍕')">🍕</button>
+                <button class="emoji-btn" onclick="selectAvatar(this, '🎸')">🎸</button>
+                <button class="emoji-btn" onclick="selectAvatar(this, '🕶️')">🕶️</button>
+                <button class="emoji-btn" onclick="selectAvatar(this, '🤖')">🤖</button>
+                <button class="emoji-btn" onclick="selectAvatar(this, '🎱')">🎱</button>
+                <button class="emoji-btn" onclick="selectAvatar(this, '⚓')">⚓</button>
+                <button class="emoji-btn" onclick="selectAvatar(this, '🐬')">🐬</button>
+                <button class="emoji-btn" onclick="selectAvatar(this, '🤠')">🤠</button>
+                <button class="emoji-btn" onclick="selectAvatar(this, '🍀')">🍀</button>
+                <button class="emoji-btn" onclick="selectAvatar(this, '🥥')">🥥</button>
+                <button class="emoji-btn" onclick="selectAvatar(this, '🔮')">🔮</button>
+                <button class="emoji-btn" onclick="selectAvatar(this, '🪁')">🪁</button>
             </div>
-            
-            <label>Or Type Custom Emoji (Optional)</label>
-            <input type="text" id="player-emoji" placeholder="e.g., 🎲">
         </div>
 
-        <button class="btn" onclick="executeRoomLogin()">Join Live Stream</button>
+        <!-- THE 5-OPTION VINYL RECORD SELECTION CRATE -->
+        <div class="input-group">
+            <label>Vote for Tonight's Primary Vinyl Record</label>
+            <div class="crate-container">
+                
+                <div class="record-tile" onclick="selectVinylRecord(this, 'TRIVI_YEAH')">
+                    <div class="record-icon">🫵</div>
+                    <div class="record-text">
+                        <h3>Trivi-yeah!</h3>
+                        <p>A classic, fast-paced battle of wits for the trivia purist—drop the needle and test your mind.</p>
+                    </div>
+                </div>
+
+                <div class="record-tile" onclick="selectVinylRecord(this, 'COUNTRY_MONKEY')">
+                    <div class="record-icon">🐒</div>
+                    <div class="record-text">
+                        <h3>Country Monkey</h3>
+                        <p>Swing through the world map and guess the mystery nation before the vintage clock runs out.</p>
+                    </div>
+                </div>
+
+                <div class="record-tile" onclick="selectVinylRecord(this, 'EMPOSSDURR')">
+                    <div class="record-icon">🕵️‍♂️</div>
+                    <div class="record-text">
+                        <h3>EmpossDurr</h3>
+                        <p>A retro social puzzle of hidden logic—can you find the imposter sitting right in your living room?</p>
+                    </div>
+                </div>
+
+                <div class="record-tile" onclick="selectVinylRecord(this, 'FLAG_ME_DOWN')">
+                    <div class="record-icon">🚩</div>
+                    <div class="record-text">
+                        <h3>Flag Me Down</h3>
+                        <p>Test your vector vision on the world's grooviest banners, colors, and historical standards.</p>
+                    </div>
+                </div>
+
+                <div class="record-tile" onclick="selectVinylRecord(this, 'ON_THE_SPECTRUM')">
+                    <div class="record-icon">🌈</div>
+                    <div class="record-text">
+                        <h3>On The Spectrum</h3>
+                        <p>A colorful, high-stakes sorting match where players rank data scales from lowest to highest.</p>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <button class="btn" onclick="executeRoomOnboarding()">Submit Record Selection</button>
         <div id="login-feedback" class="feedback"></div>
     </div>
 
-    <!-- SCREEN 2: GAMEPLAY INPUT MODE -->
+    <!-- SCREEN 2: GAMEPLAY INPUT CONTROLLER -->
     <div id="game-screen" class="card">
         <h1>VOXOPO CONTROLLER</h1>
         <div class="player-badge">
-            🟢 Signed In As: <span id="badge-emoji">-</span> <span id="badge-name" style="font-weight:bold; color:#fff;">-</span> 
+            🟢 Active: <span id="badge-emoji">-</span> <span id="badge-name" style="font-weight:bold; color:#fff;">-</span> 
             (Room: <span id="badge-room" style="font-weight:bold; color:#fff;">-</span>)
         </div>
 
         <div class="input-group">
-            <label>Submit Game Action or Trivia Answer</label>
-            <input type="text" id="game-input" placeholder="e.g., START, PAUSE, or your answer">
+            <label>Submit Game Input Action</label>
+            <input type="text" id="game-input" placeholder="Type answer or command...">
         </div>
 
-        <button class="btn" onclick="submitGameAction()">Submit Input</button>
+        <button class="btn" style="background:#00e676;" onclick="submitGameAction()">Submit Action</button>
         <div id="game-feedback" class="feedback"></div>
     </div>
 
     <script>
-        let activeRoom = '';
-        let activePhone = '';
-        let activeName = '';
-        let chosenEmoji = '👤'; // Default fallback emoji symbol if none chosen
+                let chosenAvatar = '👤';
+        let chosenRecord = '';
 
-        function selectQuickEmoji(element, emojiCharacter) {
-            // Remove selection class state from all buttons in row grid
-            const buttons = document.getElementsByClassName("emoji-btn");
-            for (let i = 0; i < buttons.length; i++) {
-                buttons[i].classList.remove("selected");
-            }
-            // Highlight selected button target element block
+        function selectAvatar(element, avatarChar) {
+            const btns = document.getElementsByClassName("emoji-btn");
+            for (let i = 0; i < btns.length; i++) { btns[i].classList.remove("selected"); }
             element.classList.add("selected");
-            document.getElementById("player-emoji").value = emojiCharacter;
-            chosenEmoji = emojiCharacter;
+            chosenAvatar = avatarChar;
         }
 
-        async function executeRoomLogin() {
+        function selectVinylRecord(element, recordKey) {
+            const tiles = document.getElementsByClassName("record-tile");
+            for (let i = 0; i < tiles.length; i++) { tiles[i].classList.remove("selected"); }
+            element.classList.add("selected");
+            chosenRecord = recordKey;
+        }
+
+        async function executeRoomOnboarding() {
             const room = document.getElementById('room-code').value.trim();
             const name = document.getElementById('player-name').value.trim();
             const phone = document.getElementById('player-phone').value.trim();
-            const customEmoji = document.getElementById('player-emoji').value.trim();
             const feedback = document.getElementById('login-feedback');
 
             if (!room || !name || !phone) {
-                showFeedback(feedback, "⚠️ All login fields are required!", "#ffa500", "rgba(255,165,0,0.1)");
+                showFeedback(feedback, "⚠️ All fields are required to check into the room crate!", "#ffa500", "rgba(255,165,0,0.1)");
+                return;
+            }
+            if (!chosenRecord) {
+                showFeedback(feedback, "🎵 Pick a vinyl record to submit your lobby vote!", "#ffa500", "rgba(255,165,0,0.1)");
                 return;
             }
 
-            // Capture custom input field box string if they chose not to use tap row grid
-            if (customEmoji) {
-                chosenEmoji = customEmoji;
-            }
+            // Save player phone tracking token into hardware cache for seamless reconnection persistence
+            localStorage.setItem('voxopo_pid', phone);
 
-            showFeedback(feedback, "Verifying credentials with server...", "#ffa500", "rgba(255,165,0,0.1)");
+            showFeedback(feedback, "Dropping needle into cloud slot...", "#ffa500", "rgba(255,165,0,0.1)");
 
             try {
-                // Unpack variables and glue them into space-separated string for gameEngine parsing logic
-                // Layout: "ROOM NAME EMOJI" -> e.g., "1234 Randy 🦬"
-                const completeBodyText = `${room} ${name} ${chosenEmoji}`;
+                // Formulate the string for gameEngine tracking parsing
+                const completeBodyText = `${room} ${name} ${chosenAvatar} ${chosenRecord}`;
 
                 const response = await fetch('/api/message', {
                     method: 'POST',
@@ -134,43 +236,37 @@
                 });
                 const data = await response.json();
 
-                activeRoom = room;
-                activePhone = phone;
-                activeName = name;
-
                 document.getElementById('badge-name').innerText = name;
                 document.getElementById('badge-room').innerText = room;
-                document.getElementById('badge-emoji').innerText = chosenEmoji;
+                document.getElementById('badge-emoji').innerText = chosenAvatar;
                 
                 document.getElementById('login-screen').style.display = "none";
                 document.getElementById('game-screen').style.display = "block";
 
             } catch (error) {
-                showFeedback(feedback, "❌ Connection failed. Check backend deployment.", "#ff4757", "rgba(255,71,87,0.1)");
+                showFeedback(feedback, "❌ Connection broken. Check Render instance status.", "#ff4757", "rgba(255,71,87,0.1)");
             }
         }
 
         async function submitGameAction() {
             const actionText = document.getElementById('game-input').value.trim();
             const feedback = document.getElementById('game-feedback');
-
             if (!actionText) return;
 
-            showFeedback(feedback, "Transmitting text action...", "#ffa500", "rgba(255,165,0,0.1)");
+            showFeedback(feedback, "Transmitting data packet...", "#ffa500", "rgba(255,165,0,0.1)");
 
             try {
+                const cachedPhoneId = localStorage.getItem('voxopo_pid') || 'test-handset';
                 const response = await fetch('/api/message', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ From: activePhone, Body: actionText })
+                    body: JSON.stringify({ From: cachedPhoneId, Body: actionText })
                 });
                 const data = await response.json();
-
                 showFeedback(feedback, `📡 Server: ${data.reply}`, "#00e676", "rgba(0,230,118,0.1)");
                 document.getElementById('game-input').value = ""; 
-
             } catch (error) {
-                showFeedback(feedback, "❌ Action failed to transmit.", "#ff4757", "rgba(255,71,87,0.1)");
+                showFeedback(feedback, "❌ Transmission failed.", "#ff4757", "rgba(255,71,87,0.1)");
             }
         }
 
