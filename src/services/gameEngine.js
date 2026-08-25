@@ -19,15 +19,14 @@ function broadcastToRoom(roomCode, payload) {
     }
 }
 
-// Upgraded Lobby Countdown Clock Machinery with external reset access
+// Automated Lobby Countdown Clock Machinery
 function startLobbyCountdown(roomCode) {
     const room = activeRooms[roomCode];
     if (!room) return;
 
-    // Initialize or reset the room-specific countdown counter properties
     room.lobbySecondsLeft = 60;
     
-    if (room.lobbyTimerInterval) return; // Keep the running interval alive if it already exists
+    if (room.lobbyTimerInterval) return;
 
     room.lobbyTimerInterval = setInterval(() => {
         room.lobbySecondsLeft--;
@@ -87,7 +86,7 @@ export function handleIncomingMessage(fromPhone, bodyText) {
     const cleanText = bodyText.trim();
     const parts = cleanText.split(' ');
     
-    if (parts.length === 0 || !parts || !parts) {
+    if (parts.length === 0 || !parts || !parts[0]) {
         return "⚠️ Error: Received an empty input payload.";
     }
 
@@ -114,10 +113,21 @@ export function handleIncomingMessage(fromPhone, bodyText) {
 
         const currentRoom = activeRooms[roomCode];
 
+        // Ensure we have enough segments to parse structural tokens safely
         if (parts.length >= 4) {
-            const playerNickname = parts[1];
-            const playerEmoji = parts[2] || '👤';
-            const votedModule = parts[3];
+            // Remove the 4-digit room code off the absolute front
+            parts.shift();
+            
+            // Pop the module preference and avatar emoji off the absolute end of the array
+            const votedModule = parts.pop();
+            const playerEmoji = parts.pop() || '👤';
+            
+            // Stitch whatever elements are left trapped in the middle back together as the Full Name string!
+            const playerNickname = parts.join(' ').trim();
+
+            if (!playerNickname) {
+                return "⚠️ Setup Error: Nickname field cannot be blank!";
+            }
 
             if (currentRoom.players[playerNickname]) {
                 return `⚠️ Name "${playerNickname}" is already taken in Room ${roomCode}! Please try a different nickname.`;
@@ -141,7 +151,7 @@ export function handleIncomingMessage(fromPhone, bodyText) {
                 }
             });
 
-            console.log(`[Lobby Engine] Player checked in. Room ${roomCode} vote tallies:`, currentRoom.votes);
+            console.log(`[Lobby Engine] Player "${playerNickname}" joined. Tallies:`, currentRoom.votes);
 
             // Synchronize visual stands lists and election progress tracks
             broadcastToRoom(roomCode, {
@@ -155,11 +165,9 @@ export function handleIncomingMessage(fromPhone, bodyText) {
                 totalVotes: playersArray.length
             });
 
-            // CLOCK ENGINE RESET TRIGGER: Fires start/reset to exactly 60 seconds on EVERY entry!
-            console.log(`[Lobby Engine] Resetting Room ${roomCode} countdown clock to 60 seconds.`);
+            // Clock Reset Trigger: Refreshes to exactly 60 seconds on every entry!
             startLobbyCountdown(roomCode);
 
-            // Broadcast the instant reset out to the TV HUD banner visually right away
             broadcastToRoom(roomCode, {
                 type: 'LOBBY_TIMER_TICK',
                 secondsLeft: "60s"
@@ -203,7 +211,7 @@ async function executeDatabaseQuery(roomCode) {
     try {
         const result = await pool.query('SELECT * FROM questions WHERE question_number = 1;');
         if (result.rows.length > 0) {
-            startQuestionCountdown(roomCode, result.rows[0]);
+            startQuestionCountdown(roomCode, result.rows);
         } else {
             console.warn("❌ Database response warning: Question #1 data target not found.");
         }
