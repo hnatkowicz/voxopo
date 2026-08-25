@@ -167,7 +167,17 @@ function startQuestionCountdown(roomCode, questionData) {
 export function handleIncomingMessage(fromPhone, bodyText) {
     const cleanText = bodyText.trim();
     const parts = cleanText.split(' ');
-    
+
+        // FIX: Intercept the phone's background poll request and return the active game phase instantly
+    if (cleanText.startsWith('ROOM_STATE_CHECK')) {
+        const checkRoomCode = parts[1];
+        const targetRoom = activeRooms[checkRoomCode];
+        if (targetRoom && targetRoom.gameState === 'CATEGORY_VOTE') {
+            return 'CATEGORY_VOTE_PHASE';
+        }
+        return 'WAITING';
+    }
+
     if (parts.length === 0 || !parts || !parts) {
         return "⚠️ Error: Received an empty input payload.";
     }
