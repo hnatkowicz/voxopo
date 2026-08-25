@@ -289,6 +289,18 @@
             }
             if (data.type === 'VOTE_UPDATE') {
                 updateModuleElectionUI(data.votes, data.totalVotes);
+                // Listen for the server's lobby clock expiration transition signal
+            if (data.type === 'TRANSITION_TO_CATEGORY_VOTE') {
+                document.getElementById('room-status-text').innerText = "Category Selection";
+                document.getElementById('lobby-countdown').innerText = "30s";
+                switchToCategoryVotingUI(data.winner);
+            }
+
+            // Listen for real-time category vote updates to slide the 3 sub-bars open
+            if (data.type === 'CATEGORY_VOTE_UPDATE') {
+                updateCategorySubElectionUI(data.votes, data.totalVotes);
+            }
+
             }
             if (data.type === 'LOBBY_TIMER_TICK') {
                 // Update the countdown digit text inside the top HUD banner frame in real-time
@@ -370,8 +382,6 @@
             }, 3000);
         }
 
-
-
         function updateLeaderboardUI(playersList) {
             document.getElementById('lobby-player-count').innerText = playersList.length;
             const tbody = document.getElementById('leaderboard-rows');
@@ -403,6 +413,55 @@
                                 // Align IDs perfectly to completely resolve the rendering block
                 document.getElementById(`vbar-${key}`).style.width = `${percentage}%`;
                 document.getElementById(`vcount-${key}`).innerText = `${count} votes (${percentage}%)`;
+            });
+        }
+
+                function switchToCategoryVotingUI(winnerModule) {
+            const panel = document.getElementById('main-trivia-panel');
+            
+            // Cleanly reformat the internal string name to make it look premium on the screen
+            const displayGameName = winnerModule === 'TRIVI_YEAH' ? 'Trivi-yeah!' : 'Country Monkey';
+            
+            // Overwrite the left column panel box to draw the 3 clean custom sub-category tracks
+            panel.innerHTML = `
+                <div class="panel-box" style="padding: 40px; flex: 1; display: flex; flex-direction: column; justify-content: center;">
+                    <h2 class="panel-title" style="margin-bottom: 8px;">🎮 Winner: ${displayGameName}</h2>
+                    <p style="color: #64748b; font-size: 0.95rem; margin: 0 0 32px 0; font-weight: 500;">Select your family sub-deck preference on your phone now</p>
+                    
+                    <div style="display: flex; flex-direction: column;">
+                        <!-- Sub-Category 1: WWII History -->
+                        <div class="vote-row">
+                            <div class="vote-meta"><span>🎖️ WWII History</span><span id="ccount-CAT_1" style="color: #64748b;">0 votes (0%)</span></div>
+                            <div class="progress-track"><div id="cbar-CAT_1" class="progress-fill" style="background: #ffa500;"></div></div>
+                        </div>
+
+                        <!-- Sub-Category 2: Primary School -->
+                        <div class="vote-row">
+                            <div class="vote-meta"><span>🎒 Primary School</span><span id="ccount-CAT_2" style="color: #64748b;">0 votes (0%)</span></div>
+                            <div class="progress-track"><div id="cbar-CAT_2" class="progress-fill" style="background: #00e676;"></div></div>
+                        </div>
+
+                        <!-- Sub-Category 3: Pop Culture -->
+                        <div class="vote-row">
+                            <div class="vote-meta"><span>🎬 Pop Culture</span><span id="ccount-CAT_3" style="color: #64748b;">0 votes (0%)</span></div>
+                            <div class="progress-track"><div id="cbar-CAT_3" class="progress-fill" style="background: #ff4757;"></div></div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function updateCategorySubElectionUI(votes, totalVotes) {
+            if (!totalVotes || totalVotes === 0) return;
+            const subKeys = ['CAT_1', 'CAT_2', 'CAT_3'];
+
+            subKeys.forEach(key => {
+                const count = votes[key] || 0;
+                const percentage = Math.round((count / totalVotes) * 100);
+                
+                // Repaint the width of the sub-category bars dynamically
+                document.getElementById(`cbar-${key}`).style.width = `${percentage}%`;
+                document.getElementById(`ccount-${key}`).innerText = `${count} votes (${percentage}%)`;
             });
         }
     </script>
