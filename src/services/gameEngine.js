@@ -166,7 +166,7 @@ export function handleIncomingMessage(fromPhone, bodyText) {
         return "⚠️ Error: Received an empty input payload.";
     }
 
-    const firstWord = parts.toUpperCase();
+    const firstWord = parts[0].toUpperCase();
 
     // 1. Handle incoming room check-in / player registration fields
     if (!isNaN(firstWord) && firstWord.length === 4) {
