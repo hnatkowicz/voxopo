@@ -320,10 +320,11 @@
                 if (data.type === 'CATEGORY_TIMER_TICK') {
                     document.getElementById('lobby-countdown').innerText = data.secondsLeft;
                 }
-                if (data.type === 'TRANSITION_TO_CATEGORY_VOTE') {
-                    document.getElementById('room-status-text').innerText = "Category Selection";
-                    switchToCategoryVotingUI(data.winner, data.label1, data.label2, data.label3);
-                }
+            // FIX: Explicitly pass data.label1, data.label2, and data.label3 into the painter!
+            if (data.type === 'TRANSITION_TO_CATEGORY_VOTE') {
+                document.getElementById('room-status-text').innerText = "Category Selection";
+                switchToCategoryVotingUI(data.winner, data.label1, data.label2, data.label3);
+            }
                 if (data.type === 'CATEGORY_VOTE_UPDATE') {
                     updateCategorySubElectionUI(data.votes, data.totalVotes);
                 }
