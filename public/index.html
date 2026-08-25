@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Voxopo Live Scoreboard TV</title>
+    <title>RandoMania Live Scoreboard</title>
     <style>
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
@@ -97,28 +97,90 @@
 </head>
 <body>
 
-    <h1 class="main-title">VOXOPO LIVE TV STREAM</h1>
+    <h1 class="main-title">RandoMania LIVE STREAM</h1>
 
-    <div class="split-container">
+    <body>
+
+    <!-- THE RE-ENGINEERED COMPANION RETRO HUD BANNER -->
+    <div class="hud-banner" style="background: #1c1c22; border: 1px solid #323238; border-radius: 8px; padding: 15px 30px; margin: 0 auto 20px auto; max-width: 1200px; display: flex; justify-content: space-between; align-items: center; box-sizing: border-box;">
+        <div style="display: flex; align-items: center; gap: 15px;">
+            <span id="room-status-dot" style="width: 12px; height: 12px; background: #00e676; border-radius: 50%; display: inline-block;"></span>
+            <span id="room-status-text" style="font-weight: bold; letter-spacing: 1px; color: #00e676; text-transform: uppercase; font-size: 0.9rem;">RandoMania Lobby</span>
+        </div>
+        <div style="font-size: 1.3rem; font-weight: bold;">ROOM CODE: <span style="color: #ffa500; letter-spacing: 1px;">1234</span></div>
+        <div style="font-size: 1.1rem; color: #a0a0b2;">PLAYERS: <span id="lobby-player-count" style="color: #fff; font-weight: bold;">0</span></div>
+        <div style="font-size: 1.4rem; font-weight: bold; color: #ff4757;" id="lobby-countdown">60s</div>
+    </div>
+
+    <!-- THE MASTER SPLIT CANVAS GRID -->
+    <div class="split-container" style="max-width: 1200px; margin: 0 auto;">
         
-        <!-- LEFT COLUMN: GAME AND TRIVIA CONTENT -->
-        <div class="left-column">
-            <div class="box">
-                <h3 style="margin-top: 0;">Current Room Status</h3>
-                <p id="room-status" style="font-weight: bold; color: #ffa500; margin-bottom: 0;">Connecting to live game stream...</p>
-            </div>
+        <!-- LEFT COLUMN: OVERWRITTEN TO HOST THE 5-OPTION VINYL ELECTION -->
+        <div class="left-column" id="main-trivia-panel">
+            <div class="box" style="flex: 1; display: flex; flex-direction: column; justify-content: center; padding: 30px;">
+                <h2 style="margin-top: 0; color: #ffa500; letter-spacing: 1px; text-transform: uppercase; font-size: 1.2rem; text-align: center; margin-bottom: 25px;">🗳️ Primary Record Election Tally</h2>
+                <div style="display: flex; flex-direction: column; gap: 20px;">
+                    
+                    <!-- 1. Trivi-yeah! Progress Bar Bar row -->
+                    <div>
+                        <div style="display: flex; justify-content: space-between; font-size: 1rem; margin-bottom: 6px;">
+                            <span>🫵 Trivi-yeah!</span>
+                            <span id="vcount-trivi" style="color: #00e676; font-weight: bold;">0 votes (0%)</span>
+                        </div>
+                        <div style="background: #18181c; height: 16px; border-radius: 8px; overflow: hidden; border: 1px solid #323238;">
+                            <div id="vbar-trivi" style="background: #00e676; width: 0%; height: 100%; transition: width 0.3s ease;"></div>
+                        </div>
+                    </div>
 
-            <div class="box" style="flex: 1; display: flex; flex-direction: column; justify-content: center;">
-                <h2 id="question-title" style="text-align: center;">Waiting for Host...</h2>
-                <p id="question-text" style="font-size: 1.2rem; color: #a0a0b2; text-align: center;">
-                    Log into Room Code <span class="highlight">1234</span> using your mobile controller to join the match!
-                </p>
-                <div id="visual-asset-container" style="min-height: 120px; margin: 20px auto; display: flex; justify-content: center; align-items: center;"></div>
-                <div class="timer" id="countdown-clock">--</div>
+                    <!-- 2. Country Monkey Progress Bar row -->
+                    <div>
+                        <div style="display: flex; justify-content: space-between; font-size: 1rem; margin-bottom: 6px;">
+                            <span>🐒 Country Monkey</span>
+                            <span id="vcount-country" style="color: #00e676; font-weight: bold;">0 votes (0%)</span>
+                        </div>
+                        <div style="background: #18181c; height: 16px; border-radius: 8px; overflow: hidden; border: 1px solid #323238;">
+                            <div id="vbar-country" style="background: #ffa500; width: 0%; height: 100%; transition: width 0.3s ease;"></div>
+                        </div>
+                    </div>
+
+                    <!-- 3. EmpossDurr Progress Bar row -->
+                    <div>
+                        <div style="display: flex; justify-content: space-between; font-size: 1rem; margin-bottom: 6px;">
+                            <span>🕵️‍♂️ EmpossDurr</span>
+                            <span id="vcount-emposs" style="color: #00e676; font-weight: bold;">0 votes (0%)</span>
+                        </div>
+                        <div style="background: #18181c; height: 16px; border-radius: 8px; overflow: hidden; border: 1px solid #323238;">
+                            <div id="vbar-emposs" style="background: #ff4757; width: 0%; height: 100%; transition: width 0.3s ease;"></div>
+                        </div>
+                    </div>
+
+                    <!-- 4. Flag Me Down Progress Bar row -->
+                    <div>
+                        <div style="display: flex; justify-content: space-between; font-size: 1rem; margin-bottom: 6px;">
+                            <span>🚩 Flag Me Down</span>
+                            <span id="vcount-flag" style="color: #00e676; font-weight: bold;">0 votes (0%)</span>
+                        </div>
+                        <div style="background: #18181c; height: 16px; border-radius: 8px; overflow: hidden; border: 1px solid #323238;">
+                            <div id="vbar-flag" style="background: #2d9cdb; width: 0%; height: 100%; transition: width 0.3s ease;"></div>
+                        </div>
+                    </div>
+
+                    <!-- 5. On The Spectrum Progress Bar row -->
+                    <div>
+                        <div style="display: flex; justify-content: space-between; font-size: 1rem; margin-bottom: 6px;">
+                            <span>🌈 On The Spectrum</span>
+                            <span id="vcount-spectrum" style="color: #00e676; font-weight: bold;">0 votes (0%)</span>
+                        </div>
+                        <div style="background: #18181c; height: 16px; border-radius: 8px; overflow: hidden; border: 1px solid #323238;">
+                            <div id="vbar-spectrum" style="background: #bb6bd9; width: 0%; height: 100%; transition: width 0.3s ease;"></div>
+                        </div>
+                    </div>
+
+                </div>
             </div>
         </div>
 
-        <!-- RIGHT COLUMN: DYNAMIC LEADERBOARD -->
+        <!-- RIGHT COLUMN: LEAVE 100% UNTOUCHED (Your beautiful running leaderboard!) -->
         <div class="right-column">
             <h2 class="board-title">🏆 LEADERBOARD</h2>
             <div style="flex: 1; overflow-y: auto;">
@@ -132,11 +194,10 @@
                         </tr>
                     </thead>
                     <tbody id="leaderboard-rows">
-                        <!-- Dynamic rows will look exactly like this placeholder structure -->
                         <tr>
                             <td class="rank-col">1</td>
                             <td class="emoji-col">👤</td>
-                            <td class="name-col">Waiting...</td>
+                            <td class="name-col">Waiting for entries...</td>
                             <td class="score-col">0</td>
                         </tr>
                     </tbody>
@@ -145,6 +206,7 @@
         </div>
 
     </div>
+
 
     <script>
         const socket = new WebSocket(`wss://${window.location.host}`);
