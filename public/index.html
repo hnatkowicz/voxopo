@@ -3,192 +3,248 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RandoMania Live Scoreboard</title>
+    <title>RandoMania Live Interface</title>
     <style>
+        /* Modern Minimalist Dark Theme Settings */
         body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-            background: #121214;
-            color: #fff;
+            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, sans-serif;
+            background: #0d0e11;
+            color: #f4f5f6;
             margin: 0;
-            padding: 30px;
+            padding: 40px;
             box-sizing: border-box;
             height: 100vh;
             display: flex;
             flex-direction: column;
+            letter-spacing: -0.01em;
         }
-        h1.main-title {
-            letter-spacing: 2px;
-            margin-bottom: 20px;
-            text-align: center;
-            font-size: 1.8rem;
+
+        /* Clean, Spaced-Out Master HUD Banner */
+        .hud-banner {
+            background: #14161d;
+            border: 1px solid #222630;
+            border-radius: 12px;
+            padding: 24px 40px;
+            margin-bottom: 32px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
-        /* The Master Split-Screen Layout Container */
+        .status-pill {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: rgba(0, 230, 118, 0.06);
+            border: 1px solid rgba(0, 230, 118, 0.15);
+            padding: 8px 16px;
+            border-radius: 30px;
+        }
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            background: #00e676;
+            border-radius: 50%;
+            box-shadow: 0 0 12px #00e676;
+        }
+        .status-text {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: #00e676;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        .hud-metric {
+            font-size: 0.9rem;
+            color: #8892b0;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            font-weight: 500;
+        }
+        .hud-value {
+            color: #ffffff;
+            font-weight: 700;
+            font-size: 1.4rem;
+            margin-left: 6px;
+        }
+
+        /* Flexbox Split View Layout */
         .split-container {
             display: flex;
-            gap: 25px;
+            gap: 32px;
             flex: 1;
             min-height: 0;
         }
-        /* Left Column: Trivia Operations (65%) */
         .left-column {
             flex: 65;
             display: flex;
             flex-direction: column;
-            gap: 20px;
         }
-        /* Right Column: Leaderboard Panel (35%) */
         .right-column {
             flex: 35;
-            background: #18181c;
-            border: 1px solid #323238;
+            background: #14161d;
+            border: 1px solid #222630;
             border-radius: 12px;
-            padding: 25px;
+            padding: 32px;
             display: flex;
             flex-direction: column;
         }
-        .box {
-            background: #202024;
-            border: 1px solid #323238;
+
+        .panel-box {
+            background: #14161d;
+            border: 1px solid #222630;
             border-radius: 12px;
-            padding: 25px;
+            padding: 40px;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
         }
-        .timer {
-            font-size: 5rem;
-            color: #ff4757;
-            font-weight: bold;
-            margin-top: 15px;
-            text-align: center;
+        .panel-title {
+            margin: 0 0 32px 0;
+            color: #ffffff;
+            font-size: 1.25rem;
+            font-weight: 600;
+            letter-spacing: -0.02em;
         }
-        .highlight {
-            color: #00e676;
-            font-weight: bold;
+
+        /* Premium Modern Tracking Bars */
+        .vote-row {
+            margin-bottom: 24px;
         }
-        /* Leaderboard Components styling */
-        h2.board-title {
-            margin: 0 0 20px 0;
-            color: #00e676;
-            font-size: 1.4rem;
-            letter-spacing: 1px;
-            border-bottom: 1px solid #323238;
-            padding-bottom: 10px;
+        .vote-meta {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.95rem;
+            font-weight: 500;
+            margin-bottom: 10px;
+            color: #e2e5e9;
+        }
+        .progress-track {
+            background: #1e222b;
+            height: 8px;
+            border-radius: 20px;
+            overflow: hidden;
+        }
+        .progress-fill {
+            background: #00e676;
+            width: 0%;
+            height: 100%;
+            border-radius: 20px;
+            transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* Leaderboard Component Styling */
+        .board-title {
+            margin: 0 0 24px 0;
+            color: #ffffff;
+            font-size: 1.25rem;
+            font-weight: 600;
+            letter-spacing: -0.02em;
         }
         .leaderboard-table {
             width: 100%;
             border-collapse: collapse;
-            text-align: left;
         }
         .leaderboard-table th {
-            color: #a0a0b2;
-            font-size: 0.8rem;
+            color: #64748b;
+            font-size: 0.75rem;
             text-transform: uppercase;
-            padding-bottom: 12px;
-            border-bottom: 1px solid #202024;
+            letter-spacing: 0.08em;
+            font-weight: 600;
+            padding-bottom: 16px;
+            border-bottom: 1px solid #222630;
         }
         .leaderboard-table td {
-            padding: 14px 0;
-            border-bottom: 1px solid #202024;
-            font-size: 1.1rem;
+            padding: 16px 0;
+            border-bottom: 1px solid #1e222b;
+            font-size: 1.05rem;
         }
-        .rank-col { width: 10%; color: #ffa500; font-weight: bold; }
-        .emoji-col { width: 15%; font-size: 1.3rem; text-align: center; }
-        .name-col { width: 50%; font-weight: 500; }
-        .score-col { width: 25%; text-align: right; color: #00e676; font-weight: bold; }
+        .rank-col { width: 12%; color: #64748b; font-weight: 600; }
+        .emoji-col { width: 15%; font-size: 1.2rem; text-align: left; }
+        .name-col { width: 53%; font-weight: 500; color: #ffffff; }
+        .score-col { width: 20%; text-align: right; color: #00e676; font-weight: 600; }
     </style>
 </head>
 <body>
 
-    <h1 class="main-title">RandoMania LIVE STREAM</h1>
-
-    <body>
-
-    <!-- THE RE-ENGINEERED COMPANION RETRO HUD BANNER -->
-    <div class="hud-banner" style="background: #1c1c22; border: 1px solid #323238; border-radius: 8px; padding: 15px 30px; margin: 0 auto 20px auto; max-width: 1200px; display: flex; justify-content: space-between; align-items: center; box-sizing: border-box;">
-        <div style="display: flex; align-items: center; gap: 15px;">
-            <span id="room-status-dot" style="width: 12px; height: 12px; background: #00e676; border-radius: 50%; display: inline-block;"></span>
-            <span id="room-status-text" style="font-weight: bold; letter-spacing: 1px; color: #00e676; text-transform: uppercase; font-size: 0.9rem;">RandoMania Lobby</span>
+    <!-- RE-ENGINEERED PREMIUM MODULAR HUD BANNER -->
+    <div class="hud-banner">
+        <div class="status-pill">
+            <div class="status-dot"></div>
+            <div class="status-text" id="room-status-text">Lobby Phase</div>
         </div>
-        <div style="font-size: 1.3rem; font-weight: bold;">ROOM CODE: <span style="color: #ffa500; letter-spacing: 1px;">1234</span></div>
-        <div style="font-size: 1.1rem; color: #a0a0b2;">PLAYERS: <span id="lobby-player-count" style="color: #fff; font-weight: bold;">0</span></div>
-        <div style="font-size: 1.4rem; font-weight: bold; color: #ff4757;" id="lobby-countdown">60s</div>
+        <div class="hud-metric">Room Code <span class="hud-value" style="color: #00e676;">1234</span></div>
+        <div class="hud-metric">Players Joined <span class="hud-value" id="lobby-player-count">0</span></div>
+        <div class="hud-value" style="color: #ff4757; font-size: 1.6rem; font-feature-settings: 'tnum';" id="lobby-countdown">60s</div>
     </div>
 
-    <!-- THE MASTER SPLIT CANVAS GRID -->
-    <div class="split-container" style="max-width: 1200px; margin: 0 auto;">
+    <!-- MASTER PRESENTATION SPLIT GRID -->
+    <div class="split-container">
         
-        <!-- LEFT COLUMN: OVERWRITTEN TO HOST THE 5-OPTION VINYL ELECTION -->
-        <div class="left-column" id="main-trivia-panel">
-            <div class="box" style="flex: 1; display: flex; flex-direction: column; justify-content: center; padding: 30px;">
-                <h2 style="margin-top: 0; color: #ffa500; letter-spacing: 1px; text-transform: uppercase; font-size: 1.2rem; text-align: center; margin-bottom: 25px;">🗳️ Primary Record Election Tally</h2>
-                <div style="display: flex; flex-direction: column; gap: 20px;">
+        <!-- LEFT COLUMN: SYSTEM MODULE ELECTION DECK -->
+        <div class="left-column">
+            <div class="panel-box">
+                <h2 class="panel-title">Active Module Election</h2>
+                <div style="display: flex; flex-direction: column;">
                     
-                    <!-- 1. Trivi-yeah! Progress Bar Bar row -->
-                    <div>
-                        <div style="display: flex; justify-content: space-between; font-size: 1rem; margin-bottom: 6px;">
-                            <span>🫵 Trivi-yeah!</span>
-                            <span id="vcount-trivi" style="color: #00e676; font-weight: bold;">0 votes (0%)</span>
+                    <!-- 1. Trivi-yeah! -->
+                    <div class="vote-row">
+                        <div class="vote-meta">
+                            <span>Trivi-yeah!</span>
+                            <span id="vcount-trivi" style="color: #64748b;">0 votes (0%)</span>
                         </div>
-                        <div style="background: #18181c; height: 16px; border-radius: 8px; overflow: hidden; border: 1px solid #323238;">
-                            <div id="vbar-trivi" style="background: #00e676; width: 0%; height: 100%; transition: width 0.3s ease;"></div>
-                        </div>
+                        <div class="progress-track"><div id="vbar-trivi" class="progress-fill"></div></div>
                     </div>
 
-                    <!-- 2. Country Monkey Progress Bar row -->
-                    <div>
-                        <div style="display: flex; justify-content: space-between; font-size: 1rem; margin-bottom: 6px;">
-                            <span>🐒 Country Monkey</span>
-                            <span id="vcount-country" style="color: #00e676; font-weight: bold;">0 votes (0%)</span>
+                    <!-- 2. Country Monkey -->
+                    <div class="vote-row">
+                        <div class="vote-meta">
+                            <span>Country Monkey</span>
+                            <span id="vcount-country" style="color: #64748b;">0 votes (0%)</span>
                         </div>
-                        <div style="background: #18181c; height: 16px; border-radius: 8px; overflow: hidden; border: 1px solid #323238;">
-                            <div id="vbar-country" style="background: #ffa500; width: 0%; height: 100%; transition: width 0.3s ease;"></div>
-                        </div>
+                        <div class="progress-track"><div id="vbar-country" class="progress-fill"></div></div>
                     </div>
 
-                    <!-- 3. EmpossDurr Progress Bar row -->
-                    <div>
-                        <div style="display: flex; justify-content: space-between; font-size: 1rem; margin-bottom: 6px;">
-                            <span>🕵️‍♂️ EmpossDurr</span>
-                            <span id="vcount-emposs" style="color: #00e676; font-weight: bold;">0 votes (0%)</span>
+                    <!-- 3. EmpossDurr -->
+                    <div class="vote-row">
+                        <div class="vote-meta">
+                            <span>EmpossDurr</span>
+                            <span id="vcount-emposs" style="color: #64748b;">0 votes (0%)</span>
                         </div>
-                        <div style="background: #18181c; height: 16px; border-radius: 8px; overflow: hidden; border: 1px solid #323238;">
-                            <div id="vbar-emposs" style="background: #ff4757; width: 0%; height: 100%; transition: width 0.3s ease;"></div>
-                        </div>
+                        <div class="progress-track"><div id="vbar-emposs" class="progress-fill"></div></div>
                     </div>
 
-                    <!-- 4. Flag Me Down Progress Bar row -->
-                    <div>
-                        <div style="display: flex; justify-content: space-between; font-size: 1rem; margin-bottom: 6px;">
-                            <span>🚩 Flag Me Down</span>
-                            <span id="vcount-flag" style="color: #00e676; font-weight: bold;">0 votes (0%)</span>
+                    <!-- 4. Flag Me Down -->
+                    <div class="vote-row">
+                        <div class="vote-meta">
+                            <span>Flag Me Down</span>
+                            <span id="vcount-flag" style="color: #64748b;">0 votes (0%)</span>
                         </div>
-                        <div style="background: #18181c; height: 16px; border-radius: 8px; overflow: hidden; border: 1px solid #323238;">
-                            <div id="vbar-flag" style="background: #2d9cdb; width: 0%; height: 100%; transition: width 0.3s ease;"></div>
-                        </div>
+                        <div class="progress-track"><div id="vbar-flag" class="progress-fill"></div></div>
                     </div>
 
-                    <!-- 5. On The Spectrum Progress Bar row -->
-                    <div>
-                        <div style="display: flex; justify-content: space-between; font-size: 1rem; margin-bottom: 6px;">
-                            <span>🌈 On The Spectrum</span>
-                            <span id="vcount-spectrum" style="color: #00e676; font-weight: bold;">0 votes (0%)</span>
+                    <!-- 5. On The Spectrum -->
+                    <div class="vote-row">
+                        <div class="vote-meta">
+                            <span>On The Spectrum</span>
+                            <span id="vcount-spectrum" style="color: #64748b;">0 votes (0%)</span>
                         </div>
-                        <div style="background: #18181c; height: 16px; border-radius: 8px; overflow: hidden; border: 1px solid #323238;">
-                            <div id="vbar-spectrum" style="background: #bb6bd9; width: 0%; height: 100%; transition: width 0.3s ease;"></div>
-                        </div>
+                        <div class="progress-track"><div id="vbar-spectrum" class="progress-fill"></div></div>
                     </div>
 
                 </div>
             </div>
         </div>
 
-        <!-- RIGHT COLUMN: LEAVE 100% UNTOUCHED (Your beautiful running leaderboard!) -->
+        <!-- RIGHT COLUMN: LEADERBOARD COLUMN PANEL PANEL -->
         <div class="right-column">
-            <h2 class="board-title">🏆 LEADERBOARD</h2>
+            <h2 class="board-title">Active Standings</h2>
             <div style="flex: 1; overflow-y: auto;">
                 <table class="leaderboard-table">
                     <thead>
                         <tr>
-                            <th>#</th>
-                            <th style="text-align: center;">Id</th>
+                            <th>Pos</th>
+                            <th>ID</th>
                             <th>Player</th>
                             <th style="text-align: right;">Score</th>
                         </tr>
@@ -197,8 +253,8 @@
                         <tr>
                             <td class="rank-col">1</td>
                             <td class="emoji-col">👤</td>
-                            <td class="name-col">Waiting for entries...</td>
-                            <td class="score-col">0</td>
+                            <td class="name-col" style="color: #64748b;">Awaiting entries...</td>
+                            <td class="score-col" style="color: #64748b;">0</td>
                         </tr>
                     </tbody>
                 </table>
@@ -207,49 +263,28 @@
 
     </div>
 
-
     <script>
         const socket = new WebSocket(`wss://${window.location.host}`);
         
         socket.onopen = () => {
-            document.getElementById('room-status').innerText = "🟢 Connected Live to Voxopo Engine";
-            document.getElementById('room-status').style.color = "#00e676";
             socket.send(JSON.stringify({ type: 'REGISTER_SCREEN', roomCode: '1234' }));
         };
 
         socket.onmessage = (event) => {
             const data = JSON.parse(event.data);
-            console.log("[WebSocket Event Received]", data);
+            console.log("[WebSocket API Event]", data);
 
-            if (data.type === 'NEW_QUESTION') {
-                document.getElementById('question-title').innerText = `Question #${data.number}`;
-                document.getElementById('question-text').innerText = data.text;
-                document.getElementById('countdown-clock').innerText = "30";
-                document.getElementById('countdown-clock').style.color = "#ff4757";
-                
-                const assetContainer = document.getElementById('visual-asset-container');
-                if (data.visualAsset) {
-                    assetContainer.innerHTML = data.visualAsset;
-                } else {
-                    assetContainer.innerHTML = "";
-                }
-            }
-
-            if (data.type === 'TIMER_TICK') {
-                document.getElementById('countdown-clock').innerText = data.secondsLeft;
-            }
-
-            // Real-Time Leaderboard Update Listener Entry
             if (data.type === 'LEADERBOARD_UPDATE') {
                 updateLeaderboardUI(data.players);
             }
         };
 
-        function updateLeaderboardUI(playersList) {
+                function updateLeaderboardUI(playersList) {
+            document.getElementById('lobby-player-count').innerText = playersList.length;
             const tbody = document.getElementById('leaderboard-rows');
-            tbody.innerHTML = ''; // Clear stale rendering
+            tbody.innerHTML = '';
 
-            // Sort players high score to low score natively
+            // Sort players natively high score to low score
             playersList.sort((a, b) => b.score - a.score);
 
             playersList.forEach((player, index) => {
@@ -263,11 +298,6 @@
                 tbody.appendChild(row);
             });
         }
-
-        socket.onclose = () => {
-            document.getElementById('room-status').innerText = "🔴 Disconnected from Server";
-            document.getElementById('room-status').style.color = "#ff4757";
-        };
     </script>
 </body>
 </html>
