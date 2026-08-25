@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>RandoMania Live Interface</title>
     <style>
-        /* Modern Minimalist Dark Theme Settings */
         body {
             font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, sans-serif;
             background: #0d0e11;
@@ -18,8 +17,6 @@
             flex-direction: column;
             letter-spacing: -0.01em;
         }
-
-        /* Clean, Spaced-Out Master HUD Banner */
         .hud-banner {
             background: #14161d;
             border: 1px solid #222630;
@@ -66,8 +63,6 @@
             font-size: 1.4rem;
             margin-left: 6px;
         }
-
-        /* Flexbox Split View Layout */
         .split-container {
             display: flex;
             gap: 32px;
@@ -88,7 +83,6 @@
             display: flex;
             flex-direction: column;
         }
-
         .panel-box {
             background: #14161d;
             border: 1px solid #222630;
@@ -106,8 +100,6 @@
             font-weight: 600;
             letter-spacing: -0.02em;
         }
-
-        /* Premium Modern Tracking Bars */
         .vote-row {
             margin-bottom: 24px;
         }
@@ -121,7 +113,7 @@
         }
         .progress-track {
             background: #1e222b;
-            height: 8px;
+            height: 12px;
             border-radius: 20px;
             overflow: hidden;
         }
@@ -130,10 +122,8 @@
             width: 0%;
             height: 100%;
             border-radius: 20px;
-            transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1); /* Essential animation anchor */
         }
-
-        /* Leaderboard Component Styling */
         .board-title {
             margin: 0 0 24px 0;
             color: #ffffff;
@@ -167,108 +157,62 @@
 </head>
 <body>
 
-    <!-- RE-ENGINEERED PREMIUM MODULAR HUD BANNER -->
     <div class="hud-banner">
         <div class="status-pill">
             <div class="status-dot"></div>
-            <div class="status-text" id="room-status-text">Lobby Phase</div>
+            <div class="status-text" id="room-status-text">Connected Live</div>
         </div>
         <div class="hud-metric">Room Code <span class="hud-value" style="color: #00e676;">1234</span></div>
         <div class="hud-metric">Players Joined <span class="hud-value" id="lobby-player-count">0</span></div>
-        <div class="hud-value" style="color: #ff4757; font-size: 1.6rem; font-feature-settings: 'tnum';" id="lobby-countdown">60s</div>
+        <div class="hud-value" style="color: #ff4757; font-size: 1.6rem;" id="lobby-countdown">60s</div>
     </div>
 
-    <!-- MASTER PRESENTATION SPLIT GRID -->
     <div class="split-container">
-        
-        <!-- LEFT COLUMN: SYSTEM MODULE ELECTION DECK -->
         <div class="left-column">
             <div class="panel-box">
                 <h2 class="panel-title">Active Module Election</h2>
                 <div style="display: flex; flex-direction: column;">
-                    
-                    <!-- 1. Trivi-yeah! -->
                     <div class="vote-row">
-                        <div class="vote-meta">
-                            <span>Trivi-yeah!</span>
-                            <span id="vcount-trivi" style="color: #64748b;">0 votes (0%)</span>
-                        </div>
-                        <div class="progress-track"><div id="vbar-trivi" class="progress-fill"></div></div>
+                        <div class="vote-meta"><span>Trivi-yeah!</span><span id="vcount-TRIVI_YEAH" style="color: #64748b;">0 votes (0%)</span></div>
+                        <div class="progress-track"><div id="vbar-TRIVI_YEAH" class="progress-fill"></div></div>
                     </div>
-
-                    <!-- 2. Country Monkey -->
                     <div class="vote-row">
-                        <div class="vote-meta">
-                            <span>Country Monkey</span>
-                            <span id="vcount-country" style="color: #64748b;">0 votes (0%)</span>
-                        </div>
-                        <div class="progress-track"><div id="vbar-country" class="progress-fill"></div></div>
+                        <div class="vote-meta"><span>Country Monkey</span><span id="vcount-COUNTRY_MONKEY" style="color: #64748b;">0 votes (0%)</span></div>
+                        <div class="progress-track"><div id="vbar-COUNTRY_MONKEY" class="progress-fill" style="background: #ffa500;"></div></div>
                     </div>
-
-                    <!-- 3. EmpossDurr -->
                     <div class="vote-row">
-                        <div class="vote-meta">
-                            <span>EmpossDurr</span>
-                            <span id="vcount-emposs" style="color: #64748b;">0 votes (0%)</span>
-                        </div>
-                        <div class="progress-track"><div id="vbar-emposs" class="progress-fill"></div></div>
+                        <div class="vote-meta"><span>EmpossDurr</span><span id="vcount-EMPOSSDURR" style="color: #64748b;">0 votes (0%)</span></div>
+                        <div class="progress-track"><div id="vbar-EMPOSSDURR" class="progress-fill" style="background: #ff4757;"></div></div>
                     </div>
-
-                    <!-- 4. Flag Me Down -->
                     <div class="vote-row">
-                        <div class="vote-meta">
-                            <span>Flag Me Down</span>
-                            <span id="vcount-flag" style="color: #64748b;">0 votes (0%)</span>
-                        </div>
-                        <div class="progress-track"><div id="vbar-flag" class="progress-fill"></div></div>
+                        <div class="vote-meta"><span>Flag Me Down</span><span id="vcount-FLAG_ME_DOWN" style="color: #64748b;">0 votes (0%)</span></div>
+                        <div class="progress-track"><div id="vbar-FLAG_ME_DOWN" class="progress-fill" style="background: #2d9cdb;"></div></div>
                     </div>
-
-                    <!-- 5. On The Spectrum -->
                     <div class="vote-row">
-                        <div class="vote-meta">
-                            <span>On The Spectrum</span>
-                            <span id="vcount-spectrum" style="color: #64748b;">0 votes (0%)</span>
-                        </div>
-                        <div class="progress-track"><div id="vbar-spectrum" class="progress-fill"></div></div>
+                        <div class="vote-meta"><span>On The Spectrum</span><span id="vcount-ON_THE_SPECTRUM" style="color: #64748b;">0 votes (0%)</span></div>
+                        <div class="progress-track"><div id="vbar-ON_THE_SPECTRUM" class="progress-fill" style="background: #bb6bd9;"></div></div>
                     </div>
-
                 </div>
             </div>
         </div>
 
-        <!-- RIGHT COLUMN: LEADERBOARD COLUMN PANEL PANEL -->
         <div class="right-column">
             <h2 class="board-title">Active Standings</h2>
             <div style="flex: 1; overflow-y: auto;">
                 <table class="leaderboard-table">
-                    <thead>
-                        <tr>
-                            <th>Pos</th>
-                            <th>ID</th>
-                            <th>Player</th>
-                            <th style="text-align: right;">Score</th>
-                        </tr>
-                    </thead>
+                    <thead><tr><th>Pos</th><th>ID</th><th>Player</th><th style="text-align: right;">Score</th></tr></thead>
                     <tbody id="leaderboard-rows">
-                        <tr>
-                            <td class="rank-col">1</td>
-                            <td class="emoji-col">👤</td>
-                            <td class="name-col" style="color: #64748b;">Awaiting entries...</td>
-                            <td class="score-col" style="color: #64748b;">0</td>
-                        </tr>
+                        <tr><td class="rank-col">1</td><td class="emoji-col">👤</td><td class="name-col" style="color: #64748b;">Awaiting entries...</td><td class="score-col" style="color: #64748b;">0</td></tr>
                     </tbody>
                 </table>
             </div>
         </div>
-
     </div>
 
     <script>
-                const socket = new WebSocket(`wss://${window.location.host}`);
+        const socket = new WebSocket(`wss://${window.location.host}`);
         
         socket.onopen = () => {
-            // FIX A: Instantly rewrite the modern HUD status text when connection locks green
-            document.getElementById('room-status-text').innerText = "Connected Live";
             socket.send(JSON.stringify({ type: 'REGISTER_SCREEN', roomCode: '1234' }));
         };
 
@@ -279,8 +223,6 @@
             if (data.type === 'LEADERBOARD_UPDATE') {
                 updateLeaderboardUI(data.players);
             }
-
-            // FIX B: Listen for the server's real-time vote broadcasts and update progress track widths instantly
             if (data.type === 'VOTE_UPDATE') {
                 updateModuleElectionUI(data.votes, data.totalVotes);
             }
@@ -305,25 +247,18 @@
             });
         }
 
-        // NEW UTILITY: Dynamically paint progress tracks hands-free as individual phone metrics arrive
         function updateModuleElectionUI(votes, totalVotes) {
             if (!totalVotes || totalVotes === 0) return;
 
-            const modules = [
-                { key: 'TRIVI_YEAH', barId: 'vbar-trivi', textId: 'vcount-trivi', label: 'Trivi-yeah!' },
-                { key: 'COUNTRY_MONKEY', barId: 'vbar-country', textId: 'vcount-country', label: 'Country Monkey' },
-                { key: 'EMPOSSDURR', barId: 'vbar-emposs', textId: 'vcount-emposs', label: 'EmpossDurr' },
-                { key: 'FLAG_ME_DOWN', barId: 'vbar-flag', textId: 'vcount-flag', label: 'Flag Me Down' },
-                { key: 'ON_THE_SPECTRUM', barId: 'vbar-spectrum', textId: 'vcount-spectrum', label: 'On The Spectrum' }
-            ];
+            const keys = ['TRIVI_YEAH', 'COUNTRY_MONKEY', 'EMPOSSDURR', 'FLAG_ME_DOWN', 'ON_THE_SPECTRUM'];
 
-            modules.forEach(m => {
-                const count = votes[m.key] || 0;
+            keys.forEach(key => {
+                const count = votes[key] || 0;
                 const percentage = Math.round((count / totalVotes) * 100);
                 
-                // Repaint the width of the clean neon-green progress tracks smoothly
-                document.getElementById(m.barId).style.width = `${percentage}%`;
-                document.getElementById(m.textId).innerText = `${count} votes (${percentage}%)`;
+                                // Align IDs perfectly to completely resolve the rendering block
+                document.getElementById(`vbar-${key}`).style.width = `${percentage}%`;
+                document.getElementById(`vcount-${key}`).innerText = `${count} votes (${percentage}%)`;
             });
         }
     </script>
