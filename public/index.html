@@ -210,7 +210,7 @@
     </div>
 
     <div class="split-container">
-        <div class="left-column">
+        <div class="left-column" id="main-trivia-panel">
             <div class="panel-box">
                 <h2 class="panel-title">Active Module Election</h2>
                 <div style="display: flex; flex-direction: column;">
@@ -283,28 +283,27 @@
             console.log("[WebSocket API Event Received]", data);
 
             if (data.type === 'LEADERBOARD_UPDATE') {
-                // If a brand new player joins, detect them and feed them to the queue channel
                 detectNewPlayerArrival(data.players);
                 updateLeaderboardUI(data.players);
             }
             if (data.type === 'VOTE_UPDATE') {
                 updateModuleElectionUI(data.votes, data.totalVotes);
-                // Listen for the server's lobby clock expiration transition signal
-            if (data.type === 'TRANSITION_TO_CATEGORY_VOTE') {
-                document.getElementById('room-status-text').innerText = "Category Selection";
-                document.getElementById('lobby-countdown').innerText = "30s";
-                switchToCategoryVotingUI(data.winner);
-            }
-
-            // Listen for real-time category vote updates to slide the 3 sub-bars open
-            if (data.type === 'CATEGORY_VOTE_UPDATE') {
-                updateCategorySubElectionUI(data.votes, data.totalVotes);
-            }
-
             }
             if (data.type === 'LOBBY_TIMER_TICK') {
-                // Update the countdown digit text inside the top HUD banner frame in real-time
                 document.getElementById('lobby-countdown').innerText = data.secondsLeft;
+            }
+            
+            // FIX B: Listen for Phase 2 category clock ticks to drive the countdown past 1s seamlessly!
+            if (data.type === 'CATEGORY_TIMER_TICK') {
+                document.getElementById('lobby-countdown').innerText = data.secondsLeft;
+            }
+
+            if (data.type === 'TRANSITION_TO_CATEGORY_VOTE') {
+                document.getElementById('room-status-text').innerText = "Category Selection";
+                switchToCategoryVotingUI(data.winner);
+            }
+            if (data.type === 'CATEGORY_VOTE_UPDATE') {
+                updateCategorySubElectionUI(data.votes, data.totalVotes);
             }
         };
 
