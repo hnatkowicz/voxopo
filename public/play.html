@@ -3,76 +3,75 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RandoMania | Mobile Controller</title>
+    <title>RandoMania | Controller</title>
     <style>
-        /* Understated Retro Dark Theme Scheme */
+        /* Minimalist Modern Dark Theme Settings */
         body { 
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; 
-            background: #141416; 
-            color: #f4f4f6; 
+            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", sans-serif; 
+            background: #0d0e11; 
+            color: #f4f5f6; 
             text-align: center; 
-            padding: 25px 15px; 
+            padding: 30px 20px; 
             margin: 0; 
+            letter-spacing: -0.01em;
         }
         .card { 
-            background: #202024; 
-            border: 2px solid #36363e; 
+            background: #14161d; 
+            border: 1px solid #222630; 
             border-radius: 12px; 
-            padding: 25px; 
-            max-width: 420px; 
-            margin: 15px auto; 
-            box-shadow: 0 6px 16px rgba(0,0,0,0.4); 
+            padding: 32px 24px; 
+            max-width: 400px; 
+            margin: 20px auto; 
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3); 
         }
-        h1 { color: #ffa500; font-family: sans-serif; letter-spacing: 2px; margin: 0 0 5px 0; font-size: 1.8rem; }
-        p.subtitle { color: #a0a0b2; margin: 0 0 25px 0; font-size: 0.9rem; }
+        h1 { color: #ffffff; font-size: 1.5rem; font-weight: 600; margin: 0 0 6px 0; letter-spacing: -0.02em; }
+        p.subtitle { color: #64748b; margin: 0 0 32px 0; font-size: 0.9rem; font-weight: 500; }
         
-        .input-group { margin-bottom: 20px; text-align: left; }
-        label { display: block; margin-bottom: 8px; font-size: 0.8rem; color: #a0a0b2; text-transform: uppercase; font-weight: bold; letter-spacing: 1px; }
-        input[type="text"] { width: 100%; padding: 14px; background: #18181c; border: 1px solid #36363e; border-radius: 6px; color: #fff; font-size: 1.1rem; box-sizing: border-box; }
-        input[type="text"]:focus { border-color: #ffa500; outline: none; }
+        .input-group { margin-bottom: 24px; text-align: left; }
+        label { display: block; margin-bottom: 10px; font-size: 0.75rem; color: #64748b; text-transform: uppercase; font-weight: 600; letter-spacing: 0.08em; }
+        input[type="text"] { width: 100%; padding: 14px; background: #1e222b; border: 1px solid #222630; border-radius: 8px; color: #fff; font-size: 1.05rem; box-sizing: border-box; transition: border-color 0.2s; }
+        input[type="text"]:focus { border-color: #00e676; outline: none; }
         
-        /* Curated 24-Emoji Avatar Grid Layout */
-        .emoji-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 8px; margin-bottom: 15px; }
-        .emoji-btn { background: #18181c; border: 1px solid #36363e; font-size: 1.4rem; padding: 10px 0; border-radius: 6px; cursor: pointer; transition: all 0.1s ease; }
-        .emoji-btn.selected { background: rgba(255, 165, 0, 0.15); border-color: #ffa500; transform: scale(1.05); }
+        /* 24-Avatar Grid Alignment Layout */
+        .emoji-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 8px; margin-bottom: 16px; }
+        .emoji-btn { background: #1e222b; border: 1px solid #222630; font-size: 1.3rem; padding: 12px 0; border-radius: 8px; cursor: pointer; transition: all 0.1s ease; }
+        .emoji-btn.selected { background: rgba(0, 230, 118, 0.06); border-color: #00e676; transform: scale(1.05); }
 
-        /* The 1970s Vinyl Record Selection Crate */
-        .crate-container { display: flex; flex-direction: column; gap: 12px; margin-top: 10px; }
-        .record-tile {
-            background: #18181c;
-            border: 2px solid #36363e;
+        /* Minimal Text-Only Module Rows Layout */
+        .module-list { display: flex; flex-direction: column; gap: 10px; margin-top: 8px; }
+        .module-row {
+            background: #1e222b;
+            border: 1px solid #222630;
             border-radius: 8px;
-            padding: 15px;
+            padding: 16px 20px;
             text-align: left;
             cursor: pointer;
+            font-size: 1rem;
+            font-weight: 500;
+            color: #e2e5e9;
             transition: all 0.15s ease;
-            display: flex;
-            align-items: center;
-            gap: 15px;
         }
-        .record-icon { font-size: 2rem; color: #545464; transition: color 0.15s; }
-        .record-text h3 { margin: 0 0 4px 0; color: #fff; font-size: 1.1rem; letter-spacing: 0.5px; }
-        .record-text p { margin: 0; color: #a0a0b2; font-size: 0.8rem; line-height: 1.3; }
-        
-        /* Interactive selection state color block */
-        .record-tile.selected { border-color: #00e676; background: rgba(0, 230, 118, 0.05); }
-        .record-tile.selected .record-icon { color: #00e676; }
-        .record-tile.selected h3 { color: #00e676; }
+        .module-row.selected { 
+            border-color: #00e676; 
+            background: rgba(0, 230, 118, 0.04); 
+            color: #00e676; 
+            font-weight: 600;
+        }
 
-        .btn { background: #ffa500; color: #141416; border: none; padding: 16px; border-radius: 6px; font-size: 1.1rem; font-weight: bold; width: 100%; cursor: pointer; margin-top: 15px; letter-spacing: 1px; }
-        .btn:hover { background: #e09200; }
-        .feedback { margin-top: 15px; font-weight: bold; padding: 10px; border-radius: 6px; display: none; font-size: 0.95rem; }
+        .btn { background: #00e676; color: #0d0e11; border: none; padding: 16px; border-radius: 8px; font-size: 1.05rem; font-weight: 600; width: 100%; cursor: pointer; margin-top: 24px; letter-spacing: 0.02em; }
+        .btn:hover { background: #00c862; }
+        .feedback { margin-top: 20px; font-weight: 500; padding: 12px; border-radius: 8px; display: none; font-size: 0.9rem; border: 1px solid transparent; }
         
         #game-screen { display: none; }
-        .player-badge { background: #18181c; padding: 12px; border-radius: 6px; border: 1px solid #36363e; margin-bottom: 20px; font-size: 1rem; color: #ffa500; }
+        .player-badge { background: #1e222b; padding: 14px; border-radius: 8px; border: 1px solid #222630; margin-bottom: 24px; font-size: 0.95rem; color: #00e676; font-weight: 600; text-align: left; }
     </style>
 </head>
 <body>
 
-    <!-- SCREEN 1: THE RETRO COMPLIANT LOBBY CRATE -->
+    <!-- SCREEN 1: MODERN STREAMLINED LOBBY PORTAL -->
     <div id="login-screen" class="card">
         <h1>RandoMania Lobby</h1>
-        <p class="subtitle">Drop your needle into the live venue match pool</p>
+        <p class="subtitle">Securely join the live room session</p>
         
         <div class="input-group">
             <label>4-Digit Room Code</label>
@@ -82,14 +81,10 @@
             <label>Your Nickname</label>
             <input type="text" id="player-name" placeholder="e.g., Randy">
         </div>
-        <div class="input-group">
-            <label>Device Identifier (Unique key)</label>
-            <input type="text" id="player-phone" placeholder="e.g., player1">
-        </div>
 
-        <!-- THE CURATED 24-AVATAR ELEMENT BLOCKS -->
+        <!-- THE CURATED 24-AVATAR SELECTION GRID -->
         <div class="input-group">
-            <label>Select Your Avatar Emoji</label>
+            <label>Select Identity Avatar</label>
             <div class="emoji-grid">
                 <button class="emoji-btn" onclick="selectAvatar(this, '👑')">👑</button>
                 <button class="emoji-btn" onclick="selectAvatar(this, '🦬')">🦬</button>
@@ -118,78 +113,44 @@
             </div>
         </div>
 
-        <!-- THE 5-OPTION VINYL RECORD SELECTION CRATE -->
+        <!-- MINIMAL TEXT-ONLY SELECTION ROWS LIST -->
         <div class="input-group">
-            <label>Vote for Tonight's Primary Vinyl Record</label>
-            <div class="crate-container">
-                
-                <div class="record-tile" onclick="selectVinylRecord(this, 'TRIVI_YEAH')">
-                    <div class="record-icon">🫵</div>
-                    <div class="record-text">
-                        <h3>Trivi-yeah!</h3>
-                        <p>A classic, fast-paced battle of wits for the trivia purist—drop the needle and test your mind.</p>
-                    </div>
-                </div>
-
-                <div class="record-tile" onclick="selectVinylRecord(this, 'COUNTRY_MONKEY')">
-                    <div class="record-icon">🐒</div>
-                    <div class="record-text">
-                        <h3>Country Monkey</h3>
-                        <p>Swing through the world map and guess the mystery nation before the vintage clock runs out.</p>
-                    </div>
-                </div>
-
-                <div class="record-tile" onclick="selectVinylRecord(this, 'EMPOSSDURR')">
-                    <div class="record-icon">🕵️‍♂️</div>
-                    <div class="record-text">
-                        <h3>EmpossDurr</h3>
-                        <p>A retro social puzzle of hidden logic—can you find the imposter sitting right in your living room?</p>
-                    </div>
-                </div>
-
-                <div class="record-tile" onclick="selectVinylRecord(this, 'FLAG_ME_DOWN')">
-                    <div class="record-icon">🚩</div>
-                    <div class="record-text">
-                        <h3>Flag Me Down</h3>
-                        <p>Test your vector vision on the world's grooviest banners, colors, and historical standards.</p>
-                    </div>
-                </div>
-
-                <div class="record-tile" onclick="selectVinylRecord(this, 'ON_THE_SPECTRUM')">
-                    <div class="record-icon">🌈</div>
-                    <div class="record-text">
-                        <h3>On The Spectrum</h3>
-                        <p>A colorful, high-stakes sorting match where players rank data scales from lowest to highest.</p>
-                    </div>
-                </div>
-
+            <label>Select Module Preference</label>
+            <div class="module-list">
+                <div class="module-row" onclick="selectModule(this, 'TRIVI_YEAH')">Trivi-yeah!</div>
+                <div class="module-row" onclick="selectModule(this, 'COUNTRY_MONKEY')">Country Monkey</div>
+                <div class="module-row" onclick="selectModule(this, 'EMPOSSDURR')">EmpossDurr</div>
+                <div class="module-row" onclick="selectModule(this, 'FLAG_ME_DOWN')">Flag Me Down</div>
+                <div class="module-row" onclick="selectModule(this, 'ON_THE_SPECTRUM')">On The Spectrum</div>
             </div>
         </div>
 
-        <button class="btn" onclick="executeRoomOnboarding()">Submit Record Selection</button>
+        <button class="btn" onclick="executeRoomOnboarding()">Submit Entry</button>
         <div id="login-feedback" class="feedback"></div>
     </div>
 
-    <!-- SCREEN 2: GAMEPLAY INPUT CONTROLLER -->
+    <!-- SCREEN 2: MINIMAL INTERFACE CONTROLLER GAMEPAD -->
     <div id="game-screen" class="card">
-        <h1>VOXOPO CONTROLLER</h1>
+        <h1>RandoMania Controller</h1>
+        <p class="subtitle" style="margin-bottom: 20px;">Connection active with TV stream dashboard</p>
+        
         <div class="player-badge">
             🟢 Active: <span id="badge-emoji">-</span> <span id="badge-name" style="font-weight:bold; color:#fff;">-</span> 
-            (Room: <span id="badge-room" style="font-weight:bold; color:#fff;">-</span>)
+            <span style="float: right; color: #64748b; font-weight: 500;">Room: <span id="badge-room" style="color:#fff; font-weight:bold;">-</span></span>
         </div>
 
         <div class="input-group">
-            <label>Submit Game Input Action</label>
-            <input type="text" id="game-input" placeholder="Type answer or command...">
+            <label>Submit Response or Command</label>
+            <input type="text" id="game-input" placeholder="Type answer here...">
         </div>
 
-        <button class="btn" style="background:#00e676;" onclick="submitGameAction()">Submit Action</button>
+        <button class="btn" onclick="submitGameAction()">Submit Action</button>
         <div id="game-feedback" class="feedback"></div>
     </div>
 
     <script>
-                let chosenAvatar = '👤';
-        let chosenRecord = '';
+        let chosenAvatar = '👤';
+        let chosenModule = '';
 
         function selectAvatar(element, avatarChar) {
             const btns = document.getElementsByClassName("emoji-btn");
@@ -198,41 +159,41 @@
             chosenAvatar = avatarChar;
         }
 
-        function selectVinylRecord(element, recordKey) {
-            const tiles = document.getElementsByClassName("record-tile");
-            for (let i = 0; i < tiles.length; i++) { tiles[i].classList.remove("selected"); }
+        function selectModule(element, moduleKey) {
+            const rows = document.getElementsByClassName("module-row");
+            for (let i = 0; i < rows.length; i++) { rows[i].classList.remove("selected"); }
             element.classList.add("selected");
-            chosenRecord = recordKey;
+            chosenModule = moduleKey;
         }
 
         async function executeRoomOnboarding() {
             const room = document.getElementById('room-code').value.trim();
             const name = document.getElementById('player-name').value.trim();
-            const phone = document.getElementById('player-phone').value.trim();
             const feedback = document.getElementById('login-feedback');
 
-            if (!room || !name || !phone) {
-                showFeedback(feedback, "⚠️ All fields are required to check into the room crate!", "#ffa500", "rgba(255,165,0,0.1)");
+            if (!room || !name) {
+                showFeedback(feedback, "⚠️ Name and Room fields are required.", "rgba(255,165,0,0.15)", "#ffa500", "rgba(255,165,0,0.1)");
                 return;
             }
-            if (!chosenRecord) {
-                showFeedback(feedback, "🎵 Pick a vinyl record to submit your lobby vote!", "#ffa500", "rgba(255,165,0,0.1)");
+            if (!chosenModule) {
+                showFeedback(feedback, "⚠️ Select a module preference to submit your vote.", "rgba(255,165,0,0.15)", "#ffa500", "rgba(255,165,0,0.1)");
                 return;
             }
 
-            // Save player phone tracking token into hardware cache for seamless reconnection persistence
-            localStorage.setItem('voxopo_pid', phone);
+            // Since phone field is gone, we use the Player Name cleanly as their unique Tracking Key token!
+            localStorage.setItem('randomania_nickname', name);
 
-            showFeedback(feedback, "Dropping needle into cloud slot...", "#ffa500", "rgba(255,165,0,0.1)");
+            showFeedback(feedback, "Connecting to live room pool...", "rgba(255,165,0,0.06)", "#ffa500", "rgba(255,165,0,0.1)");
 
             try {
-                // Formulate the string for gameEngine tracking parsing
-                const completeBodyText = `${room} ${name} ${chosenAvatar} ${chosenRecord}`;
+                // Compile the payload string exactly matching your engine parameters
+                // Layout: "ROOM NAME AVATAR MODULE"
+                                const completeBodyText = `${room} ${name} ${chosenAvatar} ${chosenModule}`;
 
                 const response = await fetch('/api/message', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ From: phone, Body: completeBodyText })
+                    body: JSON.stringify({ From: name, Body: completeBodyText }) // Passes Name as the unique From key!
                 });
                 const data = await response.json();
 
@@ -244,7 +205,7 @@
                 document.getElementById('game-screen').style.display = "block";
 
             } catch (error) {
-                showFeedback(feedback, "❌ Connection broken. Check Render instance status.", "#ff4757", "rgba(255,71,87,0.1)");
+                showFeedback(feedback, "❌ Live connection timed out. Check server logs.", "rgba(255,71,87,0.06)", "#ff4757", "rgba(255,71,87,0.1)");
             }
         }
 
@@ -253,27 +214,28 @@
             const feedback = document.getElementById('game-feedback');
             if (!actionText) return;
 
-            showFeedback(feedback, "Transmitting data packet...", "#ffa500", "rgba(255,165,0,0.1)");
+            showFeedback(feedback, "Transmitting data frame...", "rgba(255,165,0,0.06)", "#ffa500", "rgba(255,165,0,0.1)");
 
             try {
-                const cachedPhoneId = localStorage.getItem('voxopo_pid') || 'test-handset';
+                const registeredName = localStorage.getItem('randomania_nickname') || 'test-handset';
                 const response = await fetch('/api/message', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ From: cachedPhoneId, Body: actionText })
+                    body: JSON.stringify({ From: registeredName, Body: actionText })
                 });
                 const data = await response.json();
-                showFeedback(feedback, `📡 Server: ${data.reply}`, "#00e676", "rgba(0,230,118,0.1)");
+                showFeedback(feedback, `📡 Server: ${data.reply}`, "rgba(0,230,118,0.06)", "#00e676", "rgba(0,230,118,0.1)");
                 document.getElementById('game-input').value = ""; 
             } catch (error) {
-                showFeedback(feedback, "❌ Transmission failed.", "#ff4757", "rgba(255,71,87,0.1)");
+                showFeedback(feedback, "❌ Action transmission failed.", "rgba(255,71,87,0.06)", "#ff4757", "rgba(255,71,87,0.1)");
             }
         }
 
-        function showFeedback(element, text, color, bg) {
+        function showFeedback(element, text, bg, color, border) {
             element.style.display = "block";
-            element.style.color = color;
             element.style.background = bg;
+            element.style.color = color;
+            element.style.borderColor = border;
             element.innerText = text;
         }
     </script>
