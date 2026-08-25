@@ -24,8 +24,12 @@ app.post('/api/message', async (req, res) => {
             return res.status(400).json({ success: false, reply: 'Missing transaction parameters.' });
         }
 
-        // Await the response so both registration strings and database START promises resolve perfectly
         const engineResponse = await handleIncomingMessage(From, Body);
+
+        // FIX: If the engine returns a warning flag string (starts with ⚠️), pass it back gracefully as a clean, intentional message block!
+        if (typeof engineResponse === 'string' && engineResponse.startsWith('⚠️')) {
+            return res.json({ success: false, reply: engineResponse });
+        }
 
         return res.json({ success: true, reply: engineResponse });
     } catch (error) {
@@ -33,6 +37,7 @@ app.post('/api/message', async (req, res) => {
         return res.status(500).json({ success: false, reply: 'Engine processing error.' });
     }
 });
+
 
 app.get('/', (req, res) => {
     res.send('Voxopo Backend Engine is Active and Running!');
