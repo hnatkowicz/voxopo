@@ -79,28 +79,34 @@ async function startServer() {
                         const roomCode = data.roomCode;
                         console.log(`[WebSocket] TV Screen is requesting link authorization for Room: ${roomCode}`);
 
-                        // Initialize room tracking fields if they don't exist yet
                         if (!activeRooms[roomCode]) {
                             activeRooms[roomCode] = {
                                 gameState: 'LOBBY',
                                 players: {},
                                 screens: [],
                                 timerInterval: null,
+                                lobbyTimerInterval: null,
+                                categoryTimerInterval: null,
+                                lobbySecondsLeft: 60,
+                                categorySecondsLeft: 30,
+                                winningGameMode: null,
                                 activeQuestionData: null,
-                                answers: {}
+                                answers: {},
+                                votes: { TRIVI_YEAH: 0, COUNTRY_MONKEY: 0, EMPOSSDURR: 0, FLAG_ME_DOWN: 0, ON_THE_SPECTRUM: 0 },
+                                categoryVotes: { CAT_1: 0, CAT_2: 0, CAT_3: 0 }
                             };
                         }
 
-                        // Securely lock this live socket straight into the core game engine's screen array!
+                        // Explicitly push this open live socket into the shared game engine room registry layout!
                         activeRooms[roomCode].screens.push(socket);
                         console.log(`✅ [WebSocket] Room ${roomCode} TV screen is officially synced and locked live.`);
 
-                        // Instantly send back a current score list so late refreshing screens don't look empty
                         socket.send(JSON.stringify({
                             type: 'LEADERBOARD_UPDATE',
                             players: Object.values(activeRooms[roomCode].players)
                         }));
                     }
+
                 } catch (err) {
                     console.error('❌ [Socket Parsing Error]:', err.message);
                 }
