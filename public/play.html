@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>RandoMania | Controller</title>
     <style>
-        /* Minimalist Modern Dark Theme Settings */
         body { 
             font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", sans-serif; 
             background: #0d0e11; 
@@ -32,12 +31,10 @@
         input[type="text"] { width: 100%; padding: 14px; background: #1e222b; border: 1px solid #222630; border-radius: 8px; color: #fff; font-size: 1.05rem; box-sizing: border-box; transition: border-color 0.2s; }
         input[type="text"]:focus { border-color: #00e676; outline: none; }
         
-        /* 24-Avatar Grid Alignment Layout */
         .emoji-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 8px; margin-bottom: 16px; }
         .emoji-btn { background: #1e222b; border: 1px solid #222630; font-size: 1.3rem; padding: 12px 0; border-radius: 8px; cursor: pointer; transition: all 0.1s ease; }
         .emoji-btn.selected { background: rgba(0, 230, 118, 0.06); border-color: #00e676; transform: scale(1.05); }
 
-        /* Minimal Text-Only Module Rows Layout */
         .module-list { display: flex; flex-direction: column; gap: 10px; margin-top: 8px; }
         .module-row {
             background: #1e222b;
@@ -63,12 +60,13 @@
         .feedback { margin-top: 20px; font-weight: 500; padding: 12px; border-radius: 8px; display: none; font-size: 0.9rem; border: 1px solid transparent; }
         
         #game-screen { display: none; }
+        #category-screen { display: none; }
         .player-badge { background: #1e222b; padding: 14px; border-radius: 8px; border: 1px solid #222630; margin-bottom: 24px; font-size: 0.95rem; color: #00e676; font-weight: 600; text-align: left; }
     </style>
 </head>
 <body>
 
-    <!-- SCREEN 1: MODERN STREAMLINED LOBBY PORTAL -->
+    <!-- SCREEN 1: MODERN LOBBY PORTAL -->
     <div id="login-screen" class="card">
         <h1>RandoMania Lobby</h1>
         <p class="subtitle">Securely join the live room session</p>
@@ -82,32 +80,28 @@
             <input type="text" id="player-name" placeholder="e.g., Randy">
         </div>
 
-                <!-- THE 24 UNIVERSALLY SUPPORTED LEGACY-SAFE AVATARS -->
+        <!-- THE CURATED 24-AVATAR SELECTION GRID -->
         <div class="input-group">
             <label>Select Identity Avatar</label>
             <div class="emoji-grid">
-                <!-- Row 1 -->
                 <button class="emoji-btn" onclick="selectAvatar(this, '👑')">👑</button>
                 <button class="emoji-btn" onclick="selectAvatar(this, '🚀')">🚀</button>
                 <button class="emoji-btn" onclick="selectAvatar(this, '⭐')">⭐</button>
                 <button class="emoji-btn" onclick="selectAvatar(this, '💎')">💎</button>
                 <button class="emoji-btn" onclick="selectAvatar(this, '🎈')">🎈</button>
                 <button class="emoji-btn" onclick="selectAvatar(this, '🔥')">🔥</button>
-                <!-- Row 2 -->
                 <button class="emoji-btn" onclick="selectAvatar(this, '🦊')">🦊</button>
                 <button class="emoji-btn" onclick="selectAvatar(this, '🦁')">🦁</button>
                 <button class="emoji-btn" onclick="selectAvatar(this, '🐸')">🐸</button>
                 <button class="emoji-btn" onclick="selectAvatar(this, '🦉')">🦉</button>
                 <button class="emoji-btn" onclick="selectAvatar(this, '🐯')">🐯</button>
                 <button class="emoji-btn" onclick="selectAvatar(this, '🐬')">🐬</button>
-                <!-- Row 3 -->
                 <button class="emoji-btn" onclick="selectAvatar(this, '🎯')">🎯</button>
                 <button class="emoji-btn" onclick="selectAvatar(this, '🎲')">🎲</button>
                 <button class="emoji-btn" onclick="selectAvatar(this, '🎱')">🎱</button>
                 <button class="emoji-btn" onclick="selectAvatar(this, '🏆')">🏆</button>
                 <button class="emoji-btn" onclick="selectAvatar(this, '⚽')">⚽</button>
                 <button class="emoji-btn" onclick="selectAvatar(this, '🎨')">🎨</button>
-                <!-- Row 4 -->
                 <button class="emoji-btn" onclick="selectAvatar(this, '⛵')">⛵</button>
                 <button class="emoji-btn" onclick="selectAvatar(this, '⚓')">⚓</button>
                 <button class="emoji-btn" onclick="selectAvatar(this, '🔑')">🔑</button>
@@ -117,8 +111,7 @@
             </div>
         </div>
 
-
-        <!-- MINIMAL TEXT-ONLY SELECTION ROWS LIST -->
+        <!-- MODULE CHOICE ROWS (CLEAN - NO DECORATIVE EMOJIS!) -->
         <div class="input-group">
             <label>Select Module Preference</label>
             <div class="module-list">
@@ -134,49 +127,44 @@
         <div id="login-feedback" class="feedback"></div>
     </div>
 
-    <!-- SCREEN 2: MINIMAL INTERFACE CONTROLLER GAMEPAD -->
+    <!-- SCREEN 2: GAMEPLAY INPUT CONTROLLER -->
     <div id="game-screen" class="card">
         <h1>RandoMania Controller</h1>
         <p class="subtitle" style="margin-bottom: 20px;">Connection active with TV stream dashboard</p>
-        
         <div class="player-badge">
             🟢 Active: <span id="badge-emoji">-</span> <span id="badge-name" style="font-weight:bold; color:#fff;">-</span> 
             <span style="float: right; color: #64748b; font-weight: 500;">Room: <span id="badge-room" style="color:#fff; font-weight:bold;">-</span></span>
         </div>
-
         <div class="input-group">
             <label>Submit Response or Command</label>
             <input type="text" id="game-input" placeholder="Type answer here...">
         </div>
-
         <button class="btn" onclick="submitGameAction()">Submit Action</button>
         <div id="game-feedback" class="feedback"></div>
     </div>
 
-    <!-- SCREEN 3: MINIMAL SUB-CATEGORY LIGHTNING ELECTION CARD -->
-    <div id="category-screen" class="card" style="display: none;">
+    <!-- SCREEN 3: CATEGORY VOTING GAMEPAD (CLEAN - NO DECORATIVE EMOJIS!) -->
+    <div id="category-screen" class="card">
         <h1>Category Selection</h1>
         <p class="subtitle" style="margin-bottom: 24px;">Cast your family sub-deck preference now</p>
-        
         <div class="player-badge">
             ⚡ Phase 2: <span id="sub-badge-emoji">-</span> <span id="sub-badge-name" style="font-weight:bold; color:#fff;">-</span>
         </div>
-
         <div class="input-group">
             <label>Select Category Preference</label>
             <div class="module-list">
-                <!-- Clean text option rows matching your TV family packs -->
-                <div class="module-row" onclick="submitCategorySubVote(this, 'CAT_1')">WWII History</div>
-                <div class="module-row" onclick="submitCategorySubVote(this, 'CAT_2')">Primary School</div>
-                <div class="module-row" onclick="submitCategorySubVote(this, 'CAT_3')">Pop Culture</div>
+                <div class="module-row" id="btn-cat1" onclick="submitCategorySubVote(this, 'CAT_1')">Category 1</div>
+                <div class="module-row" id="btn-cat2" onclick="submitCategorySubVote(this, 'CAT_2')">Category 2</div>
+                <div class="module-row" id="btn-cat3" onclick="submitCategorySubVote(this, 'CAT_3')">Category 3</div>
             </div>
         </div>
-
         <div id="category-feedback" class="feedback"></div>
     </div>
+
     <script>
         let chosenAvatar = '👤';
         let chosenModule = '';
+        let roomStateTrackerInterval = null;
 
         function selectAvatar(element, avatarChar) {
             const btns = document.getElementsByClassName("emoji-btn");
@@ -206,22 +194,22 @@
                 return;
             }
 
-            // Since phone field is gone, we use the Player Name cleanly as their unique Tracking Key token!
             localStorage.setItem('randomania_nickname', name);
-
             showFeedback(feedback, "Connecting to live room pool...", "rgba(255,165,0,0.06)", "#ffa500", "rgba(255,165,0,0.1)");
 
             try {
-                // Compile the payload string exactly matching your engine parameters
-                // Layout: "ROOM NAME AVATAR MODULE"
-                                const completeBodyText = `${room} ${name} ${chosenAvatar} ${chosenModule}`;
-
+                const completeBodyText = `${room} ${name} ${chosenAvatar} ${chosenModule}`;
                 const response = await fetch('/api/message', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ From: name, Body: completeBodyText }) // Passes Name as the unique From key!
+                    body: JSON.stringify({ From: name, Body: completeBodyText })
                 });
                 const data = await response.json();
+
+                if (data && data.success === false) {
+                    showFeedback(feedback, data.reply, "rgba(255,71,87,0.06)", "#ff4757", "rgba(255,71,87,0.1)");
+                    return;
+                }
 
                 document.getElementById('badge-name').innerText = name;
                 document.getElementById('badge-room').innerText = room;
@@ -229,11 +217,62 @@
                 
                 document.getElementById('login-screen').style.display = "none";
                 document.getElementById('game-screen').style.display = "block";
-                // Initialize background status tracking loops cleanly
+
                 initRoomStatePoller(room, name);
 
             } catch (error) {
                 showFeedback(feedback, "❌ Live connection timed out. Check server logs.", "rgba(255,71,87,0.06)", "#ff4757", "rgba(255,71,87,0.1)");
+            }
+        }
+
+        function initRoomStatePoller(roomCode, nickname) {
+            roomStateTrackerInterval = setInterval(async () => {
+                try {
+                    const response = await fetch('/api/room-status', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ roomCode: roomCode })
+                    });
+                    const data = await response.json();
+                    
+                    if (data && data.phase === 'CATEGORY_VOTE_PHASE') {
+                        document.getElementById('sub-badge-name').innerText = nickname;
+                        document.getElementById('sub-badge-emoji').innerText = chosenAvatar;
+                        
+                        document.getElementById('btn-cat1').innerText = data.label1;
+                        document.getElementById('btn-cat2').innerText = data.label2;
+                        document.getElementById('btn-cat3').innerText = data.label3;
+                        
+                        document.getElementById('game-screen').style.display = "none";
+                        document.getElementById('category-screen').style.display = "block";
+                        clearInterval(roomStateTrackerInterval);
+                    }
+                } catch (e) {
+                    console.error("Poller stall.");
+                }
+            }, 1000);
+        }
+
+        async function submitCategorySubVote(element, categoryKey) {
+            const rows = document.getElementsByClassName("module-row");
+            for (let i = 0; i < rows.length; i++) { rows[i].classList.remove("selected"); }
+            element.classList.add("selected");
+
+            const feedback = document.getElementById('category-feedback');
+            const registeredName = localStorage.getItem('randomania_nickname') || 'test-handset';
+            
+            showFeedback(feedback, "Logging sub-vote...", "rgba(255,165,0,0.06)", "#ffa500", "rgba(255,165,0,0.1)");
+
+            try {
+                const response = await fetch('/api/message', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ From: registeredName, Body: categoryKey })
+                });
+                const data = await response.json();
+                showFeedback(feedback, `📡 Server: ${data.reply}`, "rgba(0,230,118,0.06)", "#00e676", "rgba(0,230,118,0.1)");
+            } catch (error) {
+                showFeedback(feedback, "❌ Transmission failed.", "rgba(255,71,87,0.06)", "#ff4757", "rgba(255,71,87,0.1)");
             }
         }
 
@@ -266,61 +305,6 @@
             element.style.borderColor = border;
             element.innerText = text;
         }
-
-            // Background interval handle to track room phase shifts
-        let roomStateTrackerInterval = null;
-
-        // Automatically launch this check the microsecond a player successfully registers
-        function initRoomStatePoller(roomCode, nickname) {
-            roomStateTrackerInterval = setInterval(async () => {
-                try {
-                    // Send a fast payload check string to query what state the room currently sits in
-                    const response = await fetch('/api/message', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ From: nickname, Body: `ROOM_STATE_CHECK ${roomCode}` })
-                    });
-                    const data = await response.json();
-                    
-                    // If the server engine shouts that the room shifted, morph the mobile screen card instantly!
-                    if (data.reply === 'CATEGORY_VOTE_PHASE') {
-                        document.getElementById('sub-badge-name').innerText = nickname;
-                        document.getElementById('sub-badge-emoji').innerText = chosenAvatar;
-                        
-                        document.getElementById('game-screen').style.display = "none";
-                        document.getElementById('category-screen').style.display = "block";
-                        clearInterval(roomStateTrackerInterval); // Kill poller loop once state locks
-                    }
-                } catch (e) {
-                    console.error("Poller stall.");
-                }
-            }, 1000);
-        }
-
-        async function submitCategorySubVote(element, categoryKey) {
-            const rows = document.getElementsByClassName("module-row");
-            for (let i = 0; i < rows.length; i++) { rows[i].classList.remove("selected"); }
-            element.classList.add("selected");
-
-            const feedback = document.getElementById('category-feedback');
-            const registeredName = localStorage.getItem('randomania_nickname') || 'test-handset';
-            
-            showFeedback(feedback, "Logging sub-vote...", "rgba(255,165,0,0.06)", "#ffa500", "rgba(255,165,0,0.1)");
-
-            try {
-                // Fire the clean transaction string parameter straight to the server engine
-                const response = await fetch('/api/message', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ From: registeredName, Body: categoryKey })
-                });
-                const data = await response.json();
-                showFeedback(feedback, `📡 Server: ${data.reply}`, "rgba(0,230,118,0.06)", "#00e676", "rgba(0,230,118,0.1)");
-            } catch (error) {
-                showFeedback(feedback, "❌ Transmission failed.", "rgba(255,71,87,0.06)", "#ff4757", "rgba(255,71,87,0.1)");
-            }
-        }
-
     </script>
 </body>
 </html>
