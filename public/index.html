@@ -439,42 +439,79 @@
             }, 3000);
         }
 
+        // Global memory cache to lock dynamic names on screen during rapid button mashing
+        let activeLabel1 = "Category 1";
+        let activeLabel2 = "Category 2";
+        let activeLabel3 = "Category 3";
+
         function switchToCategoryVotingUI(winnerModule, label1, label2, label3) {
             const panel = document.getElementById('main-trivia-panel');
+            
+            // Lock the incoming server strings permanently into our global script memory maps
+            activeLabel1 = label1 || "WWII History";
+            activeLabel2 = label2 || "Primary School";
+            activeLabel3 = label3 || "Pop Culture";
+
             const displayGameName = winnerModule.replace('_', ' ').toLowerCase().replace(/\b\w/g, c => c.toUpperCase());
             
             panel.innerHTML = `
                 <div class="panel-box" style="padding: 40px; flex: 1; display: flex; flex-direction: column; justify-content: center;">
-                    <h2 class="panel-title" style="margin-bottom: 8px;">Winner: ${displayGameName}</h2>
+                    <h2 class="panel-title" style="margin-bottom: 8px;">🎮 Winner: ${displayGameName}</h2>
                     <p style="color: #64748b; font-size: 0.95rem; margin: 0 0 32px 0; font-weight: 500;">Select your sub-deck preference on your phone now</p>
                     
                     <div style="display: flex; flex-direction: column;">
+                        <!-- Sub-Category 1 -->
                         <div class="vote-row">
-                            <div class="vote-meta"><span id="lbl-cat1">${label1 || 'Category 1'}</span><span id="ccount-CAT_1" style="color: #64748b;">0 votes (0%)</span></div>
+                            <div class="vote-meta">
+                                <span id="lbl-cat1" style="font-weight: 500; color: #ffffff;">${activeLabel1}</span>
+                                <span id="ccount-CAT_1" style="color: #64748b; font-weight: 500;">0 votes (0%)</span>
+                            </div>
                             <div class="progress-track"><div id="cbar-CAT_1" class="progress-fill" style="background: #ffa500;"></div></div>
                         </div>
+
+                        <!-- Sub-Category 2 -->
                         <div class="vote-row">
-                            <div class="vote-meta"><span id="lbl-cat2">${label2 || 'Category 2'}</span><span id="ccount-CAT_2" style="color: #64748b;">0 votes (0%)</span></div>
+                            <div class="vote-meta">
+                                <span id="lbl-cat2" style="font-weight: 500; color: #ffffff;">${activeLabel2}</span>
+                                <span id="ccount-CAT_2" style="color: #64748b; font-weight: 500;">0 votes (0%)</span>
+                            </div>
                             <div class="progress-track"><div id="cbar-CAT_2" class="progress-fill" style="background: #00e676;"></div></div>
                         </div>
+
+                        <!-- Sub-Category 3 -->
                         <div class="vote-row">
-                            <div class="vote-meta"><span id="lbl-cat3">${label3 || 'Category 3'}</span><span id="ccount-CAT_3" style="color: #64748b;">0 votes (0%)</span></div>
+                            <div class="vote-meta">
+                                <span id="lbl-cat3" style="font-weight: 500; color: #ffffff;">${activeLabel3}</span>
+                                <span id="ccount-CAT_3" style="color: #64748b; font-weight: 500;">0 votes (0%)</span>
+                            </div>
                             <div class="progress-track"><div id="cbar-CAT_3" class="progress-fill" style="background: #ff4757;"></div></div>
                         </div>
                     </div>
                 </div>
             `;
         }
-                function updateCategorySubElectionUI(votes, totalVotes) {
+
+        function updateCategorySubElectionUI(votes, totalVotes) {
             if (!totalVotes || totalVotes === 0) return;
             const subKeys = ['CAT_1', 'CAT_2', 'CAT_3'];
+
+            // Ensure the text strings are explicitly repainted alongside the bar widths
+            const labelsMap = { 'CAT_1': activeLabel1, 'CAT_2': activeLabel2, 'CAT_3': activeLabel3 };
+            const labelIds = { 'CAT_1': 'lbl-cat1', 'CAT_2': 'lbl-cat2', 'CAT_3': 'lbl-cat3' };
+
             subKeys.forEach(key => {
                 const count = votes[key] || 0;
                 const percentage = Math.round((count / totalVotes) * 100);
+                
+                // Keep the custom names rigidly locked to their header lines
+                const nameNode = document.getElementById(labelIds[key]);
+                if (nameNode) nameNode.innerText = labelsMap[key];
+
                 document.getElementById(`cbar-${key}`).style.width = `${percentage}%`;
                 document.getElementById(`ccount-${key}`).innerText = `${count} votes (${percentage}%)`;
             });
         }
+
 
         // Trigger dynamic assignment protocols on page wakeup
         initializeDynamicRoomSession();
