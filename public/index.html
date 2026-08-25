@@ -190,11 +190,20 @@
 </head>
 <body>
 
+    <!-- UPDATED MODERN MODULAR HUD BANNER -->
     <div class="hud-banner">
-        <div class="status-pill">
-            <div class="status-dot"></div>
-            <div class="status-text" id="room-status-text">Connected Live</div>
+        
+        <!-- BRANDING + STATUS BLOCK -->
+        <div style="display: flex; align-items: center; gap: 24px;">
+            <!-- Cool, understated minimalist branding text label -->
+            <span style="font-family: ui-monospace, SFMono-Regular, SF Mono, Menlo, Monaco, Consolas, monospace; font-weight: 700; font-size: 1.15rem; color: #ffffff; letter-spacing: 0.12em; text-transform: uppercase;">RandoMania!</span>
+            
+            <div class="status-pill">
+                <div class="status-dot"></div>
+                <div class="status-text" id="room-status-text">Connected Live</div>
+            </div>
         </div>
+        
         <div class="hud-metric">Room Code <span class="hud-value" style="color: #00e676;">1234</span></div>
         <div class="hud-metric">Players Joined <span class="hud-value" id="lobby-player-count">0</span></div>
         <div class="hud-value" style="color: #ff4757; font-size: 1.6rem;" id="lobby-countdown">60s</div>
