@@ -19,24 +19,27 @@ function broadcastToRoom(roomCode, payload) {
     }
 }
 
-// Automated Lobby Countdown Clock Machinery
+// Upgraded Lobby Countdown Clock Machinery with external reset access
 function startLobbyCountdown(roomCode) {
     const room = activeRooms[roomCode];
     if (!room) return;
 
-    let count = 60;
+    // Initialize or reset the room-specific countdown counter properties
+    room.lobbySecondsLeft = 60;
     
-    if (room.lobbyTimerInterval) clearInterval(room.lobbyTimerInterval);
+    if (room.lobbyTimerInterval) return; // Keep the running interval alive if it already exists
 
     room.lobbyTimerInterval = setInterval(() => {
-        count--;
-        if (count > 0) {
+        room.lobbySecondsLeft--;
+        
+        if (room.lobbySecondsLeft > 0) {
             broadcastToRoom(roomCode, {
                 type: 'LOBBY_TIMER_TICK',
-                secondsLeft: count + "s"
+                secondsLeft: room.lobbySecondsLeft + "s"
             });
         } else {
             clearInterval(room.lobbyTimerInterval);
+            room.lobbyTimerInterval = null;
             room.gameState = 'ACTIVE_GAME';
             
             broadcastToRoom(roomCode, {
@@ -84,11 +87,10 @@ export function handleIncomingMessage(fromPhone, bodyText) {
     const cleanText = bodyText.trim();
     const parts = cleanText.split(' ');
     
-    if (parts.length === 0 || !parts || !parts[0]) {
+    if (parts.length === 0 || !parts || !parts) {
         return "⚠️ Error: Received an empty input payload.";
     }
 
-    // FIX: Safely grab the first word string out of the array before capitalizing it!
     const firstWord = parts[0].toUpperCase();
 
     // 1. Handle incoming room check-in / player registration fields
@@ -102,6 +104,7 @@ export function handleIncomingMessage(fromPhone, bodyText) {
                 screens: [],
                 timerInterval: null,
                 lobbyTimerInterval: null,
+                lobbySecondsLeft: 60,
                 activeQuestionData: null,
                 answers: {},
                 votes: { TRIVI_YEAH: 0, COUNTRY_MONKEY: 0, EMPOSSDURR: 0, FLAG_ME_DOWN: 0, ON_THE_SPECTRUM: 0 }
@@ -152,11 +155,15 @@ export function handleIncomingMessage(fromPhone, bodyText) {
                 totalVotes: playersArray.length
             });
 
-            // Start the 60-second countdown loop ONLY when the very first player arrives
-            if (playersArray.length === 1) {
-                console.log(`[Lobby Engine] First player detected inside Room ${roomCode}. Initializing clock machine.`);
-                startLobbyCountdown(roomCode);
-            }
+            // CLOCK ENGINE RESET TRIGGER: Fires start/reset to exactly 60 seconds on EVERY entry!
+            console.log(`[Lobby Engine] Resetting Room ${roomCode} countdown clock to 60 seconds.`);
+            startLobbyCountdown(roomCode);
+
+            // Broadcast the instant reset out to the TV HUD banner visually right away
+            broadcastToRoom(roomCode, {
+                type: 'LOBBY_TIMER_TICK',
+                secondsLeft: "60s"
+            });
 
             return `Welcome to RandoMania, ${playerNickname}! Your registration and vote have been logged live.`;
         }
