@@ -153,6 +153,39 @@
         .emoji-col { width: 15%; font-size: 1.2rem; text-align: left; }
         .name-col { width: 53%; font-weight: 500; color: #ffffff; }
         .score-col { width: 20%; text-align: right; color: #00e676; font-weight: 600; }
+                /* Sliding Toast Alert Notification Window Styles */
+        .toast-container {
+            position: fixed;
+            bottom: 40px;
+            left: 40px;
+            z-index: 9999;
+            pointer-events: none;
+        }
+        .toast-card {
+            background: rgba(20, 22, 29, 0.95);
+            border: 1px solid #222630;
+            border-radius: 8px;
+            padding: 16px 24px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            box-shadow: 0 12px 32px rgba(0,0,0,0.5);
+            transform: translateX(-150%);
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            backdrop-filter: blur(8px);
+        }
+        .toast-card.active {
+            transform: translateX(0);
+        }
+        .toast-text {
+            font-size: 1rem;
+            font-weight: 500;
+            color: #ffffff;
+        }
+        .toast-highlight {
+            color: #00e676;
+            font-weight: 600;
+        }
     </style>
 </head>
 <body>
@@ -216,17 +249,83 @@
             socket.send(JSON.stringify({ type: 'REGISTER_SCREEN', roomCode: '1234' }));
         };
 
+                // Invisible memory queue arrays to prevent animation data collisions
+        let toastQueue = [];
+        let isToastPlaying = false;
+
         socket.onmessage = (event) => {
             const data = JSON.parse(event.data);
             console.log("[WebSocket API Event Received]", data);
 
             if (data.type === 'LEADERBOARD_UPDATE') {
+                // If a brand new player joins, detect them and feed them to the queue channel
+                detectNewPlayerArrival(data.players);
                 updateLeaderboardUI(data.players);
             }
             if (data.type === 'VOTE_UPDATE') {
                 updateModuleElectionUI(data.votes, data.totalVotes);
             }
         };
+
+        // Keeps a local memory snapshot to identify exactly who just clicked join
+        let cachedPlayersSnapshot = [];
+
+        function detectNewPlayerArrival(freshPlayersList) {
+            // Find who is in the fresh list but missing from our old snapshot array
+            freshPlayersList.forEach(player => {
+                const exists = cachedPlayersSnapshot.some(p => p.name === player.name);
+                if (!exists && cachedPlayersSnapshot.length > 0) {
+                    // Push the fresh profile data прямо inside our toast queue!
+                    toastQueue.push(player);
+                    processToastQueuePipeline();
+                }
+            });
+            // Update our local tracking memory cache channel
+            cachedPlayersSnapshot = [...freshPlayersList];
+            if (cachedPlayersSnapshot.length === 1 && toastQueue.length === 0) {
+                // Handle the very first player loading onto an empty screen grid
+                toastQueue.push(freshPlayersList[0]);
+                processToastQueuePipeline();
+            }
+        }
+
+        function processToastQueuePipeline() {
+            // If an animation is already running on screen, stand down and wait its turn
+            if (isToastPlaying || toastQueue.length === 0) return;
+
+            isToastPlaying = true;
+            const nextPlayer = toastQueue.shift(); // Pull the top item out of the queue list row
+            const anchor = document.getElementById('toast-anchor');
+
+            // Construct the clean glass card structure layout
+            anchor.innerHTML = `
+                <div class="toast-card" id="active-toast">
+                    <span style="font-size: 1.4rem;">${nextPlayer.emoji || '👤'}</span>
+                    <div class="toast-text">
+                        <span class="toast-highlight">${nextPlayer.name}</span> has entered the lobby
+                    </div>
+                </div>
+            `;
+
+            // Force a tiny browser frame calculation delay, then apply the active animation class
+            setTimeout(() => {
+                const card = document.getElementById('active-toast');
+                if (card) card.classList.add('active');
+            }, 50);
+
+            // Hold on screen for exactly 3 seconds
+            setTimeout(() => {
+                const card = document.getElementById('active-toast');
+                if (card) card.classList.remove('active');
+                
+                // Wait for the slide-out retraction animation to finish completely before freeing the queue gate
+                setTimeout(() => {
+                    isToastPlaying = false;
+                    processToastQueuePipeline(); // Trigger next queue step recursively!
+                }, 400);
+            }, 3000);
+        }
+
 
         function updateLeaderboardUI(playersList) {
             document.getElementById('lobby-player-count').innerText = playersList.length;
@@ -262,5 +361,7 @@
             });
         }
     </script>
+    <!-- Sliding Toast Notification Anchor Node -->
+    <div class="toast-container" id="toast-anchor"></div>
 </body>
 </html>
