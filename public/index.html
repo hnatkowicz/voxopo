@@ -264,27 +264,33 @@
     </div>
 
     <script>
-        const socket = new WebSocket(`wss://${window.location.host}`);
+                const socket = new WebSocket(`wss://${window.location.host}`);
         
         socket.onopen = () => {
+            // FIX A: Instantly rewrite the modern HUD status text when connection locks green
+            document.getElementById('room-status-text').innerText = "Connected Live";
             socket.send(JSON.stringify({ type: 'REGISTER_SCREEN', roomCode: '1234' }));
         };
 
         socket.onmessage = (event) => {
             const data = JSON.parse(event.data);
-            console.log("[WebSocket API Event]", data);
+            console.log("[WebSocket API Event Received]", data);
 
             if (data.type === 'LEADERBOARD_UPDATE') {
                 updateLeaderboardUI(data.players);
             }
+
+            // FIX B: Listen for the server's real-time vote broadcasts and update progress track widths instantly
+            if (data.type === 'VOTE_UPDATE') {
+                updateModuleElectionUI(data.votes, data.totalVotes);
+            }
         };
 
-                function updateLeaderboardUI(playersList) {
+        function updateLeaderboardUI(playersList) {
             document.getElementById('lobby-player-count').innerText = playersList.length;
             const tbody = document.getElementById('leaderboard-rows');
             tbody.innerHTML = '';
 
-            // Sort players natively high score to low score
             playersList.sort((a, b) => b.score - a.score);
 
             playersList.forEach((player, index) => {
@@ -296,6 +302,28 @@
                     <td class="score-col">${player.score || 0}</td>
                 `;
                 tbody.appendChild(row);
+            });
+        }
+
+        // NEW UTILITY: Dynamically paint progress tracks hands-free as individual phone metrics arrive
+        function updateModuleElectionUI(votes, totalVotes) {
+            if (!totalVotes || totalVotes === 0) return;
+
+            const modules = [
+                { key: 'TRIVI_YEAH', barId: 'vbar-trivi', textId: 'vcount-trivi', label: 'Trivi-yeah!' },
+                { key: 'COUNTRY_MONKEY', barId: 'vbar-country', textId: 'vcount-country', label: 'Country Monkey' },
+                { key: 'EMPOSSDURR', barId: 'vbar-emposs', textId: 'vcount-emposs', label: 'EmpossDurr' },
+                { key: 'FLAG_ME_DOWN', barId: 'vbar-flag', textId: 'vcount-flag', label: 'Flag Me Down' },
+                { key: 'ON_THE_SPECTRUM', barId: 'vbar-spectrum', textId: 'vcount-spectrum', label: 'On The Spectrum' }
+            ];
+
+            modules.forEach(m => {
+                const count = votes[m.key] || 0;
+                const percentage = Math.round((count / totalVotes) * 100);
+                
+                // Repaint the width of the clean neon-green progress tracks smoothly
+                document.getElementById(m.barId).style.width = `${percentage}%`;
+                document.getElementById(m.textId).innerText = `${count} votes (${percentage}%)`;
             });
         }
     </script>
