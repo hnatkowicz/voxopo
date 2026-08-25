@@ -96,7 +96,7 @@ function calculateElectionWinner(room) {
     return tieBreakingWinner;
 }
 
-// Automated Micro Category 30-second Timer Loop
+// Upgraded Category Clock Tracker explicitly connected to the broadcast agent
 function startCategoryCountdown(roomCode) {
     const room = activeRooms[roomCode];
     if (!room) return;
@@ -104,9 +104,15 @@ function startCategoryCountdown(roomCode) {
     let count = 30;
     room.categorySecondsLeft = count;
 
+    // Clear any stale legacy interval states running in background tasks
+    if (room.categoryTimerInterval) clearInterval(room.categoryTimerInterval);
+
     room.categoryTimerInterval = setInterval(() => {
         count--;
+        room.categorySecondsLeft = count;
+        
         if (count > 0) {
+            // Push the category ticks straight up the WebSocket pipeline to drive your top HUD banner!
             broadcastToRoom(roomCode, {
                 type: 'CATEGORY_TIMER_TICK',
                 secondsLeft: count + "s"
@@ -116,7 +122,6 @@ function startCategoryCountdown(roomCode) {
             room.categoryTimerInterval = null;
             room.gameState = 'ACTIVE_GAME';
             
-            // Future extension node: Tally category sub-votes and fetch exact database questions here!
             broadcastToRoom(roomCode, {
                 type: 'CATEGORY_TIMER_TICK',
                 secondsLeft: "MATCH START!"
@@ -125,6 +130,7 @@ function startCategoryCountdown(roomCode) {
         }
     }, 1000);
 }
+
 
 function startQuestionCountdown(roomCode, questionData) {
     const room = activeRooms[roomCode];
