@@ -19,14 +19,13 @@ function broadcastToRoom(roomCode, payload) {
     }
 }
 
-// 1. NEW ENGINE ASSET: Automated Lobby Countdown Clock Machinery
+// Automated Lobby Countdown Clock Machinery
 function startLobbyCountdown(roomCode) {
     const room = activeRooms[roomCode];
     if (!room) return;
 
     let count = 60;
     
-    // Clear any loose trailing background intervals to prevent race conditions
     if (room.lobbyTimerInterval) clearInterval(room.lobbyTimerInterval);
 
     room.lobbyTimerInterval = setInterval(() => {
@@ -44,9 +43,7 @@ function startLobbyCountdown(roomCode) {
                 type: 'LOBBY_TIMER_TICK',
                 secondsLeft: "MATCH START!"
             });
-            
-            console.log(`[Lobby Clock] Room ${roomCode} election window closed. Transitioning to Active Match state.`);
-            // Future extension node: Automatically trigger the winning game module cartridge execution here!
+            console.log(`[Lobby Clock] Room ${roomCode} election window closed.`);
         }
     }, 1000);
 }
@@ -87,13 +84,14 @@ export function handleIncomingMessage(fromPhone, bodyText) {
     const cleanText = bodyText.trim();
     const parts = cleanText.split(' ');
     
-    if (parts.length === 0 || !parts) {
+    if (parts.length === 0 || !parts || !parts[0]) {
         return "⚠️ Error: Received an empty input payload.";
     }
 
-    const firstWord = parts.toUpperCase();
+    // FIX: Safely grab the first word string out of the array before capitalizing it!
+    const firstWord = parts[0].toUpperCase();
 
-    // 2. Handle incoming room check-in / player registration fields
+    // 1. Handle incoming room check-in / player registration fields
     if (!isNaN(firstWord) && firstWord.length === 4) {
         const roomCode = firstWord;
         
@@ -103,7 +101,7 @@ export function handleIncomingMessage(fromPhone, bodyText) {
                 players: {},
                 screens: [],
                 timerInterval: null,
-                lobbyTimerInterval: null, // Track lobby loop separate from question intervals
+                lobbyTimerInterval: null,
                 activeQuestionData: null,
                 answers: {},
                 votes: { TRIVI_YEAH: 0, COUNTRY_MONKEY: 0, EMPOSSDURR: 0, FLAG_ME_DOWN: 0, ON_THE_SPECTRUM: 0 }
@@ -114,15 +112,14 @@ export function handleIncomingMessage(fromPhone, bodyText) {
         const currentRoom = activeRooms[roomCode];
 
         if (parts.length >= 4) {
-            const playerNickname = parts;
-            const playerEmoji = parts || '👤';
-            const votedModule = parts;
+            const playerNickname = parts[1];
+            const playerEmoji = parts[2] || '👤';
+            const votedModule = parts[3];
 
             if (currentRoom.players[playerNickname]) {
                 return `⚠️ Name "${playerNickname}" is already taken in Room ${roomCode}! Please try a different nickname.`;
             }
 
-            // Lock the player profile securely into cloud memory state arrays
             currentRoom.players[playerNickname] = {
                 name: playerNickname,
                 emoji: playerEmoji,
@@ -143,7 +140,7 @@ export function handleIncomingMessage(fromPhone, bodyText) {
 
             console.log(`[Lobby Engine] Player checked in. Room ${roomCode} vote tallies:`, currentRoom.votes);
 
-            // Synchronize visual stands lists and election progress track fills immediately
+            // Synchronize visual stands lists and election progress tracks
             broadcastToRoom(roomCode, {
                 type: 'LEADERBOARD_UPDATE',
                 players: playersArray
@@ -155,7 +152,7 @@ export function handleIncomingMessage(fromPhone, bodyText) {
                 totalVotes: playersArray.length
             });
 
-            // 3. CORE TRIGGER TRIGGER CHECK: Start the 60-second countdown loop ONLY when the very first player arrives
+            // Start the 60-second countdown loop ONLY when the very first player arrives
             if (playersArray.length === 1) {
                 console.log(`[Lobby Engine] First player detected inside Room ${roomCode}. Initializing clock machine.`);
                 startLobbyCountdown(roomCode);
@@ -165,7 +162,7 @@ export function handleIncomingMessage(fromPhone, bodyText) {
         }
     }
 
-    // 4. Global cross-reference search to locate room container by Player Name tracking key
+    // 2. Global cross-reference search to locate room container by Player Name tracking key
     let associatedRoomCode = null;
     for (const code in activeRooms) {
         if (activeRooms[code].players[fromPhone]) {
@@ -181,13 +178,13 @@ export function handleIncomingMessage(fromPhone, bodyText) {
     const currentRoom = activeRooms[associatedRoomCode];
     const player = currentRoom.players[fromPhone];
 
-    // 5. Process game host operation administration commands
+    // 3. Process game host operation administration commands
     if (cleanText.toUpperCase() === 'START') {
         executeDatabaseQuery(associatedRoomCode);
         return "🚀 Initializing selected game module framework... Look up at the TV screen canvas!";
     }
 
-    // 6. Handle default incoming trivia response submissions based on active rules
+    // 4. Handle default incoming trivia response submissions based on active rules
     if (currentRoom.gameState !== 'QUESTION') {
         return `Sorry, ${player.name}, the response submission window is closed right now!`;
     }
@@ -199,7 +196,7 @@ async function executeDatabaseQuery(roomCode) {
     try {
         const result = await pool.query('SELECT * FROM questions WHERE question_number = 1;');
         if (result.rows.length > 0) {
-            startQuestionCountdown(roomCode, result.rows);
+            startQuestionCountdown(roomCode, result.rows[0]);
         } else {
             console.warn("❌ Database response warning: Question #1 data target not found.");
         }
