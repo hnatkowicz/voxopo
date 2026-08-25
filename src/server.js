@@ -14,29 +14,57 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(express.static('public'));
 
-// 1. CLEAN REGULAR MESSAGE PORT (Handles pure text registration strings)
-app.post('/api/message', async (req, res) => {
+// 1. DYNAMIC ROOM LIFECYCLE CREATOR ENDPOINT
+app.get('/api/create-room', (req, res) => {
     try {
-        const { From, Body } = req.body;
+        let code;
+        let checks = 0;
+        
+        // Randomly pull numbers until we find an absolute unallocated code string
+        do {
+            code = Math.floor(1000 + Math.random() * 9000).toString();
+            checks++;
+        } while (activeRooms[code] && checks < 100);
 
-        if (!From || !Body) {
-            return res.status(400).json({ success: false, reply: 'Missing transaction parameters.' });
-        }
+        // Initialize the unified memory container state properties on the backend instantly
+        activeRooms[code] = {
+            gameState: 'LOBBY',
+            players: {},
+            screens: [],
+            timerInterval: null,
+            lobbyTimerInterval: null,
+            categoryTimerInterval: null,
+            lobbySecondsLeft: 60,
+            categorySecondsLeft: 30,
+            winningGameMode: null,
+            activeQuestionData: null,
+            answers: {},
+            votes: { TRIVI_YEAH: 0, COUNTRY_MONKEY: 0, EMPOSSDURR: 0, FLAG_ME_DOWN: 0, ON_THE_SPECTRUM: 0 },
+            categoryVotes: { CAT_1: 0, CAT_2: 0, CAT_3: 0 }
+        };
 
-        const engineResponse = await handleIncomingMessage(From, Body);
-
-        if (typeof engineResponse === 'string' && engineResponse.startsWith('⚠️')) {
-            return res.json({ success: false, reply: engineResponse });
-        }
-
-        return res.json({ success: true, reply: engineResponse });
-    } catch (error) {
-        console.error('❌ [Web API Gateway Exception]:', error.message);
-        return res.status(500).json({ success: false, reply: 'Engine processing error.' });
+        console.log(`[Room Organizer] Created dynamic session bubble: ${code}`);
+        return res.json({ success: true, roomCode: code });
+    } catch (e) {
+        return res.status(500).json({ success: false, error: 'Lifecycle allocation failure.' });
     }
 });
 
-// 2. NEW CLEAN POLL ENDPOINT (Surgically handles background checks with pure JSON objects!)
+app.post('/api/message', async (req, res) => {
+    try {
+        const { From, Body } = req.body;
+        if (!From || !Body) return res.status(400).json({ success: false, reply: 'Missing parameters.' });
+
+        const engineResponse = await handleIncomingMessage(From, Body);
+        if (typeof engineResponse === 'string' && engineResponse.startsWith('⚠️')) {
+            return res.json({ success: false, reply: engineResponse });
+        }
+        return res.json({ success: true, reply: engineResponse });
+    } catch (error) {
+        return res.status(500).json({ success: false, reply: 'Engine error.' });
+    }
+});
+
 app.post('/api/room-status', (req, res) => {
     try {
         const { roomCode } = req.body;
@@ -44,7 +72,6 @@ app.post('/api/room-status', (req, res) => {
 
         if (targetRoom && targetRoom.gameState === 'CATEGORY_VOTE') {
             let cat1 = 'WWII History', cat2 = 'Primary School', cat3 = 'Pop Culture';
-            
             if (targetRoom.winningGameMode === 'COUNTRY_MONKEY') {
                 cat1 = 'Global Mix'; cat2 = 'Europe & Americas'; cat3 = 'Asia & Africa';
             } else if (targetRoom.winningGameMode === 'EMPOSSDURR') {
@@ -54,18 +81,11 @@ app.post('/api/room-status', (req, res) => {
             } else if (targetRoom.winningGameMode === 'ON_THE_SPECTRUM') {
                 cat1 = 'Numeric Scales'; cat2 = 'Extreme Measures'; cat3 = 'Chrono Orders';
             }
-
-            return res.json({
-                phase: 'CATEGORY_VOTE_PHASE',
-                label1: cat1,
-                label2: cat2,
-                label3: cat3
-            });
+            return res.json({ phase: 'CATEGORY_VOTE_PHASE', label1: cat1, label2: cat2, label3: cat3 });
         }
-        
         return res.json({ phase: 'WAITING' });
     } catch (error) {
-        return res.status(500).json({ error: 'Status tracking error.' });
+        return res.status(500).json({ error: 'Status track exception.' });
     }
 });
 
@@ -77,8 +97,7 @@ async function startServer() {
     try {
         console.log('⏳ Verifying cloud database availability...');
         const result = await pool.query('SELECT COUNT(*) FROM questions;');
-        const questionCount = result.rows[0]?.count || 0;
-        console.log(`✅ [Database Connection Verified] Found ${questionCount} trivia questions waiting in the cloud.`);
+        console.log(`✅ [Database Connection Verified] Ready for production requests.`);
 
         const serverInstance = app.listen(PORT, () => {
             console.log(`===============================================`);
@@ -89,36 +108,27 @@ async function startServer() {
         const wss = new WebSocketServer({ server: serverInstance });
 
         wss.on('connection', (socket) => {
-            console.log('[WebSocket] A venue TV screen layout has opened a raw network socket line.');
-
             socket.on('message', (messageText) => {
                 try {
                     const data = JSON.parse(messageText);
                     
                     if (data.type === 'REGISTER_SCREEN') {
                         const roomCode = data.roomCode;
-                        console.log(`[WebSocket] TV Screen is requesting link authorization for Room: ${roomCode}`);
-
+                        
+                        // Check structural allocation container baseline overrides
                         if (!activeRooms[roomCode]) {
                             activeRooms[roomCode] = {
-                                gameState: 'LOBBY',
-                                players: {},
-                                screens: [],
-                                timerInterval: null,
-                                lobbyTimerInterval: null,
-                                categoryTimerInterval: null,
-                                lobbySecondsLeft: 60,
-                                categorySecondsLeft: 30,
-                                winningGameMode: null,
-                                activeQuestionData: null,
-                                answers: {},
+                                gameState: 'LOBBY', players: {}, screens: [], timerInterval: null,
+                                lobbyTimerInterval: null, categoryTimerInterval: null,
+                                lobbySecondsLeft: 60, categorySecondsLeft: 30, winningGameMode: null,
+                                activeQuestionData: null, answers: {},
                                 votes: { TRIVI_YEAH: 0, COUNTRY_MONKEY: 0, EMPOSSDURR: 0, FLAG_ME_DOWN: 0, ON_THE_SPECTRUM: 0 },
                                 categoryVotes: { CAT_1: 0, CAT_2: 0, CAT_3: 0 }
                             };
                         }
 
                         activeRooms[roomCode].screens.push(socket);
-                        console.log(`✅ [WebSocket] Room ${roomCode} TV screen is officially synced and locked live.`);
+                        console.log(`✅ [WebSocket] Room ${roomCode} TV layout screen explicitly locked live.`);
 
                         socket.send(JSON.stringify({
                             type: 'LEADERBOARD_UPDATE',
@@ -126,12 +136,11 @@ async function startServer() {
                         }));
                     }
                 } catch (err) {
-                    console.error('❌ [Socket Parsing Error]:', err.message);
+                    console.error('❌ [Socket Error]:', err.message);
                 }
             });
 
             socket.on('close', () => {
-                console.log('[WebSocket] A layout screen disconnected from the pipeline loop.');
                 for (const code in activeRooms) {
                     activeRooms[code].screens = activeRooms[code].screens.filter(s => s !== socket);
                 }
