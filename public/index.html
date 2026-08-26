@@ -461,8 +461,7 @@
         let activeLabel2 = "Category 2";
         let activeLabel3 = "Category 3";
 
-         function switchToCategoryVotingUI(winnerModule, label1, label2, label3) {
-            // FIX: Point target handle straight to the isolated stage container node
+       function switchToCategoryVotingUI(winnerModule, label1, label2, label3) {
             const panel = document.getElementById('active-content-stage');
             
             activeLabel1 = label1 || "WWII History";
@@ -471,6 +470,20 @@
 
             const displayGameName = winnerModule.replace('_', ' ').toLowerCase().replace(/\b\w/g, c => c.toUpperCase());
             
+            // 1. DYNAMIC LOWER PANEL CLEANUP: Wipe out the raw QR image image handle from view view
+            const onboardingSlot = document.getElementById('onboarding-text-slot');
+            if (onboardingSlot) {
+                // Find and clear out the parent white wrapping container box cleanly
+                const qrBox = onboardingSlot.previousElementSibling;
+                if (qrBox) qrBox.style.display = "none"; 
+                
+                // Rewrite text blocks to match your sleek new gameplay instruction banner row
+                onboardingSlot.innerHTML = `
+                    <div style="font-size: 1.1rem; font-weight: 600; color: #00e676; letter-spacing: -0.01em; margin-bottom: 2px;">⚡ TYPE "START" TO CONFIRM AND OVERRIDE CLOCK</div>
+                    <div style="font-size: 0.85rem; color: #64748b; font-weight: 500;">When every player submits start, the system skips countdowns instantly.</div>
+                `;
+            }
+
             panel.innerHTML = `
                 <div class="panel-box" style="padding: 40px; flex: 1; display: flex; flex-direction: column; justify-content: center;">
                     <h2 class="panel-title" style="margin-bottom: 8px;">🎮 Winner: ${displayGameName}</h2>
