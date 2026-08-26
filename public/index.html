@@ -324,6 +324,12 @@
                 if (data.type === 'GAME_TIMER_TICK') {
                     document.getElementById('lobby-countdown').innerText = data.secondsLeft;
                 }
+                // Listen for the server's 25s clock expiration to highlight the correct answer choice
+                if (data.type === 'REVEAL_CORRECT_ANSWER') {
+                    document.getElementById('room-status-text').innerText = "Round Evaluation";
+                    document.getElementById('lobby-countdown').innerText = "0s";
+                    highlightCorrectAnswerOnTV(data.correctLetter);
+                }
                 // FIX: Explicitly pass data.label1, data.label2, and data.label3 into the painter!
                 if (data.type === 'TRANSITION_TO_CATEGORY_VOTE') {
                     document.getElementById('room-status-text').innerText = "Category Selection";
@@ -538,34 +544,49 @@
                     <div style="font-size: 1.6rem; font-weight: 600; color: #ffffff; line-height: 1.4; flex: 1; display: flex; align-items: center; margin-bottom: 40px; letter-spacing: -0.01em;">
                         ${questionText}
                     </div>
-
-                    <!-- Sleek, Highly-Scannable 2x2 Answer Layout Matrix Grid -->
+                    
+                    <!-- Added targeted IDs to your 2x2 Answer Grid Layout Matrix -->
                     <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; width: 100%;">
-                        
-                        <div style="background: #1e222b; border: 1px solid #222630; border-radius: 8px; padding: 20px; display: flex; align-items: center; gap: 14px;">
+                        <div id="choice-row-A" style="background: #1e222b; border: 1px solid #222630; border-radius: 8px; padding: 20px; display: flex; align-items: center; gap: 14px; transition: all 0.3s ease;">
                             <span style="background: rgba(0, 230, 118, 0.1); color: #00e676; font-weight: 700; padding: 4px 10px; border-radius: 4px; font-size: 0.9rem;">A</span>
                             <span style="font-size: 1.05rem; font-weight: 500; color: #e2e5e9;">${choiceA}</span>
                         </div>
-
-                        <div style="background: #1e222b; border: 1px solid #222630; border-radius: 8px; padding: 20px; display: flex; align-items: center; gap: 14px;">
+                        <div id="choice-row-B" style="background: #1e222b; border: 1px solid #222630; border-radius: 8px; padding: 20px; display: flex; align-items: center; gap: 14px; transition: all 0.3s ease;">
                             <span style="background: rgba(0, 230, 118, 0.1); color: #00e676; font-weight: 700; padding: 4px 10px; border-radius: 4px; font-size: 0.9rem;">B</span>
                             <span style="font-size: 1.05rem; font-weight: 500; color: #e2e5e9;">${choiceB}</span>
                         </div>
-
-                        <div style="background: #1e222b; border: 1px solid #222630; border-radius: 8px; padding: 20px; display: flex; align-items: center; gap: 14px;">
+                        <div id="choice-row-C" style="background: #1e222b; border: 1px solid #222630; border-radius: 8px; padding: 20px; display: flex; align-items: center; gap: 14px; transition: all 0.3s ease;">
                             <span style="background: rgba(0, 230, 118, 0.1); color: #00e676; font-weight: 700; padding: 4px 10px; border-radius: 4px; font-size: 0.9rem;">C</span>
                             <span style="font-size: 1.05rem; font-weight: 500; color: #e2e5e9;">${choiceC}</span>
                         </div>
-
-                        <div style="background: #1e222b; border: 1px solid #222630; border-radius: 8px; padding: 20px; display: flex; align-items: center; gap: 14px;">
+                        <div id="choice-row-D" style="background: #1e222b; border: 1px solid #222630; border-radius: 8px; padding: 20px; display: flex; align-items: center; gap: 14px; transition: all 0.3s ease;">
                             <span style="background: rgba(0, 230, 118, 0.1); color: #00e676; font-weight: 700; padding: 4px 10px; border-radius: 4px; font-size: 0.9rem;">D</span>
                             <span style="font-size: 1.05rem; font-weight: 500; color: #e2e5e9;">${choiceD}</span>
                         </div>
-
                     </div>
                 </div>
             `;
         }
+        function highlightCorrectAnswerOnTV(correctLetter) {
+            // Find all 4 choice blocks inside our layout container
+            const ids = ['A', 'B', 'C', 'D'];
+            
+            ids.forEach(letter => {
+                // Look for the background rows we drew inside our question canvas grid template
+                const rowNode = document.getElementById(`choice-row-${letter}`) || null;
+                
+                // If it's the winner, turn it bright neon green! Otherwise, dim it out completely.
+                if (letter === correctLetter) {
+                    if (rowNode) {
+                        rowNode.style.background = "rgba(0, 230, 118, 0.08)";
+                        rowNode.style.borderColor = "#00e676";
+                    }
+                } else {
+                    if (rowNode) rowNode.style.opacity = "0.15";
+                }
+            });
+        }
+
         // Trigger dynamic assignment protocols on page wakeup
         initializeDynamicRoomSession();
     </script>
