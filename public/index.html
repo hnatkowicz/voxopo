@@ -363,6 +363,14 @@
                 `;
                 return;
             }
+            //Automatically reveal the text instructions on the main lobby screen!
+            const onboardingSlot = document.getElementById('onboarding-text-slot');
+            if (onboardingSlot && !onboardingSlot.innerHTML.includes('START')) {
+                onboardingSlot.innerHTML = `
+                    <div style="font-size: 1rem; font-weight: 600; color: #00e676; letter-spacing: -0.01em; margin-bottom: 2px;">⚡ TYPE "START" TO CONFIRM AND OVERRIDE LOBBY CLOCK</div>
+                    <div style="font-size: 0.85rem; color: #64748b; font-weight: 500;">When every player submits start, the system skips countdowns instantly.</div>
+                `;
+            }
 
             tbody.innerHTML = '';
             playersList.sort((a, b) => b.score - a.score);
