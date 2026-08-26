@@ -320,13 +320,19 @@
                 if (data.type === 'CATEGORY_TIMER_TICK') {
                     document.getElementById('lobby-countdown').innerText = data.secondsLeft;
                 }
-            // FIX: Explicitly pass data.label1, data.label2, and data.label3 into the painter!
-            if (data.type === 'TRANSITION_TO_CATEGORY_VOTE') {
-                document.getElementById('room-status-text').innerText = "Category Selection";
-                switchToCategoryVotingUI(data.winner, data.label1, data.label2, data.label3);
-            }
+                // FIX: Explicitly pass data.label1, data.label2, and data.label3 into the painter!
+                if (data.type === 'TRANSITION_TO_CATEGORY_VOTE') {
+                    document.getElementById('room-status-text').innerText = "Category Selection";
+                    switchToCategoryVotingUI(data.winner, data.label1, data.label2, data.label3);
+                }
                 if (data.type === 'CATEGORY_VOTE_UPDATE') {
                     updateCategorySubElectionUI(data.votes, data.totalVotes);
+                }
+                // Listen for the server's Category Phase expiration signal to draw the question canvas
+                if (data.type === 'TRANSITION_TO_QUESTION') {
+                    document.getElementById('room-status-text').innerText = "Gameplay Phase";
+                    document.getElementById('lobby-countdown').innerText = "30s"; // Reset banner clock visually
+                    switchToQuestionUI(data.categoryLabel, data.questionText, data.choiceA, data.choiceB, data.choiceC, data.choiceD);
                 }
             };
         }
@@ -512,7 +518,50 @@
             });
         }
 
+        function switchToQuestionUI(categoryLabel, questionText, choiceA, choiceB, choiceC, choiceD) {
+            const panel = document.getElementById('main-trivia-panel');
+            
+            // Overwrite the left panel with an ultra-clean, expansive dark layout structure
+            panel.innerHTML = `
+                <div class="panel-box" style="padding: 50px; flex: 1; display: flex; flex-direction: column; justify-content: space-between; text-align: left; min-height: 480px;">
+                    
+                    <!-- Muted Upper Topic Suffix Header Row -->
+                    <div style="font-size: 0.85rem; font-weight: 600; color: #64748b; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 24px;">
+                        Active Deck: ${categoryLabel}
+                    </div>
 
+                    <!-- Expansive Centered Main Question Canvas Block -->
+                    <div style="font-size: 1.6rem; font-weight: 600; color: #ffffff; line-height: 1.4; flex: 1; display: flex; align-items: center; margin-bottom: 40px; letter-spacing: -0.01em;">
+                        ${questionText}
+                    </div>
+
+                    <!-- Sleek, Highly-Scannable 2x2 Answer Layout Matrix Grid -->
+                    <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; width: 100%;">
+                        
+                        <div style="background: #1e222b; border: 1px solid #222630; border-radius: 8px; padding: 20px; display: flex; align-items: center; gap: 14px;">
+                            <span style="background: rgba(0, 230, 118, 0.1); color: #00e676; font-weight: 700; padding: 4px 10px; border-radius: 4px; font-size: 0.9rem;">A</span>
+                            <span style="font-size: 1.05rem; font-weight: 500; color: #e2e5e9;">${choiceA}</span>
+                        </div>
+
+                        <div style="background: #1e222b; border: 1px solid #222630; border-radius: 8px; padding: 20px; display: flex; align-items: center; gap: 14px;">
+                            <span style="background: rgba(0, 230, 118, 0.1); color: #00e676; font-weight: 700; padding: 4px 10px; border-radius: 4px; font-size: 0.9rem;">B</span>
+                            <span style="font-size: 1.05rem; font-weight: 500; color: #e2e5e9;">${choiceB}</span>
+                        </div>
+
+                        <div style="background: #1e222b; border: 1px solid #222630; border-radius: 8px; padding: 20px; display: flex; align-items: center; gap: 14px;">
+                            <span style="background: rgba(0, 230, 118, 0.1); color: #00e676; font-weight: 700; padding: 4px 10px; border-radius: 4px; font-size: 0.9rem;">C</span>
+                            <span style="font-size: 1.05rem; font-weight: 500; color: #e2e5e9;">${choiceC}</span>
+                        </div>
+
+                        <div style="background: #1e222b; border: 1px solid #222630; border-radius: 8px; padding: 20px; display: flex; align-items: center; gap: 14px;">
+                            <span style="background: rgba(0, 230, 118, 0.1); color: #00e676; font-weight: 700; padding: 4px 10px; border-radius: 4px; font-size: 0.9rem;">D</span>
+                            <span style="font-size: 1.05rem; font-weight: 500; color: #e2e5e9;">${choiceD}</span>
+                        </div>
+
+                    </div>
+                </div>
+            `;
+        }
         // Trigger dynamic assignment protocols on page wakeup
         initializeDynamicRoomSession();
     </script>
