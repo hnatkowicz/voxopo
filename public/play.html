@@ -160,6 +160,35 @@
         </div>
         <div id="category-feedback" class="feedback"></div>
     </div>
+    
+    <!-- SCREEN 4: ULTRA-CLEAN FULL-WIDTH QUESTION ANSWER CONTROLLER -->
+    <div id="question-screen" class="card" style="display: none;">
+        <h1>Active Match Question</h1>
+        <p class="subtitle" style="margin-bottom: 24px;">Tap your final answer selection now</p>
+        
+        <div class="player-badge">
+            🧠 Active Round: <span id="q-badge-emoji">-</span> <span id="q-badge-name" style="font-weight:bold; color:#fff;">-</span>
+        </div>
+
+        <div class="module-list">
+            <!-- Full-width minimalist answer choice rows -->
+            <div class="module-row" id="choice-row-A" onclick="submitTriviaAnswer(this, 'A')">
+                <span style="background: rgba(0, 230, 118, 0.1); color: #00e676; font-weight: 700; padding: 4px 10px; border-radius: 4px; font-size: 0.85rem; margin-right: 12px;">A</span> Answer Selection A
+            </div>
+            <div class="module-row" id="choice-row-B" onclick="submitTriviaAnswer(this, 'B')">
+                <span style="background: rgba(0, 230, 118, 0.1); color: #00e676; font-weight: 700; padding: 4px 10px; border-radius: 4px; font-size: 0.85rem; margin-right: 12px;">B</span> Answer Selection B
+            </div>
+            <div class="module-row" id="choice-row-C" onclick="submitTriviaAnswer(this, 'C')">
+                <span style="background: rgba(0, 230, 118, 0.1); color: #00e676; font-weight: 700; padding: 4px 10px; border-radius: 4px; font-size: 0.85rem; margin-right: 12px;">C</span> Answer Selection C
+            </div>
+            <div class="module-row" id="choice-row-D" onclick="submitTriviaAnswer(this, 'D')">
+                <span style="background: rgba(0, 230, 118, 0.1); color: #00e676; font-weight: 700; padding: 4px 10px; border-radius: 4px; font-size: 0.85rem; margin-right: 12px;">D</span> Answer Selection D
+            </div>
+        </div>
+
+        <!-- Persistent Lockout Selection Display Window Frame -->
+        <div id="question-feedback" class="feedback" style="margin-top: 24px; font-weight: 600; text-align: left; padding: 14px 20px;"></div>
+    </div>
 
     <script>
         let chosenAvatar = '👤';
@@ -235,22 +264,63 @@
                     });
                     const data = await response.json();
                     
-                    if (data && data.phase === 'CATEGORY_VOTE_PHASE') {
-                        document.getElementById('sub-badge-name').innerText = nickname;
-                        document.getElementById('sub-badge-emoji').innerText = chosenAvatar;
+                    if (data && data.reply) {
+                        // PHASE 2 MORPH: Open category election cards
+                        if (data.reply.phase === 'CATEGORY_VOTE_PHASE' && document.getElementById('category-screen').style.display !== "block") {
+                            document.getElementById('sub-badge-name').innerText = nickname;
+                            document.getElementById('sub-badge-emoji').innerText = chosenAvatar;
+                            
+                            document.getElementById('btn-cat1').innerText = data.reply.label1;
+                            document.getElementById('btn-cat2').innerText = data.reply.label2;
+                            document.getElementById('btn-cat3').innerText = data.reply.label3;
+                            
+                            document.getElementById('game-screen').style.display = "none";
+                            document.getElementById('category-screen').style.display = "block";
+                        }
                         
-                        document.getElementById('btn-cat1').innerText = data.label1;
-                        document.getElementById('btn-cat2').innerText = data.label2;
-                        document.getElementById('btn-cat3').innerText = data.label3;
-                        
-                        document.getElementById('game-screen').style.display = "none";
-                        document.getElementById('category-screen').style.display = "block";
-                        clearInterval(roomStateTrackerInterval);
+                        // PHASE 3 MORPH: Open active gameplay answer grid layout cards automatically!
+                        if (data.reply.phase === 'GAME_ROUND_PHASE') {
+                            document.getElementById('q-badge-name').innerText = nickname;
+                            document.getElementById('q-badge-emoji').innerText = chosenAvatar;
+                            
+                            document.getElementById('category-screen').style.display = "none";
+                            document.getElementById('game-screen').style.display = "none";
+                            document.getElementById('question-screen').style.display = "block";
+                            clearInterval(roomStateTrackerInterval); // Kill background poller once game starts
+                        }
                     }
                 } catch (e) {
                     console.error("Poller stall.");
                 }
             }, 1000);
+        }
+
+        async function submitTriviaAnswer(element, selectedLetter) {
+            // 1. Instantly dim all options and highlight ONLY the tapped selection row row
+            const rows = document.getElementById('question-screen').getElementsByClassName("module-row");
+            for (let i = 0; i < rows.length; i++) { 
+                rows[i].classList.remove("selected");
+                rows[i].style.opacity = "0.3"; // Mute non-chosen elements visually
+            }
+            element.classList.add("selected");
+            element.style.opacity = "1"; // Max out contrast on the chosen row block
+
+            const feedback = document.getElementById('question-feedback');
+            const registeredName = localStorage.getItem('randomania_nickname') || 'test-handset';
+            
+            // 2. Write a persistent, rock-solid lock statement statement onto the screen box frame
+            showFeedback(feedback, `📡 LOCKED IN: You selected Option ${selectedLetter}`, "rgba(0,230,118,0.06)", "#00e676", "rgba(0,230,118,0.15)");
+
+            try {
+                // 3. Fire the response parameter text string straight up the HTTP POST channel to the server
+                await fetch('/api/message', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ From: registeredName, Body: selectedLetter })
+                });
+            } catch (error) {
+                showFeedback(feedback, "❌ Transmission failure.", "rgba(255,71,87,0.06)", "#ff4757", "rgba(255,71,87,0.1)");
+            }
         }
 
         async function submitCategorySubVote(element, categoryKey) {
