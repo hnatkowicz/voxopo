@@ -211,46 +211,47 @@
     </div>
 
     <div class="split-container">
-        <div class="left-column" id="main-trivia-panel">
-            <div class="panel-box">
-                <h2 class="panel-title">Active Module Election</h2>
-                <div style="display: flex; flex-direction: column;">
-                    <div class="vote-row">
-                        <div class="vote-meta"><span>Trivi-yeah!</span><span id="vcount-TRIVI_YEAH" style="color: #64748b;">0 votes (0%)</span></div>
-                        <div class="progress-track"><div id="vbar-TRIVI_YEAH" class="progress-fill"></div></div>
-                    </div>
-                    <div class="vote-row">
-                        <div class="vote-meta"><span>Country Monkey</span><span id="vcount-COUNTRY_MONKEY" style="color: #64748b;">0 votes (0%)</span></div>
-                        <div class="progress-track"><div id="vbar-COUNTRY_MONKEY" class="progress-fill" style="background: #ffa500;"></div></div>
-                    </div>
-                    <div class="vote-row">
-                        <div class="vote-meta"><span>EmpossDurr</span><span id="vcount-EMPOSSDURR" style="color: #64748b;">0 votes (0%)</span></div>
-                        <div class="progress-track"><div id="vbar-EMPOSSDURR" class="progress-fill" style="background: #ff4757;"></div></div>
-                    </div>
-                    <div class="vote-row">
-                        <div class="vote-meta"><span>Flag Me Down</span><span id="vcount-FLAG_ME_DOWN" style="color: #64748b;">0 votes (0%)</span></div>
-                        <div class="progress-track"><div id="vbar-FLAG_ME_DOWN" class="progress-fill" style="background: #2d9cdb;"></div></div>
-                    </div>
-                    <div class="vote-row">
-                        <div class="vote-meta"><span>On The Spectrum</span><span id="vcount-ON_THE_SPECTRUM" style="color: #64748b;">0 votes (0%)</span></div>
-                        <div class="progress-track"><div id="vbar-ON_THE_SPECTRUM" class="progress-fill" style="background: #bb6bd9;"></div></div>
+        <!-- LEFT COLUMN: Operations, Animations, and Onboarding HUD Zone -->
+        <div class="left-column" id="main-trivia-panel" style="display: flex; flex-direction: column; flex: 65;">
+            
+            <!-- THE ACTIVE STAGE CONTAINER: Isolated handle for code layout swaps -->
+            <div id="active-content-stage" style="display: flex; flex-direction: column; flex: 1;">
+                <div class="panel-box">
+                    <h2 class="panel-title">Active Module Election</h2>
+                    <div style="display: flex; flex-direction: column;">
+                        <div class="vote-row">
+                            <div class="vote-meta"><span>Trivi-yeah!</span><span id="vcount-TRIVI_YEAH" style="color: #64748b;">0 votes (0%)</span></div>
+                            <div class="progress-track"><div id="vbar-TRIVI_YEAH" class="progress-fill"></div></div>
+                        </div>
+                        <div class="vote-row">
+                            <div class="vote-meta"><span>Country Monkey</span><span id="vcount-COUNTRY_MONKEY" style="color: #64748b;">0 votes (0%)</span></div>
+                            <div class="progress-track"><div id="vbar-COUNTRY_MONKEY" class="progress-fill" style="background: #ffa500;"></div></div>
+                        </div>
+                        <div class="vote-row">
+                            <div class="vote-meta"><span>EmpossDurr</span><span id="vcount-EMPOSSDURR" style="color: #64748b;">0 votes (0%)</span></div>
+                            <div class="progress-track"><div id="vbar-EMPOSSDURR" class="progress-fill" style="background: #ff4757;"></div></div>
+                        </div>
+                        <div class="vote-row">
+                            <div class="vote-meta"><span>Flag Me Down</span><span id="vcount-FLAG_ME_DOWN" style="color: #64748b;">0 votes (0%)</span></div>
+                            <div class="progress-track"><div id="vbar-FLAG_ME_DOWN" class="progress-fill" style="background: #2d9cdb;"></div></div>
+                        </div>
+                        <div class="vote-row">
+                            <div class="vote-meta"><span>On The Spectrum</span><span id="vcount-ON_THE_SPECTRUM" style="color: #64748b;">0 votes (0%)</span></div>
+                            <div class="progress-track"><div id="vbar-ON_THE_SPECTRUM" class="progress-fill" style="background: #bb6bd9;"></div></div>
+                        </div>
                     </div>
                 </div>
             </div>
-            <!-- MODERN HIGH-UTILITY ONBOARDING PANEL (Nested in Left Column) -->
-            <div style="background: #14161d; border: 1px solid #222630; border-radius: 12px; padding: 20px 24px; margin-top: 24px; display: flex; align-items: center; gap: 20px; box-sizing: border-box; position: relative; min-height: 114px;">
-                
-                <!-- Local QR Asset Node -->
+
+            <!-- MODERN HIGH-UTILITY ONBOARDING PANEL (Stays locked permanently!) -->
+            <div style="background: #14161d; border: 1px solid #222630; border-radius: 12px; padding: 20px 24px; margin-top: 24px; display: flex; align-items: center; gap: 20px; box-sizing: border-box; position: relative; min-height: 114px; flex-shrink: 0;">
                 <div style="background: #ffffff; padding: 2px; border-radius: 8px; display: flex; justify-content: center; align-items: center; width: 96px; height: 96px; box-sizing: border-box; flex-shrink: 0; z-index: 10; margin-right: 12px;">
                     <img src="qr.png" alt="Scan to Play" style="width: 100%; height: 100%; object-fit: contain;">
                 </div>
-                
-                <!-- THE TARGET CONTROLLER TEXT SLOT FOR DYNAMIC SWAPPING -->
                 <div id="onboarding-text-slot" style="text-align: left; flex: 1; transition: opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1); opacity: 1;">
-                    <div style="font-size: 1rem; font-weight: 600; color: #ffffff; margin-bottom: 4px; letter-spacing: -0.01em;">SCAN TO JOIN THE LOBBY NOW</div>
-                    <div style="font-size: 0.85rem; color: #64748b; font-weight: 500;">Or open your phone browser and type: <br><span style="color: #00e676; font-weight: 600;">https://voxopo.onrender.com/play.html</span></div>
+                    <div style="font-size: 1rem; font-weight: 600; color: #ffffff; margin-bottom: 4px; letter-spacing: -0.01em;">SCAN TO JOIN THE LOBBY MATCH NOW</div>
+                    <div style="font-size: 0.85rem; color: #64748b; font-weight: 500;">Or open your phone browser and type: <span style="color: #00e676; font-weight: 600;">://onrender.com</span></div>
                 </div>
-
             </div>
 
         </div>
