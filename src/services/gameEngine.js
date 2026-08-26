@@ -19,54 +19,58 @@ function broadcastToRoom(roomCode, payload) {
     }
 }
 
-// Automated Lobby Countdown Clock Machinery (Upgraded with Tie-Breaker & Phase 2 Transition Logic)
+// Automated Lobby Countdown Clock Machinery (Phase 1)
 function startLobbyCountdown(roomCode) {
     const room = activeRooms[roomCode];
     if (!room) return;
 
     room.lobbySecondsLeft = 60;
-    
     if (room.lobbyTimerInterval) return;
 
     room.lobbyTimerInterval = setInterval(() => {
         room.lobbySecondsLeft--;
         
         if (room.lobbySecondsLeft > 0) {
-            broadcastToRoom(roomCode, {
-                type: 'LOBBY_TIMER_TICK',
-                secondsLeft: room.lobbySecondsLeft + "s"
-            });
+            broadcastToRoom(roomCode, { type: 'LOBBY_TIMER_TICK', secondsLeft: room.lobbySecondsLeft + "s" });
         } else {
             clearInterval(room.lobbyTimerInterval);
             room.lobbyTimerInterval = null;
             
-            // 1. CHOOSE THE WINNING MODULE WITH CHRONOLOGICAL TIE-BREAKER
             const winningModule = calculateElectionWinner(room);
             room.gameState = 'CATEGORY_VOTE';
             room.winningGameMode = winningModule;
             
-            console.log(`[Lobby Clock] Election closed. Winning module: ${winningModule}. Shifting to Category Vote.`);
+            let cat1 = 'WWII History', cat2 = 'Primary School', cat3 = 'Pop Culture';
+            if (winningModule === 'COUNTRY_MONKEY') {
+                cat1 = 'Global Mix'; cat2 = 'Europe & Americas'; cat3 = 'Asia & Africa';
+            } else if (winningModule === 'EMPOSSDURR') {
+                cat1 = 'Standard Circle'; cat2 = 'Traitor Pack'; cat3 = 'Chaos Mode';
+            } else if (winningModule === 'FLAG_ME_DOWN') {
+                cat1 = 'Modern Nations'; cat2 = 'Historical Standards'; cat3 = 'Bizarre Banners';
+            } else if (winningModule === 'ON_THE_SPECTRUM') {
+                cat1 = 'Numeric Scales'; cat2 = 'Extreme Measures'; cat3 = 'Chrono Orders';
+            }
+            
+            console.log(`[Lobby Clock] Election closed. Winning module: ${winningModule}.`);
 
-            // 2. BROADCAST PHASE 2 MORPH COMMAND TO TV SCREEN
             broadcastToRoom(roomCode, {
                 type: 'TRANSITION_TO_CATEGORY_VOTE',
                 winner: winningModule,
-                secondsLeft: "30s"
+                label1: cat1,
+                label2: cat2,
+                label3: cat3
             });
 
-            // 3. START THE 30-SECOND MICRO CATEGORY TIMER LOOP
             startCategoryCountdown(roomCode);
         }
     }, 1000);
 }
 
-// Helper math block to count votes and break stalemates by giving more weight to earlier entries
 function calculateElectionWinner(room) {
     const votes = room.votes;
     let maxVotes = -1;
     let candidates = [];
 
-    // Find the highest vote score
     for (const mode in votes) {
         if (votes[mode] > maxVotes) {
             maxVotes = votes[mode];
@@ -75,13 +79,10 @@ function calculateElectionWinner(room) {
             candidates.push(mode);
         }
     }
-
-    // If there's a single clear winner, return it immediately
     if (candidates.length === 1) return candidates[0];
 
-    // TIE-BREAKER: Scan player profiles chronologically to find which tied module had the earliest logged entry
-    let earliestTime = new Date('2030-01-01'); // Safe future baseline date
-    let tieBreakingWinner = candidates[0]; // Fallback fallback
+    let earliestTime = new Date('2030-01-01');
+    let tieBreakingWinner = candidates[0];
 
     Object.values(room.players).forEach(player => {
         if (candidates.includes(player.vote)) {
@@ -92,11 +93,10 @@ function calculateElectionWinner(room) {
             }
         }
     });
-
     return tieBreakingWinner;
 }
 
-// Upgraded Category Clock Tracker explicitly connected to the broadcast agent
+// Automated Micro Category Countdown Timer Loop (Phase 2)
 function startCategoryCountdown(roomCode) {
     const room = activeRooms[roomCode];
     if (!room) return;
@@ -104,7 +104,6 @@ function startCategoryCountdown(roomCode) {
     let count = 30;
     room.categorySecondsLeft = count;
 
-    // Clear any stale legacy interval states running in background tasks
     if (room.categoryTimerInterval) clearInterval(room.categoryTimerInterval);
 
     room.categoryTimerInterval = setInterval(() => {
@@ -112,54 +111,88 @@ function startCategoryCountdown(roomCode) {
         room.categorySecondsLeft = count;
         
         if (count > 0) {
-            // Push the category ticks straight up the WebSocket pipeline to drive your top HUD banner!
-            broadcastToRoom(roomCode, {
-                type: 'CATEGORY_TIMER_TICK',
-                secondsLeft: count + "s"
-            });
+            broadcastToRoom(roomCode, { type: 'CATEGORY_TIMER_TICK', secondsLeft: count + "s" });
         } else {
             clearInterval(room.categoryTimerInterval);
             room.categoryTimerInterval = null;
-            room.gameState = 'ACTIVE_GAME';
             
+            // 1. TALLY SUB-VOTES WITH PURE RANDOM COIN-FLIP TIE BREAKER!
+            const winningCategoryKey = calculateCategoryWinner(room);
+            room.gameState = 'GAME_ROUND';
+            
+            // Map keys back to beautiful localized strings for display
+            let labelMap = { CAT_1: 'WWII History', CAT_2: 'Primary School', CAT_3: 'Pop Culture' };
+            if (room.winningGameMode === 'COUNTRY_MONKEY') {
+                labelMap = { CAT_1: 'Global Mix', CAT_2: 'Europe & Americas', CAT_3: 'Asia & Africa' };
+            }
+            const activeDeckName = labelMap[winningCategoryKey] || 'General Deck';
+
+            console.log(`[Category Clock] Sub-election closed. Winner: ${winningCategoryKey} (${activeDeckName}).`);
+
+            // 2. BROADCAST THE MORPH COMMAND WITH CUSTOM THEME DUMMY TRIVIA PACKET
             broadcastToRoom(roomCode, {
-                type: 'CATEGORY_TIMER_TICK',
-                secondsLeft: "MATCH START!"
+                type: 'TRANSITION_TO_QUESTION',
+                categoryLabel: activeDeckName,
+                questionText: "Which country was the first to implement radar technology defensively during the structural operations of World War II?",
+                choiceA: "Great Britain",
+                choiceB: "Germany",
+                choiceC: "United States",
+                choiceD: "Japan"
             });
-            console.log(`[Category Clock] Room ${roomCode} micro category voting closed.`);
+
+            // 3. LAUNCH THE PREMIUM 25-SECOND ROUND COUNTDOWN TIMING ENGINE!
+            startGameRoundCountdown(roomCode);
         }
     }, 1000);
 }
 
+// Pure Random Tie-Breaker Tracker
+function calculateCategoryWinner(room) {
+    const votes = room.categoryVotes;
+    let maxVotes = -1;
+    let candidates = [];
 
-function startQuestionCountdown(roomCode, questionData) {
+    for (const key in votes) {
+        if (votes[key] > maxVotes) {
+            maxVotes = votes[key];
+            candidates = [key];
+        } else if (votes[key] === maxVotes) {
+            candidates.push(key);
+        }
+    }
+    
+    // If a clean draw happens, pick a candidate string out of the array completely at random!
+    const randomIndex = Math.floor(Math.random() * candidates.length);
+    return candidates[randomIndex];
+}
+
+// Active Gameplay Phase Timer Loop (Phase 3 - Set to exactly 25 seconds!)
+function startGameRoundCountdown(roomCode) {
     const room = activeRooms[roomCode];
     if (!room) return;
 
-    room.gameState = 'QUESTION';
-    room.activeQuestionData = questionData;
-    room.answers = {};
-
-    if (room.timerInterval) clearInterval(room.timerInterval);
-
-    let count = 30;
+    let count = 25; // 👈 25 Seconds rigidly configured configured!
     
-    broadcastToRoom(roomCode, {
-        type: 'NEW_QUESTION',
-        number: questionData.question_number,
-        text: questionData.question_text,
-        visualAsset: questionData.visual_asset,
-        gameMode: questionData.game_mode
-    });
+    if (room.timerInterval) clearInterval(room.timerInterval);
 
     room.timerInterval = setInterval(() => {
         count--;
         if (count > 0) {
-            broadcastToRoom(roomCode, { type: 'TIMER_TICK', secondsLeft: count + "s" });
+            // Push active game ticks to drive the top banner clock
+            broadcastToRoom(roomCode, {
+                type: 'GAME_TIMER_TICK',
+                secondsLeft: count + "s"
+            });
         } else {
             clearInterval(room.timerInterval);
-            room.gameState = 'LOBBY';
-            broadcastToRoom(roomCode, { type: 'TIMER_TICK', secondsLeft: "TIME'S UP!" });
+            room.timerInterval = null;
+            room.gameState = 'ROUND_REVEAL';
+            
+            broadcastToRoom(roomCode, {
+                type: 'GAME_TIMER_TICK',
+                secondsLeft: "TIME'S UP!"
+            });
+            console.log(`[Game Round Clock] Round countdown finished for Room ${roomCode}.`);
         }
     }, 1000);
 }
@@ -167,52 +200,26 @@ function startQuestionCountdown(roomCode, questionData) {
 export function handleIncomingMessage(fromPhone, bodyText) {
     const cleanText = bodyText.trim();
     const parts = cleanText.split(' ');
-
-        // FIX: Intercept the phone's background poll request and return the active game phase instantly
-    if (cleanText.startsWith('ROOM_STATE_CHECK')) {
-        const checkRoomCode = parts[1];
-        const targetRoom = activeRooms[checkRoomCode];
-        if (targetRoom && targetRoom.gameState === 'CATEGORY_VOTE') {
-            return 'CATEGORY_VOTE_PHASE';
-        }
-        return 'WAITING';
-    }
-
-    if (parts.length === 0 || !parts || !parts) {
-        return "⚠️ Error: Received an empty input payload.";
-    }
-
+    
+    if (parts.length === 0 || !parts) return "⚠️ Error: Empty packet payload.";
     const firstWord = parts[0].toUpperCase();
 
-    // 1. Handle incoming room check-in / player registration fields
     if (!isNaN(firstWord) && firstWord.length === 4) {
         const roomCode = firstWord;
         
         if (!activeRooms[roomCode]) {
             activeRooms[roomCode] = {
-                gameState: 'LOBBY',
-                players: {},
-                screens: [],
-                timerInterval: null,
-                lobbyTimerInterval: null,
-                categoryTimerInterval: null,
-                lobbySecondsLeft: 60,
-                categorySecondsLeft: 30,
-                winningGameMode: null,
-                activeQuestionData: null,
-                answers: {},
+                gameState: 'LOBBY', players: {}, screens: [], timerInterval: null,
+                lobbyTimerInterval: null, categoryTimerInterval: null,
+                lobbySecondsLeft: 60, categorySecondsLeft: 30, winningGameMode: null,
+                activeQuestionData: null, answers: {},
                 votes: { TRIVI_YEAH: 0, COUNTRY_MONKEY: 0, EMPOSSDURR: 0, FLAG_ME_DOWN: 0, ON_THE_SPECTRUM: 0 },
-                categoryVotes: { CAT_1: 0, CAT_2: 0, CAT_3: 0 } // Sub-vote counters container initialization
+                categoryVotes: { CAT_1: 0, CAT_2: 0, CAT_3: 0 }
             };
-            console.log(`[Room Engine] Initialized Room Container: ${roomCode}`);
         }
 
         const currentRoom = activeRooms[roomCode];
-
-        // LATE REGISTRATION SAFEGUARD SHIELD: If lobby clock ended, lock the door out!
-        if (currentRoom.gameState !== 'LOBBY') {
-            return "⚠️ Registration closed! A match is currently initializing. Please stand by for Round 2.";
-        }
+        if (currentRoom.gameState !== 'LOBBY') return "⚠️ Registration closed! Match active.";
 
         if (parts.length >= 4) {
             parts.shift();
@@ -220,57 +227,30 @@ export function handleIncomingMessage(fromPhone, bodyText) {
             const playerEmoji = parts.pop() || '👤';
             const playerNickname = parts.join(' ').trim();
 
-            if (!playerNickname) {
-                return "⚠️ Setup Error: Nickname field cannot be blank!";
-            }
-
-            if (currentRoom.players[playerNickname]) {
-                return `⚠️ Name "${playerNickname}" is already taken in Room ${roomCode}! Please try a different nickname.`;
-            }
+            if (!playerNickname) return "⚠️ Setup Error: Blank nickname field.";
+            if (currentRoom.players[playerNickname]) return `⚠️ Name taken inside Room ${roomCode}.`;
 
             currentRoom.players[playerNickname] = {
-                name: playerNickname,
-                emoji: playerEmoji,
-                vote: votedModule,
-                categoryVote: null, // Prep placeholder variable for micro phase selection
-                score: 0,
-                joinedAt: new Date() // The precise millisecond clock timestamp anchor!
+                name: playerNickname, emoji: playerEmoji, vote: votedModule, categoryVote: null, score: 0, joinedAt: new Date()
             };
 
             currentRoom.votes = { TRIVI_YEAH: 0, COUNTRY_MONKEY: 0, EMPOSSDURR: 0, FLAG_ME_DOWN: 0, ON_THE_SPECTRUM: 0 };
             const playersArray = Object.values(currentRoom.players);
             
             playersArray.forEach(p => {
-                if (currentRoom.votes[p.vote] !== undefined) {
-                    currentRoom.votes[p.vote]++;
-                }
+                if (currentRoom.votes[p.vote] !== undefined) currentRoom.votes[p.vote]++;
             });
 
-            console.log(`[Lobby Engine] Player "${playerNickname}" joined. Tallies:`, currentRoom.votes);
-
-            broadcastToRoom(roomCode, {
-                type: 'LEADERBOARD_UPDATE',
-                players: playersArray
-            });
-
-            broadcastToRoom(roomCode, {
-                type: 'VOTE_UPDATE',
-                votes: currentRoom.votes,
-                totalVotes: playersArray.length
-            });
+            broadcastToRoom(roomCode, { type: 'LEADERBOARD_UPDATE', players: playersArray });
+            broadcastToRoom(roomCode, { type: 'VOTE_UPDATE', votes: currentRoom.votes, totalVotes: playersArray.length });
 
             startLobbyCountdown(roomCode);
+            broadcastToRoom(roomCode, { type: 'LOBBY_TIMER_TICK', secondsLeft: "60s" });
 
-            broadcastToRoom(roomCode, {
-                type: 'LOBBY_TIMER_TICK',
-                secondsLeft: "60s"
-            });
-
-            return `Welcome to RandoMania, ${playerNickname}! Your registration and vote have been logged live.`;
+            return `Welcome to RandoMania, ${playerNickname}! Entry logged live.`;
         }
     }
 
-    // 2. Global cross-reference search to locate room container by Player Name tracking key
     let associatedRoomCode = null;
     for (const code in activeRooms) {
         if (activeRooms[code].players[fromPhone]) {
@@ -278,21 +258,16 @@ export function handleIncomingMessage(fromPhone, bodyText) {
             break;
         }
     }
-
-    if (!associatedRoomCode) {
-        return "⚠️ Setup Warning: Log into a live room session first from the main lobby gate card screen.";
-    }
+    if (!associatedRoomCode) return "⚠️ Setup Warning: Join a live room first.";
 
     const currentRoom = activeRooms[associatedRoomCode];
     const player = currentRoom.players[fromPhone];
 
-    // NEW: Handle Micro Category sub-voting inputs during CATEGORY_VOTE phase windows
     if (currentRoom.gameState === 'CATEGORY_VOTE') {
         const choice = cleanText.toUpperCase();
         if (['CAT_1', 'CAT_2', 'CAT_3'].includes(choice)) {
             player.categoryVote = choice;
 
-            // Recalculate micro vote progress tracks
             currentRoom.categoryVotes = { CAT_1: 0, CAT_2: 0, CAT_3: 0 };
             const activePlayers = Object.values(currentRoom.players);
             let totalSubVotes = 0;
@@ -304,29 +279,19 @@ export function handleIncomingMessage(fromPhone, bodyText) {
                 }
             });
 
-            // Stream micro percentages instantly up the web socket line to repaint bars
             broadcastToRoom(associatedRoomCode, {
                 type: 'CATEGORY_VOTE_UPDATE',
                 votes: currentRoom.categoryVotes,
                 totalVotes: totalSubVotes
             });
 
-            return `Got it, ${player.name}! Your sub-category vote for ${choice} has been counted.`;
+            return `Got it, ${player.name}! Vote counted.`;
         }
     }
 
-    // 3. Process game host operation administration commands
-    if (cleanText.toUpperCase() === 'START') {
-        executeDatabaseQuery(associatedRoomCode);
-        return "🚀 Initializing selected game module framework... Look up at the TV screen canvas!";
-    }
-
-    // 4. Handle default incoming trivia response submissions based on active rules
-    if (currentRoom.gameState !== 'QUESTION') {
-        return `Sorry, ${player.name}, the response submission window is closed right now!`;
-    }
-
-    return `Got it, ${player.name}! Input logged securely. Stand by for round evaluation.`;
+    if (cleanText.toUpperCase() === 'START') return "🚀 Framework active! Watch the TV screen canvas.";
+    if (currentRoom.gameState !== 'QUESTION') return `Sorry, ${player.name}, response gateway closed.`;
+    return `Got it, ${player.name}! Input logged securely.`;
 }
 
 async function executeDatabaseQuery(roomCode) {
@@ -341,3 +306,4 @@ async function executeDatabaseQuery(roomCode) {
         console.error('❌ [Neon SQL Engine Crash]:', err.message);
     }
 }
+
