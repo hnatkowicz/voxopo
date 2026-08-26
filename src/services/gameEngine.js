@@ -111,16 +111,15 @@ function startCategoryCountdown(roomCode) {
         room.categorySecondsLeft = count;
         
         if (count > 0) {
-            broadcastToRoom(roomCode, { type: 'CATEGORY_TIMER_TICK', secondsLeft: count + " s" });
+            broadcastToRoom(roomCode, { type: 'CATEGORY_TIMER_TICK', secondsLeft: count + "s" });
         } else {
             clearInterval(room.categoryTimerInterval);
             room.categoryTimerInterval = null;
             
-            // 1. TALLY SUB-VOTES WITH PURE RANDOM COIN-FLIP TIE BREAKER!
             const winningCategoryKey = calculateCategoryWinner(room);
-            room.gameState = 'GAME_ROUND';
+            room.gameState = 'QUESTION'; // Transition cleanly to our active question phase
+            room.answers = {}; // Reset answer array memory storage buckets for the fresh round
             
-            // Map keys back to beautiful localized strings for display
             let labelMap = { CAT_1: 'WWII History', CAT_2: 'Primary School', CAT_3: 'Pop Culture' };
             if (room.winningGameMode === 'COUNTRY_MONKEY') {
                 labelMap = { CAT_1: 'Global Mix', CAT_2: 'Europe & Americas', CAT_3: 'Asia & Africa' };
@@ -129,7 +128,6 @@ function startCategoryCountdown(roomCode) {
 
             console.log(`[Category Clock] Sub-election closed. Winner: ${winningCategoryKey} (${activeDeckName}).`);
 
-            // 2. BROADCAST THE MORPH COMMAND WITH CUSTOM THEME DUMMY TRIVIA PACKET
             broadcastToRoom(roomCode, {
                 type: 'TRANSITION_TO_QUESTION',
                 categoryLabel: activeDeckName,
@@ -140,13 +138,11 @@ function startCategoryCountdown(roomCode) {
                 choiceD: "Japan"
             });
 
-            // 3. LAUNCH THE PREMIUM 25-SECOND ROUND COUNTDOWN TIMING ENGINE!
             startGameRoundCountdown(roomCode);
         }
     }, 1000);
 }
 
-// Pure Random Tie-Breaker Tracker
 function calculateCategoryWinner(room) {
     const votes = room.categoryVotes;
     let maxVotes = -1;
@@ -160,45 +156,52 @@ function calculateCategoryWinner(room) {
             candidates.push(key);
         }
     }
-    
-    // If a clean draw happens, pick a candidate string out of the array completely at random!
     const randomIndex = Math.floor(Math.random() * candidates.length);
     return candidates[randomIndex];
 }
 
-// Active Gameplay Phase Timer Loop (Phase 3 - Set to exactly 25 seconds!)
+// Active Gameplay Phase Timer Loop (Phase 3 - 25-Second Active Clock Engine)
 function startGameRoundCountdown(roomCode) {
     const room = activeRooms[roomCode];
     if (!room) return;
 
-    let count = 25; // 👈 25 Seconds rigidly configured configured!
-    
+    let count = 25; 
     if (room.timerInterval) clearInterval(room.timerInterval);
 
     room.timerInterval = setInterval(() => {
         count--;
         if (count > 0) {
-            // Push active game ticks to drive the top banner clock
-            broadcastToRoom(roomCode, {
-                type: 'GAME_TIMER_TICK',
-                secondsLeft: count + " s"
-            });
+            broadcastToRoom(roomCode, { type: 'GAME_TIMER_TICK', secondsLeft: count + "s" });
         } else {
-            clearInterval(room.timerInterval);
-            room.timerInterval = null;
-            room.gameState = 'ROUND_REVEAL';
-            
-            broadcastToRoom(roomCode, { type: 'GAME_TIMER_TICK', secondsLeft: "TIME'S UP!" });
-            
-            // FIX: Broadcast the answer reveal command down the pipeline instantly when time runs dry!
-            broadcastToRoom(roomCode, {
-                type: 'REVEAL_CORRECT_ANSWER',
-                correctLetter: "A"
-            });
-            
-            console.log(`[Game Round Clock] Round countdown finished for Room ${roomCode}. Broadcasted answer reveal.`);
+            // Force standard clock runtime expiration reveal if time runs out naturally
+            evaluateRoundAndRevealAnswer(roomCode);
         }
     }, 1000);
+}
+
+// Unified Answer Reveal Engine (Triggers on Timer Runout OR when all player votes lock!)
+function evaluateRoundAndRevealAnswer(roomCode) {
+    const room = activeRooms[roomCode];
+    if (!room) return;
+
+    // Clear background interval clocks instantly to prevent double-firing crashes
+    if (room.timerInterval) {
+        clearInterval(room.timerInterval);
+        room.timerInterval = null;
+    }
+
+    room.gameState = 'ROUND_REVEAL';
+    
+    // Announce timer completion on the visual top HUD banner layout
+    broadcastToRoom(roomCode, { type: 'GAME_TIMER_TICK', secondsLeft: "TIME'S UP!" });
+    
+    // Broadcast answer reveal command (Historical Winner: Option A - Great Britain)
+    broadcastToRoom(roomCode, {
+        type: 'REVEAL_CORRECT_ANSWER',
+        correctLetter: "A"
+    });
+    
+    console.log(`[Match Engine] Round closed for Room ${roomCode}. All choices frozen and compiled.`);
 }
 
 export function handleIncomingMessage(fromPhone, bodyText) {
@@ -267,6 +270,7 @@ export function handleIncomingMessage(fromPhone, bodyText) {
     const currentRoom = activeRooms[associatedRoomCode];
     const player = currentRoom.players[fromPhone];
 
+    // Handle Category Sub-Voting Window (Phase 2)
     if (currentRoom.gameState === 'CATEGORY_VOTE') {
         const choice = cleanText.toUpperCase();
         if (['CAT_1', 'CAT_2', 'CAT_3'].includes(choice)) {
@@ -293,21 +297,29 @@ export function handleIncomingMessage(fromPhone, bodyText) {
         }
     }
 
-    if (cleanText.toUpperCase() === 'START') return "🚀 Framework active! Watch the TV screen canvas.";
-    if (currentRoom.gameState !== 'QUESTION') return `Sorry, ${player.name}, response gateway closed.`;
-    return `Got it, ${player.name}! Input logged securely.`;
-}
+    // Handle Active Question Submission Input Locking Window (Phase 3)
+    if (currentRoom.gameState === 'QUESTION') {
+        const answerChoice = cleanText.toUpperCase();
+        if (['A', 'B', 'C', 'D'].includes(answerChoice)) {
+            
+            // Register or overwrite the player's active answer selection in memory maps
+            currentRoom.answers[fromPhone] = answerChoice;
+            
+            const totalPlayersCount = Object.keys(currentRoom.players).length;
+            const totalAnswersLogged = Object.keys(currentRoom.answers).length;
 
-async function executeDatabaseQuery(roomCode) {
-    try {
-        const result = await pool.query('SELECT * FROM questions WHERE question_number = 1;');
-        if (result.rows.length > 0) {
-            startQuestionCountdown(roomCode, result.rows);
-        } else {
-            console.warn("❌ Database response warning: Question #1 data target not found.");
+            console.log(`[Match Engine] Submission received from ${player.name}: "${answerChoice}". Total logged: ${totalAnswersLogged}/${totalPlayersCount}`);
+
+            // INTERRUPT TRIGGER CHECK: If every registered player has logged an answer, end the timer NOW!
+            if (totalAnswersLogged === totalPlayersCount) {
+                console.log(`🚀 [Match Engine] Final submission secured! Blowing out countdown loop fields immediately.`);
+                evaluateRoundAndRevealAnswer(associatedRoomCode);
+            }
+
+            return `Got it, ${player.name}! Input logged securely.`;
         }
-    } catch (err) {
-        console.error('❌ [Neon SQL Engine Crash]:', err.message);
     }
-}
 
+    if (cleanText.toUpperCase() === 'START') return "🚀 Framework active! Watch the TV screen canvas.";
+    return `Sorry, ${player.name}, response gateway closed right now.`;
+}
