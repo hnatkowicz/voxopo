@@ -461,10 +461,10 @@
         let activeLabel2 = "Category 2";
         let activeLabel3 = "Category 3";
 
-        function switchToCategoryVotingUI(winnerModule, label1, label2, label3) {
-            const panel = document.getElementById('main-trivia-panel');
+         function switchToCategoryVotingUI(winnerModule, label1, label2, label3) {
+            // FIX: Point target handle straight to the isolated stage container node
+            const panel = document.getElementById('active-content-stage');
             
-            // Lock the incoming server strings permanently into our global script memory maps
             activeLabel1 = label1 || "WWII History";
             activeLabel2 = label2 || "Primary School";
             activeLabel3 = label3 || "Pop Culture";
@@ -473,11 +473,10 @@
             
             panel.innerHTML = `
                 <div class="panel-box" style="padding: 40px; flex: 1; display: flex; flex-direction: column; justify-content: center;">
-                    <h2 class="panel-title" style="margin-bottom: 8px;">Selection: ${displayGameName}</h2>
+                    <h2 class="panel-title" style="margin-bottom: 8px;">🎮 Winner: ${displayGameName}</h2>
                     <p style="color: #64748b; font-size: 0.95rem; margin: 0 0 32px 0; font-weight: 500;">Select your sub-deck preference on your phone now</p>
                     
                     <div style="display: flex; flex-direction: column;">
-                        <!-- Sub-Category 1 -->
                         <div class="vote-row">
                             <div class="vote-meta">
                                 <span id="lbl-cat1" style="font-weight: 500; color: #ffffff;">${activeLabel1}</span>
@@ -485,8 +484,6 @@
                             </div>
                             <div class="progress-track"><div id="cbar-CAT_1" class="progress-fill" style="background: #ffa500;"></div></div>
                         </div>
-
-                        <!-- Sub-Category 2 -->
                         <div class="vote-row">
                             <div class="vote-meta">
                                 <span id="lbl-cat2" style="font-weight: 500; color: #ffffff;">${activeLabel2}</span>
@@ -494,8 +491,6 @@
                             </div>
                             <div class="progress-track"><div id="cbar-CAT_2" class="progress-fill" style="background: #00e676;"></div></div>
                         </div>
-
-                        <!-- Sub-Category 3 -->
                         <div class="vote-row">
                             <div class="vote-meta">
                                 <span id="lbl-cat3" style="font-weight: 500; color: #ffffff;">${activeLabel3}</span>
@@ -529,45 +524,43 @@
             });
         }
 
-        function switchToQuestionUI(categoryLabel, questionText, choiceA, choiceB, choiceC, choiceD) {
-            const panel = document.getElementById('main-trivia-panel');
+       function switchToQuestionUI(categoryLabel, questionText, choiceA, choiceB, choiceC, choiceD) {
+            // FIX: Point target handle straight to the isolated stage container node
+            const panel = document.getElementById('active-content-stage');
             
-            // Overwrite the left panel with an ultra-clean, expansive dark layout structure
             panel.innerHTML = `
-                <div class="panel-box" style="padding: 50px; flex: 1; display: flex; flex-direction: column; justify-content: space-between; text-align: left; min-height: 480px;">
+                <div class="panel-box" style="padding: 40px; flex: 1; display: flex; flex-direction: column; justify-content: space-between; text-align: left; min-height: 400px; box-sizing: border-box;">
                     
-                    <!-- Muted Upper Topic Suffix Header Row -->
-                    <div style="font-size: 0.85rem; font-weight: 600; color: #64748b; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 24px;">
-                        Active Deck: ${categoryLabel}
+                    <div style="font-size: 0.85rem; font-weight: 600; color: #64748b; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 16px;">
+                        🎯 Active Deck: ${categoryLabel}
                     </div>
 
-                    <!-- Expansive Centered Main Question Canvas Block -->
-                    <div style="font-size: 1.6rem; font-weight: 600; color: #ffffff; line-height: 1.4; flex: 1; display: flex; align-items: center; margin-bottom: 40px; letter-spacing: -0.01em;">
+                    <div style="font-size: 1.4rem; font-weight: 600; color: #ffffff; line-height: 1.4; flex: 1; display: flex; align-items: center; margin-bottom: 24px; letter-spacing: -0.01em;">
                         ${questionText}
                     </div>
-                    
-                    <!-- Added targeted IDs to your 2x2 Answer Grid Layout Matrix -->
-                    <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; width: 100%;">
-                        <div id="choice-row-A" style="background: #1e222b; border: 1px solid #222630; border-radius: 8px; padding: 20px; display: flex; align-items: center; gap: 14px; transition: all 0.3s ease;">
-                            <span style="background: rgba(0, 230, 118, 0.1); color: #00e676; font-weight: 700; padding: 4px 10px; border-radius: 4px; font-size: 0.9rem;">A</span>
-                            <span style="font-size: 1.05rem; font-weight: 500; color: #e2e5e9;">${choiceA}</span>
+
+                    <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; width: 100%;">
+                        <div id="choice-row-A" style="background: #1e222b; border: 1px solid #222630; border-radius: 8px; padding: 16px; display: flex; align-items: center; gap: 12px; transition: all 0.3s ease;">
+                            <span style="background: rgba(0, 230, 118, 0.1); color: #00e676; font-weight: 700; padding: 4px 10px; border-radius: 4px; font-size: 0.85rem;">A</span>
+                            <span style="font-size: 1rem; font-weight: 500; color: #e2e5e9;">${choiceA}</span>
                         </div>
-                        <div id="choice-row-B" style="background: #1e222b; border: 1px solid #222630; border-radius: 8px; padding: 20px; display: flex; align-items: center; gap: 14px; transition: all 0.3s ease;">
-                            <span style="background: rgba(0, 230, 118, 0.1); color: #00e676; font-weight: 700; padding: 4px 10px; border-radius: 4px; font-size: 0.9rem;">B</span>
-                            <span style="font-size: 1.05rem; font-weight: 500; color: #e2e5e9;">${choiceB}</span>
+                        <div id="choice-row-B" style="background: #1e222b; border: 1px solid #222630; border-radius: 8px; padding: 16px; display: flex; align-items: center; gap: 12px; transition: all 0.3s ease;">
+                            <span style="background: rgba(0, 230, 118, 0.1); color: #00e676; font-weight: 700; padding: 4px 10px; border-radius: 4px; font-size: 0.85rem;">B</span>
+                            <span style="font-size: 1rem; font-weight: 500; color: #e2e5e9;">${choiceB}</span>
                         </div>
-                        <div id="choice-row-C" style="background: #1e222b; border: 1px solid #222630; border-radius: 8px; padding: 20px; display: flex; align-items: center; gap: 14px; transition: all 0.3s ease;">
-                            <span style="background: rgba(0, 230, 118, 0.1); color: #00e676; font-weight: 700; padding: 4px 10px; border-radius: 4px; font-size: 0.9rem;">C</span>
-                            <span style="font-size: 1.05rem; font-weight: 500; color: #e2e5e9;">${choiceC}</span>
+                        <div id="choice-row-C" style="background: #1e222b; border: 1px solid #222630; border-radius: 8px; padding: 16px; display: flex; align-items: center; gap: 12px; transition: all 0.3s ease;">
+                            <span style="background: rgba(0, 230, 118, 0.1); color: #00e676; font-weight: 700; padding: 4px 10px; border-radius: 4px; font-size: 0.85rem;">C</span>
+                            <span style="font-size: 1rem; font-weight: 500; color: #e2e5e9;">${choiceC}</span>
                         </div>
-                        <div id="choice-row-D" style="background: #1e222b; border: 1px solid #222630; border-radius: 8px; padding: 20px; display: flex; align-items: center; gap: 14px; transition: all 0.3s ease;">
-                            <span style="background: rgba(0, 230, 118, 0.1); color: #00e676; font-weight: 700; padding: 4px 10px; border-radius: 4px; font-size: 0.9rem;">D</span>
-                            <span style="font-size: 1.05rem; font-weight: 500; color: #e2e5e9;">${choiceD}</span>
+                        <div id="choice-row-D" style="background: #1e222b; border: 1px solid #222630; border-radius: 8px; padding: 16px; display: flex; align-items: center; gap: 12px; transition: all 0.3s ease;">
+                            <span style="background: rgba(0, 230, 118, 0.1); color: #00e676; font-weight: 700; padding: 4px 10px; border-radius: 4px; font-size: 0.85rem;">D</span>
+                            <span style="font-size: 1rem; font-weight: 500; color: #e2e5e9;">${choiceD}</span>
                         </div>
                     </div>
                 </div>
             `;
         }
+        
         function highlightCorrectAnswerOnTV(correctLetter) {
             // Find all 4 choice blocks inside our layout container
             const ids = ['A', 'B', 'C', 'D'];
