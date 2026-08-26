@@ -83,6 +83,11 @@ app.post('/api/room-status', (req, res) => {
             }
             return res.json({ phase: 'CATEGORY_VOTE_PHASE', label1: cat1, label2: cat2, label3: cat3 });
         }
+        // FIX: If the clock expired and moved to gameplay, shout the round phase back to the phone poller!
+        // FIX ALIGNMENT: Flatten the object parameters so it matches Phase 2 perfectly!
+        if (targetRoom && targetRoom.gameState === 'GAME_ROUND') {
+            return res.json({ phase: 'GAME_ROUND_PHASE' });
+        }
         return res.json({ phase: 'WAITING' });
     } catch (error) {
         return res.status(500).json({ error: 'Status track exception.' });
