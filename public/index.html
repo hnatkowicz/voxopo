@@ -320,6 +320,10 @@
                 if (data.type === 'CATEGORY_TIMER_TICK') {
                     document.getElementById('lobby-countdown').innerText = data.secondsLeft;
                 }
+                // Listen for Phase 3 active question clock ticks to drive your 25s banner countdown!
+                if (data.type === 'GAME_TIMER_TICK') {
+                    document.getElementById('lobby-countdown').innerText = data.secondsLeft;
+                }
                 // FIX: Explicitly pass data.label1, data.label2, and data.label3 into the painter!
                 if (data.type === 'TRANSITION_TO_CATEGORY_VOTE') {
                     document.getElementById('room-status-text').innerText = "Category Selection";
