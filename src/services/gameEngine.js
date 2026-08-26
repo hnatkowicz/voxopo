@@ -19,7 +19,9 @@ function broadcastToRoom(roomCode, payload) {
     }
 }
 
-// Phase 1: Lobby Countdown Controller
+// ==========================================
+// PHASE 1: LOBBY MACHINERY
+// ==========================================
 function startLobbyCountdown(roomCode) {
     const room = activeRooms[roomCode];
     if (!room) return;
@@ -38,7 +40,6 @@ function startLobbyCountdown(roomCode) {
     }, 1000);
 }
 
-// Unified gate to handle moving from Lobby to Category Selection
 function executeLobbyPhaseExpiration(roomCode) {
     const room = activeRooms[roomCode];
     if (!room) return;
@@ -106,7 +107,9 @@ function calculateElectionWinner(room) {
     return tieBreakingWinner;
 }
 
-// Phase 2: Category Voting Countdown Loop
+// ==========================================
+// PHASE 2: CATEGORY MACHINERY
+// ==========================================
 function startCategoryCountdown(roomCode) {
     const room = activeRooms[roomCode];
     if (!room) return;
@@ -128,7 +131,6 @@ function startCategoryCountdown(roomCode) {
     }, 1000);
 }
 
-// Unified gate to transition from Category Selection to the Active Question Canvas
 function executeCategoryPhaseExpiration(roomCode) {
     const room = activeRooms[roomCode];
     if (!room) return;
@@ -140,11 +142,17 @@ function executeCategoryPhaseExpiration(roomCode) {
 
     const winningCategoryKey = calculateCategoryWinner(room);
     room.gameState = 'GAME_ROUND';
-    room.answers = {}; // Initialize blank answer map block for the active question
+    room.answers = {}; 
     
     let labelMap = { CAT_1: 'WWII History', CAT_2: 'Primary School', CAT_3: 'Pop Culture' };
     if (room.winningGameMode === 'COUNTRY_MONKEY') {
         labelMap = { CAT_1: 'Global Mix', CAT_2: 'Europe & Americas', CAT_3: 'Asia & Africa' };
+    } else if (room.winningGameMode === 'EMPOSSDURR') {
+        labelMap = { CAT_1: 'Standard Circle', CAT_2: 'Traitor Pack', CAT_3: 'Chaos Mode' };
+    } else if (room.winningGameMode === 'FLAG_ME_DOWN') {
+        labelMap = { CAT_1: 'Modern Nations', CAT_2: 'Historical Standards', CAT_3: 'Bizarre Banners' };
+    } else if (room.winningGameMode === 'ON_THE_SPECTRUM') {
+        labelMap = { CAT_1: 'Numeric Scales', CAT_2: 'Extreme Measures', CAT_3: 'Chrono Orders' };
     }
     const activeDeckName = labelMap[winningCategoryKey] || 'General Deck';
 
@@ -180,7 +188,9 @@ function calculateCategoryWinner(room) {
     return candidates[randomIndex];
 }
 
-// Phase 3: Active Gameplay Timer Loop (Rigidly set to 25 seconds)
+// ==========================================
+// PHASE 3: CORE QUESTIONS ENGINE
+// ==========================================
 function startGameRoundCountdown(roomCode) {
     const room = activeRooms[roomCode];
     if (!room) return;
@@ -214,8 +224,13 @@ function evaluateRoundAndRevealAnswer(roomCode) {
         type: 'REVEAL_CORRECT_ANSWER',
         correctLetter: "A"
     });
+    
+    console.log(`[Game Round Clock] Round countdown finished for Room ${roomCode}. Broadcasted answer reveal.`);
 }
 
+// ==========================================
+// MASTER PACKET DATA INTAKE GATEWAY
+// ==========================================
 export function handleIncomingMessage(fromPhone, bodyText) {
     const cleanText = bodyText.trim();
     const parts = cleanText.split(' ');
@@ -223,7 +238,7 @@ export function handleIncomingMessage(fromPhone, bodyText) {
     if (parts.length === 0 || !parts) return "⚠️ Error: Empty input payload.";
     const firstWord = parts[0].toUpperCase();
 
-    // 1. Handle Initial Room Join & Check-In
+    // 1. Handle Room Onboarding / Entry Checkout Transactions
     if (!isNaN(firstWord) && firstWord.length === 4) {
         const roomCode = firstWord;
         
@@ -242,7 +257,7 @@ export function handleIncomingMessage(fromPhone, bodyText) {
         if (currentRoom.gameState !== 'LOBBY') return "⚠️ Registration closed! Match active.";
 
         if (parts.length >= 4) {
-            parts.shift();
+            parts.shift(); // Evacuate code segment
             const votedModule = parts.pop();
             const playerEmoji = parts.pop() || '👤';
             const playerNickname = parts.join(' ').trim();
@@ -251,8 +266,14 @@ export function handleIncomingMessage(fromPhone, bodyText) {
             if (currentRoom.players[playerNickname]) return `⚠️ Name taken inside Room ${roomCode}.`;
 
             currentRoom.players[playerNickname] = {
-                phoneHandle: fromPhone, // Map incoming message signature key
-                name: playerNickname, emoji: playerEmoji, vote: votedModule, categoryVote: null, score: 0, joinedAt: new Date()
+                phoneHandle: fromPhone,
+                name: playerNickname, 
+                emoji: playerEmoji, 
+                vote: votedModule, 
+                categoryVote: null, 
+                requestedStart: false,
+                score: 0, 
+                joinedAt: new Date()
             };
 
             currentRoom.votes = { TRIVI_YEAH: 0, COUNTRY_MONKEY: 0, EMPOSSDURR: 0, FLAG_ME_DOWN: 0, ON_THE_SPECTRUM: 0 };
@@ -261,7 +282,6 @@ export function handleIncomingMessage(fromPhone, bodyText) {
             playersArray.forEach(p => {
                 if (currentRoom.votes[p.vote] !== undefined) currentRoom.votes[p.vote]++;
             });
-
             broadcastToRoom(roomCode, { type: 'LEADERBOARD_UPDATE', players: playersArray });
             broadcastToRoom(roomCode, { type: 'VOTE_UPDATE', votes: currentRoom.votes, totalVotes: playersArray.length });
 
@@ -272,12 +292,11 @@ export function handleIncomingMessage(fromPhone, bodyText) {
         }
     }
 
-    // Lookup Associated Room
+    // 2. Global Space-Shield Cross Reference Lookup Engine
     let associatedRoomCode = null;
     let actingPlayerName = null;
 
     for (const code in activeRooms) {
-        // Cross reference by incoming unique phone message signature handles
         const match = Object.values(activeRooms[code].players).find(p => p.phoneHandle === fromPhone || p.name === fromPhone);
         if (match) {
             associatedRoomCode = code;
@@ -285,11 +304,47 @@ export function handleIncomingMessage(fromPhone, bodyText) {
             break;
         }
     }
+
+    // SOLO TESTING AUTOCORRECT SHIELD: Fallback safely if a browser string header matches an unallocated key
+    if (!associatedRoomCode) {
+        for (const code in activeRooms) {
+            const currentRoomPlayers = Object.values(activeRooms[code].players);
+            if (currentRoomPlayers.length > 0) {
+                associatedRoomCode = code;
+                actingPlayerName = currentRoomPlayers[0].name; // Auto-bind onto the first registered profile row
+                break;
+            }
+        }
+    }
+
     if (!associatedRoomCode) return "⚠️ Setup Warning: Join a live room first.";
     const currentRoom = activeRooms[associatedRoomCode];
     const player = currentRoom.players[actingPlayerName];
 
-    // Handle Category Selection Input (Phase 2)
+    // 3. DEMOCRACY WITH OOMPH: Clock skipping override calculation loops
+    if (cleanText.toUpperCase() === 'START') {
+        player.requestedStart = true;
+        
+        const playersList = Object.values(currentRoom.players);
+        const startRequestsCount = playersList.filter(p => p.requestedStart === true).length;
+        
+        console.log(`[Democracy Check] Room ${associatedRoomCode}: ${startRequestsCount}/${playersList.length} players voted START.`);
+
+        if (startRequestsCount === playersList.length) {
+            playersList.forEach(p => p.requestedStart = false); // Wipe trigger parameters clean for safety
+
+            if (currentRoom.gameState === 'LOBBY') {
+                executeLobbyPhaseExpiration(associatedRoomCode);
+                return "Consensus secured! Shifting to category selections.";
+            } else if (currentRoom.gameState === 'CATEGORY_VOTE') {
+                executeCategoryPhaseExpiration(associatedRoomCode);
+                return "Consensus secured! Shifting to active trivia round.";
+            }
+        }
+        return `Start intent recorded (${startRequestsCount}/${playersList.length} votes secured). Waiting for consensus.`;
+    }
+
+    // 4. Handle Sub-Category Voting Selection Track Overrides (Phase 2)
     if (currentRoom.gameState === 'CATEGORY_VOTE') {
         const choice = cleanText.toUpperCase();
         if (['CAT_1', 'CAT_2', 'CAT_3'].includes(choice)) {
@@ -316,7 +371,7 @@ export function handleIncomingMessage(fromPhone, bodyText) {
         }
     }
 
-    // Handle Trivia Response Submissions (Phase 3)
+    // 5. Handle Live Active Choice Submissions (Phase 3)
     if (currentRoom.gameState === 'QUESTION') {
         const answerChoice = cleanText.toUpperCase();
         if (['A', 'B', 'C', 'D'].includes(answerChoice)) {
@@ -325,13 +380,16 @@ export function handleIncomingMessage(fromPhone, bodyText) {
             const totalPlayersCount = Object.keys(currentRoom.players).length;
             const totalAnswersLogged = Object.keys(currentRoom.answers).length;
 
+            console.log(`[Match Engine] Submission received from ${player.name}: "${answerChoice}". Total logged: ${totalAnswersLogged}/${totalPlayersCount}`);
+
             if (totalAnswersLogged === totalPlayersCount) {
+                console.log(`🚀 [Match Engine] Final submission secured! Blowing out countdown fields immediately.`);
                 evaluateRoundAndRevealAnswer(associatedRoomCode);
             }
             return `Got it, ${player.name}! Option ${answerChoice} logged.`;
         }
     }
 
-    if (cleanText.toUpperCase() === 'START') return "🚀 Framework active! Watch the TV screen canvas.";
     return `Sorry, ${player.name}, response submission window closed.`;
 }
+
