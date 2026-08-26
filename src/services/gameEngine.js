@@ -19,7 +19,7 @@ function broadcastToRoom(roomCode, payload) {
     }
 }
 
-// Automated Lobby Countdown Clock Machinery (Phase 1)
+// Phase 1: Lobby Countdown Controller
 function startLobbyCountdown(roomCode) {
     const room = activeRooms[roomCode];
     if (!room) return;
@@ -33,37 +33,47 @@ function startLobbyCountdown(roomCode) {
         if (room.lobbySecondsLeft > 0) {
             broadcastToRoom(roomCode, { type: 'LOBBY_TIMER_TICK', secondsLeft: room.lobbySecondsLeft + "s" });
         } else {
-            clearInterval(room.lobbyTimerInterval);
-            room.lobbyTimerInterval = null;
-            
-            const winningModule = calculateElectionWinner(room);
-            room.gameState = 'CATEGORY_VOTE';
-            room.winningGameMode = winningModule;
-            
-            let cat1 = 'WWII History', cat2 = 'Primary School', cat3 = 'Pop Culture';
-            if (winningModule === 'COUNTRY_MONKEY') {
-                cat1 = 'Global Mix'; cat2 = 'Europe & Americas'; cat3 = 'Asia & Africa';
-            } else if (winningModule === 'EMPOSSDURR') {
-                cat1 = 'Standard Circle'; cat2 = 'Traitor Pack'; cat3 = 'Chaos Mode';
-            } else if (winningModule === 'FLAG_ME_DOWN') {
-                cat1 = 'Modern Nations'; cat2 = 'Historical Standards'; cat3 = 'Bizarre Banners';
-            } else if (winningModule === 'ON_THE_SPECTRUM') {
-                cat1 = 'Numeric Scales'; cat2 = 'Extreme Measures'; cat3 = 'Chrono Orders';
-            }
-            
-            console.log(`[Lobby Clock] Election closed. Winning module: ${winningModule}.`);
-
-            broadcastToRoom(roomCode, {
-                type: 'TRANSITION_TO_CATEGORY_VOTE',
-                winner: winningModule,
-                label1: cat1,
-                label2: cat2,
-                label3: cat3
-            });
-
-            startCategoryCountdown(roomCode);
+            executeLobbyPhaseExpiration(roomCode);
         }
     }, 1000);
+}
+
+// Unified gate to handle moving from Lobby to Category Selection
+function executeLobbyPhaseExpiration(roomCode) {
+    const room = activeRooms[roomCode];
+    if (!room) return;
+
+    if (room.lobbyTimerInterval) {
+        clearInterval(room.lobbyTimerInterval);
+        room.lobbyTimerInterval = null;
+    }
+
+    const winningModule = calculateElectionWinner(room);
+    room.gameState = 'CATEGORY_VOTE';
+    room.winningGameMode = winningModule;
+    
+    let cat1 = 'WWII History', cat2 = 'Primary School', cat3 = 'Pop Culture';
+    if (winningModule === 'COUNTRY_MONKEY') {
+        cat1 = 'Global Mix'; cat2 = 'Europe & Americas'; cat3 = 'Asia & Africa';
+    } else if (winningModule === 'EMPOSSDURR') {
+        cat1 = 'Standard Circle'; cat2 = 'Traitor Pack'; cat3 = 'Chaos Mode';
+    } else if (winningModule === 'FLAG_ME_DOWN') {
+        cat1 = 'Modern Nations'; cat2 = 'Historical Standards'; cat3 = 'Bizarre Banners';
+    } else if (winningModule === 'ON_THE_SPECTRUM') {
+        cat1 = 'Numeric Scales'; cat2 = 'Extreme Measures'; cat3 = 'Chrono Orders';
+    }
+    
+    console.log(`[Room Engine] Lobby phase closed for Room ${roomCode}. Winner: ${winningModule}`);
+
+    broadcastToRoom(roomCode, {
+        type: 'TRANSITION_TO_CATEGORY_VOTE',
+        winner: winningModule,
+        label1: cat1,
+        label2: cat2,
+        label3: cat3
+    });
+
+    startCategoryCountdown(roomCode);
 }
 
 function calculateElectionWinner(room) {
@@ -96,7 +106,7 @@ function calculateElectionWinner(room) {
     return tieBreakingWinner;
 }
 
-// Automated Micro Category Countdown Timer Loop (Phase 2)
+// Phase 2: Category Voting Countdown Loop
 function startCategoryCountdown(roomCode) {
     const room = activeRooms[roomCode];
     if (!room) return;
@@ -113,34 +123,44 @@ function startCategoryCountdown(roomCode) {
         if (count > 0) {
             broadcastToRoom(roomCode, { type: 'CATEGORY_TIMER_TICK', secondsLeft: count + "s" });
         } else {
-            clearInterval(room.categoryTimerInterval);
-            room.categoryTimerInterval = null;
-            
-            const winningCategoryKey = calculateCategoryWinner(room);
-            room.gameState = 'QUESTION'; // Transition cleanly to our active question phase
-            room.answers = {}; // Reset answer array memory storage buckets for the fresh round
-            
-            let labelMap = { CAT_1: 'WWII History', CAT_2: 'Primary School', CAT_3: 'Pop Culture' };
-            if (room.winningGameMode === 'COUNTRY_MONKEY') {
-                labelMap = { CAT_1: 'Global Mix', CAT_2: 'Europe & Americas', CAT_3: 'Asia & Africa' };
-            }
-            const activeDeckName = labelMap[winningCategoryKey] || 'General Deck';
-
-            console.log(`[Category Clock] Sub-election closed. Winner: ${winningCategoryKey} (${activeDeckName}).`);
-
-            broadcastToRoom(roomCode, {
-                type: 'TRANSITION_TO_QUESTION',
-                categoryLabel: activeDeckName,
-                questionText: "Which country was the first to implement radar technology defensively during the structural operations of World War II?",
-                choiceA: "Great Britain",
-                choiceB: "Germany",
-                choiceC: "United States",
-                choiceD: "Japan"
-            });
-
-            startGameRoundCountdown(roomCode);
+            executeCategoryPhaseExpiration(roomCode);
         }
     }, 1000);
+}
+
+// Unified gate to transition from Category Selection to the Active Question Canvas
+function executeCategoryPhaseExpiration(roomCode) {
+    const room = activeRooms[roomCode];
+    if (!room) return;
+
+    if (room.categoryTimerInterval) {
+        clearInterval(room.categoryTimerInterval);
+        room.categoryTimerInterval = null;
+    }
+
+    const winningCategoryKey = calculateCategoryWinner(room);
+    room.gameState = 'GAME_ROUND';
+    room.answers = {}; // Initialize blank answer map block for the active question
+    
+    let labelMap = { CAT_1: 'WWII History', CAT_2: 'Primary School', CAT_3: 'Pop Culture' };
+    if (room.winningGameMode === 'COUNTRY_MONKEY') {
+        labelMap = { CAT_1: 'Global Mix', CAT_2: 'Europe & Americas', CAT_3: 'Asia & Africa' };
+    }
+    const activeDeckName = labelMap[winningCategoryKey] || 'General Deck';
+
+    console.log(`[Room Engine] Category selection finalized for Room ${roomCode}. Loaded: ${activeDeckName}`);
+
+    broadcastToRoom(roomCode, {
+        type: 'TRANSITION_TO_QUESTION',
+        categoryLabel: activeDeckName,
+        questionText: "Which country was the first to implement radar technology defensively during the structural operations of World War II?",
+        choiceA: "Great Britain",
+        choiceB: "Germany",
+        choiceC: "United States",
+        choiceD: "Japan"
+    });
+
+    startGameRoundCountdown(roomCode);
 }
 
 function calculateCategoryWinner(room) {
@@ -160,7 +180,7 @@ function calculateCategoryWinner(room) {
     return candidates[randomIndex];
 }
 
-// Active Gameplay Phase Timer Loop (Phase 3 - 25-Second Active Clock Engine)
+// Phase 3: Active Gameplay Timer Loop (Rigidly set to 25 seconds)
 function startGameRoundCountdown(roomCode) {
     const room = activeRooms[roomCode];
     if (!room) return;
@@ -173,44 +193,37 @@ function startGameRoundCountdown(roomCode) {
         if (count > 0) {
             broadcastToRoom(roomCode, { type: 'GAME_TIMER_TICK', secondsLeft: count + "s" });
         } else {
-            // Force standard clock runtime expiration reveal if time runs out naturally
             evaluateRoundAndRevealAnswer(roomCode);
         }
     }, 1000);
 }
 
-// Unified Answer Reveal Engine (Triggers on Timer Runout OR when all player votes lock!)
 function evaluateRoundAndRevealAnswer(roomCode) {
     const room = activeRooms[roomCode];
     if (!room) return;
 
-    // Clear background interval clocks instantly to prevent double-firing crashes
     if (room.timerInterval) {
         clearInterval(room.timerInterval);
         room.timerInterval = null;
     }
 
     room.gameState = 'ROUND_REVEAL';
-    
-    // Announce timer completion on the visual top HUD banner layout
     broadcastToRoom(roomCode, { type: 'GAME_TIMER_TICK', secondsLeft: "TIME'S UP!" });
     
-    // Broadcast answer reveal command (Historical Winner: Option A - Great Britain)
     broadcastToRoom(roomCode, {
         type: 'REVEAL_CORRECT_ANSWER',
         correctLetter: "A"
     });
-    
-    console.log(`[Match Engine] Round closed for Room ${roomCode}. All choices frozen and compiled.`);
 }
 
 export function handleIncomingMessage(fromPhone, bodyText) {
     const cleanText = bodyText.trim();
     const parts = cleanText.split(' ');
     
-    if (parts.length === 0 || !parts) return "⚠️ Error: Empty packet payload.";
+    if (parts.length === 0 || !parts) return "⚠️ Error: Empty input payload.";
     const firstWord = parts[0].toUpperCase();
 
+    // 1. Handle Initial Room Join & Check-In
     if (!isNaN(firstWord) && firstWord.length === 4) {
         const roomCode = firstWord;
         
@@ -238,6 +251,7 @@ export function handleIncomingMessage(fromPhone, bodyText) {
             if (currentRoom.players[playerNickname]) return `⚠️ Name taken inside Room ${roomCode}.`;
 
             currentRoom.players[playerNickname] = {
+                phoneHandle: fromPhone, // Map incoming message signature key
                 name: playerNickname, emoji: playerEmoji, vote: votedModule, categoryVote: null, score: 0, joinedAt: new Date()
             };
 
@@ -258,19 +272,24 @@ export function handleIncomingMessage(fromPhone, bodyText) {
         }
     }
 
+    // Lookup Associated Room
     let associatedRoomCode = null;
+    let actingPlayerName = null;
+
     for (const code in activeRooms) {
-        if (activeRooms[code].players[fromPhone]) {
+        // Cross reference by incoming unique phone message signature handles
+        const match = Object.values(activeRooms[code].players).find(p => p.phoneHandle === fromPhone || p.name === fromPhone);
+        if (match) {
             associatedRoomCode = code;
+            actingPlayerName = match.name;
             break;
         }
     }
     if (!associatedRoomCode) return "⚠️ Setup Warning: Join a live room first.";
-
     const currentRoom = activeRooms[associatedRoomCode];
-    const player = currentRoom.players[fromPhone];
+    const player = currentRoom.players[actingPlayerName];
 
-    // Handle Category Sub-Voting Window (Phase 2)
+    // Handle Category Selection Input (Phase 2)
     if (currentRoom.gameState === 'CATEGORY_VOTE') {
         const choice = cleanText.toUpperCase();
         if (['CAT_1', 'CAT_2', 'CAT_3'].includes(choice)) {
@@ -293,33 +312,26 @@ export function handleIncomingMessage(fromPhone, bodyText) {
                 totalVotes: totalSubVotes
             });
 
-            return `Got it, ${player.name}! Vote counted.`;
+            return `Got it, ${player.name}! Sub-vote recorded.`;
         }
     }
 
-    // Handle Active Question Submission Input Locking Window (Phase 3)
+    // Handle Trivia Response Submissions (Phase 3)
     if (currentRoom.gameState === 'QUESTION') {
         const answerChoice = cleanText.toUpperCase();
         if (['A', 'B', 'C', 'D'].includes(answerChoice)) {
-            
-            // Register or overwrite the player's active answer selection in memory maps
-            currentRoom.answers[fromPhone] = answerChoice;
+            currentRoom.answers[actingPlayerName] = answerChoice;
             
             const totalPlayersCount = Object.keys(currentRoom.players).length;
             const totalAnswersLogged = Object.keys(currentRoom.answers).length;
 
-            console.log(`[Match Engine] Submission received from ${player.name}: "${answerChoice}". Total logged: ${totalAnswersLogged}/${totalPlayersCount}`);
-
-            // INTERRUPT TRIGGER CHECK: If every registered player has logged an answer, end the timer NOW!
             if (totalAnswersLogged === totalPlayersCount) {
-                console.log(`🚀 [Match Engine] Final submission secured! Blowing out countdown loop fields immediately.`);
                 evaluateRoundAndRevealAnswer(associatedRoomCode);
             }
-
-            return `Got it, ${player.name}! Input logged securely.`;
+            return `Got it, ${player.name}! Option ${answerChoice} logged.`;
         }
     }
 
     if (cleanText.toUpperCase() === 'START') return "🚀 Framework active! Watch the TV screen canvas.";
-    return `Sorry, ${player.name}, response gateway closed right now.`;
+    return `Sorry, ${player.name}, response submission window closed.`;
 }
