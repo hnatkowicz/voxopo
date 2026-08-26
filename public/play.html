@@ -257,6 +257,7 @@
         function initRoomStatePoller(roomCode, nickname) {
             roomStateTrackerInterval = setInterval(async () => {
                 try {
+                    // Poll our dedicated status gateway endpoint
                     const response = await fetch('/api/room-status', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
@@ -264,29 +265,29 @@
                     });
                     const data = await response.json();
                     
-                    if (data && data.reply) {
-                        // PHASE 2 MORPH: Open category election cards
-                        if (data.reply.phase === 'CATEGORY_VOTE_PHASE' && document.getElementById('category-screen').style.display !== "block") {
+                    if (data && data.phase) {
+                        // PHASE 2 TRANSITION: Open category election cards
+                        if (data.phase === 'CATEGORY_VOTE_PHASE' && document.getElementById('category-screen').style.display !== "block") {
                             document.getElementById('sub-badge-name').innerText = nickname;
                             document.getElementById('sub-badge-emoji').innerText = chosenAvatar;
                             
-                            document.getElementById('btn-cat1').innerText = data.reply.label1;
-                            document.getElementById('btn-cat2').innerText = data.reply.label2;
-                            document.getElementById('btn-cat3').innerText = data.reply.label3;
+                            document.getElementById('btn-cat1').innerText = data.label1;
+                            document.getElementById('btn-cat2').innerText = data.label2;
+                            document.getElementById('btn-cat3').innerText = data.label3;
                             
                             document.getElementById('game-screen').style.display = "none";
                             document.getElementById('category-screen').style.display = "block";
                         }
                         
-                        // PHASE 3 MORPH: Open active gameplay answer grid layout cards automatically!
-                        if (data.reply.phase === 'GAME_ROUND_PHASE') {
+                        // PHASE 3 TRANSITION: Open active gameplay answer grid layout rows instantly!
+                        if (data.phase === 'GAME_ROUND_PHASE') {
                             document.getElementById('q-badge-name').innerText = nickname;
                             document.getElementById('q-badge-emoji').innerText = chosenAvatar;
                             
                             document.getElementById('category-screen').style.display = "none";
                             document.getElementById('game-screen').style.display = "none";
                             document.getElementById('question-screen').style.display = "block";
-                            clearInterval(roomStateTrackerInterval); // Kill background poller once game starts
+                            clearInterval(roomStateTrackerInterval); // Kill background poller once game loops lock
                         }
                     }
                 } catch (e) {
