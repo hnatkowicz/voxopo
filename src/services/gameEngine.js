@@ -111,7 +111,7 @@ function startCategoryCountdown(roomCode) {
         room.categorySecondsLeft = count;
         
         if (count > 0) {
-            broadcastToRoom(roomCode, { type: 'CATEGORY_TIMER_TICK', secondsLeft: count + "s" });
+            broadcastToRoom(roomCode, { type: 'CATEGORY_TIMER_TICK', secondsLeft: count + " s" });
         } else {
             clearInterval(room.categoryTimerInterval);
             room.categoryTimerInterval = null;
@@ -181,18 +181,22 @@ function startGameRoundCountdown(roomCode) {
             // Push active game ticks to drive the top banner clock
             broadcastToRoom(roomCode, {
                 type: 'GAME_TIMER_TICK',
-                secondsLeft: count + "s"
+                secondsLeft: count + " s"
             });
         } else {
             clearInterval(room.timerInterval);
             room.timerInterval = null;
             room.gameState = 'ROUND_REVEAL';
             
+            broadcastToRoom(roomCode, { type: 'GAME_TIMER_TICK', secondsLeft: "TIME'S UP!" });
+            
+            // FIX: Broadcast the answer reveal command down the pipeline instantly when time runs dry!
             broadcastToRoom(roomCode, {
-                type: 'GAME_TIMER_TICK',
-                secondsLeft: "TIME'S UP!"
+                type: 'REVEAL_CORRECT_ANSWER',
+                correctLetter: "A"
             });
-            console.log(`[Game Round Clock] Round countdown finished for Room ${roomCode}.`);
+            
+            console.log(`[Game Round Clock] Round countdown finished for Room ${roomCode}. Broadcasted answer reveal.`);
         }
     }, 1000);
 }
