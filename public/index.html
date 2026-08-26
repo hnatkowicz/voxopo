@@ -545,10 +545,21 @@
             });
         }
 
-       function switchToQuestionUI(categoryLabel, questionText, choiceA, choiceB, choiceC, choiceD) {
-            // FIX: Point target handle straight to the isolated stage container node
+        function switchToQuestionUI(categoryLabel, questionText, choiceA, choiceB, choiceC, choiceD) {
             const panel = document.getElementById('active-content-stage');
             
+            // CLEAN FOOTER: Wipe the QR code box out and inject the live gameplay text placeholder!
+            const onboardingSlot = document.getElementById('onboarding-text-slot');
+            if (onboardingSlot) {
+                const qrBox = onboardingSlot.previousElementSibling;
+                if (qrBox) qrBox.style.display = "none"; // Permanently hide white QR container block
+                
+                onboardingSlot.innerHTML = `
+                    <div id="gameplay-answer-row" style="font-size: 1.1rem; font-weight: 600; color: #64748b; letter-spacing: -0.01em; transition: all 0.3s ease;">
+                        📝 Answer: <span style="font-weight: 500; font-style: italic; font-size: 1rem;">Waiting for player submissions...</span>
+                    </div>
+                `;
+            }
             panel.innerHTML = `
                 <div class="panel-box" style="padding: 40px; flex: 1; display: flex; flex-direction: column; justify-content: space-between; text-align: left; min-height: 400px; box-sizing: border-box;">
                     
@@ -583,14 +594,14 @@
         }
         
         function highlightCorrectAnswerOnTV(correctLetter) {
-            // Find all 4 choice blocks inside our layout container
             const ids = ['A', 'B', 'C', 'D'];
             
+            // Map the choice letters back to their true string values for display text output
+            const answersMap = { 'A': 'Great Britain', 'B': 'Germany', 'C': 'United States', 'D': 'Japan' };
+
             ids.forEach(letter => {
-                // Look for the background rows we drew inside our question canvas grid template
                 const rowNode = document.getElementById(`choice-row-${letter}`) || null;
                 
-                // If it's the winner, turn it bright neon green! Otherwise, dim it out completely.
                 if (letter === correctLetter) {
                     if (rowNode) {
                         rowNode.style.background = "rgba(0, 230, 118, 0.08)";
@@ -600,6 +611,15 @@
                     if (rowNode) rowNode.style.opacity = "0.15";
                 }
             });
+
+            // REVEAL LIVE TEXT BLOCK: Overwrite the lower panel placeholder with the true historical winner!
+            const answerRow = document.getElementById('gameplay-answer-row');
+            if (answerRow) {
+                answerRow.style.color = "#ffffff";
+                answerRow.innerHTML = `
+                    📝 Answer: <span style="color: #00e676; font-weight: 700; text-transform: uppercase; background: rgba(0, 230, 118, 0.06); padding: 4px 10px; border-radius: 4px; border: 1px solid rgba(0,230,118,0.2); margin-left: 6px;">${correctLetter}) ${answersMap[correctLetter]}</span>
+                `;
+            }
         }
 
         // Trigger dynamic assignment protocols on page wakeup
