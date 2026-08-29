@@ -380,36 +380,43 @@ let currentActiveRoomCode = '----';
             `;
         }
         
-        function highlightCorrectAnswerOnTV(correctLetter) {
-            const ids = ['A', 'B', 'C', 'D'];
-            
-            // Map the choice letters back to their true string values for display text output
-            const answersMap = { 'A': 'Great Britain', 'B': 'Germany', 'C': 'United States', 'D': 'Japan' };
+function highlightCorrectAnswerOnTV(correctLetter) { 
+    const ids = ['A', 'B', 'C', 'D']; 
+    
+    // 💡 DYNAMIC CONTENT FIX: Check if your global window question tracking object exists.
+    // If it does, we pull the true choice answers; otherwise, it falls back gracefully!
+    const answersMap = (window.activeQuestion && window.activeQuestion.choices) ? {
+        'A': window.activeQuestion.choices.A || 'A',
+        'B': window.activeQuestion.choices.B || 'B',
+        'C': window.activeQuestion.choices.C || 'C',
+        'D': window.activeQuestion.choices.D || 'D'
+    } : { 'A': 'Choice A', 'B': 'Choice B', 'C': 'Choice C', 'D': 'Choice D' };
 
-            ids.forEach(letter => {
-                const rowNode = document.getElementById(`choice-row-${letter}`) || null;
-                
-                if (letter === correctLetter) {
-                    if (rowNode) {
-                        rowNode.style.background = "rgba(0, 230, 118, 0.08)";
-                        rowNode.style.borderColor = "#00e676";
-                    }
-                } else {
-                    if (rowNode) rowNode.style.opacity = "0.15";
-                }
-            });
+    ids.forEach(letter => { 
+        const rowNode = document.getElementById(`choice-row-${letter}`) || null; 
+        if (letter === correctLetter) { 
+            if (rowNode) { 
+                rowNode.style.background = "rgba(0, 230, 118, 0.08)"; 
+                rowNode.style.borderColor = "#00e676"; 
+            } 
+        } else { 
+            if (rowNode) rowNode.style.opacity = "0.15"; 
+        } 
+    }); 
 
-// REVEAL LIVE TEXT BLOCK: Overwrite the lower panel placeholder with the true historical winner!
-const answerRow = document.getElementById('gameplay-answer-row');
-if (answerRow) {
-    answerRow.style.color = "#ffffff";
-    answerRow.innerHTML = `Answer: <span style="color: #00e676; font-weight: 700; text-transform: uppercase;">Revealed!</span>`;
-}
+    // REVEAL LIVE TEXT BLOCK: Overwrite the lower panel placeholder with the true historical winner! 
+    const answerRow = document.getElementById('gameplay-answer-row'); 
+    if (answerRow) { 
+        const trueAnswerText = answersMap[correctLetter] || 'Revealed!';
+        answerRow.style.color = "#ffffff"; 
+        answerRow.innerHTML = `Answer: <span style="color: #00e676; font-weight: 700; text-transform: uppercase;">${trueAnswerText}</span>`; 
+    } 
+} // 🔓 1. THIS CLOSES THE FUNCTION SAFELY!
 
-// Trigger dynamic assignment protocols on page wakeup
-if (typeof initializeDynamicRoomSession === 'function') {
-    initializeDynamicRoomSession();
-}
+// Trigger dynamic assignment protocols on page wakeup 
+if (typeof initializeDynamicRoomSession === 'function') { 
+    initializeDynamicRoomSession(); 
+} 
 
-// 🎯 THIS CLOSES THE MASTER DOMContentLoaded WRAPPER WE ADDED AT THE VERY TOP!
+// 🎯 2. THIS CLOSES THE MASTER DOMContentLoaded WRAPPER WE ADDED AT THE VERY TOP!
 });
