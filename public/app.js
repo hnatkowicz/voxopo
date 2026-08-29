@@ -21,6 +21,12 @@ if (btnGenerate) {
                 
                 // Fire the CSS toggle selector rule to drop the gateway screen
                 document.body.setAttribute('data-view', 'game');
+
+                                if (typeof setupWebSocket === 'function') {
+                    setupWebSocket(data.roomCode);
+                } else if (typeof connectToRoom === 'function') {
+                    connectToRoom(data.roomCode);
+                }
                 
                 // Let your existing WebSocket framework take over from here
                 // Example: setupWebSocket(data.roomCode);
