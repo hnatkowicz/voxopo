@@ -95,6 +95,32 @@ let currentActiveRoomCode = '----';
                 const data = JSON.parse(event.data);
                 console.log("[WebSocket API Event Received]", data);
 
+                // Fired once right after REGISTER_SCREEN if the room is already
+                // mid-game (e.g. the TV screen reloaded). Re-draws whichever
+                // phase the server says is actually active.
+                if (data.type === 'STATE_CATCH_UP') {
+                    console.log("[Sync Engine] Synchronizing layout with active server phase:", data.gameState);
+
+                    document.body.setAttribute('data-view', 'game');
+
+                    if (data.gameState === 'CATEGORY_VOTE') {
+                        document.getElementById('room-status-text').innerText = "Category Selection";
+                        document.getElementById('lobby-countdown').innerText = data.categorySecondsLeft + "s";
+                        switchToCategoryVotingUI(data.winningGameMode, data.label1, data.label2, data.label3);
+                    } else if (data.gameState === 'GAME_ROUND' && data.activeQuestionData) {
+                        document.getElementById('room-status-text').innerText = "Gameplay Phase";
+                        document.getElementById('lobby-countdown').innerText = data.gameSecondsLeft + "s";
+                        const q = data.activeQuestionData;
+                        // Kept in sync with the choices shown, so a REVEAL_CORRECT_ANSWER
+                        // that lands after reconnect still highlights the real answer text.
+                        window.activeQuestion = { choices: { A: q.choiceA, B: q.choiceB, C: q.choiceC, D: q.choiceD } };
+                        switchToQuestionUI(q.categoryLabel, q.questionText, q.choiceA, q.choiceB, q.choiceC, q.choiceD);
+                    } else if (data.gameState === 'ROUND_REVEAL') {
+                        // Reveal happened while we were away; there's no correctLetter here,
+                        // so just drop into the gameplay view and wait for the next broadcast.
+                        document.getElementById('room-status-text').innerText = "Round Evaluation";
+                    }
+                }
                 if (data.type === 'LEADERBOARD_UPDATE') {
                     detectNewPlayerArrival(data.players);
                     updateLeaderboardUI(data.players);
