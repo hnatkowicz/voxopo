@@ -1,0 +1,181 @@
+body {
+            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, sans-serif;
+            background: #0d0e11;
+            color: #f4f5f6;
+            margin: 0;
+            padding: 40px;
+            box-sizing: border-box;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            letter-spacing: -0.01em;
+        }
+        .hud-banner {
+            background: #14161d;
+            border: 1px solid #222630;
+            border-radius: 12px;
+            padding: 24px 40px;
+            margin-bottom: 32px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .status-pill {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: rgba(0, 230, 118, 0.06);
+            border: 1px solid rgba(0, 230, 118, 0.15);
+            padding: 8px 16px;
+            border-radius: 30px;
+        }
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            background: #00e676;
+            border-radius: 50%;
+            box-shadow: 0 0 12px #00e676;
+        }
+        .status-text {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: #00e676;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        .hud-metric {
+            font-size: 0.9rem;
+            color: #8892b0;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            font-weight: 500;
+        }
+        .hud-value {
+            color: #ffffff;
+            font-weight: 700;
+            font-size: 1.4rem;
+            margin-left: 6px;
+        }
+        .split-container {
+            display: flex;
+            gap: 32px;
+            flex: 1;
+            min-height: 0;
+        }
+        .left-column {
+            flex: 65;
+            display: flex;
+            flex-direction: column;
+        }
+        .right-column {
+            flex: 35;
+            background: #14161d;
+            border: 1px solid #222630;
+            border-radius: 12px;
+            padding: 32px;
+            display: flex;
+            flex-direction: column;
+        }
+        .panel-box {
+            background: #14161d;
+            border: 1px solid #222630;
+            border-radius: 12px;
+            padding: 40px;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        .panel-title {
+            margin: 0 0 32px 0;
+            color: #ffffff;
+            font-size: 1.25rem;
+            font-weight: 600;
+            letter-spacing: -0.02em;
+        }
+        .vote-row {
+            margin-bottom: 24px;
+        }
+        .vote-meta {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.95rem;
+            font-weight: 500;
+            margin-bottom: 10px;
+            color: #e2e5e9;
+        }
+        .progress-track {
+            background: #1e222b;
+            height: 12px;
+            border-radius: 20px;
+            overflow: hidden;
+        }
+        .progress-fill {
+            background: #00e676;
+            width: 0%;
+            height: 100%;
+            border-radius: 20px;
+            transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1); /* Essential animation anchor */
+        }
+        .board-title {
+            margin: 0 0 24px 0;
+            color: #ffffff;
+            font-size: 1.25rem;
+            font-weight: 600;
+            letter-spacing: -0.02em;
+        }
+        .leaderboard-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .leaderboard-table th {
+            color: #64748b;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            font-weight: 600;
+            padding-bottom: 16px;
+            border-bottom: 1px solid #222630;
+        }
+        .leaderboard-table td {
+            padding: 16px 0;
+            border-bottom: 1px solid #1e222b;
+            font-size: 1.05rem;
+        }
+        .rank-col { width: 12%; color: #64748b; font-weight: 600; }
+        .emoji-col { width: 15%; font-size: 1.2rem; text-align: left; }
+        .name-col { width: 53%; font-weight: 500; color: #ffffff; }
+        .score-col { width: 20%; text-align: right; color: #00e676; font-weight: 600; }
+                /* Sliding Toast Alert Notification Window Styles */
+        .toast-container {
+            position: fixed;
+            bottom: 40px;
+            left: 40px;
+            z-index: 9999;
+            pointer-events: none;
+        }
+        .toast-card {
+            background: rgba(20, 22, 29, 0.95);
+            border: 1px solid #222630;
+            border-radius: 8px;
+            padding: 16px 24px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            box-shadow: 0 12px 32px rgba(0,0,0,0.5);
+            transform: translateX(-150%);
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            backdrop-filter: blur(8px);
+        }
+        .toast-card.active {
+            transform: translateX(0);
+        }
+        .toast-text {
+            font-size: 1rem;
+            font-weight: 500;
+            color: #ffffff;
+        }
+        .toast-highlight {
+            color: #00e676;
+            font-weight: 600;
+        }
