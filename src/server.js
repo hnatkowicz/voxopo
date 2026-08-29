@@ -9,7 +9,6 @@ dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 3000;
-const path = require('path');
 
 // Tell Express to serve everything inside the 'public' folder as static assets
 app.use(express.static(path.join(__dirname, '..public')));
