@@ -11,7 +11,6 @@ document.addEventListener("DOMContentLoaded", () => {
 if (btnGenerate) {
     btnGenerate.addEventListener('click', async () => {
         try {
-            // Update this string to point directly to your exact Express GET route
             const response = await fetch('/api/create-room'); 
             const data = await response.json();
             
@@ -21,22 +20,17 @@ if (btnGenerate) {
                 
                 // Fire the CSS toggle selector rule to drop the gateway screen
                 document.body.setAttribute('data-view', 'game');
-
-                                if (typeof setupWebSocket === 'function') {
-                    setupWebSocket(data.roomCode);
-                } else if (typeof connectToRoom === 'function') {
-                    connectToRoom(data.roomCode);
-                }
                 
-                // Let your existing WebSocket framework take over from here
-                // Example: setupWebSocket(data.roomCode);
+                // ========================================================
+                // 🚀 WAKE UP YOUR SOCKET ENGINE INSTANTLY HERE:
+                // ========================================================
+                connectWebSocketEngine(data.roomCode);
             }
         } catch (err) {
             console.error("Critical server synchronization failure:", err);
         }
     });
 }
-
 
     // 2. TOGGLE SPECTATOR CODE ENTRY DRAWER
     if (btnToggleSpectate && spectateDrawer) {
@@ -47,21 +41,21 @@ if (btnGenerate) {
         });
     }
 
-    // 3. SUBMIT CODE AND CONNECT AS SPECTATOR VIEW
-    if (btnSubmitSpectate) {
-        btnSubmitSpectate.addEventListener('click', () => {
-            const enteredCode = inputRoomCode.value.trim().toUpperCase();
-            if (enteredCode.length === 4) {
-                document.getElementById('display-room-code-badge').innerText = enteredCode;
-                
-                // Transition panel view layout completely over to game tracking board
-                document.body.setAttribute('data-view', 'game');
-                
-                // Fire off your room-joining telemetry initialization routines here...
-            }
-        });
-    }
-});
+// 3. SUBMIT MANUALLY ENTERED SPECTATOR CODE
+if (btnSubmitSpectate) {
+    btnSubmitSpectate.addEventListener('click', () => {
+        const enteredCode = inputRoomCode.value.trim().toUpperCase();
+        if (enteredCode.length === 4) {
+            document.getElementById('display-room-code-badge').innerText = enteredCode;
+            
+            // Shift layout view over to the match screen tracker panel
+            document.body.setAttribute('data-view', 'game');
+            
+            // 🚀 Wake up the connection engine for the spectator view!
+            connectWebSocketEngine(enteredCode);
+        }
+    });
+}
 
 let currentActiveRoomCode = '----';
         let socket = null;
