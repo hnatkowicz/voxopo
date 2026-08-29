@@ -5,14 +5,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>RM! Live Interface</title>
     <link rel="icon" type="image/x-icon" href="/R.ico" />
+    <link rel="stylesheet" href="/styles.css">
 </head>
 <body>
 
     <div class="hud-banner">
         <!-- BRANDING + STATUS BLOCK -->
         <div style="display: flex; align-items: center; gap: 24px;">
-            <a href="/" id="brand-logo" style="height: 28px; display: flex; align-items: center;">
-                <!-- JavaScript will place the vector perfectly here -->
+            <a href="/" style="height: 28px; display: flex; align-items: center;">
+                <!-- Simple, highly portable, and automatically vertically centered by flexbox -->
+                <img src="/RandoMania!.svg" alt="RandoMania!" style="height: 100%; width: auto;" />
             </a>
             
             <div class="status-pill">
@@ -84,10 +86,7 @@
             </div>
         </div>
     </div>
-
-    <script>
-        
-    </script>
+<script src="/app.js" defer></script>
 </body>
 </html>
 
