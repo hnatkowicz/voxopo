@@ -238,20 +238,22 @@ body[data-view="game"] #game-screen {
 /*  VIEWPORT ENGINE VISIBILITY STATES         */
 /* ========================================== */
 
-/* State A: Display Gateway and drop match engine track entirely */
-body[data-view="gateway"] #game-screen {
+/* State A: Complete lockdown of the match engine when inside the gateway */
+body[data-view="gateway"] #game-screen,
+body[data-view="gateway"] #game-screen * {
     display: none !important;
 }
 body[data-view="gateway"] #gateway-screen {
-    display: block;
+    display: block !important;
 }
 
-/* State B: Drop Gateway layer completely, bring main match dashboard to stage */
-body[data-view="game"] #gateway-screen {
+/* State B: Complete lockdown of the gateway when inside an active game */
+body[data-view="game"] #gateway-screen,
+body[data-view="game"] #gateway-screen * {
     display: none !important;
 }
 body[data-view="game"] #game-screen {
-    display: block;
+    display: block !important;
 }
 
 /* Custom Interactive UI Button Properties */
