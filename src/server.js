@@ -4,7 +4,6 @@ import path from 'path';
 import { WebSocketServer } from 'ws';
 import pool from './config/database.js';
 import { handleIncomingMessage, activeRooms } from './services/gameEngine.js';
-import path from 'path';
 import { fileURLToPath } from 'url';
 
 // Recreate __dirname cleanly for ES module environments
