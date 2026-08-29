@@ -1,12 +1,22 @@
-import pkg from 'pg';
-const { Pool } = pkg;
-
-const pool = new Pool({
-    connectionString: process.env.DATABASE_URL,
-    ssl: { rejectUnauthorized: false }
-});
+import pool from '../config/database.js';
 
 export const activeRooms = {};
+
+// PLACE/THING/DATE pools are too thin right now to supply 3 distractors each,
+// so the loop only draws from subcategories with enough peers per faction.
+const ELIGIBLE_SUBCATEGORIES = ['PERSON', 'EVENT'];
+const MIN_GROUP_SIZE_FOR_DISTRACTORS = 4; // correct answer + 3 distractors
+const MAX_QUESTIONS_PER_GAME = 30;
+const REVEAL_DURATION_MS = 5000;
+
+function shuffleArray(items) {
+    const copy = [...items];
+    for (let i = copy.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [copy[i], copy[j]] = [copy[j], copy[i]];
+    }
+    return copy;
+}
 
 // Shared label lookup so lobby, category, and reconnect/catch-up broadcasts
 // never fall out of sync with each other.
@@ -138,7 +148,7 @@ function startCategoryCountdown(roomCode) {
     }, 1000);
 }
 
-function executeCategoryPhaseExpiration(roomCode) {
+async function executeCategoryPhaseExpiration(roomCode) {
     const room = activeRooms[roomCode];
     if (!room) return;
 
@@ -148,32 +158,131 @@ function executeCategoryPhaseExpiration(roomCode) {
     }
 
     const winningCategoryKey = calculateCategoryWinner(room);
-    room.gameState = 'GAME_ROUND';
-    room.answers = {};
 
     const { cat1, cat2, cat3 } = getCategoryLabels(room.winningGameMode);
     const labelMap = { CAT_1: cat1, CAT_2: cat2, CAT_3: cat3 };
-    const activeDeckName = labelMap[winningCategoryKey] || 'General Deck';
+    room.activeDeckName = labelMap[winningCategoryKey] || 'General Deck';
 
-    console.log(`[Room Engine] Category selection finalized for Room ${roomCode}. Loaded: ${activeDeckName}`);
+    console.log(`[Room Engine] Category selection finalized for Room ${roomCode}. Loaded: ${room.activeDeckName}`);
+
+    try {
+        await loadQuestionBank(room);
+    } catch (error) {
+        console.error(`❌ [Question Bank] Failed to load questions for Room ${roomCode}:`, error.message);
+        return;
+    }
+
+    if (room.questionBank.length === 0) {
+        console.error(`❌ [Question Bank] No eligible questions found for Room ${roomCode}.`);
+        return;
+    }
+
+    startNextQuestion(roomCode);
+}
+
+// Pulls every TRIVIA row from an eligible subcategory, groups peers by
+// subcategory+faction for distractor sourcing, and keeps only questions
+// whose group has enough peers to supply 3 distractors. Shuffled once per
+// room so question order (and which questions get asked at all) varies game to game.
+async function loadQuestionBank(room) {
+    const result = await pool.query(
+        `SELECT id, subcategory, faction, question_text, correct_answer, points, visual_asset
+         FROM questions
+         WHERE game_mode = 'TRIVIA' AND subcategory = ANY($1::text[])`,
+        [ELIGIBLE_SUBCATEGORIES]
+    );
+
+    const groups = {};
+    result.rows.forEach(row => {
+        const key = `${row.subcategory}|${row.faction}`;
+        if (!groups[key]) groups[key] = [];
+        groups[key].push(row);
+    });
+
+    const eligibleQuestions = result.rows.filter(row => {
+        const key = `${row.subcategory}|${row.faction}`;
+        return groups[key].length >= MIN_GROUP_SIZE_FOR_DISTRACTORS;
+    });
+
+    room.questionGroups = groups;
+    room.questionBank = shuffleArray(eligibleQuestions).slice(0, MAX_QUESTIONS_PER_GAME);
+    room.currentQuestionIndex = -1;
+    room.askedQuestionIds = new Set();
+}
+
+// Builds the shuffled 4-choice payload for one question row: distractors are
+// pulled from sibling rows sharing subcategory+faction (excluding itself).
+function buildQuestionPayload(room, row, categoryLabel) {
+    const groupKey = `${row.subcategory}|${row.faction}`;
+    const distractorPool = (room.questionGroups[groupKey] || [])
+        .filter(peer => peer.id !== row.id)
+        .map(peer => peer.correct_answer);
+
+    const distractors = shuffleArray(distractorPool).slice(0, 3);
+    const shuffledChoices = shuffleArray([row.correct_answer, ...distractors]);
+    const letters = ['A', 'B', 'C', 'D'];
+    const correctLetter = letters[shuffledChoices.indexOf(row.correct_answer)];
+
+    return {
+        questionId: row.id,
+        categoryLabel,
+        questionText: row.question_text,
+        points: row.points,
+        visualAsset: row.visual_asset,
+        choiceA: shuffledChoices[0],
+        choiceB: shuffledChoices[1],
+        choiceC: shuffledChoices[2],
+        choiceD: shuffledChoices[3],
+        correctLetter
+    };
+}
+
+function startNextQuestion(roomCode) {
+    const room = activeRooms[roomCode];
+    if (!room) return;
+
+    room.currentQuestionIndex++;
+
+    if (room.currentQuestionIndex >= room.questionBank.length) {
+        endGame(roomCode);
+        return;
+    }
+
+    const row = room.questionBank[room.currentQuestionIndex];
+    room.askedQuestionIds.add(row.id);
+    room.answers = {};
+    room.gameState = 'GAME_ROUND';
 
     // Persist the live question on the room so a reconnecting/refreshed TV
     // screen can be caught up via STATE_CATCH_UP instead of seeing a blank panel.
-    room.activeQuestionData = {
-        categoryLabel: activeDeckName,
-        questionText: "Which country was the first to implement radar technology defensively during the structural operations of World War II?",
-        choiceA: "Great Britain",
-        choiceB: "Germany",
-        choiceC: "United States",
-        choiceD: "Japan"
-    };
+    room.activeQuestionData = buildQuestionPayload(room, row, room.activeDeckName);
 
     broadcastToRoom(roomCode, {
         type: 'TRANSITION_TO_QUESTION',
-        ...room.activeQuestionData
+        ...room.activeQuestionData,
+        questionNumber: room.currentQuestionIndex + 1,
+        totalQuestions: room.questionBank.length
     });
 
     startGameRoundCountdown(roomCode);
+}
+
+function endGame(roomCode) {
+    const room = activeRooms[roomCode];
+    if (!room) return;
+
+    if (room.timerInterval) { clearInterval(room.timerInterval); room.timerInterval = null; }
+    if (room.revealTimeout) { clearTimeout(room.revealTimeout); room.revealTimeout = null; }
+
+    room.gameState = 'GAME_OVER';
+    const finalStandings = Object.values(room.players).sort((a, b) => b.score - a.score);
+
+    console.log(`🏁 [Game Engine] Room ${roomCode} finished ${room.questionBank.length} questions. Broadcasting final leaderboard.`);
+
+    broadcastToRoom(roomCode, {
+        type: 'GAME_OVER',
+        players: finalStandings
+    });
 }
 
 function calculateCategoryWinner(room) {
@@ -226,13 +335,20 @@ function evaluateRoundAndRevealAnswer(roomCode) {
 
     room.gameState = 'ROUND_REVEAL';
     broadcastToRoom(roomCode, { type: 'GAME_TIMER_TICK', secondsLeft: "TIME'S UP!" });
-    
+
+    const correctLetter = room.activeQuestionData ? room.activeQuestionData.correctLetter : null;
     broadcastToRoom(roomCode, {
         type: 'REVEAL_CORRECT_ANSWER',
-        correctLetter: "A"
+        correctLetter
     });
-    
+
     console.log(`[Game Round Clock] Round countdown finished for Room ${roomCode}. Broadcasted answer reveal.`);
+
+    if (room.revealTimeout) clearTimeout(room.revealTimeout);
+    room.revealTimeout = setTimeout(() => {
+        room.revealTimeout = null;
+        startNextQuestion(roomCode);
+    }, REVEAL_DURATION_MS);
 }
 
 // ==========================================
@@ -252,9 +368,10 @@ export function handleIncomingMessage(fromPhone, bodyText) {
         if (!activeRooms[roomCode]) {
             activeRooms[roomCode] = {
                 gameState: 'LOBBY', players: {}, screens: [], timerInterval: null,
-                lobbyTimerInterval: null, categoryTimerInterval: null,
+                lobbyTimerInterval: null, categoryTimerInterval: null, revealTimeout: null,
                 lobbySecondsLeft: 60, categorySecondsLeft: 30, gameSecondsLeft: 25, winningGameMode: null,
-                activeQuestionData: null, answers: {},
+                activeQuestionData: null, activeDeckName: null, answers: {},
+                questionBank: [], questionGroups: {}, currentQuestionIndex: -1, askedQuestionIds: new Set(),
                 votes: { TRIVI_YEAH: 0, COUNTRY_MONKEY: 0, EMPOSSDURR: 0, FLAG_ME_DOWN: 0, ON_THE_SPECTRUM: 0 },
                 categoryVotes: { CAT_1: 0, CAT_2: 0, CAT_3: 0 }
             };
@@ -381,7 +498,7 @@ export function handleIncomingMessage(fromPhone, bodyText) {
     }
 
     // 5. Handle Live Active Choice Submissions (Phase 3)
-    if (currentRoom.gameState === 'QUESTION') {
+    if (currentRoom.gameState === 'GAME_ROUND') {
         const answerChoice = cleanText.toUpperCase();
         if (['A', 'B', 'C', 'D'].includes(answerChoice)) {
             currentRoom.answers[actingPlayerName] = answerChoice;
