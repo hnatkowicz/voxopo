@@ -222,7 +222,7 @@ let currentActiveRoomCode = '----';
 
             panel.innerHTML = `
                 <div class="panel-box" style="padding: 40px; flex: 1; display: flex; flex-direction: column; justify-content: center;">
-                    <h2 class="panel-title" style="margin-bottom: 8px;">🎮 Winner: ${displayGameName}</h2>
+                    <h2 class="panel-title" style="margin-bottom: 8px;">Winner: ${displayGameName}</h2>
                     <p style="color: #64748b; font-size: 0.95rem; margin: 0 0 32px 0; font-weight: 500;">Select your sub-deck preference on your phone now</p>
                     
                     <div style="display: flex; flex-direction: column;">
