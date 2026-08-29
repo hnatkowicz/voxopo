@@ -151,7 +151,21 @@ async function startServer() {
                             type: 'LEADERBOARD_UPDATE',
                             players: Object.values(activeRooms[roomCode].players)
                         }));
-                    }
+
+                        const currentRoomState = activeRooms[roomCode];
+                            if (currentRoomState.gameState !== 'LOBBY') {
+                                socket.send(JSON.stringify({
+                                    type: 'STATE_CATCH_UP',
+                                    gameState: currentRoomState.gameState,
+                                    winningGameMode: currentRoomState.winningGameMode,
+                                    activeQuestionData: currentRoomState.activeQuestionData, // Sends the live trivia question text!
+                                    // Pass down whatever timer metrics are left on the clock
+                                    lobbySecondsLeft: currentRoomState.lobbySecondsLeft,
+                                    categorySecondsLeft: currentRoomState.categorySecondsLeft
+                                }));
+                                console.log(`[Sync Engine] Sent catch-up payload for active room ${roomCode} to fresh display listener.`);
+                            }
+                        }
                 } catch (err) {
                     console.error('❌ [Socket Error]:', err.message);
                 }
