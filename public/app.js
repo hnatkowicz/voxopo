@@ -1,3 +1,58 @@
+document.addEventListener("DOMContentLoaded", () => {
+    const btnGenerate = document.getElementById('btn-generate-lobby');
+    const btnToggleSpectate = document.getElementById('btn-toggle-spectate');
+    const spectateDrawer = document.getElementById('spectate-input-drawer');
+    const btnSubmitSpectate = document.getElementById('btn-submit-spectate');
+    const inputRoomCode = document.getElementById('input-room-code');
+
+    // 1. GENERATE NEW LOBBY EVENT HANDLE
+    if (btnGenerate) {
+        btnGenerate.addEventListener('click', async () => {
+            try {
+                // Point this fetch statement to whatever route code your server.js exposes
+                const response = await fetch('/api/rooms/create', { method: 'POST' });
+                const data = await response.json();
+                
+                if (data.roomCode) {
+                    // Update your dashboard metric badge labels
+                    document.getElementById('display-room-code-badge').innerText = data.roomCode;
+                    
+                    // Instantly shift view configuration state using the master CSS selector rule
+                    document.body.setAttribute('data-view', 'game');
+                    
+                    // Boot up your existing websocket / polling gameplay timers here...
+                }
+            } catch (err) {
+                console.error("Failed to initialize lobby state node:", err);
+            }
+        });
+    }
+
+    // 2. TOGGLE SPECTATOR CODE ENTRY DRAWER
+    if (btnToggleSpectate && spectateDrawer) {
+        btnToggleSpectate.addEventListener('click', () => {
+            const isHidden = spectateDrawer.style.display === 'none';
+            spectateDrawer.style.display = isHidden ? 'flex' : 'none';
+            if (isHidden) inputRoomCode.focus();
+        });
+    }
+
+    // 3. SUBMIT CODE AND CONNECT AS SPECTATOR VIEW
+    if (btnSubmitSpectate) {
+        btnSubmitSpectate.addEventListener('click', () => {
+            const enteredCode = inputRoomCode.value.trim().toUpperCase();
+            if (enteredCode.length === 4) {
+                document.getElementById('display-room-code-badge').innerText = enteredCode;
+                
+                // Transition panel view layout completely over to game tracking board
+                document.body.setAttribute('data-view', 'game');
+                
+                // Fire off your room-joining telemetry initialization routines here...
+            }
+        });
+    }
+});
+
 let currentActiveRoomCode = '----';
         let socket = null;
         let toastQueue = [];
