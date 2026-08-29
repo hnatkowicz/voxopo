@@ -1,0 +1,207 @@
+diff --git a/public/app.js b/public/app.js
+index 7375bb5..5eb7f33 100644
+--- a/public/app.js
++++ b/public/app.js
+@@ -95,6 +95,32 @@ let currentActiveRoomCode = '----';
+                 const data = JSON.parse(event.data);
+                 console.log("[WebSocket API Event Received]", data);
+ 
++                // Fired once right after REGISTER_SCREEN if the room is already
++                // mid-game (e.g. the TV screen reloaded). Re-draws whichever
++                // phase the server says is actually active.
++                if (data.type === 'STATE_CATCH_UP') {
++                    console.log("[Sync Engine] Synchronizing layout with active server phase:", data.gameState);
++
++                    document.body.setAttribute('data-view', 'game');
++
++                    if (data.gameState === 'CATEGORY_VOTE') {
++                        document.getElementById('room-status-text').innerText = "Category Selection";
++                        document.getElementById('lobby-countdown').innerText = data.categorySecondsLeft + "s";
++                        switchToCategoryVotingUI(data.winningGameMode, data.label1, data.label2, data.label3);
++                    } else if (data.gameState === 'GAME_ROUND' && data.activeQuestionData) {
++                        document.getElementById('room-status-text').innerText = "Gameplay Phase";
++                        document.getElementById('lobby-countdown').innerText = data.gameSecondsLeft + "s";
++                        const q = data.activeQuestionData;
++                        // Kept in sync with the choices shown, so a REVEAL_CORRECT_ANSWER
++                        // that lands after reconnect still highlights the real answer text.
++                        window.activeQuestion = { choices: { A: q.choiceA, B: q.choiceB, C: q.choiceC, D: q.choiceD } };
++                        switchToQuestionUI(q.categoryLabel, q.questionText, q.choiceA, q.choiceB, q.choiceC, q.choiceD);
++                    } else if (data.gameState === 'ROUND_REVEAL') {
++                        // Reveal happened while we were away; there's no correctLetter here,
++                        // so just drop into the gameplay view and wait for the next broadcast.
++                        document.getElementById('room-status-text').innerText = "Round Evaluation";
++                    }
++                }
+                 if (data.type === 'LEADERBOARD_UPDATE') {
+                     detectNewPlayerArrival(data.players);
+                     updateLeaderboardUI(data.players);
+diff --git a/src/server.js b/src/server.js
+index e8a14ee..cdc5694 100644
+--- a/src/server.js
++++ b/src/server.js
+@@ -3,7 +3,7 @@ import dotenv from 'dotenv';
+ import path from 'path';
+ import { WebSocketServer } from 'ws';
+ import pool from './config/database.js';
+-import { handleIncomingMessage, activeRooms } from './services/gameEngine.js';
++import { handleIncomingMessage, activeRooms, getCategoryLabels } from './services/gameEngine.js';
+ import { fileURLToPath } from 'url';
+ 
+ // Recreate __dirname cleanly for ES module environments
+@@ -43,6 +43,7 @@ app.get('/api/create-room', (req, res) => {
+             categoryTimerInterval: null,
+             lobbySecondsLeft: 60,
+             categorySecondsLeft: 30,
++            gameSecondsLeft: 25,
+             winningGameMode: null,
+             activeQuestionData: null,
+             answers: {},
+@@ -137,7 +138,7 @@ async function startServer() {
+                             activeRooms[roomCode] = {
+                                 gameState: 'LOBBY', players: {}, screens: [], timerInterval: null,
+                                 lobbyTimerInterval: null, categoryTimerInterval: null,
+-                                lobbySecondsLeft: 60, categorySecondsLeft: 30, winningGameMode: null,
++                                lobbySecondsLeft: 60, categorySecondsLeft: 30, gameSecondsLeft: 25, winningGameMode: null,
+                                 activeQuestionData: null, answers: {},
+                                 votes: { TRIVI_YEAH: 0, COUNTRY_MONKEY: 0, EMPOSSDURR: 0, FLAG_ME_DOWN: 0, ON_THE_SPECTRUM: 0 },
+                                 categoryVotes: { CAT_1: 0, CAT_2: 0, CAT_3: 0 }
+@@ -154,14 +155,22 @@ async function startServer() {
+ 
+                         const currentRoomState = activeRooms[roomCode];
+                             if (currentRoomState.gameState !== 'LOBBY') {
++                                // Recompute the same category labels the CATEGORY_VOTE broadcast used,
++                                // so a reconnecting screen shows the real sub-deck names, not defaults.
++                                const { cat1, cat2, cat3 } = getCategoryLabels(currentRoomState.winningGameMode);
++
+                                 socket.send(JSON.stringify({
+                                     type: 'STATE_CATCH_UP',
+                                     gameState: currentRoomState.gameState,
+                                     winningGameMode: currentRoomState.winningGameMode,
++                                    label1: cat1,
++                                    label2: cat2,
++                                    label3: cat3,
+                                     activeQuestionData: currentRoomState.activeQuestionData, // Sends the live trivia question text!
+                                     // Pass down whatever timer metrics are left on the clock
+                                     lobbySecondsLeft: currentRoomState.lobbySecondsLeft,
+-                                    categorySecondsLeft: currentRoomState.categorySecondsLeft
++                                    categorySecondsLeft: currentRoomState.categorySecondsLeft,
++                                    gameSecondsLeft: currentRoomState.gameSecondsLeft
+                                 }));
+                                 console.log(`[Sync Engine] Sent catch-up payload for active room ${roomCode} to fresh display listener.`);
+                             }
+diff --git a/src/services/gameEngine.js b/src/services/gameEngine.js
+index 9d9eb36..5a3fa6c 100644
+--- a/src/services/gameEngine.js
++++ b/src/services/gameEngine.js
+@@ -8,6 +8,22 @@ const pool = new Pool({
+ 
+ export const activeRooms = {};
+ 
++// Shared label lookup so lobby, category, and reconnect/catch-up broadcasts
++// never fall out of sync with each other.
++export function getCategoryLabels(winningGameMode) {
++    let cat1 = 'WWII History', cat2 = 'Primary School', cat3 = 'Pop Culture';
++    if (winningGameMode === 'COUNTRY_MONKEY') {
++        cat1 = 'Global Mix'; cat2 = 'Europe & Americas'; cat3 = 'Asia & Africa';
++    } else if (winningGameMode === 'EMPOSSDURR') {
++        cat1 = 'Standard Circle'; cat2 = 'Traitor Pack'; cat3 = 'Chaos Mode';
++    } else if (winningGameMode === 'FLAG_ME_DOWN') {
++        cat1 = 'Modern Nations'; cat2 = 'Historical Standards'; cat3 = 'Bizarre Banners';
++    } else if (winningGameMode === 'ON_THE_SPECTRUM') {
++        cat1 = 'Numeric Scales'; cat2 = 'Extreme Measures'; cat3 = 'Chrono Orders';
++    }
++    return { cat1, cat2, cat3 };
++}
++
+ function broadcastToRoom(roomCode, payload) {
+     const room = activeRooms[roomCode];
+     if (room && room.screens) {
+@@ -52,18 +68,9 @@ function executeLobbyPhaseExpiration(roomCode) {
+     const winningModule = calculateElectionWinner(room);
+     room.gameState = 'CATEGORY_VOTE';
+     room.winningGameMode = winningModule;
+-    
+-    let cat1 = 'WWII History', cat2 = 'Primary School', cat3 = 'Pop Culture';
+-    if (winningModule === 'COUNTRY_MONKEY') {
+-        cat1 = 'Global Mix'; cat2 = 'Europe & Americas'; cat3 = 'Asia & Africa';
+-    } else if (winningModule === 'EMPOSSDURR') {
+-        cat1 = 'Standard Circle'; cat2 = 'Traitor Pack'; cat3 = 'Chaos Mode';
+-    } else if (winningModule === 'FLAG_ME_DOWN') {
+-        cat1 = 'Modern Nations'; cat2 = 'Historical Standards'; cat3 = 'Bizarre Banners';
+-    } else if (winningModule === 'ON_THE_SPECTRUM') {
+-        cat1 = 'Numeric Scales'; cat2 = 'Extreme Measures'; cat3 = 'Chrono Orders';
+-    }
+-    
++
++    const { cat1, cat2, cat3 } = getCategoryLabels(winningModule);
++
+     console.log(`[Room Engine] Lobby phase closed for Room ${roomCode}. Winner: ${winningModule}`);
+ 
+     broadcastToRoom(roomCode, {
+@@ -142,30 +149,28 @@ function executeCategoryPhaseExpiration(roomCode) {
+ 
+     const winningCategoryKey = calculateCategoryWinner(room);
+     room.gameState = 'GAME_ROUND';
+-    room.answers = {}; 
+-    
+-    let labelMap = { CAT_1: 'WWII History', CAT_2: 'Primary School', CAT_3: 'Pop Culture' };
+-    if (room.winningGameMode === 'COUNTRY_MONKEY') {
+-        labelMap = { CAT_1: 'Global Mix', CAT_2: 'Europe & Americas', CAT_3: 'Asia & Africa' };
+-    } else if (room.winningGameMode === 'EMPOSSDURR') {
+-        labelMap = { CAT_1: 'Standard Circle', CAT_2: 'Traitor Pack', CAT_3: 'Chaos Mode' };
+-    } else if (room.winningGameMode === 'FLAG_ME_DOWN') {
+-        labelMap = { CAT_1: 'Modern Nations', CAT_2: 'Historical Standards', CAT_3: 'Bizarre Banners' };
+-    } else if (room.winningGameMode === 'ON_THE_SPECTRUM') {
+-        labelMap = { CAT_1: 'Numeric Scales', CAT_2: 'Extreme Measures', CAT_3: 'Chrono Orders' };
+-    }
++    room.answers = {};
++
++    const { cat1, cat2, cat3 } = getCategoryLabels(room.winningGameMode);
++    const labelMap = { CAT_1: cat1, CAT_2: cat2, CAT_3: cat3 };
+     const activeDeckName = labelMap[winningCategoryKey] || 'General Deck';
+ 
+     console.log(`[Room Engine] Category selection finalized for Room ${roomCode}. Loaded: ${activeDeckName}`);
+ 
+-    broadcastToRoom(roomCode, {
+-        type: 'TRANSITION_TO_QUESTION',
++    // Persist the live question on the room so a reconnecting/refreshed TV
++    // screen can be caught up via STATE_CATCH_UP instead of seeing a blank panel.
++    room.activeQuestionData = {
+         categoryLabel: activeDeckName,
+         questionText: "Which country was the first to implement radar technology defensively during the structural operations of World War II?",
+         choiceA: "Great Britain",
+         choiceB: "Germany",
+         choiceC: "United States",
+         choiceD: "Japan"
++    };
++
++    broadcastToRoom(roomCode, {
++        type: 'TRANSITION_TO_QUESTION',
++        ...room.activeQuestionData
+     });
+ 
+     startGameRoundCountdown(roomCode);
+@@ -195,11 +200,13 @@ function startGameRoundCountdown(roomCode) {
+     const room = activeRooms[roomCode];
+     if (!room) return;
+ 
+-    let count = 25; 
++    let count = 25;
++    room.gameSecondsLeft = count;
+     if (room.timerInterval) clearInterval(room.timerInterval);
+ 
+     room.timerInterval = setInterval(() => {
+         count--;
++        room.gameSecondsLeft = count;
+         if (count > 0) {
+             broadcastToRoom(roomCode, { type: 'GAME_TIMER_TICK', secondsLeft: count + "s" });
+         } else {
+@@ -246,7 +253,7 @@ export function handleIncomingMessage(fromPhone, bodyText) {
+             activeRooms[roomCode] = {
+                 gameState: 'LOBBY', players: {}, screens: [], timerInterval: null,
+                 lobbyTimerInterval: null, categoryTimerInterval: null,
+-                lobbySecondsLeft: 60, categorySecondsLeft: 30, winningGameMode: null,
++                lobbySecondsLeft: 60, categorySecondsLeft: 30, gameSecondsLeft: 25, winningGameMode: null,
+                 activeQuestionData: null, answers: {},
+                 votes: { TRIVI_YEAH: 0, COUNTRY_MONKEY: 0, EMPOSSDURR: 0, FLAG_ME_DOWN: 0, ON_THE_SPECTRUM: 0 },
+                 categoryVotes: { CAT_1: 0, CAT_2: 0, CAT_3: 0 }
