@@ -253,9 +253,14 @@ function startNextQuestion(roomCode) {
     room.answers = {};
     room.gameState = 'GAME_ROUND';
 
-    // Persist the live question on the room so a reconnecting/refreshed TV
-    // screen can be caught up via STATE_CATCH_UP instead of seeing a blank panel.
-    room.activeQuestionData = buildQuestionPayload(room, row, room.activeDeckName);
+    // currentQuestionData (server-only) carries correctLetter/points for scoring
+    // and reveal. activeQuestionData is the public-safe copy with the answer
+    // stripped out — it's what gets broadcast and handed to reconnecting/
+    // refreshed TV screens via STATE_CATCH_UP, so the answer can't leak early.
+    const fullQuestionData = buildQuestionPayload(room, row, room.activeDeckName);
+    const { correctLetter, ...publicQuestionData } = fullQuestionData;
+    room.currentQuestionData = fullQuestionData;
+    room.activeQuestionData = publicQuestionData;
 
     broadcastToRoom(roomCode, {
         type: 'TRANSITION_TO_QUESTION',
@@ -336,10 +341,25 @@ function evaluateRoundAndRevealAnswer(roomCode) {
     room.gameState = 'ROUND_REVEAL';
     broadcastToRoom(roomCode, { type: 'GAME_TIMER_TICK', secondsLeft: "TIME'S UP!" });
 
-    const correctLetter = room.activeQuestionData ? room.activeQuestionData.correctLetter : null;
+    const correctLetter = room.currentQuestionData ? room.currentQuestionData.correctLetter : null;
+    const points = room.currentQuestionData ? room.currentQuestionData.points : 0;
+
+    if (correctLetter) {
+        Object.entries(room.answers).forEach(([playerName, submittedLetter]) => {
+            if (submittedLetter === correctLetter) {
+                const player = room.players[playerName];
+                if (player) player.score += points;
+            }
+        });
+    }
+
     broadcastToRoom(roomCode, {
         type: 'REVEAL_CORRECT_ANSWER',
         correctLetter
+    });
+    broadcastToRoom(roomCode, {
+        type: 'LEADERBOARD_UPDATE',
+        players: Object.values(room.players)
     });
 
     console.log(`[Game Round Clock] Round countdown finished for Room ${roomCode}. Broadcasted answer reveal.`);
@@ -370,7 +390,7 @@ export function handleIncomingMessage(fromPhone, bodyText) {
                 gameState: 'LOBBY', players: {}, screens: [], timerInterval: null,
                 lobbyTimerInterval: null, categoryTimerInterval: null, revealTimeout: null,
                 lobbySecondsLeft: 60, categorySecondsLeft: 30, gameSecondsLeft: 25, winningGameMode: null,
-                activeQuestionData: null, activeDeckName: null, answers: {},
+                activeQuestionData: null, currentQuestionData: null, activeDeckName: null, answers: {},
                 questionBank: [], questionGroups: {}, currentQuestionIndex: -1, askedQuestionIds: new Set(),
                 votes: { TRIVI_YEAH: 0, COUNTRY_MONKEY: 0, EMPOSSDURR: 0, FLAG_ME_DOWN: 0, ON_THE_SPECTRUM: 0 },
                 categoryVotes: { CAT_1: 0, CAT_2: 0, CAT_3: 0 }

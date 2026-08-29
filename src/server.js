@@ -47,6 +47,7 @@ app.get('/api/create-room', (req, res) => {
             gameSecondsLeft: 25,
             winningGameMode: null,
             activeQuestionData: null,
+            currentQuestionData: null,
             activeDeckName: null,
             answers: {},
             questionBank: [],
@@ -145,7 +146,7 @@ async function startServer() {
                                 gameState: 'LOBBY', players: {}, screens: [], timerInterval: null,
                                 lobbyTimerInterval: null, categoryTimerInterval: null, revealTimeout: null,
                                 lobbySecondsLeft: 60, categorySecondsLeft: 30, gameSecondsLeft: 25, winningGameMode: null,
-                                activeQuestionData: null, activeDeckName: null, answers: {},
+                                activeQuestionData: null, currentQuestionData: null, activeDeckName: null, answers: {},
                                 questionBank: [], questionGroups: {}, currentQuestionIndex: -1, askedQuestionIds: new Set(),
                                 votes: { TRIVI_YEAH: 0, COUNTRY_MONKEY: 0, EMPOSSDURR: 0, FLAG_ME_DOWN: 0, ON_THE_SPECTRUM: 0 },
                                 categoryVotes: { CAT_1: 0, CAT_2: 0, CAT_3: 0 }
