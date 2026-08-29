@@ -7,28 +7,30 @@ document.addEventListener("DOMContentLoaded", () => {
     const btnSubmitSpectate = document.getElementById('btn-submit-spectate');
     const inputRoomCode = document.getElementById('input-room-code');
 
-    // 1. GENERATE NEW LOBBY EVENT HANDLE
-    if (btnGenerate) {
-        btnGenerate.addEventListener('click', async () => {
-            try {
-                // Point this fetch statement to whatever route code your server.js exposes
-                const response = await fetch('/api/rooms/create', { method: 'POST' });
-                const data = await response.json();
+// 1. DYNAMIC LIFECYCLE CREATION ROUTINE
+if (btnGenerate) {
+    btnGenerate.addEventListener('click', async () => {
+        try {
+            // Update this string to point directly to your exact Express GET route
+            const response = await fetch('/api/create-room'); 
+            const data = await response.json();
+            
+            if (data.success && data.roomCode) {
+                // Update the active room metric tracking element label
+                document.getElementById('display-room-code-badge').innerText = data.roomCode;
                 
-                if (data.roomCode) {
-                    // Update your dashboard metric badge labels
-                    document.getElementById('display-room-code-badge').innerText = data.roomCode;
-                    
-                    // Instantly shift view configuration state using the master CSS selector rule
-                    document.body.setAttribute('data-view', 'game');
-                    
-                    // Boot up your existing websocket / polling gameplay timers here...
-                }
-            } catch (err) {
-                console.error("Failed to initialize lobby state node:", err);
+                // Fire the CSS toggle selector rule to drop the gateway screen
+                document.body.setAttribute('data-view', 'game');
+                
+                // Let your existing WebSocket framework take over from here
+                // Example: setupWebSocket(data.roomCode);
             }
-        });
-    }
+        } catch (err) {
+            console.error("Critical server synchronization failure:", err);
+        }
+    });
+}
+
 
     // 2. TOGGLE SPECTATOR CODE ENTRY DRAWER
     if (btnToggleSpectate && spectateDrawer) {
