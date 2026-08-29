@@ -47,7 +47,7 @@ app.get('/api/create-room', (req, res) => {
             activeQuestionData: null,
             answers: {},
             votes: { TRIVI_YEAH: 0, COUNTRY_MONKEY: 0, EMPOSSDURR: 0, FLAG_ME_DOWN: 0, ON_THE_SPECTRUM: 0 },
-            categoryVotes: { CAT_1: 0, CAT_2: 0, CAT_3: 0 }
+            categoryVotes: { CAT_1: 0, CAT_2: 0, CAT_3: 0 },
             lastActivity: Date.now() // Time the room was "born"
         };
 
