@@ -48,6 +48,7 @@ app.get('/api/create-room', (req, res) => {
             answers: {},
             votes: { TRIVI_YEAH: 0, COUNTRY_MONKEY: 0, EMPOSSDURR: 0, FLAG_ME_DOWN: 0, ON_THE_SPECTRUM: 0 },
             categoryVotes: { CAT_1: 0, CAT_2: 0, CAT_3: 0 }
+            lastActivity: Date.now() // Time the room was "born"
         };
 
         console.log(`[Room Organizer] Created dynamic session bubble: ${code}`);
@@ -76,6 +77,10 @@ app.post('/api/room-status', (req, res) => {
     try {
         const { roomCode } = req.body;
         const targetRoom = activeRooms[roomCode];
+        if (targetRoom) {
+            // A player just interacted with this room! Bump the clock to keep it alive
+            targetRoom.lastActivity = Date.now();
+        }
 
         if (targetRoom && targetRoom.gameState === 'CATEGORY_VOTE') {
             let cat1 = 'WWII History', cat2 = 'Primary School', cat3 = 'Pop Culture';
@@ -151,6 +156,41 @@ async function startServer() {
                     console.error('❌ [Socket Error]:', err.message);
                 }
             });
+            // ========================================================
+            // 🧹 AUTOMATED GARBAGE COLLECTION REAPER (Keeps room pool fresh)
+            // ========================================================
+            const ROOM_TIMEOUT_MS = 60 * 60 * 1000; // 1 Hour (Adjust this to whatever you like!)
+            
+            setInterval(() => {
+                const now = Date.now();
+                let reapedCount = 0;
+            
+                for (const code in activeRooms) {
+                    const room = activeRooms[code];
+                    
+                    // If the room has been sitting completely idle for over an hour, wipe it out
+                    if (now - room.lastActivity > ROOM_TIMEOUT_MS) {
+                        
+                        // Clean up and clear out any active room countdown intervals to prevent RAM leaks
+                        if (room.timerInterval) clearInterval(room.timerInterval);
+                        if (room.lobbyTimerInterval) clearInterval(room.lobbyTimerInterval);
+                        if (room.categoryTimerInterval) clearInterval(room.categoryTimerInterval);
+                        
+                        // Securely drop the sockets
+                        room.screens.forEach(socket => {
+                            try { socket.close(); } catch (e) {}
+                        });
+            
+                        // Erase the room memory mapping completely out of RAM
+                        delete activeRooms[code];
+                        reapedCount++;
+                    }
+                }
+                
+                if (reapedCount > 0) {
+                    console.log(`[Reaper Engine] Cleaned up ${reapedCount} dead/abandoned lobby sessions.`);
+                }
+            }, 5 * 60 * 1000); // Wakes up automatically every 5 minutes to sweep the server
 
             socket.on('close', () => {
                 for (const code in activeRooms) {
