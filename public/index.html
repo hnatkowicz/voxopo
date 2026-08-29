@@ -8,7 +8,82 @@
     <link rel="stylesheet" href="/styles.css">
 </head>
 <body>
+    <!-- ========================================== -->
+    <!--  VIEWPORT 1: THE WELCOME ENTRY GATEWAY     -->
+    <!-- ========================================== -->
+    <div id="gateway-screen">
+        <div class="hud-banner">
+            <div style="display: flex; align-items: center; gap: 24px;">
+                <a href="/" style="height: 28px; display: flex; align-items: center;">
+                    <img src="/randomania-logo.svg" alt="RandoMania!" style="height: 100%; width: auto;" />
+                </a>
+                <div class="status-pill">
+                    <div class="status-dot"></div>
+                    <div class="status-text">Connected Live</div>
+                </div>
+            </div>
+            <div class="hud-metric" style="color: #64748b; font-weight: 600; letter-spacing: 0.05em;">SYSTEM GATEWAY</div>
+        </div>
 
+        <div class="split-container">
+            <!-- LEFT PANEL: Dynamic Control Forms -->
+            <div class="left-column" style="flex: 65; display: flex; flex-direction: column;">
+                <div class="panel-box" style="flex: 1; display: flex; flex-direction: column; justify-content: center; gap: 24px; padding: 40px;">
+                    <h2 class="panel-title" style="margin-bottom: 8px;">Lobby Generator</h2>
+                    
+                    <button id="btn-generate-lobby" class="action-btn-primary">
+                        🚀 Generate New Lobby
+                    </button>
+
+                    <div style="border-top: 1px solid #222630; margin: 12px 0;"></div>
+
+                    <div style="display: flex; flex-direction: column; gap: 12px;">
+                        <button id="btn-toggle-spectate" class="action-btn-secondary">
+                            📺 Display Existing Lobby
+                        </button>
+                        
+                        <!-- Smooth sliding drawer container for room verification input -->
+                        <div id="spectate-input-drawer" style="display: none; gap: 12px; margin-top: 8px;">
+                            <input type="text" id="input-room-code" placeholder="Enter 4-Digit Code" maxlength="4" style="flex: 1; background: #14161d; border: 1px solid #222630; border-radius: 8px; color: #fff; padding: 14px; font-family: monospace; font-size: 1.2rem; text-align: center; letter-spacing: 4px;">
+                            <button id="btn-submit-spectate" class="action-btn-primary" style="padding: 0 24px; font-size: 1rem;">View</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- PERSISTENT QR BLOCK (Stays visible exactly as specified) -->
+                <div style="background: #14161d; border: 1px solid #222630; border-radius: 12px; padding: 20px 24px; margin-top: 24px; display: flex; align-items: center; gap: 20px; box-sizing: border-box; position: relative; min-height: 114px; flex-shrink: 0;">
+                    <div style="background: #ffffff; padding: 2px; border-radius: 8px; display: flex; justify-content: center; align-items: center; width: 96px; height: 96px; box-sizing: border-box; flex-shrink: 0; z-index: 10; margin-right: 12px;">
+                        <img src="qr.png" alt="Scan to Play" style="width: 100%; height: 100%; object-fit: contain;">
+                    </div>
+                    <div style="text-align: left; flex: 1;">
+                        <div style="font-size: 1rem; font-weight: 600; color: #ffffff; margin-bottom: 4px; letter-spacing: -0.01em;">SCAN TO JOIN THE LOBBY MATCH NOW</div>
+                        <div style="font-size: 0.85rem; color: #64748b; font-weight: 500;">Or open your phone browser and type: <span style="color: #00e676; font-weight: 600;">://onrender.com</span></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- RIGHT PANEL: High-Level System Telemetry -->
+            <div class="right-column" style="flex: 35;">
+                <h2 class="board-title">Global Analytics</h2>
+                <div style="flex: 1; display: flex; flex-direction: column; gap: 20px; padding: 12px 0;">
+                    <p style="color: #64748b; font-size: 0.9rem; line-height: 1.5; margin: 0 0 12px 0;">Live tracking active instances on the central node pipeline.</p>
+                    
+                    <div style="background: #14161d; border: 1px solid #222630; border-radius: 8px; padding: 16px 20px; display: flex; justify-content: space-between; align-items: center;">
+                        <span style="color: #f4f5f690; font-weight: 500;">Active Rooms</span>
+                        <span id="global-active-rooms" style="color: #00e676; font-size: 1.4rem; font-weight: 700; font-family: monospace;">--</span>
+                    </div>
+
+                    <div style="background: #14161d; border: 1px solid #222630; border-radius: 8px; padding: 16px 20px; display: flex; justify-content: space-between; align-items: center;">
+                        <span style="color: #f4f5f690; font-weight: 500;">Players Live</span>
+                        <span id="global-players-count" style="color: #2d9cdb; font-size: 1.4rem; font-weight: 700; font-family: monospace;">--</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- ========================== -->
+    <!--  VIEWPORT 2: MATCH ENGINE  -->
+    <!-- ========================== -->
     <div class="hud-banner">
         <!-- BRANDING + STATUS BLOCK -->
         <div style="display: flex; align-items: center; gap: 24px;">
