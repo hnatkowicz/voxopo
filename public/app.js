@@ -1,4 +1,6 @@
 document.addEventListener("DOMContentLoaded", () => {
+    document.body.setAttribute('data-view', 'gateway');
+    
     const btnGenerate = document.getElementById('btn-generate-lobby');
     const btnToggleSpectate = document.getElementById('btn-toggle-spectate');
     const spectateDrawer = document.getElementById('spectate-input-drawer');
