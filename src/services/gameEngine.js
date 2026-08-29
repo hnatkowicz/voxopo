@@ -254,9 +254,8 @@ export function handleIncomingMessage(fromPhone, bodyText) {
         }
 
         const currentRoom = activeRooms[roomCode];
-        if (currentRoom) {
-            currentRoom.lastActivity = Date.now();
-        }
+        if (currentRoom) currentRoom.lastActivity = Date.now();
+        
         if (currentRoom.gameState !== 'LOBBY') return "⚠️ Registration closed! Match active.";
 
         if (parts.length >= 4) {
