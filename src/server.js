@@ -3,7 +3,7 @@ import dotenv from 'dotenv';
 import path from 'path';
 import { WebSocketServer } from 'ws';
 import pool from './config/database.js';
-import { handleIncomingMessage, activeRooms } from './services/gameEngine.js';
+import { handleIncomingMessage, activeRooms, getCategoryLabels } from './services/gameEngine.js';
 import { fileURLToPath } from 'url';
 
 // Recreate __dirname cleanly for ES module environments
@@ -43,6 +43,7 @@ app.get('/api/create-room', (req, res) => {
             categoryTimerInterval: null,
             lobbySecondsLeft: 60,
             categorySecondsLeft: 30,
+            gameSecondsLeft: 25,
             winningGameMode: null,
             activeQuestionData: null,
             answers: {},
@@ -137,7 +138,7 @@ async function startServer() {
                             activeRooms[roomCode] = {
                                 gameState: 'LOBBY', players: {}, screens: [], timerInterval: null,
                                 lobbyTimerInterval: null, categoryTimerInterval: null,
-                                lobbySecondsLeft: 60, categorySecondsLeft: 30, winningGameMode: null,
+                                lobbySecondsLeft: 60, categorySecondsLeft: 30, gameSecondsLeft: 25, winningGameMode: null,
                                 activeQuestionData: null, answers: {},
                                 votes: { TRIVI_YEAH: 0, COUNTRY_MONKEY: 0, EMPOSSDURR: 0, FLAG_ME_DOWN: 0, ON_THE_SPECTRUM: 0 },
                                 categoryVotes: { CAT_1: 0, CAT_2: 0, CAT_3: 0 }
@@ -154,14 +155,22 @@ async function startServer() {
 
                         const currentRoomState = activeRooms[roomCode];
                             if (currentRoomState.gameState !== 'LOBBY') {
+                                // Recompute the same category labels the CATEGORY_VOTE broadcast used,
+                                // so a reconnecting screen shows the real sub-deck names, not defaults.
+                                const { cat1, cat2, cat3 } = getCategoryLabels(currentRoomState.winningGameMode);
+
                                 socket.send(JSON.stringify({
                                     type: 'STATE_CATCH_UP',
                                     gameState: currentRoomState.gameState,
                                     winningGameMode: currentRoomState.winningGameMode,
+                                    label1: cat1,
+                                    label2: cat2,
+                                    label3: cat3,
                                     activeQuestionData: currentRoomState.activeQuestionData, // Sends the live trivia question text!
                                     // Pass down whatever timer metrics are left on the clock
                                     lobbySecondsLeft: currentRoomState.lobbySecondsLeft,
-                                    categorySecondsLeft: currentRoomState.categorySecondsLeft
+                                    categorySecondsLeft: currentRoomState.categorySecondsLeft,
+                                    gameSecondsLeft: currentRoomState.gameSecondsLeft
                                 }));
                                 console.log(`[Sync Engine] Sent catch-up payload for active room ${roomCode} to fresh display listener.`);
                             }
