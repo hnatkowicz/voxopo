@@ -234,3 +234,58 @@ body[data-view="game"] #game-screen {
     border-color: #64748b;
     background: #1c1f29;
 }
+/* ========================================== */
+/*  VIEWPORT ENGINE VISIBILITY STATES         */
+/* ========================================== */
+
+/* State A: Display Gateway and drop match engine track entirely */
+body[data-view="gateway"] #game-screen {
+    display: none !important;
+}
+body[data-view="gateway"] #gateway-screen {
+    display: block;
+}
+
+/* State B: Drop Gateway layer completely, bring main match dashboard to stage */
+body[data-view="game"] #gateway-screen {
+    display: none !important;
+}
+body[data-view="game"] #game-screen {
+    display: block;
+}
+
+/* Custom Interactive UI Button Properties */
+.action-btn-primary {
+    background: #00e676;
+    color: #0b0e14;
+    border: none;
+    border-radius: 8px;
+    padding: 16px 32px;
+    font-size: 1.1rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: transform 0.15s ease, background 0.15s ease;
+}
+.action-btn-primary:hover {
+    background: #00c862;
+    transform: translateY(-1px);
+}
+.action-btn-primary:active {
+    transform: translateY(1px);
+}
+
+.action-btn-secondary {
+    background: #14161d;
+    color: #ffffff;
+    border: 1px solid #222630;
+    border-radius: 8px;
+    padding: 14px 28px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: border-color 0.15s ease, background 0.15s ease;
+}
+.action-btn-secondary:hover {
+    border-color: #64748b;
+    background: #1c1f29;
+}
