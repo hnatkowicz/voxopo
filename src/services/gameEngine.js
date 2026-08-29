@@ -8,6 +8,22 @@ const pool = new Pool({
 
 export const activeRooms = {};
 
+// Shared label lookup so lobby, category, and reconnect/catch-up broadcasts
+// never fall out of sync with each other.
+export function getCategoryLabels(winningGameMode) {
+    let cat1 = 'WWII History', cat2 = 'Primary School', cat3 = 'Pop Culture';
+    if (winningGameMode === 'COUNTRY_MONKEY') {
+        cat1 = 'Global Mix'; cat2 = 'Europe & Americas'; cat3 = 'Asia & Africa';
+    } else if (winningGameMode === 'EMPOSSDURR') {
+        cat1 = 'Standard Circle'; cat2 = 'Traitor Pack'; cat3 = 'Chaos Mode';
+    } else if (winningGameMode === 'FLAG_ME_DOWN') {
+        cat1 = 'Modern Nations'; cat2 = 'Historical Standards'; cat3 = 'Bizarre Banners';
+    } else if (winningGameMode === 'ON_THE_SPECTRUM') {
+        cat1 = 'Numeric Scales'; cat2 = 'Extreme Measures'; cat3 = 'Chrono Orders';
+    }
+    return { cat1, cat2, cat3 };
+}
+
 function broadcastToRoom(roomCode, payload) {
     const room = activeRooms[roomCode];
     if (room && room.screens) {
@@ -52,18 +68,9 @@ function executeLobbyPhaseExpiration(roomCode) {
     const winningModule = calculateElectionWinner(room);
     room.gameState = 'CATEGORY_VOTE';
     room.winningGameMode = winningModule;
-    
-    let cat1 = 'WWII History', cat2 = 'Primary School', cat3 = 'Pop Culture';
-    if (winningModule === 'COUNTRY_MONKEY') {
-        cat1 = 'Global Mix'; cat2 = 'Europe & Americas'; cat3 = 'Asia & Africa';
-    } else if (winningModule === 'EMPOSSDURR') {
-        cat1 = 'Standard Circle'; cat2 = 'Traitor Pack'; cat3 = 'Chaos Mode';
-    } else if (winningModule === 'FLAG_ME_DOWN') {
-        cat1 = 'Modern Nations'; cat2 = 'Historical Standards'; cat3 = 'Bizarre Banners';
-    } else if (winningModule === 'ON_THE_SPECTRUM') {
-        cat1 = 'Numeric Scales'; cat2 = 'Extreme Measures'; cat3 = 'Chrono Orders';
-    }
-    
+
+    const { cat1, cat2, cat3 } = getCategoryLabels(winningModule);
+
     console.log(`[Room Engine] Lobby phase closed for Room ${roomCode}. Winner: ${winningModule}`);
 
     broadcastToRoom(roomCode, {
@@ -142,30 +149,28 @@ function executeCategoryPhaseExpiration(roomCode) {
 
     const winningCategoryKey = calculateCategoryWinner(room);
     room.gameState = 'GAME_ROUND';
-    room.answers = {}; 
-    
-    let labelMap = { CAT_1: 'WWII History', CAT_2: 'Primary School', CAT_3: 'Pop Culture' };
-    if (room.winningGameMode === 'COUNTRY_MONKEY') {
-        labelMap = { CAT_1: 'Global Mix', CAT_2: 'Europe & Americas', CAT_3: 'Asia & Africa' };
-    } else if (room.winningGameMode === 'EMPOSSDURR') {
-        labelMap = { CAT_1: 'Standard Circle', CAT_2: 'Traitor Pack', CAT_3: 'Chaos Mode' };
-    } else if (room.winningGameMode === 'FLAG_ME_DOWN') {
-        labelMap = { CAT_1: 'Modern Nations', CAT_2: 'Historical Standards', CAT_3: 'Bizarre Banners' };
-    } else if (room.winningGameMode === 'ON_THE_SPECTRUM') {
-        labelMap = { CAT_1: 'Numeric Scales', CAT_2: 'Extreme Measures', CAT_3: 'Chrono Orders' };
-    }
+    room.answers = {};
+
+    const { cat1, cat2, cat3 } = getCategoryLabels(room.winningGameMode);
+    const labelMap = { CAT_1: cat1, CAT_2: cat2, CAT_3: cat3 };
     const activeDeckName = labelMap[winningCategoryKey] || 'General Deck';
 
     console.log(`[Room Engine] Category selection finalized for Room ${roomCode}. Loaded: ${activeDeckName}`);
 
-    broadcastToRoom(roomCode, {
-        type: 'TRANSITION_TO_QUESTION',
+    // Persist the live question on the room so a reconnecting/refreshed TV
+    // screen can be caught up via STATE_CATCH_UP instead of seeing a blank panel.
+    room.activeQuestionData = {
         categoryLabel: activeDeckName,
         questionText: "Which country was the first to implement radar technology defensively during the structural operations of World War II?",
         choiceA: "Great Britain",
         choiceB: "Germany",
         choiceC: "United States",
         choiceD: "Japan"
+    };
+
+    broadcastToRoom(roomCode, {
+        type: 'TRANSITION_TO_QUESTION',
+        ...room.activeQuestionData
     });
 
     startGameRoundCountdown(roomCode);
@@ -195,11 +200,13 @@ function startGameRoundCountdown(roomCode) {
     const room = activeRooms[roomCode];
     if (!room) return;
 
-    let count = 25; 
+    let count = 25;
+    room.gameSecondsLeft = count;
     if (room.timerInterval) clearInterval(room.timerInterval);
 
     room.timerInterval = setInterval(() => {
         count--;
+        room.gameSecondsLeft = count;
         if (count > 0) {
             broadcastToRoom(roomCode, { type: 'GAME_TIMER_TICK', secondsLeft: count + "s" });
         } else {
@@ -246,7 +253,7 @@ export function handleIncomingMessage(fromPhone, bodyText) {
             activeRooms[roomCode] = {
                 gameState: 'LOBBY', players: {}, screens: [], timerInterval: null,
                 lobbyTimerInterval: null, categoryTimerInterval: null,
-                lobbySecondsLeft: 60, categorySecondsLeft: 30, winningGameMode: null,
+                lobbySecondsLeft: 60, categorySecondsLeft: 30, gameSecondsLeft: 25, winningGameMode: null,
                 activeQuestionData: null, answers: {},
                 votes: { TRIVI_YEAH: 0, COUNTRY_MONKEY: 0, EMPOSSDURR: 0, FLAG_ME_DOWN: 0, ON_THE_SPECTRUM: 0 },
                 categoryVotes: { CAT_1: 0, CAT_2: 0, CAT_3: 0 }
