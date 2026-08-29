@@ -399,15 +399,17 @@ let currentActiveRoomCode = '----';
                 }
             });
 
-            // REVEAL LIVE TEXT BLOCK: Overwrite the lower panel placeholder with the true historical winner!
-            const answerRow = document.getElementById('gameplay-answer-row');
-            if (answerRow) {
-                answerRow.style.color = "#ffffff";
-                answerRow.innerHTML = `
-                    📝 Answer: <span style="color: #00e676; font-weight: 700; text-transform: uppercase; background: rgba(0, 230, 118, 0.06); padding: 4px 10px; border-radius: 4px; border: 1px solid rgba(0,230,118,0.2); margin-left: 6px;">${correctLetter}) ${answersMap[correctLetter]}</span>
-                `;
-            }
-        }
+// REVEAL LIVE TEXT BLOCK: Overwrite the lower panel placeholder with the true historical winner!
+const answerRow = document.getElementById('gameplay-answer-row');
+if (answerRow) {
+    answerRow.style.color = "#ffffff";
+    answerRow.innerHTML = `Answer: <span style="color: #00e676; font-weight: 700; text-transform: uppercase;">Revealed!</span>`;
+}
 
-        // Trigger dynamic assignment protocols on page wakeup
-        initializeDynamicRoomSession();
+// Trigger dynamic assignment protocols on page wakeup
+if (typeof initializeDynamicRoomSession === 'function') {
+    initializeDynamicRoomSession();
+}
+
+// 🎯 THIS CLOSES THE MASTER DOMContentLoaded WRAPPER WE ADDED AT THE VERY TOP!
+});
