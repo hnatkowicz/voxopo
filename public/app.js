@@ -191,6 +191,7 @@ let currentActiveRoomCode = '----';
                     stopCategoryMusic();
                     stopCountdownMusic();
                     switchToGameOverUI(data.players);
+                    playAudioTrack('win-music');
                 }
             };
         }
