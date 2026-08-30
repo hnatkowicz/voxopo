@@ -233,7 +233,8 @@ async function seed() {
         (109, 'COUNTRY_MONKEY', 'AFRICA', 'COUNTRY', 'AFRICA', 'Which country is highlighted?', '/countries/burundi.svg', 'Burundi', 250),
         (110, 'COUNTRY_MONKEY', 'AFRICA', 'COUNTRY', 'AFRICA', 'Which country is highlighted?', '/countries/ethiopia_2.svg', 'Ethiopia', 200),
         (111, 'COUNTRY_MONKEY', 'AFRICA', 'COUNTRY', 'AFRICA', 'Which country is highlighted?', '/countries/somalia_2.svg', 'Somalia', 200),
-        (112, 'COUNTRY_MONKEY', 'AFRICA', 'COUNTRY', 'AFRICA', 'Which country is highlighted?', '/countries/kenya_2.svg', 'Kenya', 200);
+        (112, 'COUNTRY_MONKEY', 'AFRICA', 'COUNTRY', 'AFRICA', 'Which country is highlighted?', '/countries/kenya_2.svg', 'Kenya', 200),
+        (113, 'COUNTRY_MONKEY', 'AFRICA', 'COUNTRY', 'AFRICA', 'Which country is highlighted?', '/countries/car.svg', 'CAR', 200);
     `);
 
     console.log('✅ [Database] Cloud schema expanded, WWII bank, 5 new main categories, and Country Monkey Africa bank seeded!');

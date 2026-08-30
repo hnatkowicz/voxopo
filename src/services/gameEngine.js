@@ -58,14 +58,20 @@ function gameModeToDbValue(winningGameMode) {
     return winningGameMode === 'TRIVI_YEAH' ? 'TRIVIA' : winningGameMode;
 }
 
-// Real category keys (WWII_HISTORY, and eventually Country Monkey's own
-// regions once curated) come straight from the `category` column and should
-// filter the question bank. The content-less modes' placeholder categories
-// (getCategoriesForMode) use synthetic CAT_1/CAT_2/CAT_3 keys instead, which
-// never match a real category value -- this tells the two apart without
-// needing a mode-by-mode allowlist.
+// Country Monkey's explicit "pull from every region" option -- unlike the
+// per-region keys (AFRICA, EUROPE, ...) this deliberately matches no real
+// `category` value, so loadQuestionBank's filter is skipped and it draws
+// from the mode's whole pool.
+const ALL_REGIONS_KEY = 'WORLDWIDE';
+
+// Real category keys (WWII_HISTORY, Country Monkey's AFRICA/EUROPE/etc.)
+// come straight from the `category` column and should filter the question
+// bank. The content-less modes' placeholder categories (getCategoriesForMode)
+// use synthetic CAT_1/CAT_2/CAT_3 keys instead, which never match a real
+// category value -- this tells the two apart without needing a mode-by-mode
+// allowlist. ALL_REGIONS_KEY is deliberately non-filtering too.
 function isRealCategoryKey(categoryKey) {
-    return !!categoryKey && !/^CAT_\d+$/.test(categoryKey);
+    return !!categoryKey && categoryKey !== ALL_REGIONS_KEY && !/^CAT_\d+$/.test(categoryKey);
 }
 
 // Shared category list lookup so lobby, category, and reconnect/catch-up
@@ -75,9 +81,9 @@ function isRealCategoryKey(categoryKey) {
 export function getCategoriesForMode(winningGameMode) {
     if (winningGameMode === 'COUNTRY_MONKEY') {
         return [
-            { key: 'CAT_1', label: 'Global Mix' },
-            { key: 'CAT_2', label: 'Europe & Americas' },
-            { key: 'CAT_3', label: 'Asia & Africa' }
+            { key: 'AFRICA', label: 'Africa' },
+            { key: 'EUROPE', label: 'Europe' },
+            { key: ALL_REGIONS_KEY, label: 'World Wide!' }
         ];
     } else if (winningGameMode === 'EMPOSSDURR') {
         return [
