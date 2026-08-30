@@ -164,30 +164,38 @@
     <!-- SCREEN 4: ULTRA-CLEAN FULL-WIDTH QUESTION ANSWER CONTROLLER -->
     <div id="question-screen" class="card" style="display: none;">
         <h1>Active Match Question</h1>
-        <p class="subtitle" style="margin-bottom: 24px;">Tap your final answer selection now</p>
-        
+        <p class="subtitle" id="question-meta" style="margin-bottom: 20px;">Tap your final answer selection now</p>
+
         <div class="player-badge">
             🧠 Active Round: <span id="q-badge-emoji">-</span> <span id="q-badge-name" style="font-weight:bold; color:#fff;">-</span>
         </div>
 
+        <div id="question-text-display" style="text-align: left; font-size: 1.1rem; font-weight: 600; color: #ffffff; line-height: 1.4; margin: 20px 0;"></div>
+
         <div class="module-list">
             <!-- Full-width minimalist answer choice rows -->
             <div class="module-row" id="choice-row-A" onclick="submitTriviaAnswer(this, 'A')">
-                <span style="background: rgba(0, 230, 118, 0.1); color: #00e676; font-weight: 700; padding: 4px 10px; border-radius: 4px; font-size: 0.85rem; margin-right: 12px;">A</span> Answer Selection A
+                <span style="background: rgba(0, 230, 118, 0.1); color: #00e676; font-weight: 700; padding: 4px 10px; border-radius: 4px; font-size: 0.85rem; margin-right: 12px;">A</span><span id="choice-text-A">-</span>
             </div>
             <div class="module-row" id="choice-row-B" onclick="submitTriviaAnswer(this, 'B')">
-                <span style="background: rgba(0, 230, 118, 0.1); color: #00e676; font-weight: 700; padding: 4px 10px; border-radius: 4px; font-size: 0.85rem; margin-right: 12px;">B</span> Answer Selection B
+                <span style="background: rgba(0, 230, 118, 0.1); color: #00e676; font-weight: 700; padding: 4px 10px; border-radius: 4px; font-size: 0.85rem; margin-right: 12px;">B</span><span id="choice-text-B">-</span>
             </div>
             <div class="module-row" id="choice-row-C" onclick="submitTriviaAnswer(this, 'C')">
-                <span style="background: rgba(0, 230, 118, 0.1); color: #00e676; font-weight: 700; padding: 4px 10px; border-radius: 4px; font-size: 0.85rem; margin-right: 12px;">C</span> Answer Selection C
+                <span style="background: rgba(0, 230, 118, 0.1); color: #00e676; font-weight: 700; padding: 4px 10px; border-radius: 4px; font-size: 0.85rem; margin-right: 12px;">C</span><span id="choice-text-C">-</span>
             </div>
             <div class="module-row" id="choice-row-D" onclick="submitTriviaAnswer(this, 'D')">
-                <span style="background: rgba(0, 230, 118, 0.1); color: #00e676; font-weight: 700; padding: 4px 10px; border-radius: 4px; font-size: 0.85rem; margin-right: 12px;">D</span> Answer Selection D
+                <span style="background: rgba(0, 230, 118, 0.1); color: #00e676; font-weight: 700; padding: 4px 10px; border-radius: 4px; font-size: 0.85rem; margin-right: 12px;">D</span><span id="choice-text-D">-</span>
             </div>
         </div>
 
         <!-- Persistent Lockout Selection Display Window Frame -->
         <div id="question-feedback" class="feedback" style="margin-top: 24px; font-weight: 600; text-align: left; padding: 14px 20px;"></div>
+    </div>
+
+    <!-- SCREEN 5: GAME OVER -->
+    <div id="game-over-screen" class="card" style="display: none;">
+        <h1>🏁 Game Over</h1>
+        <p class="subtitle" style="margin-bottom: 0;">Thanks for playing! Check the TV screen for the final leaderboard.</p>
     </div>
 
     <script>
@@ -254,6 +262,8 @@
             }
         }
 
+        let activeQuestionId = null; // Tracks which question is currently rendered so we only re-render on change
+
         function initRoomStatePoller(roomCode, nickname) {
             roomStateTrackerInterval = setInterval(async () => {
                 try {
@@ -264,36 +274,71 @@
                         body: JSON.stringify({ roomCode: roomCode })
                     });
                     const data = await response.json();
-                    
+
                     if (data && data.phase) {
                         // PHASE 2 TRANSITION: Open category election cards
                         if (data.phase === 'CATEGORY_VOTE_PHASE' && document.getElementById('category-screen').style.display !== "block") {
                             document.getElementById('sub-badge-name').innerText = nickname;
                             document.getElementById('sub-badge-emoji').innerText = chosenAvatar;
-                            
+
                             document.getElementById('btn-cat1').innerText = data.label1;
                             document.getElementById('btn-cat2').innerText = data.label2;
                             document.getElementById('btn-cat3').innerText = data.label3;
-                            
+
                             document.getElementById('game-screen').style.display = "none";
                             document.getElementById('category-screen').style.display = "block";
                         }
-                        
-                        // PHASE 3 TRANSITION: Open active gameplay answer grid layout rows instantly!
+
+                        // PHASE 3: Live gameplay. Keeps polling for the life of the match so each
+                        // new question (loop advances every ~5s after a reveal) actually shows up here.
                         if (data.phase === 'GAME_ROUND_PHASE') {
-                            document.getElementById('q-badge-name').innerText = nickname;
-                            document.getElementById('q-badge-emoji').innerText = chosenAvatar;
-                            
                             document.getElementById('category-screen').style.display = "none";
                             document.getElementById('game-screen').style.display = "none";
                             document.getElementById('question-screen').style.display = "block";
-                            clearInterval(roomStateTrackerInterval); // Kill background poller once game loops lock
+
+                            // Only re-render (and unlock the answer rows) when the question actually changed
+                            if (data.questionId !== activeQuestionId) {
+                                activeQuestionId = data.questionId;
+                                renderQuestion(data, nickname);
+                            }
+                        }
+
+                        // Loop exhausted its question bank: stop polling and point players at the TV.
+                        if (data.phase === 'GAME_OVER_PHASE') {
+                            document.getElementById('category-screen').style.display = "none";
+                            document.getElementById('game-screen').style.display = "none";
+                            document.getElementById('question-screen').style.display = "none";
+                            document.getElementById('game-over-screen').style.display = "block";
+                            clearInterval(roomStateTrackerInterval);
                         }
                     }
                 } catch (e) {
                     console.error("Poller stall.");
                 }
             }, 1000);
+        }
+
+        function renderQuestion(data, nickname) {
+            document.getElementById('q-badge-name').innerText = nickname;
+            document.getElementById('q-badge-emoji').innerText = chosenAvatar;
+            document.getElementById('question-meta').innerText = `${data.categoryLabel || ''} · Q${data.questionNumber || '?'}/${data.totalQuestions || '?'} · ${data.points || 0} pts`;
+            document.getElementById('question-text-display').innerText = data.questionText || '';
+
+            document.getElementById('choice-text-A').innerText = data.choiceA || '-';
+            document.getElementById('choice-text-B').innerText = data.choiceB || '-';
+            document.getElementById('choice-text-C').innerText = data.choiceC || '-';
+            document.getElementById('choice-text-D').innerText = data.choiceD || '-';
+
+            // Fresh question: unlock every row and clear the previous "locked in" feedback
+            ['A', 'B', 'C', 'D'].forEach(letter => {
+                const row = document.getElementById(`choice-row-${letter}`);
+                row.classList.remove('selected');
+                row.style.opacity = "1";
+            });
+
+            const feedback = document.getElementById('question-feedback');
+            feedback.style.display = "none";
+            feedback.innerText = "";
         }
 
         async function submitTriviaAnswer(element, selectedLetter) {

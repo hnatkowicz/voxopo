@@ -41,12 +41,19 @@ app.get('/api/create-room', (req, res) => {
             timerInterval: null,
             lobbyTimerInterval: null,
             categoryTimerInterval: null,
+            revealTimeout: null,
             lobbySecondsLeft: 60,
             categorySecondsLeft: 30,
             gameSecondsLeft: 25,
             winningGameMode: null,
             activeQuestionData: null,
+            currentQuestionData: null,
+            activeDeckName: null,
             answers: {},
+            questionBank: [],
+            questionGroups: {},
+            currentQuestionIndex: -1,
+            askedQuestionIds: new Set(),
             votes: { TRIVI_YEAH: 0, COUNTRY_MONKEY: 0, EMPOSSDURR: 0, FLAG_ME_DOWN: 0, ON_THE_SPECTRUM: 0 },
             categoryVotes: { CAT_1: 0, CAT_2: 0, CAT_3: 0 },
             lastActivity: Date.now() // Time the room was "born"
@@ -98,8 +105,12 @@ app.post('/api/room-status', (req, res) => {
         }
         // FIX: If the clock expired and moved to gameplay, shout the round phase back to the phone poller!
         // FIX ALIGNMENT: Flatten the object parameters so it matches Phase 2 perfectly!
-        if (targetRoom && targetRoom.gameState === 'GAME_ROUND') {
-            return res.json({ phase: 'GAME_ROUND_PHASE' });
+        if (targetRoom && targetRoom.gameState === 'GAME_ROUND' && targetRoom.activeQuestionData) {
+            // activeQuestionData is already answer-safe (correctLetter stripped in gameEngine.js)
+            return res.json({ phase: 'GAME_ROUND_PHASE', ...targetRoom.activeQuestionData });
+        }
+        if (targetRoom && targetRoom.gameState === 'GAME_OVER') {
+            return res.json({ phase: 'GAME_OVER_PHASE' });
         }
         return res.json({ phase: 'WAITING' });
     } catch (error) {
@@ -137,9 +148,10 @@ async function startServer() {
                         if (!activeRooms[roomCode]) {
                             activeRooms[roomCode] = {
                                 gameState: 'LOBBY', players: {}, screens: [], timerInterval: null,
-                                lobbyTimerInterval: null, categoryTimerInterval: null,
+                                lobbyTimerInterval: null, categoryTimerInterval: null, revealTimeout: null,
                                 lobbySecondsLeft: 60, categorySecondsLeft: 30, gameSecondsLeft: 25, winningGameMode: null,
-                                activeQuestionData: null, answers: {},
+                                activeQuestionData: null, currentQuestionData: null, activeDeckName: null, answers: {},
+                                questionBank: [], questionGroups: {}, currentQuestionIndex: -1, askedQuestionIds: new Set(),
                                 votes: { TRIVI_YEAH: 0, COUNTRY_MONKEY: 0, EMPOSSDURR: 0, FLAG_ME_DOWN: 0, ON_THE_SPECTRUM: 0 },
                                 categoryVotes: { CAT_1: 0, CAT_2: 0, CAT_3: 0 }
                             };
@@ -198,6 +210,7 @@ async function startServer() {
                         if (room.timerInterval) clearInterval(room.timerInterval);
                         if (room.lobbyTimerInterval) clearInterval(room.lobbyTimerInterval);
                         if (room.categoryTimerInterval) clearInterval(room.categoryTimerInterval);
+                        if (room.revealTimeout) clearTimeout(room.revealTimeout);
                         
                         // Securely drop the sockets
                         room.screens.forEach(socket => {

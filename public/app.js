@@ -158,6 +158,12 @@ let currentActiveRoomCode = '----';
                     document.getElementById('lobby-countdown').innerText = "30s"; // Reset banner clock visually
                     switchToQuestionUI(data.categoryLabel, data.questionText, data.choiceA, data.choiceB, data.choiceC, data.choiceD);
                 }
+                // Fired once the question loop runs out of questions for this game.
+                if (data.type === 'GAME_OVER') {
+                    document.getElementById('room-status-text').innerText = "Game Over";
+                    document.getElementById('lobby-countdown').innerText = "🏁";
+                    switchToGameOverUI(data.players);
+                }
             };
         }
 
@@ -406,7 +412,30 @@ let currentActiveRoomCode = '----';
             `;
         }
         
-function highlightCorrectAnswerOnTV(correctLetter) { 
+function switchToGameOverUI(players) {
+    const panel = document.getElementById('active-content-stage');
+    const sorted = [...(players || [])].sort((a, b) => b.score - a.score);
+
+    const rows = sorted.map((player, index) => `
+        <div class="vote-row" style="align-items: center;">
+            <div class="vote-meta" style="align-items: center;">
+                <span style="font-weight: 700; color: #64748b; width: 24px; display: inline-block;">${index + 1}</span>
+                <span style="font-weight: 500; color: #ffffff;">${player.emoji || '👤'} ${player.name}</span>
+                <span style="color: #00e676; font-weight: 700;">${player.score || 0} pts</span>
+            </div>
+        </div>
+    `).join('');
+
+    panel.innerHTML = `
+        <div class="panel-box" style="padding: 40px; flex: 1; display: flex; flex-direction: column; justify-content: center;">
+            <h2 class="panel-title" style="margin-bottom: 8px;">🏁 Final Leaderboard</h2>
+            <p style="color: #64748b; font-size: 0.95rem; margin: 0 0 32px 0; font-weight: 500;">Thanks for playing!</p>
+            <div style="display: flex; flex-direction: column; gap: 4px;">${rows}</div>
+        </div>
+    `;
+}
+
+function highlightCorrectAnswerOnTV(correctLetter) {
     const ids = ['A', 'B', 'C', 'D']; 
     
     // 💡 DYNAMIC CONTENT FIX: Check if your global window question tracking object exists.
