@@ -178,11 +178,17 @@ let currentActiveRoomCode = '----';
                 if (data.type === 'GAME_TIMER_TICK') {
                     document.getElementById('lobby-countdown').innerText = data.secondsLeft;
                 }
-                // Listen for the server's clock expiration to highlight the correct answer choice
+                // Listen for the server's clock expiration to reveal the correct answer
                 if (data.type === 'REVEAL_CORRECT_ANSWER') {
                     document.getElementById('room-status-text').innerText = "Round Evaluation";
                     document.getElementById('lobby-countdown').innerText = "0 s";
-                    highlightCorrectAnswerOnTV(data.correctLetter);
+                    // Visual questions render no choice-row buttons (see switchToQuestionUI),
+                    // so there's nothing to highlight -- fall back to printing the answer text.
+                    if (document.getElementById('choice-row-A')) {
+                        highlightCorrectAnswerOnTV(data.correctLetter);
+                    } else {
+                        showCorrectAnswerInStatusPanel(data.correctAnswerText);
+                    }
                     stopCountdownMusic();
                 }
                 if (data.type === 'TRANSITION_TO_CATEGORY_VOTE') {
@@ -365,11 +371,11 @@ let currentActiveRoomCode = '----';
             const displayGameName = GAME_MODE_LABELS[winnerModule] || winnerModule;
 
             currentGamePhase = 'CATEGORY_VOTE';
-            // QR + join instructions stay put -- only the muted status slot changes.
-            setStatusMessage(`
-                <div style="font-weight: 600; color: #8892b0; margin-bottom: 2px;">TYPE "START" TO CONFIRM</div>
-                <div style="font-size: 0.8rem; color: #64748b;">Skips the countdown once everyone's in</div>
-            `);
+            // The category-screen on the phone has no free-text input (only the
+            // lobby's game-screen does), so there's no way to actually act on a
+            // "TYPE START" nudge here -- leave the status slot blank instead of
+            // showing an instruction nobody can follow.
+            setStatusMessage('');
 
             const rows = categoryList.map((c, index) => `
                 <div class="vote-row">
@@ -423,13 +429,30 @@ let currentActiveRoomCode = '----';
                 <div style="font-weight: 600; color: #64748b;">Question ${questionNumber || '?'} / ${totalQuestions || '?'}</div>
             `);
 
-            // Most trivia rows have no visual_asset -- only rendered when a mode
-            // (e.g. Country Monkey's highlighted-map SVGs) actually supplies one.
-            // Capped height keeps the 4-choice grid below from getting pushed
-            // off screen regardless of the source image's native dimensions.
-            const visualBlock = visualAsset
-                ? `<div style="text-align: center; margin-bottom: 16px;"><img src="${visualAsset}" alt="" style="max-width: 100%; max-height: 200px; width: auto; height: auto; border-radius: 8px;"></div>`
-                : '';
+            // Visual questions (Country Monkey's highlighted-map SVGs, etc.) already
+            // show the same 4 choices on the player's phone -- repeating them here
+            // would just compete with the image for space, so these go image-first
+            // instead, with no choice grid at all. There's nothing to highlight on
+            // reveal in that case, so REVEAL_CORRECT_ANSWER instead prints the real
+            // answer text into the status panel (see showCorrectAnswerInStatusPanel).
+            if (visualAsset) {
+                panel.innerHTML = `
+                    <div class="panel-box" style="padding: 40px; flex: 1; display: flex; flex-direction: row; align-items: center; gap: 32px; box-sizing: border-box; min-height: 400px;">
+                        <div style="flex: 1; text-align: center;">
+                            <img src="${visualAsset}" alt="" style="max-width: 100%; max-height: 340px; border-radius: 8px;">
+                        </div>
+                        <div style="flex: 1; text-align: left;">
+                            <div style="font-size: 0.85rem; font-weight: 600; color: #64748b; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 16px;">
+                                Active Deck: ${categoryLabel}
+                            </div>
+                            <div style="font-size: 1.4rem; font-weight: 600; color: #ffffff; line-height: 1.4; letter-spacing: -0.01em;">
+                                ${questionText}
+                            </div>
+                        </div>
+                    </div>
+                `;
+                return;
+            }
 
             panel.innerHTML = `
                 <div class="panel-box" style="padding: 40px; flex: 1; display: flex; flex-direction: column; justify-content: space-between; text-align: left; min-height: 400px; box-sizing: border-box;">
@@ -437,8 +460,6 @@ let currentActiveRoomCode = '----';
                     <div style="font-size: 0.85rem; font-weight: 600; color: #64748b; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 16px;">
                         Active Deck: ${categoryLabel}
                     </div>
-
-                    ${visualBlock}
 
                     <div style="font-size: 1.4rem; font-weight: 600; color: #ffffff; line-height: 1.4; flex: 1; display: flex; align-items: center; margin-bottom: 24px; letter-spacing: -0.01em;">
                         ${questionText}
@@ -482,12 +503,22 @@ function switchToGameOverUI(players) {
         <div class="panel-box" style="padding: 40px; flex: 1; display: flex; flex-direction: column; justify-content: center;">
             <h2 class="panel-title" style="margin-bottom: 8px;">Final Leaderboard</h2>
             <p style="color: #64748b; font-size: 0.95rem; margin: 0 0 32px 0; font-weight: 500;">Thanks for playing!</p>
-            <div style="display: flex; flex-direction: column; gap: 22px;">${rows}</div>
+            <div style="display: flex; flex-direction: column; gap: 36px;">${rows}</div>
         </div>
     `;
 
     currentGamePhase = 'GAME_OVER';
     setStatusMessage(`<div style="font-weight: 600; color: #8892b0;">Match complete</div>`);
+}
+
+// Reveal path for visual questions, which have no choice-row buttons to
+// highlight -- prints the actual answer text into the status panel instead,
+// styled with the same green "correct" look used on the choice-row letters.
+function showCorrectAnswerInStatusPanel(answerText) {
+    setStatusMessage(`
+        <div style="font-weight: 600; color: #64748b; margin-bottom: 6px;">Correct Answer</div>
+        <span style="background: rgba(0, 230, 118, 0.1); color: #00e676; font-weight: 700; padding: 6px 14px; border-radius: 6px; font-size: 1rem;">${answerText}</span>
+    `);
 }
 
 function highlightCorrectAnswerOnTV(correctLetter) {

@@ -483,6 +483,11 @@ function evaluateRoundAndRevealAnswer(roomCode) {
 
     const correctLetter = room.currentQuestionData ? room.currentQuestionData.correctLetter : null;
     const points = room.currentQuestionData ? room.currentQuestionData.points : 0;
+    // The TV needs the literal answer text (not just the letter) for visual
+    // questions, which render no choice-row buttons to highlight by letter.
+    const correctAnswerText = (room.currentQuestionData && correctLetter)
+        ? room.currentQuestionData[`choice${correctLetter}`]
+        : null;
 
     if (correctLetter) {
         Object.entries(room.answers).forEach(([playerName, submittedLetter]) => {
@@ -498,7 +503,8 @@ function evaluateRoundAndRevealAnswer(roomCode) {
 
     broadcastToRoom(roomCode, {
         type: 'REVEAL_CORRECT_ANSWER',
-        correctLetter
+        correctLetter,
+        correctAnswerText
     });
     broadcastToRoom(roomCode, {
         type: 'LEADERBOARD_UPDATE',
