@@ -152,10 +152,7 @@ let currentActiveRoomCode = '----';
                         document.getElementById('room-status-text').innerText = "Gameplay Phase";
                         document.getElementById('lobby-countdown').innerText = data.gameSecondsLeft + " s";
                         const q = data.activeQuestionData;
-                        // Kept in sync with the choices shown, so a REVEAL_CORRECT_ANSWER
-                        // that lands after reconnect still highlights the real answer text.
-                        window.activeQuestion = { choices: { A: q.choiceA, B: q.choiceB, C: q.choiceC, D: q.choiceD } };
-                        switchToQuestionUI(q.categoryLabel, q.questionText, q.choiceA, q.choiceB, q.choiceC, q.choiceD);
+                        switchToQuestionUI(q.categoryLabel, q.questionText, q.choiceA, q.choiceB, q.choiceC, q.choiceD, q.questionNumber, q.totalQuestions);
                         stopCategoryMusic();
                         playCountdownMusic();
                     } else if (data.gameState === 'ROUND_REVEAL') {
@@ -201,7 +198,7 @@ let currentActiveRoomCode = '----';
                 if (data.type === 'TRANSITION_TO_QUESTION') {
                     document.getElementById('room-status-text').innerText = "Gameplay Phase";
                     document.getElementById('lobby-countdown').innerText = "30 s"; // Reset banner clock visually
-                    switchToQuestionUI(data.categoryLabel, data.questionText, data.choiceA, data.choiceB, data.choiceC, data.choiceD);
+                    switchToQuestionUI(data.categoryLabel, data.questionText, data.choiceA, data.choiceB, data.choiceC, data.choiceD, data.questionNumber, data.totalQuestions);
                     stopCategoryMusic();
                     playCountdownMusic();
                 }
@@ -415,15 +412,16 @@ let currentActiveRoomCode = '----';
             });
         }
 
-        function switchToQuestionUI(categoryLabel, questionText, choiceA, choiceB, choiceC, choiceD) {
+        function switchToQuestionUI(categoryLabel, questionText, choiceA, choiceB, choiceC, choiceD, questionNumber, totalQuestions) {
             const panel = document.getElementById('active-content-stage');
-            
+
             currentGamePhase = 'GAME_ROUND';
-            // QR + join instructions stay put -- only the muted status slot changes.
+            // QR + join instructions stay put -- only the muted status slot changes. The
+            // correct answer is already shown by highlighting the choice buttons below, so
+            // repeating it here as text would just be redundant -- this stays as progress
+            // (Question X/Y) through both the waiting and reveal states of the round.
             setStatusMessage(`
-                <div id="gameplay-answer-row" style="font-weight: 600; color: #64748b; transition: color 0.3s ease;">
-                    Answer: <span style="font-style: italic;">Waiting for submissions...</span>
-                </div>
+                <div style="font-weight: 600; color: #64748b;">Question ${questionNumber || '?'} / ${totalQuestions || '?'}</div>
             `);
             panel.innerHTML = `
                 <div class="panel-box" style="padding: 40px; flex: 1; display: flex; flex-direction: column; justify-content: space-between; text-align: left; min-height: 400px; box-sizing: border-box;">
@@ -483,37 +481,23 @@ function switchToGameOverUI(players) {
 }
 
 function highlightCorrectAnswerOnTV(correctLetter) {
-    const ids = ['A', 'B', 'C', 'D']; 
-    
-    // 💡 DYNAMIC CONTENT FIX: Check if your global window question tracking object exists.
-    // If it does, we pull the true choice answers; otherwise, it falls back gracefully!
-    const answersMap = (window.activeQuestion && window.activeQuestion.choices) ? {
-        'A': window.activeQuestion.choices.A || 'A',
-        'B': window.activeQuestion.choices.B || 'B',
-        'C': window.activeQuestion.choices.C || 'C',
-        'D': window.activeQuestion.choices.D || 'D'
-    } : { 'A': 'Choice A', 'B': 'Choice B', 'C': 'Choice C', 'D': 'Choice D' };
+    // Highlighting the correct choice row below is the whole reveal -- the status
+    // slot's "Question X/Y" progress indicator stays as-is through this, no
+    // redundant "Answer: X" text repeated elsewhere.
+    const ids = ['A', 'B', 'C', 'D'];
 
-    ids.forEach(letter => { 
-        const rowNode = document.getElementById(`choice-row-${letter}`) || null; 
-        if (letter === correctLetter) { 
-            if (rowNode) { 
-                rowNode.style.background = "rgba(0, 230, 118, 0.08)"; 
-                rowNode.style.borderColor = "#00e676"; 
-            } 
-        } else { 
-            if (rowNode) rowNode.style.opacity = "0.15"; 
-        } 
-    }); 
-
-    // REVEAL LIVE TEXT BLOCK: Overwrite the lower panel placeholder with the true historical winner! 
-    const answerRow = document.getElementById('gameplay-answer-row'); 
-    if (answerRow) { 
-        const trueAnswerText = answersMap[correctLetter] || 'Revealed!';
-        answerRow.style.color = "#ffffff"; 
-        answerRow.innerHTML = `Answer: <span style="color: #00e676; font-weight: 700; text-transform: uppercase;">${trueAnswerText}</span>`; 
-    } 
-} // 🔓 1. THIS CLOSES THE FUNCTION SAFELY!
+    ids.forEach(letter => {
+        const rowNode = document.getElementById(`choice-row-${letter}`) || null;
+        if (letter === correctLetter) {
+            if (rowNode) {
+                rowNode.style.background = "rgba(0, 230, 118, 0.08)";
+                rowNode.style.borderColor = "#00e676";
+            }
+        } else {
+            if (rowNode) rowNode.style.opacity = "0.15";
+        }
+    });
+}
 
 function playAudioTrack(elementId) {
     const audio = document.getElementById(elementId);

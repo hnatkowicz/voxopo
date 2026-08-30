@@ -374,7 +374,7 @@
             const registeredName = localStorage.getItem('randomania_nickname') || 'test-handset';
             
             // 2. Write a persistent, rock-solid lock statement statement onto the screen box frame
-            showFeedback(feedback, `📡 LOCKED IN: You selected Option ${selectedLetter}`, "rgba(0,230,118,0.06)", "#00e676", "rgba(0,230,118,0.15)");
+            showFeedback(feedback, `LOCKED IN: You selected Option ${selectedLetter}`, "rgba(0,230,118,0.06)", "#00e676", "rgba(0,230,118,0.15)");
 
             try {
                 // 3. Fire the response parameter text string straight up the HTTP POST channel to the server
@@ -405,7 +405,7 @@
                     body: JSON.stringify({ From: registeredName, Body: categoryKey, roomCode: localStorage.getItem('randomania_roomcode') })
                 });
                 const data = await response.json();
-                showFeedback(feedback, `📡 Server: ${data.reply}`, "rgba(0,230,118,0.06)", "#00e676", "rgba(0,230,118,0.1)");
+                showFeedback(feedback, data.reply, "rgba(0,230,118,0.06)", "#00e676", "rgba(0,230,118,0.1)");
             } catch (error) {
                 showFeedback(feedback, "❌ Transmission failed.", "rgba(255,71,87,0.06)", "#ff4757", "rgba(255,71,87,0.1)");
             }
@@ -426,7 +426,7 @@
                     body: JSON.stringify({ From: registeredName, Body: actionText, roomCode: localStorage.getItem('randomania_roomcode') })
                 });
                 const data = await response.json();
-                showFeedback(feedback, `📡 Server: ${data.reply}`, "rgba(0,230,118,0.06)", "#00e676", "rgba(0,230,118,0.1)");
+                showFeedback(feedback, data.reply, "rgba(0,230,118,0.06)", "#00e676", "rgba(0,230,118,0.1)");
                 document.getElementById('game-input').value = ""; 
             } catch (error) {
                 showFeedback(feedback, "❌ Action transmission failed.", "rgba(255,71,87,0.06)", "#ff4757", "rgba(255,71,87,0.1)");
