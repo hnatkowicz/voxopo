@@ -2,10 +2,12 @@ import pool from '../config/database.js';
 
 export const activeRooms = {};
 
-// All 5 are recognized subcategory values; the per-group depth check below
-// (MIN_GROUP_SIZE_FOR_DISTRACTORS) is what actually excludes any specific
-// category+subcategory+faction combo that's too thin to supply distractors --
-// this list is just which values are queried for at all.
+// Recognized subcategory values for TRIVI_YEAH specifically; the per-group
+// depth check below (MIN_GROUP_SIZE_FOR_DISTRACTORS) is what actually excludes
+// any specific category+subcategory+faction combo that's too thin to supply
+// distractors -- this list is just which values are queried for at all. Other
+// game modes (Country Monkey, etc.) define their own subcategory vocabulary
+// and aren't filtered against this list -- see loadQuestionBank.
 const ELIGIBLE_SUBCATEGORIES = ['PERSON', 'PLACE', 'THING', 'EVENT', 'DATE'];
 const MIN_GROUP_SIZE_FOR_DISTRACTORS = 4; // correct answer + 3 distractors
 const MAX_QUESTIONS_PER_GAME = 30;
@@ -47,7 +49,24 @@ const TRIVIA_CATEGORIES = [
     { key: 'CAPITALS', label: 'Capitals' },
     { key: 'GEOGRAPHY', label: 'Geography' }
 ];
-const TRIVIA_CATEGORY_KEYS = TRIVIA_CATEGORIES.map(c => c.key);
+// The questions table's game_mode column predates the room-state vote keys
+// (TRIVI_YEAH, COUNTRY_MONKEY, ...) and TRIVI_YEAH's rows were already seeded
+// under 'TRIVIA' -- kept as a one-off exception rather than renamed. Every
+// mode added since just uses its own vote key as the DB value directly, so
+// no mapping entry is needed for them.
+function gameModeToDbValue(winningGameMode) {
+    return winningGameMode === 'TRIVI_YEAH' ? 'TRIVIA' : winningGameMode;
+}
+
+// Real category keys (WWII_HISTORY, and eventually Country Monkey's own
+// regions once curated) come straight from the `category` column and should
+// filter the question bank. The content-less modes' placeholder categories
+// (getCategoriesForMode) use synthetic CAT_1/CAT_2/CAT_3 keys instead, which
+// never match a real category value -- this tells the two apart without
+// needing a mode-by-mode allowlist.
+function isRealCategoryKey(categoryKey) {
+    return !!categoryKey && !/^CAT_\d+$/.test(categoryKey);
+}
 
 // Shared category list lookup so lobby, category, and reconnect/catch-up
 // broadcasts never fall out of sync with each other. The other game modes
@@ -231,26 +250,35 @@ async function executeCategoryPhaseExpiration(roomCode) {
     startNextQuestion(roomCode);
 }
 
-// Pulls every TRIVIA row from an eligible subcategory (filtered down to the
-// winning main category when it's a real TRIVIA category -- the other,
-// content-less game modes' synthetic CAT_1/2/3 keys never match a real
-// `category` column value, so they fall back to drawing from the whole
-// TRIVIA pool exactly as before), groups peers by category+subcategory+faction
-// for distractor sourcing, and keeps only questions whose group has enough
-// peers to supply 3 distractors. Shuffled once per room so question order
-// (and which questions get asked at all) varies game to game.
+// Pulls every row for the room's winning game mode (filtered down to the
+// winning main category whenever that's a real category key -- the
+// content-less modes' synthetic CAT_1/2/3 keys never match a real `category`
+// column value, so they fall back to drawing from that mode's whole pool),
+// groups peers by category+subcategory+faction for distractor sourcing, and
+// keeps only questions whose group has enough peers to supply 3 distractors.
+// Shuffled once per room so question order (and which questions get asked at
+// all) varies game to game.
 async function loadQuestionBank(room) {
-    const params = [ELIGIBLE_SUBCATEGORIES];
-    let categoryFilter = '';
-    if (room.activeCategoryKey && TRIVIA_CATEGORY_KEYS.includes(room.activeCategoryKey)) {
-        categoryFilter = ' AND category = $2';
+    const dbGameMode = gameModeToDbValue(room.winningGameMode);
+    const params = [dbGameMode];
+    let filters = '';
+
+    // TRIVI_YEAH's subcategory vocabulary (PERSON/PLACE/THING/EVENT/DATE) is
+    // specific to it -- other modes define their own and aren't gated by it.
+    if (dbGameMode === 'TRIVIA') {
+        params.push(ELIGIBLE_SUBCATEGORIES);
+        filters += ` AND subcategory = ANY($${params.length}::text[])`;
+    }
+
+    if (isRealCategoryKey(room.activeCategoryKey)) {
         params.push(room.activeCategoryKey);
+        filters += ` AND category = $${params.length}`;
     }
 
     const result = await pool.query(
         `SELECT id, category, subcategory, faction, question_text, correct_answer, points, visual_asset
          FROM questions
-         WHERE game_mode = 'TRIVIA' AND subcategory = ANY($1::text[])${categoryFilter}`,
+         WHERE game_mode = $1${filters}`,
         params
     );
 

@@ -152,7 +152,7 @@ let currentActiveRoomCode = '----';
                         document.getElementById('room-status-text').innerText = "Gameplay Phase";
                         document.getElementById('lobby-countdown').innerText = data.gameSecondsLeft + " s";
                         const q = data.activeQuestionData;
-                        switchToQuestionUI(q.categoryLabel, q.questionText, q.choiceA, q.choiceB, q.choiceC, q.choiceD, q.questionNumber, q.totalQuestions);
+                        switchToQuestionUI(q.categoryLabel, q.questionText, q.choiceA, q.choiceB, q.choiceC, q.choiceD, q.questionNumber, q.totalQuestions, q.visualAsset);
                         stopCategoryMusic();
                         playCountdownMusic();
                     } else if (data.gameState === 'ROUND_REVEAL') {
@@ -197,7 +197,7 @@ let currentActiveRoomCode = '----';
                 if (data.type === 'TRANSITION_TO_QUESTION') {
                     document.getElementById('room-status-text').innerText = "Gameplay Phase";
                     document.getElementById('lobby-countdown').innerText = "30 s"; // Reset banner clock visually
-                    switchToQuestionUI(data.categoryLabel, data.questionText, data.choiceA, data.choiceB, data.choiceC, data.choiceD, data.questionNumber, data.totalQuestions);
+                    switchToQuestionUI(data.categoryLabel, data.questionText, data.choiceA, data.choiceB, data.choiceC, data.choiceD, data.questionNumber, data.totalQuestions, data.visualAsset);
                     stopCategoryMusic();
                     playCountdownMusic();
                 }
@@ -411,7 +411,7 @@ let currentActiveRoomCode = '----';
             });
         }
 
-        function switchToQuestionUI(categoryLabel, questionText, choiceA, choiceB, choiceC, choiceD, questionNumber, totalQuestions) {
+        function switchToQuestionUI(categoryLabel, questionText, choiceA, choiceB, choiceC, choiceD, questionNumber, totalQuestions, visualAsset) {
             const panel = document.getElementById('active-content-stage');
 
             currentGamePhase = 'GAME_ROUND';
@@ -422,12 +422,23 @@ let currentActiveRoomCode = '----';
             setStatusMessage(`
                 <div style="font-weight: 600; color: #64748b;">Question ${questionNumber || '?'} / ${totalQuestions || '?'}</div>
             `);
+
+            // Most trivia rows have no visual_asset -- only rendered when a mode
+            // (e.g. Country Monkey's highlighted-map SVGs) actually supplies one.
+            // Capped height keeps the 4-choice grid below from getting pushed
+            // off screen regardless of the source image's native dimensions.
+            const visualBlock = visualAsset
+                ? `<div style="text-align: center; margin-bottom: 16px;"><img src="${visualAsset}" alt="" style="max-width: 100%; max-height: 200px; width: auto; height: auto; border-radius: 8px;"></div>`
+                : '';
+
             panel.innerHTML = `
                 <div class="panel-box" style="padding: 40px; flex: 1; display: flex; flex-direction: column; justify-content: space-between; text-align: left; min-height: 400px; box-sizing: border-box;">
-                    
+
                     <div style="font-size: 0.85rem; font-weight: 600; color: #64748b; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 16px;">
                         Active Deck: ${categoryLabel}
                     </div>
+
+                    ${visualBlock}
 
                     <div style="font-size: 1.4rem; font-weight: 600; color: #ffffff; line-height: 1.4; flex: 1; display: flex; align-items: center; margin-bottom: 24px; letter-spacing: -0.01em;">
                         ${questionText}
