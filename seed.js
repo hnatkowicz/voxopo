@@ -237,7 +237,51 @@ async function seed() {
         (113, 'COUNTRY_MONKEY', 'AFRICA', 'COUNTRY', 'AFRICA', 'Which country is highlighted?', '/countries/car.svg', 'CAR', 200);
     `);
 
-    console.log('✅ [Database] Cloud schema expanded, WWII bank, 5 new main categories, and Country Monkey Africa bank seeded!');
+    // 5. Country Monkey's second region: Europe (35 countries). Same flat
+    //    one-group-per-region shape as Africa -- 35 distinct answers is well
+    //    above the eligibility floor.
+    console.log('🌍 Seeding Country Monkey European country bank...');
+    await client.query(`
+      INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, points)
+      VALUES
+        (114, 'COUNTRY_MONKEY', 'EUROPE', 'COUNTRY', 'EUROPE', 'Which country is highlighted?', '/countries/europe/albania.svg', 'Albania', 300),
+        (115, 'COUNTRY_MONKEY', 'EUROPE', 'COUNTRY', 'EUROPE', 'Which country is highlighted?', '/countries/europe/austria.svg', 'Austria', 200),
+        (116, 'COUNTRY_MONKEY', 'EUROPE', 'COUNTRY', 'EUROPE', 'Which country is highlighted?', '/countries/europe/belarus.svg', 'Belarus', 200),
+        (117, 'COUNTRY_MONKEY', 'EUROPE', 'COUNTRY', 'EUROPE', 'Which country is highlighted?', '/countries/europe/belgium.svg', 'Belgium', 200),
+        (118, 'COUNTRY_MONKEY', 'EUROPE', 'COUNTRY', 'EUROPE', 'Which country is highlighted?', '/countries/europe/bos_her.svg', 'Bosnia', 250),
+        (119, 'COUNTRY_MONKEY', 'EUROPE', 'COUNTRY', 'EUROPE', 'Which country is highlighted?', '/countries/europe/bulgaria.svg', 'Bulgaria', 200),
+        (120, 'COUNTRY_MONKEY', 'EUROPE', 'COUNTRY', 'EUROPE', 'Which country is highlighted?', '/countries/europe/croatia.svg', 'Croatia', 200),
+        (121, 'COUNTRY_MONKEY', 'EUROPE', 'COUNTRY', 'EUROPE', 'Which country is highlighted?', '/countries/europe/czech_republic.svg', 'Czech Republic', 200),
+        (122, 'COUNTRY_MONKEY', 'EUROPE', 'COUNTRY', 'EUROPE', 'Which country is highlighted?', '/countries/europe/denmark.svg', 'Denmark', 200),
+        (123, 'COUNTRY_MONKEY', 'EUROPE', 'COUNTRY', 'EUROPE', 'Which country is highlighted?', '/countries/europe/estonia.svg', 'Estonia', 200),
+        (124, 'COUNTRY_MONKEY', 'EUROPE', 'COUNTRY', 'EUROPE', 'Which country is highlighted?', '/countries/europe/finland.svg', 'Finland', 200),
+        (125, 'COUNTRY_MONKEY', 'EUROPE', 'COUNTRY', 'EUROPE', 'Which country is highlighted?', '/countries/europe/france.svg', 'France', 150),
+        (126, 'COUNTRY_MONKEY', 'EUROPE', 'COUNTRY', 'EUROPE', 'Which country is highlighted?', '/countries/europe/germany.svg', 'Germany', 200),
+        (127, 'COUNTRY_MONKEY', 'EUROPE', 'COUNTRY', 'EUROPE', 'Which country is highlighted?', '/countries/europe/greece.svg', 'Greece', 200),
+        (128, 'COUNTRY_MONKEY', 'EUROPE', 'COUNTRY', 'EUROPE', 'Which country is highlighted?', '/countries/europe/hungary.svg', 'Hungary', 200),
+        (129, 'COUNTRY_MONKEY', 'EUROPE', 'COUNTRY', 'EUROPE', 'Which country is highlighted?', '/countries/europe/ireland.svg', 'Ireland', 200),
+        (130, 'COUNTRY_MONKEY', 'EUROPE', 'COUNTRY', 'EUROPE', 'Which country is highlighted?', '/countries/europe/italy.svg', 'Italy', 150),
+        (131, 'COUNTRY_MONKEY', 'EUROPE', 'COUNTRY', 'EUROPE', 'Which country is highlighted?', '/countries/europe/latvia.svg', 'Latvia', 200),
+        (132, 'COUNTRY_MONKEY', 'EUROPE', 'COUNTRY', 'EUROPE', 'Which country is highlighted?', '/countries/europe/lithuania.svg', 'Lithuania', 200),
+        (133, 'COUNTRY_MONKEY', 'EUROPE', 'COUNTRY', 'EUROPE', 'Which country is highlighted?', '/countries/europe/moldova.svg', 'Moldova', 300),
+        (134, 'COUNTRY_MONKEY', 'EUROPE', 'COUNTRY', 'EUROPE', 'Which country is highlighted?', '/countries/europe/montenegro.svg', 'Montenegro', 300),
+        (135, 'COUNTRY_MONKEY', 'EUROPE', 'COUNTRY', 'EUROPE', 'Which country is highlighted?', '/countries/europe/netherlands.svg', 'Netherlands', 200),
+        (136, 'COUNTRY_MONKEY', 'EUROPE', 'COUNTRY', 'EUROPE', 'Which country is highlighted?', '/countries/europe/norway.svg', 'Norway', 200),
+        (137, 'COUNTRY_MONKEY', 'EUROPE', 'COUNTRY', 'EUROPE', 'Which country is highlighted?', '/countries/europe/poland.svg', 'Poland', 200),
+        (138, 'COUNTRY_MONKEY', 'EUROPE', 'COUNTRY', 'EUROPE', 'Which country is highlighted?', '/countries/europe/portugal.svg', 'Portugal', 150),
+        (139, 'COUNTRY_MONKEY', 'EUROPE', 'COUNTRY', 'EUROPE', 'Which country is highlighted?', '/countries/europe/romania.svg', 'Romania', 200),
+        (140, 'COUNTRY_MONKEY', 'EUROPE', 'COUNTRY', 'EUROPE', 'Which country is highlighted?', '/countries/europe/serbia.svg', 'Serbia', 250),
+        (141, 'COUNTRY_MONKEY', 'EUROPE', 'COUNTRY', 'EUROPE', 'Which country is highlighted?', '/countries/europe/slovakia.svg', 'Slovakia', 250),
+        (142, 'COUNTRY_MONKEY', 'EUROPE', 'COUNTRY', 'EUROPE', 'Which country is highlighted?', '/countries/europe/slovenia.svg', 'Slovenia', 250),
+        (143, 'COUNTRY_MONKEY', 'EUROPE', 'COUNTRY', 'EUROPE', 'Which country is highlighted?', '/countries/europe/spain.svg', 'Spain', 150),
+        (144, 'COUNTRY_MONKEY', 'EUROPE', 'COUNTRY', 'EUROPE', 'Which country is highlighted?', '/countries/europe/sweden.svg', 'Sweden', 200),
+        (145, 'COUNTRY_MONKEY', 'EUROPE', 'COUNTRY', 'EUROPE', 'Which country is highlighted?', '/countries/europe/switzerland.svg', 'Switzerland', 200),
+        (146, 'COUNTRY_MONKEY', 'EUROPE', 'COUNTRY', 'EUROPE', 'Which country is highlighted?', '/countries/europe/turkiye.svg', 'Turkiye', 200),
+        (147, 'COUNTRY_MONKEY', 'EUROPE', 'COUNTRY', 'EUROPE', 'Which country is highlighted?', '/countries/europe/ukraine.svg', 'Ukraine', 200),
+        (148, 'COUNTRY_MONKEY', 'EUROPE', 'COUNTRY', 'EUROPE', 'Which country is highlighted?', '/countries/europe/united_kingdom.svg', 'United Kingdom', 150);
+    `);
+
+    console.log('✅ [Database] Cloud schema expanded, WWII bank, 5 new main categories, and Country Monkey Africa + Europe banks seeded!');
   } catch (error) {
     console.error('❌ Schema expansion failed:', error.message);
   } finally {
