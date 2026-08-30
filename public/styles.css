@@ -236,27 +236,6 @@ body[data-view="game"] #game-screen {
     background: #1c1f29;
 }
 
-.qcount-btn {
-    flex: 1;
-    background: #14161d;
-    color: #ffffff;
-    border: 1px solid #222630;
-    border-radius: 8px;
-    padding: 12px 0;
-    font-size: 1rem;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.15s ease;
-}
-.qcount-btn:hover {
-    border-color: #64748b;
-}
-.qcount-btn.selected {
-    background: rgba(0, 230, 118, 0.08);
-    border-color: #00e676;
-    color: #00e676;
-}
-
 /* Final leaderboard rows -- same sleek button feel as .action-btn-secondary,
    with a gold/silver/bronze accent per rank instead of an icon. */
 .leaderboard-btn {

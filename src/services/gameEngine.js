@@ -8,18 +8,20 @@ const ELIGIBLE_SUBCATEGORIES = ['PERSON', 'EVENT'];
 const MIN_GROUP_SIZE_FOR_DISTRACTORS = 4; // correct answer + 3 distractors
 const MAX_QUESTIONS_PER_GAME = 30;
 const MIN_QUESTIONS_PER_GAME = 15;
+const DEFAULT_QUESTIONS_PER_GAME = 20; // fixed length, no lobby picker for this right now
 const REVEAL_DURATION_MS = 5000;
 const GAME_ROUND_DURATION_SECONDS = 30;
 const FAST_FORWARD_SECONDS = 3; // once everyone's answered, snap the clock down to this for a beat of suspense
 const MAX_NAME_LENGTH = 30; // matches the phone's input maxlength
 
-// Clamps the host's requested question count (from the lobby picker) into
-// [MIN_QUESTIONS_PER_GAME, MAX_QUESTIONS_PER_GAME]. Falls back to the max for
-// anything missing/non-numeric, e.g. the defensive room-init paths that don't
-// go through the picker at all.
+// Clamps a requested question count into [MIN_QUESTIONS_PER_GAME,
+// MAX_QUESTIONS_PER_GAME]. Falls back to the fixed default for anything
+// missing/non-numeric. The bounds stay in place (and this stays exported) for
+// whenever a "Game Night" picker resurfaces the choice; today no caller passes
+// a real value, so every room lands on DEFAULT_QUESTIONS_PER_GAME.
 export function resolveRequestedQuestionCount(rawValue) {
     const parsed = parseInt(rawValue, 10);
-    if (Number.isNaN(parsed)) return MAX_QUESTIONS_PER_GAME;
+    if (Number.isNaN(parsed)) return DEFAULT_QUESTIONS_PER_GAME;
     return Math.max(MIN_QUESTIONS_PER_GAME, Math.min(parsed, MAX_QUESTIONS_PER_GAME));
 }
 

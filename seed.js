@@ -79,7 +79,23 @@ async function seed() {
 
         -- PLACE (thin pools for now)
         (19, 'TRIVIA', 'WWII_HISTORY', 'PLACE', 'ALLIED', 'Which French region served as the primary landing site for Allied troops on D-Day?', NULL, 'Normandy', 100),
-        (20, 'TRIVIA', 'WWII_HISTORY', 'PLACE', 'AXIS', 'What was the capital city of Nazi Germany?', NULL, 'Berlin', 100);
+        (20, 'TRIVIA', 'WWII_HISTORY', 'PLACE', 'AXIS', 'What was the capital city of Nazi Germany?', NULL, 'Berlin', 100),
+
+        -- PERSON / ALLIED (round 2 -- deepens the pool so a 4-choice question has real distractor depth)
+        (21, 'TRIVIA', 'WWII_HISTORY', 'PERSON', 'ALLIED', 'Who was President of the United States for most of World War II, dying in office in April 1945?', NULL, 'Franklin D. Roosevelt', 100),
+        (22, 'TRIVIA', 'WWII_HISTORY', 'PERSON', 'ALLIED', 'Which French general led the Free French Forces from exile in London?', NULL, 'Charles de Gaulle', 200),
+        (23, 'TRIVIA', 'WWII_HISTORY', 'PERSON', 'ALLIED', 'Which British field marshal commanded the Allied victory at El Alamein?', NULL, 'Bernard Montgomery', 200),
+        (24, 'TRIVIA', 'WWII_HISTORY', 'PERSON', 'ALLIED', 'Which U.S. admiral commanded the Pacific Fleet for most of the war?', NULL, 'Chester Nimitz', 200),
+        (25, 'TRIVIA', 'WWII_HISTORY', 'PERSON', 'ALLIED', 'Which U.S. Army Chief of Staff later devised the postwar European recovery plan bearing his name?', NULL, 'George Marshall', 300),
+        (26, 'TRIVIA', 'WWII_HISTORY', 'PERSON', 'ALLIED', 'Which Soviet marshal led the Red Army''s defense of Moscow and the capture of Berlin?', NULL, 'Georgy Zhukov', 300),
+
+        -- PERSON / AXIS (round 2)
+        (27, 'TRIVIA', 'WWII_HISTORY', 'PERSON', 'AXIS', 'Who commanded the German Luftwaffe throughout World War II?', NULL, 'Hermann Goering', 200),
+        (28, 'TRIVIA', 'WWII_HISTORY', 'PERSON', 'AXIS', 'Who led the SS and organized the Nazi regime''s system of concentration camps?', NULL, 'Heinrich Himmler', 200),
+        (29, 'TRIVIA', 'WWII_HISTORY', 'PERSON', 'AXIS', 'Which Japanese admiral planned the attack on Pearl Harbor?', NULL, 'Isoroku Yamamoto', 200),
+        (30, 'TRIVIA', 'WWII_HISTORY', 'PERSON', 'AXIS', 'Which German admiral commanded the U-boat fleet and briefly succeeded Hitler as head of state?', NULL, 'Karl Doenitz', 300),
+        (31, 'TRIVIA', 'WWII_HISTORY', 'PERSON', 'AXIS', 'Who was the Emperor of Japan throughout World War II?', NULL, 'Hirohito', 100),
+        (32, 'TRIVIA', 'WWII_HISTORY', 'PERSON', 'AXIS', 'Who served as Nazi Germany''s Minister of Armaments and War Production?', NULL, 'Albert Speer', 300);
     `);
 
     console.log('✅ [Database] Cloud schema expanded and WWII trivia bank seeded!');

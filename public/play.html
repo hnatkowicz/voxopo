@@ -137,11 +137,11 @@
         <p class="subtitle" style="margin-bottom: 20px;">Connection active with TV stream dashboard</p>
         <div class="player-badge">
             <span class="player-badge-identity">🟢 <span id="badge-emoji">-</span> <span id="badge-name" class="player-badge-name">-</span></span>
-            <span class="player-badge-room">Room <strong id="badge-room">-</strong></span>
+            <span class="player-badge-room">Room <strong id="badge-room">-</strong> · Score <strong id="badge-score">0</strong></span>
         </div>
         <div class="input-group">
-            <label>Submit Response or Command</label>
-            <input type="text" id="game-input" placeholder="Type answer here...">
+            <label>Vote START to lock in</label>
+            <input type="text" id="game-input" placeholder="Type START...">
         </div>
         <button class="btn" onclick="submitGameAction()">Submit Action</button>
         <div id="game-feedback" class="feedback"></div>
@@ -153,7 +153,7 @@
         <p class="subtitle" style="margin-bottom: 24px;">Cast your family sub-deck preference now</p>
         <div class="player-badge">
             <span class="player-badge-identity">⚡ <span id="sub-badge-emoji">-</span> <span id="sub-badge-name" class="player-badge-name">-</span></span>
-            <span class="player-badge-room">Room <strong id="sub-badge-room">-</strong></span>
+            <span class="player-badge-room">Room <strong id="sub-badge-room">-</strong> · Score <strong id="sub-badge-score">0</strong></span>
         </div>
         <div class="input-group">
             <label>Select Category Preference</label>
@@ -173,7 +173,7 @@
 
         <div class="player-badge">
             <span class="player-badge-identity"><span id="q-badge-emoji">-</span> <span id="q-badge-name" class="player-badge-name">-</span></span>
-            <span class="player-badge-room">Room <strong id="q-badge-room">-</strong></span>
+            <span class="player-badge-room">Room <strong id="q-badge-room">-</strong> · Score <strong id="q-badge-score">0</strong></span>
         </div>
 
         <div id="question-text-display" style="text-align: left; font-size: 1.1rem; font-weight: 600; color: #ffffff; line-height: 1.4; margin: 20px 0;"></div>
@@ -279,11 +279,20 @@
                     const response = await fetch('/api/room-status', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ roomCode: roomCode })
+                        body: JSON.stringify({ roomCode: roomCode, playerName: nickname })
                     });
                     const data = await response.json();
 
                     if (data && data.phase) {
+                        // All three badges stay in the DOM (just hidden/shown), so it's
+                        // harmless to refresh every score span on every tick regardless
+                        // of which screen is currently visible.
+                        if (data.myScore !== null && data.myScore !== undefined) {
+                            ['badge-score', 'sub-badge-score', 'q-badge-score'].forEach(id => {
+                                const el = document.getElementById(id);
+                                if (el) el.innerText = data.myScore;
+                            });
+                        }
                         // PHASE 2 TRANSITION: Open category election cards
                         if (data.phase === 'CATEGORY_VOTE_PHASE' && document.getElementById('category-screen').style.display !== "block") {
                             document.getElementById('sub-badge-name').innerText = nickname;

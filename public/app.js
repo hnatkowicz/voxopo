@@ -1,6 +1,11 @@
 document.addEventListener("DOMContentLoaded", () => {
     document.body.setAttribute('data-view', 'gateway');
-    
+
+    ['countdown-music', 'category-music', 'win-music'].forEach(id => {
+        const audio = document.getElementById(id);
+        if (audio) audio.volume = 0.5;
+    });
+
     const btnGenerate = document.getElementById('btn-generate-lobby');
     const btnToggleSpectate = document.getElementById('btn-toggle-spectate');
     const spectateDrawer = document.getElementById('spectate-input-drawer');
@@ -12,7 +17,7 @@ if (btnGenerate) {
     btnGenerate.addEventListener('click', async () => {
         unlockAllAudio(); // real user gesture right here -- primes playback for later WebSocket-triggered calls
         try {
-            const response = await fetch(`/api/create-room?questionCount=${selectedQuestionCount}`);
+            const response = await fetch('/api/create-room');
             const data = await response.json();
             
             if (data.success && data.roomCode) {
@@ -66,18 +71,6 @@ let currentActiveRoomCode = '----';
         let cachedPlayersSnapshot = [];
         let currentStatusHtml = ''; // Whatever the status slot should show at rest for the current phase (toasts restore to this)
         let currentGamePhase = 'LOBBY'; // LOBBY / CATEGORY_VOTE / GAME_ROUND / GAME_OVER -- gates the "TYPE START" nudge to lobby only
-        let selectedQuestionCount = 20;
-
-        // index.html/app.js wire buttons via addEventListener rather than inline
-        // onclick -- an inline onclick executes in global scope and can't see
-        // functions defined inside this DOMContentLoaded closure.
-        document.querySelectorAll('.qcount-btn').forEach(btn => {
-            btn.addEventListener('click', () => {
-                document.querySelectorAll('.qcount-btn').forEach(b => b.classList.remove('selected'));
-                btn.classList.add('selected');
-                selectedQuestionCount = parseInt(btn.dataset.count, 10);
-            });
-        });
 
         // Primes all three <audio> elements against a real user gesture (a click), so
         // later programmatic .play() calls fired from WebSocket handlers aren't blocked

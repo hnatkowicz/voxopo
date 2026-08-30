@@ -89,12 +89,18 @@ app.post('/api/message', async (req, res) => {
 
 app.post('/api/room-status', (req, res) => {
     try {
-        const { roomCode } = req.body;
+        const { roomCode, playerName } = req.body;
         const targetRoom = activeRooms[roomCode];
         if (targetRoom) {
             // A player just interacted with this room! Bump the clock to keep it alive
             targetRoom.lastActivity = Date.now();
         }
+
+        // Current-round score only -- no cross-round "Game Night" total exists yet,
+        // and that mechanic isn't designed, so deliberately not stubbing a field for it.
+        const myScore = (targetRoom && playerName && targetRoom.players[playerName])
+            ? targetRoom.players[playerName].score
+            : null;
 
         if (targetRoom && targetRoom.gameState === 'CATEGORY_VOTE') {
             let cat1 = 'WWII History', cat2 = 'Primary School', cat3 = 'Pop Culture';
@@ -107,18 +113,18 @@ app.post('/api/room-status', (req, res) => {
             } else if (targetRoom.winningGameMode === 'ON_THE_SPECTRUM') {
                 cat1 = 'Numeric Scales'; cat2 = 'Extreme Measures'; cat3 = 'Chrono Orders';
             }
-            return res.json({ phase: 'CATEGORY_VOTE_PHASE', label1: cat1, label2: cat2, label3: cat3 });
+            return res.json({ phase: 'CATEGORY_VOTE_PHASE', label1: cat1, label2: cat2, label3: cat3, myScore });
         }
         // FIX: If the clock expired and moved to gameplay, shout the round phase back to the phone poller!
         // FIX ALIGNMENT: Flatten the object parameters so it matches Phase 2 perfectly!
         if (targetRoom && targetRoom.gameState === 'GAME_ROUND' && targetRoom.activeQuestionData) {
             // activeQuestionData is already answer-safe (correctLetter stripped in gameEngine.js)
-            return res.json({ phase: 'GAME_ROUND_PHASE', ...targetRoom.activeQuestionData });
+            return res.json({ phase: 'GAME_ROUND_PHASE', ...targetRoom.activeQuestionData, myScore });
         }
         if (targetRoom && targetRoom.gameState === 'GAME_OVER') {
-            return res.json({ phase: 'GAME_OVER_PHASE' });
+            return res.json({ phase: 'GAME_OVER_PHASE', myScore });
         }
-        return res.json({ phase: 'WAITING' });
+        return res.json({ phase: 'WAITING', myScore });
     } catch (error) {
         return res.status(500).json({ error: 'Status track exception.' });
     }
