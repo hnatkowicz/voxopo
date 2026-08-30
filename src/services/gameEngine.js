@@ -8,6 +8,8 @@ const ELIGIBLE_SUBCATEGORIES = ['PERSON', 'EVENT'];
 const MIN_GROUP_SIZE_FOR_DISTRACTORS = 4; // correct answer + 3 distractors
 const MAX_QUESTIONS_PER_GAME = 30;
 const REVEAL_DURATION_MS = 5000;
+const GAME_ROUND_DURATION_SECONDS = 25;
+const FAST_FORWARD_SECONDS = 3; // once everyone's answered, snap the clock down to this for a beat of suspense
 
 function shuffleArray(items) {
     const copy = [...items];
@@ -59,7 +61,7 @@ function startLobbyCountdown(roomCode) {
         room.lobbySecondsLeft--;
         
         if (room.lobbySecondsLeft > 0) {
-            broadcastToRoom(roomCode, { type: 'LOBBY_TIMER_TICK', secondsLeft: room.lobbySecondsLeft + "s" });
+            broadcastToRoom(roomCode, { type: 'LOBBY_TIMER_TICK', secondsLeft: room.lobbySecondsLeft + " s" });
         } else {
             executeLobbyPhaseExpiration(roomCode);
         }
@@ -141,7 +143,7 @@ function startCategoryCountdown(roomCode) {
         room.categorySecondsLeft = count;
         
         if (count > 0) {
-            broadcastToRoom(roomCode, { type: 'CATEGORY_TIMER_TICK', secondsLeft: count + "s" });
+            broadcastToRoom(roomCode, { type: 'CATEGORY_TIMER_TICK', secondsLeft: count + " s" });
         } else {
             executeCategoryPhaseExpiration(roomCode);
         }
@@ -313,11 +315,11 @@ function calculateCategoryWinner(room) {
 // ==========================================
 // PHASE 3: CORE QUESTIONS ENGINE
 // ==========================================
-function startGameRoundCountdown(roomCode) {
+function startGameRoundCountdown(roomCode, startCount = GAME_ROUND_DURATION_SECONDS) {
     const room = activeRooms[roomCode];
     if (!room) return;
 
-    let count = 25;
+    let count = startCount;
     room.gameSecondsLeft = count;
     if (room.timerInterval) clearInterval(room.timerInterval);
 
@@ -325,11 +327,26 @@ function startGameRoundCountdown(roomCode) {
         count--;
         room.gameSecondsLeft = count;
         if (count > 0) {
-            broadcastToRoom(roomCode, { type: 'GAME_TIMER_TICK', secondsLeft: count + "s" });
+            broadcastToRoom(roomCode, { type: 'GAME_TIMER_TICK', secondsLeft: count + " s" });
         } else {
             evaluateRoundAndRevealAnswer(roomCode);
         }
     }, 1000);
+}
+
+// Once every player has answered, don't reveal instantly -- snap the remaining
+// time down to a short beat (never lengthening it) so the room gets a "3...2...1"
+// moment instead of a jarring instant cut to the answer.
+function fastForwardToReveal(roomCode) {
+    const room = activeRooms[roomCode];
+    if (!room) return;
+
+    if (room.gameSecondsLeft > FAST_FORWARD_SECONDS) {
+        // The countdown interval decrements before it broadcasts, so without this
+        // the display would jump straight to "2 s" and skip showing "3 s" at all.
+        broadcastToRoom(roomCode, { type: 'GAME_TIMER_TICK', secondsLeft: FAST_FORWARD_SECONDS + " s" });
+        startGameRoundCountdown(roomCode, FAST_FORWARD_SECONDS);
+    }
 }
 
 function evaluateRoundAndRevealAnswer(roomCode) {
@@ -402,8 +419,10 @@ export function handleIncomingMessage(fromPhone, bodyText) {
 
         const currentRoom = activeRooms[roomCode];
         if (currentRoom) currentRoom.lastActivity = Date.now();
-        
-        if (currentRoom.gameState !== 'LOBBY') return "⚠️ Registration closed! Match active.";
+
+        // Late joins are welcome any time before the match wraps up -- their
+        // phone's status poller will catch them up to whatever phase is live.
+        if (currentRoom.gameState === 'GAME_OVER') return "⚠️ This match has already ended.";
 
         if (parts.length >= 4) {
             parts.shift(); // Evacuate code segment
@@ -425,19 +444,27 @@ export function handleIncomingMessage(fromPhone, bodyText) {
                 joinedAt: new Date()
             };
 
-            currentRoom.votes = { TRIVI_YEAH: 0, COUNTRY_MONKEY: 0, EMPOSSDURR: 0, FLAG_ME_DOWN: 0, ON_THE_SPECTRUM: 0 };
             const playersArray = Object.values(currentRoom.players);
-            
-            playersArray.forEach(p => {
-                if (currentRoom.votes[p.vote] !== undefined) currentRoom.votes[p.vote]++;
-            });
             broadcastToRoom(roomCode, { type: 'LEADERBOARD_UPDATE', players: playersArray });
-            broadcastToRoom(roomCode, { type: 'VOTE_UPDATE', votes: currentRoom.votes, totalVotes: playersArray.length });
 
-            startLobbyCountdown(roomCode);
-            broadcastToRoom(roomCode, { type: 'LOBBY_TIMER_TICK', secondsLeft: "60s" });
+            // Module voting and the lobby clock are only meaningful pre-game --
+            // restarting them for a late joiner would silently reset a match
+            // already in progress (executeLobbyPhaseExpiration would fire again
+            // in 60s and stomp on whatever real phase is live by then).
+            if (currentRoom.gameState === 'LOBBY') {
+                currentRoom.votes = { TRIVI_YEAH: 0, COUNTRY_MONKEY: 0, EMPOSSDURR: 0, FLAG_ME_DOWN: 0, ON_THE_SPECTRUM: 0 };
+                playersArray.forEach(p => {
+                    if (currentRoom.votes[p.vote] !== undefined) currentRoom.votes[p.vote]++;
+                });
+                broadcastToRoom(roomCode, { type: 'VOTE_UPDATE', votes: currentRoom.votes, totalVotes: playersArray.length });
 
-            return `Welcome to RandoMania, ${playerNickname}! Entry logged live.`;
+                startLobbyCountdown(roomCode);
+                broadcastToRoom(roomCode, { type: 'LOBBY_TIMER_TICK', secondsLeft: "60 s" });
+
+                return `Welcome to RandoMania, ${playerNickname}! Entry logged live.`;
+            }
+
+            return `Welcome to RandoMania, ${playerNickname}! Jumping into the action already in progress.`;
         }
     }
 
@@ -532,8 +559,8 @@ export function handleIncomingMessage(fromPhone, bodyText) {
             console.log(`[Match Engine] Submission received from ${player.name}: "${answerChoice}". Total logged: ${totalAnswersLogged}/${totalPlayersCount}`);
 
             if (totalAnswersLogged === totalPlayersCount) {
-                console.log(`🚀 [Match Engine] Final submission secured! Blowing out countdown fields immediately.`);
-                evaluateRoundAndRevealAnswer(associatedRoomCode);
+                console.log(`🚀 [Match Engine] Final submission secured! Fast-forwarding clock to ${FAST_FORWARD_SECONDS}s.`);
+                fastForwardToReveal(associatedRoomCode);
             }
             return `Got it, ${player.name}! Option ${answerChoice} logged.`;
         }

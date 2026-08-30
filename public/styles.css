@@ -234,6 +234,43 @@ body[data-view="game"] #game-screen {
     border-color: #64748b;
     background: #1c1f29;
 }
+
+/* Final leaderboard rows -- same sleek button feel as .action-btn-secondary,
+   with a gold/silver/bronze accent per rank instead of an icon. */
+.leaderboard-btn {
+    background: #14161d;
+    border: 1px solid #222630;
+    border-radius: 8px;
+    padding: 16px 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.leaderboard-btn-name {
+    color: #ffffff;
+    font-size: 1.05rem;
+    font-weight: 600;
+}
+.leaderboard-btn-score {
+    font-size: 1.05rem;
+    font-weight: 700;
+}
+.leaderboard-btn.rank-gold {
+    border-color: #d4af37;
+    background: rgba(212, 175, 55, 0.08);
+}
+.leaderboard-btn.rank-gold .leaderboard-btn-score { color: #d4af37; }
+.leaderboard-btn.rank-silver {
+    border-color: #b8bcc4;
+    background: rgba(184, 188, 196, 0.08);
+}
+.leaderboard-btn.rank-silver .leaderboard-btn-score { color: #b8bcc4; }
+.leaderboard-btn.rank-bronze {
+    border-color: #cd7f32;
+    background: rgba(205, 127, 50, 0.08);
+}
+.leaderboard-btn.rank-bronze .leaderboard-btn-score { color: #cd7f32; }
+
 /* ========================================== */
 /*  VIEWPORT ENGINE VISIBILITY STATES         */
 /* ========================================== */

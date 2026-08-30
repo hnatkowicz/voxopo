@@ -105,16 +105,17 @@ let currentActiveRoomCode = '----';
 
                     if (data.gameState === 'CATEGORY_VOTE') {
                         document.getElementById('room-status-text').innerText = "Category Selection";
-                        document.getElementById('lobby-countdown').innerText = data.categorySecondsLeft + "s";
+                        document.getElementById('lobby-countdown').innerText = data.categorySecondsLeft + " s";
                         switchToCategoryVotingUI(data.winningGameMode, data.label1, data.label2, data.label3);
                     } else if (data.gameState === 'GAME_ROUND' && data.activeQuestionData) {
                         document.getElementById('room-status-text').innerText = "Gameplay Phase";
-                        document.getElementById('lobby-countdown').innerText = data.gameSecondsLeft + "s";
+                        document.getElementById('lobby-countdown').innerText = data.gameSecondsLeft + " s";
                         const q = data.activeQuestionData;
                         // Kept in sync with the choices shown, so a REVEAL_CORRECT_ANSWER
                         // that lands after reconnect still highlights the real answer text.
                         window.activeQuestion = { choices: { A: q.choiceA, B: q.choiceB, C: q.choiceC, D: q.choiceD } };
                         switchToQuestionUI(q.categoryLabel, q.questionText, q.choiceA, q.choiceB, q.choiceC, q.choiceD);
+                        playCountdownMusic();
                     } else if (data.gameState === 'ROUND_REVEAL') {
                         // Reveal happened while we were away; there's no correctLetter here,
                         // so just drop into the gameplay view and wait for the next broadcast.
@@ -141,8 +142,9 @@ let currentActiveRoomCode = '----';
                 // Listen for the server's 25s clock expiration to highlight the correct answer choice
                 if (data.type === 'REVEAL_CORRECT_ANSWER') {
                     document.getElementById('room-status-text').innerText = "Round Evaluation";
-                    document.getElementById('lobby-countdown').innerText = "0s";
+                    document.getElementById('lobby-countdown').innerText = "0 s";
                     highlightCorrectAnswerOnTV(data.correctLetter);
+                    stopCountdownMusic();
                 }
                 // FIX: Explicitly pass data.label1, data.label2, and data.label3 into the painter!
                 if (data.type === 'TRANSITION_TO_CATEGORY_VOTE') {
@@ -155,13 +157,15 @@ let currentActiveRoomCode = '----';
                 // Listen for the server's Category Phase expiration signal to draw the question canvas
                 if (data.type === 'TRANSITION_TO_QUESTION') {
                     document.getElementById('room-status-text').innerText = "Gameplay Phase";
-                    document.getElementById('lobby-countdown').innerText = "30s"; // Reset banner clock visually
+                    document.getElementById('lobby-countdown').innerText = "25 s"; // Reset banner clock visually
                     switchToQuestionUI(data.categoryLabel, data.questionText, data.choiceA, data.choiceB, data.choiceC, data.choiceD);
+                    playCountdownMusic();
                 }
                 // Fired once the question loop runs out of questions for this game.
                 if (data.type === 'GAME_OVER') {
                     document.getElementById('room-status-text').innerText = "Game Over";
-                    document.getElementById('lobby-countdown').innerText = "🏁";
+                    document.getElementById('lobby-countdown').innerText = "FINAL";
+                    stopCountdownMusic();
                     switchToGameOverUI(data.players);
                 }
             };
@@ -383,7 +387,7 @@ let currentActiveRoomCode = '----';
                 <div class="panel-box" style="padding: 40px; flex: 1; display: flex; flex-direction: column; justify-content: space-between; text-align: left; min-height: 400px; box-sizing: border-box;">
                     
                     <div style="font-size: 0.85rem; font-weight: 600; color: #64748b; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 16px;">
-                        🎯 Active Deck: ${categoryLabel}
+                        Active Deck: ${categoryLabel}
                     </div>
 
                     <div style="font-size: 1.4rem; font-weight: 600; color: #ffffff; line-height: 1.4; flex: 1; display: flex; align-items: center; margin-bottom: 24px; letter-spacing: -0.01em;">
@@ -414,23 +418,21 @@ let currentActiveRoomCode = '----';
         
 function switchToGameOverUI(players) {
     const panel = document.getElementById('active-content-stage');
-    const sorted = [...(players || [])].sort((a, b) => b.score - a.score);
+    const topThree = [...(players || [])].sort((a, b) => b.score - a.score).slice(0, 3);
+    const rankClasses = ['rank-gold', 'rank-silver', 'rank-bronze'];
 
-    const rows = sorted.map((player, index) => `
-        <div class="vote-row" style="align-items: center;">
-            <div class="vote-meta" style="align-items: center;">
-                <span style="font-weight: 700; color: #64748b; width: 24px; display: inline-block;">${index + 1}</span>
-                <span style="font-weight: 500; color: #ffffff;">${player.emoji || '👤'} ${player.name}</span>
-                <span style="color: #00e676; font-weight: 700;">${player.score || 0} pts</span>
-            </div>
+    const rows = topThree.map((player, index) => `
+        <div class="leaderboard-btn ${rankClasses[index]}">
+            <span class="leaderboard-btn-name">${player.name}</span>
+            <span class="leaderboard-btn-score">${player.score || 0} pts</span>
         </div>
     `).join('');
 
     panel.innerHTML = `
         <div class="panel-box" style="padding: 40px; flex: 1; display: flex; flex-direction: column; justify-content: center;">
-            <h2 class="panel-title" style="margin-bottom: 8px;">🏁 Final Leaderboard</h2>
+            <h2 class="panel-title" style="margin-bottom: 8px;">Final Leaderboard</h2>
             <p style="color: #64748b; font-size: 0.95rem; margin: 0 0 32px 0; font-weight: 500;">Thanks for playing!</p>
-            <div style="display: flex; flex-direction: column; gap: 4px;">${rows}</div>
+            <div style="display: flex; flex-direction: column; gap: 12px;">${rows}</div>
         </div>
     `;
 }
@@ -468,7 +470,27 @@ function highlightCorrectAnswerOnTV(correctLetter) {
     } 
 } // 🔓 1. THIS CLOSES THE FUNCTION SAFELY!
 
-// Trigger dynamic assignment protocols on page wakeup 
+function playCountdownMusic() {
+    const music = document.getElementById('countdown-music');
+    if (!music) return;
+    music.currentTime = 0;
+    // Autoplay can be blocked until the page has seen a user gesture -- clicking
+    // "Generate New Lobby" or "View" to get here usually satisfies that, but
+    // swallow the rejection rather than letting it throw if it doesn't.
+    const playPromise = music.play();
+    if (playPromise && typeof playPromise.catch === 'function') {
+        playPromise.catch(err => console.warn('[Audio] Countdown music blocked or failed:', err.message));
+    }
+}
+
+function stopCountdownMusic() {
+    const music = document.getElementById('countdown-music');
+    if (!music) return;
+    music.pause();
+    music.currentTime = 0;
+}
+
+// Trigger dynamic assignment protocols on page wakeup
 if (typeof initializeDynamicRoomSession === 'function') { 
     initializeDynamicRoomSession(); 
 } 
