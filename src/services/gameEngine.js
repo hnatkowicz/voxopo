@@ -10,6 +10,7 @@ const MAX_QUESTIONS_PER_GAME = 30;
 const REVEAL_DURATION_MS = 5000;
 const GAME_ROUND_DURATION_SECONDS = 30;
 const FAST_FORWARD_SECONDS = 3; // once everyone's answered, snap the clock down to this for a beat of suspense
+const MAX_NAME_LENGTH = 30; // matches the phone's input maxlength
 
 function shuffleArray(items) {
     const copy = [...items];
@@ -277,6 +278,14 @@ function startNextQuestion(roomCode) {
     startGameRoundCountdown(roomCode);
 }
 
+// Ranks by score, then correct-answer count, then join time -- the last one is
+// always unique, so this never leaves two players tied for the same medal.
+function compareByRank(a, b) {
+    return b.score - a.score
+        || (b.correctAnswers || 0) - (a.correctAnswers || 0)
+        || new Date(a.joinedAt) - new Date(b.joinedAt);
+}
+
 function endGame(roomCode) {
     const room = activeRooms[roomCode];
     if (!room) return;
@@ -285,7 +294,7 @@ function endGame(roomCode) {
     if (room.revealTimeout) { clearTimeout(room.revealTimeout); room.revealTimeout = null; }
 
     room.gameState = 'GAME_OVER';
-    const finalStandings = Object.values(room.players).sort((a, b) => b.score - a.score);
+    const finalStandings = Object.values(room.players).sort(compareByRank);
 
     console.log(`🏁 [Game Engine] Room ${roomCode} finished ${room.questionBank.length} questions. Broadcasting final leaderboard.`);
 
@@ -368,7 +377,10 @@ function evaluateRoundAndRevealAnswer(roomCode) {
         Object.entries(room.answers).forEach(([playerName, submittedLetter]) => {
             if (submittedLetter === correctLetter) {
                 const player = room.players[playerName];
-                if (player) player.score += points;
+                if (player) {
+                    player.score += points;
+                    player.correctAnswers = (player.correctAnswers || 0) + 1; // tiebreak for the final leaderboard
+                }
             }
         });
     }
@@ -431,6 +443,10 @@ export function handleIncomingMessage(fromPhone, bodyText) {
             const playerNickname = parts.join(' ').trim();
 
             if (!playerNickname) return "⚠️ Setup Error: Blank nickname field.";
+            // Matches the phone's input maxlength -- rejected rather than truncated so the
+            // stored name (used as the player's key everywhere) is never silently altered.
+            // Display-side truncation (ellipsis) handles anything still too long to fit visually.
+            if (playerNickname.length > MAX_NAME_LENGTH) return `⚠️ Nickname too long (max ${MAX_NAME_LENGTH} characters).`;
             if (currentRoom.players[playerNickname]) return `⚠️ Name taken inside Room ${roomCode}.`;
 
             currentRoom.players[playerNickname] = {
@@ -440,7 +456,8 @@ export function handleIncomingMessage(fromPhone, bodyText) {
                 vote: votedModule, 
                 categoryVote: null, 
                 requestedStart: false,
-                score: 0, 
+                score: 0,
+                correctAnswers: 0,
                 joinedAt: new Date()
             };
 

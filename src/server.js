@@ -19,7 +19,12 @@ const PORT = process.env.PORT || 3000;
 app.use(express.static(path.join(__dirname, '..public')));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
-app.use(express.static('public'));
+// no-cache (not no-store) so browsers still revalidate via ETag/Last-Modified
+// instead of serving a stale cached copy of index.html/app.js/play.html after
+// a deploy -- avoids "I don't see the fix" confusion from a cached old build.
+app.use(express.static('public', {
+    setHeaders: (res) => res.setHeader('Cache-Control', 'no-cache')
+}));
 
 // 1. DYNAMIC ROOM LIFECYCLE CREATOR ENDPOINT
 app.get('/api/create-room', (req, res) => {

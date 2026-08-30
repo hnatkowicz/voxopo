@@ -65,6 +65,14 @@ let currentActiveRoomCode = '----';
         let currentStatusHtml = ''; // Whatever the status slot should show at rest for the current phase (toasts restore to this)
         let currentGamePhase = 'LOBBY'; // LOBBY / CATEGORY_VOTE / GAME_ROUND / GAME_OVER -- gates the "TYPE START" nudge to lobby only
 
+        // Ranks by score, then correct-answer count, then join time -- the last one
+        // is always unique, so ties never leave two players sharing the same medal.
+        function compareByRank(a, b) {
+            return b.score - a.score
+                || (b.correctAnswers || 0) - (a.correctAnswers || 0)
+                || new Date(a.joinedAt) - new Date(b.joinedAt);
+        }
+
         // Sets the muted, right-hand status message next to the permanent QR block.
         // The QR + join instructions on the left never change, so late arrivals can
         // always scan in -- this slot is the only thing that varies by phase.
@@ -209,7 +217,7 @@ let currentActiveRoomCode = '----';
             }
 
             tbody.innerHTML = '';
-            playersList.sort((a, b) => b.score - a.score);
+            playersList.sort(compareByRank);
 
             playersList.forEach((player, index) => {
                 const row = document.createElement('tr');
@@ -425,7 +433,7 @@ let currentActiveRoomCode = '----';
         
 function switchToGameOverUI(players) {
     const panel = document.getElementById('active-content-stage');
-    const topThree = [...(players || [])].sort((a, b) => b.score - a.score).slice(0, 3);
+    const topThree = [...(players || [])].sort(compareByRank).slice(0, 3);
     const rankClasses = ['rank-gold', 'rank-silver', 'rank-bronze'];
 
     const rows = topThree.map((player, index) => `

@@ -127,6 +127,7 @@ body {
         .leaderboard-table {
             width: 100%;
             border-collapse: collapse;
+            table-layout: fixed; /* required for name-col ellipsis to actually clip instead of stretching the table */
         }
         .leaderboard-table th {
             color: #64748b;
@@ -144,7 +145,7 @@ body {
         }
         .rank-col { width: 12%; color: #64748b; font-weight: 600; }
         .emoji-col { width: 15%; font-size: 1.2rem; text-align: left; }
-        .name-col { width: 53%; font-weight: 500; color: #ffffff; }
+        .name-col { width: 53%; font-weight: 500; color: #ffffff; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
         .score-col { width: 20%; text-align: right; color: #00e676; font-weight: 600; }
                 /* Sliding Toast Alert Notification Window Styles */
         .toast-container {
@@ -250,10 +251,17 @@ body[data-view="game"] #game-screen {
     color: #ffffff;
     font-size: 1.05rem;
     font-weight: 600;
+    flex: 1 1 auto;
+    min-width: 0; /* lets a flex child actually shrink below its content width so ellipsis can kick in */
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    margin-right: 12px;
 }
 .leaderboard-btn-score {
     font-size: 1.05rem;
     font-weight: 700;
+    flex-shrink: 0;
 }
 .leaderboard-btn.rank-gold {
     border-color: #d4af37;
