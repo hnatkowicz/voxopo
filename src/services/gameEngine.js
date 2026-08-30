@@ -2,9 +2,11 @@ import pool from '../config/database.js';
 
 export const activeRooms = {};
 
-// PLACE/THING/DATE pools are too thin right now to supply 3 distractors each,
-// so the loop only draws from subcategories with enough peers per faction.
-const ELIGIBLE_SUBCATEGORIES = ['PERSON', 'EVENT'];
+// All 5 are recognized subcategory values; the per-group depth check below
+// (MIN_GROUP_SIZE_FOR_DISTRACTORS) is what actually excludes any specific
+// category+subcategory+faction combo that's too thin to supply distractors --
+// this list is just which values are queried for at all.
+const ELIGIBLE_SUBCATEGORIES = ['PERSON', 'PLACE', 'THING', 'EVENT', 'DATE'];
 const MIN_GROUP_SIZE_FOR_DISTRACTORS = 4; // correct answer + 3 distractors
 const MAX_QUESTIONS_PER_GAME = 30;
 const MIN_QUESTIONS_PER_GAME = 15;
@@ -34,20 +36,50 @@ function shuffleArray(items) {
     return copy;
 }
 
-// Shared label lookup so lobby, category, and reconnect/catch-up broadcasts
-// never fall out of sync with each other.
-export function getCategoryLabels(winningGameMode) {
-    let cat1 = 'WWII History', cat2 = 'Primary School', cat3 = 'Pop Culture';
+// The real trivia main categories -- their keys double as the `category`
+// column value in the questions table, so loadQuestionBank can filter
+// directly on room.activeCategoryKey with no separate mapping step.
+const TRIVIA_CATEGORIES = [
+    { key: 'WWII_HISTORY', label: 'WWII History' },
+    { key: 'PRIMARY_SCHOOL', label: 'Primary School' },
+    { key: 'POP_CULTURE', label: 'Pop Culture' },
+    { key: 'SCIENCE', label: 'Science' },
+    { key: 'CAPITALS', label: 'Capitals' },
+    { key: 'GEOGRAPHY', label: 'Geography' }
+];
+const TRIVIA_CATEGORY_KEYS = TRIVIA_CATEGORIES.map(c => c.key);
+
+// Shared category list lookup so lobby, category, and reconnect/catch-up
+// broadcasts never fall out of sync with each other. The other game modes
+// don't have real question content yet, so their categories are synthetic
+// placeholders (CAT_1/2/3 keys) that loadQuestionBank never filters on.
+export function getCategoriesForMode(winningGameMode) {
     if (winningGameMode === 'COUNTRY_MONKEY') {
-        cat1 = 'Global Mix'; cat2 = 'Europe & Americas'; cat3 = 'Asia & Africa';
+        return [
+            { key: 'CAT_1', label: 'Global Mix' },
+            { key: 'CAT_2', label: 'Europe & Americas' },
+            { key: 'CAT_3', label: 'Asia & Africa' }
+        ];
     } else if (winningGameMode === 'EMPOSSDURR') {
-        cat1 = 'Standard Circle'; cat2 = 'Traitor Pack'; cat3 = 'Chaos Mode';
+        return [
+            { key: 'CAT_1', label: 'Standard Circle' },
+            { key: 'CAT_2', label: 'Traitor Pack' },
+            { key: 'CAT_3', label: 'Chaos Mode' }
+        ];
     } else if (winningGameMode === 'FLAG_ME_DOWN') {
-        cat1 = 'Modern Nations'; cat2 = 'Historical Standards'; cat3 = 'Bizarre Banners';
+        return [
+            { key: 'CAT_1', label: 'Modern Nations' },
+            { key: 'CAT_2', label: 'Historical Standards' },
+            { key: 'CAT_3', label: 'Bizarre Banners' }
+        ];
     } else if (winningGameMode === 'ON_THE_SPECTRUM') {
-        cat1 = 'Numeric Scales'; cat2 = 'Extreme Measures'; cat3 = 'Chrono Orders';
+        return [
+            { key: 'CAT_1', label: 'Numeric Scales' },
+            { key: 'CAT_2', label: 'Extreme Measures' },
+            { key: 'CAT_3', label: 'Chrono Orders' }
+        ];
     }
-    return { cat1, cat2, cat3 };
+    return TRIVIA_CATEGORIES;
 }
 
 function broadcastToRoom(roomCode, payload) {
@@ -95,16 +127,18 @@ function executeLobbyPhaseExpiration(roomCode) {
     room.gameState = 'CATEGORY_VOTE';
     room.winningGameMode = winningModule;
 
-    const { cat1, cat2, cat3 } = getCategoryLabels(winningModule);
+    const categories = getCategoriesForMode(winningModule);
+    // Fresh vote tally keyed to this mode's actual categories -- the previous
+    // room's categoryVotes (if any) belonged to a different mode's key set.
+    room.categoryVotes = {};
+    categories.forEach(c => { room.categoryVotes[c.key] = 0; });
 
     console.log(`[Room Engine] Lobby phase closed for Room ${roomCode}. Winner: ${winningModule}`);
 
     broadcastToRoom(roomCode, {
         type: 'TRANSITION_TO_CATEGORY_VOTE',
         winner: winningModule,
-        label1: cat1,
-        label2: cat2,
-        label3: cat3
+        categories
     });
 
     startCategoryCountdown(roomCode);
@@ -175,9 +209,10 @@ async function executeCategoryPhaseExpiration(roomCode) {
 
     const winningCategoryKey = calculateCategoryWinner(room);
 
-    const { cat1, cat2, cat3 } = getCategoryLabels(room.winningGameMode);
-    const labelMap = { CAT_1: cat1, CAT_2: cat2, CAT_3: cat3 };
-    room.activeDeckName = labelMap[winningCategoryKey] || 'General Deck';
+    const categories = getCategoriesForMode(room.winningGameMode);
+    const matchedCategory = categories.find(c => c.key === winningCategoryKey);
+    room.activeCategoryKey = winningCategoryKey;
+    room.activeDeckName = matchedCategory ? matchedCategory.label : 'General Deck';
 
     console.log(`[Room Engine] Category selection finalized for Room ${roomCode}. Loaded: ${room.activeDeckName}`);
 
@@ -196,27 +231,38 @@ async function executeCategoryPhaseExpiration(roomCode) {
     startNextQuestion(roomCode);
 }
 
-// Pulls every TRIVIA row from an eligible subcategory, groups peers by
-// subcategory+faction for distractor sourcing, and keeps only questions
-// whose group has enough peers to supply 3 distractors. Shuffled once per
-// room so question order (and which questions get asked at all) varies game to game.
+// Pulls every TRIVIA row from an eligible subcategory (filtered down to the
+// winning main category when it's a real TRIVIA category -- the other,
+// content-less game modes' synthetic CAT_1/2/3 keys never match a real
+// `category` column value, so they fall back to drawing from the whole
+// TRIVIA pool exactly as before), groups peers by category+subcategory+faction
+// for distractor sourcing, and keeps only questions whose group has enough
+// peers to supply 3 distractors. Shuffled once per room so question order
+// (and which questions get asked at all) varies game to game.
 async function loadQuestionBank(room) {
+    const params = [ELIGIBLE_SUBCATEGORIES];
+    let categoryFilter = '';
+    if (room.activeCategoryKey && TRIVIA_CATEGORY_KEYS.includes(room.activeCategoryKey)) {
+        categoryFilter = ' AND category = $2';
+        params.push(room.activeCategoryKey);
+    }
+
     const result = await pool.query(
-        `SELECT id, subcategory, faction, question_text, correct_answer, points, visual_asset
+        `SELECT id, category, subcategory, faction, question_text, correct_answer, points, visual_asset
          FROM questions
-         WHERE game_mode = 'TRIVIA' AND subcategory = ANY($1::text[])`,
-        [ELIGIBLE_SUBCATEGORIES]
+         WHERE game_mode = 'TRIVIA' AND subcategory = ANY($1::text[])${categoryFilter}`,
+        params
     );
 
     const groups = {};
     result.rows.forEach(row => {
-        const key = `${row.subcategory}|${row.faction}`;
+        const key = `${row.category}|${row.subcategory}|${row.faction}`;
         if (!groups[key]) groups[key] = [];
         groups[key].push(row);
     });
 
     const eligibleQuestions = result.rows.filter(row => {
-        const key = `${row.subcategory}|${row.faction}`;
+        const key = `${row.category}|${row.subcategory}|${row.faction}`;
         return groups[key].length >= MIN_GROUP_SIZE_FOR_DISTRACTORS;
     });
 
@@ -230,7 +276,7 @@ async function loadQuestionBank(room) {
 // Builds the shuffled 4-choice payload for one question row: distractors are
 // pulled from sibling rows sharing subcategory+faction (excluding itself).
 function buildQuestionPayload(room, row, categoryLabel) {
-    const groupKey = `${row.subcategory}|${row.faction}`;
+    const groupKey = `${row.category}|${row.subcategory}|${row.faction}`;
     const distractorPool = (room.questionGroups[groupKey] || [])
         .filter(peer => peer.id !== row.id)
         .map(peer => peer.correct_answer);
@@ -436,11 +482,14 @@ export function handleIncomingMessage(fromPhone, bodyText, explicitRoomCode) {
                 gameState: 'LOBBY', players: {}, screens: [], timerInterval: null,
                 lobbyTimerInterval: null, categoryTimerInterval: null, revealTimeout: null,
                 lobbySecondsLeft: 60, categorySecondsLeft: 30, gameSecondsLeft: 25, winningGameMode: null,
-                activeQuestionData: null, currentQuestionData: null, activeDeckName: null, answers: {},
+                activeQuestionData: null, currentQuestionData: null, activeDeckName: null, activeCategoryKey: null, answers: {},
                 questionBank: [], questionGroups: {}, currentQuestionIndex: -1, askedQuestionIds: new Set(),
                 requestedQuestionCount: MAX_QUESTIONS_PER_GAME,
                 votes: { TRIVI_YEAH: 0, COUNTRY_MONKEY: 0, EMPOSSDURR: 0, FLAG_ME_DOWN: 0, ON_THE_SPECTRUM: 0 },
-                categoryVotes: { CAT_1: 0, CAT_2: 0, CAT_3: 0 }
+                // Populated with real keys once the category vote phase actually
+                // starts (executeLobbyPhaseExpiration), since the key set depends
+                // on which game mode won the lobby election.
+                categoryVotes: {}
             };
         }
 
@@ -580,10 +629,12 @@ export function handleIncomingMessage(fromPhone, bodyText, explicitRoomCode) {
     // 4. Handle Sub-Category Voting Selection Track Overrides (Phase 2)
     if (currentRoom.gameState === 'CATEGORY_VOTE') {
         const choice = cleanText.toUpperCase();
-        if (['CAT_1', 'CAT_2', 'CAT_3'].includes(choice)) {
+        const validCategoryKeys = Object.keys(currentRoom.categoryVotes);
+        if (validCategoryKeys.includes(choice)) {
             player.categoryVote = choice;
 
-            currentRoom.categoryVotes = { CAT_1: 0, CAT_2: 0, CAT_3: 0 };
+            currentRoom.categoryVotes = {};
+            validCategoryKeys.forEach(key => { currentRoom.categoryVotes[key] = 0; });
             const activePlayers = Object.values(currentRoom.players);
             let totalSubVotes = 0;
 

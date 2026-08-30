@@ -98,7 +98,108 @@ async function seed() {
         (32, 'TRIVIA', 'WWII_HISTORY', 'PERSON', 'AXIS', 'Who served as Nazi Germany''s Minister of Armaments and War Production?', NULL, 'Albert Speer', 300);
     `);
 
-    console.log('✅ [Database] Cloud schema expanded and WWII trivia bank seeded!');
+    // 3. Seed the 5 new main trivia categories (WWII_HISTORY's the 6th, seeded
+    //    above). Each gets 3 subcategory/faction groups of 4 questions apiece --
+    //    "faction" isn't literal here like WWII's ALLIED/AXIS, it's just a second
+    //    grouping axis so a category can offer more than one distractor pool
+    //    (e.g. CAPITALS splits into world/US-state/org-HQ questions). Placeholder
+    //    content per the phased plan -- broader per-category content comes later.
+    console.log('🌱 Seeding placeholder content for the 5 new main categories...');
+    await client.query(`
+      INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, points)
+      VALUES
+        -- PRIMARY_SCHOOL / PERSON / HISTORICAL
+        (33, 'TRIVIA', 'PRIMARY_SCHOOL', 'PERSON', 'HISTORICAL', 'Who was the first President of the United States?', NULL, 'George Washington', 100),
+        (34, 'TRIVIA', 'PRIMARY_SCHOOL', 'PERSON', 'HISTORICAL', 'Which civil rights leader delivered the "I Have a Dream" speech?', NULL, 'Martin Luther King Jr.', 100),
+        (35, 'TRIVIA', 'PRIMARY_SCHOOL', 'PERSON', 'HISTORICAL', 'Which inventor is commonly credited with inventing the light bulb?', NULL, 'Thomas Edison', 100),
+        (36, 'TRIVIA', 'PRIMARY_SCHOOL', 'PERSON', 'HISTORICAL', 'Which explorer is credited with reaching the Americas in 1492?', NULL, 'Christopher Columbus', 100),
+
+        -- PRIMARY_SCHOOL / THING / SCIENCE_BASICS
+        (37, 'TRIVIA', 'PRIMARY_SCHOOL', 'THING', 'SCIENCE_BASICS', 'What gas do plants absorb from the air to make their food?', NULL, 'Carbon Dioxide', 100),
+        (38, 'TRIVIA', 'PRIMARY_SCHOOL', 'THING', 'SCIENCE_BASICS', 'How many planets are in our solar system?', NULL, 'Eight', 100),
+        (39, 'TRIVIA', 'PRIMARY_SCHOOL', 'THING', 'SCIENCE_BASICS', 'What is the closest star to Earth?', NULL, 'The Sun', 100),
+        (40, 'TRIVIA', 'PRIMARY_SCHOOL', 'THING', 'SCIENCE_BASICS', 'Which state of matter has no fixed shape and no fixed volume?', NULL, 'Gas', 100),
+
+        -- PRIMARY_SCHOOL / THING / MATH_BASICS
+        (41, 'TRIVIA', 'PRIMARY_SCHOOL', 'THING', 'MATH_BASICS', 'How many sides does a hexagon have?', NULL, 'Six', 100),
+        (42, 'TRIVIA', 'PRIMARY_SCHOOL', 'THING', 'MATH_BASICS', 'What is the sum of the interior angles in a triangle?', NULL, '180 degrees', 100),
+        (43, 'TRIVIA', 'PRIMARY_SCHOOL', 'THING', 'MATH_BASICS', 'What do you call a number that can only be divided evenly by 1 and itself?', NULL, 'Prime number', 200),
+        (44, 'TRIVIA', 'PRIMARY_SCHOOL', 'THING', 'MATH_BASICS', 'What is 7 multiplied by 8?', NULL, '56', 100),
+
+        -- POP_CULTURE / PERSON / MUSIC
+        (45, 'TRIVIA', 'POP_CULTURE', 'PERSON', 'MUSIC', 'Which artist is known as the "King of Pop"?', NULL, 'Michael Jackson', 100),
+        (46, 'TRIVIA', 'POP_CULTURE', 'PERSON', 'MUSIC', 'Which British rock band recorded the album "Abbey Road"?', NULL, 'The Beatles', 100),
+        (47, 'TRIVIA', 'POP_CULTURE', 'PERSON', 'MUSIC', 'Which pop star released the albums "1989" and "Lover"?', NULL, 'Taylor Swift', 100),
+        (48, 'TRIVIA', 'POP_CULTURE', 'PERSON', 'MUSIC', 'Which singer is known for the hit song "Rolling in the Deep"?', NULL, 'Adele', 200),
+
+        -- POP_CULTURE / PERSON / MOVIES
+        (49, 'TRIVIA', 'POP_CULTURE', 'PERSON', 'MOVIES', 'Which actor played Iron Man in the Marvel Cinematic Universe?', NULL, 'Robert Downey Jr.', 100),
+        (50, 'TRIVIA', 'POP_CULTURE', 'PERSON', 'MOVIES', 'Who directed the original 1977 "Star Wars" film?', NULL, 'George Lucas', 200),
+        (51, 'TRIVIA', 'POP_CULTURE', 'PERSON', 'MOVIES', 'Which actress played Hermione Granger in the Harry Potter films?', NULL, 'Emma Watson', 100),
+        (52, 'TRIVIA', 'POP_CULTURE', 'PERSON', 'MOVIES', 'Who directed the 1975 film "Jaws"?', NULL, 'Steven Spielberg', 200),
+
+        -- POP_CULTURE / THING / MOVIES
+        (53, 'TRIVIA', 'POP_CULTURE', 'THING', 'MOVIES', 'Which 1997 film about a shipwreck starred Leonardo DiCaprio and Kate Winslet?', NULL, 'Titanic', 100),
+        (54, 'TRIVIA', 'POP_CULTURE', 'THING', 'MOVIES', 'Which 1994 animated Disney film features the song "Circle of Life"?', NULL, 'The Lion King', 100),
+        (55, 'TRIVIA', 'POP_CULTURE', 'THING', 'MOVIES', 'Which animation studio produced the "Toy Story" film franchise?', NULL, 'Pixar', 100),
+        (56, 'TRIVIA', 'POP_CULTURE', 'THING', 'MOVIES', 'What footwear does Dorothy click together to return home in "The Wizard of Oz"?', NULL, 'Ruby slippers', 200),
+
+        -- SCIENCE / THING / BIOLOGY
+        (57, 'TRIVIA', 'SCIENCE', 'THING', 'BIOLOGY', 'What is commonly called the "powerhouse of the cell"?', NULL, 'Mitochondria', 200),
+        (58, 'TRIVIA', 'SCIENCE', 'THING', 'BIOLOGY', 'What gas do humans need to breathe in to survive?', NULL, 'Oxygen', 100),
+        (59, 'TRIVIA', 'SCIENCE', 'THING', 'BIOLOGY', 'What is the largest organ in the human body?', NULL, 'Skin', 100),
+        (60, 'TRIVIA', 'SCIENCE', 'THING', 'BIOLOGY', 'How many chambers does the human heart have?', NULL, 'Four', 100),
+
+        -- SCIENCE / THING / PHYSICS
+        (61, 'TRIVIA', 'SCIENCE', 'THING', 'PHYSICS', 'What force pulls objects toward the center of the Earth?', NULL, 'Gravity', 100),
+        (62, 'TRIVIA', 'SCIENCE', 'THING', 'PHYSICS', 'What is the chemical symbol for water?', NULL, 'H2O', 100),
+        (63, 'TRIVIA', 'SCIENCE', 'THING', 'PHYSICS', 'At what temperature, in Celsius, does water freeze?', NULL, '0 degrees Celsius', 100),
+        (64, 'TRIVIA', 'SCIENCE', 'THING', 'PHYSICS', 'Which travels faster: light or sound?', NULL, 'Light', 100),
+
+        -- SCIENCE / PERSON / SCIENTISTS
+        (65, 'TRIVIA', 'SCIENCE', 'PERSON', 'SCIENTISTS', 'Which scientist developed the theory of general relativity?', NULL, 'Albert Einstein', 100),
+        (66, 'TRIVIA', 'SCIENCE', 'PERSON', 'SCIENTISTS', 'Which scientist is known for his laws of motion and universal gravitation?', NULL, 'Isaac Newton', 200),
+        (67, 'TRIVIA', 'SCIENCE', 'PERSON', 'SCIENTISTS', 'Which scientist discovered penicillin?', NULL, 'Alexander Fleming', 200),
+        (68, 'TRIVIA', 'SCIENCE', 'PERSON', 'SCIENTISTS', 'Which naturalist proposed the theory of evolution by natural selection?', NULL, 'Charles Darwin', 200),
+
+        -- CAPITALS / PLACE / WORLD
+        (69, 'TRIVIA', 'CAPITALS', 'PLACE', 'WORLD', 'What is the capital of France?', NULL, 'Paris', 100),
+        (70, 'TRIVIA', 'CAPITALS', 'PLACE', 'WORLD', 'What is the capital of Japan?', NULL, 'Tokyo', 100),
+        (71, 'TRIVIA', 'CAPITALS', 'PLACE', 'WORLD', 'What is the capital of Australia?', NULL, 'Canberra', 200),
+        (72, 'TRIVIA', 'CAPITALS', 'PLACE', 'WORLD', 'What is the capital of Canada?', NULL, 'Ottawa', 100),
+
+        -- CAPITALS / PLACE / US_STATE
+        (73, 'TRIVIA', 'CAPITALS', 'PLACE', 'US_STATE', 'What is the capital of California?', NULL, 'Sacramento', 200),
+        (74, 'TRIVIA', 'CAPITALS', 'PLACE', 'US_STATE', 'What is the capital of Texas?', NULL, 'Austin', 100),
+        (75, 'TRIVIA', 'CAPITALS', 'PLACE', 'US_STATE', 'What is the capital of New York State?', NULL, 'Albany', 200),
+        (76, 'TRIVIA', 'CAPITALS', 'PLACE', 'US_STATE', 'What is the capital of Florida?', NULL, 'Tallahassee', 200),
+
+        -- CAPITALS / PLACE / ORGANIZATION
+        (77, 'TRIVIA', 'CAPITALS', 'PLACE', 'ORGANIZATION', 'Which U.S. city hosts the headquarters of the United Nations?', NULL, 'New York City', 100),
+        (78, 'TRIVIA', 'CAPITALS', 'PLACE', 'ORGANIZATION', 'Which Belgian city serves as the de facto capital of the European Union?', NULL, 'Brussels', 200),
+        (79, 'TRIVIA', 'CAPITALS', 'PLACE', 'ORGANIZATION', 'Which Dutch city hosts the International Court of Justice?', NULL, 'The Hague', 300),
+        (80, 'TRIVIA', 'CAPITALS', 'PLACE', 'ORGANIZATION', 'Which Swiss city hosts the headquarters of the International Red Cross?', NULL, 'Geneva', 300),
+
+        -- GEOGRAPHY / PLACE / PHYSICAL
+        (81, 'TRIVIA', 'GEOGRAPHY', 'PLACE', 'PHYSICAL', 'What is the longest river in the world?', NULL, 'The Nile', 100),
+        (82, 'TRIVIA', 'GEOGRAPHY', 'PLACE', 'PHYSICAL', 'What is the tallest mountain in the world?', NULL, 'Mount Everest', 100),
+        (83, 'TRIVIA', 'GEOGRAPHY', 'PLACE', 'PHYSICAL', 'What is the largest ocean on Earth?', NULL, 'The Pacific Ocean', 100),
+        (84, 'TRIVIA', 'GEOGRAPHY', 'PLACE', 'PHYSICAL', 'What is the largest hot desert in the world?', NULL, 'The Sahara', 200),
+
+        -- GEOGRAPHY / PLACE / POLITICAL
+        (85, 'TRIVIA', 'GEOGRAPHY', 'PLACE', 'POLITICAL', 'Which is the largest country in the world by land area?', NULL, 'Russia', 100),
+        (86, 'TRIVIA', 'GEOGRAPHY', 'PLACE', 'POLITICAL', 'Which continent is Egypt located on?', NULL, 'Africa', 100),
+        (87, 'TRIVIA', 'GEOGRAPHY', 'PLACE', 'POLITICAL', 'Which country has the largest population in the world?', NULL, 'India', 200),
+        (88, 'TRIVIA', 'GEOGRAPHY', 'PLACE', 'POLITICAL', 'How many continents are there?', NULL, 'Seven', 100),
+
+        -- GEOGRAPHY / PLACE / LANDMARKS
+        (89, 'TRIVIA', 'GEOGRAPHY', 'PLACE', 'LANDMARKS', 'In which country is the Great Barrier Reef located?', NULL, 'Australia', 100),
+        (90, 'TRIVIA', 'GEOGRAPHY', 'PLACE', 'LANDMARKS', 'In which country would you find the Great Wall?', NULL, 'China', 100),
+        (91, 'TRIVIA', 'GEOGRAPHY', 'PLACE', 'LANDMARKS', 'In which city would you find the Eiffel Tower?', NULL, 'Paris', 100),
+        (92, 'TRIVIA', 'GEOGRAPHY', 'PLACE', 'LANDMARKS', 'In which country would you find Machu Picchu?', NULL, 'Peru', 200);
+    `);
+
+    console.log('✅ [Database] Cloud schema expanded, WWII bank, and 5 new main categories seeded!');
   } catch (error) {
     console.error('❌ Schema expansion failed:', error.message);
   } finally {

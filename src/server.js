@@ -3,7 +3,7 @@ import dotenv from 'dotenv';
 import path from 'path';
 import { WebSocketServer } from 'ws';
 import pool from './config/database.js';
-import { handleIncomingMessage, activeRooms, getCategoryLabels, resolveRequestedQuestionCount } from './services/gameEngine.js';
+import { handleIncomingMessage, activeRooms, getCategoriesForMode, resolveRequestedQuestionCount } from './services/gameEngine.js';
 import { fileURLToPath } from 'url';
 
 // Recreate __dirname cleanly for ES module environments
@@ -54,6 +54,7 @@ app.get('/api/create-room', (req, res) => {
             activeQuestionData: null,
             currentQuestionData: null,
             activeDeckName: null,
+            activeCategoryKey: null,
             answers: {},
             questionBank: [],
             questionGroups: {},
@@ -61,7 +62,8 @@ app.get('/api/create-room', (req, res) => {
             askedQuestionIds: new Set(),
             requestedQuestionCount: resolveRequestedQuestionCount(req.query.questionCount),
             votes: { TRIVI_YEAH: 0, COUNTRY_MONKEY: 0, EMPOSSDURR: 0, FLAG_ME_DOWN: 0, ON_THE_SPECTRUM: 0 },
-            categoryVotes: { CAT_1: 0, CAT_2: 0, CAT_3: 0 },
+            // Populated with real keys once the category vote phase actually starts.
+            categoryVotes: {},
             lastActivity: Date.now() // Time the room was "born"
         };
 
@@ -103,17 +105,8 @@ app.post('/api/room-status', (req, res) => {
             : null;
 
         if (targetRoom && targetRoom.gameState === 'CATEGORY_VOTE') {
-            let cat1 = 'WWII History', cat2 = 'Primary School', cat3 = 'Pop Culture';
-            if (targetRoom.winningGameMode === 'COUNTRY_MONKEY') {
-                cat1 = 'Global Mix'; cat2 = 'Europe & Americas'; cat3 = 'Asia & Africa';
-            } else if (targetRoom.winningGameMode === 'EMPOSSDURR') {
-                cat1 = 'Standard Circle'; cat2 = 'Traitor Pack'; cat3 = 'Chaos Mode';
-            } else if (targetRoom.winningGameMode === 'FLAG_ME_DOWN') {
-                cat1 = 'Modern Nations'; cat2 = 'Historical Standards'; cat3 = 'Bizarre Banners';
-            } else if (targetRoom.winningGameMode === 'ON_THE_SPECTRUM') {
-                cat1 = 'Numeric Scales'; cat2 = 'Extreme Measures'; cat3 = 'Chrono Orders';
-            }
-            return res.json({ phase: 'CATEGORY_VOTE_PHASE', label1: cat1, label2: cat2, label3: cat3, myScore });
+            const categories = getCategoriesForMode(targetRoom.winningGameMode);
+            return res.json({ phase: 'CATEGORY_VOTE_PHASE', categories, myScore });
         }
         // FIX: If the clock expired and moved to gameplay, shout the round phase back to the phone poller!
         // FIX ALIGNMENT: Flatten the object parameters so it matches Phase 2 perfectly!
@@ -162,11 +155,11 @@ async function startServer() {
                                 gameState: 'LOBBY', players: {}, screens: [], timerInterval: null,
                                 lobbyTimerInterval: null, categoryTimerInterval: null, revealTimeout: null,
                                 lobbySecondsLeft: 60, categorySecondsLeft: 30, gameSecondsLeft: 25, winningGameMode: null,
-                                activeQuestionData: null, currentQuestionData: null, activeDeckName: null, answers: {},
+                                activeQuestionData: null, currentQuestionData: null, activeDeckName: null, activeCategoryKey: null, answers: {},
                                 questionBank: [], questionGroups: {}, currentQuestionIndex: -1, askedQuestionIds: new Set(),
                                 requestedQuestionCount: resolveRequestedQuestionCount(undefined),
                                 votes: { TRIVI_YEAH: 0, COUNTRY_MONKEY: 0, EMPOSSDURR: 0, FLAG_ME_DOWN: 0, ON_THE_SPECTRUM: 0 },
-                                categoryVotes: { CAT_1: 0, CAT_2: 0, CAT_3: 0 }
+                                categoryVotes: {}
                             };
                         }
 
@@ -180,17 +173,15 @@ async function startServer() {
 
                         const currentRoomState = activeRooms[roomCode];
                             if (currentRoomState.gameState !== 'LOBBY') {
-                                // Recompute the same category labels the CATEGORY_VOTE broadcast used,
+                                // Recompute the same category list the CATEGORY_VOTE broadcast used,
                                 // so a reconnecting screen shows the real sub-deck names, not defaults.
-                                const { cat1, cat2, cat3 } = getCategoryLabels(currentRoomState.winningGameMode);
+                                const categories = getCategoriesForMode(currentRoomState.winningGameMode);
 
                                 socket.send(JSON.stringify({
                                     type: 'STATE_CATCH_UP',
                                     gameState: currentRoomState.gameState,
                                     winningGameMode: currentRoomState.winningGameMode,
-                                    label1: cat1,
-                                    label2: cat2,
-                                    label3: cat3,
+                                    categories,
                                     activeQuestionData: currentRoomState.activeQuestionData, // Sends the live trivia question text!
                                     // Pass down whatever timer metrics are left on the clock
                                     lobbySecondsLeft: currentRoomState.lobbySecondsLeft,

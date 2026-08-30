@@ -146,7 +146,7 @@ let currentActiveRoomCode = '----';
                     if (data.gameState === 'CATEGORY_VOTE') {
                         document.getElementById('room-status-text').innerText = "Category Selection";
                         document.getElementById('lobby-countdown').innerText = data.categorySecondsLeft + " s";
-                        switchToCategoryVotingUI(data.winningGameMode, data.label1, data.label2, data.label3);
+                        switchToCategoryVotingUI(data.winningGameMode, data.categories);
                         playCategoryMusic();
                     } else if (data.gameState === 'GAME_ROUND' && data.activeQuestionData) {
                         document.getElementById('room-status-text').innerText = "Gameplay Phase";
@@ -185,10 +185,9 @@ let currentActiveRoomCode = '----';
                     highlightCorrectAnswerOnTV(data.correctLetter);
                     stopCountdownMusic();
                 }
-                // FIX: Explicitly pass data.label1, data.label2, and data.label3 into the painter!
                 if (data.type === 'TRANSITION_TO_CATEGORY_VOTE') {
                     document.getElementById('room-status-text').innerText = "Category Selection";
-                    switchToCategoryVotingUI(data.winner, data.label1, data.label2, data.label3);
+                    switchToCategoryVotingUI(data.winner, data.categories);
                     playCategoryMusic();
                 }
                 if (data.type === 'CATEGORY_VOTE_UPDATE') {
@@ -338,17 +337,18 @@ let currentActiveRoomCode = '----';
             }, 3000);
         }
 
-        // Global memory cache to lock dynamic names on screen during rapid button mashing
-        let activeLabel1 = "Category 1";
-        let activeLabel2 = "Category 2";
-        let activeLabel3 = "Category 3";
+        // Global memory cache to lock dynamic category labels on screen during rapid
+        // button mashing, keyed by the category's real key (e.g. WWII_HISTORY) rather
+        // than fixed cat1/2/3 slots -- supports any number of categories per mode.
+        let activeCategoryLabels = {};
+        const CATEGORY_BAR_COLORS = ['#ffa500', '#00e676', '#ff4757', '#2d9cdb', '#bb6bd9', '#f9c74f'];
 
-       function switchToCategoryVotingUI(winnerModule, label1, label2, label3) {
+        function switchToCategoryVotingUI(winnerModule, categories) {
             const panel = document.getElementById('active-content-stage');
-            
-            activeLabel1 = label1 || "WWII History";
-            activeLabel2 = label2 || "Primary School";
-            activeLabel3 = label3 || "Pop Culture";
+            const categoryList = categories || [];
+
+            activeCategoryLabels = {};
+            categoryList.forEach(c => { activeCategoryLabels[c.key] = c.label; });
 
             const displayGameName = winnerModule.replace('_', ' ').toLowerCase().replace(/\b\w/g, c => c.toUpperCase());
 
@@ -359,33 +359,23 @@ let currentActiveRoomCode = '----';
                 <div style="font-size: 0.8rem; color: #64748b;">Skips the countdown once everyone's in</div>
             `);
 
+            const rows = categoryList.map((c, index) => `
+                <div class="vote-row">
+                    <div class="vote-meta">
+                        <span id="lbl-${c.key}" style="font-weight: 500; color: #ffffff;">${c.label}</span>
+                        <span id="ccount-${c.key}" style="color: #64748b; font-weight: 500;">0 votes (0%)</span>
+                    </div>
+                    <div class="progress-track"><div id="cbar-${c.key}" class="progress-fill" style="background: ${CATEGORY_BAR_COLORS[index % CATEGORY_BAR_COLORS.length]};"></div></div>
+                </div>
+            `).join('');
+
             panel.innerHTML = `
                 <div class="panel-box" style="padding: 40px; flex: 1; display: flex; flex-direction: column; justify-content: center;">
                     <h2 class="panel-title" style="margin-bottom: 8px;">Winner: ${displayGameName}</h2>
                     <p style="color: #64748b; font-size: 0.95rem; margin: 0 0 32px 0; font-weight: 500;">Select your sub-deck preference on your phone now</p>
-                    
+
                     <div style="display: flex; flex-direction: column;">
-                        <div class="vote-row">
-                            <div class="vote-meta">
-                                <span id="lbl-cat1" style="font-weight: 500; color: #ffffff;">${activeLabel1}</span>
-                                <span id="ccount-CAT_1" style="color: #64748b; font-weight: 500;">0 votes (0%)</span>
-                            </div>
-                            <div class="progress-track"><div id="cbar-CAT_1" class="progress-fill" style="background: #ffa500;"></div></div>
-                        </div>
-                        <div class="vote-row">
-                            <div class="vote-meta">
-                                <span id="lbl-cat2" style="font-weight: 500; color: #ffffff;">${activeLabel2}</span>
-                                <span id="ccount-CAT_2" style="color: #64748b; font-weight: 500;">0 votes (0%)</span>
-                            </div>
-                            <div class="progress-track"><div id="cbar-CAT_2" class="progress-fill" style="background: #00e676;"></div></div>
-                        </div>
-                        <div class="vote-row">
-                            <div class="vote-meta">
-                                <span id="lbl-cat3" style="font-weight: 500; color: #ffffff;">${activeLabel3}</span>
-                                <span id="ccount-CAT_3" style="color: #64748b; font-weight: 500;">0 votes (0%)</span>
-                            </div>
-                            <div class="progress-track"><div id="cbar-CAT_3" class="progress-fill" style="background: #ff4757;"></div></div>
-                        </div>
+                        ${rows}
                     </div>
                 </div>
             `;
@@ -393,22 +383,19 @@ let currentActiveRoomCode = '----';
 
         function updateCategorySubElectionUI(votes, totalVotes) {
             if (!totalVotes || totalVotes === 0) return;
-            const subKeys = ['CAT_1', 'CAT_2', 'CAT_3'];
 
-            // Ensure the text strings are explicitly repainted alongside the bar widths
-            const labelsMap = { 'CAT_1': activeLabel1, 'CAT_2': activeLabel2, 'CAT_3': activeLabel3 };
-            const labelIds = { 'CAT_1': 'lbl-cat1', 'CAT_2': 'lbl-cat2', 'CAT_3': 'lbl-cat3' };
-
-            subKeys.forEach(key => {
+            Object.keys(votes).forEach(key => {
                 const count = votes[key] || 0;
                 const percentage = Math.round((count / totalVotes) * 100);
-                
-                // Keep the custom names rigidly locked to their header lines
-                const nameNode = document.getElementById(labelIds[key]);
-                if (nameNode) nameNode.innerText = labelsMap[key];
 
-                document.getElementById(`cbar-${key}`).style.width = `${percentage}%`;
-                document.getElementById(`ccount-${key}`).innerText = `${count} votes (${percentage}%)`;
+                // Keep the custom names rigidly locked to their header lines
+                const nameNode = document.getElementById(`lbl-${key}`);
+                if (nameNode && activeCategoryLabels[key]) nameNode.innerText = activeCategoryLabels[key];
+
+                const barNode = document.getElementById(`cbar-${key}`);
+                if (barNode) barNode.style.width = `${percentage}%`;
+                const countNode = document.getElementById(`ccount-${key}`);
+                if (countNode) countNode.innerText = `${count} votes (${percentage}%)`;
             });
         }
 

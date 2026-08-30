@@ -157,11 +157,7 @@
         </div>
         <div class="input-group">
             <label>Select Category Preference</label>
-            <div class="module-list">
-                <div class="module-row" id="btn-cat1" onclick="submitCategorySubVote(this, 'CAT_1')">Category 1</div>
-                <div class="module-row" id="btn-cat2" onclick="submitCategorySubVote(this, 'CAT_2')">Category 2</div>
-                <div class="module-row" id="btn-cat3" onclick="submitCategorySubVote(this, 'CAT_3')">Category 3</div>
-            </div>
+            <div class="module-list" id="category-vote-list"></div>
         </div>
         <div id="category-feedback" class="feedback"></div>
     </div>
@@ -299,9 +295,10 @@
                             document.getElementById('sub-badge-emoji').innerText = chosenAvatar;
                             document.getElementById('sub-badge-room').innerText = roomCode;
 
-                            document.getElementById('btn-cat1').innerText = data.label1;
-                            document.getElementById('btn-cat2').innerText = data.label2;
-                            document.getElementById('btn-cat3').innerText = data.label3;
+                            const listEl = document.getElementById('category-vote-list');
+                            listEl.innerHTML = (data.categories || []).map(c =>
+                                `<div class="module-row" onclick="submitCategorySubVote(this, '${c.key}')">${c.label}</div>`
+                            ).join('');
 
                             document.getElementById('game-screen').style.display = "none";
                             document.getElementById('category-screen').style.display = "block";
