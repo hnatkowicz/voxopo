@@ -255,18 +255,21 @@ function startNextQuestion(roomCode) {
 
     // currentQuestionData (server-only) carries correctLetter/points for scoring
     // and reveal. activeQuestionData is the public-safe copy with the answer
-    // stripped out — it's what gets broadcast and handed to reconnecting/
-    // refreshed TV screens via STATE_CATCH_UP, so the answer can't leak early.
+    // stripped out — it's what gets broadcast, handed to reconnecting/refreshed
+    // TV screens via STATE_CATCH_UP, and polled by phones via /api/room-status,
+    // so the answer can't leak early through any of those paths.
     const fullQuestionData = buildQuestionPayload(room, row, room.activeDeckName);
     const { correctLetter, ...publicQuestionData } = fullQuestionData;
     room.currentQuestionData = fullQuestionData;
-    room.activeQuestionData = publicQuestionData;
+    room.activeQuestionData = {
+        ...publicQuestionData,
+        questionNumber: room.currentQuestionIndex + 1,
+        totalQuestions: room.questionBank.length
+    };
 
     broadcastToRoom(roomCode, {
         type: 'TRANSITION_TO_QUESTION',
-        ...room.activeQuestionData,
-        questionNumber: room.currentQuestionIndex + 1,
-        totalQuestions: room.questionBank.length
+        ...room.activeQuestionData
     });
 
     startGameRoundCountdown(roomCode);

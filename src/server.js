@@ -105,8 +105,12 @@ app.post('/api/room-status', (req, res) => {
         }
         // FIX: If the clock expired and moved to gameplay, shout the round phase back to the phone poller!
         // FIX ALIGNMENT: Flatten the object parameters so it matches Phase 2 perfectly!
-        if (targetRoom && targetRoom.gameState === 'GAME_ROUND') {
-            return res.json({ phase: 'GAME_ROUND_PHASE' });
+        if (targetRoom && targetRoom.gameState === 'GAME_ROUND' && targetRoom.activeQuestionData) {
+            // activeQuestionData is already answer-safe (correctLetter stripped in gameEngine.js)
+            return res.json({ phase: 'GAME_ROUND_PHASE', ...targetRoom.activeQuestionData });
+        }
+        if (targetRoom && targetRoom.gameState === 'GAME_OVER') {
+            return res.json({ phase: 'GAME_OVER_PHASE' });
         }
         return res.json({ phase: 'WAITING' });
     } catch (error) {
