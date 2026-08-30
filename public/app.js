@@ -126,6 +126,7 @@ let currentActiveRoomCode = '----';
                         document.getElementById('room-status-text').innerText = "Category Selection";
                         document.getElementById('lobby-countdown').innerText = data.categorySecondsLeft + " s";
                         switchToCategoryVotingUI(data.winningGameMode, data.label1, data.label2, data.label3);
+                        playCategoryMusic();
                     } else if (data.gameState === 'GAME_ROUND' && data.activeQuestionData) {
                         document.getElementById('room-status-text').innerText = "Gameplay Phase";
                         document.getElementById('lobby-countdown').innerText = data.gameSecondsLeft + " s";
@@ -134,6 +135,7 @@ let currentActiveRoomCode = '----';
                         // that lands after reconnect still highlights the real answer text.
                         window.activeQuestion = { choices: { A: q.choiceA, B: q.choiceB, C: q.choiceC, D: q.choiceD } };
                         switchToQuestionUI(q.categoryLabel, q.questionText, q.choiceA, q.choiceB, q.choiceC, q.choiceD);
+                        stopCategoryMusic();
                         playCountdownMusic();
                     } else if (data.gameState === 'ROUND_REVEAL') {
                         // Reveal happened while we were away; there's no correctLetter here,
@@ -169,6 +171,7 @@ let currentActiveRoomCode = '----';
                 if (data.type === 'TRANSITION_TO_CATEGORY_VOTE') {
                     document.getElementById('room-status-text').innerText = "Category Selection";
                     switchToCategoryVotingUI(data.winner, data.label1, data.label2, data.label3);
+                    playCategoryMusic();
                 }
                 if (data.type === 'CATEGORY_VOTE_UPDATE') {
                     updateCategorySubElectionUI(data.votes, data.totalVotes);
@@ -178,12 +181,14 @@ let currentActiveRoomCode = '----';
                     document.getElementById('room-status-text').innerText = "Gameplay Phase";
                     document.getElementById('lobby-countdown').innerText = "30 s"; // Reset banner clock visually
                     switchToQuestionUI(data.categoryLabel, data.questionText, data.choiceA, data.choiceB, data.choiceC, data.choiceD);
+                    stopCategoryMusic();
                     playCountdownMusic();
                 }
                 // Fired once the question loop runs out of questions for this game.
                 if (data.type === 'GAME_OVER') {
                     document.getElementById('room-status-text').innerText = "Game Over";
                     document.getElementById('lobby-countdown').innerText = "FINAL";
+                    stopCategoryMusic();
                     stopCountdownMusic();
                     switchToGameOverUI(data.players);
                 }
@@ -488,25 +493,30 @@ function highlightCorrectAnswerOnTV(correctLetter) {
     } 
 } // 🔓 1. THIS CLOSES THE FUNCTION SAFELY!
 
-function playCountdownMusic() {
-    const music = document.getElementById('countdown-music');
-    if (!music) return;
-    music.currentTime = 0;
+function playAudioTrack(elementId) {
+    const audio = document.getElementById(elementId);
+    if (!audio) return;
+    audio.currentTime = 0;
     // Autoplay can be blocked until the page has seen a user gesture -- clicking
     // "Generate New Lobby" or "View" to get here usually satisfies that, but
     // swallow the rejection rather than letting it throw if it doesn't.
-    const playPromise = music.play();
+    const playPromise = audio.play();
     if (playPromise && typeof playPromise.catch === 'function') {
-        playPromise.catch(err => console.warn('[Audio] Countdown music blocked or failed:', err.message));
+        playPromise.catch(err => console.warn(`[Audio] ${elementId} blocked or failed:`, err.message));
     }
 }
 
-function stopCountdownMusic() {
-    const music = document.getElementById('countdown-music');
-    if (!music) return;
-    music.pause();
-    music.currentTime = 0;
+function stopAudioTrack(elementId) {
+    const audio = document.getElementById(elementId);
+    if (!audio) return;
+    audio.pause();
+    audio.currentTime = 0;
 }
+
+function playCountdownMusic() { playAudioTrack('countdown-music'); }
+function stopCountdownMusic() { stopAudioTrack('countdown-music'); }
+function playCategoryMusic() { playAudioTrack('category-music'); }
+function stopCategoryMusic() { stopAudioTrack('category-music'); }
 
 // Trigger dynamic assignment protocols on page wakeup
 if (typeof initializeDynamicRoomSession === 'function') { 
