@@ -30,7 +30,17 @@
             <div class="left-column" style="flex: 65; display: flex; flex-direction: column;">
                 <div class="panel-box" style="flex: 1; display: flex; flex-direction: column; justify-content: center; gap: 24px; padding: 40px;">
                     <h2 class="panel-title" style="margin-bottom: 8px;">Lobby Generator</h2>
-                    
+
+                    <div style="display: flex; flex-direction: column; gap: 10px;">
+                        <label style="font-size: 0.75rem; color: #64748b; text-transform: uppercase; letter-spacing: 0.08em; font-weight: 600;">Questions Per Game</label>
+                        <div id="question-count-picker" style="display: flex; gap: 8px;">
+                            <button class="qcount-btn" data-count="15">15</button>
+                            <button class="qcount-btn selected" data-count="20">20</button>
+                            <button class="qcount-btn" data-count="25">25</button>
+                            <button class="qcount-btn" data-count="30">30</button>
+                        </div>
+                    </div>
+
                     <button id="btn-generate-lobby" class="action-btn-primary">
                         Generate New Lobby
                     </button>

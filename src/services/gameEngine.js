@@ -7,10 +7,21 @@ export const activeRooms = {};
 const ELIGIBLE_SUBCATEGORIES = ['PERSON', 'EVENT'];
 const MIN_GROUP_SIZE_FOR_DISTRACTORS = 4; // correct answer + 3 distractors
 const MAX_QUESTIONS_PER_GAME = 30;
+const MIN_QUESTIONS_PER_GAME = 15;
 const REVEAL_DURATION_MS = 5000;
 const GAME_ROUND_DURATION_SECONDS = 30;
 const FAST_FORWARD_SECONDS = 3; // once everyone's answered, snap the clock down to this for a beat of suspense
 const MAX_NAME_LENGTH = 30; // matches the phone's input maxlength
+
+// Clamps the host's requested question count (from the lobby picker) into
+// [MIN_QUESTIONS_PER_GAME, MAX_QUESTIONS_PER_GAME]. Falls back to the max for
+// anything missing/non-numeric, e.g. the defensive room-init paths that don't
+// go through the picker at all.
+export function resolveRequestedQuestionCount(rawValue) {
+    const parsed = parseInt(rawValue, 10);
+    if (Number.isNaN(parsed)) return MAX_QUESTIONS_PER_GAME;
+    return Math.max(MIN_QUESTIONS_PER_GAME, Math.min(parsed, MAX_QUESTIONS_PER_GAME));
+}
 
 function shuffleArray(items) {
     const copy = [...items];
@@ -208,7 +219,8 @@ async function loadQuestionBank(room) {
     });
 
     room.questionGroups = groups;
-    room.questionBank = shuffleArray(eligibleQuestions).slice(0, MAX_QUESTIONS_PER_GAME);
+    const targetCount = Math.min(room.requestedQuestionCount || MAX_QUESTIONS_PER_GAME, eligibleQuestions.length);
+    room.questionBank = shuffleArray(eligibleQuestions).slice(0, targetCount);
     room.currentQuestionIndex = -1;
     room.askedQuestionIds = new Set();
 }
@@ -406,7 +418,7 @@ function evaluateRoundAndRevealAnswer(roomCode) {
 // ==========================================
 // MASTER PACKET DATA INTAKE GATEWAY
 // ==========================================
-export function handleIncomingMessage(fromPhone, bodyText) {
+export function handleIncomingMessage(fromPhone, bodyText, explicitRoomCode) {
     const cleanText = bodyText.trim();
     const parts = cleanText.split(' ');
     
@@ -424,6 +436,7 @@ export function handleIncomingMessage(fromPhone, bodyText) {
                 lobbySecondsLeft: 60, categorySecondsLeft: 30, gameSecondsLeft: 25, winningGameMode: null,
                 activeQuestionData: null, currentQuestionData: null, activeDeckName: null, answers: {},
                 questionBank: [], questionGroups: {}, currentQuestionIndex: -1, askedQuestionIds: new Set(),
+                requestedQuestionCount: MAX_QUESTIONS_PER_GAME,
                 votes: { TRIVI_YEAH: 0, COUNTRY_MONKEY: 0, EMPOSSDURR: 0, FLAG_ME_DOWN: 0, ON_THE_SPECTRUM: 0 },
                 categoryVotes: { CAT_1: 0, CAT_2: 0, CAT_3: 0 }
             };
@@ -485,27 +498,52 @@ export function handleIncomingMessage(fromPhone, bodyText) {
         }
     }
 
-    // 2. Global Space-Shield Cross Reference Lookup Engine
+    // 2. Room resolution. Prefer the room code the phone told us it's in --
+    // every real client sends this now (set in localStorage at join time).
+    // The old behavior searched every room in memory for a name/phoneHandle
+    // match with `for...in`, which iterates numeric-string keys (room codes)
+    // in ascending numeric order, NOT creation order -- so once the server had
+    // accumulated multiple rooms across a long testing session, a player could
+    // get silently matched into an old, numerically-lower-coded stale room
+    // that happened to share their name, rather than the room they were
+    // actually looking at. That fallback search still exists below for any
+    // caller that doesn't supply a roomCode, but now prefers the
+    // most-recently-active room on a name collision instead of the smallest
+    // room code.
     let associatedRoomCode = null;
     let actingPlayerName = null;
 
-    for (const code in activeRooms) {
-        const match = Object.values(activeRooms[code].players).find(p => p.phoneHandle === fromPhone || p.name === fromPhone);
-        if (match) {
-            associatedRoomCode = code;
-            actingPlayerName = match.name;
-            break;
+    if (explicitRoomCode && activeRooms[explicitRoomCode]) {
+        const directMatch = Object.values(activeRooms[explicitRoomCode].players)
+            .find(p => p.phoneHandle === fromPhone || p.name === fromPhone);
+        if (directMatch) {
+            associatedRoomCode = explicitRoomCode;
+            actingPlayerName = directMatch.name;
         }
     }
 
-    // SOLO TESTING AUTOCORRECT SHIELD: Fallback safely if a browser string header matches an unallocated key
     if (!associatedRoomCode) {
-        for (const code in activeRooms) {
-            const currentRoomPlayers = Object.values(activeRooms[code].players);
-            if (currentRoomPlayers.length > 0) {
+        const roomCodesByRecency = Object.keys(activeRooms)
+            .sort((a, b) => (activeRooms[b].lastActivity || 0) - (activeRooms[a].lastActivity || 0));
+
+        for (const code of roomCodesByRecency) {
+            const match = Object.values(activeRooms[code].players).find(p => p.phoneHandle === fromPhone || p.name === fromPhone);
+            if (match) {
                 associatedRoomCode = code;
-                actingPlayerName = currentRoomPlayers[0].name; // Auto-bind onto the first registered profile row
+                actingPlayerName = match.name;
                 break;
+            }
+        }
+
+        // SOLO TESTING AUTOCORRECT SHIELD: Fallback safely if a browser string header matches an unallocated key
+        if (!associatedRoomCode) {
+            for (const code of roomCodesByRecency) {
+                const currentRoomPlayers = Object.values(activeRooms[code].players);
+                if (currentRoomPlayers.length > 0) {
+                    associatedRoomCode = code;
+                    actingPlayerName = currentRoomPlayers[0].name; // Auto-bind onto the first registered profile row
+                    break;
+                }
             }
         }
     }

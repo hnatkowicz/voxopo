@@ -3,7 +3,7 @@ import dotenv from 'dotenv';
 import path from 'path';
 import { WebSocketServer } from 'ws';
 import pool from './config/database.js';
-import { handleIncomingMessage, activeRooms, getCategoryLabels } from './services/gameEngine.js';
+import { handleIncomingMessage, activeRooms, getCategoryLabels, resolveRequestedQuestionCount } from './services/gameEngine.js';
 import { fileURLToPath } from 'url';
 
 // Recreate __dirname cleanly for ES module environments
@@ -59,6 +59,7 @@ app.get('/api/create-room', (req, res) => {
             questionGroups: {},
             currentQuestionIndex: -1,
             askedQuestionIds: new Set(),
+            requestedQuestionCount: resolveRequestedQuestionCount(req.query.questionCount),
             votes: { TRIVI_YEAH: 0, COUNTRY_MONKEY: 0, EMPOSSDURR: 0, FLAG_ME_DOWN: 0, ON_THE_SPECTRUM: 0 },
             categoryVotes: { CAT_1: 0, CAT_2: 0, CAT_3: 0 },
             lastActivity: Date.now() // Time the room was "born"
@@ -73,10 +74,10 @@ app.get('/api/create-room', (req, res) => {
 
 app.post('/api/message', async (req, res) => {
     try {
-        const { From, Body } = req.body;
+        const { From, Body, roomCode } = req.body;
         if (!From || !Body) return res.status(400).json({ success: false, reply: 'Missing parameters.' });
 
-        const engineResponse = await handleIncomingMessage(From, Body);
+        const engineResponse = await handleIncomingMessage(From, Body, roomCode);
         if (typeof engineResponse === 'string' && engineResponse.startsWith('⚠️')) {
             return res.json({ success: false, reply: engineResponse });
         }
@@ -157,6 +158,7 @@ async function startServer() {
                                 lobbySecondsLeft: 60, categorySecondsLeft: 30, gameSecondsLeft: 25, winningGameMode: null,
                                 activeQuestionData: null, currentQuestionData: null, activeDeckName: null, answers: {},
                                 questionBank: [], questionGroups: {}, currentQuestionIndex: -1, askedQuestionIds: new Set(),
+                                requestedQuestionCount: resolveRequestedQuestionCount(undefined),
                                 votes: { TRIVI_YEAH: 0, COUNTRY_MONKEY: 0, EMPOSSDURR: 0, FLAG_ME_DOWN: 0, ON_THE_SPECTRUM: 0 },
                                 categoryVotes: { CAT_1: 0, CAT_2: 0, CAT_3: 0 }
                             };

@@ -10,8 +10,9 @@ document.addEventListener("DOMContentLoaded", () => {
 // 1. DYNAMIC LIFECYCLE CREATION ROUTINE
 if (btnGenerate) {
     btnGenerate.addEventListener('click', async () => {
+        unlockAllAudio(); // real user gesture right here -- primes playback for later WebSocket-triggered calls
         try {
-            const response = await fetch('/api/create-room'); 
+            const response = await fetch(`/api/create-room?questionCount=${selectedQuestionCount}`);
             const data = await response.json();
             
             if (data.success && data.roomCode) {
@@ -44,6 +45,7 @@ if (btnGenerate) {
 // 3. SUBMIT MANUALLY ENTERED SPECTATOR CODE
 if (btnSubmitSpectate) {
     btnSubmitSpectate.addEventListener('click', () => {
+        unlockAllAudio(); // real user gesture right here -- primes playback for later WebSocket-triggered calls
         const enteredCode = inputRoomCode.value.trim().toUpperCase();
         if (enteredCode.length === 4) {
             document.getElementById('display-room-code-badge').innerText = enteredCode;
@@ -64,6 +66,32 @@ let currentActiveRoomCode = '----';
         let cachedPlayersSnapshot = [];
         let currentStatusHtml = ''; // Whatever the status slot should show at rest for the current phase (toasts restore to this)
         let currentGamePhase = 'LOBBY'; // LOBBY / CATEGORY_VOTE / GAME_ROUND / GAME_OVER -- gates the "TYPE START" nudge to lobby only
+        let selectedQuestionCount = 20;
+
+        // index.html/app.js wire buttons via addEventListener rather than inline
+        // onclick -- an inline onclick executes in global scope and can't see
+        // functions defined inside this DOMContentLoaded closure.
+        document.querySelectorAll('.qcount-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.qcount-btn').forEach(b => b.classList.remove('selected'));
+                btn.classList.add('selected');
+                selectedQuestionCount = parseInt(btn.dataset.count, 10);
+            });
+        });
+
+        // Primes all three <audio> elements against a real user gesture (a click), so
+        // later programmatic .play() calls fired from WebSocket handlers aren't blocked
+        // by the browser's autoplay policy, which only allows audio after interaction.
+        function unlockAllAudio() {
+            ['countdown-music', 'category-music', 'win-music'].forEach(id => {
+                const audio = document.getElementById(id);
+                if (!audio) return;
+                const p = audio.play();
+                if (p && typeof p.catch === 'function') {
+                    p.then(() => { audio.pause(); audio.currentTime = 0; }).catch(() => {});
+                }
+            });
+        }
 
         // Ranks by score, then correct-answer count, then join time -- the last one
         // is always unique, so ties never leave two players sharing the same medal.

@@ -254,6 +254,8 @@
                     return;
                 }
 
+                localStorage.setItem('randomania_roomcode', room);
+
                 document.getElementById('badge-name').innerText = name;
                 document.getElementById('badge-room').innerText = room;
                 document.getElementById('badge-emoji').innerText = chosenAvatar;
@@ -370,7 +372,7 @@
                 await fetch('/api/message', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ From: registeredName, Body: selectedLetter })
+                    body: JSON.stringify({ From: registeredName, Body: selectedLetter, roomCode: localStorage.getItem('randomania_roomcode') })
                 });
             } catch (error) {
                 showFeedback(feedback, "❌ Transmission failure.", "rgba(255,71,87,0.06)", "#ff4757", "rgba(255,71,87,0.1)");
@@ -391,7 +393,7 @@
                 const response = await fetch('/api/message', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ From: registeredName, Body: categoryKey })
+                    body: JSON.stringify({ From: registeredName, Body: categoryKey, roomCode: localStorage.getItem('randomania_roomcode') })
                 });
                 const data = await response.json();
                 showFeedback(feedback, `📡 Server: ${data.reply}`, "rgba(0,230,118,0.06)", "#00e676", "rgba(0,230,118,0.1)");
@@ -412,7 +414,7 @@
                 const response = await fetch('/api/message', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ From: registeredName, Body: actionText })
+                    body: JSON.stringify({ From: registeredName, Body: actionText, roomCode: localStorage.getItem('randomania_roomcode') })
                 });
                 const data = await response.json();
                 showFeedback(feedback, `📡 Server: ${data.reply}`, "rgba(0,230,118,0.06)", "#00e676", "rgba(0,230,118,0.1)");
