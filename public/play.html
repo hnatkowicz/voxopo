@@ -57,8 +57,12 @@
 
         .btn { background: #00e676; color: #0d0e11; border: none; padding: 16px; border-radius: 8px; font-size: 1.05rem; font-weight: 600; width: 100%; cursor: pointer; margin-top: 24px; letter-spacing: 0.02em; }
         .btn:hover { background: #00c862; }
+        .btn-leave { background: transparent; color: #ff4757; border: 1px solid rgba(255, 71, 87, 0.3); margin-top: 14px; }
+        .btn-leave:hover { background: rgba(255, 71, 87, 0.08); }
+        .btn-horn { background: #ffa500; margin-top: 16px; }
+        .btn-horn:hover { background: #e59400; }
         .feedback { margin-top: 20px; font-weight: 500; padding: 12px; border-radius: 8px; display: none; font-size: 0.9rem; border: 1px solid transparent; }
-        
+
         #game-screen { display: none; }
         #category-screen { display: none; }
         .player-badge { background: #1e222b; padding: 14px; border-radius: 8px; border: 1px solid #222630; margin-bottom: 24px; font-size: 0.95rem; color: #00e676; font-weight: 600; text-align: left; display: flex; justify-content: space-between; align-items: center; gap: 12px; }
@@ -66,13 +70,27 @@
         .player-badge-name { color: #fff; font-weight: bold; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
         .player-badge-room { color: #64748b; font-weight: 500; flex-shrink: 0; white-space: nowrap; }
         .player-badge-room strong { color: #fff; font-weight: bold; }
+
+        .logo-header { height: 34px; width: auto; margin: 0 auto 10px auto; display: block; }
+
+        /* Mirrors the TV's final-leaderboard medal styling (public/styles.css) so a
+           player's own placement card reads as "the same result," not a re-skin. */
+        .leaderboard-btn { background: #1e222b; border: 1px solid #222630; border-radius: 8px; padding: 16px 20px; display: flex; justify-content: space-between; align-items: center; text-align: left; margin-top: 16px; }
+        .leaderboard-btn-name { color: #ffffff; font-size: 1.05rem; font-weight: 600; }
+        .leaderboard-btn-score { font-size: 1.05rem; font-weight: 700; }
+        .leaderboard-btn.rank-gold { border-color: #d4af37; background: rgba(212, 175, 55, 0.08); }
+        .leaderboard-btn.rank-gold .leaderboard-btn-score { color: #d4af37; }
+        .leaderboard-btn.rank-silver { border-color: #b8bcc4; background: rgba(184, 188, 196, 0.08); }
+        .leaderboard-btn.rank-silver .leaderboard-btn-score { color: #b8bcc4; }
+        .leaderboard-btn.rank-bronze { border-color: #cd7f32; background: rgba(205, 127, 50, 0.08); }
+        .leaderboard-btn.rank-bronze .leaderboard-btn-score { color: #cd7f32; }
     </style>
 </head>
 <body>
 
     <!-- SCREEN 1: MODERN LOBBY PORTAL -->
     <div id="login-screen" class="card">
-        <h1>RandoMania Lobby</h1>
+        <img src="/randomania-logo.svg" alt="RandoMania!" class="logo-header">
         <p class="subtitle">Securely join the live room session</p>
         
         <div class="input-group">
@@ -192,12 +210,19 @@
 
         <!-- Persistent Lockout Selection Display Window Frame -->
         <div id="question-feedback" class="feedback" style="margin-top: 24px; font-weight: 600; text-align: left; padding: 14px 20px;"></div>
+
+        <!-- Stepping away mid-question would otherwise leave the room stuck waiting
+             on this player's answer forever -- this lets them bow out cleanly. -->
+        <button class="btn btn-leave" onclick="leaveRoom()">Leave Room</button>
     </div>
 
     <!-- SCREEN 5: GAME OVER -->
     <div id="game-over-screen" class="card" style="display: none;">
         <h1>Game Over</h1>
-        <p class="subtitle" style="margin-bottom: 0;">Thanks for playing! Check the TV screen for the final leaderboard.</p>
+        <div id="game-over-content">
+            <p class="subtitle" style="margin-bottom: 0;">Thanks for playing! Check the TV screen for the final leaderboard.</p>
+        </div>
+        <audio id="horn-sound" src="/audio/horn.wav" preload="auto"></audio>
     </div>
 
     <script>
@@ -318,12 +343,14 @@
                             }
                         }
 
-                        // Loop exhausted its question bank: stop polling and point players at the TV.
+                        // Loop exhausted its question bank: stop polling and show this
+                        // player's own placement (mirrors the TV's medal styling).
                         if (data.phase === 'GAME_OVER_PHASE') {
                             document.getElementById('category-screen').style.display = "none";
                             document.getElementById('game-screen').style.display = "none";
                             document.getElementById('question-screen').style.display = "none";
                             document.getElementById('game-over-screen').style.display = "block";
+                            renderGameOver(data, nickname);
                             clearInterval(roomStateTrackerInterval);
                         }
                     }
@@ -428,6 +455,84 @@
             } catch (error) {
                 showFeedback(feedback, "❌ Action transmission failed.", "rgba(255,71,87,0.06)", "#ff4757", "rgba(255,71,87,0.1)");
             }
+        }
+
+        // Renders this player's own final-standings card, styled to match the TV's
+        // gold/silver/bronze medal rows for the top 3. Rank 1 gets a bonus soundboard
+        // button -- horn.wav needs to actually exist in public/audio for it to play.
+        function renderGameOver(data, nickname) {
+            const container = document.getElementById('game-over-content');
+            const rank = data.myRank;
+
+            if (!rank) {
+                container.innerHTML = `<p class="subtitle" style="margin-bottom: 0;">Thanks for playing! Check the TV screen for the final leaderboard.</p>`;
+                return;
+            }
+
+            const score = data.myScore || 0;
+            const correct = data.myCorrectAnswers || 0;
+            const total = data.totalPlayers || 0;
+
+            const rankClasses = { 1: 'rank-gold', 2: 'rank-silver', 3: 'rank-bronze' };
+            const medals = { 1: '🥇', 2: '🥈', 3: '🥉' };
+            const headlines = { 1: 'Champion!', 2: 'So Close!', 3: 'Podium Finish!' };
+
+            const cardClass = rankClasses[rank] || '';
+            const medal = medals[rank] || '🎮';
+            const headline = headlines[rank] || 'Nice Game!';
+            const subline = rank <= 3
+                ? `${score} pts &middot; ${correct} correct`
+                : `You finished #${rank} of ${total} with ${score} pts &middot; ${correct} correct`;
+            const hornButton = rank === 1
+                ? `<button class="btn btn-horn" onclick="playHorn()">🎺 Blast the Air Horn</button>`
+                : '';
+
+            container.innerHTML = `
+                <div class="leaderboard-btn ${cardClass}">
+                    <span class="leaderboard-btn-name">${medal} ${nickname}</span>
+                    <span class="leaderboard-btn-score">${score} pts</span>
+                </div>
+                <p class="subtitle" style="margin: 14px 0 0 0;">${headline}</p>
+                <p style="color: #64748b; font-size: 0.85rem; margin: 4px 0 0 0;">${subline}</p>
+                ${hornButton}
+            `;
+        }
+
+        function playHorn() {
+            const audio = document.getElementById('horn-sound');
+            if (!audio) return;
+            audio.currentTime = 0;
+            const p = audio.play();
+            if (p && typeof p.catch === 'function') p.catch(err => console.warn('[Audio] horn blocked or failed:', err.message));
+        }
+
+        async function leaveRoom() {
+            const registeredName = localStorage.getItem('randomania_nickname') || 'test-handset';
+            const roomCode = localStorage.getItem('randomania_roomcode');
+
+            try {
+                await fetch('/api/message', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ From: registeredName, Body: 'LEAVE', roomCode })
+                });
+            } catch (error) {
+                console.error("Leave request failed to transmit.");
+            }
+
+            clearInterval(roomStateTrackerInterval);
+            ['game-screen', 'category-screen', 'question-screen', 'game-over-screen'].forEach(id => {
+                document.getElementById(id).style.display = "none";
+            });
+
+            // Room code + name stay filled in so rejoining is a single tap away --
+            // the server recognizes the name as a rejoin and restores the score.
+            document.getElementById('room-code').value = roomCode || '';
+            document.getElementById('player-name').value = registeredName || '';
+            document.getElementById('login-screen').style.display = "block";
+
+            const feedback = document.getElementById('login-feedback');
+            showFeedback(feedback, "You left the room. Rejoin any time with the same name to pick up where you left off.", "rgba(255,165,0,0.06)", "#ffa500", "rgba(255,165,0,0.1)");
         }
 
         function showFeedback(element, text, bg, color, border) {

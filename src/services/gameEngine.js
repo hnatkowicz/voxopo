@@ -340,7 +340,9 @@ function startNextQuestion(roomCode) {
 
 // Ranks by score, then correct-answer count, then join time -- the last one is
 // always unique, so this never leaves two players tied for the same medal.
-function compareByRank(a, b) {
+// Exported so server.js's /api/room-status can compute a player's own final
+// placement for the phone's game-over screen using the exact same ordering.
+export function compareByRank(a, b) {
     return b.score - a.score
         || (b.correctAnswers || 0) - (a.correctAnswers || 0)
         || new Date(a.joinedAt) - new Date(b.joinedAt);
@@ -354,7 +356,9 @@ function endGame(roomCode) {
     if (room.revealTimeout) { clearTimeout(room.revealTimeout); room.revealTimeout = null; }
 
     room.gameState = 'GAME_OVER';
-    const finalStandings = Object.values(room.players).sort(compareByRank);
+    // Players who left mid-game keep their score internally (in case they
+    // rejoin before this fires) but don't appear in the final standings.
+    const finalStandings = Object.values(room.players).filter(p => !p.left).sort(compareByRank);
 
     console.log(`🏁 [Game Engine] Room ${roomCode} finished ${room.questionBank.length} questions. Broadcasting final leaderboard.`);
 
@@ -451,7 +455,7 @@ function evaluateRoundAndRevealAnswer(roomCode) {
     });
     broadcastToRoom(roomCode, {
         type: 'LEADERBOARD_UPDATE',
-        players: Object.values(room.players)
+        players: Object.values(room.players).filter(p => !p.left)
     });
 
     console.log(`[Game Round Clock] Round countdown finished for Room ${roomCode}. Broadcasted answer reveal.`);
@@ -511,21 +515,35 @@ export function handleIncomingMessage(fromPhone, bodyText, explicitRoomCode) {
             // stored name (used as the player's key everywhere) is never silently altered.
             // Display-side truncation (ellipsis) handles anything still too long to fit visually.
             if (playerNickname.length > MAX_NAME_LENGTH) return `⚠️ Nickname too long (max ${MAX_NAME_LENGTH} characters).`;
-            if (currentRoom.players[playerNickname]) return `⚠️ Name taken inside Room ${roomCode}.`;
 
-            currentRoom.players[playerNickname] = {
-                phoneHandle: fromPhone,
-                name: playerNickname, 
-                emoji: playerEmoji, 
-                vote: votedModule, 
-                categoryVote: null, 
-                requestedStart: false,
-                score: 0,
-                correctAnswers: 0,
-                joinedAt: new Date()
-            };
+            // A name still held by an active (non-left) player is a genuine collision.
+            // A name held by someone who used "Leave Room" is a rejoin -- reuse the
+            // same slot so their score/correctAnswers survive the trip, rather than
+            // blocking them or starting them back over at zero.
+            const existingPlayer = currentRoom.players[playerNickname];
+            if (existingPlayer && !existingPlayer.left) return `⚠️ Name taken inside Room ${roomCode}.`;
 
-            const playersArray = Object.values(currentRoom.players);
+            if (existingPlayer) {
+                existingPlayer.left = false;
+                existingPlayer.phoneHandle = fromPhone;
+                existingPlayer.emoji = playerEmoji;
+                existingPlayer.vote = votedModule;
+            } else {
+                currentRoom.players[playerNickname] = {
+                    phoneHandle: fromPhone,
+                    name: playerNickname,
+                    emoji: playerEmoji,
+                    vote: votedModule,
+                    categoryVote: null,
+                    requestedStart: false,
+                    score: 0,
+                    correctAnswers: 0,
+                    left: false,
+                    joinedAt: new Date()
+                };
+            }
+
+            const playersArray = Object.values(currentRoom.players).filter(p => !p.left);
             broadcastToRoom(roomCode, { type: 'LEADERBOARD_UPDATE', players: playersArray });
 
             // Module voting and the lobby clock are only meaningful pre-game --
@@ -545,7 +563,9 @@ export function handleIncomingMessage(fromPhone, bodyText, explicitRoomCode) {
                 return `Welcome to RandoMania, ${playerNickname}! Entry logged live.`;
             }
 
-            return `Welcome to RandoMania, ${playerNickname}! Jumping into the action already in progress.`;
+            return existingPlayer
+                ? `Welcome back, ${playerNickname}! Rejoining Room ${roomCode} with your score intact.`
+                : `Welcome to RandoMania, ${playerNickname}! Jumping into the action already in progress.`;
         }
     }
 
@@ -603,11 +623,46 @@ export function handleIncomingMessage(fromPhone, bodyText, explicitRoomCode) {
     const currentRoom = activeRooms[associatedRoomCode];
     const player = currentRoom.players[actingPlayerName];
 
+    // A player who left is out of the active roster until they rejoin through
+    // the login screen (same room code + name) -- block any further game
+    // actions from their stale phone session in the meantime.
+    if (player.left) return `⚠️ You left Room ${associatedRoomCode}. Rejoin from the lobby screen to keep playing.`;
+
+    // 2.5 Handle "Leave Room" -- lets a player step away without leaving the
+    // rest of the room stuck waiting on their START vote or their answer.
+    if (cleanText.toUpperCase() === 'LEAVE') {
+        player.left = true;
+        player.requestedStart = false;
+        delete currentRoom.answers[actingPlayerName];
+
+        const remainingActivePlayers = Object.values(currentRoom.players).filter(p => !p.left);
+        broadcastToRoom(associatedRoomCode, { type: 'LEADERBOARD_UPDATE', players: remainingActivePlayers });
+
+        // Re-check whichever gate the current phase is waiting on -- leaving
+        // shouldn't leave everyone else stuck if they'd already cleared it.
+        if (remainingActivePlayers.length > 0) {
+            if (currentRoom.gameState === 'LOBBY' && remainingActivePlayers.every(p => p.requestedStart)) {
+                remainingActivePlayers.forEach(p => p.requestedStart = false);
+                executeLobbyPhaseExpiration(associatedRoomCode);
+            } else if (currentRoom.gameState === 'CATEGORY_VOTE' && remainingActivePlayers.every(p => p.requestedStart)) {
+                remainingActivePlayers.forEach(p => p.requestedStart = false);
+                executeCategoryPhaseExpiration(associatedRoomCode);
+            } else if (currentRoom.gameState === 'GAME_ROUND') {
+                const totalAnswersLogged = remainingActivePlayers.filter(p => currentRoom.answers[p.name] !== undefined).length;
+                if (totalAnswersLogged === remainingActivePlayers.length) {
+                    fastForwardToReveal(associatedRoomCode);
+                }
+            }
+        }
+
+        return `You've left Room ${associatedRoomCode}. Come back any time using the same name to pick up where you left off.`;
+    }
+
     // 3. DEMOCRACY WITH OOMPH: Clock skipping override calculation loops
     if (cleanText.toUpperCase() === 'START') {
         player.requestedStart = true;
-        
-        const playersList = Object.values(currentRoom.players);
+
+        const playersList = Object.values(currentRoom.players).filter(p => !p.left);
         const startRequestsCount = playersList.filter(p => p.requestedStart === true).length;
         
         console.log(`[Democracy Check] Room ${associatedRoomCode}: ${startRequestsCount}/${playersList.length} players voted START.`);
@@ -635,7 +690,7 @@ export function handleIncomingMessage(fromPhone, bodyText, explicitRoomCode) {
 
             currentRoom.categoryVotes = {};
             validCategoryKeys.forEach(key => { currentRoom.categoryVotes[key] = 0; });
-            const activePlayers = Object.values(currentRoom.players);
+            const activePlayers = Object.values(currentRoom.players).filter(p => !p.left);
             let totalSubVotes = 0;
 
             activePlayers.forEach(p => {
@@ -660,8 +715,8 @@ export function handleIncomingMessage(fromPhone, bodyText, explicitRoomCode) {
         const answerChoice = cleanText.toUpperCase();
         if (['A', 'B', 'C', 'D'].includes(answerChoice)) {
             currentRoom.answers[actingPlayerName] = answerChoice;
-            
-            const totalPlayersCount = Object.keys(currentRoom.players).length;
+
+            const totalPlayersCount = Object.values(currentRoom.players).filter(p => !p.left).length;
             const totalAnswersLogged = Object.keys(currentRoom.answers).length;
 
             console.log(`[Match Engine] Submission received from ${player.name}: "${answerChoice}". Total logged: ${totalAnswersLogged}/${totalPlayersCount}`);

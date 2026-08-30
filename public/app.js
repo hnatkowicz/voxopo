@@ -343,6 +343,18 @@ let currentActiveRoomCode = '----';
         let activeCategoryLabels = {};
         const CATEGORY_BAR_COLORS = ['#ffa500', '#00e676', '#ff4757', '#2d9cdb', '#bb6bd9', '#f9c74f'];
 
+        // Canonical display names, matching exactly what the lobby's own module
+        // election rows show (index.html). A generic key.replace('_', ' ') +
+        // title-case transform used to derive this instead, which silently turned
+        // TRIVI_YEAH into "Trivi Yeah" -- losing the hyphen and the exclamation mark.
+        const GAME_MODE_LABELS = {
+            TRIVI_YEAH: 'Trivi-yeah!',
+            COUNTRY_MONKEY: 'Country Monkey',
+            EMPOSSDURR: 'EmpossDurr',
+            FLAG_ME_DOWN: 'Flag Me Down',
+            ON_THE_SPECTRUM: 'On The Spectrum'
+        };
+
         function switchToCategoryVotingUI(winnerModule, categories) {
             const panel = document.getElementById('active-content-stage');
             const categoryList = categories || [];
@@ -350,7 +362,7 @@ let currentActiveRoomCode = '----';
             activeCategoryLabels = {};
             categoryList.forEach(c => { activeCategoryLabels[c.key] = c.label; });
 
-            const displayGameName = winnerModule.replace('_', ' ').toLowerCase().replace(/\b\w/g, c => c.toUpperCase());
+            const displayGameName = GAME_MODE_LABELS[winnerModule] || winnerModule;
 
             currentGamePhase = 'CATEGORY_VOTE';
             // QR + join instructions stay put -- only the muted status slot changes.
@@ -459,7 +471,7 @@ function switchToGameOverUI(players) {
         <div class="panel-box" style="padding: 40px; flex: 1; display: flex; flex-direction: column; justify-content: center;">
             <h2 class="panel-title" style="margin-bottom: 8px;">Final Leaderboard</h2>
             <p style="color: #64748b; font-size: 0.95rem; margin: 0 0 32px 0; font-weight: 500;">Thanks for playing!</p>
-            <div style="display: flex; flex-direction: column; gap: 12px;">${rows}</div>
+            <div style="display: flex; flex-direction: column; gap: 22px;">${rows}</div>
         </div>
     `;
 

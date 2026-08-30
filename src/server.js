@@ -3,7 +3,7 @@ import dotenv from 'dotenv';
 import path from 'path';
 import { WebSocketServer } from 'ws';
 import pool from './config/database.js';
-import { handleIncomingMessage, activeRooms, getCategoriesForMode, resolveRequestedQuestionCount } from './services/gameEngine.js';
+import { handleIncomingMessage, activeRooms, getCategoriesForMode, resolveRequestedQuestionCount, compareByRank } from './services/gameEngine.js';
 import { fileURLToPath } from 'url';
 
 // Recreate __dirname cleanly for ES module environments
@@ -115,7 +115,20 @@ app.post('/api/room-status', (req, res) => {
             return res.json({ phase: 'GAME_ROUND_PHASE', ...targetRoom.activeQuestionData, myScore });
         }
         if (targetRoom && targetRoom.gameState === 'GAME_OVER') {
-            return res.json({ phase: 'GAME_OVER_PHASE', myScore });
+            // Same ordering the TV's final leaderboard used, so a player's phone
+            // shows the exact placement (and can style itself gold/silver/bronze)
+            // that matches what's on screen -- players who left don't get ranked.
+            const finalStandings = Object.values(targetRoom.players).filter(p => !p.left).sort(compareByRank);
+            const myIndex = playerName ? finalStandings.findIndex(p => p.name === playerName) : -1;
+            const myRank = myIndex >= 0 ? myIndex + 1 : null;
+            const myCorrectAnswers = (targetRoom.players[playerName] && targetRoom.players[playerName].correctAnswers) || 0;
+            return res.json({
+                phase: 'GAME_OVER_PHASE',
+                myScore,
+                myRank,
+                myCorrectAnswers,
+                totalPlayers: finalStandings.length
+            });
         }
         return res.json({ phase: 'WAITING', myScore });
     } catch (error) {
