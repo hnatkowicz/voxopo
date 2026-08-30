@@ -289,9 +289,19 @@ async function loadQuestionBank(room) {
         groups[key].push(row);
     });
 
+    // Eligibility is about *distinct* correct answers, not row count -- a
+    // group can hold several rows for the same answer (e.g. one country
+    // shown via multiple different regional map crops), and those don't
+    // each count as a fresh distractor source. Needs >=4 distinct answers
+    // to guarantee a real answer plus 3 unique distractors.
+    const distinctAnswerCounts = {};
+    Object.keys(groups).forEach(key => {
+        distinctAnswerCounts[key] = new Set(groups[key].map(r => r.correct_answer)).size;
+    });
+
     const eligibleQuestions = result.rows.filter(row => {
         const key = `${row.category}|${row.subcategory}|${row.faction}`;
-        return groups[key].length >= MIN_GROUP_SIZE_FOR_DISTRACTORS;
+        return distinctAnswerCounts[key] >= MIN_GROUP_SIZE_FOR_DISTRACTORS;
     });
 
     room.questionGroups = groups;
@@ -305,9 +315,18 @@ async function loadQuestionBank(room) {
 // pulled from sibling rows sharing subcategory+faction (excluding itself).
 function buildQuestionPayload(room, row, categoryLabel) {
     const groupKey = `${row.category}|${row.subcategory}|${row.faction}`;
-    const distractorPool = (room.questionGroups[groupKey] || [])
-        .filter(peer => peer.id !== row.id)
-        .map(peer => peer.correct_answer);
+
+    // Dedupe by answer text, not row id -- a sibling row can share this row's
+    // own correct answer (e.g. a different map crop of the same country), and
+    // without this it could get pulled in as a "wrong" choice identical to the
+    // right one, or the same wrong answer could appear in two choice slots.
+    const seenAnswers = new Set([row.correct_answer]);
+    const distractorPool = [];
+    (room.questionGroups[groupKey] || []).forEach(peer => {
+        if (peer.id === row.id || seenAnswers.has(peer.correct_answer)) return;
+        seenAnswers.add(peer.correct_answer);
+        distractorPool.push(peer.correct_answer);
+    });
 
     const distractors = shuffleArray(distractorPool).slice(0, 3);
     const shuffledChoices = shuffleArray([row.correct_answer, ...distractors]);
