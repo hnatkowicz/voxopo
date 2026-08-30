@@ -199,7 +199,44 @@ async function seed() {
         (92, 'TRIVIA', 'GEOGRAPHY', 'PLACE', 'LANDMARKS', 'In which country would you find Machu Picchu?', NULL, 'Peru', 200);
     `);
 
-    console.log('✅ [Database] Cloud schema expanded, WWII bank, and 5 new main categories seeded!');
+    // 4. Seed Country Monkey's first real content bank: African countries,
+    //    shown via a highlighted-map SVG (visual_asset), guessed multiple-
+    //    choice against sibling countries in the same group. All one flat
+    //    group for now (17 distinct countries is well above the 4-distinct-
+    //    answer minimum) -- can be split into subcategory tiers later once
+    //    there's enough volume to split without starving any one tier.
+    //    Ethiopia/Somalia/Kenya each get a second row (_2) pointing at a
+    //    different map crop of the same country/answer, to add question
+    //    variety without new content -- buildQuestionPayload's distractor
+    //    dedup (by answer text, not row id) is what makes that safe.
+    //    CAR is not yet included -- its SVG hasn't been uploaded yet.
+    console.log('🌍 Seeding Country Monkey African country bank...');
+    await client.query(`
+      INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, points)
+      VALUES
+        (93, 'COUNTRY_MONKEY', 'AFRICA', 'COUNTRY', 'AFRICA', 'Which country is highlighted?', '/countries/drc.svg', 'DR Congo', 200),
+        (94, 'COUNTRY_MONKEY', 'AFRICA', 'COUNTRY', 'AFRICA', 'Which country is highlighted?', '/countries/gabon.svg', 'Gabon', 300),
+        (95, 'COUNTRY_MONKEY', 'AFRICA', 'COUNTRY', 'AFRICA', 'Which country is highlighted?', '/countries/kenya.svg', 'Kenya', 200),
+        (96, 'COUNTRY_MONKEY', 'AFRICA', 'COUNTRY', 'AFRICA', 'Which country is highlighted?', '/countries/angola.svg', 'Angola', 200),
+        (97, 'COUNTRY_MONKEY', 'AFRICA', 'COUNTRY', 'AFRICA', 'Which country is highlighted?', '/countries/zimbabwe.svg', 'Zimbabwe', 250),
+        (98, 'COUNTRY_MONKEY', 'AFRICA', 'COUNTRY', 'AFRICA', 'Which country is highlighted?', '/countries/zambia.svg', 'Zambia', 250),
+        (99, 'COUNTRY_MONKEY', 'AFRICA', 'COUNTRY', 'AFRICA', 'Which country is highlighted?', '/countries/malawi.svg', 'Malawi', 250),
+        (100, 'COUNTRY_MONKEY', 'AFRICA', 'COUNTRY', 'AFRICA', 'Which country is highlighted?', '/countries/tanzania.svg', 'Tanzania', 200),
+        (101, 'COUNTRY_MONKEY', 'AFRICA', 'COUNTRY', 'AFRICA', 'Which country is highlighted?', '/countries/south_sudan.svg', 'South Sudan', 200),
+        (102, 'COUNTRY_MONKEY', 'AFRICA', 'COUNTRY', 'AFRICA', 'Which country is highlighted?', '/countries/ethiopia.svg', 'Ethiopia', 200),
+        (103, 'COUNTRY_MONKEY', 'AFRICA', 'COUNTRY', 'AFRICA', 'Which country is highlighted?', '/countries/congo_republic.svg', 'Rep. of Congo', 250),
+        (104, 'COUNTRY_MONKEY', 'AFRICA', 'COUNTRY', 'AFRICA', 'Which country is highlighted?', '/countries/cameroon.svg', 'Cameroon', 200),
+        (105, 'COUNTRY_MONKEY', 'AFRICA', 'COUNTRY', 'AFRICA', 'Which country is highlighted?', '/countries/somalia.svg', 'Somalia', 200),
+        (106, 'COUNTRY_MONKEY', 'AFRICA', 'COUNTRY', 'AFRICA', 'Which country is highlighted?', '/countries/djibouti.svg', 'Djibouti', 300),
+        (107, 'COUNTRY_MONKEY', 'AFRICA', 'COUNTRY', 'AFRICA', 'Which country is highlighted?', '/countries/uganda.svg', 'Uganda', 200),
+        (108, 'COUNTRY_MONKEY', 'AFRICA', 'COUNTRY', 'AFRICA', 'Which country is highlighted?', '/countries/rwanda.svg', 'Rwanda', 250),
+        (109, 'COUNTRY_MONKEY', 'AFRICA', 'COUNTRY', 'AFRICA', 'Which country is highlighted?', '/countries/burundi.svg', 'Burundi', 250),
+        (110, 'COUNTRY_MONKEY', 'AFRICA', 'COUNTRY', 'AFRICA', 'Which country is highlighted?', '/countries/ethiopia_2.svg', 'Ethiopia', 200),
+        (111, 'COUNTRY_MONKEY', 'AFRICA', 'COUNTRY', 'AFRICA', 'Which country is highlighted?', '/countries/somalia_2.svg', 'Somalia', 200),
+        (112, 'COUNTRY_MONKEY', 'AFRICA', 'COUNTRY', 'AFRICA', 'Which country is highlighted?', '/countries/kenya_2.svg', 'Kenya', 200);
+    `);
+
+    console.log('✅ [Database] Cloud schema expanded, WWII bank, 5 new main categories, and Country Monkey Africa bank seeded!');
   } catch (error) {
     console.error('❌ Schema expansion failed:', error.message);
   } finally {
