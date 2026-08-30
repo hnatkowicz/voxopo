@@ -8,7 +8,7 @@ const ELIGIBLE_SUBCATEGORIES = ['PERSON', 'EVENT'];
 const MIN_GROUP_SIZE_FOR_DISTRACTORS = 4; // correct answer + 3 distractors
 const MAX_QUESTIONS_PER_GAME = 30;
 const REVEAL_DURATION_MS = 5000;
-const GAME_ROUND_DURATION_SECONDS = 25;
+const GAME_ROUND_DURATION_SECONDS = 30;
 const FAST_FORWARD_SECONDS = 3; // once everyone's answered, snap the clock down to this for a beat of suspense
 
 function shuffleArray(items) {

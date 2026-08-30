@@ -62,6 +62,17 @@ let currentActiveRoomCode = '----';
         let toastQueue = [];
         let isToastPlaying = false;
         let cachedPlayersSnapshot = [];
+        let currentStatusHtml = ''; // Whatever the status slot should show at rest for the current phase (toasts restore to this)
+        let currentGamePhase = 'LOBBY'; // LOBBY / CATEGORY_VOTE / GAME_ROUND / GAME_OVER -- gates the "TYPE START" nudge to lobby only
+
+        // Sets the muted, right-hand status message next to the permanent QR block.
+        // The QR + join instructions on the left never change, so late arrivals can
+        // always scan in -- this slot is the only thing that varies by phase.
+        function setStatusMessage(html) {
+            currentStatusHtml = html;
+            const slot = document.getElementById('onboarding-status-slot');
+            if (slot) slot.innerHTML = html;
+        }
 
         // Fetch a randomized code from the server on demand automatically on load
         async function initializeDynamicRoomSession() {
@@ -135,11 +146,11 @@ let currentActiveRoomCode = '----';
                 if (data.type === 'CATEGORY_TIMER_TICK') {
                     document.getElementById('lobby-countdown').innerText = data.secondsLeft;
                 }
-                // Listen for Phase 3 active question clock ticks to drive your 25s banner countdown!
+                // Listen for Phase 3 active question clock ticks to drive the round countdown banner!
                 if (data.type === 'GAME_TIMER_TICK') {
                     document.getElementById('lobby-countdown').innerText = data.secondsLeft;
                 }
-                // Listen for the server's 25s clock expiration to highlight the correct answer choice
+                // Listen for the server's clock expiration to highlight the correct answer choice
                 if (data.type === 'REVEAL_CORRECT_ANSWER') {
                     document.getElementById('room-status-text').innerText = "Round Evaluation";
                     document.getElementById('lobby-countdown').innerText = "0 s";
@@ -157,7 +168,7 @@ let currentActiveRoomCode = '----';
                 // Listen for the server's Category Phase expiration signal to draw the question canvas
                 if (data.type === 'TRANSITION_TO_QUESTION') {
                     document.getElementById('room-status-text').innerText = "Gameplay Phase";
-                    document.getElementById('lobby-countdown').innerText = "25 s"; // Reset banner clock visually
+                    document.getElementById('lobby-countdown').innerText = "30 s"; // Reset banner clock visually
                     switchToQuestionUI(data.categoryLabel, data.questionText, data.choiceA, data.choiceB, data.choiceC, data.choiceD);
                     playCountdownMusic();
                 }
@@ -187,12 +198,14 @@ let currentActiveRoomCode = '----';
                 return;
             }
             //Automatically reveal the text instructions on the main lobby screen!
-            const onboardingSlot = document.getElementById('onboarding-text-slot');
-            if (onboardingSlot && !onboardingSlot.innerHTML.includes('START')) {
-                onboardingSlot.innerHTML = `
-                    <div style="font-size: 1rem; font-weight: 600; color: #00e676; letter-spacing: -0.01em; margin-bottom: 2px;">⚡ TYPE "START" TO CONFIRM AND OVERRIDE LOBBY CLOCK</div>
-                    <div style="font-size: 0.85rem; color: #64748b; font-weight: 500;">When every player submits start, the system skips countdowns instantly.</div>
-                `;
+            // Gated to LOBBY specifically -- this fires on every LEADERBOARD_UPDATE,
+            // including the ones broadcast after every reveal once the game is live,
+            // and would otherwise stomp the in-game/game-over status message.
+            if (currentGamePhase === 'LOBBY' && !currentStatusHtml.includes('START')) {
+                setStatusMessage(`
+                    <div style="font-weight: 600; color: #8892b0; margin-bottom: 2px;">TYPE "START" TO CONFIRM</div>
+                    <div style="font-size: 0.8rem; color: #64748b;">Skips the countdown once everyone's in</div>
+                `);
             }
 
             tbody.innerHTML = '';
@@ -222,16 +235,23 @@ let currentActiveRoomCode = '----';
         }
 
         function detectNewPlayerArrival(freshPlayersList) {
+            // Snapshot BEFORE reassignment -- was the room empty prior to this update?
+            // (Checking cachedPlayersSnapshot.length === 1 *after* reassigning it below
+            // used to just mean "the room currently has 1 player," which re-fired the
+            // welcome toast on every later broadcast in a solo game, e.g. after every
+            // question's LEADERBOARD_UPDATE -- not just the genuine first arrival.)
+            const wasEmpty = cachedPlayersSnapshot.length === 0;
+
             freshPlayersList.forEach(player => {
                 const exists = cachedPlayersSnapshot.some(p => p.name === player.name);
-                if (!exists && cachedPlayersSnapshot.length > 0) {
+                if (!exists && !wasEmpty) {
                     toastQueue.push(player);
                     processToastQueuePipeline();
                 }
             });
             cachedPlayersSnapshot = [...freshPlayersList];
-            if (cachedPlayersSnapshot.length === 1 && toastQueue.length === 0) {
-                toastQueue.push(freshPlayersList[0]); // Fixes passing the exact player node instead of the array list!
+            if (wasEmpty && freshPlayersList.length > 0) {
+                toastQueue.push(freshPlayersList[0]); // Welcome the very first player into an empty room
                 processToastQueuePipeline();
             }
         }
@@ -241,7 +261,7 @@ let currentActiveRoomCode = '----';
 
             isToastPlaying = true;
             const nextPlayer = toastQueue.shift();
-            const slot = document.getElementById('onboarding-text-slot');
+            const slot = document.getElementById('onboarding-status-slot');
 
             if (!slot) {
                 isToastPlaying = false;
@@ -252,12 +272,12 @@ let currentActiveRoomCode = '----';
 
             setTimeout(() => {
                 slot.innerHTML = `
-                    <div style="display: flex; align-items: center; gap: 14px; transition: transform 0.3s ease; transform: scale(0.95); opacity: 0;" id="inline-toast-card">
-                        <span style="font-size: 1.6rem; background: #1e222b; padding: 6px 12px; border-radius: 6px; border: 1px solid #222630;">${nextPlayer.emoji || '👤'}</span>
-                        <div>
-                            <div style="font-size: 1.2rem; font-weight: 600; color: #00e676; letter-spacing: -0.01em; text-transform: uppercase;">New Entry Arrival</div>
-                            <div style="font-size: 1.0rem; color: #ffffff; font-weight: 500;"><span style="font-weight: 700; text-decoration: underline;">${nextPlayer.name}</span> has locked into the match!</div>
+                    <div style="display: flex; align-items: center; justify-content: flex-end; gap: 10px; transition: transform 0.3s ease; transform: scale(0.95); opacity: 0;" id="inline-toast-card">
+                        <div style="text-align: right;">
+                            <div style="font-size: 0.85rem; font-weight: 600; color: #00e676; letter-spacing: -0.01em;">New player joined</div>
+                            <div style="font-size: 0.85rem; color: #64748b;">${nextPlayer.name}</div>
                         </div>
+                        <span style="font-size: 1.1rem;">${nextPlayer.emoji || '👤'}</span>
                     </div>
                 `;
 
@@ -273,10 +293,9 @@ let currentActiveRoomCode = '----';
                 slot.style.opacity = "0";
 
                 setTimeout(() => {
-                    slot.innerHTML = `
-                        <div style="font-size: 1rem; font-weight: 600; color: #ffffff; margin-bottom: 4px; letter-spacing: -0.01em;">SCAN TO JOIN THE LOBBY NOW</div>
-                        <div style="font-size: 0.85rem; color: #64748b; font-weight: 500;">Or open your phone browser and type: <br><span style="color: #00e676; font-weight: 600;">https://voxopo.onrender.com/play</span></div>
-                    `;
+                    // Restore whatever the current phase's real status message is,
+                    // rather than a hardcoded string -- the toast is just a brief overlay.
+                    slot.innerHTML = currentStatusHtml;
                     slot.style.opacity = "1";
 
                     setTimeout(() => {
@@ -300,20 +319,13 @@ let currentActiveRoomCode = '----';
             activeLabel3 = label3 || "Pop Culture";
 
             const displayGameName = winnerModule.replace('_', ' ').toLowerCase().replace(/\b\w/g, c => c.toUpperCase());
-            
-            // 1. DYNAMIC LOWER PANEL CLEANUP: Wipe out the raw QR image image handle from view view
-            const onboardingSlot = document.getElementById('onboarding-text-slot');
-            if (onboardingSlot) {
-                // Find and clear out the parent white wrapping container box cleanly
-                const qrBox = onboardingSlot.previousElementSibling;
-                if (qrBox) qrBox.style.display = "none"; 
-                
-                // Rewrite text blocks to match your sleek new gameplay instruction banner row
-                onboardingSlot.innerHTML = `
-                    <div style="font-size: 1.1rem; font-weight: 600; color: #00e676; letter-spacing: -0.01em; margin-bottom: 2px;">⚡ TYPE "START" TO CONFIRM AND OVERRIDE CLOCK</div>
-                    <div style="font-size: 0.85rem; color: #64748b; font-weight: 500;">When every player submits start, the system skips countdowns instantly.</div>
-                `;
-            }
+
+            currentGamePhase = 'CATEGORY_VOTE';
+            // QR + join instructions stay put -- only the muted status slot changes.
+            setStatusMessage(`
+                <div style="font-weight: 600; color: #8892b0; margin-bottom: 2px;">TYPE "START" TO CONFIRM</div>
+                <div style="font-size: 0.8rem; color: #64748b;">Skips the countdown once everyone's in</div>
+            `);
 
             panel.innerHTML = `
                 <div class="panel-box" style="padding: 40px; flex: 1; display: flex; flex-direction: column; justify-content: center;">
@@ -371,18 +383,13 @@ let currentActiveRoomCode = '----';
         function switchToQuestionUI(categoryLabel, questionText, choiceA, choiceB, choiceC, choiceD) {
             const panel = document.getElementById('active-content-stage');
             
-            // CLEAN FOOTER: Wipe the QR code box out and inject the live gameplay text placeholder!
-            const onboardingSlot = document.getElementById('onboarding-text-slot');
-            if (onboardingSlot) {
-                const qrBox = onboardingSlot.previousElementSibling;
-                if (qrBox) qrBox.style.display = "none"; // Permanently hide white QR container block
-                
-                onboardingSlot.innerHTML = `
-                    <div id="gameplay-answer-row" style="font-size: 1.1rem; font-weight: 600; color: #64748b; letter-spacing: -0.01em; transition: all 0.3s ease;">
-                        📝 Answer: <span style="font-weight: 500; font-style: italic; font-size: 1rem;">Waiting for player submissions...</span>
-                    </div>
-                `;
-            }
+            currentGamePhase = 'GAME_ROUND';
+            // QR + join instructions stay put -- only the muted status slot changes.
+            setStatusMessage(`
+                <div id="gameplay-answer-row" style="font-weight: 600; color: #64748b; transition: color 0.3s ease;">
+                    Answer: <span style="font-style: italic;">Waiting for submissions...</span>
+                </div>
+            `);
             panel.innerHTML = `
                 <div class="panel-box" style="padding: 40px; flex: 1; display: flex; flex-direction: column; justify-content: space-between; text-align: left; min-height: 400px; box-sizing: border-box;">
                     
@@ -435,6 +442,9 @@ function switchToGameOverUI(players) {
             <div style="display: flex; flex-direction: column; gap: 12px;">${rows}</div>
         </div>
     `;
+
+    currentGamePhase = 'GAME_OVER';
+    setStatusMessage(`<div style="font-weight: 600; color: #8892b0;">Match complete</div>`);
 }
 
 function highlightCorrectAnswerOnTV(correctLetter) {
