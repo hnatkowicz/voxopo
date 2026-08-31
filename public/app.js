@@ -517,7 +517,7 @@ function switchToGameOverUI(players) {
 function showCorrectAnswerInStatusPanel(answerText) {
     setStatusMessage(`
         <div style="font-weight: 600; color: #64748b; margin-bottom: 6px;">Correct Answer</div>
-        <span style="background: rgba(0, 230, 118, 0.1); color: #00e676; font-weight: 700; padding: 6px 14px; border-radius: 6px; font-size: 1rem;">${answerText}</span>
+        <span style="display: inline-block; background: rgba(0, 230, 118, 0.1); color: #00e676; font-weight: 700; padding: 6px 14px; border-radius: 6px; font-size: 3rem; max-width: 100%;">${answerText}</span>
     `);
 }
 
