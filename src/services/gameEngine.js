@@ -489,20 +489,26 @@ function evaluateRoundAndRevealAnswer(roomCode) {
 
     const correctLetter = room.currentQuestionData ? room.currentQuestionData.correctLetter : null;
     const points = room.currentQuestionData ? room.currentQuestionData.points : 0;
-    // The TV needs the literal answer text (not just the letter) for visual
-    // questions, which render no choice-row buttons to highlight by letter.
-    const correctAnswerText = (room.currentQuestionData && correctLetter)
-        ? room.currentQuestionData[`choice${correctLetter}`]
-        : null;
 
     if (correctLetter) {
-        Object.entries(room.answers).forEach(([playerName, submittedLetter]) => {
+        // Iterates every player, not just those who answered, so a player who
+        // sat this one out (no submission) has their streak broken same as a
+        // wrong answer -- only an unbroken run of *correct* answers counts.
+        Object.values(room.players).forEach(player => {
+            const submittedLetter = room.answers[player.name];
             if (submittedLetter === correctLetter) {
-                const player = room.players[playerName];
-                if (player) {
-                    player.score += points;
-                    player.correctAnswers = (player.correctAnswers || 0) + 1; // tiebreak for the final leaderboard
+                player.score += points;
+                player.correctAnswers = (player.correctAnswers || 0) + 1; // tiebreak for the final leaderboard
+                player.currentStreak = (player.currentStreak || 0) + 1;
+                // Every 5-in-a-row earns a stackable badge (framework for future
+                // award types -- see AWARD_DISPLAY in app.js), capped at 5 shown.
+                if (player.currentStreak >= 5) {
+                    player.currentStreak = 0;
+                    player.awards = player.awards || [];
+                    if (player.awards.length < 5) player.awards.push('STREAK5');
                 }
+            } else {
+                player.currentStreak = 0;
             }
         });
     }
@@ -510,7 +516,9 @@ function evaluateRoundAndRevealAnswer(roomCode) {
     broadcastToRoom(roomCode, {
         type: 'REVEAL_CORRECT_ANSWER',
         correctLetter,
-        correctAnswerText
+        // Lets the TV mark each player's per-round status indicator green
+        // (correct) or back to invisible (wrong/no answer) after the reveal.
+        answers: room.answers
     });
     broadcastToRoom(roomCode, {
         type: 'LEADERBOARD_UPDATE',
@@ -597,6 +605,8 @@ export function handleIncomingMessage(fromPhone, bodyText, explicitRoomCode) {
                     requestedStart: false,
                     score: 0,
                     correctAnswers: 0,
+                    currentStreak: 0,
+                    awards: [],
                     left: false,
                     joinedAt: new Date()
                 };
@@ -774,6 +784,9 @@ export function handleIncomingMessage(fromPhone, bodyText, explicitRoomCode) {
         const answerChoice = cleanText.toUpperCase();
         if (['A', 'B', 'C', 'D'].includes(answerChoice)) {
             currentRoom.answers[actingPlayerName] = answerChoice;
+            // Lets the TV light up this player's per-round status indicator
+            // immediately, without waiting for the reveal broadcast.
+            broadcastToRoom(associatedRoomCode, { type: 'ANSWER_SUBMITTED', playerName: actingPlayerName });
 
             const totalPlayersCount = Object.values(currentRoom.players).filter(p => !p.left).length;
             const totalAnswersLogged = Object.keys(currentRoom.answers).length;

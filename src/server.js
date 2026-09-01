@@ -100,19 +100,21 @@ app.post('/api/room-status', (req, res) => {
 
         // Current-round score only -- no cross-round "Game Night" total exists yet,
         // and that mechanic isn't designed, so deliberately not stubbing a field for it.
-        const myScore = (targetRoom && playerName && targetRoom.players[playerName])
-            ? targetRoom.players[playerName].score
-            : null;
+        const myPlayer = (targetRoom && playerName) ? targetRoom.players[playerName] : null;
+        const myScore = myPlayer ? myPlayer.score : null;
+        // Included in every phase (not just GAME_OVER) so the phone can show a
+        // running "X/Y correct" stat during active gameplay, not just at the end.
+        const myCorrectAnswers = myPlayer ? (myPlayer.correctAnswers || 0) : 0;
 
         if (targetRoom && targetRoom.gameState === 'CATEGORY_VOTE') {
             const categories = getCategoriesForMode(targetRoom.winningGameMode);
-            return res.json({ phase: 'CATEGORY_VOTE_PHASE', categories, myScore });
+            return res.json({ phase: 'CATEGORY_VOTE_PHASE', categories, myScore, myCorrectAnswers });
         }
         // FIX: If the clock expired and moved to gameplay, shout the round phase back to the phone poller!
         // FIX ALIGNMENT: Flatten the object parameters so it matches Phase 2 perfectly!
         if (targetRoom && targetRoom.gameState === 'GAME_ROUND' && targetRoom.activeQuestionData) {
             // activeQuestionData is already answer-safe (correctLetter stripped in gameEngine.js)
-            return res.json({ phase: 'GAME_ROUND_PHASE', ...targetRoom.activeQuestionData, myScore });
+            return res.json({ phase: 'GAME_ROUND_PHASE', ...targetRoom.activeQuestionData, myScore, myCorrectAnswers });
         }
         if (targetRoom && targetRoom.gameState === 'GAME_OVER') {
             // Same ordering the TV's final leaderboard used, so a player's phone
@@ -121,7 +123,6 @@ app.post('/api/room-status', (req, res) => {
             const finalStandings = Object.values(targetRoom.players).filter(p => !p.left).sort(compareByRank);
             const myIndex = playerName ? finalStandings.findIndex(p => p.name === playerName) : -1;
             const myRank = myIndex >= 0 ? myIndex + 1 : null;
-            const myCorrectAnswers = (targetRoom.players[playerName] && targetRoom.players[playerName].correctAnswers) || 0;
             return res.json({
                 phase: 'GAME_OVER_PHASE',
                 myScore,
@@ -130,7 +131,7 @@ app.post('/api/room-status', (req, res) => {
                 totalPlayers: finalStandings.length
             });
         }
-        return res.json({ phase: 'WAITING', myScore });
+        return res.json({ phase: 'WAITING', myScore, myCorrectAnswers });
     } catch (error) {
         return res.status(500).json({ error: 'Status track exception.' });
     }

@@ -69,6 +69,10 @@ let currentActiveRoomCode = '----';
         let toastQueue = [];
         let isToastPlaying = false;
         let cachedPlayersSnapshot = [];
+        // name -> 'answered' | 'correct'. Absent = invisible. Reset every new
+        // question (TRANSITION_TO_QUESTION); 'answered' set on ANSWER_SUBMITTED;
+        // resolved to 'correct' or deleted on REVEAL_CORRECT_ANSWER.
+        let playerAnswerStatus = {};
         let currentStatusHtml = ''; // Whatever the status slot should show at rest for the current phase (toasts restore to this)
         let currentGamePhase = 'LOBBY'; // LOBBY / CATEGORY_VOTE / GAME_ROUND / GAME_OVER -- gates the "TYPE START" nudge to lobby only
 
@@ -168,6 +172,12 @@ let currentActiveRoomCode = '----';
                 if (data.type === 'VOTE_UPDATE') {
                     updateModuleElectionUI(data.votes, data.totalVotes);
                 }
+                // A player just locked in an answer -- flip their status-indicator to
+                // "answered" (yellow) immediately, well before the round's reveal.
+                if (data.type === 'ANSWER_SUBMITTED') {
+                    playerAnswerStatus[data.playerName] = 'answered';
+                    updateLeaderboardUI(cachedPlayersSnapshot);
+                }
                 if (data.type === 'LOBBY_TIMER_TICK') {
                     document.getElementById('lobby-countdown').innerText = data.secondsLeft;
                 }
@@ -182,12 +192,18 @@ let currentActiveRoomCode = '----';
                 if (data.type === 'REVEAL_CORRECT_ANSWER') {
                     document.getElementById('room-status-text').innerText = "Round Evaluation";
                     document.getElementById('lobby-countdown').innerText = "0 s";
-                    // Visual questions render no choice-row buttons (see switchToQuestionUI),
-                    // so there's nothing to highlight -- fall back to printing the answer text.
-                    if (document.getElementById('choice-row-A')) {
-                        highlightCorrectAnswerOnTV(data.correctLetter);
-                    } else {
-                        showCorrectAnswerInStatusPanel(data.correctAnswerText);
+                    highlightCorrectAnswerOnTV(data.correctLetter);
+                    // Mark each player's status-indicator green (correct) or back to
+                    // invisible (wrong/no answer) -- the next LEADERBOARD_UPDATE (sent
+                    // right after this by the server) is what actually redraws the table.
+                    if (data.answers) {
+                        Object.keys(data.answers).forEach(name => {
+                            if (data.answers[name] === data.correctLetter) {
+                                playerAnswerStatus[name] = 'correct';
+                            } else {
+                                delete playerAnswerStatus[name];
+                            }
+                        });
                     }
                     stopCountdownMusic();
                 }
@@ -204,6 +220,9 @@ let currentActiveRoomCode = '----';
                     document.getElementById('room-status-text').innerText = "Gameplay Phase";
                     document.getElementById('lobby-countdown').innerText = "30 s"; // Reset banner clock visually
                     switchToQuestionUI(data.categoryLabel, data.questionText, data.choiceA, data.choiceB, data.choiceC, data.choiceD, data.questionNumber, data.totalQuestions, data.visualAsset);
+                    // Fresh question: every player's status-indicator goes back to invisible.
+                    playerAnswerStatus = {};
+                    updateLeaderboardUI(cachedPlayersSnapshot);
                     stopCategoryMusic();
                     playCountdownMusic();
                 }
@@ -219,14 +238,31 @@ let currentActiveRoomCode = '----';
             };
         }
 
+        // Award-type framework: each entry in a player's `awards` array renders
+        // via this lookup, so adding a new award later (e.g. a fastest-answer
+        // lightning bolt) is just one more entry here, no other code to touch.
+        const AWARD_DISPLAY = {
+            STREAK5: { icon: '5', pulse: true, title: '5 correct answers in a row' }
+        };
+
+        function renderAwardBadges(awards) {
+            return (awards || []).map(type => {
+                const def = AWARD_DISPLAY[type];
+                if (!def) return '';
+                return `<span class="award-badge${def.pulse ? ' award-pulse' : ''}" title="${def.title || ''}">${def.icon}</span>`;
+            }).join('');
+        }
+
         function updateLeaderboardUI(playersList) {
             document.getElementById('lobby-player-count').innerText = playersList.length;
             const tbody = document.getElementById('leaderboard-rows');
-            
+
             if (!playersList || playersList.length === 0) {
                 tbody.innerHTML = `
                     <tr>
+                        <td class="indicator-col"></td>
                         <td class="rank-col" style="color: #222630;">—</td>
+                        <td class="awards-col"></td>
                         <td class="emoji-col" style="color: #222630;">👤</td>
                         <td class="name-col" style="color: #64748b; font-style: italic;">Lobby is empty...</td>
                         <td class="score-col" style="color: #222630;">0</td>
@@ -250,8 +286,12 @@ let currentActiveRoomCode = '----';
 
             playersList.forEach((player, index) => {
                 const row = document.createElement('tr');
+                const status = playerAnswerStatus[player.name]; // 'answered' | 'correct' | undefined
+                const indicatorClass = status === 'correct' ? 'correct' : (status === 'answered' ? 'answered' : '');
                 row.innerHTML = `
+                    <td class="indicator-col"><span class="status-indicator ${indicatorClass}"></span></td>
                     <td class="rank-col">${index + 1}</td>
+                    <td class="awards-col">${renderAwardBadges(player.awards)}</td>
                     <td class="emoji-col">${player.emoji || '👤'}</td>
                     <td class="name-col">${player.name}</td>
                     <td class="score-col">${player.score || 0}</td>
@@ -429,25 +469,48 @@ let currentActiveRoomCode = '----';
                 <div style="font-weight: 600; color: #64748b;">Question ${questionNumber || '?'} / ${totalQuestions || '?'}</div>
             `);
 
-            // Visual questions (Country Monkey's highlighted-map SVGs, etc.) already
-            // show the same 4 choices on the player's phone -- repeating them here
-            // would just compete with the image for space, so these go image-first
-            // instead, with no choice grid at all. There's nothing to highlight on
-            // reveal in that case, so REVEAL_CORRECT_ANSWER instead prints the real
-            // answer text into the status panel (see showCorrectAnswerInStatusPanel).
+            // Choice-row markup is identical whether or not there's a visual_asset --
+            // reveal always works by highlighting the correct row (highlightCorrectAnswerOnTV),
+            // so this stays the single source of truth for what "the choices" look like.
+            const choiceGrid = `
+                <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; width: 100%;">
+                    <div id="choice-row-A" style="background: #1e222b; border: 1px solid #222630; border-radius: 8px; padding: 16px; display: flex; align-items: center; gap: 12px; transition: all 0.3s ease;">
+                        <span style="background: rgba(0, 230, 118, 0.1); color: #00e676; font-weight: 700; padding: 4px 10px; border-radius: 4px; font-size: 0.85rem;">A</span>
+                        <span style="font-size: 1rem; font-weight: 500; color: #e2e5e9;">${choiceA}</span>
+                    </div>
+                    <div id="choice-row-B" style="background: #1e222b; border: 1px solid #222630; border-radius: 8px; padding: 16px; display: flex; align-items: center; gap: 12px; transition: all 0.3s ease;">
+                        <span style="background: rgba(0, 230, 118, 0.1); color: #00e676; font-weight: 700; padding: 4px 10px; border-radius: 4px; font-size: 0.85rem;">B</span>
+                        <span style="font-size: 1rem; font-weight: 500; color: #e2e5e9;">${choiceB}</span>
+                    </div>
+                    <div id="choice-row-C" style="background: #1e222b; border: 1px solid #222630; border-radius: 8px; padding: 16px; display: flex; align-items: center; gap: 12px; transition: all 0.3s ease;">
+                        <span style="background: rgba(0, 230, 118, 0.1); color: #00e676; font-weight: 700; padding: 4px 10px; border-radius: 4px; font-size: 0.85rem;">C</span>
+                        <span style="font-size: 1rem; font-weight: 500; color: #e2e5e9;">${choiceC}</span>
+                    </div>
+                    <div id="choice-row-D" style="background: #1e222b; border: 1px solid #222630; border-radius: 8px; padding: 16px; display: flex; align-items: center; gap: 12px; transition: all 0.3s ease;">
+                        <span style="background: rgba(0, 230, 118, 0.1); color: #00e676; font-weight: 700; padding: 4px 10px; border-radius: 4px; font-size: 0.85rem;">D</span>
+                        <span style="font-size: 1rem; font-weight: 500; color: #e2e5e9;">${choiceD}</span>
+                    </div>
+                </div>
+            `;
+
+            // Visual questions (Country Monkey's highlighted-map SVGs, etc.) put the
+            // image on the left and the choice buttons on the right, instead of
+            // stacking the choices under a full-width question block -- naming the
+            // country in text next to its own map was redundant with the buttons.
             if (visualAsset) {
                 panel.innerHTML = `
                     <div class="panel-box" style="padding: 40px; flex: 1; display: flex; flex-direction: row; align-items: center; gap: 32px; box-sizing: border-box; min-height: 400px;">
                         <div style="flex: 1; text-align: center;">
                             <img src="${visualAsset}" alt="" style="max-width: 100%; max-height: 340px; border-radius: 8px;">
                         </div>
-                        <div style="flex: 1; text-align: left;">
-                            <div style="font-size: 0.85rem; font-weight: 600; color: #64748b; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 16px;">
+                        <div style="flex: 1; text-align: left; display: flex; flex-direction: column; gap: 16px;">
+                            <div style="font-size: 0.85rem; font-weight: 600; color: #64748b; text-transform: uppercase; letter-spacing: 0.08em;">
                                 Active Deck: ${categoryLabel}
                             </div>
-                            <div style="font-size: 1.4rem; font-weight: 600; color: #ffffff; line-height: 1.4; letter-spacing: -0.01em;">
+                            <div style="font-size: 1.2rem; font-weight: 600; color: #ffffff; line-height: 1.3; letter-spacing: -0.01em;">
                                 ${questionText}
                             </div>
+                            ${choiceGrid}
                         </div>
                     </div>
                 `;
@@ -465,24 +528,7 @@ let currentActiveRoomCode = '----';
                         ${questionText}
                     </div>
 
-                    <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; width: 100%;">
-                        <div id="choice-row-A" style="background: #1e222b; border: 1px solid #222630; border-radius: 8px; padding: 16px; display: flex; align-items: center; gap: 12px; transition: all 0.3s ease;">
-                            <span style="background: rgba(0, 230, 118, 0.1); color: #00e676; font-weight: 700; padding: 4px 10px; border-radius: 4px; font-size: 0.85rem;">A</span>
-                            <span style="font-size: 1rem; font-weight: 500; color: #e2e5e9;">${choiceA}</span>
-                        </div>
-                        <div id="choice-row-B" style="background: #1e222b; border: 1px solid #222630; border-radius: 8px; padding: 16px; display: flex; align-items: center; gap: 12px; transition: all 0.3s ease;">
-                            <span style="background: rgba(0, 230, 118, 0.1); color: #00e676; font-weight: 700; padding: 4px 10px; border-radius: 4px; font-size: 0.85rem;">B</span>
-                            <span style="font-size: 1rem; font-weight: 500; color: #e2e5e9;">${choiceB}</span>
-                        </div>
-                        <div id="choice-row-C" style="background: #1e222b; border: 1px solid #222630; border-radius: 8px; padding: 16px; display: flex; align-items: center; gap: 12px; transition: all 0.3s ease;">
-                            <span style="background: rgba(0, 230, 118, 0.1); color: #00e676; font-weight: 700; padding: 4px 10px; border-radius: 4px; font-size: 0.85rem;">C</span>
-                            <span style="font-size: 1rem; font-weight: 500; color: #e2e5e9;">${choiceC}</span>
-                        </div>
-                        <div id="choice-row-D" style="background: #1e222b; border: 1px solid #222630; border-radius: 8px; padding: 16px; display: flex; align-items: center; gap: 12px; transition: all 0.3s ease;">
-                            <span style="background: rgba(0, 230, 118, 0.1); color: #00e676; font-weight: 700; padding: 4px 10px; border-radius: 4px; font-size: 0.85rem;">D</span>
-                            <span style="font-size: 1rem; font-weight: 500; color: #e2e5e9;">${choiceD}</span>
-                        </div>
-                    </div>
+                    ${choiceGrid}
                 </div>
             `;
         }
@@ -509,16 +555,6 @@ function switchToGameOverUI(players) {
 
     currentGamePhase = 'GAME_OVER';
     setStatusMessage(`<div style="font-weight: 600; color: #8892b0;">Match complete</div>`);
-}
-
-// Reveal path for visual questions, which have no choice-row buttons to
-// highlight -- prints the actual answer text into the status panel instead,
-// styled with the same green "correct" look used on the choice-row letters.
-function showCorrectAnswerInStatusPanel(answerText) {
-    setStatusMessage(`
-        <div style="font-weight: 600; color: #64748b; margin-bottom: 6px;">Correct Answer</div>
-        <span style="display: inline-block; background: rgba(0, 230, 118, 0.1); color: #00e676; font-weight: 700; padding: 6px 14px; border-radius: 6px; font-size: 3rem; max-width: 100%;">${answerText}</span>
-    `);
 }
 
 function highlightCorrectAnswerOnTV(correctLetter) {

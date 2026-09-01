@@ -73,6 +73,13 @@
 
         .logo-header { height: 34px; width: auto; margin: 0 auto 10px auto; display: block; }
 
+        /* Light, unobtrusive context appended after a module's name -- never
+           competes with the name itself for attention. */
+        .module-descriptor { color: #64748b; font-weight: 400; font-size: 0.78rem; }
+
+        /* Small, non-dominant "X/Y correct" stat under the question badge. */
+        .correct-stat { color: #64748b; font-size: 0.8rem; font-weight: 500; text-align: right; margin: -16px 0 20px 0; }
+
         /* Mirrors the TV's final-leaderboard medal styling (public/styles.css) so a
            player's own placement card reads as "the same result," not a re-skin. */
         .leaderboard-btn { background: #1e222b; border: 1px solid #222630; border-radius: 8px; padding: 16px 20px; display: flex; justify-content: space-between; align-items: center; text-align: left; margin-top: 16px; }
@@ -137,11 +144,11 @@
         <div class="input-group">
             <label>Select Module Preference</label>
             <div class="module-list">
-                <div class="module-row" onclick="selectModule(this, 'TRIVI_YEAH')">Trivi-yeah!</div>
-                <div class="module-row" onclick="selectModule(this, 'COUNTRY_MONKEY')">Country Monkey</div>
-                <div class="module-row" onclick="selectModule(this, 'EMPOSSDURR')">EmpossDurr</div>
-                <div class="module-row" onclick="selectModule(this, 'FLAG_ME_DOWN')">Flag Me Down</div>
-                <div class="module-row" onclick="selectModule(this, 'ON_THE_SPECTRUM')">On The Spectrum</div>
+                <div class="module-row" onclick="selectModule(this, 'TRIVI_YEAH')">Trivi-yeah! <span class="module-descriptor">Multiple-choice trivia across a mix of subjects.</span></div>
+                <div class="module-row" onclick="selectModule(this, 'COUNTRY_MONKEY')">Country Monkey <span class="module-descriptor">Guess the highlighted country on the map.</span></div>
+                <div class="module-row" onclick="selectModule(this, 'EMPOSSDURR')">EmpossDurr <span class="module-descriptor">Find the impostor hiding in the group.</span></div>
+                <div class="module-row" onclick="selectModule(this, 'FLAG_ME_DOWN')">Flag Me Down <span class="module-descriptor">World and historical flags, banners, and symbols.</span></div>
+                <div class="module-row" onclick="selectModule(this, 'ON_THE_SPECTRUM')">On The Spectrum <span class="module-descriptor">Guess where it lands between two extremes.</span></div>
             </div>
         </div>
 
@@ -189,6 +196,7 @@
             <span class="player-badge-identity"><span id="q-badge-emoji">-</span> <span id="q-badge-name" class="player-badge-name">-</span></span>
             <span class="player-badge-room">Room <strong id="q-badge-room">-</strong> · Score <strong id="q-badge-score">0</strong></span>
         </div>
+        <div id="q-correct-stat" class="correct-stat">0/0 correct</div>
 
         <div id="question-text-display" style="text-align: left; font-size: 1.1rem; font-weight: 600; color: #ffffff; line-height: 1.4; margin: 20px 0;"></div>
 
@@ -365,6 +373,7 @@
             document.getElementById('q-badge-emoji').innerText = chosenAvatar;
             document.getElementById('q-badge-room').innerText = roomCode;
             document.getElementById('question-meta').innerText = `${data.categoryLabel || ''} · Q${data.questionNumber || '?'}/${data.totalQuestions || '?'} · ${data.points || 0} pts`;
+            document.getElementById('q-correct-stat').innerText = `${data.myCorrectAnswers || 0}/${data.totalQuestions || '?'} correct`;
             document.getElementById('question-text-display').innerText = data.questionText || '';
 
             document.getElementById('choice-text-A').innerText = data.choiceA || '-';

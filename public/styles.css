@@ -143,10 +143,52 @@ body {
             border-bottom: 1px solid #1e222b;
             font-size: 1.05rem;
         }
-        .rank-col { width: 12%; color: #64748b; font-weight: 600; }
-        .emoji-col { width: 15%; font-size: 1.2rem; text-align: left; }
-        .name-col { width: 53%; font-weight: 500; color: #ffffff; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .indicator-col { width: 6%; }
+        .rank-col { width: 9%; color: #64748b; font-weight: 600; }
+        .awards-col { width: 13%; white-space: nowrap; }
+        .emoji-col { width: 12%; font-size: 1.2rem; text-align: left; }
+        .name-col { width: 40%; font-weight: 500; color: #ffffff; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
         .score-col { width: 20%; text-align: right; color: #00e676; font-weight: 600; }
+
+        /* Per-round answer status "light" -- invisible until a player submits
+           (light yellow), then either turns green (correct) or reverts to
+           invisible (wrong/no answer) once the reveal fires. Never red --
+           the reveal only ever calls out correctness, not failure. */
+        .status-indicator {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: transparent;
+            transition: background-color 0.3s ease;
+        }
+        .status-indicator.answered { background: #ffd54f; }
+        .status-indicator.correct { background: #00e676; }
+
+        /* Stackable in-round achievement badges (framework -- see AWARD_DISPLAY
+           in app.js for how new award types plug in). */
+        .award-badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #00e676;
+            color: #0d0e11;
+            font-size: 0.7rem;
+            font-weight: 700;
+            margin-right: 4px;
+        }
+        .award-pulse { animation: awardPulse 1.6s ease-in-out infinite; }
+        @keyframes awardPulse {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.35); }
+            50% { box-shadow: 0 0 6px 3px rgba(255, 255, 255, 0.35); }
+        }
+
+        /* Light, unobtrusive context appended after a module's name -- never
+           competes with the name itself for attention. */
+        .module-descriptor { color: #64748b; font-weight: 400; font-size: 0.8rem; }
                 /* Sliding Toast Alert Notification Window Styles */
         .toast-container {
             position: fixed;
