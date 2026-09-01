@@ -248,6 +248,55 @@
         let chosenModule = '';
         let roomStateTrackerInterval = null;
 
+        // Silent reconnect for a reload/dropped connection -- NOT for an
+        // explicit "Leave Room" (that's respected, not overridden). A stored
+        // room+name alone can't prove it's really the same device (anyone
+        // could plant those in their own browser), so this peeks at
+        // /api/room-status first rather than resubmitting the join form
+        // outright; the actual identity proof (the session token) only
+        // matters once a join message is sent, which this path skips
+        // entirely for an already-active player -- polling and answering
+        // both resolve by name alone once you're in, no rejoin required.
+        (async function attemptAutoResume() {
+            const storedRoom = localStorage.getItem('randomania_roomcode');
+            const storedName = localStorage.getItem('randomania_nickname');
+            if (!storedRoom || !storedName) return;
+
+            try {
+                const response = await fetch('/api/room-status', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ roomCode: storedRoom, playerName: storedName })
+                });
+                const data = await response.json();
+
+                // No matching player -- the room's gone, or this was never a
+                // real session. Nothing to resume; normal login screen stands.
+                if (!data || data.myScore === null || data.myScore === undefined) return;
+
+                if (data.myLeft) {
+                    // They chose to leave -- don't silently drop them back in.
+                    // Pre-fill the form so rejoining is still just one tap,
+                    // matching what Leave Room itself already sets up.
+                    document.getElementById('room-code').value = storedRoom;
+                    document.getElementById('player-name').value = storedName;
+                    return;
+                }
+
+                // Still an active player -- resume straight into the game, no
+                // form, no re-picking an avatar or a mode vote.
+                chosenAvatar = data.myEmoji || chosenAvatar;
+                document.getElementById('badge-emoji').innerText = chosenAvatar;
+                document.getElementById('badge-name').innerText = storedName;
+                document.getElementById('badge-room').innerText = storedRoom;
+                document.getElementById('login-screen').style.display = "none";
+                document.getElementById('game-screen').style.display = "block";
+                initRoomStatePoller(storedRoom, storedName);
+            } catch (e) {
+                console.error("Auto-resume check failed:", e);
+            }
+        })();
+
         function selectAvatar(element, avatarChar) {
             const btns = document.getElementsByClassName("emoji-btn");
             for (let i = 0; i < btns.length; i++) { btns[i].classList.remove("selected"); }
@@ -284,7 +333,7 @@
                 const response = await fetch('/api/message', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ From: name, Body: completeBodyText })
+                    body: JSON.stringify({ From: name, Body: completeBodyText, sessionToken: localStorage.getItem('randomania_sessiontoken') })
                 });
                 const data = await response.json();
 
@@ -294,6 +343,11 @@
                 }
 
                 localStorage.setItem('randomania_roomcode', room);
+                // Proves later requests claiming this name are from the same
+                // device -- without it, anyone could retype a taken name and
+                // inherit that player's score the moment they leave (or even
+                // right now, if this join is itself a silent reclaim).
+                if (data.sessionToken) localStorage.setItem('randomania_sessiontoken', data.sessionToken);
 
                 document.getElementById('badge-name').innerText = name;
                 document.getElementById('badge-room').innerText = room;

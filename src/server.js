@@ -77,14 +77,21 @@ app.get('/api/create-room', (req, res) => {
 
 app.post('/api/message', async (req, res) => {
     try {
-        const { From, Body, roomCode } = req.body;
+        const { From, Body, roomCode, sessionToken } = req.body;
         if (!From || !Body) return res.status(400).json({ success: false, reply: 'Missing parameters.' });
 
-        const engineResponse = await handleIncomingMessage(From, Body, roomCode);
-        if (typeof engineResponse === 'string' && engineResponse.startsWith('⚠️')) {
-            return res.json({ success: false, reply: engineResponse });
+        const engineResponse = await handleIncomingMessage(From, Body, roomCode, sessionToken);
+        // Every non-join reply is a plain string. A successful join/rejoin is the
+        // one case that returns { reply, sessionToken } instead -- the phone needs
+        // that token back so it can silently reclaim this same name later (see
+        // play.html's auto-resume flow).
+        if (typeof engineResponse === 'string') {
+            if (engineResponse.startsWith('⚠️')) {
+                return res.json({ success: false, reply: engineResponse });
+            }
+            return res.json({ success: true, reply: engineResponse });
         }
-        return res.json({ success: true, reply: engineResponse });
+        return res.json({ success: true, reply: engineResponse.reply, sessionToken: engineResponse.sessionToken });
     } catch (error) {
         return res.status(500).json({ success: false, reply: 'Engine error.' });
     }
@@ -106,22 +113,28 @@ app.post('/api/room-status', (req, res) => {
         // Included in every phase (not just GAME_OVER) so the phone can show a
         // running "X/Y correct" stat during active gameplay, not just at the end.
         const myCorrectAnswers = myPlayer ? (myPlayer.correctAnswers || 0) : 0;
+        // Lets a reloaded phone (play.html's auto-resume check) tell "still an
+        // active player, safe to silently resume" apart from "explicitly left,
+        // don't drop them back in without asking" -- and restore the right
+        // avatar without needing to remember it client-side.
+        const myLeft = myPlayer ? !!myPlayer.left : null;
+        const myEmoji = myPlayer ? myPlayer.emoji : null;
 
         // Covers both a fresh join and a "return to lobby" reset after
         // GAME_OVER -- either way, the phone's poller just needs to know to
         // show the "Vote START to lock in" screen.
         if (targetRoom && targetRoom.gameState === 'LOBBY') {
-            return res.json({ phase: 'LOBBY_PHASE', myScore, myCorrectAnswers });
+            return res.json({ phase: 'LOBBY_PHASE', myScore, myCorrectAnswers, myLeft, myEmoji });
         }
         if (targetRoom && targetRoom.gameState === 'CATEGORY_VOTE') {
             const categories = getCategoriesForMode(targetRoom.winningGameMode);
-            return res.json({ phase: 'CATEGORY_VOTE_PHASE', categories, myScore, myCorrectAnswers });
+            return res.json({ phase: 'CATEGORY_VOTE_PHASE', categories, myScore, myCorrectAnswers, myLeft, myEmoji });
         }
         // FIX: If the clock expired and moved to gameplay, shout the round phase back to the phone poller!
         // FIX ALIGNMENT: Flatten the object parameters so it matches Phase 2 perfectly!
         if (targetRoom && targetRoom.gameState === 'GAME_ROUND' && targetRoom.activeQuestionData) {
             // activeQuestionData is already answer-safe (correctLetter stripped in gameEngine.js)
-            return res.json({ phase: 'GAME_ROUND_PHASE', ...targetRoom.activeQuestionData, myScore, myCorrectAnswers });
+            return res.json({ phase: 'GAME_ROUND_PHASE', ...targetRoom.activeQuestionData, myScore, myCorrectAnswers, myLeft, myEmoji });
         }
         if (targetRoom && targetRoom.gameState === 'GAME_OVER') {
             // Same ordering the TV's final leaderboard used, so a player's phone
@@ -135,10 +148,12 @@ app.post('/api/room-status', (req, res) => {
                 myScore,
                 myRank,
                 myCorrectAnswers,
-                totalPlayers: finalStandings.length
+                totalPlayers: finalStandings.length,
+                myLeft,
+                myEmoji
             });
         }
-        return res.json({ phase: 'WAITING', myScore, myCorrectAnswers });
+        return res.json({ phase: 'WAITING', myScore, myCorrectAnswers, myLeft, myEmoji });
     } catch (error) {
         return res.status(500).json({ error: 'Status track exception.' });
     }

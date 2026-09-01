@@ -1,4 +1,5 @@
 import pool from '../config/database.js';
+import { randomUUID } from 'node:crypto';
 
 export const activeRooms = {};
 
@@ -618,7 +619,7 @@ function evaluateRoundAndRevealAnswer(roomCode) {
 // ==========================================
 // MASTER PACKET DATA INTAKE GATEWAY
 // ==========================================
-export function handleIncomingMessage(fromPhone, bodyText, explicitRoomCode) {
+export function handleIncomingMessage(fromPhone, bodyText, explicitRoomCode, presentedToken) {
     const cleanText = bodyText.trim();
     const parts = cleanText.split(' ');
     
@@ -649,10 +650,6 @@ export function handleIncomingMessage(fromPhone, bodyText, explicitRoomCode) {
         const currentRoom = activeRooms[roomCode];
         if (currentRoom) currentRoom.lastActivity = Date.now();
 
-        // Late joins are welcome any time before the match wraps up -- their
-        // phone's status poller will catch them up to whatever phase is live.
-        if (currentRoom.gameState === 'GAME_OVER') return "⚠️ This match has already ended.";
-
         if (parts.length >= 4) {
             parts.shift(); // Evacuate code segment
             const votedModule = parts.pop();
@@ -665,19 +662,36 @@ export function handleIncomingMessage(fromPhone, bodyText, explicitRoomCode) {
             // Display-side truncation (ellipsis) handles anything still too long to fit visually.
             if (playerNickname.length > MAX_NAME_LENGTH) return `⚠️ Nickname too long (max ${MAX_NAME_LENGTH} characters).`;
 
-            // A name still held by an active (non-left) player is a genuine collision.
-            // A name held by someone who used "Leave Room" is a rejoin -- reuse the
-            // same slot so their score/correctAnswers survive the trip, rather than
-            // blocking them or starting them back over at zero.
+            // A name already claimed by someone else is a genuine collision --
+            // whether that identity is currently active or was left behind by
+            // whoever holds it. Matching the stored session token is what lets
+            // the SAME device silently reclaim its own name later (this is the
+            // whole point of the token -- a stranger retyping a taken name,
+            // active or not, can't just inherit it). A brand-new name has no
+            // existingPlayer at all, so this never blocks a genuine first join.
             const existingPlayer = currentRoom.players[playerNickname];
-            if (existingPlayer && !existingPlayer.left) return `⚠️ Name taken inside Room ${roomCode}.`;
+            if (existingPlayer && existingPlayer.sessionToken !== presentedToken) {
+                return `⚠️ Name taken inside Room ${roomCode}.`;
+            }
 
+            // Late joins are welcome any time before the match wraps up -- their
+            // phone's status poller will catch them up to whatever phase is live.
+            // A finished match still lets its OWN players reconnect (e.g. an
+            // auto-resume after the game already ended) -- it just won't let a
+            // brand-new stranger join one that's already over.
+            if (currentRoom.gameState === 'GAME_OVER' && !existingPlayer) {
+                return "⚠️ This match has already ended.";
+            }
+
+            let sessionToken;
             if (existingPlayer) {
                 existingPlayer.left = false;
                 existingPlayer.phoneHandle = fromPhone;
                 existingPlayer.emoji = playerEmoji;
                 existingPlayer.vote = votedModule;
+                sessionToken = existingPlayer.sessionToken;
             } else {
+                sessionToken = randomUUID();
                 currentRoom.players[playerNickname] = {
                     phoneHandle: fromPhone,
                     name: playerNickname,
@@ -690,6 +704,7 @@ export function handleIncomingMessage(fromPhone, bodyText, explicitRoomCode) {
                     currentStreak: 0,
                     timesFastest: 0, // lifetime count, purely for tie-breaking -- independent of the bolt badge's live per-round status
                     awards: {},
+                    sessionToken, // proves later requests claiming this name are from the same device -- see play.html's auto-resume flow
                     left: false,
                     joinedAt: new Date()
                 };
@@ -712,12 +727,15 @@ export function handleIncomingMessage(fromPhone, bodyText, explicitRoomCode) {
                 startLobbyCountdown(roomCode);
                 broadcastToRoom(roomCode, { type: 'LOBBY_TIMER_TICK', secondsLeft: "60 s" });
 
-                return `Welcome to RandoMania, ${playerNickname}! Entry logged live.`;
+                return { reply: `Welcome to RandoMania, ${playerNickname}! Entry logged live.`, sessionToken };
             }
 
-            return existingPlayer
-                ? `Welcome back, ${playerNickname}! Rejoining Room ${roomCode} with your score intact.`
-                : `Welcome to RandoMania, ${playerNickname}! Jumping into the action already in progress.`;
+            return {
+                reply: existingPlayer
+                    ? `Welcome back, ${playerNickname}! Rejoining Room ${roomCode} with your score intact.`
+                    : `Welcome to RandoMania, ${playerNickname}! Jumping into the action already in progress.`,
+                sessionToken
+            };
         }
     }
 
