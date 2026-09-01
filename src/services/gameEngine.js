@@ -505,25 +505,29 @@ function evaluateRoundAndRevealAnswer(roomCode) {
                 player.score += points;
                 player.correctAnswers = (player.correctAnswers || 0) + 1; // tiebreak for the final leaderboard
                 player.currentStreak = (player.currentStreak || 0) + 1;
-                // Every 5-in-a-row earns a stackable badge (framework for future
-                // award types -- see AWARD_DISPLAY in app.js), capped per-type at 5 shown.
+                // Every 5-in-a-row bumps a single badge's level (framework for future
+                // award types -- see AWARD_DISPLAY in app.js) instead of stacking a new
+                // icon -- the badge's own label climbs 5/10/15/... capped at level 5.
                 if (player.currentStreak >= 5) {
                     player.currentStreak = 0;
-                    player.awards = player.awards || [];
-                    if (player.awards.filter(a => a === 'STREAK5').length < 5) player.awards.push('STREAK5');
+                    player.awards = player.awards || {};
+                    if ((player.awards.STREAK5 || 0) < 5) {
+                        player.awards.STREAK5 = (player.awards.STREAK5 || 0) + 1;
+                    }
                 }
             } else {
                 player.currentStreak = 0;
             }
 
-            // Fastest-to-answer 3 rounds in a row earns a stackable lightning
-            // bolt badge, same per-type cap as STREAK5.
+            // Fastest-to-answer 3 rounds in a row earns a single (non-stacking)
+            // lightning bolt badge -- once earned it's a flat achievement, not a
+            // counter, so re-crossing the 3-streak threshold again is a no-op.
             if (player.name === fastestPlayerName) {
                 player.fastestStreak = (player.fastestStreak || 0) + 1;
                 if (player.fastestStreak >= 3) {
                     player.fastestStreak = 0;
-                    player.awards = player.awards || [];
-                    if (player.awards.filter(a => a === 'SPEED3').length < 5) player.awards.push('SPEED3');
+                    player.awards = player.awards || {};
+                    player.awards.SPEED3 = 1;
                 }
             } else {
                 player.fastestStreak = 0;
@@ -626,7 +630,7 @@ export function handleIncomingMessage(fromPhone, bodyText, explicitRoomCode) {
                     correctAnswers: 0,
                     currentStreak: 0,
                     fastestStreak: 0,
-                    awards: [],
+                    awards: {},
                     left: false,
                     joinedAt: new Date()
                 };
