@@ -236,6 +236,10 @@
         <div id="game-over-content">
             <p class="subtitle" style="margin-bottom: 0;">Thanks for playing! Check the TV screen for the final leaderboard.</p>
         </div>
+        <!-- Outside #game-over-content on purpose -- renderGameOver() replaces that
+             div's innerHTML every time, which would wipe this button out with it. -->
+        <button class="btn" onclick="requestPlayAgain()">Play Again</button>
+        <div id="playagain-feedback" class="feedback"></div>
         <audio id="horn-sound" src="/audio/horn.wav" preload="auto"></audio>
     </div>
 
@@ -357,15 +361,27 @@
                             }
                         }
 
-                        // Loop exhausted its question bank: stop polling and show this
-                        // player's own placement (mirrors the TV's medal styling).
+                        // Loop exhausted its question bank: show this player's own placement
+                        // (mirrors the TV's medal styling). Polling keeps running (not
+                        // cleared here anymore) so this phone can still detect a
+                        // "return to lobby" reset if the room votes to play again.
                         if (data.phase === 'GAME_OVER_PHASE') {
                             document.getElementById('category-screen').style.display = "none";
                             document.getElementById('game-screen').style.display = "none";
                             document.getElementById('question-screen').style.display = "none";
                             document.getElementById('game-over-screen').style.display = "block";
                             renderGameOver(data, nickname);
-                            clearInterval(roomStateTrackerInterval);
+                        }
+
+                        // Post-game consensus reset the room -- same code, same roster,
+                        // every stat cleared. Every player's phone (not just whoever
+                        // tapped Play Again) bounces back to the "Vote START" screen.
+                        if (data.phase === 'LOBBY_PHASE') {
+                            document.getElementById('category-screen').style.display = "none";
+                            document.getElementById('question-screen').style.display = "none";
+                            document.getElementById('game-over-screen').style.display = "none";
+                            document.getElementById('game-screen').style.display = "block";
+                            activeQuestionId = null; // next game's first question should always render fresh
                         }
                     }
                 } catch (e) {
@@ -480,6 +496,29 @@
                 document.getElementById('game-input').value = ""; 
             } catch (error) {
                 showFeedback(feedback, "❌ Action transmission failed.", "rgba(255,71,87,0.06)", "#ff4757", "rgba(255,71,87,0.1)");
+            }
+        }
+
+        // One-tap consensus vote from the game-over screen -- same STAT mechanic
+        // as the lobby's "type START" input, just as a button instead of a text
+        // field. Once every active player has tapped it, the server resets the
+        // room and every phone's poller (LOBBY_PHASE) bounces back automatically.
+        async function requestPlayAgain() {
+            const feedback = document.getElementById('playagain-feedback');
+            const registeredName = localStorage.getItem('randomania_nickname') || 'test-handset';
+
+            showFeedback(feedback, "Locking in...", "rgba(255,165,0,0.06)", "#ffa500", "rgba(255,165,0,0.1)");
+
+            try {
+                const response = await fetch('/api/message', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ From: registeredName, Body: 'START', roomCode: localStorage.getItem('randomania_roomcode') })
+                });
+                const data = await response.json();
+                showFeedback(feedback, data.reply, "rgba(0,230,118,0.06)", "#00e676", "rgba(0,230,118,0.1)");
+            } catch (error) {
+                showFeedback(feedback, "❌ Transmission failed.", "rgba(255,71,87,0.06)", "#ff4757", "rgba(255,71,87,0.1)");
             }
         }
 

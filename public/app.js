@@ -238,6 +238,19 @@ let currentActiveRoomCode = '----';
                     switchToGameOverUI(data.players);
                     playAudioTrack('win-music');
                 }
+                // Post-game consensus (everyone voting START from the game-over
+                // screen) sends everyone back to the mode-election lobby -- same
+                // room code and roster, every stat wiped for a genuinely fresh game.
+                if (data.type === 'RETURN_TO_LOBBY') {
+                    document.getElementById('room-status-text').innerText = "Connected Live";
+                    document.getElementById('lobby-countdown').innerText = "60s";
+                    stopCategoryMusic();
+                    stopCountdownMusic();
+                    switchToLobbyVoteUI();
+                    // Otherwise the last round's green "correct" dot would still be
+                    // sitting next to a player's name on the fresh lobby screen.
+                    playerAnswerStatus = {};
+                }
             };
         }
 
@@ -563,6 +576,42 @@ let currentActiveRoomCode = '----';
             `;
         }
         
+// Rebuilds the "Active Module Election" panel from scratch -- switchToCategoryVotingUI/
+// switchToQuestionUI/switchToGameOverUI all overwrite this same #active-content-stage,
+// so returning to the lobby (post-game consensus) needs to reconstruct the exact
+// markup index.html originally shipped with, not just toggle visibility.
+function switchToLobbyVoteUI() {
+    const panel = document.getElementById('active-content-stage');
+    panel.innerHTML = `
+        <div class="panel-box">
+            <h2 class="panel-title">Active Module Election</h2>
+            <div style="display: flex; flex-direction: column;">
+                <div class="vote-row">
+                    <div class="vote-meta"><span>Trivi-yeah! <span class="module-descriptor">Multiple-choice trivia across a mix of subjects.</span></span><span id="vcount-TRIVI_YEAH" style="color: #64748b;">0 votes (0%)</span></div>
+                    <div class="progress-track"><div id="vbar-TRIVI_YEAH" class="progress-fill"></div></div>
+                </div>
+                <div class="vote-row">
+                    <div class="vote-meta"><span>Country Monkey <span class="module-descriptor">Guess the highlighted country on the map.</span></span><span id="vcount-COUNTRY_MONKEY" style="color: #64748b;">0 votes (0%)</span></div>
+                    <div class="progress-track"><div id="vbar-COUNTRY_MONKEY" class="progress-fill" style="background: #ffa500;"></div></div>
+                </div>
+                <div class="vote-row">
+                    <div class="vote-meta"><span>EmpossDurr <span class="module-descriptor">Find the impostor hiding in the group.</span></span><span id="vcount-EMPOSSDURR" style="color: #64748b;">0 votes (0%)</span></div>
+                    <div class="progress-track"><div id="vbar-EMPOSSDURR" class="progress-fill" style="background: #ff4757;"></div></div>
+                </div>
+                <div class="vote-row">
+                    <div class="vote-meta"><span>Flag Me Down <span class="module-descriptor">World and historical flags, banners, and symbols.</span></span><span id="vcount-FLAG_ME_DOWN" style="color: #64748b;">0 votes (0%)</span></div>
+                    <div class="progress-track"><div id="vbar-FLAG_ME_DOWN" class="progress-fill" style="background: #2d9cdb;"></div></div>
+                </div>
+                <div class="vote-row">
+                    <div class="vote-meta"><span>On The Spectrum <span class="module-descriptor">Guess where it lands between two extremes.</span></span><span id="vcount-ON_THE_SPECTRUM" style="color: #64748b;">0 votes (0%)</span></div>
+                    <div class="progress-track"><div id="vbar-ON_THE_SPECTRUM" class="progress-fill" style="background: #bb6bd9;"></div></div>
+                </div>
+            </div>
+        </div>
+    `;
+    currentGamePhase = 'LOBBY';
+}
+
 function switchToGameOverUI(players) {
     const panel = document.getElementById('active-content-stage');
     const topThree = [...(players || [])].sort(compareByRank).slice(0, 3);

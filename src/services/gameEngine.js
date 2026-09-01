@@ -425,6 +425,59 @@ function endGame(roomCode) {
     });
 }
 
+// Triggered by post-game consensus (every active player voting START while
+// GAME_OVER) -- keeps the room code and roster intact (nobody rescans a QR
+// code or retypes their name) but wipes every game-specific stat clean, per
+// the explicit "no score/badges/streaks carry over" design: this starts a
+// fresh game, not a running Game Night total. Mode votes are the one thing
+// left untouched -- they're cast once at join time with no separate "change
+// your vote" command, so clearing them would leave a player with no way to
+// ever vote again.
+function resetRoomToLobby(roomCode) {
+    const room = activeRooms[roomCode];
+    if (!room) return;
+
+    if (room.timerInterval) { clearInterval(room.timerInterval); room.timerInterval = null; }
+    if (room.categoryTimerInterval) { clearInterval(room.categoryTimerInterval); room.categoryTimerInterval = null; }
+    if (room.revealTimeout) { clearTimeout(room.revealTimeout); room.revealTimeout = null; }
+
+    room.gameState = 'LOBBY';
+    room.winningGameMode = null;
+    room.activeQuestionData = null;
+    room.currentQuestionData = null;
+    room.activeDeckName = null;
+    room.activeCategoryKey = null;
+    room.answers = {};
+    room.answerOrder = [];
+    room.questionBank = [];
+    room.questionGroups = {};
+    room.currentQuestionIndex = -1;
+    room.askedQuestionIds = new Set();
+    room.categoryVotes = {};
+
+    room.votes = { TRIVI_YEAH: 0, COUNTRY_MONKEY: 0, EMPOSSDURR: 0, FLAG_ME_DOWN: 0, ON_THE_SPECTRUM: 0 };
+    const activePlayers = Object.values(room.players).filter(p => !p.left);
+    activePlayers.forEach(player => {
+        player.requestedStart = false;
+        player.categoryVote = null;
+        player.score = 0;
+        player.correctAnswers = 0;
+        player.currentStreak = 0;
+        player.timesFastest = 0;
+        player.awards = {};
+        if (room.votes[player.vote] !== undefined) room.votes[player.vote]++;
+    });
+
+    console.log(`[Room Engine] Room ${roomCode} returned to the lobby for a fresh game -- roster kept, all stats cleared.`);
+
+    broadcastToRoom(roomCode, { type: 'RETURN_TO_LOBBY' });
+    broadcastToRoom(roomCode, { type: 'VOTE_UPDATE', votes: room.votes, totalVotes: activePlayers.length });
+    broadcastToRoom(roomCode, { type: 'LEADERBOARD_UPDATE', players: activePlayers });
+
+    startLobbyCountdown(roomCode);
+    broadcastToRoom(roomCode, { type: 'LOBBY_TIMER_TICK', secondsLeft: "60 s" });
+}
+
 function calculateCategoryWinner(room) {
     const votes = room.categoryVotes;
     let maxVotes = -1;
@@ -775,6 +828,9 @@ export function handleIncomingMessage(fromPhone, bodyText, explicitRoomCode) {
             } else if (currentRoom.gameState === 'CATEGORY_VOTE') {
                 executeCategoryPhaseExpiration(associatedRoomCode);
                 return "Consensus secured! Shifting to active trivia round.";
+            } else if (currentRoom.gameState === 'GAME_OVER') {
+                resetRoomToLobby(associatedRoomCode);
+                return "Consensus secured! Back to the lobby for a new game.";
             }
         }
         return `Start intent recorded (${startRequestsCount}/${playersList.length} votes secured). Waiting for consensus.`;

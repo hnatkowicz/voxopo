@@ -107,6 +107,12 @@ app.post('/api/room-status', (req, res) => {
         // running "X/Y correct" stat during active gameplay, not just at the end.
         const myCorrectAnswers = myPlayer ? (myPlayer.correctAnswers || 0) : 0;
 
+        // Covers both a fresh join and a "return to lobby" reset after
+        // GAME_OVER -- either way, the phone's poller just needs to know to
+        // show the "Vote START to lock in" screen.
+        if (targetRoom && targetRoom.gameState === 'LOBBY') {
+            return res.json({ phase: 'LOBBY_PHASE', myScore, myCorrectAnswers });
+        }
         if (targetRoom && targetRoom.gameState === 'CATEGORY_VOTE') {
             const categories = getCategoriesForMode(targetRoom.winningGameMode);
             return res.json({ phase: 'CATEGORY_VOTE_PHASE', categories, myScore, myCorrectAnswers });
