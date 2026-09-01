@@ -198,6 +198,12 @@
         </div>
         <div id="q-correct-stat" class="correct-stat">0/0 correct</div>
 
+        <!-- Visual questions (Country Monkey's highlighted-map SVGs, etc.) -- hidden
+             whenever a question has no visualAsset. -->
+        <div id="q-visual-container" style="display: none; text-align: center; margin: 20px 0;">
+            <img id="q-visual-image" src="" alt="" style="max-width: 100%; max-height: 220px; border-radius: 8px;">
+        </div>
+
         <div id="question-text-display" style="text-align: left; font-size: 1.1rem; font-weight: 600; color: #ffffff; line-height: 1.4; margin: 20px 0;"></div>
 
         <div class="module-list">
@@ -373,8 +379,19 @@
             document.getElementById('q-badge-emoji').innerText = chosenAvatar;
             document.getElementById('q-badge-room').innerText = roomCode;
             document.getElementById('question-meta').innerText = `${data.categoryLabel || ''} · Q${data.questionNumber || '?'}/${data.totalQuestions || '?'} · ${data.points || 0} pts`;
-            document.getElementById('q-correct-stat').innerText = `${data.myCorrectAnswers || 0}/${data.totalQuestions || '?'} correct`;
+            // Denominator is questions asked so far (this one included), not the
+            // game's total length -- "3/5" while on question 5 reads as progress,
+            // not as if the player is already 2 questions short of a perfect game.
+            document.getElementById('q-correct-stat').innerText = `${data.myCorrectAnswers || 0}/${data.questionNumber || '?'} correct`;
             document.getElementById('question-text-display').innerText = data.questionText || '';
+
+            const visualContainer = document.getElementById('q-visual-container');
+            if (data.visualAsset) {
+                document.getElementById('q-visual-image').src = data.visualAsset;
+                visualContainer.style.display = 'block';
+            } else {
+                visualContainer.style.display = 'none';
+            }
 
             document.getElementById('choice-text-A').innerText = data.choiceA || '-';
             document.getElementById('choice-text-B').innerText = data.choiceB || '-';
@@ -493,7 +510,7 @@
                 ? `${score} pts &middot; ${correct} correct`
                 : `You finished #${rank} of ${total} with ${score} pts &middot; ${correct} correct`;
             const hornButton = rank === 1
-                ? `<button class="btn btn-horn" onclick="playHorn()">🎺 Blast the Air Horn</button>`
+                ? `<button class="btn btn-horn" onclick="playHorn()">Blast the Air Horn</button>`
                 : '';
 
             container.innerHTML = `

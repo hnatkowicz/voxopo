@@ -165,8 +165,9 @@ body {
         .status-indicator.answered { background: #ffd54f; }
         .status-indicator.correct { background: #00e676; }
 
-        /* Stackable in-round achievement badges (framework -- see AWARD_DISPLAY
-           in app.js for how new award types plug in). */
+        /* In-round achievement badges (framework -- see AWARD_DISPLAY in app.js
+           for how new award types plug in). Each type shows as a single badge
+           whose color/label reflects its current tier/level, never stacking. */
         .award-badge {
             display: inline-flex;
             align-items: center;
@@ -185,12 +186,23 @@ body {
             0%, 100% { box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.35); }
             50% { box-shadow: 0 0 6px 3px rgba(255, 255, 255, 0.35); }
         }
-        /* The bolt art is itself green, nearly identical to the default badge's
-           green fill -- it would vanish into that background, so image badges
-           get a dark backdrop instead so the icon actually reads. */
+        /* The bolt badge has no circular backdrop -- it's the SVG's own shape,
+           painted via a CSS mask (rather than an <img>) so its color is ours to
+           set (an electric yellow) independent of whatever color the source art
+           actually uses. Same footprint as the number badges (22px) so they line
+           up in the awards column. */
         .award-badge-icon {
-            background: #14161d;
-            border: 1px solid #2a2f3a;
+            background: transparent;
+            border-radius: 0;
+            background-color: #ffd600;
+            -webkit-mask-image: url('/bolt-icon.svg');
+            mask-image: url('/bolt-icon.svg');
+            -webkit-mask-repeat: no-repeat;
+            mask-repeat: no-repeat;
+            -webkit-mask-position: center;
+            mask-position: center;
+            -webkit-mask-size: contain;
+            mask-size: contain;
         }
 
         /* Light, unobtrusive context appended after a module's name -- never

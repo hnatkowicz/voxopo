@@ -238,15 +238,21 @@ let currentActiveRoomCode = '----';
             };
         }
 
-        // Award-type framework: each entry in a player's `awards` array renders
-        // via this lookup, so adding a new award later (e.g. a fastest-answer
-        // lightning bolt) is just one more entry here, no other code to touch.
-        // level 1 = badge just earned; STREAK5's label climbs with level (5/10/15/...)
-        // instead of stacking a new icon per achievement -- SPEED3 is a flat
-        // earned/not-earned achievement, so its level is always shown as 1 badge.
+        // Award-type framework: each entry in a player's `awards` map (type -> level)
+        // renders via this lookup, so adding a new award later is just one more
+        // entry here, no other code to touch. STREAK climbs bronze/silver/gold
+        // tiers (3/6/9 in a row) as its level increases, capped at gold -- SPEED3
+        // is a flat earned/not-earned achievement, always shown as one badge.
         const AWARD_DISPLAY = {
-            STREAK5: { pulse: true, title: '5 correct answers in a row', renderLabel: (level) => String(level * 5) },
-            SPEED3: { image: '/bolt-icon.svg', pulse: false, title: 'Fastest to answer, 3 rounds in a row', imageBadge: true }
+            STREAK: {
+                pulse: true,
+                tiers: [
+                    { threshold: 3, color: '#cd7f32' }, // bronze
+                    { threshold: 6, color: '#b8bcc4' }, // silver
+                    { threshold: 9, color: '#d4af37' }  // gold
+                ]
+            },
+            SPEED3: { pulse: false, title: 'Fastest to answer, 3 rounds in a row', imageBadge: true }
         };
 
         function renderAwardBadges(awards) {
@@ -258,10 +264,16 @@ let currentActiveRoomCode = '----';
                 const classes = ['award-badge'];
                 if (def.pulse) classes.push('award-pulse');
                 if (def.imageBadge) classes.push('award-badge-icon');
-                const content = def.image
-                    ? `<img src="${def.image}" alt="" style="width: 16px; height: 16px;">`
-                    : def.renderLabel(level);
-                return `<span class="${classes.join(' ')}" title="${def.title || ''}">${content}</span>`;
+                let content = '';
+                let title = def.title || '';
+                let styleAttr = '';
+                if (def.tiers) {
+                    const tier = def.tiers[Math.min(level, def.tiers.length) - 1];
+                    content = String(tier.threshold);
+                    title = `${tier.threshold} correct answers in a row`;
+                    styleAttr = ` style="background: ${tier.color};"`;
+                }
+                return `<span class="${classes.join(' ')}"${styleAttr} title="${title}">${content}</span>`;
             }).join('');
         }
 

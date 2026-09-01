@@ -505,14 +505,16 @@ function evaluateRoundAndRevealAnswer(roomCode) {
                 player.score += points;
                 player.correctAnswers = (player.correctAnswers || 0) + 1; // tiebreak for the final leaderboard
                 player.currentStreak = (player.currentStreak || 0) + 1;
-                // Every 5-in-a-row bumps a single badge's level (framework for future
+                // Every 3-in-a-row bumps a single badge's level (framework for future
                 // award types -- see AWARD_DISPLAY in app.js) instead of stacking a new
-                // icon -- the badge's own label climbs 5/10/15/... capped at level 5.
-                if (player.currentStreak >= 5) {
+                // icon -- the badge's own label/tier climbs bronze/silver/gold (3/6/9),
+                // capped at level 3 (9). Checkpointing every 3 (not the whole game) means
+                // breaking a streak only ever costs up to 2 questions of progress.
+                if (player.currentStreak >= 3) {
                     player.currentStreak = 0;
                     player.awards = player.awards || {};
-                    if ((player.awards.STREAK5 || 0) < 5) {
-                        player.awards.STREAK5 = (player.awards.STREAK5 || 0) + 1;
+                    if ((player.awards.STREAK || 0) < 3) {
+                        player.awards.STREAK = (player.awards.STREAK || 0) + 1;
                     }
                 }
             } else {
