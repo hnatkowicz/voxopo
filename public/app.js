@@ -90,11 +90,14 @@ let currentActiveRoomCode = '----';
             });
         }
 
-        // Ranks by score, then correct-answer count, then join time -- the last one
-        // is always unique, so ties never leave two players sharing the same medal.
+        // Ranks by score, then correct-answer count, then lifetime times-fastest,
+        // then join time as the final fallback -- join time is always unique, so
+        // ties never leave two players sharing the same medal. Mirrors
+        // gameEngine.js's compareByRank exactly.
         function compareByRank(a, b) {
             return b.score - a.score
                 || (b.correctAnswers || 0) - (a.correctAnswers || 0)
+                || (b.timesFastest || 0) - (a.timesFastest || 0)
                 || new Date(a.joinedAt) - new Date(b.joinedAt);
         }
 

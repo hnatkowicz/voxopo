@@ -392,13 +392,16 @@ function startNextQuestion(roomCode) {
     startGameRoundCountdown(roomCode);
 }
 
-// Ranks by score, then correct-answer count, then join time -- the last one is
-// always unique, so this never leaves two players tied for the same medal.
-// Exported so server.js's /api/room-status can compute a player's own final
-// placement for the phone's game-over screen using the exact same ordering.
+// Ranks by score, then correct-answer count, then lifetime times-fastest
+// (rewards speed as its own skill, not just a coin-flip), then join time as
+// the final fallback -- join time is always unique, so this never leaves two
+// players tied for the same medal. Exported so server.js's /api/room-status
+// can compute a player's own final placement for the phone's game-over
+// screen using the exact same ordering.
 export function compareByRank(a, b) {
     return b.score - a.score
         || (b.correctAnswers || 0) - (a.correctAnswers || 0)
+        || (b.timesFastest || 0) - (a.timesFastest || 0)
         || new Date(a.joinedAt) - new Date(b.joinedAt);
 }
 
@@ -528,6 +531,10 @@ function evaluateRoundAndRevealAnswer(roomCode) {
             player.awards = player.awards || {};
             if (player.name === fastestPlayerName) {
                 player.awards.SPEED3 = 1;
+                // Unlike the badge, this lifetime count never resets -- it exists
+                // solely as the final leaderboard's tiebreaker (compareByRank),
+                // one step more meaningful than falling straight to join order.
+                player.timesFastest = (player.timesFastest || 0) + 1;
             } else if (player.awards.SPEED3) {
                 delete player.awards.SPEED3;
             }
@@ -628,6 +635,7 @@ export function handleIncomingMessage(fromPhone, bodyText, explicitRoomCode) {
                     score: 0,
                     correctAnswers: 0,
                     currentStreak: 0,
+                    timesFastest: 0, // lifetime count, purely for tie-breaking -- independent of the bolt badge's live per-round status
                     awards: {},
                     left: false,
                     joinedAt: new Date()
