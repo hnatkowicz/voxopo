@@ -243,13 +243,16 @@ let currentActiveRoomCode = '----';
         // entry here, no other code to touch. STREAK climbs bronze/silver/gold
         // tiers (3/6/9 in a row) as its level increases, capped at gold -- SPEED3
         // is a flat earned/not-earned achievement, always shown as one badge.
+        // Tier colors/backgrounds mirror the final-screen medal buttons
+        // (.leaderboard-btn.rank-gold/silver/bronze in styles.css) so a tier
+        // reads as "the same medal," not a re-skin.
         const AWARD_DISPLAY = {
             STREAK: {
-                pulse: true,
+                pulse: false,
                 tiers: [
-                    { threshold: 3, color: '#cd7f32' }, // bronze
-                    { threshold: 6, color: '#b8bcc4' }, // silver
-                    { threshold: 9, color: '#d4af37' }  // gold
+                    { threshold: 3, color: '#cd7f32', bg: 'rgba(205, 127, 50, 0.08)' },  // bronze
+                    { threshold: 6, color: '#b8bcc4', bg: 'rgba(184, 188, 196, 0.08)' }, // silver
+                    { threshold: 9, color: '#d4af37', bg: 'rgba(212, 175, 55, 0.08)' }   // gold
                 ]
             },
             SPEED3: { pulse: false, title: 'Fastest to answer, 3 rounds in a row', imageBadge: true }
@@ -271,7 +274,7 @@ let currentActiveRoomCode = '----';
                     const tier = def.tiers[Math.min(level, def.tiers.length) - 1];
                     content = String(tier.threshold);
                     title = `${tier.threshold} correct answers in a row`;
-                    styleAttr = ` style="background: ${tier.color};"`;
+                    styleAttr = ` style="background: ${tier.bg}; border: 2px solid ${tier.color}; color: ${tier.color};"`;
                 }
                 return `<span class="${classes.join(' ')}"${styleAttr} title="${title}">${content}</span>`;
             }).join('');

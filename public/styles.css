@@ -172,6 +172,8 @@ body {
             display: inline-flex;
             align-items: center;
             justify-content: center;
+            vertical-align: middle;
+            box-sizing: border-box;
             width: 22px;
             height: 22px;
             border-radius: 50%;
