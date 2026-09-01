@@ -146,8 +146,13 @@ body {
         .indicator-col { width: 6%; }
         .rank-col { width: 9%; color: #64748b; font-weight: 600; }
         .awards-col { width: 18%; white-space: nowrap; }
-        .emoji-col { width: 12%; font-size: 1.2rem; text-align: left; }
-        .name-col { width: 35%; font-weight: 500; color: #ffffff; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        /* Emoji + name are one "identity" cell (a tight flex gap, not two
+           independently-widthed columns) so they read as grouped data instead
+           of leaving an arbitrary gap between them. */
+        .identity-col { width: 47%; overflow: hidden; }
+        .identity-wrap { display: flex; align-items: center; gap: 6px; min-width: 0; }
+        .player-emoji { font-size: 1.2rem; flex-shrink: 0; }
+        .player-name { font-weight: 500; color: #ffffff; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; min-width: 0; }
         .score-col { width: 20%; text-align: right; color: #00e676; font-weight: 600; }
 
         /* Per-round answer status "light" -- invisible until a player submits

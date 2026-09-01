@@ -241,8 +241,10 @@ let currentActiveRoomCode = '----';
         // Award-type framework: each entry in a player's `awards` map (type -> level)
         // renders via this lookup, so adding a new award later is just one more
         // entry here, no other code to touch. STREAK climbs bronze/silver/gold
-        // tiers (3/6/9 in a row) as its level increases, capped at gold -- SPEED3
-        // is a flat earned/not-earned achievement, always shown as one badge.
+        // tiers (3/6/9 in a row) as its level increases, capped at gold -- a
+        // genuine accumulated achievement. SPEED3 is the opposite: a live,
+        // contested status (not a streak) that belongs to whoever answered
+        // fastest THIS round and is lost the instant someone else wins it.
         // Tier colors/backgrounds mirror the final-screen medal buttons
         // (.leaderboard-btn.rank-gold/silver/bronze in styles.css) so a tier
         // reads as "the same medal," not a re-skin.
@@ -255,7 +257,7 @@ let currentActiveRoomCode = '----';
                     { threshold: 9, color: '#d4af37', bg: 'rgba(212, 175, 55, 0.08)' }   // gold
                 ]
             },
-            SPEED3: { pulse: false, title: 'Fastest to answer, 3 rounds in a row', imageBadge: true }
+            SPEED3: { pulse: false, title: 'Fastest answer this round', imageBadge: true }
         };
 
         function renderAwardBadges(awards) {
@@ -290,8 +292,7 @@ let currentActiveRoomCode = '----';
                         <td class="indicator-col"></td>
                         <td class="rank-col" style="color: #222630;">—</td>
                         <td class="awards-col"></td>
-                        <td class="emoji-col" style="color: #222630;">👤</td>
-                        <td class="name-col" style="color: #64748b; font-style: italic;">Lobby is empty...</td>
+                        <td class="identity-col"><span class="identity-wrap"><span class="player-emoji" style="color: #222630;">👤</span><span class="player-name" style="color: #64748b; font-style: italic;">Lobby is empty...</span></span></td>
                         <td class="score-col" style="color: #222630;">0</td>
                     </tr>
                 `;
@@ -319,8 +320,7 @@ let currentActiveRoomCode = '----';
                     <td class="indicator-col"><span class="status-indicator ${indicatorClass}"></span></td>
                     <td class="rank-col">${index + 1}</td>
                     <td class="awards-col">${renderAwardBadges(player.awards)}</td>
-                    <td class="emoji-col">${player.emoji || '👤'}</td>
-                    <td class="name-col">${player.name}</td>
+                    <td class="identity-col"><span class="identity-wrap"><span class="player-emoji">${player.emoji || '👤'}</span><span class="player-name">${player.name}</span></span></td>
                     <td class="score-col">${player.score || 0}</td>
                 `;
                 tbody.appendChild(row);

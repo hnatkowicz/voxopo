@@ -521,18 +521,15 @@ function evaluateRoundAndRevealAnswer(roomCode) {
                 player.currentStreak = 0;
             }
 
-            // Fastest-to-answer 3 rounds in a row earns a single (non-stacking)
-            // lightning bolt badge -- once earned it's a flat achievement, not a
-            // counter, so re-crossing the 3-streak threshold again is a no-op.
+            // The bolt is a live, contested status, not an accumulated streak --
+            // it belongs to whoever answered fastest THIS round, full stop. It's
+            // taken away from anyone else holding it the moment someone else wins
+            // the round, so it's always showing the room's current fastest player.
+            player.awards = player.awards || {};
             if (player.name === fastestPlayerName) {
-                player.fastestStreak = (player.fastestStreak || 0) + 1;
-                if (player.fastestStreak >= 3) {
-                    player.fastestStreak = 0;
-                    player.awards = player.awards || {};
-                    player.awards.SPEED3 = 1;
-                }
-            } else {
-                player.fastestStreak = 0;
+                player.awards.SPEED3 = 1;
+            } else if (player.awards.SPEED3) {
+                delete player.awards.SPEED3;
             }
         });
     }
@@ -631,7 +628,6 @@ export function handleIncomingMessage(fromPhone, bodyText, explicitRoomCode) {
                     score: 0,
                     correctAnswers: 0,
                     currentStreak: 0,
-                    fastestStreak: 0,
                     awards: {},
                     left: false,
                     joinedAt: new Date()
