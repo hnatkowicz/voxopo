@@ -395,10 +395,11 @@
             document.getElementById('q-badge-emoji').innerText = chosenAvatar;
             document.getElementById('q-badge-room').innerText = roomCode;
             document.getElementById('question-meta').innerText = `${data.categoryLabel || ''} · Q${data.questionNumber || '?'}/${data.totalQuestions || '?'} · ${data.points || 0} pts`;
-            // Denominator is questions asked so far (this one included), not the
-            // game's total length -- "3/5" while on question 5 reads as progress,
-            // not as if the player is already 2 questions short of a perfect game.
-            document.getElementById('q-correct-stat').innerText = `${data.myCorrectAnswers || 0}/${data.questionNumber || '?'} correct`;
+            // Denominator is questions actually COMPLETED so far -- this one is still
+            // active/unanswered, so questionNumber itself would overcount by one
+            // (showing "2/3" while only 2 rounds have actually been revealed yet).
+            const questionsCompleted = Math.max(0, (data.questionNumber || 1) - 1);
+            document.getElementById('q-correct-stat').innerText = `${data.myCorrectAnswers || 0}/${questionsCompleted} correct`;
             document.getElementById('question-text-display').innerText = data.questionText || '';
 
             const visualContainer = document.getElementById('q-visual-container');
