@@ -367,6 +367,7 @@ function startNextQuestion(roomCode) {
     const row = room.questionBank[room.currentQuestionIndex];
     room.askedQuestionIds.add(row.id);
     room.answers = {};
+    room.answerOrder = [];
     room.gameState = 'GAME_ROUND';
 
     // currentQuestionData (server-only) carries correctLetter/points for scoring
@@ -494,6 +495,10 @@ function evaluateRoundAndRevealAnswer(roomCode) {
         // Iterates every player, not just those who answered, so a player who
         // sat this one out (no submission) has their streak broken same as a
         // wrong answer -- only an unbroken run of *correct* answers counts.
+        // First name to submit any answer this round (right or wrong) -- fastest
+        // is a raw-speed achievement, independent of whether it was correct.
+        const fastestPlayerName = room.answerOrder && room.answerOrder[0];
+
         Object.values(room.players).forEach(player => {
             const submittedLetter = room.answers[player.name];
             if (submittedLetter === correctLetter) {
@@ -501,14 +506,27 @@ function evaluateRoundAndRevealAnswer(roomCode) {
                 player.correctAnswers = (player.correctAnswers || 0) + 1; // tiebreak for the final leaderboard
                 player.currentStreak = (player.currentStreak || 0) + 1;
                 // Every 5-in-a-row earns a stackable badge (framework for future
-                // award types -- see AWARD_DISPLAY in app.js), capped at 5 shown.
+                // award types -- see AWARD_DISPLAY in app.js), capped per-type at 5 shown.
                 if (player.currentStreak >= 5) {
                     player.currentStreak = 0;
                     player.awards = player.awards || [];
-                    if (player.awards.length < 5) player.awards.push('STREAK5');
+                    if (player.awards.filter(a => a === 'STREAK5').length < 5) player.awards.push('STREAK5');
                 }
             } else {
                 player.currentStreak = 0;
+            }
+
+            // Fastest-to-answer 3 rounds in a row earns a stackable lightning
+            // bolt badge, same per-type cap as STREAK5.
+            if (player.name === fastestPlayerName) {
+                player.fastestStreak = (player.fastestStreak || 0) + 1;
+                if (player.fastestStreak >= 3) {
+                    player.fastestStreak = 0;
+                    player.awards = player.awards || [];
+                    if (player.awards.filter(a => a === 'SPEED3').length < 5) player.awards.push('SPEED3');
+                }
+            } else {
+                player.fastestStreak = 0;
             }
         });
     }
@@ -554,6 +572,7 @@ export function handleIncomingMessage(fromPhone, bodyText, explicitRoomCode) {
                 lobbyTimerInterval: null, categoryTimerInterval: null, revealTimeout: null,
                 lobbySecondsLeft: 60, categorySecondsLeft: 30, gameSecondsLeft: 25, winningGameMode: null,
                 activeQuestionData: null, currentQuestionData: null, activeDeckName: null, activeCategoryKey: null, answers: {},
+                answerOrder: [],
                 questionBank: [], questionGroups: {}, currentQuestionIndex: -1, askedQuestionIds: new Set(),
                 requestedQuestionCount: MAX_QUESTIONS_PER_GAME,
                 votes: { TRIVI_YEAH: 0, COUNTRY_MONKEY: 0, EMPOSSDURR: 0, FLAG_ME_DOWN: 0, ON_THE_SPECTRUM: 0 },
@@ -606,6 +625,7 @@ export function handleIncomingMessage(fromPhone, bodyText, explicitRoomCode) {
                     score: 0,
                     correctAnswers: 0,
                     currentStreak: 0,
+                    fastestStreak: 0,
                     awards: [],
                     left: false,
                     joinedAt: new Date()
@@ -783,6 +803,10 @@ export function handleIncomingMessage(fromPhone, bodyText, explicitRoomCode) {
     if (currentRoom.gameState === 'GAME_ROUND') {
         const answerChoice = cleanText.toUpperCase();
         if (['A', 'B', 'C', 'D'].includes(answerChoice)) {
+            if (!(actingPlayerName in currentRoom.answers)) {
+                currentRoom.answerOrder = currentRoom.answerOrder || [];
+                currentRoom.answerOrder.push(actingPlayerName);
+            }
             currentRoom.answers[actingPlayerName] = answerChoice;
             // Lets the TV light up this player's per-round status indicator
             // immediately, without waiting for the reveal broadcast.

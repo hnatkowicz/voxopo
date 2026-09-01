@@ -242,14 +242,16 @@ let currentActiveRoomCode = '----';
         // via this lookup, so adding a new award later (e.g. a fastest-answer
         // lightning bolt) is just one more entry here, no other code to touch.
         const AWARD_DISPLAY = {
-            STREAK5: { icon: '5', pulse: true, title: '5 correct answers in a row' }
+            STREAK5: { icon: '5', pulse: true, title: '5 correct answers in a row' },
+            SPEED3: { image: '/bolt-icon.svg', pulse: false, title: 'Fastest to answer, 3 rounds in a row' }
         };
 
         function renderAwardBadges(awards) {
             return (awards || []).map(type => {
                 const def = AWARD_DISPLAY[type];
                 if (!def) return '';
-                return `<span class="award-badge${def.pulse ? ' award-pulse' : ''}" title="${def.title || ''}">${def.icon}</span>`;
+                const content = def.image ? `<img src="${def.image}" alt="" style="width: 12px; height: 12px;">` : def.icon;
+                return `<span class="award-badge${def.pulse ? ' award-pulse' : ''}" title="${def.title || ''}">${content}</span>`;
             }).join('');
         }
 
