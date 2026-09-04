@@ -170,6 +170,12 @@
         </div>
         <button class="btn" onclick="submitGameAction()">Submit Action</button>
         <div id="game-feedback" class="feedback"></div>
+
+        <!-- Without this, a phone silently auto-resumed into a stale remembered
+             room (see attemptAutoResume) has no way back to the login form to
+             join a different one -- Leave Room used to exist only on the
+             question screen, which this phase never reaches. -->
+        <button class="btn btn-leave" onclick="leaveRoom()">Not you? Leave Room</button>
     </div>
 
     <!-- SCREEN 3: CATEGORY VOTING GAMEPAD (CLEAN - NO DECORATIVE EMOJIS!) -->
@@ -185,6 +191,7 @@
             <div class="module-list" id="category-vote-list"></div>
         </div>
         <div id="category-feedback" class="feedback"></div>
+        <button class="btn btn-leave" onclick="leaveRoom()">Not you? Leave Room</button>
     </div>
     
     <!-- SCREEN 4: ULTRA-CLEAN FULL-WIDTH QUESTION ANSWER CONTROLLER -->
@@ -240,6 +247,7 @@
              div's innerHTML every time, which would wipe this button out with it. -->
         <button class="btn" onclick="requestPlayAgain()">Play Again</button>
         <div id="playagain-feedback" class="feedback"></div>
+        <button class="btn btn-leave" onclick="leaveRoom()">Not you? Leave Room</button>
         <audio id="horn-sound" src="/audio/horn.wav" preload="auto"></audio>
     </div>
 
