@@ -707,14 +707,14 @@ function switchToEmpossDurrDiscussionUI(round, totalRounds) {
                 Give your one-word clues out loud
             </div>
             <div style="font-size: 1rem; color: #94a3b8; margin-bottom: 6px;">Round ${round} of ${totalRounds}</div>
-            <div id="ed-tv-ready-tally" style="font-size: 1.1rem; font-weight: 600; color: #ffa500;">0 / 0 ready to accuse</div>
+            <div id="ed-tv-ready-tally" style="font-size: 1.1rem; font-weight: 600; color: #ffa500;">0 / 0 ready to vote</div>
         </div>
     `;
 }
 
 function updateEmpossDurrReadyTally(readyNames, totalActive) {
     const el = document.getElementById('ed-tv-ready-tally');
-    if (el) el.innerText = `${(readyNames || []).length} / ${totalActive || 0} ready to accuse`;
+    if (el) el.innerText = `${(readyNames || []).length} / ${totalActive || 0} ready to vote`;
 }
 
 function switchToEmpossDurrAccuseVoteUI(secondsLeft) {

@@ -93,7 +93,13 @@
            so the impostor's phone doesn't visually shout "I'm different"
            next to a real player's. The text is the only thing that differs,
            and only the phone's own holder reads it up close. */
-        .btn-declare, .btn-ed-decoy { background: #1e222b; border: 1px solid #222630; color: #e2e5e9; }
+        /* Dimmer than every other button's text on purpose -- legible up
+           close to whoever's holding the phone, but hard to read at a
+           glance or from across the table. Nobody but the impostor should
+           ever be able to make out "I Declare!" from arm's length, and the
+           decoy needs the identical treatment or the dimness itself becomes
+           a tell. */
+        .btn-declare, .btn-ed-decoy { background: #1e222b; border: 1px solid #222630; color: #64748b; }
         .btn-declare:hover, .btn-ed-decoy:hover { background: #262b36; }
         .btn-locked { opacity: 0.4; pointer-events: none; }
 
@@ -710,9 +716,9 @@
                     ? `<button class="btn btn-declare" onclick="submitEmpossDurrDeclare()">I Declare!</button>`
                     : `<button class="btn btn-ed-decoy" onclick="clickEmpossDurrDecoy(this)">${pickEmpossDurrDecoyWord()}</button>`;
                 container.innerHTML = `
-                    <p class="ed-status-line">Give your one-word clues out loud. When you're ready to accuse, mark yourself ready below.</p>
-                    <div class="ed-status-line" id="ed-ready-tally">0 / 0 ready to accuse</div>
-                    <button class="btn btn-ready" id="ed-ready-btn" onclick="toggleEmpossDurrReady()">I'm Ready to Accuse</button>
+                    <p class="ed-status-line">Give your one-word clues out loud. When you're ready to vote, mark yourself ready below.</p>
+                    <div class="ed-status-line" id="ed-ready-tally">0 / 0 ready to vote</div>
+                    <button class="btn btn-ready" id="ed-ready-btn" onclick="toggleEmpossDurrReady()">I'm Ready to Vote</button>
                     ${secondButton}
                 `;
                 updateEmpossDurrLiveBits(data);
@@ -758,7 +764,7 @@
         function updateEmpossDurrLiveBits(data) {
             if (data.empossdurrPhase === 'DISCUSSION') {
                 const tally = document.getElementById('ed-ready-tally');
-                if (tally) tally.innerText = `${(data.readyToAccuse || []).length} / ${data.totalActive || 0} ready to accuse`;
+                if (tally) tally.innerText = `${(data.readyToAccuse || []).length} / ${data.totalActive || 0} ready to vote`;
                 const readyBtn = document.getElementById('ed-ready-btn');
                 if (readyBtn) {
                     if (data.iAmReady) {
@@ -766,7 +772,7 @@
                         readyBtn.innerText = "Ready ✓ (tap to retract)";
                     } else {
                         readyBtn.classList.remove('ed-active');
-                        readyBtn.innerText = "I'm Ready to Accuse";
+                        readyBtn.innerText = "I'm Ready to Vote";
                     }
                 }
             } else if (data.empossdurrPhase === 'ACCUSE_VOTE') {
