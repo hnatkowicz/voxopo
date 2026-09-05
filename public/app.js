@@ -354,6 +354,15 @@ let currentActiveRoomCode = '----';
         // Tier colors/backgrounds mirror the final-screen medal buttons
         // (.leaderboard-btn.rank-gold/silver/bronze in styles.css) so a tier
         // reads as "the same medal," not a re-skin.
+        //
+        // SPYGLASS/IMPOSTOR_WIN/BULLSEYE are EmpossDurr's own one-shot badges:
+        // boolean-style (level is always 1), set the instant they're earned and
+        // never re-evaluated afterward -- they stay lit for the rest of that
+        // game once true, same "persists on the leaderboard row" idea as
+        // STREAK, just without tiers. Icon color is deliberately the app's
+        // own green accent (matching everything else) rather than SPEED3's
+        // yellow -- yellow is reserved for "still up for grabs this round,"
+        // green means "earned, permanent."
         const AWARD_DISPLAY = {
             STREAK: {
                 pulse: false,
@@ -363,7 +372,10 @@ let currentActiveRoomCode = '----';
                     { threshold: 9, color: '#d4af37', bg: 'rgba(212, 175, 55, 0.08)' }   // gold
                 ]
             },
-            SPEED3: { pulse: false, title: 'Fastest answer this round', imageBadge: true }
+            SPEED3: { pulse: false, title: 'Fastest answer this round', imageBadge: true, iconClass: 'badge-speed3' },
+            SPYGLASS: { pulse: false, title: 'Caught the impostor', imageBadge: true, iconClass: 'badge-spyglass' },
+            IMPOSTOR_WIN: { pulse: false, title: 'Successful impostor', imageBadge: true, iconClass: 'badge-impostor-win' },
+            BULLSEYE: { pulse: false, title: 'Called a bluff in a split decision', imageBadge: true, iconClass: 'badge-bullseye' }
         };
 
         function renderAwardBadges(awards) {
@@ -375,6 +387,7 @@ let currentActiveRoomCode = '----';
                 const classes = ['award-badge'];
                 if (def.pulse) classes.push('award-pulse');
                 if (def.imageBadge) classes.push('award-badge-icon');
+                if (def.iconClass) classes.push(def.iconClass);
                 let content = '';
                 let title = def.title || '';
                 let styleAttr = '';

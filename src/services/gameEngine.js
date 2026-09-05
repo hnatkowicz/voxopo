@@ -638,11 +638,30 @@ function applyEmpossDurrAccuseScoring(room, resolution) {
     });
 
     if (resolution.type === 'continue') {
-        if (impostorPlayer) impostorPlayer.score += 1;
+        if (impostorPlayer) { impostorPlayer.score += 1; awardEmpossDurrBadge(impostorPlayer, 'IMPOSTOR_WIN'); }
     } else if (resolution.type === 'accuse' && resolution.targetName !== ed.impostorName) {
-        if (impostorPlayer) impostorPlayer.score += 3;
+        if (impostorPlayer) { impostorPlayer.score += 3; awardEmpossDurrBadge(impostorPlayer, 'IMPOSTOR_WIN'); }
+    } else if (resolution.type === 'accuse' && resolution.targetName === ed.impostorName) {
+        // Correctly-caught impostor gets 0 score for this outcome, but everyone
+        // who voted for the real impostor earns the spyglass -- a persistent
+        // badge for the rest of the game, same spirit as STREAK/SPEED3.
+        Object.entries(ed.accuseVotes).forEach(([voterName, vote]) => {
+            if (vote.mode !== 'accuse' || vote.target !== ed.impostorName) return;
+            const voterPlayer = room.players[voterName];
+            if (voterPlayer) awardEmpossDurrBadge(voterPlayer, 'SPYGLASS');
+        });
     }
-    // Correctly-caught impostor gets 0 for this outcome -- no line needed.
+}
+
+// Sets a persistent, boolean-style EmpossDurr award the instant it's earned.
+// Unlike STREAK (which climbs tiers) or SPEED3 (which is live/contested),
+// these three are one-shot: once true, they stay on the leaderboard row for
+// the rest of the game (cleared only on the next game-reset, alongside every
+// other stat in player.awards).
+function awardEmpossDurrBadge(player, type) {
+    if (!player) return;
+    player.awards = player.awards || {};
+    player.awards[type] = 1;
 }
 
 function tallyEmpossDurrAccuseVotes(roomCode) {
@@ -750,7 +769,20 @@ function tallyEmpossDurrDeclareVerdict(roomCode) {
     const correct = yesCount >= neededForMajority;
 
     const impostorPlayer = room.players[ed.impostorName];
-    if (impostorPlayer) impostorPlayer.score += correct ? 5 : -2;
+    if (impostorPlayer) {
+        impostorPlayer.score += correct ? 5 : -2;
+        if (correct) awardEmpossDurrBadge(impostorPlayer, 'IMPOSTOR_WIN');
+    }
+
+    // Bullseye: reward correctly reading a split room, not just being right
+    // when everyone already agreed. Only counts votes actually cast (a
+    // juror who never responded isn't "wrong," just absent from the split).
+    const yesVoters = jurors.filter(j => ed.declareVotes[j.name] === 'yes');
+    const noVoters = jurors.filter(j => ed.declareVotes[j.name] === 'no');
+    if (yesVoters.length > 0 && noVoters.length > 0) {
+        const correctSideVoters = correct ? yesVoters : noVoters;
+        correctSideVoters.forEach(j => awardEmpossDurrBadge(j, 'BULLSEYE'));
+    }
 
     const activePlayersArray = Object.values(room.players).filter(p => !p.left);
     broadcastToRoom(roomCode, { type: 'EMPOSSDURR_DECLARE_RESULT', correct, impostorName: ed.impostorName });

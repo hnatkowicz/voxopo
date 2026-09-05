@@ -193,23 +193,43 @@ body {
             0%, 100% { box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.35); }
             50% { box-shadow: 0 0 6px 3px rgba(255, 255, 255, 0.35); }
         }
-        /* The bolt badge has no circular backdrop -- it's the SVG's own shape,
+        /* Icon badges have no circular backdrop -- it's the SVG's own shape,
            painted via a CSS mask (rather than an <img>) so its color is ours to
-           set (an electric yellow) independent of whatever color the source art
-           actually uses. Same footprint as the number badges (22px) so they line
-           up in the awards column. */
+           set independent of whatever color the source art actually uses. Same
+           footprint as the number badges (22px) so they line up in the awards
+           column. SPEED3 (still up for grabs this round) gets its own electric
+           yellow; the EmpossDurr trio (SPYGLASS/IMPOSTOR_WIN/BULLSEYE) are
+           permanent once earned, so they share the app's own green accent
+           instead -- "yellow = live race, green = you earned this." */
         .award-badge-icon {
             background: transparent;
             border-radius: 0;
-            background-color: #ffd600;
-            -webkit-mask-image: url('/bolt-icon.svg');
-            mask-image: url('/bolt-icon.svg');
             -webkit-mask-repeat: no-repeat;
             mask-repeat: no-repeat;
             -webkit-mask-position: center;
             mask-position: center;
             -webkit-mask-size: contain;
             mask-size: contain;
+        }
+        .badge-speed3 {
+            background-color: #ffd600;
+            -webkit-mask-image: url('/bolt-icon.svg');
+            mask-image: url('/bolt-icon.svg');
+        }
+        .badge-spyglass {
+            background-color: #00e676;
+            -webkit-mask-image: url('/mag-glass.svg');
+            mask-image: url('/mag-glass.svg');
+        }
+        .badge-impostor-win {
+            background-color: #00e676;
+            -webkit-mask-image: url('/spy.svg');
+            mask-image: url('/spy.svg');
+        }
+        .badge-bullseye {
+            background-color: #00e676;
+            -webkit-mask-image: url('/muscle.svg');
+            mask-image: url('/muscle.svg');
         }
 
         /* Light, unobtrusive context appended after a module's name -- never
