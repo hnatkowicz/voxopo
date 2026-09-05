@@ -77,6 +77,7 @@ let currentActiveRoomCode = '----';
         let currentGamePhase = 'LOBBY'; // LOBBY / CATEGORY_VOTE / GAME_ROUND / GAME_OVER -- gates the "TYPE START" nudge to lobby only
         let currentEmpossDurrRound = null; // cached so EMPOSSDURR_RESUME_DISCUSSION can redraw the same round header
         let currentEmpossDurrTotalRounds = null;
+        let currentEmpossDurrStarterName = null; // same reason -- resuming discussion keeps the same starter, no new broadcast for it
 
         // Primes all three <audio> elements against a real user gesture (a click), so
         // later programmatic .play() calls fired from WebSocket handlers aren't blocked
@@ -281,7 +282,7 @@ let currentActiveRoomCode = '----';
                 if (data.type === 'EMPOSSDURR_ROUND_START') {
                     document.getElementById('room-status-text').innerText = "EmpossDurr — Open Discussion";
                     document.getElementById('lobby-countdown').innerText = '';
-                    switchToEmpossDurrDiscussionUI(data.round, data.totalRounds);
+                    switchToEmpossDurrDiscussionUI(data.round, data.totalRounds, data.starter);
                     playerAnswerStatus = {};
                     updateLeaderboardUI(cachedPlayersSnapshot);
                     stopCategoryMusic();
@@ -703,9 +704,13 @@ let currentActiveRoomCode = '----';
 // calm round counter and a live ready-tally instead of dense content. See
 // design chat: reusing the same panel chrome as every other mode rather
 // than building new layout, just with leaner content dropped into it.
-function switchToEmpossDurrDiscussionUI(round, totalRounds) {
+function switchToEmpossDurrDiscussionUI(round, totalRounds, starterName) {
     currentEmpossDurrRound = round;
     currentEmpossDurrTotalRounds = totalRounds;
+    // Only a fresh round broadcasts a starter -- EMPOSSDURR_RESUME_DISCUSSION
+    // (the "group couldn't agree" outcome) reopens the SAME round with no new
+    // starter, so it passes nothing here and this just keeps the cached name.
+    if (starterName) currentEmpossDurrStarterName = starterName;
     const panel = document.getElementById('active-content-stage');
     currentGamePhase = 'EMPOSSDURR_ROUND';
     setStatusMessage(`
@@ -717,7 +722,7 @@ function switchToEmpossDurrDiscussionUI(round, totalRounds) {
                 Active Deck: EmpossDurr
             </div>
             <div style="font-size: 1.6rem; font-weight: 700; color: #ffffff; letter-spacing: -0.02em; margin-bottom: 20px;">
-                Give your one-word clues out loud
+                ${currentEmpossDurrStarterName || 'Someone'}, start the round of one-word clues.
             </div>
             <div style="font-size: 1rem; color: #94a3b8; margin-bottom: 6px;">Round ${round} of ${totalRounds}</div>
             <div id="ed-tv-ready-tally" style="font-size: 1.1rem; font-weight: 600; color: #ffa500;">0 / 0 ready to vote</div>

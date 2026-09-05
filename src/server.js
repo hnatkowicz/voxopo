@@ -124,7 +124,12 @@ app.post('/api/room-status', (req, res) => {
         // GAME_OVER -- either way, the phone's poller just needs to know to
         // show the "Vote START to lock in" screen.
         if (targetRoom && targetRoom.gameState === 'LOBBY') {
-            return res.json({ phase: 'LOBBY_PHASE', myScore, myCorrectAnswers, myLeft, myEmoji });
+            // Lets the phone highlight which mode this player currently has
+            // selected, so a returning "Main Menu" player can see (and change)
+            // their standing vote instead of it being a silent, unchangeable
+            // choice locked in back at join time.
+            const myVote = myPlayer ? myPlayer.vote : null;
+            return res.json({ phase: 'LOBBY_PHASE', myScore, myCorrectAnswers, myLeft, myEmoji, myVote });
         }
         if (targetRoom && targetRoom.gameState === 'CATEGORY_VOTE') {
             const categories = getCategoriesForMode(targetRoom.winningGameMode);

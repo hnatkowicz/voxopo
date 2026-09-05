@@ -225,6 +225,23 @@
         <button class="btn" onclick="submitGameAction()">Submit Action</button>
         <div id="game-feedback" class="feedback"></div>
 
+        <!-- Only meaningful reason to revisit this screen after the first game
+             is "Main Menu" bouncing everyone back here from Game Over -- a
+             player's mode vote was otherwise cast once at join and never
+             changeable again, so a room was stuck replaying the same mode
+             forever. Live-updates the same way category voting already does:
+             tap a row, it's sent immediately, no separate submit step. -->
+        <div class="input-group">
+            <label>Change Game Mode Vote</label>
+            <div class="module-list" id="mode-revote-list">
+                <div class="module-row" data-mode-key="TRIVI_YEAH" onclick="submitModeRevote(this, 'TRIVI_YEAH')">Trivi-yeah! <span class="module-descriptor">Multiple-choice trivia across a mix of subjects.</span></div>
+                <div class="module-row" data-mode-key="COUNTRY_MONKEY" onclick="submitModeRevote(this, 'COUNTRY_MONKEY')">Country Monkey <span class="module-descriptor">Guess the highlighted country on the map.</span></div>
+                <div class="module-row" data-mode-key="EMPOSSDURR" onclick="submitModeRevote(this, 'EMPOSSDURR')">EmpossDurr <span class="module-descriptor">Find the impostor hiding in the group.</span></div>
+                <div class="module-row" data-mode-key="FLAG_ME_DOWN" onclick="submitModeRevote(this, 'FLAG_ME_DOWN')">Flag Me Down <span class="module-descriptor">World and historical flags, banners, and symbols.</span></div>
+                <div class="module-row" data-mode-key="ON_THE_SPECTRUM" onclick="submitModeRevote(this, 'ON_THE_SPECTRUM')">On The Spectrum <span class="module-descriptor">Guess where it lands between two extremes.</span></div>
+            </div>
+        </div>
+
         <!-- Without this, a phone silently auto-resumed into a stale remembered
              room (see attemptAutoResume) has no way back to the login form to
              join a different one -- Leave Room used to exist only on the
@@ -546,6 +563,14 @@
                             showOnlyPlayScreen('game-screen');
                             activeQuestionId = null; // next game's first question should always render fresh
                             edLastPhaseKey = null; // next EmpossDurr game's first round should render fresh
+
+                            // Highlights whichever mode this player currently has
+                            // voted for (their original join-time pick, or a
+                            // later change via submitModeRevote) -- idempotent,
+                            // so re-syncing every poll tick is harmless.
+                            document.querySelectorAll('#mode-revote-list .module-row').forEach(r => {
+                                r.classList.toggle('selected', data.myVote && r.dataset.modeKey === data.myVote);
+                            });
                         }
                     }
                 } catch (e) {
@@ -639,6 +664,31 @@
                 showFeedback(feedback, data.reply, "rgba(0,230,118,0.06)", "#00e676", "rgba(0,230,118,0.1)");
             } catch (error) {
                 showFeedback(feedback, "❌ Transmission failed.", "rgba(255,71,87,0.06)", "#ff4757", "rgba(255,71,87,0.1)");
+            }
+        }
+
+        // Scoped to its own list (unlike submitCategorySubVote's document-wide
+        // getElementsByClassName) since this list coexists in the DOM with
+        // category-screen's own .module-row set -- selecting one shouldn't
+        // touch classes on rows in a completely different, currently-hidden
+        // screen.
+        async function submitModeRevote(element, modeKey) {
+            document.querySelectorAll('#mode-revote-list .module-row').forEach(r => r.classList.remove('selected'));
+            element.classList.add('selected');
+
+            const feedback = document.getElementById('game-feedback');
+            const registeredName = localStorage.getItem('randomania_nickname') || 'test-handset';
+
+            try {
+                const response = await fetch('/api/message', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ From: registeredName, Body: modeKey, roomCode: localStorage.getItem('randomania_roomcode') })
+                });
+                const data = await response.json();
+                showFeedback(feedback, data.reply, "rgba(0,230,118,0.06)", "#00e676", "rgba(0,230,118,0.1)");
+            } catch (error) {
+                showFeedback(feedback, "❌ Vote transmission failed.", "rgba(255,71,87,0.06)", "#ff4757", "rgba(255,71,87,0.1)");
             }
         }
 

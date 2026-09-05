@@ -560,10 +560,17 @@ function startEmpossDurrRound(roomCode) {
     const activePlayers = Object.values(room.players).filter(p => !p.left);
     const impostor = activePlayers[Math.floor(Math.random() * activePlayers.length)];
     const clue = nextWord.clues[Math.floor(Math.random() * nextWord.clues.length)];
+    // Independent random draw, same reasoning as the impostor pick -- no
+    // rotation/bag system, so it's possible (by design) for one player to
+    // start more often than another across a game. Who starts reveals
+    // nothing about who the impostor is, so this is safe to broadcast
+    // openly to the TV, unlike the word/clue/impostor identity.
+    const starter = activePlayers[Math.floor(Math.random() * activePlayers.length)];
 
     ed.secretWord = nextWord.word;
     ed.impostorClue = clue;
     ed.impostorName = impostor.name;
+    ed.starterName = starter.name;
     ed.phase = 'DISCUSSION';
     ed.readyToAccuse = new Set();
     ed.accuseVotes = {};
@@ -571,7 +578,7 @@ function startEmpossDurrRound(roomCode) {
 
     room.gameState = 'EMPOSSDURR_ROUND';
 
-    console.log(`[EmpossDurr] Room ${roomCode} round ${ed.currentRound}/${ed.totalRounds}. Impostor: ${impostor.name}.`);
+    console.log(`[EmpossDurr] Room ${roomCode} round ${ed.currentRound}/${ed.totalRounds}. Impostor: ${impostor.name}. Starts: ${starter.name}.`);
 
     // Deliberately no secret content in this broadcast -- the TV only ever
     // learns the round number, never the word or who the impostor is. Each
@@ -579,7 +586,8 @@ function startEmpossDurrRound(roomCode) {
     broadcastToRoom(roomCode, {
         type: 'EMPOSSDURR_ROUND_START',
         round: ed.currentRound,
-        totalRounds: ed.totalRounds
+        totalRounds: ed.totalRounds,
+        starter: ed.starterName
     });
 }
 
@@ -1271,6 +1279,27 @@ export function handleIncomingMessage(fromPhone, bodyText, explicitRoomCode, pre
         }
 
         return `You've left Room ${associatedRoomCode}. Come back any time using the same name to pick up where you left off.`;
+    }
+
+    // 2.6 Handle re-voting for a different game mode while sitting in the
+    // lobby -- e.g. after "Main Menu" bounces everyone back from a finished
+    // game. player.vote is otherwise cast once at join time and never
+    // touched again, which meant a room was stuck replaying whatever mode
+    // it first picked forever, with no way to ever pick a different one.
+    // Reuses the exact same mode keys the join form already sends.
+    if (currentRoom.gameState === 'LOBBY' && currentRoom.votes) {
+        const modeChoice = cleanText.toUpperCase();
+        if (Object.prototype.hasOwnProperty.call(currentRoom.votes, modeChoice)) {
+            player.vote = modeChoice;
+
+            const activePlayers = Object.values(currentRoom.players).filter(p => !p.left);
+            currentRoom.votes = { TRIVI_YEAH: 0, COUNTRY_MONKEY: 0, EMPOSSDURR: 0, FLAG_ME_DOWN: 0, ON_THE_SPECTRUM: 0 };
+            activePlayers.forEach(p => { if (currentRoom.votes[p.vote] !== undefined) currentRoom.votes[p.vote]++; });
+
+            broadcastToRoom(associatedRoomCode, { type: 'VOTE_UPDATE', votes: currentRoom.votes, totalVotes: activePlayers.length });
+
+            return `Vote switched to ${modeChoice}, ${player.name}!`;
+        }
     }
 
     // 3. DEMOCRACY WITH OOMPH: Clock skipping override calculation loops
