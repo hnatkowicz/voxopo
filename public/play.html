@@ -218,21 +218,19 @@
             <span class="player-badge-identity">🟢 <span id="badge-emoji">-</span> <span id="badge-name" class="player-badge-name">-</span></span>
             <span class="player-badge-room">Room <strong id="badge-room">-</strong> · Score <strong id="badge-score">0</strong></span>
         </div>
-        <div class="input-group">
-            <label>Vote START to lock in</label>
-            <input type="text" id="game-input" placeholder="Type START...">
-        </div>
-        <button class="btn" onclick="submitGameAction()">Submit Action</button>
-        <div id="game-feedback" class="feedback"></div>
-
         <!-- Only meaningful reason to revisit this screen after the first game
              is "Main Menu" bouncing everyone back here from Game Over -- a
              player's mode vote was otherwise cast once at join and never
              changeable again, so a room was stuck replaying the same mode
              forever. Live-updates the same way category voting already does:
-             tap a row, it's sent immediately, no separate submit step. -->
+             tap a row, it's sent immediately, no separate submit step.
+             Placed BEFORE the START input (not after) and framed as step 1
+             of 2 -- stacking it below "type START to lock in" read as two
+             unrelated, competing screens rather than one sequence, since
+             typing START is the thing you do once you're happy with the
+             mode, not a separate first step. -->
         <div class="input-group">
-            <label>Change Game Mode Vote</label>
+            <label>1. Playing again? Confirm or change the mode</label>
             <div class="module-list" id="mode-revote-list">
                 <div class="module-row" data-mode-key="TRIVI_YEAH" onclick="submitModeRevote(this, 'TRIVI_YEAH')">Trivi-yeah! <span class="module-descriptor">Multiple-choice trivia across a mix of subjects.</span></div>
                 <div class="module-row" data-mode-key="COUNTRY_MONKEY" onclick="submitModeRevote(this, 'COUNTRY_MONKEY')">Country Monkey <span class="module-descriptor">Guess the highlighted country on the map.</span></div>
@@ -241,6 +239,13 @@
                 <div class="module-row" data-mode-key="ON_THE_SPECTRUM" onclick="submitModeRevote(this, 'ON_THE_SPECTRUM')">On The Spectrum <span class="module-descriptor">Guess where it lands between two extremes.</span></div>
             </div>
         </div>
+
+        <div class="input-group">
+            <label>2. Vote START to lock in</label>
+            <input type="text" id="game-input" placeholder="Type START...">
+        </div>
+        <button class="btn" onclick="submitGameAction()">Submit Action</button>
+        <div id="game-feedback" class="feedback"></div>
 
         <!-- Without this, a phone silently auto-resumed into a stale remembered
              room (see attemptAutoResume) has no way back to the login form to
