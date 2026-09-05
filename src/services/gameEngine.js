@@ -255,7 +255,13 @@ async function executeCategoryPhaseExpiration(roomCode) {
     }
 
     if (room.questionBank.length === 0) {
-        console.error(`❌ [Question Bank] No eligible questions found for Room ${roomCode}.`);
+        // A deck with real map/content assets but no matching DB rows yet
+        // (e.g. a region's SQL not applied to this environment) would
+        // otherwise leave every player stuck on the category screen forever
+        // with zero feedback -- bounce back to the lobby instead so the
+        // room recovers and someone can pick a different deck.
+        console.error(`❌ [Question Bank] No eligible questions found for Room ${roomCode} (category: ${room.activeCategoryKey}). Returning to lobby instead of hanging.`);
+        resetRoomToLobby(roomCode);
         return;
     }
 

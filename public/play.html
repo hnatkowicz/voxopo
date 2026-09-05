@@ -175,7 +175,7 @@
              room (see attemptAutoResume) has no way back to the login form to
              join a different one -- Leave Room used to exist only on the
              question screen, which this phase never reaches. -->
-        <button class="btn btn-leave" onclick="leaveRoom()">Not you? Leave Room</button>
+        <button class="btn btn-leave" onclick="leaveRoom()">Leave Room</button>
     </div>
 
     <!-- SCREEN 3: CATEGORY VOTING GAMEPAD (CLEAN - NO DECORATIVE EMOJIS!) -->
@@ -183,7 +183,7 @@
         <h1>Category Selection</h1>
         <p class="subtitle" style="margin-bottom: 24px;">Cast your family sub-deck preference now</p>
         <div class="player-badge">
-            <span class="player-badge-identity">⚡ <span id="sub-badge-emoji">-</span> <span id="sub-badge-name" class="player-badge-name">-</span></span>
+            <span class="player-badge-identity"><span id="sub-badge-emoji">-</span> <span id="sub-badge-name" class="player-badge-name">-</span></span>
             <span class="player-badge-room">Room <strong id="sub-badge-room">-</strong> · Score <strong id="sub-badge-score">0</strong></span>
         </div>
         <div class="input-group">
@@ -191,7 +191,7 @@
             <div class="module-list" id="category-vote-list"></div>
         </div>
         <div id="category-feedback" class="feedback"></div>
-        <button class="btn btn-leave" onclick="leaveRoom()">Not you? Leave Room</button>
+        <button class="btn btn-leave" onclick="leaveRoom()">Leave Room</button>
     </div>
     
     <!-- SCREEN 4: ULTRA-CLEAN FULL-WIDTH QUESTION ANSWER CONTROLLER -->
@@ -247,7 +247,7 @@
              div's innerHTML every time, which would wipe this button out with it. -->
         <button class="btn" onclick="requestPlayAgain()">Play Again</button>
         <div id="playagain-feedback" class="feedback"></div>
-        <button class="btn btn-leave" onclick="leaveRoom()">Not you? Leave Room</button>
+        <button class="btn btn-leave" onclick="leaveRoom()">Leave Room</button>
         <audio id="horn-sound" src="/audio/horn.wav" preload="auto"></audio>
     </div>
 
