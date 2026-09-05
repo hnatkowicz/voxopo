@@ -841,11 +841,24 @@ export function handleIncomingMessage(fromPhone, bodyText, explicitRoomCode, pre
 
     // 3. DEMOCRACY WITH OOMPH: Clock skipping override calculation loops
     if (cleanText.toUpperCase() === 'START') {
+        // Play Again is a "start a fresh game" request, not a "skip the
+        // timer early" vote like LOBBY/CATEGORY_VOTE's START -- GAME_OVER
+        // has no timer to skip in the first place, so gating it on
+        // unanimous consensus with zero fallback meant one player who'd
+        // wandered off (closed their phone without ever tapping Leave Room)
+        // could silently strand everyone else on the Game Over screen
+        // forever, with nothing but a feedback line on the tapping phone to
+        // explain why. Any single active player is enough to start over.
+        if (currentRoom.gameState === 'GAME_OVER') {
+            resetRoomToLobby(associatedRoomCode);
+            return "Back to the lobby for a new game!";
+        }
+
         player.requestedStart = true;
 
         const playersList = Object.values(currentRoom.players).filter(p => !p.left);
         const startRequestsCount = playersList.filter(p => p.requestedStart === true).length;
-        
+
         console.log(`[Democracy Check] Room ${associatedRoomCode}: ${startRequestsCount}/${playersList.length} players voted START.`);
 
         if (startRequestsCount === playersList.length) {
@@ -857,9 +870,6 @@ export function handleIncomingMessage(fromPhone, bodyText, explicitRoomCode, pre
             } else if (currentRoom.gameState === 'CATEGORY_VOTE') {
                 executeCategoryPhaseExpiration(associatedRoomCode);
                 return "Consensus secured! Shifting to active trivia round.";
-            } else if (currentRoom.gameState === 'GAME_OVER') {
-                resetRoomToLobby(associatedRoomCode);
-                return "Consensus secured! Back to the lobby for a new game.";
             }
         }
         return `Start intent recorded (${startRequestsCount}/${playersList.length} votes secured). Waiting for consensus.`;
