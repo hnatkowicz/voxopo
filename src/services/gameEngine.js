@@ -670,12 +670,27 @@ function tallyEmpossDurrAccuseVotes(roomCode) {
     broadcastToRoom(roomCode, { type: 'LEADERBOARD_UPDATE', players: activePlayersArray });
 
     if (resolution.type === 'accuse') {
-        startEmpossDurrRound(roomCode);
+        // Give the room a beat to actually read who got accused (and whether
+        // they were right) before the next round's content overwrites it --
+        // same REVEAL_DURATION_MS pause the trivia modes use between a
+        // question's reveal and the next question.
+        if (room.revealTimeout) clearTimeout(room.revealTimeout);
+        room.revealTimeout = setTimeout(() => {
+            room.revealTimeout = null;
+            startEmpossDurrRound(roomCode);
+        }, REVEAL_DURATION_MS);
     } else {
-        // Same word, same impostor -- just re-open the floor for more talk.
-        ed.phase = 'DISCUSSION';
-        ed.readyToAccuse = new Set();
-        ed.accuseVotes = {};
+        // Same word, same impostor -- just re-open the floor for more talk,
+        // after the same reveal pause so "the group couldn't agree" actually
+        // gets read before discussion resumes.
+        if (room.revealTimeout) clearTimeout(room.revealTimeout);
+        room.revealTimeout = setTimeout(() => {
+            room.revealTimeout = null;
+            ed.phase = 'DISCUSSION';
+            ed.readyToAccuse = new Set();
+            ed.accuseVotes = {};
+            broadcastToRoom(roomCode, { type: 'EMPOSSDURR_RESUME_DISCUSSION' });
+        }, REVEAL_DURATION_MS);
     }
 }
 
@@ -727,8 +742,13 @@ function tallyEmpossDurrDeclareVerdict(roomCode) {
     broadcastToRoom(roomCode, { type: 'EMPOSSDURR_DECLARE_RESULT', correct, impostorName: ed.impostorName });
     broadcastToRoom(roomCode, { type: 'LEADERBOARD_UPDATE', players: activePlayersArray });
 
-    // Declaring always ends the round, right or wrong.
-    startEmpossDurrRound(roomCode);
+    // Declaring always ends the round, right or wrong -- same reveal pause
+    // as the accuse-vote result gets before the next round overwrites it.
+    if (room.revealTimeout) clearTimeout(room.revealTimeout);
+    room.revealTimeout = setTimeout(() => {
+        room.revealTimeout = null;
+        startEmpossDurrRound(roomCode);
+    }, REVEAL_DURATION_MS);
 }
 
 // Resets score/roster state exactly like resetRoomToLobby, but short-circuits

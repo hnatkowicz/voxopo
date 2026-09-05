@@ -158,6 +158,11 @@ app.post('/api/room-status', (req, res) => {
                 iHaveVoted: ed.phase === 'ACCUSE_VOTE'
                     ? (playerName in ed.accuseVotes)
                     : (ed.phase === 'DECLARE_VERDICT' ? (playerName in ed.declareVotes) : false),
+                // Only revealed once a declaration is actually in progress --
+                // pressing "I Declare!" is inherently self-outing in person
+                // (everyone watches you speak up), so naming them here isn't
+                // leaking anything they didn't already announce out loud.
+                impostorName: ed.phase === 'DECLARE_VERDICT' ? ed.impostorName : undefined,
                 playerNames: activePlayers.map(p => p.name),
                 myScore, myCorrectAnswers, myLeft, myEmoji
             });
@@ -176,7 +181,10 @@ app.post('/api/room-status', (req, res) => {
                 myCorrectAnswers,
                 totalPlayers: finalStandings.length,
                 myLeft,
-                myEmoji
+                myEmoji,
+                // Lets the phone show the "Play EmpossDurr Again" shortcut
+                // only when that's actually the mode that just finished.
+                winningGameMode: targetRoom.winningGameMode
             });
         }
         return res.json({ phase: 'WAITING', myScore, myCorrectAnswers, myLeft, myEmoji });
@@ -249,7 +257,11 @@ async function startServer() {
                                     // Pass down whatever timer metrics are left on the clock
                                     lobbySecondsLeft: currentRoomState.lobbySecondsLeft,
                                     categorySecondsLeft: currentRoomState.categorySecondsLeft,
-                                    gameSecondsLeft: currentRoomState.gameSecondsLeft
+                                    gameSecondsLeft: currentRoomState.gameSecondsLeft,
+                                    // Round numbers only -- never the secret word or who the
+                                    // impostor is, same rule as every other EmpossDurr broadcast.
+                                    empossdurrRound: currentRoomState.empossdurr ? currentRoomState.empossdurr.currentRound : null,
+                                    empossdurrTotalRounds: currentRoomState.empossdurr ? currentRoomState.empossdurr.totalRounds : null
                                 }));
                                 console.log(`[Sync Engine] Sent catch-up payload for active room ${roomCode} to fresh display listener.`);
                             }

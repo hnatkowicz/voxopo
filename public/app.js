@@ -1,7 +1,7 @@
 document.addEventListener("DOMContentLoaded", () => {
     document.body.setAttribute('data-view', 'gateway');
 
-    ['countdown-music', 'category-music', 'win-music'].forEach(id => {
+    ['countdown-music', 'category-music', 'win-music', 'declare-music'].forEach(id => {
         const audio = document.getElementById(id);
         if (audio) audio.volume = 0.5;
     });
@@ -75,12 +75,14 @@ let currentActiveRoomCode = '----';
         let playerAnswerStatus = {};
         let currentStatusHtml = ''; // Whatever the status slot should show at rest for the current phase (toasts restore to this)
         let currentGamePhase = 'LOBBY'; // LOBBY / CATEGORY_VOTE / GAME_ROUND / GAME_OVER -- gates the "TYPE START" nudge to lobby only
+        let currentEmpossDurrRound = null; // cached so EMPOSSDURR_RESUME_DISCUSSION can redraw the same round header
+        let currentEmpossDurrTotalRounds = null;
 
         // Primes all three <audio> elements against a real user gesture (a click), so
         // later programmatic .play() calls fired from WebSocket handlers aren't blocked
         // by the browser's autoplay policy, which only allows audio after interaction.
         function unlockAllAudio() {
-            ['countdown-music', 'category-music', 'win-music'].forEach(id => {
+            ['countdown-music', 'category-music', 'win-music', 'declare-music'].forEach(id => {
                 const audio = document.getElementById(id);
                 if (!audio) return;
                 const p = audio.play();
@@ -166,6 +168,15 @@ let currentActiveRoomCode = '----';
                         // Reveal happened while we were away; there's no correctLetter here,
                         // so just drop into the gameplay view and wait for the next broadcast.
                         document.getElementById('room-status-text').innerText = "Round Evaluation";
+                    } else if (data.gameState === 'EMPOSSDURR_ROUND') {
+                        // A refreshed TV can't recover exactly which EmpossDurr
+                        // sub-phase (discussion/vote/declare) was live -- the
+                        // next broadcast (ready update, timer tick, etc.) will
+                        // correct it within a second or two. Good enough for a
+                        // rare mid-round refresh; not worth serializing the
+                        // whole EmpossDurr sub-state through this payload too.
+                        document.getElementById('room-status-text').innerText = "EmpossDurr in progress";
+                        switchToEmpossDurrDiscussionUI(data.empossdurrRound || '?', data.empossdurrTotalRounds || '?');
                     }
                 }
                 if (data.type === 'LEADERBOARD_UPDATE') {
@@ -249,6 +260,76 @@ let currentActiveRoomCode = '----';
                     switchToLobbyVoteUI();
                     // Otherwise the last round's green "correct" dot would still be
                     // sitting next to a player's name on the fresh lobby screen.
+                    playerAnswerStatus = {};
+                }
+
+                // ---------- EmpossDurr ----------
+                // Deliberately never carries the word or who the impostor is --
+                // that content is private, delivered only to each phone via
+                // /api/room-status. The TV only ever learns round numbers,
+                // ready/vote *counts*, and (once someone declares) that one
+                // name -- which is self-outing anyway, see EMPOSSDURR_DECLARE.
+                if (data.type === 'EMPOSSDURR_ROUND_START') {
+                    document.getElementById('room-status-text').innerText = "EmpossDurr — Open Discussion";
+                    document.getElementById('lobby-countdown').innerText = '';
+                    switchToEmpossDurrDiscussionUI(data.round, data.totalRounds);
+                    playerAnswerStatus = {};
+                    updateLeaderboardUI(cachedPlayersSnapshot);
+                    stopCategoryMusic();
+                    stopCountdownMusic();
+                }
+                if (data.type === 'EMPOSSDURR_READY_UPDATE') {
+                    updateEmpossDurrReadyTally(data.readyNames, data.totalActive);
+                    // Reuse the same lit/dim dot as ANSWER_SUBMITTED -- a player
+                    // marking themselves ready lights up exactly the same way a
+                    // trivia answer does, deliberately indistinguishable.
+                    playerAnswerStatus = {};
+                    (data.readyNames || []).forEach(name => { playerAnswerStatus[name] = 'answered'; });
+                    updateLeaderboardUI(cachedPlayersSnapshot);
+                }
+                if (data.type === 'EMPOSSDURR_ACCUSE_VOTE_START') {
+                    document.getElementById('room-status-text').innerText = "EmpossDurr — Accuse Vote";
+                    switchToEmpossDurrAccuseVoteUI(data.secondsLeft);
+                    playerAnswerStatus = {};
+                    updateLeaderboardUI(cachedPlayersSnapshot);
+                }
+                if (data.type === 'EMPOSSDURR_ACCUSE_TIMER_TICK') {
+                    document.getElementById('lobby-countdown').innerText = data.secondsLeft + " s";
+                    const t = document.getElementById('ed-tv-timer');
+                    if (t) t.innerText = data.secondsLeft + " s";
+                }
+                if (data.type === 'EMPOSSDURR_VOTE_SUBMITTED') {
+                    playerAnswerStatus[data.playerName] = 'answered';
+                    updateLeaderboardUI(cachedPlayersSnapshot);
+                }
+                if (data.type === 'EMPOSSDURR_ACCUSE_RESULT') {
+                    switchToEmpossDurrAccuseResultUI(data.resolution, data.impostorName);
+                    playerAnswerStatus = {};
+                }
+                if (data.type === 'EMPOSSDURR_RESUME_DISCUSSION') {
+                    document.getElementById('room-status-text').innerText = "EmpossDurr — Open Discussion";
+                    document.getElementById('lobby-countdown').innerText = '';
+                    switchToEmpossDurrDiscussionUI(currentEmpossDurrRound, currentEmpossDurrTotalRounds);
+                    playerAnswerStatus = {};
+                    updateLeaderboardUI(cachedPlayersSnapshot);
+                }
+                if (data.type === 'EMPOSSDURR_DECLARE') {
+                    document.getElementById('room-status-text').innerText = "EmpossDurr — Declaration!";
+                    document.getElementById('lobby-countdown').innerText = data.secondsLeft + " s";
+                    switchToEmpossDurrDeclareSplashUI(data.impostorName, data.secondsLeft);
+                    stopCategoryMusic();
+                    stopCountdownMusic();
+                    playAudioTrack('declare-music');
+                    playerAnswerStatus = {};
+                    updateLeaderboardUI(cachedPlayersSnapshot);
+                }
+                if (data.type === 'EMPOSSDURR_DECLARE_TIMER_TICK') {
+                    document.getElementById('lobby-countdown').innerText = data.secondsLeft + " s";
+                    const t = document.getElementById('ed-tv-timer');
+                    if (t) t.innerText = data.secondsLeft + " s";
+                }
+                if (data.type === 'EMPOSSDURR_DECLARE_RESULT') {
+                    switchToEmpossDurrDeclareResultUI(data.correct, data.impostorName);
                     playerAnswerStatus = {};
                 }
             };
@@ -576,6 +657,100 @@ let currentActiveRoomCode = '----';
             `;
         }
         
+// ---------- EmpossDurr ----------
+// Deliberately sparse -- there's no question text or visual asset to show
+// (the secret word/clue is private, phone-only), so the panel is mostly a
+// calm round counter and a live ready-tally instead of dense content. See
+// design chat: reusing the same panel chrome as every other mode rather
+// than building new layout, just with leaner content dropped into it.
+function switchToEmpossDurrDiscussionUI(round, totalRounds) {
+    currentEmpossDurrRound = round;
+    currentEmpossDurrTotalRounds = totalRounds;
+    const panel = document.getElementById('active-content-stage');
+    currentGamePhase = 'EMPOSSDURR_ROUND';
+    setStatusMessage(`
+        <div style="font-weight: 600; color: #64748b;">Round ${round} / ${totalRounds}</div>
+    `);
+    panel.innerHTML = `
+        <div class="panel-box" style="padding: 40px; flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; min-height: 400px; box-sizing: border-box;">
+            <div style="font-size: 0.85rem; font-weight: 600; color: #64748b; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 8px;">
+                Active Deck: EmpossDurr
+            </div>
+            <div style="font-size: 1.6rem; font-weight: 700; color: #ffffff; letter-spacing: -0.02em; margin-bottom: 20px;">
+                Give your one-word clues out loud
+            </div>
+            <div style="font-size: 1rem; color: #94a3b8; margin-bottom: 6px;">Round ${round} of ${totalRounds}</div>
+            <div id="ed-tv-ready-tally" style="font-size: 1.1rem; font-weight: 600; color: #ffa500;">0 / 0 ready to accuse</div>
+        </div>
+    `;
+}
+
+function updateEmpossDurrReadyTally(readyNames, totalActive) {
+    const el = document.getElementById('ed-tv-ready-tally');
+    if (el) el.innerText = `${(readyNames || []).length} / ${totalActive || 0} ready to accuse`;
+}
+
+function switchToEmpossDurrAccuseVoteUI(secondsLeft) {
+    const panel = document.getElementById('active-content-stage');
+    panel.innerHTML = `
+        <div class="panel-box" style="padding: 40px; flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; min-height: 400px; box-sizing: border-box;">
+            <div style="font-size: 0.85rem; font-weight: 600; color: #64748b; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 8px;">
+                Accuse Vote In Progress
+            </div>
+            <div id="ed-tv-timer" style="font-size: 3rem; font-weight: 700; color: #ffffff;">${secondsLeft} s</div>
+            <div style="font-size: 1rem; color: #94a3b8; margin-top: 12px;">Votes are secret -- watch names light up below as everyone locks in.</div>
+        </div>
+    `;
+}
+
+function switchToEmpossDurrAccuseResultUI(resolution, impostorName) {
+    const panel = document.getElementById('active-content-stage');
+    let headline, sub;
+    if (resolution.type === 'accuse') {
+        headline = `${resolution.targetName} was accused!`;
+        sub = resolution.targetName === impostorName
+            ? "They WERE the impostor. Round over."
+            : "They were NOT the impostor -- the real one escapes with a bonus.";
+    } else {
+        headline = "The group couldn't agree.";
+        sub = "Back to discussion -- the impostor survives this vote.";
+    }
+    panel.innerHTML = `
+        <div class="panel-box" style="padding: 40px; flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; min-height: 400px; box-sizing: border-box;">
+            <div style="font-size: 1.6rem; font-weight: 700; color: #ffffff; letter-spacing: -0.02em; margin-bottom: 12px;">${headline}</div>
+            <div style="font-size: 1rem; color: #94a3b8;">${sub}</div>
+        </div>
+    `;
+}
+
+// The one moment allowed to interrupt everything else -- a near-full-panel
+// takeover naming the impostor. Not a secret leak: declaring is inherently
+// self-outing in person (everyone watches them speak up), same as the
+// phone's splash.
+function switchToEmpossDurrDeclareSplashUI(impostorName, secondsLeft) {
+    const panel = document.getElementById('active-content-stage');
+    panel.innerHTML = `
+        <div class="panel-box" style="padding: 40px; flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; min-height: 400px; box-sizing: border-box; background: rgba(255, 165, 0, 0.06); border-color: rgba(255, 165, 0, 0.4);">
+            <div style="font-size: 3rem; margin-bottom: 12px;">🕵️</div>
+            <div style="font-size: 2rem; font-weight: 700; color: #ffa500; letter-spacing: -0.02em; margin-bottom: 12px;">${impostorName} DECLARES!</div>
+            <div style="font-size: 1rem; color: #94a3b8; margin-bottom: 20px;">Everyone but the impostor is voting: was their guess correct?</div>
+            <div id="ed-tv-timer" style="font-size: 2.2rem; font-weight: 700; color: #ffffff;">${secondsLeft} s</div>
+        </div>
+    `;
+}
+
+function switchToEmpossDurrDeclareResultUI(correct, impostorName) {
+    const panel = document.getElementById('active-content-stage');
+    panel.innerHTML = `
+        <div class="panel-box" style="padding: 40px; flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; min-height: 400px; box-sizing: border-box;">
+            <div style="font-size: 1.6rem; font-weight: 700; color: #ffffff; letter-spacing: -0.02em; margin-bottom: 12px;">
+                ${correct ? `${impostorName} guessed correctly!` : `${impostorName} guessed wrong!`}
+            </div>
+            <div style="font-size: 1rem; color: #94a3b8;">Round over -- next round starting shortly.</div>
+        </div>
+    `;
+}
+
 // Rebuilds the "Active Module Election" panel from scratch -- switchToCategoryVotingUI/
 // switchToQuestionUI/switchToGameOverUI all overwrite this same #active-content-stage,
 // so returning to the lobby (post-game consensus) needs to reconstruct the exact

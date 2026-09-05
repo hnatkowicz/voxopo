@@ -65,6 +65,40 @@
 
         #game-screen { display: none; }
         #category-screen { display: none; }
+        #empossdurr-screen { display: none; }
+
+        /* Word (green, "you're a real player") vs clue (orange, "you're the
+           impostor") -- color alone should make a glanced-at phone read
+           correctly even before the label text registers. */
+        .ed-role-banner { border-radius: 8px; padding: 18px; margin-bottom: 20px; text-align: center; }
+        .ed-role-banner.ed-role-word { background: rgba(0, 230, 118, 0.06); border: 1px solid rgba(0, 230, 118, 0.3); }
+        .ed-role-banner.ed-role-impostor { background: rgba(255, 165, 0, 0.06); border: 1px solid rgba(255, 165, 0, 0.3); }
+        .ed-role-label { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.08em; font-weight: 600; color: #64748b; margin-bottom: 6px; }
+        .ed-role-word .ed-role-label { color: #00e676; }
+        .ed-role-impostor .ed-role-label { color: #ffa500; }
+        .ed-role-value { font-size: 1.4rem; font-weight: 700; color: #ffffff; letter-spacing: -0.01em; }
+
+        .ed-round-indicator { font-size: 0.8rem; color: #64748b; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 16px; }
+        .ed-status-line { font-size: 0.85rem; color: #64748b; text-align: center; margin: 12px 0; }
+        .ed-timer { font-size: 2rem; font-weight: 700; color: #ffffff; text-align: center; margin: 12px 0; }
+
+        .btn-ready { background: #1e222b; border: 1px solid #222630; color: #e2e5e9; }
+        .btn-ready.ed-active { background: rgba(0, 230, 118, 0.08); border-color: #00e676; color: #00e676; }
+        .btn-declare, .btn-ed-again { background: #ffa500; color: #0d0e11; }
+        .btn-declare:hover, .btn-ed-again:hover { background: #e59400; }
+        .btn-locked { opacity: 0.4; pointer-events: none; }
+
+        /* Full-screen takeover the instant the impostor declares -- fires on
+           every phone, not just theirs, so the room's attention snaps up
+           regardless of what anyone was looking at. */
+        #ed-declare-splash {
+            display: none; position: fixed; inset: 0; background: rgba(13, 14, 17, 0.97);
+            z-index: 1000; flex-direction: column; align-items: center; justify-content: center;
+            text-align: center; padding: 24px;
+        }
+        #ed-declare-splash .ed-splash-icon { font-size: 3.5rem; margin-bottom: 16px; }
+        #ed-declare-splash .ed-splash-title { font-size: 1.6rem; font-weight: 700; color: #ffa500; letter-spacing: -0.02em; margin-bottom: 8px; }
+        #ed-declare-splash .ed-splash-sub { font-size: 0.95rem; color: #94a3b8; }
         .player-badge { background: #1e222b; padding: 14px; border-radius: 8px; border: 1px solid #222630; margin-bottom: 24px; font-size: 0.95rem; color: #00e676; font-weight: 600; text-align: left; display: flex; justify-content: space-between; align-items: center; gap: 12px; }
         .player-badge-identity { display: flex; align-items: center; gap: 6px; min-width: 0; overflow: hidden; }
         .player-badge-name { color: #fff; font-weight: bold; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
@@ -193,7 +227,39 @@
         <div id="category-feedback" class="feedback"></div>
         <button class="btn btn-leave" onclick="leaveRoom()">Leave Room</button>
     </div>
-    
+
+    <!-- SCREEN 3.5: EMPOSSDURR ROUND CONTROLLER -->
+    <div id="empossdurr-screen" class="card">
+        <h1>EmpossDurr</h1>
+        <div class="ed-round-indicator" id="ed-round-indicator">Round - / -</div>
+        <div class="player-badge">
+            <span class="player-badge-identity"><span id="ed-badge-emoji">-</span> <span id="ed-badge-name" class="player-badge-name">-</span></span>
+            <span class="player-badge-room">Room <strong id="ed-badge-room">-</strong> · Score <strong id="ed-badge-score">0</strong></span>
+        </div>
+
+        <div id="ed-role-banner" class="ed-role-banner">
+            <div class="ed-role-label" id="ed-role-label">-</div>
+            <div class="ed-role-value" id="ed-role-value">-</div>
+        </div>
+
+        <!-- Rebuilt from scratch whenever the phase (or round) changes; the
+             countdown/ready-tally text inside gets updated in place every
+             poll tick without a full rebuild, so buttons don't flicker or
+             lose their locked state every second. -->
+        <div id="ed-phase-content"></div>
+
+        <div id="ed-feedback" class="feedback"></div>
+        <button class="btn btn-leave" onclick="leaveRoom()">Leave Room</button>
+    </div>
+
+    <!-- Impostor's "I Declare!" moment -- fires on every phone at once. -->
+    <div id="ed-declare-splash">
+        <div class="ed-splash-icon">🕵️</div>
+        <div class="ed-splash-title" id="ed-splash-title">DECLARING!</div>
+        <div class="ed-splash-sub">Everyone, listen up.</div>
+    </div>
+    <audio id="declare-sound" src="/audio/impostor-declares.wav" preload="auto"></audio>
+
     <!-- SCREEN 4: ULTRA-CLEAN FULL-WIDTH QUESTION ANSWER CONTROLLER -->
     <div id="question-screen" class="card" style="display: none;">
         <h1>Active Match Question</h1>
@@ -245,7 +311,8 @@
         </div>
         <!-- Outside #game-over-content on purpose -- renderGameOver() replaces that
              div's innerHTML every time, which would wipe this button out with it. -->
-        <button class="btn" onclick="requestPlayAgain()">Play Again</button>
+        <button class="btn btn-ed-again" id="btn-play-empossdurr-again" style="display: none;" onclick="requestPlayEmpossDurrAgain()">Play EmpossDurr Again</button>
+        <button class="btn" onclick="requestPlayAgain()">Main Menu</button>
         <div id="playagain-feedback" class="feedback"></div>
         <button class="btn btn-leave" onclick="leaveRoom()">Leave Room</button>
         <audio id="horn-sound" src="/audio/horn.wav" preload="auto"></audio>
@@ -372,6 +439,8 @@
         }
 
         let activeQuestionId = null; // Tracks which question is currently rendered so we only re-render on change
+        let edLastPhaseKey = null; // "<empossdurrPhase>|<round>" -- rebuild ed-phase-content only when this changes
+        let edDeclareSplashShown = false; // guards the splash from re-firing every poll tick while DECLARE_VERDICT is active
 
         function initRoomStatePoller(roomCode, nickname) {
             roomStateTrackerInterval = setInterval(async () => {
@@ -406,6 +475,7 @@
                             ).join('');
 
                             document.getElementById('game-screen').style.display = "none";
+                            document.getElementById('empossdurr-screen').style.display = "none";
                             document.getElementById('category-screen').style.display = "block";
                         }
 
@@ -414,6 +484,7 @@
                         if (data.phase === 'GAME_ROUND_PHASE') {
                             document.getElementById('category-screen').style.display = "none";
                             document.getElementById('game-screen').style.display = "none";
+                            document.getElementById('empossdurr-screen').style.display = "none";
                             document.getElementById('question-screen').style.display = "block";
 
                             // Only re-render (and unlock the answer rows) when the question actually changed
@@ -421,6 +492,17 @@
                                 activeQuestionId = data.questionId;
                                 renderQuestion(data, nickname, roomCode);
                             }
+                        }
+
+                        // EmpossDurr's own round loop -- reveal, open discussion, the
+                        // ready-to-accuse toggle, the timed accuse vote, and the
+                        // Declare verdict all live inside this one screen.
+                        if (data.phase === 'EMPOSSDURR_ROUND_PHASE') {
+                            document.getElementById('category-screen').style.display = "none";
+                            document.getElementById('game-screen').style.display = "none";
+                            document.getElementById('question-screen').style.display = "none";
+                            document.getElementById('empossdurr-screen').style.display = "block";
+                            renderEmpossDurr(data, nickname, roomCode);
                         }
 
                         // Loop exhausted its question bank: show this player's own placement
@@ -431,6 +513,7 @@
                             document.getElementById('category-screen').style.display = "none";
                             document.getElementById('game-screen').style.display = "none";
                             document.getElementById('question-screen').style.display = "none";
+                            document.getElementById('empossdurr-screen').style.display = "none";
                             document.getElementById('game-over-screen').style.display = "block";
                             renderGameOver(data, nickname);
                         }
@@ -441,9 +524,11 @@
                         if (data.phase === 'LOBBY_PHASE') {
                             document.getElementById('category-screen').style.display = "none";
                             document.getElementById('question-screen').style.display = "none";
+                            document.getElementById('empossdurr-screen').style.display = "none";
                             document.getElementById('game-over-screen').style.display = "none";
                             document.getElementById('game-screen').style.display = "block";
                             activeQuestionId = null; // next game's first question should always render fresh
+                            edLastPhaseKey = null; // next EmpossDurr game's first round should render fresh
                         }
                     }
                 } catch (e) {
@@ -540,6 +625,177 @@
             }
         }
 
+        // ---------- EmpossDurr ----------
+
+        function renderEmpossDurr(data, nickname, roomCode) {
+            document.getElementById('ed-badge-name').innerText = nickname;
+            document.getElementById('ed-badge-emoji').innerText = chosenAvatar;
+            document.getElementById('ed-badge-room').innerText = roomCode;
+            document.getElementById('ed-round-indicator').innerText = `Round ${data.round} of ${data.totalRounds}`;
+
+            const roleBanner = document.getElementById('ed-role-banner');
+            if (data.isImpostor) {
+                roleBanner.className = 'ed-role-banner ed-role-impostor';
+                document.getElementById('ed-role-label').innerText = 'Your Clue (you are the impostor)';
+                document.getElementById('ed-role-value').innerText = (data.displayClue || '-').toUpperCase();
+            } else {
+                roleBanner.className = 'ed-role-banner ed-role-word';
+                document.getElementById('ed-role-label').innerText = 'Secret Word';
+                document.getElementById('ed-role-value').innerText = (data.displayWord || '-').toUpperCase();
+            }
+
+            // Declare splash fires exactly once per verdict phase, the moment
+            // we first notice it's live -- not every poll tick.
+            if (data.empossdurrPhase === 'DECLARE_VERDICT' && !edDeclareSplashShown) {
+                edDeclareSplashShown = true;
+                showEmpossDurrDeclareSplash(data.impostorName || null, data.isImpostor);
+            }
+            if (data.empossdurrPhase !== 'DECLARE_VERDICT') {
+                edDeclareSplashShown = false;
+            }
+
+            const phaseKey = `${data.empossdurrPhase}|${data.round}`;
+            if (phaseKey !== edLastPhaseKey) {
+                edLastPhaseKey = phaseKey;
+                buildEmpossDurrPhaseContent(data);
+            } else {
+                updateEmpossDurrLiveBits(data);
+            }
+        }
+
+        function buildEmpossDurrPhaseContent(data) {
+            const container = document.getElementById('ed-phase-content');
+            const feedback = document.getElementById('ed-feedback');
+            feedback.style.display = 'none';
+
+            if (data.empossdurrPhase === 'DISCUSSION') {
+                const declareButton = data.isImpostor
+                    ? `<button class="btn btn-declare" onclick="submitEmpossDurrDeclare()">I Declare!</button>`
+                    : '';
+                container.innerHTML = `
+                    <p class="ed-status-line">Give your one-word clues out loud. When you're ready to accuse, mark yourself ready below.</p>
+                    <div class="ed-status-line" id="ed-ready-tally">0 / 0 ready to accuse</div>
+                    <button class="btn btn-ready" id="ed-ready-btn" onclick="toggleEmpossDurrReady()">I'm Ready to Accuse</button>
+                    ${declareButton}
+                `;
+                updateEmpossDurrLiveBits(data);
+                return;
+            }
+
+            if (data.empossdurrPhase === 'ACCUSE_VOTE') {
+                const targetButtons = (data.playerNames || [])
+                    .filter(n => n !== localStorage.getItem('randomania_nickname'))
+                    .map(n => `<div class="module-row" onclick="submitEmpossDurrAccuse('${n}', this)">${n}</div>`)
+                    .join('');
+                container.innerHTML = `
+                    <div class="ed-timer" id="ed-timer">${data.accuseSecondsLeft ?? ''}s</div>
+                    <p class="ed-status-line">Vote is secret. Accuse someone, or abstain to keep talking.</p>
+                    <div class="module-list">${targetButtons}</div>
+                    <button class="btn btn-ready" onclick="submitEmpossDurrAbstain(this)">Abstain / Keep Talking</button>
+                `;
+                updateEmpossDurrLiveBits(data);
+                return;
+            }
+
+            if (data.empossdurrPhase === 'DECLARE_VERDICT') {
+                if (data.isImpostor) {
+                    container.innerHTML = `<p class="ed-status-line">You've declared -- the group is deciding now.</p>`;
+                } else {
+                    container.innerHTML = `
+                        <div class="ed-timer" id="ed-timer">${data.declareSecondsLeft ?? ''}s</div>
+                        <p class="ed-status-line">Was their spoken guess actually correct?</p>
+                        <button class="btn" onclick="submitEmpossDurrVerdict('DECLARE_YES', this)">Yes, that's it!</button>
+                        <button class="btn btn-leave" onclick="submitEmpossDurrVerdict('DECLARE_NO', this)">No, that's wrong</button>
+                    `;
+                }
+                updateEmpossDurrLiveBits(data);
+                return;
+            }
+
+            container.innerHTML = `<p class="ed-status-line">Waiting on the room...</p>`;
+        }
+
+        // Updates just the numbers that tick every second (countdown, ready
+        // tally) and re-locks controls the server says are already used --
+        // never rebuilds the buttons themselves, so nothing flickers.
+        function updateEmpossDurrLiveBits(data) {
+            if (data.empossdurrPhase === 'DISCUSSION') {
+                const tally = document.getElementById('ed-ready-tally');
+                if (tally) tally.innerText = `${(data.readyToAccuse || []).length} / ${data.totalActive || 0} ready to accuse`;
+                const readyBtn = document.getElementById('ed-ready-btn');
+                if (readyBtn) {
+                    if (data.iAmReady) {
+                        readyBtn.classList.add('ed-active');
+                        readyBtn.innerText = "Ready ✓ (tap to retract)";
+                    } else {
+                        readyBtn.classList.remove('ed-active');
+                        readyBtn.innerText = "I'm Ready to Accuse";
+                    }
+                }
+            } else if (data.empossdurrPhase === 'ACCUSE_VOTE') {
+                const timer = document.getElementById('ed-timer');
+                if (timer) timer.innerText = `${data.accuseSecondsLeft ?? 0}s`;
+                if (data.iHaveVoted) {
+                    document.querySelectorAll('#ed-phase-content .module-row, #ed-phase-content .btn').forEach(el => el.classList.add('btn-locked'));
+                }
+            } else if (data.empossdurrPhase === 'DECLARE_VERDICT' && !data.isImpostor) {
+                const timer = document.getElementById('ed-timer');
+                if (timer) timer.innerText = `${data.declareSecondsLeft ?? 0}s`;
+                if (data.iHaveVoted) {
+                    document.querySelectorAll('#ed-phase-content .btn').forEach(el => el.classList.add('btn-locked'));
+                }
+            }
+        }
+
+        function showEmpossDurrDeclareSplash(impostorName, isSelf) {
+            const splash = document.getElementById('ed-declare-splash');
+            document.getElementById('ed-splash-title').innerText = isSelf
+                ? "YOU'VE DECLARED!"
+                : `${(impostorName || 'THE IMPOSTOR').toUpperCase()} DECLARES!`;
+            splash.style.display = 'flex';
+            playDeclareSound();
+            setTimeout(() => { splash.style.display = 'none'; }, 2500);
+        }
+
+        function playDeclareSound() {
+            const audio = document.getElementById('declare-sound');
+            if (!audio) return;
+            audio.currentTime = 0;
+            const p = audio.play();
+            if (p && typeof p.catch === 'function') p.catch(err => console.warn('[Audio] declare sound blocked or failed:', err.message));
+        }
+
+        async function sendEmpossDurrAction(body) {
+            const registeredName = localStorage.getItem('randomania_nickname') || 'test-handset';
+            const feedback = document.getElementById('ed-feedback');
+            try {
+                const response = await fetch('/api/message', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ From: registeredName, Body: body, roomCode: localStorage.getItem('randomania_roomcode') })
+                });
+                const data = await response.json();
+                showFeedback(feedback, data.reply, "rgba(0,230,118,0.06)", "#00e676", "rgba(0,230,118,0.1)");
+            } catch (error) {
+                showFeedback(feedback, "❌ Transmission failed.", "rgba(255,71,87,0.06)", "#ff4757", "rgba(255,71,87,0.1)");
+            }
+        }
+
+        function toggleEmpossDurrReady() { sendEmpossDurrAction('READY_TOGGLE'); }
+        function submitEmpossDurrAccuse(targetName, element) {
+            document.querySelectorAll('#ed-phase-content .module-row, #ed-phase-content .btn').forEach(el => el.classList.add('btn-locked'));
+            sendEmpossDurrAction(`ACCUSE_TARGET:${targetName}`);
+        }
+        function submitEmpossDurrAbstain(element) {
+            document.querySelectorAll('#ed-phase-content .module-row, #ed-phase-content .btn').forEach(el => el.classList.add('btn-locked'));
+            sendEmpossDurrAction('ACCUSE_ABSTAIN');
+        }
+        function submitEmpossDurrDeclare() { sendEmpossDurrAction('DECLARE'); }
+        function submitEmpossDurrVerdict(vote, element) {
+            document.querySelectorAll('#ed-phase-content .btn').forEach(el => el.classList.add('btn-locked'));
+            sendEmpossDurrAction(vote);
+        }
+
         async function submitGameAction() {
             const actionText = document.getElementById('game-input').value.trim();
             const feedback = document.getElementById('game-feedback');
@@ -585,12 +841,36 @@
             }
         }
 
+        // Single-tap shortcut, same reasoning as requestPlayAgain -- skips the
+        // full mode election and jumps straight back into EmpossDurr.
+        async function requestPlayEmpossDurrAgain() {
+            const feedback = document.getElementById('playagain-feedback');
+            const registeredName = localStorage.getItem('randomania_nickname') || 'test-handset';
+
+            showFeedback(feedback, "Locking in...", "rgba(255,165,0,0.06)", "#ffa500", "rgba(255,165,0,0.1)");
+
+            try {
+                const response = await fetch('/api/message', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ From: registeredName, Body: 'PLAY_EMPOSSDURR_AGAIN', roomCode: localStorage.getItem('randomania_roomcode') })
+                });
+                const data = await response.json();
+                showFeedback(feedback, data.reply, "rgba(0,230,118,0.06)", "#00e676", "rgba(0,230,118,0.1)");
+            } catch (error) {
+                showFeedback(feedback, "❌ Transmission failed.", "rgba(255,71,87,0.06)", "#ff4757", "rgba(255,71,87,0.1)");
+            }
+        }
+
         // Renders this player's own final-standings card, styled to match the TV's
         // gold/silver/bronze medal rows for the top 3. Rank 1 gets a bonus soundboard
         // button -- horn.wav needs to actually exist in public/audio for it to play.
         function renderGameOver(data, nickname) {
             const container = document.getElementById('game-over-content');
             const rank = data.myRank;
+
+            document.getElementById('btn-play-empossdurr-again').style.display =
+                data.winningGameMode === 'EMPOSSDURR' ? 'block' : 'none';
 
             if (!rank) {
                 container.innerHTML = `<p class="subtitle" style="margin-bottom: 0;">Thanks for playing! Check the TV screen for the final leaderboard.</p>`;
