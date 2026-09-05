@@ -84,6 +84,9 @@ export function getCategoriesForMode(winningGameMode) {
         return [
             { key: 'AFRICA', label: 'Africa' },
             { key: 'EUROPE', label: 'Europe' },
+            { key: 'AMERICAS', label: 'Americas' },
+            { key: 'SOUTHEAST_ASIA', label: 'Southeast Asia' },
+            { key: 'PACIFIC_ISLANDS', label: 'Pacific Islands' },
             { key: ALL_REGIONS_KEY, label: 'World Wide!' }
         ];
     } else if (winningGameMode === 'EMPOSSDURR') {
