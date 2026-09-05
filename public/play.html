@@ -57,6 +57,11 @@
 
         .btn { background: #00e676; color: #0d0e11; border: none; padding: 16px; border-radius: 8px; font-size: 1.05rem; font-weight: 600; width: 100%; cursor: pointer; margin-top: 24px; letter-spacing: 0.02em; }
         .btn:hover { background: #00c862; }
+        /* Explicit disabled treatment -- the browser default on a bright
+           green button over a dark theme looks like a rendering glitch, not
+           an intentional "pick something first" state. */
+        .btn:disabled { background: #1e222b; color: #64748b; cursor: not-allowed; }
+        .btn:disabled:hover { background: #1e222b; }
         .btn-leave { background: transparent; color: #ff4757; border: 1px solid rgba(255, 71, 87, 0.3); margin-top: 14px; }
         .btn-leave:hover { background: rgba(255, 71, 87, 0.08); }
         .btn-horn { background: #ffa500; margin-top: 16px; }
@@ -726,15 +731,22 @@
             }
 
             if (data.empossdurrPhase === 'ACCUSE_VOTE') {
-                const targetButtons = (data.playerNames || [])
+                edPendingChoice = null;
+                // Tapping a row only selects it -- nothing reaches the server
+                // until "Submit Vote" is tapped, so a miskeyed accusation can
+                // be corrected before it's ever locked in.
+                const targetRows = (data.playerNames || [])
                     .filter(n => n !== localStorage.getItem('randomania_nickname'))
-                    .map(n => `<div class="module-row" onclick="submitEmpossDurrAccuse('${n}', this)">${n}</div>`)
+                    .map(n => `<div class="module-row" onclick="selectEmpossDurrChoice('ACCUSE_TARGET:${n}', this)">${n}</div>`)
                     .join('');
                 container.innerHTML = `
                     <div class="ed-timer" id="ed-timer">${data.accuseSecondsLeft ?? ''}s</div>
-                    <p class="ed-status-line">Vote is secret. Accuse someone, or abstain to keep talking.</p>
-                    <div class="module-list">${targetButtons}</div>
-                    <button class="btn btn-ready" onclick="submitEmpossDurrAbstain(this)">Abstain / Keep Talking</button>
+                    <p class="ed-status-line">Vote is secret. Pick who to accuse, or abstain, then submit.</p>
+                    <div class="module-list">
+                        ${targetRows}
+                        <div class="module-row" onclick="selectEmpossDurrChoice('ACCUSE_ABSTAIN', this)">Abstain / Keep Talking</div>
+                    </div>
+                    <button class="btn" id="ed-submit-vote-btn" disabled onclick="submitEmpossDurrChoice()">Submit Vote</button>
                 `;
                 updateEmpossDurrLiveBits(data);
                 return;
@@ -744,11 +756,15 @@
                 if (data.isImpostor) {
                     container.innerHTML = `<p class="ed-status-line">You've declared -- the group is deciding now.</p>`;
                 } else {
+                    edPendingChoice = null;
                     container.innerHTML = `
                         <div class="ed-timer" id="ed-timer">${data.declareSecondsLeft ?? ''}s</div>
                         <p class="ed-status-line">Was their spoken guess actually correct?</p>
-                        <button class="btn" onclick="submitEmpossDurrVerdict('DECLARE_YES', this)">Yes, that's it!</button>
-                        <button class="btn btn-leave" onclick="submitEmpossDurrVerdict('DECLARE_NO', this)">No, that's wrong</button>
+                        <div class="module-list">
+                            <div class="module-row" onclick="selectEmpossDurrChoice('DECLARE_YES', this)">Yes, that's it!</div>
+                            <div class="module-row" onclick="selectEmpossDurrChoice('DECLARE_NO', this)">No, that's wrong</div>
+                        </div>
+                        <button class="btn" id="ed-submit-vote-btn" disabled onclick="submitEmpossDurrChoice()">Submit Verdict</button>
                     `;
                 }
                 updateEmpossDurrLiveBits(data);
@@ -825,19 +841,26 @@
         }
 
         function toggleEmpossDurrReady() { sendEmpossDurrAction('READY_TOGGLE'); }
-        function submitEmpossDurrAccuse(targetName, element) {
-            document.querySelectorAll('#ed-phase-content .module-row, #ed-phase-content .btn').forEach(el => el.classList.add('btn-locked'));
-            sendEmpossDurrAction(`ACCUSE_TARGET:${targetName}`);
+        // Select-then-submit for both accuse and verdict votes -- tapping a
+        // choice only highlights it (same .selected treatment as trivia's
+        // answer rows) and enables Submit; nothing reaches the server until
+        // Submit is tapped, and tapping a different choice first just moves
+        // the highlight. Closes the "miskeyed vote" problem: a wrong tap is
+        // free to correct right up until the deliberate submit action.
+        let edPendingChoice = null;
+        function selectEmpossDurrChoice(choiceBody, element) {
+            edPendingChoice = choiceBody;
+            document.querySelectorAll('#ed-phase-content .module-row').forEach(el => el.classList.remove('selected'));
+            element.classList.add('selected');
+            const submitBtn = document.getElementById('ed-submit-vote-btn');
+            if (submitBtn) submitBtn.disabled = false;
         }
-        function submitEmpossDurrAbstain(element) {
+        function submitEmpossDurrChoice() {
+            if (!edPendingChoice) return;
             document.querySelectorAll('#ed-phase-content .module-row, #ed-phase-content .btn').forEach(el => el.classList.add('btn-locked'));
-            sendEmpossDurrAction('ACCUSE_ABSTAIN');
+            sendEmpossDurrAction(edPendingChoice);
         }
         function submitEmpossDurrDeclare() { sendEmpossDurrAction('DECLARE'); }
-        function submitEmpossDurrVerdict(vote, element) {
-            document.querySelectorAll('#ed-phase-content .btn').forEach(el => el.classList.add('btn-locked'));
-            sendEmpossDurrAction(vote);
-        }
 
         async function submitGameAction() {
             const actionText = document.getElementById('game-input').value.trim();
