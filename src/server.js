@@ -136,6 +136,32 @@ app.post('/api/room-status', (req, res) => {
             // activeQuestionData is already answer-safe (correctLetter stripped in gameEngine.js)
             return res.json({ phase: 'GAME_ROUND_PHASE', ...targetRoom.activeQuestionData, myScore, myCorrectAnswers, myLeft, myEmoji });
         }
+        if (targetRoom && targetRoom.gameState === 'EMPOSSDURR_ROUND' && targetRoom.empossdurr) {
+            const ed = targetRoom.empossdurr;
+            const isImpostor = playerName === ed.impostorName;
+            const activePlayers = Object.values(targetRoom.players).filter(p => !p.left);
+            return res.json({
+                phase: 'EMPOSSDURR_ROUND_PHASE',
+                empossdurrPhase: ed.phase, // DISCUSSION | ACCUSE_VOTE | DECLARE_VERDICT
+                round: ed.currentRound,
+                totalRounds: ed.totalRounds,
+                isImpostor,
+                // Never both -- a real player sees the word, the impostor
+                // sees only their one clue, and never the other's content.
+                displayWord: isImpostor ? null : ed.secretWord,
+                displayClue: isImpostor ? ed.impostorClue : null,
+                readyToAccuse: Array.from(ed.readyToAccuse || []),
+                iAmReady: ed.readyToAccuse ? ed.readyToAccuse.has(playerName) : false,
+                totalActive: activePlayers.length,
+                accuseSecondsLeft: ed.accuseSecondsLeft,
+                declareSecondsLeft: ed.declareSecondsLeft,
+                iHaveVoted: ed.phase === 'ACCUSE_VOTE'
+                    ? (playerName in ed.accuseVotes)
+                    : (ed.phase === 'DECLARE_VERDICT' ? (playerName in ed.declareVotes) : false),
+                playerNames: activePlayers.map(p => p.name),
+                myScore, myCorrectAnswers, myLeft, myEmoji
+            });
+        }
         if (targetRoom && targetRoom.gameState === 'GAME_OVER') {
             // Same ordering the TV's final leaderboard used, so a player's phone
             // shows the exact placement (and can style itself gold/silver/bronze)

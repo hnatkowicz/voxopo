@@ -19,6 +19,20 @@ const GAME_ROUND_DURATION_SECONDS = 30;
 const FAST_FORWARD_SECONDS = 3; // once everyone's answered, snap the clock down to this for a beat of suspense
 const MAX_NAME_LENGTH = 30; // matches the phone's input maxlength
 
+// EmpossDurr (impostor social-deduction mode). Round count scales with the
+// roster instead of a flat number -- "roster + 3" gives a small table (5-6
+// players) a couple of bonus rounds past one full impostor-rotation's worth
+// of variety, without making a big table drag on forever. Bounded on both
+// ends so a 2-person test room and a hypothetical 30-person room both land
+// somewhere sane. Deliberately NOT a rotation/bag system -- impostor pick
+// stays pure independent random every round by design (see design chat):
+// true unpredictability is the point, even though it means one player might
+// never get picked all game while another gets picked repeatedly.
+const EMPOSSDURR_MIN_ROUNDS = 5;
+const EMPOSSDURR_MAX_ROUNDS = 12;
+const EMPOSSDURR_ACCUSE_VOTE_SECONDS = 15;
+const EMPOSSDURR_DECLARE_VOTE_SECONDS = 10;
+
 // Clamps a requested question count into [MIN_QUESTIONS_PER_GAME,
 // MAX_QUESTIONS_PER_GAME]. Falls back to the fixed default for anything
 // missing/non-numeric. The bounds stay in place (and this stays exported) for
@@ -247,6 +261,19 @@ async function executeCategoryPhaseExpiration(roomCode) {
 
     console.log(`[Room Engine] Category selection finalized for Room ${roomCode}. Loaded: ${room.activeDeckName}`);
 
+    // EmpossDurr has no multiple-choice question bank at all -- it's a
+    // completely separate engine (see PHASE 3B below) with its own word deck,
+    // round counting, and phase machine.
+    if (room.winningGameMode === 'EMPOSSDURR') {
+        try {
+            await startEmpossDurrGame(roomCode);
+        } catch (error) {
+            console.error(`❌ [EmpossDurr] Failed to start Room ${roomCode}:`, error.message);
+            resetRoomToLobby(roomCode);
+        }
+        return;
+    }
+
     try {
         await loadQuestionBank(room);
     } catch (error) {
@@ -429,12 +456,325 @@ function endGame(roomCode) {
     // rejoin before this fires) but don't appear in the final standings.
     const finalStandings = Object.values(room.players).filter(p => !p.left).sort(compareByRank);
 
-    console.log(`🏁 [Game Engine] Room ${roomCode} finished ${room.questionBank.length} questions. Broadcasting final leaderboard.`);
+    const roundsPlayedDescription = room.winningGameMode === 'EMPOSSDURR'
+        ? `${room.empossdurr ? room.empossdurr.currentRound : 0} rounds`
+        : `${room.questionBank.length} questions`;
+    console.log(`🏁 [Game Engine] Room ${roomCode} finished ${roundsPlayedDescription}. Broadcasting final leaderboard.`);
 
     broadcastToRoom(roomCode, {
         type: 'GAME_OVER',
         players: finalStandings
     });
+}
+
+// ==========================================
+// PHASE 3B: EMPOSSDURR ENGINE (impostor social-deduction mode)
+// ==========================================
+
+// Loaded once per process and cached -- the deck barely ever changes
+// mid-runtime, and re-querying it every single game would be wasteful. A
+// server restart naturally picks up any new rows added since.
+let empossDurrWordCache = null;
+async function loadEmpossDurrWordPool() {
+    if (empossDurrWordCache) return empossDurrWordCache;
+    const result = await pool.query('SELECT word, clue_1, clue_2, clue_3, clue_4 FROM empossdurr_words');
+    empossDurrWordCache = result.rows.map(row => ({
+        word: row.word,
+        clues: [row.clue_1, row.clue_2, row.clue_3, row.clue_4]
+    }));
+    return empossDurrWordCache;
+}
+
+function clearEmpossDurrTimers(room) {
+    if (!room.empossdurr) return;
+    if (room.empossdurr.accuseTimerInterval) { clearInterval(room.empossdurr.accuseTimerInterval); room.empossdurr.accuseTimerInterval = null; }
+    if (room.empossdurr.declareTimerInterval) { clearInterval(room.empossdurr.declareTimerInterval); room.empossdurr.declareTimerInterval = null; }
+}
+
+// Entry point once EmpossDurr wins the lobby election and its (currently
+// single) category phase resolves -- the equivalent of loadQuestionBank +
+// startNextQuestion for the trivia modes, but EmpossDurr has no
+// multiple-choice question bank at all, just a word deck.
+async function startEmpossDurrGame(roomCode) {
+    const room = activeRooms[roomCode];
+    if (!room) return;
+
+    const wordPool = shuffleArray(await loadEmpossDurrWordPool());
+    const activePlayerCount = Object.values(room.players).filter(p => !p.left).length;
+    const totalRounds = Math.max(EMPOSSDURR_MIN_ROUNDS, Math.min(activePlayerCount + 3, EMPOSSDURR_MAX_ROUNDS));
+
+    room.empossdurr = {
+        wordPool,
+        totalRounds,
+        currentRound: 0,
+        secretWord: null,
+        impostorClue: null,
+        impostorName: null,
+        phase: null, // DISCUSSION | ACCUSE_VOTE | DECLARE_VERDICT
+        readyToAccuse: new Set(),
+        accuseVotes: {}, // name -> { mode: 'accuse'|'abstain', target }
+        accuseSecondsLeft: 0,
+        accuseTimerInterval: null,
+        declareVotes: {}, // name -> 'yes'|'no'
+        declareSecondsLeft: 0,
+        declareTimerInterval: null
+    };
+
+    startEmpossDurrRound(roomCode);
+}
+
+function startEmpossDurrRound(roomCode) {
+    const room = activeRooms[roomCode];
+    if (!room || !room.empossdurr) return;
+
+    clearEmpossDurrTimers(room);
+    const ed = room.empossdurr;
+    ed.currentRound += 1;
+
+    if (ed.currentRound > ed.totalRounds) {
+        endGame(roomCode);
+        return;
+    }
+
+    if (ed.wordPool.length === 0) {
+        // Ran through the whole deck this game -- reshuffle a fresh lap rather
+        // than reusing the exact same draw order.
+        loadEmpossDurrWordPool().then(fullPool => { ed.wordPool = shuffleArray(fullPool); });
+    }
+    const nextWord = ed.wordPool.pop();
+
+    const activePlayers = Object.values(room.players).filter(p => !p.left);
+    const impostor = activePlayers[Math.floor(Math.random() * activePlayers.length)];
+    const clue = nextWord.clues[Math.floor(Math.random() * nextWord.clues.length)];
+
+    ed.secretWord = nextWord.word;
+    ed.impostorClue = clue;
+    ed.impostorName = impostor.name;
+    ed.phase = 'DISCUSSION';
+    ed.readyToAccuse = new Set();
+    ed.accuseVotes = {};
+    ed.declareVotes = {};
+
+    room.gameState = 'EMPOSSDURR_ROUND';
+
+    console.log(`[EmpossDurr] Room ${roomCode} round ${ed.currentRound}/${ed.totalRounds}. Impostor: ${impostor.name}.`);
+
+    // Deliberately no secret content in this broadcast -- the TV only ever
+    // learns the round number, never the word or who the impostor is. Each
+    // phone gets its own private content by polling /api/room-status.
+    broadcastToRoom(roomCode, {
+        type: 'EMPOSSDURR_ROUND_START',
+        round: ed.currentRound,
+        totalRounds: ed.totalRounds
+    });
+}
+
+function broadcastEmpossDurrReadyUpdate(roomCode) {
+    const room = activeRooms[roomCode];
+    if (!room || !room.empossdurr) return;
+    const activePlayers = Object.values(room.players).filter(p => !p.left);
+    broadcastToRoom(roomCode, {
+        type: 'EMPOSSDURR_READY_UPDATE',
+        readyNames: Array.from(room.empossdurr.readyToAccuse),
+        totalActive: activePlayers.length
+    });
+}
+
+function startEmpossDurrAccuseVote(roomCode) {
+    const room = activeRooms[roomCode];
+    if (!room || !room.empossdurr) return;
+    clearEmpossDurrTimers(room);
+
+    const ed = room.empossdurr;
+    ed.phase = 'ACCUSE_VOTE';
+    ed.accuseVotes = {};
+    ed.readyToAccuse = new Set();
+    ed.accuseSecondsLeft = EMPOSSDURR_ACCUSE_VOTE_SECONDS;
+
+    broadcastToRoom(roomCode, { type: 'EMPOSSDURR_ACCUSE_VOTE_START', secondsLeft: ed.accuseSecondsLeft });
+
+    ed.accuseTimerInterval = setInterval(() => {
+        ed.accuseSecondsLeft -= 1;
+        if (ed.accuseSecondsLeft > 0) {
+            broadcastToRoom(roomCode, { type: 'EMPOSSDURR_ACCUSE_TIMER_TICK', secondsLeft: ed.accuseSecondsLeft });
+        } else {
+            tallyEmpossDurrAccuseVotes(roomCode);
+        }
+    }, 1000);
+}
+
+// Mirrors the original single-device game's scoring exactly: every accuse
+// vote scores immediately regardless of outcome, a "continue" result nets
+// the impostor a small survival bonus, and a resolved accusation ends the
+// round -- rewarding the impostor handsomely for a wrong accusation, giving
+// them nothing for a correct one.
+function applyEmpossDurrAccuseScoring(room, resolution) {
+    const ed = room.empossdurr;
+    const impostorPlayer = room.players[ed.impostorName];
+
+    Object.entries(ed.accuseVotes).forEach(([voterName, vote]) => {
+        if (vote.mode !== 'accuse') return;
+        const voterPlayer = room.players[voterName];
+        if (!voterPlayer) return;
+        if (vote.target === ed.impostorName) {
+            voterPlayer.score += 2;
+        } else {
+            voterPlayer.score -= 1;
+        }
+    });
+
+    if (resolution.type === 'continue') {
+        if (impostorPlayer) impostorPlayer.score += 1;
+    } else if (resolution.type === 'accuse' && resolution.targetName !== ed.impostorName) {
+        if (impostorPlayer) impostorPlayer.score += 3;
+    }
+    // Correctly-caught impostor gets 0 for this outcome -- no line needed.
+}
+
+function tallyEmpossDurrAccuseVotes(roomCode) {
+    const room = activeRooms[roomCode];
+    if (!room || !room.empossdurr) return;
+    clearEmpossDurrTimers(room);
+
+    const ed = room.empossdurr;
+    const activePlayers = Object.values(room.players).filter(p => !p.left);
+    const neededForMajority = Math.floor(activePlayers.length / 2) + 1;
+
+    const targetCounts = {};
+    Object.values(ed.accuseVotes).forEach(vote => {
+        if (vote.mode !== 'accuse') return;
+        targetCounts[vote.target] = (targetCounts[vote.target] || 0) + 1;
+    });
+
+    let bestTarget = null, bestCount = 0, tie = false;
+    Object.entries(targetCounts).forEach(([targetName, count]) => {
+        if (count > bestCount) { bestTarget = targetName; bestCount = count; tie = false; }
+        else if (count === bestCount) { tie = true; }
+    });
+
+    let resolution;
+    if (bestTarget && bestCount >= neededForMajority && !tie) {
+        resolution = { type: 'accuse', targetName: bestTarget };
+    } else {
+        resolution = { type: 'continue' };
+    }
+
+    applyEmpossDurrAccuseScoring(room, resolution);
+
+    const activePlayersArray = Object.values(room.players).filter(p => !p.left);
+    broadcastToRoom(roomCode, {
+        type: 'EMPOSSDURR_ACCUSE_RESULT',
+        resolution,
+        impostorName: resolution.type === 'accuse' ? ed.impostorName : undefined
+    });
+    broadcastToRoom(roomCode, { type: 'LEADERBOARD_UPDATE', players: activePlayersArray });
+
+    if (resolution.type === 'accuse') {
+        startEmpossDurrRound(roomCode);
+    } else {
+        // Same word, same impostor -- just re-open the floor for more talk.
+        ed.phase = 'DISCUSSION';
+        ed.readyToAccuse = new Set();
+        ed.accuseVotes = {};
+    }
+}
+
+// The impostor's own one-shot bet: always ends the round, win or lose. Can
+// be pressed from either DISCUSSION or ACCUSE_VOTE -- it deliberately
+// preempts an in-flight accuse vote (see design chat: this is what "handles
+// the impostor being caught out immediately" down to the millisecond,
+// something the original pass-around version had no clean way to do).
+function startEmpossDurrDeclare(roomCode) {
+    const room = activeRooms[roomCode];
+    if (!room || !room.empossdurr) return;
+    clearEmpossDurrTimers(room);
+
+    const ed = room.empossdurr;
+    ed.phase = 'DECLARE_VERDICT';
+    ed.declareVotes = {};
+    ed.readyToAccuse = new Set();
+    ed.declareSecondsLeft = EMPOSSDURR_DECLARE_VOTE_SECONDS;
+
+    broadcastToRoom(roomCode, { type: 'EMPOSSDURR_DECLARE', impostorName: ed.impostorName, secondsLeft: ed.declareSecondsLeft });
+
+    ed.declareTimerInterval = setInterval(() => {
+        ed.declareSecondsLeft -= 1;
+        if (ed.declareSecondsLeft > 0) {
+            broadcastToRoom(roomCode, { type: 'EMPOSSDURR_DECLARE_TIMER_TICK', secondsLeft: ed.declareSecondsLeft });
+        } else {
+            tallyEmpossDurrDeclareVerdict(roomCode);
+        }
+    }, 1000);
+}
+
+function tallyEmpossDurrDeclareVerdict(roomCode) {
+    const room = activeRooms[roomCode];
+    if (!room || !room.empossdurr) return;
+    clearEmpossDurrTimers(room);
+
+    const ed = room.empossdurr;
+    const jurors = Object.values(room.players).filter(p => !p.left && p.name !== ed.impostorName);
+    const neededForMajority = Math.floor(jurors.length / 2) + 1;
+
+    let yesCount = 0;
+    jurors.forEach(j => { if (ed.declareVotes[j.name] === 'yes') yesCount++; });
+    const correct = yesCount >= neededForMajority;
+
+    const impostorPlayer = room.players[ed.impostorName];
+    if (impostorPlayer) impostorPlayer.score += correct ? 5 : -2;
+
+    const activePlayersArray = Object.values(room.players).filter(p => !p.left);
+    broadcastToRoom(roomCode, { type: 'EMPOSSDURR_DECLARE_RESULT', correct, impostorName: ed.impostorName });
+    broadcastToRoom(roomCode, { type: 'LEADERBOARD_UPDATE', players: activePlayersArray });
+
+    // Declaring always ends the round, right or wrong.
+    startEmpossDurrRound(roomCode);
+}
+
+// Resets score/roster state exactly like resetRoomToLobby, but short-circuits
+// straight back into EmpossDurr's category-vote phase instead of the full
+// 5-way mode election -- lets a group that's enjoying EmpossDurr jump back in
+// without re-litigating the mode vote every time. Single-tap, same reasoning
+// as the Play Again fix: no unanimous consensus required.
+function resetRoomToEmpossDurrCategoryVote(roomCode) {
+    const room = activeRooms[roomCode];
+    if (!room) return;
+
+    clearEmpossDurrTimers(room);
+    if (room.timerInterval) { clearInterval(room.timerInterval); room.timerInterval = null; }
+    if (room.categoryTimerInterval) { clearInterval(room.categoryTimerInterval); room.categoryTimerInterval = null; }
+    if (room.revealTimeout) { clearTimeout(room.revealTimeout); room.revealTimeout = null; }
+
+    room.winningGameMode = 'EMPOSSDURR';
+    room.gameState = 'CATEGORY_VOTE';
+    room.empossdurr = null;
+    room.answers = {};
+    room.answerOrder = [];
+
+    const activePlayers = Object.values(room.players).filter(p => !p.left);
+    const categories = getCategoriesForMode('EMPOSSDURR');
+    room.categoryVotes = {};
+    categories.forEach(c => { room.categoryVotes[c.key] = 0; });
+
+    activePlayers.forEach(player => {
+        player.requestedStart = false;
+        player.categoryVote = null;
+        player.score = 0;
+        player.correctAnswers = 0;
+        player.currentStreak = 0;
+        player.timesFastest = 0;
+        player.awards = {};
+    });
+
+    console.log(`[Room Engine] Room ${roomCode} jumping straight back into EmpossDurr -- roster kept, stats cleared.`);
+
+    broadcastToRoom(roomCode, {
+        type: 'TRANSITION_TO_CATEGORY_VOTE',
+        winner: 'EMPOSSDURR',
+        categories
+    });
+
+    startCategoryCountdown(roomCode);
 }
 
 // Triggered by post-game consensus (every active player voting START while
@@ -452,6 +792,7 @@ function resetRoomToLobby(roomCode) {
     if (room.timerInterval) { clearInterval(room.timerInterval); room.timerInterval = null; }
     if (room.categoryTimerInterval) { clearInterval(room.categoryTimerInterval); room.categoryTimerInterval = null; }
     if (room.revealTimeout) { clearTimeout(room.revealTimeout); room.revealTimeout = null; }
+    clearEmpossDurrTimers(room);
 
     room.gameState = 'LOBBY';
     room.winningGameMode = null;
@@ -466,6 +807,7 @@ function resetRoomToLobby(roomCode) {
     room.currentQuestionIndex = -1;
     room.askedQuestionIds = new Set();
     room.categoryVotes = {};
+    room.empossdurr = null;
 
     room.votes = { TRIVI_YEAH: 0, COUNTRY_MONKEY: 0, EMPOSSDURR: 0, FLAG_ME_DOWN: 0, ON_THE_SPECTRUM: 0 };
     const activePlayers = Object.values(room.players).filter(p => !p.left);
@@ -833,6 +1175,32 @@ export function handleIncomingMessage(fromPhone, bodyText, explicitRoomCode, pre
                 if (totalAnswersLogged === remainingActivePlayers.length) {
                     fastForwardToReveal(associatedRoomCode);
                 }
+            } else if (currentRoom.gameState === 'EMPOSSDURR_ROUND' && currentRoom.empossdurr) {
+                const ed = currentRoom.empossdurr;
+                // The impostor leaving mid-round breaks the round's whole
+                // premise (nobody left to catch) -- just move on rather than
+                // leave everyone stuck talking about someone who's gone.
+                if (actingPlayerName === ed.impostorName) {
+                    startEmpossDurrRound(associatedRoomCode);
+                } else if (ed.phase === 'DISCUSSION') {
+                    ed.readyToAccuse.delete(actingPlayerName);
+                    broadcastEmpossDurrReadyUpdate(associatedRoomCode);
+                    const neededForMajority = Math.floor(remainingActivePlayers.length / 2) + 1;
+                    if (ed.readyToAccuse.size >= neededForMajority) {
+                        startEmpossDurrAccuseVote(associatedRoomCode);
+                    }
+                } else if (ed.phase === 'ACCUSE_VOTE') {
+                    delete ed.accuseVotes[actingPlayerName];
+                    if (Object.keys(ed.accuseVotes).length === remainingActivePlayers.length) {
+                        tallyEmpossDurrAccuseVotes(associatedRoomCode);
+                    }
+                } else if (ed.phase === 'DECLARE_VERDICT') {
+                    delete ed.declareVotes[actingPlayerName];
+                    const jurors = remainingActivePlayers.filter(p => p.name !== ed.impostorName);
+                    if (Object.keys(ed.declareVotes).length === jurors.length) {
+                        tallyEmpossDurrDeclareVerdict(associatedRoomCode);
+                    }
+                }
             }
         }
 
@@ -873,6 +1241,14 @@ export function handleIncomingMessage(fromPhone, bodyText, explicitRoomCode, pre
             }
         }
         return `Start intent recorded (${startRequestsCount}/${playersList.length} votes secured). Waiting for consensus.`;
+    }
+
+    // 3.5. "Play EmpossDurr Again" shortcut -- same single-tap reasoning as the
+    // Play Again fix above, but skips the 5-way mode election entirely and
+    // jumps straight back to EmpossDurr's category-vote phase.
+    if (cleanText.toUpperCase() === 'PLAY_EMPOSSDURR_AGAIN' && currentRoom.gameState === 'GAME_OVER' && currentRoom.winningGameMode === 'EMPOSSDURR') {
+        resetRoomToEmpossDurrCategoryVote(associatedRoomCode);
+        return "Back into EmpossDurr!";
     }
 
     // 4. Handle Sub-Category Voting Selection Track Overrides (Phase 2)
@@ -928,6 +1304,91 @@ export function handleIncomingMessage(fromPhone, bodyText, explicitRoomCode, pre
             }
             return `Got it, ${player.name}! Option ${answerChoice} logged.`;
         }
+    }
+
+    // 5.5. EmpossDurr round messages
+    if (currentRoom.gameState === 'EMPOSSDURR_ROUND') {
+        const ed = currentRoom.empossdurr;
+        const command = cleanText.toUpperCase();
+
+        // The impostor's declare button preempts whatever's currently
+        // happening (open talk or an in-flight accuse vote) -- see design
+        // chat: this is deliberately the one action allowed to interrupt
+        // another phase, since real-table it was the impostor physically
+        // speaking up, which nothing could stop either.
+        if (command === 'DECLARE') {
+            if (actingPlayerName !== ed.impostorName) {
+                return "⚠️ Only the impostor can declare.";
+            }
+            if (ed.phase === 'DECLARE_VERDICT') {
+                return "The declaration is already in progress.";
+            }
+            startEmpossDurrDeclare(associatedRoomCode);
+            return "You've declared! Say your guess out loud now.";
+        }
+
+        if (ed.phase === 'DISCUSSION' && (command === 'READY_TOGGLE')) {
+            if (ed.readyToAccuse.has(actingPlayerName)) {
+                ed.readyToAccuse.delete(actingPlayerName);
+            } else {
+                ed.readyToAccuse.add(actingPlayerName);
+            }
+            broadcastEmpossDurrReadyUpdate(associatedRoomCode);
+
+            const activePlayers = Object.values(currentRoom.players).filter(p => !p.left);
+            const neededForMajority = Math.floor(activePlayers.length / 2) + 1;
+            if (ed.readyToAccuse.size >= neededForMajority) {
+                startEmpossDurrAccuseVote(associatedRoomCode);
+                return "Majority's ready -- vote is on!";
+            }
+            return ed.readyToAccuse.has(actingPlayerName)
+                ? "You're marked ready to accuse."
+                : "Ready status retracted.";
+        }
+
+        if (ed.phase === 'ACCUSE_VOTE' && (command === 'ACCUSE_ABSTAIN' || command.startsWith('ACCUSE_TARGET:'))) {
+            if (actingPlayerName in ed.accuseVotes) {
+                return "Vote already locked in for this round.";
+            }
+            if (command === 'ACCUSE_ABSTAIN') {
+                ed.accuseVotes[actingPlayerName] = { mode: 'abstain' };
+            } else {
+                const targetName = cleanText.slice('ACCUSE_TARGET:'.length);
+                if (!currentRoom.players[targetName] || currentRoom.players[targetName].left) {
+                    return "⚠️ Unknown player.";
+                }
+                ed.accuseVotes[actingPlayerName] = { mode: 'accuse', target: targetName };
+            }
+
+            // Lets the TV light up this player's tile without revealing
+            // what they chose -- same treatment as ANSWER_SUBMITTED.
+            broadcastToRoom(associatedRoomCode, { type: 'EMPOSSDURR_VOTE_SUBMITTED', playerName: actingPlayerName });
+
+            const activePlayers = Object.values(currentRoom.players).filter(p => !p.left);
+            if (Object.keys(ed.accuseVotes).length === activePlayers.length) {
+                tallyEmpossDurrAccuseVotes(associatedRoomCode);
+            }
+            return `Got it, ${player.name}! Vote logged.`;
+        }
+
+        if (ed.phase === 'DECLARE_VERDICT' && (command === 'DECLARE_YES' || command === 'DECLARE_NO')) {
+            if (actingPlayerName === ed.impostorName) {
+                return "⚠️ The impostor doesn't get a vote on their own declaration.";
+            }
+            if (actingPlayerName in ed.declareVotes) {
+                return "Vote already locked in.";
+            }
+            ed.declareVotes[actingPlayerName] = command === 'DECLARE_YES' ? 'yes' : 'no';
+            broadcastToRoom(associatedRoomCode, { type: 'EMPOSSDURR_VOTE_SUBMITTED', playerName: actingPlayerName });
+
+            const jurors = Object.values(currentRoom.players).filter(p => !p.left && p.name !== ed.impostorName);
+            if (Object.keys(ed.declareVotes).length === jurors.length) {
+                tallyEmpossDurrDeclareVerdict(associatedRoomCode);
+            }
+            return `Got it, ${player.name}! Verdict logged.`;
+        }
+
+        return `⚠️ That action isn't available right now.`;
     }
 
     return `Sorry, ${player.name}, response submission window closed.`;
