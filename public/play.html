@@ -343,6 +343,21 @@
         let chosenModule = '';
         let roomStateTrackerInterval = null;
 
+        // Single source of truth for "what screen is visible" -- every phase
+        // transition used to hand-list which *other* screens to hide, and
+        // each new screen (EmpossDurr) had to be remembered in every one of
+        // those lists. That's exactly how stale screens kept lingering
+        // underneath the current one (Leave Room and Play EmpossDurr Again
+        // both missed a spot). Hiding every known screen and showing only
+        // the requested one makes that whole bug class impossible going
+        // forward -- a future new screen just needs adding here once.
+        const ALL_PLAY_SCREENS = ['login-screen', 'game-screen', 'category-screen', 'empossdurr-screen', 'question-screen', 'game-over-screen'];
+        function showOnlyPlayScreen(idToShow) {
+            ALL_PLAY_SCREENS.forEach(id => {
+                document.getElementById(id).style.display = (id === idToShow) ? 'block' : 'none';
+            });
+        }
+
         // Silent reconnect for a reload/dropped connection -- NOT for an
         // explicit "Leave Room" (that's respected, not overridden). A stored
         // room+name alone can't prove it's really the same device (anyone
@@ -384,8 +399,7 @@
                 document.getElementById('badge-emoji').innerText = chosenAvatar;
                 document.getElementById('badge-name').innerText = storedName;
                 document.getElementById('badge-room').innerText = storedRoom;
-                document.getElementById('login-screen').style.display = "none";
-                document.getElementById('game-screen').style.display = "block";
+                showOnlyPlayScreen('game-screen');
                 initRoomStatePoller(storedRoom, storedName);
             } catch (e) {
                 console.error("Auto-resume check failed:", e);
@@ -448,8 +462,7 @@
                 document.getElementById('badge-room').innerText = room;
                 document.getElementById('badge-emoji').innerText = chosenAvatar;
                 
-                document.getElementById('login-screen').style.display = "none";
-                document.getElementById('game-screen').style.display = "block";
+                showOnlyPlayScreen('game-screen');
 
                 initRoomStatePoller(room, name);
 
@@ -494,18 +507,13 @@
                                 `<div class="module-row" onclick="submitCategorySubVote(this, '${c.key}')">${c.label}</div>`
                             ).join('');
 
-                            document.getElementById('game-screen').style.display = "none";
-                            document.getElementById('empossdurr-screen').style.display = "none";
-                            document.getElementById('category-screen').style.display = "block";
+                            showOnlyPlayScreen('category-screen');
                         }
 
                         // PHASE 3: Live gameplay. Keeps polling for the life of the match so each
                         // new question (loop advances every ~5s after a reveal) actually shows up here.
                         if (data.phase === 'GAME_ROUND_PHASE') {
-                            document.getElementById('category-screen').style.display = "none";
-                            document.getElementById('game-screen').style.display = "none";
-                            document.getElementById('empossdurr-screen').style.display = "none";
-                            document.getElementById('question-screen').style.display = "block";
+                            showOnlyPlayScreen('question-screen');
 
                             // Only re-render (and unlock the answer rows) when the question actually changed
                             if (data.questionId !== activeQuestionId) {
@@ -518,10 +526,7 @@
                         // ready-to-accuse toggle, the timed accuse vote, and the
                         // Declare verdict all live inside this one screen.
                         if (data.phase === 'EMPOSSDURR_ROUND_PHASE') {
-                            document.getElementById('category-screen').style.display = "none";
-                            document.getElementById('game-screen').style.display = "none";
-                            document.getElementById('question-screen').style.display = "none";
-                            document.getElementById('empossdurr-screen').style.display = "block";
+                            showOnlyPlayScreen('empossdurr-screen');
                             renderEmpossDurr(data, nickname, roomCode);
                         }
 
@@ -530,11 +535,7 @@
                         // cleared here anymore) so this phone can still detect a
                         // "return to lobby" reset if the room votes to play again.
                         if (data.phase === 'GAME_OVER_PHASE') {
-                            document.getElementById('category-screen').style.display = "none";
-                            document.getElementById('game-screen').style.display = "none";
-                            document.getElementById('question-screen').style.display = "none";
-                            document.getElementById('empossdurr-screen').style.display = "none";
-                            document.getElementById('game-over-screen').style.display = "block";
+                            showOnlyPlayScreen('game-over-screen');
                             renderGameOver(data, nickname);
                         }
 
@@ -542,11 +543,7 @@
                         // every stat cleared. Every player's phone (not just whoever
                         // tapped Play Again) bounces back to the "Vote START" screen.
                         if (data.phase === 'LOBBY_PHASE') {
-                            document.getElementById('category-screen').style.display = "none";
-                            document.getElementById('question-screen').style.display = "none";
-                            document.getElementById('empossdurr-screen').style.display = "none";
-                            document.getElementById('game-over-screen').style.display = "none";
-                            document.getElementById('game-screen').style.display = "block";
+                            showOnlyPlayScreen('game-screen');
                             activeQuestionId = null; // next game's first question should always render fresh
                             edLastPhaseKey = null; // next EmpossDurr game's first round should render fresh
                         }
@@ -995,15 +992,12 @@
             }
 
             clearInterval(roomStateTrackerInterval);
-            ['game-screen', 'category-screen', 'question-screen', 'game-over-screen'].forEach(id => {
-                document.getElementById(id).style.display = "none";
-            });
 
             // Room code + name stay filled in so rejoining is a single tap away --
             // the server recognizes the name as a rejoin and restores the score.
             document.getElementById('room-code').value = roomCode || '';
             document.getElementById('player-name').value = registeredName || '';
-            document.getElementById('login-screen').style.display = "block";
+            showOnlyPlayScreen('login-screen');
 
             const feedback = document.getElementById('login-feedback');
             showFeedback(feedback, "You left the room. Rejoin any time with the same name to pick up where you left off.", "rgba(255,165,0,0.06)", "#ffa500", "rgba(255,165,0,0.1)");
