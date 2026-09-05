@@ -1,145 +1,112 @@
 -- ============================================================================
--- ⚠️ DO NOT RUN THIS FILE AGAINST PRODUCTION -- it assumes only the 20-word
--- seed is live. That assumption turned out to be wrong: the original
--- 80-word batch (an earlier version of this same file) was already run.
--- Use empossdurr_words_reconciliation.sql instead, which accounts for that
--- and is safe to run as-is. This file is kept only as a record of the full
--- word/clue content; it's still the right place to look up or edit any
--- word's clues going forward, just don't execute it directly anymore.
--- ============================================================================
+-- EmpossDurr content expansion, part 2: reconciles with the 80-word file that
+-- was ALREADY run against production while the 500-word batch was being built
+-- (empossdurr_words_expansion.sql in the repo is the version that assumed
+-- nothing had been run yet -- that assumption turned out to be wrong).
 --
--- EmpossDurr content expansion: adds 484 new words/clue-sets on top of the
--- original 20-word seed batch in empossdurr_words_seed.sql (504 total,
--- verified against a fresh local load -- no duplicate words, no clue that
--- shares a root/lemma with its own word, checked programmatically as well
--- as by eye). Family playtesting confirmed the mode plays great and burns
--- through a small deck fast -- this bulks up the pool so replays don't
--- start repeating words within the same game night. Two INSERT statements
--- in this one file: the first (296 words) covers the family-edited batch
--- plus a first new-word wave; the second (188 words) is a further new-word
--- wave to close the gap to 504 total.
+-- Production currently has: the 20-word seed, plus the original 80-word batch
+-- exactly as first delivered (unedited clues, includes ZEBRA). Since then the
+-- family reworked that 80-word batch's clues (loosened several that were too
+-- direct, e.g. BACKPACK) and it grew into the full ~500-word set. Re-running
+-- the full INSERT would have created 79 duplicate WORDS -- same word, two rows
+-- with different clues, which would let the same word show up twice in a game
+-- with mismatched clue sets. This file avoids that:
 --
--- This file REPLACES the earlier, smaller empossdurr_words_expansion.sql --
--- that one was never run against any database, so there's nothing live to
--- reconcile. Safe to run once, start to finish, against a fresh database
--- that only has the 20-word seed loaded.
+--   1. UPDATEs the 79 words that are already live, fixing their clue_1..4
+--      to the final versions (word text is unchanged, only clues moved).
+--   2. INSERTs only the 405 genuinely new words that were never run.
 --
--- Purely additive: does NOT touch, modify, or delete any existing row. The
--- table already exists (created by empossdurr_words_seed.sql) and uses a
--- plain SERIAL id, so there's no MAX(id)-style numbering dance needed, just
--- a plain INSERT.
+-- ZEBRA (in the live 80-word batch, dropped from the family's later edit) is
+-- left alone -- still a perfectly good live row, just no longer 'expected' by
+-- any file. No action needed for it.
 --
--- Content rules (refined from a direct family bug report on the clues, and
--- do not violate when adding more):
---   1. ADJACENT, NOT DIRECT -- this is the big one. A clue must not lead
---      almost straight back to the word. Illustrative example: if the word
---      were JESUS, "risen" or "crucifixion" would be a dead giveaway --
---      those terms basically ARE Jesus, not just associated with him. A
---      good clue sits one conceptual step away and could describe multiple
---      different things, not just this one.
---   2. No clue may share a root/lemma with the word itself.
---   3. A clue should be plausible for at least one OTHER word too -- if you
---      can't think of a second candidate, it's too tight (this is really
---      the same idea as rule 1, restated as a test you can run per-clue).
---   4. No rhymes or sound-alikes with zero semantic connection.
---   5. Loose and evocative beats tight and "correct."
---   6. Words don't have to be a single token -- a common two-word (or
---      three-word) compound noun is fine as long as the pair reads as one
---      indivisible concept.
---   7. Proper nouns, brands, and pop-culture references are fair game (the
---      original 10%-cap guidance is superseded by this batch's looser,
---      family-tested direction) -- just keep applying rule 1 to them same
---      as anything else.
---
--- No overlap with the seed file's 20 words (PIZZA, UMBRELLA, GUITAR,
--- VOLCANO, SANDWICH, LIGHTHOUSE, TREASURE CHEST, FIREFLY, ROLLER COASTER,
--- CHIMNEY, SNOWMAN, CAMPFIRE, ESCALATOR, BEEHIVE, SUBMARINE, XYLOPHONE,
--- ANCHOR, FIREFIGHTER, SCARECROW, IGLOO). PIZZA was dropped from the
--- family-edited batch below for that reason (it's already in the seed).
+-- Run this INSTEAD of empossdurr_words_expansion.sql -- do not run both.
+-- Safe to run once against production as-is.
 -- ============================================================================
 
+-- ---- Part 1: fix clues on the 79 words already live ----
+UPDATE empossdurr_words SET clue_1 = 'heavy', clue_2 = 'frame', clue_3 = 'dora', clue_4 = 'stuffed' WHERE word = 'BACKPACK';
+UPDATE empossdurr_words SET clue_1 = 'bounce', clue_2 = 'springs', clue_3 = 'backyard', clue_4 = 'somersault' WHERE word = 'TRAMPOLINE';
+UPDATE empossdurr_words SET clue_1 = 'pitcher', clue_2 = 'summer', clue_3 = 'rip-off', clue_4 = 'ice' WHERE word = 'LEMONADE STAND';
+UPDATE empossdurr_words SET clue_1 = 'tony', clue_2 = 'ramp', clue_3 = 'vans', clue_4 = 'grind' WHERE word = 'SKATEBOARD';
+UPDATE empossdurr_words SET clue_1 = 'front porch', clue_2 = 'clouds', clue_3 = 'rumble', clue_4 = 'flash' WHERE word = 'THUNDERSTORM';
+UPDATE empossdurr_words SET clue_1 = 'plank', clue_2 = 'mast', clue_3 = 'cannon', clue_4 = 'flag' WHERE word = 'PIRATE SHIP';
+UPDATE empossdurr_words SET clue_1 = 'coins', clue_2 = 'soda', clue_3 = 'jam', clue_4 = 'alley' WHERE word = 'VENDING MACHINE';
+UPDATE empossdurr_words SET clue_1 = 'sway', clue_2 = 'banana', clue_3 = 'backyard', clue_4 = 'nap' WHERE word = 'HAMMOCK';
+UPDATE empossdurr_words SET clue_1 = 'colorful', clue_2 = 'wings', clue_3 = 'garden', clue_4 = 'net' WHERE word = 'BUTTERFLY';
+UPDATE empossdurr_words SET clue_1 = 'stars', clue_2 = 'lens', clue_3 = 'glass', clue_4 = 'zoom' WHERE word = 'TELESCOPE';
+UPDATE empossdurr_words SET clue_1 = 'pond', clue_2 = 'wings', clue_3 = 'buzz', clue_4 = 'iridescent' WHERE word = 'DRAGONFLY';
+UPDATE empossdurr_words SET clue_1 = 'beach', clue_2 = 'bucket', clue_3 = 'moat', clue_4 = 'tide' WHERE word = 'SANDCASTLE';
+UPDATE empossdurr_words SET clue_1 = 'carnival', clue_2 = 'spokes', clue_3 = 'view', clue_4 = 'circle' WHERE word = 'FERRIS WHEEL';
+UPDATE empossdurr_words SET clue_1 = 'kernel', clue_2 = 'butter', clue_3 = 'movie', clue_4 = 'salty' WHERE word = 'POPCORN';
+UPDATE empossdurr_words SET clue_1 = 'campout', clue_2 = 'zipper', clue_3 = 'cocoon', clue_4 = 'tent' WHERE word = 'SLEEPING BAG';
+UPDATE empossdurr_words SET clue_1 = 'cliff', clue_2 = 'mist', clue_3 = 'roar', clue_4 = 'plunge' WHERE word = 'WATERFALL';
+UPDATE empossdurr_words SET clue_1 = 'skydive', clue_2 = 'canopy', clue_3 = 'harness', clue_4 = 'freefall' WHERE word = 'PARACHUTE';
+UPDATE empossdurr_words SET clue_1 = 'sand', clue_2 = 'timer', clue_3 = 'flip', clue_4 = 'minutes' WHERE word = 'HOURGLASS';
+UPDATE empossdurr_words SET clue_1 = 'tank', clue_2 = 'flippers', clue_3 = 'coral', clue_4 = 'bubbles' WHERE word = 'SCUBA DIVER';
+UPDATE empossdurr_words SET clue_1 = 'coins', clue_2 = 'slot', clue_3 = 'savings', clue_4 = 'ceramic' WHERE word = 'PIGGY BANK';
+UPDATE empossdurr_words SET clue_1 = 'dirt', clue_2 = 'garden', clue_3 = 'tip', clue_4 = 'handle' WHERE word = 'WHEELBARROW';
+UPDATE empossdurr_words SET clue_1 = 'pouch', clue_2 = 'hop', clue_3 = 'marsupial', clue_4 = 'outback' WHERE word = 'KANGAROO';
+UPDATE empossdurr_words SET clue_1 = 'intersection', clue_2 = 'red', clue_3 = 'signal', clue_4 = 'pole' WHERE word = 'TRAFFIC LIGHT';
+UPDATE empossdurr_words SET clue_1 = 'fridge', clue_2 = 'attract', clue_3 = 'metal', clue_4 = 'pole' WHERE word = 'MAGNET';
+UPDATE empossdurr_words SET clue_1 = 'sink', clue_2 = 'desert', clue_3 = 'trap', clue_4 = 'mud' WHERE word = 'QUICKSAND';
+UPDATE empossdurr_words SET clue_1 = 'mask', clue_2 = 'breathe', clue_3 = 'reef', clue_4 = 'tube' WHERE word = 'SNORKEL';
+UPDATE empossdurr_words SET clue_1 = 'crystal', clue_2 = 'ceiling', clue_3 = 'sparkle', clue_4 = 'ballroom' WHERE word = 'CHANDELIER';
+UPDATE empossdurr_words SET clue_1 = 'twist', clue_2 = 'salt', clue_3 = 'dough', clue_4 = 'knot' WHERE word = 'PRETZEL';
+UPDATE empossdurr_words SET clue_1 = 'silk', clue_2 = 'trap', clue_3 = 'dew', clue_4 = 'strands' WHERE word = 'SPIDER WEB';
+UPDATE empossdurr_words SET clue_1 = 'blades', clue_2 = 'breeze', clue_3 = 'farm', clue_4 = 'grind' WHERE word = 'WINDMILL';
+UPDATE empossdurr_words SET clue_1 = 'keys', clue_2 = 'ribbon', clue_3 = 'click', clue_4 = 'paper' WHERE word = 'TYPEWRITER';
+UPDATE empossdurr_words SET clue_1 = 'prism', clue_2 = 'arc', clue_3 = 'storm', clue_4 = 'colors' WHERE word = 'RAINBOW';
+UPDATE empossdurr_words SET clue_1 = 'pendulum', clue_2 = 'chime', clue_3 = 'hallway', clue_4 = 'tick' WHERE word = 'GRANDFATHER CLOCK';
+UPDATE empossdurr_words SET clue_1 = 'pink', clue_2 = 'pond', clue_3 = 'balance', clue_4 = 'feather' WHERE word = 'FLAMINGO';
+UPDATE empossdurr_words SET clue_1 = 'pop', clue_2 = 'cushion', clue_3 = 'packages', clue_4 = 'plastic' WHERE word = 'BUBBLE WRAP';
+UPDATE empossdurr_words SET clue_1 = 'desert', clue_2 = 'roll', clue_3 = 'dry', clue_4 = 'wind' WHERE word = 'TUMBLEWEED';
+UPDATE empossdurr_words SET clue_1 = 'doctor', clue_2 = 'heartbeat', clue_3 = 'tubes', clue_4 = 'checkup' WHERE word = 'STETHOSCOPE';
+UPDATE empossdurr_words SET clue_1 = 'candy', clue_2 = 'blindfold', clue_3 = 'stick', clue_4 = 'burst' WHERE word = 'PINATA';
+UPDATE empossdurr_words SET clue_1 = 'stone', clue_2 = 'perch', clue_3 = 'cathedral', clue_4 = 'statue' WHERE word = 'GARGOYLE';
+UPDATE empossdurr_words SET clue_1 = 'water', clue_2 = 'ink', clue_3 = 'reef', clue_4 = 'eight' WHERE word = 'OCTOPUS';
+UPDATE empossdurr_words SET clue_1 = 'squeeze', clue_2 = 'folds', clue_3 = 'polka', clue_4 = 'bellows' WHERE word = 'ACCORDION';
+UPDATE empossdurr_words SET clue_1 = 'cheese', clue_2 = 'snap', clue_3 = 'bait', clue_4 = 'spring' WHERE word = 'MOUSETRAP';
+UPDATE empossdurr_words SET clue_1 = 'shake', clue_2 = 'flakes', clue_3 = 'dome', clue_4 = 'souvenir' WHERE word = 'SNOW GLOBE';
+UPDATE empossdurr_words SET clue_1 = 'pebble', clue_2 = 'stretch', clue_3 = 'aim', clue_4 = 'fork' WHERE word = 'SLINGSHOT';
+UPDATE empossdurr_words SET clue_1 = 'throw', clue_2 = 'curve', clue_3 = 'return', clue_4 = 'wood' WHERE word = 'BOOMERANG';
+UPDATE empossdurr_words SET clue_1 = 'spikes', clue_2 = 'desert', clue_3 = 'bloom', clue_4 = 'prickly' WHERE word = 'CACTUS';
+UPDATE empossdurr_words SET clue_1 = 'string', clue_2 = 'trick', clue_3 = 'spin', clue_4 = 'sleeper' WHERE word = 'YO-YO';
+UPDATE empossdurr_words SET clue_1 = 'referee', clue_2 = 'blow', clue_3 = 'tweet', clue_4 = 'coach' WHERE word = 'WHISTLE';
+UPDATE empossdurr_words SET clue_1 = 'slouch', clue_2 = 'pellets', clue_3 = 'cozy', clue_4 = 'floor' WHERE word = 'BEANBAG CHAIR';
+UPDATE empossdurr_words SET clue_1 = 'needle', clue_2 = 'north', clue_3 = 'map', clue_4 = 'direction' WHERE word = 'COMPASS';
+UPDATE empossdurr_words SET clue_1 = 'luck', clue_2 = 'forge', clue_3 = 'hoof', clue_4 = 'toss' WHERE word = 'HORSESHOE';
+UPDATE empossdurr_words SET clue_1 = 'pavement', clue_2 = 'vibrate', clue_3 = 'drill', clue_4 = 'construction' WHERE word = 'JACKHAMMER';
+UPDATE empossdurr_words SET clue_1 = 'garden', clue_2 = 'beard', clue_3 = 'pointy hat', clue_4 = 'statue' WHERE word = 'LAWN GNOME';
+UPDATE empossdurr_words SET clue_1 = 'blankets', clue_2 = 'chairs', clue_3 = 'floor', clue_4 = 'flashlight' WHERE word = 'PILLOW FORT';
+UPDATE empossdurr_words SET clue_1 = 'water', clue_2 = 'squeak', clue_3 = 'yellow', clue_4 = 'floatie' WHERE word = 'RUBBER DUCK';
+UPDATE empossdurr_words SET clue_1 = 'playground', clue_2 = 'balance', clue_3 = 'plank', clue_4 = 'tip' WHERE word = 'SEESAW';
+UPDATE empossdurr_words SET clue_1 = 'jingle', clue_2 = 'shake', clue_3 = 'band', clue_4 = 'ribbons' WHERE word = 'TAMBOURINE';
+UPDATE empossdurr_words SET clue_1 = 'balance', clue_2 = 'circus', clue_3 = 'pedal', clue_4 = 'tire' WHERE word = 'UNICYCLE';
+UPDATE empossdurr_words SET clue_1 = 'spout', clue_2 = 'garden', clue_3 = 'sprinkle', clue_4 = 'plants' WHERE word = 'WATERING CAN';
+UPDATE empossdurr_words SET clue_1 = 'cable', clue_2 = 'harness', clue_3 = 'forest', clue_4 = 'glide' WHERE word = 'ZIPLINE';
+UPDATE empossdurr_words SET clue_1 = 'gutter', clue_2 = 'pins', clue_3 = 'heavy', clue_4 = 'lane' WHERE word = 'BOWLING BALL';
+UPDATE empossdurr_words SET clue_1 = 'chime', clue_2 = 'porch', clue_3 = 'ring', clue_4 = 'visitor' WHERE word = 'DOORBELL';
+UPDATE empossdurr_words SET clue_1 = 'kitchen', clue_2 = 'sand', clue_3 = 'minutes', clue_4 = 'ding' WHERE word = 'EGG TIMER';
+UPDATE empossdurr_words SET clue_1 = 'batteries', clue_2 = 'beam', clue_3 = 'dark', clue_4 = 'camping' WHERE word = 'FLASHLIGHT';
+UPDATE empossdurr_words SET clue_1 = 'coin', clue_2 = 'glass', clue_3 = 'chew', clue_4 = 'twist' WHERE word = 'GUMBALL MACHINE';
+UPDATE empossdurr_words SET clue_1 = 'spin', clue_2 = 'waist', clue_3 = 'plastic', clue_4 = 'circle' WHERE word = 'HULA HOOP';
+UPDATE empossdurr_words SET clue_1 = 'jingle', clue_2 = 'cone', clue_3 = 'summer', clue_4 = 'freezer' WHERE word = 'ICE CREAM TRUCK';
+UPDATE empossdurr_words SET clue_1 = 'pieces', clue_2 = 'edges', clue_3 = 'table', clue_4 = 'missing' WHERE word = 'JIGSAW PUZZLE';
+UPDATE empossdurr_words SET clue_1 = 'string', clue_2 = 'wind', clue_3 = 'tail', clue_4 = 'fly' WHERE word = 'KITE';
+UPDATE empossdurr_words SET clue_1 = 'hot', clue_2 = 'blob', clue_3 = 'retro', clue_4 = 'bedroom' WHERE word = 'LAVA LAMP';
+UPDATE empossdurr_words SET clue_1 = 'carousel', clue_2 = 'music', clue_3 = 'spin', clue_4 = 'horses' WHERE word = 'MERRY-GO-ROUND';
+UPDATE empossdurr_words SET clue_1 = 'chomp', clue_2 = 'teeth', clue_3 = 'ballet', clue_4 = 'wooden' WHERE word = 'NUTCRACKER';
+UPDATE empossdurr_words SET clue_1 = 'kitchen', clue_2 = 'hot', clue_3 = 'grip', clue_4 = 'fabric' WHERE word = 'OVEN MITT';
+UPDATE empossdurr_words SET clue_1 = 'squawk', clue_2 = 'feather', clue_3 = 'pirate', clue_4 = 'mimic' WHERE word = 'PARROT';
+UPDATE empossdurr_words SET clue_1 = 'porch', clue_2 = 'creak', clue_3 = 'grandma', clue_4 = 'sway' WHERE word = 'ROCKING CHAIR';
+UPDATE empossdurr_words SET clue_1 = 'circus', clue_2 = 'balance', clue_3 = 'wire', clue_4 = 'fall' WHERE word = 'TIGHTROPE';
+UPDATE empossdurr_words SET clue_1 = 'suck', clue_2 = 'hose', clue_3 = 'carpet', clue_4 = 'dust' WHERE word = 'VACUUM CLEANER';
+UPDATE empossdurr_words SET clue_1 = 'wheels', clue_2 = 'pull', clue_3 = 'red', clue_4 = 'handle' WHERE word = 'WAGON';
+UPDATE empossdurr_words SET clue_1 = 'rooftop', clue_2 = 'arrow', clue_3 = 'wind', clue_4 = 'rooster' WHERE word = 'WEATHER VANE';
+
+-- ---- Part 2: insert the 405 genuinely new words ----
 INSERT INTO empossdurr_words (word, clue_1, clue_2, clue_3, clue_4) VALUES
-    -- ---- Family-edited batch (kept as written, two clues tightened to fit
-    -- the adjacent-not-direct rule -- see notes on TONGUE and WATER TOWER) ----
-    ('BACKPACK', 'heavy', 'frame', 'dora', 'stuffed'),
-    ('TRAMPOLINE', 'bounce', 'springs', 'backyard', 'somersault'),
-    ('LEMONADE STAND', 'pitcher', 'summer', 'rip-off', 'ice'),
-    ('SKATEBOARD', 'tony', 'ramp', 'vans', 'grind'),
-    ('THUNDERSTORM', 'front porch', 'clouds', 'rumble', 'flash'),
-    ('PIRATE SHIP', 'plank', 'mast', 'cannon', 'flag'),
-    ('VENDING MACHINE', 'coins', 'soda', 'jam', 'alley'),
-    ('HAMMOCK', 'sway', 'banana', 'backyard', 'nap'),
-    ('BUTTERFLY', 'colorful', 'wings', 'garden', 'net'),
-    ('TELESCOPE', 'stars', 'lens', 'glass', 'zoom'),
-    ('DRAGONFLY', 'pond', 'wings', 'buzz', 'iridescent'),
-    ('SANDCASTLE', 'beach', 'bucket', 'moat', 'tide'),
-    ('FERRIS WHEEL', 'carnival', 'spokes', 'view', 'circle'),
-    ('POPCORN', 'kernel', 'butter', 'movie', 'salty'),
-    ('SLEEPING BAG', 'campout', 'zipper', 'cocoon', 'tent'),
-    ('WATERFALL', 'cliff', 'mist', 'roar', 'plunge'),
-    ('PARACHUTE', 'skydive', 'canopy', 'harness', 'freefall'),
-    ('HOURGLASS', 'sand', 'timer', 'flip', 'minutes'),
-    ('SCUBA DIVER', 'tank', 'flippers', 'coral', 'bubbles'),
-    ('PIGGY BANK', 'coins', 'slot', 'savings', 'ceramic'),
-    ('WHEELBARROW', 'dirt', 'garden', 'tip', 'handle'),
-    ('KANGAROO', 'pouch', 'hop', 'marsupial', 'outback'),
-    ('TRAFFIC LIGHT', 'intersection', 'red', 'signal', 'pole'),
-    ('MAGNET', 'fridge', 'attract', 'metal', 'pole'),
-    ('QUICKSAND', 'sink', 'desert', 'trap', 'mud'),
-    ('SNORKEL', 'mask', 'breathe', 'reef', 'tube'),
-    ('CHANDELIER', 'crystal', 'ceiling', 'sparkle', 'ballroom'),
-    ('PRETZEL', 'twist', 'salt', 'dough', 'knot'),
-    ('SPIDER WEB', 'silk', 'trap', 'dew', 'strands'),
-    ('WINDMILL', 'blades', 'breeze', 'farm', 'grind'),
-    ('TYPEWRITER', 'keys', 'ribbon', 'click', 'paper'),
-    ('RAINBOW', 'prism', 'arc', 'storm', 'colors'),
-    ('GRANDFATHER CLOCK', 'pendulum', 'chime', 'hallway', 'tick'),
-    ('FLAMINGO', 'pink', 'pond', 'balance', 'feather'),
-    ('BUBBLE WRAP', 'pop', 'cushion', 'packages', 'plastic'),
-    ('TUMBLEWEED', 'desert', 'roll', 'dry', 'wind'),
-    ('STETHOSCOPE', 'doctor', 'heartbeat', 'tubes', 'checkup'),
-    ('PINATA', 'candy', 'blindfold', 'stick', 'burst'),
-    ('GARGOYLE', 'stone', 'perch', 'cathedral', 'statue'),
-    ('OCTOPUS', 'water', 'ink', 'reef', 'eight'),
-    ('ACCORDION', 'squeeze', 'folds', 'polka', 'bellows'),
-    ('MOUSETRAP', 'cheese', 'snap', 'bait', 'spring'),
-    ('SNOW GLOBE', 'shake', 'flakes', 'dome', 'souvenir'),
-    ('SLINGSHOT', 'pebble', 'stretch', 'aim', 'fork'),
-    ('BOOMERANG', 'throw', 'curve', 'return', 'wood'),
-    ('CACTUS', 'spikes', 'desert', 'bloom', 'prickly'),
-    ('YO-YO', 'string', 'trick', 'spin', 'sleeper'),
-    ('WHISTLE', 'referee', 'blow', 'tweet', 'coach'),
-    ('BEANBAG CHAIR', 'slouch', 'pellets', 'cozy', 'floor'),
-    ('COMPASS', 'needle', 'north', 'map', 'direction'),
-    ('HORSESHOE', 'luck', 'forge', 'hoof', 'toss'),
-    ('JACKHAMMER', 'pavement', 'vibrate', 'drill', 'construction'),
-    ('LAWN GNOME', 'garden', 'beard', 'pointy hat', 'statue'),
-    ('PILLOW FORT', 'blankets', 'chairs', 'floor', 'flashlight'),
-    ('RUBBER DUCK', 'water', 'squeak', 'yellow', 'floatie'),
-    ('SEESAW', 'playground', 'balance', 'plank', 'tip'),
-    ('TAMBOURINE', 'jingle', 'shake', 'band', 'ribbons'),
-    ('UNICYCLE', 'balance', 'circus', 'pedal', 'tire'),
-    ('WATERING CAN', 'spout', 'garden', 'sprinkle', 'plants'),
-    ('ZIPLINE', 'cable', 'harness', 'forest', 'glide'),
-    ('BOWLING BALL', 'gutter', 'pins', 'heavy', 'lane'),
-    ('DOORBELL', 'chime', 'porch', 'ring', 'visitor'),
-    ('EGG TIMER', 'kitchen', 'sand', 'minutes', 'ding'),
-    ('FLASHLIGHT', 'batteries', 'beam', 'dark', 'camping'),
-    ('GUMBALL MACHINE', 'coin', 'glass', 'chew', 'twist'),
-    ('HULA HOOP', 'spin', 'waist', 'plastic', 'circle'),
-    ('ICE CREAM TRUCK', 'jingle', 'cone', 'summer', 'freezer'),
-    ('JIGSAW PUZZLE', 'pieces', 'edges', 'table', 'missing'),
-    ('KITE', 'string', 'wind', 'tail', 'fly'),
-    ('LAVA LAMP', 'hot', 'blob', 'retro', 'bedroom'),
-    ('MERRY-GO-ROUND', 'carousel', 'music', 'spin', 'horses'),
-    ('NUTCRACKER', 'chomp', 'teeth', 'ballet', 'wooden'),
-    ('OVEN MITT', 'kitchen', 'hot', 'grip', 'fabric'),
-    ('PARROT', 'squawk', 'feather', 'pirate', 'mimic'),
-    ('ROCKING CHAIR', 'porch', 'creak', 'grandma', 'sway'),
-    ('TIGHTROPE', 'circus', 'balance', 'wire', 'fall'),
-    ('VACUUM CLEANER', 'suck', 'hose', 'carpet', 'dust'),
-    ('WAGON', 'wheels', 'pull', 'red', 'handle'),
-    ('WEATHER VANE', 'rooftop', 'arrow', 'wind', 'rooster'),
     ('BALTIMORE', 'orange', 'purple', 'dirty', 'beltway'),
     ('SPRING GROVE', 'home', 'pa', 'mill', 'circle'),
     ('MUSHROOM', 'cap', 'mario', 'trip', 'lo mein'),
@@ -176,11 +143,6 @@ INSERT INTO empossdurr_words (word, clue_1, clue_2, clue_3, clue_4) VALUES
     ('MADONNA', 'music', 'material', 'immaculate', 'prayer'),
     ('BALD', 'hat', 'shiny', 'eagle', 'smooth'),
     ('WINNER', 'loser', 'chicken', 'dinner', 'runner up'),
-
-    -- ---- New additions (~180 words) -- everyday objects, animals, food,
-    -- places, tech, pop-culture archetypes, sports, school, holidays,
-    -- weather, household, vehicles, entertainment, clothing, professions,
-    -- and games/toys. All checked against the adjacent-not-direct rule. ----
     ('GIRAFFE', 'tall', 'spots', 'savanna', 'treetop'),
     ('PENGUIN', 'waddle', 'tuxedo', 'ice floe', 'flightless'),
     ('HEDGEHOG', 'curl', 'garden', 'spiky', 'snuffle'),
@@ -361,14 +323,7 @@ INSERT INTO empossdurr_words (word, clue_1, clue_2, clue_3, clue_4) VALUES
     ('STUFFED ANIMAL', 'cuddly', 'button eyes', 'bedtime', 'soft'),
     ('WATER GUN', 'squirt', 'summer', 'refill', 'ambush'),
     ('PLAYING CARDS', 'shuffle', 'deck', 'deal', 'poker'),
-    ('KEYCHAIN', 'dangle', 'jingle', 'pocket', 'souvenir');
-
--- ---- Wave 2: ~201 more new words to close the gap to 500 total. Same
--- rules, fresh categories (body/personal, emotions, space, ocean, insects,
--- birds, prehistoric, farm, circus, instruments, weather, school, office,
--- medical, arts/crafts, retro tech, everyday city objects, sports gear,
--- gardening, winter). ----
-INSERT INTO empossdurr_words (word, clue_1, clue_2, clue_3, clue_4) VALUES
+    ('KEYCHAIN', 'dangle', 'jingle', 'pocket', 'souvenir'),
     ('ELBOW', 'bend', 'funny bone', 'joint', 'nudge'),
     ('KNEE', 'cap', 'bend', 'scrape', 'wobbly'),
     ('EYEBROW', 'raise', 'arch', 'pencil', 'expression'),
