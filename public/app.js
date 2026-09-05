@@ -299,18 +299,16 @@ let currentActiveRoomCode = '----';
                 }
                 if (data.type === 'EMPOSSDURR_ACCUSE_VOTE_START') {
                     document.getElementById('room-status-text').innerText = "EmpossDurr — Accuse Vote";
-                    switchToEmpossDurrAccuseVoteUI(data.secondsLeft);
+                    document.getElementById('lobby-countdown').innerText = '';
+                    switchToEmpossDurrAccuseVoteUI(data.votedCount, data.totalNeeded);
                     playerAnswerStatus = {};
                     updateLeaderboardUI(cachedPlayersSnapshot);
-                }
-                if (data.type === 'EMPOSSDURR_ACCUSE_TIMER_TICK') {
-                    document.getElementById('lobby-countdown').innerText = data.secondsLeft + " s";
-                    const t = document.getElementById('ed-tv-timer');
-                    if (t) t.innerText = data.secondsLeft + " s";
                 }
                 if (data.type === 'EMPOSSDURR_VOTE_SUBMITTED') {
                     playerAnswerStatus[data.playerName] = 'answered';
                     updateLeaderboardUI(cachedPlayersSnapshot);
+                    const tally = document.getElementById('ed-tv-tally');
+                    if (tally) tally.innerText = `${data.votedCount ?? 0} / ${data.totalNeeded ?? 0}`;
                 }
                 if (data.type === 'EMPOSSDURR_ACCUSE_RESULT') {
                     switchToEmpossDurrAccuseResultUI(data.resolution, data.impostorName);
@@ -325,18 +323,13 @@ let currentActiveRoomCode = '----';
                 }
                 if (data.type === 'EMPOSSDURR_DECLARE') {
                     document.getElementById('room-status-text').innerText = "EmpossDurr — Declaration!";
-                    document.getElementById('lobby-countdown').innerText = data.secondsLeft + " s";
-                    switchToEmpossDurrDeclareSplashUI(data.impostorName, data.secondsLeft);
+                    document.getElementById('lobby-countdown').innerText = '';
+                    switchToEmpossDurrDeclareSplashUI(data.impostorName, data.votedCount, data.totalNeeded);
                     stopCategoryMusic();
                     stopCountdownMusic();
                     playAudioTrack('declare-music');
                     playerAnswerStatus = {};
                     updateLeaderboardUI(cachedPlayersSnapshot);
-                }
-                if (data.type === 'EMPOSSDURR_DECLARE_TIMER_TICK') {
-                    document.getElementById('lobby-countdown').innerText = data.secondsLeft + " s";
-                    const t = document.getElementById('ed-tv-timer');
-                    if (t) t.innerText = data.secondsLeft + " s";
                 }
                 if (data.type === 'EMPOSSDURR_DECLARE_RESULT') {
                     switchToEmpossDurrDeclareResultUI(data.correct, data.impostorName);
@@ -735,15 +728,18 @@ function updateEmpossDurrReadyTally(readyNames, totalActive) {
     if (el) el.innerText = `${(readyNames || []).length} / ${totalActive || 0} ready to vote`;
 }
 
-function switchToEmpossDurrAccuseVoteUI(secondsLeft) {
+// No countdown -- the vote waits for every active player to submit, however
+// long the discussion takes (real family feedback: a timer was cutting off
+// votes mid-conversation). votedCount/totalNeeded show real progress instead.
+function switchToEmpossDurrAccuseVoteUI(votedCount, totalNeeded) {
     const panel = document.getElementById('active-content-stage');
     panel.innerHTML = `
         <div class="panel-box" style="padding: 40px; flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; min-height: 400px; box-sizing: border-box;">
             <div style="font-size: 0.85rem; font-weight: 600; color: #64748b; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 8px;">
                 Accuse Vote In Progress
             </div>
-            <div id="ed-tv-timer" style="font-size: 3rem; font-weight: 700; color: #ffffff;">${secondsLeft} s</div>
-            <div style="font-size: 1rem; color: #94a3b8; margin-top: 12px;">Votes are secret -- watch names light up below as everyone locks in.</div>
+            <div id="ed-tv-tally" style="font-size: 3rem; font-weight: 700; color: #ffffff;">${votedCount ?? 0} / ${totalNeeded ?? 0}</div>
+            <div style="font-size: 1rem; color: #94a3b8; margin-top: 12px;">Votes are secret -- nothing happens until everyone's in. Watch names light up below as they lock in.</div>
         </div>
     `;
 }
@@ -772,14 +768,14 @@ function switchToEmpossDurrAccuseResultUI(resolution, impostorName) {
 // takeover naming the impostor. Not a secret leak: declaring is inherently
 // self-outing in person (everyone watches them speak up), same as the
 // phone's splash.
-function switchToEmpossDurrDeclareSplashUI(impostorName, secondsLeft) {
+function switchToEmpossDurrDeclareSplashUI(impostorName, votedCount, totalNeeded) {
     const panel = document.getElementById('active-content-stage');
     panel.innerHTML = `
         <div class="panel-box" style="padding: 40px; flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; min-height: 400px; box-sizing: border-box; background: rgba(255, 165, 0, 0.06); border-color: rgba(255, 165, 0, 0.4);">
             <div style="font-size: 3rem; margin-bottom: 12px;">🕵️</div>
             <div style="font-size: 2rem; font-weight: 700; color: #ffa500; letter-spacing: -0.02em; margin-bottom: 12px;">${impostorName} DECLARES!</div>
-            <div style="font-size: 1rem; color: #94a3b8; margin-bottom: 20px;">Everyone but the impostor is voting: was their guess correct?</div>
-            <div id="ed-tv-timer" style="font-size: 2.2rem; font-weight: 700; color: #ffffff;">${secondsLeft} s</div>
+            <div style="font-size: 1rem; color: #94a3b8; margin-bottom: 20px;">Everyone but the impostor is voting: was their guess correct? Nothing happens until every juror's in.</div>
+            <div id="ed-tv-tally" style="font-size: 2.2rem; font-weight: 700; color: #ffffff;">${votedCount ?? 0} / ${totalNeeded ?? 0}</div>
         </div>
     `;
 }

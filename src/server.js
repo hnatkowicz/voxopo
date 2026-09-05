@@ -158,8 +158,15 @@ app.post('/api/room-status', (req, res) => {
                 readyToAccuse: Array.from(ed.readyToAccuse || []),
                 iAmReady: ed.readyToAccuse ? ed.readyToAccuse.has(playerName) : false,
                 totalActive: activePlayers.length,
-                accuseSecondsLeft: ed.accuseSecondsLeft,
-                declareSecondsLeft: ed.declareSecondsLeft,
+                // No countdown -- the vote waits for every required voter to
+                // submit, however long that takes. votedCount/totalNeeded
+                // let the phone show real progress instead of a timer.
+                votedCount: ed.phase === 'ACCUSE_VOTE'
+                    ? Object.keys(ed.accuseVotes).length
+                    : (ed.phase === 'DECLARE_VERDICT' ? Object.keys(ed.declareVotes).length : 0),
+                totalNeeded: ed.phase === 'ACCUSE_VOTE'
+                    ? activePlayers.length
+                    : (ed.phase === 'DECLARE_VERDICT' ? activePlayers.filter(p => p.name !== ed.impostorName).length : 0),
                 iHaveVoted: ed.phase === 'ACCUSE_VOTE'
                     ? (playerName in ed.accuseVotes)
                     : (ed.phase === 'DECLARE_VERDICT' ? (playerName in ed.declareVotes) : false),

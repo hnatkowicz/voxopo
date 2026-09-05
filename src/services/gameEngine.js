@@ -30,8 +30,6 @@ const MAX_NAME_LENGTH = 30; // matches the phone's input maxlength
 // never get picked all game while another gets picked repeatedly.
 const EMPOSSDURR_MIN_ROUNDS = 5;
 const EMPOSSDURR_MAX_ROUNDS = 12;
-const EMPOSSDURR_ACCUSE_VOTE_SECONDS = 15;
-const EMPOSSDURR_DECLARE_VOTE_SECONDS = 10;
 
 // Clamps a requested question count into [MIN_QUESTIONS_PER_GAME,
 // MAX_QUESTIONS_PER_GAME]. Falls back to the fixed default for anything
@@ -527,11 +525,7 @@ async function startEmpossDurrGame(roomCode) {
         phase: null, // DISCUSSION | ACCUSE_VOTE | DECLARE_VERDICT
         readyToAccuse: new Set(),
         accuseVotes: {}, // name -> { mode: 'accuse'|'abstain', target }
-        accuseSecondsLeft: 0,
-        accuseTimerInterval: null,
-        declareVotes: {}, // name -> 'yes'|'no'
-        declareSecondsLeft: 0,
-        declareTimerInterval: null
+        declareVotes: {} // name -> 'yes'|'no'
     };
 
     startEmpossDurrRound(roomCode);
@@ -602,6 +596,11 @@ function broadcastEmpossDurrReadyUpdate(roomCode) {
     });
 }
 
+// No countdown -- explicit design decision after real family play: a timer
+// pressured people mid-discussion and cut off votes nobody had actually cast
+// yet. The vote now waits for every active player to submit, however long
+// that takes; tallyEmpossDurrAccuseVotes only ever fires once the vote
+// handler below sees everyone in.
 function startEmpossDurrAccuseVote(roomCode) {
     const room = activeRooms[roomCode];
     if (!room || !room.empossdurr) return;
@@ -611,18 +610,9 @@ function startEmpossDurrAccuseVote(roomCode) {
     ed.phase = 'ACCUSE_VOTE';
     ed.accuseVotes = {};
     ed.readyToAccuse = new Set();
-    ed.accuseSecondsLeft = EMPOSSDURR_ACCUSE_VOTE_SECONDS;
 
-    broadcastToRoom(roomCode, { type: 'EMPOSSDURR_ACCUSE_VOTE_START', secondsLeft: ed.accuseSecondsLeft });
-
-    ed.accuseTimerInterval = setInterval(() => {
-        ed.accuseSecondsLeft -= 1;
-        if (ed.accuseSecondsLeft > 0) {
-            broadcastToRoom(roomCode, { type: 'EMPOSSDURR_ACCUSE_TIMER_TICK', secondsLeft: ed.accuseSecondsLeft });
-        } else {
-            tallyEmpossDurrAccuseVotes(roomCode);
-        }
-    }, 1000);
+    const activePlayers = Object.values(room.players).filter(p => !p.left);
+    broadcastToRoom(roomCode, { type: 'EMPOSSDURR_ACCUSE_VOTE_START', votedCount: 0, totalNeeded: activePlayers.length });
 }
 
 // Mirrors the original single-device game's scoring exactly: every accuse
@@ -740,6 +730,8 @@ function tallyEmpossDurrAccuseVotes(roomCode) {
 // preempts an in-flight accuse vote (see design chat: this is what "handles
 // the impostor being caught out immediately" down to the millisecond,
 // something the original pass-around version had no clean way to do).
+// No countdown here either -- same reasoning as the accuse vote. Waits for
+// every juror (every active player except the impostor) to submit a verdict.
 function startEmpossDurrDeclare(roomCode) {
     const room = activeRooms[roomCode];
     if (!room || !room.empossdurr) return;
@@ -749,18 +741,9 @@ function startEmpossDurrDeclare(roomCode) {
     ed.phase = 'DECLARE_VERDICT';
     ed.declareVotes = {};
     ed.readyToAccuse = new Set();
-    ed.declareSecondsLeft = EMPOSSDURR_DECLARE_VOTE_SECONDS;
 
-    broadcastToRoom(roomCode, { type: 'EMPOSSDURR_DECLARE', impostorName: ed.impostorName, secondsLeft: ed.declareSecondsLeft });
-
-    ed.declareTimerInterval = setInterval(() => {
-        ed.declareSecondsLeft -= 1;
-        if (ed.declareSecondsLeft > 0) {
-            broadcastToRoom(roomCode, { type: 'EMPOSSDURR_DECLARE_TIMER_TICK', secondsLeft: ed.declareSecondsLeft });
-        } else {
-            tallyEmpossDurrDeclareVerdict(roomCode);
-        }
-    }, 1000);
+    const jurors = Object.values(room.players).filter(p => !p.left && p.name !== ed.impostorName);
+    broadcastToRoom(roomCode, { type: 'EMPOSSDURR_DECLARE', impostorName: ed.impostorName, votedCount: 0, totalNeeded: jurors.length });
 }
 
 function tallyEmpossDurrDeclareVerdict(roomCode) {
@@ -1456,10 +1439,18 @@ export function handleIncomingMessage(fromPhone, bodyText, explicitRoomCode, pre
             }
 
             // Lets the TV light up this player's tile without revealing
-            // what they chose -- same treatment as ANSWER_SUBMITTED.
-            broadcastToRoom(associatedRoomCode, { type: 'EMPOSSDURR_VOTE_SUBMITTED', playerName: actingPlayerName });
-
+            // what they chose -- same treatment as ANSWER_SUBMITTED. Also
+            // carries a live votedCount/totalNeeded so the TV and phones can
+            // show real progress instead of a countdown -- nothing tallies
+            // until every one of these is in.
             const activePlayers = Object.values(currentRoom.players).filter(p => !p.left);
+            broadcastToRoom(associatedRoomCode, {
+                type: 'EMPOSSDURR_VOTE_SUBMITTED',
+                playerName: actingPlayerName,
+                votedCount: Object.keys(ed.accuseVotes).length,
+                totalNeeded: activePlayers.length
+            });
+
             if (Object.keys(ed.accuseVotes).length === activePlayers.length) {
                 tallyEmpossDurrAccuseVotes(associatedRoomCode);
             }
@@ -1474,9 +1465,15 @@ export function handleIncomingMessage(fromPhone, bodyText, explicitRoomCode, pre
                 return "Vote already locked in.";
             }
             ed.declareVotes[actingPlayerName] = command === 'DECLARE_YES' ? 'yes' : 'no';
-            broadcastToRoom(associatedRoomCode, { type: 'EMPOSSDURR_VOTE_SUBMITTED', playerName: actingPlayerName });
 
             const jurors = Object.values(currentRoom.players).filter(p => !p.left && p.name !== ed.impostorName);
+            broadcastToRoom(associatedRoomCode, {
+                type: 'EMPOSSDURR_VOTE_SUBMITTED',
+                playerName: actingPlayerName,
+                votedCount: Object.keys(ed.declareVotes).length,
+                totalNeeded: jurors.length
+            });
+
             if (Object.keys(ed.declareVotes).length === jurors.length) {
                 tallyEmpossDurrDeclareVerdict(associatedRoomCode);
             }

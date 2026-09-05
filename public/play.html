@@ -87,7 +87,6 @@
 
         .ed-round-indicator { font-size: 0.8rem; color: #64748b; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 16px; }
         .ed-status-line { font-size: 0.85rem; color: #64748b; text-align: center; margin: 12px 0; }
-        .ed-timer { font-size: 2rem; font-weight: 700; color: #ffffff; text-align: center; margin: 12px 0; }
 
         .btn-ready { background: #1e222b; border: 1px solid #222630; color: #e2e5e9; }
         .btn-ready.ed-active { background: rgba(0, 230, 118, 0.08); border-color: #00e676; color: #00e676; }
@@ -792,8 +791,8 @@
                     .map(n => `<div class="module-row" onclick="selectEmpossDurrChoice('ACCUSE_TARGET:${n}', this)">${n}</div>`)
                     .join('');
                 container.innerHTML = `
-                    <div class="ed-timer" id="ed-timer">${data.accuseSecondsLeft ?? ''}s</div>
-                    <p class="ed-status-line">Vote is secret. Pick who to accuse, or abstain, then submit.</p>
+                    <div class="ed-status-line" id="ed-vote-tally">${data.votedCount ?? 0} / ${data.totalNeeded ?? 0} voted</div>
+                    <p class="ed-status-line">Vote is secret. Pick who to accuse, or abstain, then submit. Nothing happens until everyone's in.</p>
                     <div class="module-list">
                         ${targetRows}
                         <div class="module-row" onclick="selectEmpossDurrChoice('ACCUSE_ABSTAIN', this)">Abstain / Keep Talking</div>
@@ -810,8 +809,8 @@
                 } else {
                     edPendingChoice = null;
                     container.innerHTML = `
-                        <div class="ed-timer" id="ed-timer">${data.declareSecondsLeft ?? ''}s</div>
-                        <p class="ed-status-line">Was their spoken guess actually correct?</p>
+                        <div class="ed-status-line" id="ed-vote-tally">${data.votedCount ?? 0} / ${data.totalNeeded ?? 0} voted</div>
+                        <p class="ed-status-line">Was their spoken guess actually correct? Nothing happens until every juror's in.</p>
                         <div class="module-list">
                             <div class="module-row" onclick="selectEmpossDurrChoice('DECLARE_YES', this)">Yes, that's it!</div>
                             <div class="module-row" onclick="selectEmpossDurrChoice('DECLARE_NO', this)">No, that's wrong</div>
@@ -844,14 +843,14 @@
                     }
                 }
             } else if (data.empossdurrPhase === 'ACCUSE_VOTE') {
-                const timer = document.getElementById('ed-timer');
-                if (timer) timer.innerText = `${data.accuseSecondsLeft ?? 0}s`;
+                const tally = document.getElementById('ed-vote-tally');
+                if (tally) tally.innerText = `${data.votedCount ?? 0} / ${data.totalNeeded ?? 0} voted`;
                 if (data.iHaveVoted) {
                     document.querySelectorAll('#ed-phase-content .module-row, #ed-phase-content .btn').forEach(el => el.classList.add('btn-locked'));
                 }
             } else if (data.empossdurrPhase === 'DECLARE_VERDICT' && !data.isImpostor) {
-                const timer = document.getElementById('ed-timer');
-                if (timer) timer.innerText = `${data.declareSecondsLeft ?? 0}s`;
+                const tally = document.getElementById('ed-vote-tally');
+                if (tally) tally.innerText = `${data.votedCount ?? 0} / ${data.totalNeeded ?? 0} voted`;
                 if (data.iHaveVoted) {
                     document.querySelectorAll('#ed-phase-content .btn').forEach(el => el.classList.add('btn-locked'));
                 }
