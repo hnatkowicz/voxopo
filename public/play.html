@@ -71,11 +71,13 @@
            impostor") -- color alone should make a glanced-at phone read
            correctly even before the label text registers. */
         .ed-role-banner { border-radius: 8px; padding: 18px; margin-bottom: 20px; text-align: center; }
-        .ed-role-banner.ed-role-word { background: rgba(0, 230, 118, 0.06); border: 1px solid rgba(0, 230, 118, 0.3); }
-        .ed-role-banner.ed-role-impostor { background: rgba(255, 165, 0, 0.06); border: 1px solid rgba(255, 165, 0, 0.3); }
-        .ed-role-label { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.08em; font-weight: 600; color: #64748b; margin-bottom: 6px; }
-        .ed-role-word .ed-role-label { color: #00e676; }
-        .ed-role-impostor .ed-role-label { color: #ffa500; }
+        /* Deliberately IDENTICAL for word and impostor -- a real player's and
+           the impostor's phones must look the same at a glance (or "out of
+           the corner of your eye," per the original pass-around version's
+           own known bug). Only the text inside differs, which requires
+           actually reading it up close. */
+        .ed-role-banner.ed-role-word, .ed-role-banner.ed-role-impostor { background: rgba(0, 230, 118, 0.06); border: 1px solid rgba(0, 230, 118, 0.3); }
+        .ed-role-label { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.08em; font-weight: 600; color: #00e676; margin-bottom: 6px; }
         .ed-role-value { font-size: 1.4rem; font-weight: 700; color: #ffffff; letter-spacing: -0.01em; }
 
         .ed-round-indicator { font-size: 0.8rem; color: #64748b; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 16px; }
@@ -84,8 +86,15 @@
 
         .btn-ready { background: #1e222b; border: 1px solid #222630; color: #e2e5e9; }
         .btn-ready.ed-active { background: rgba(0, 230, 118, 0.08); border-color: #00e676; color: #00e676; }
-        .btn-declare, .btn-ed-again { background: #ffa500; color: #0d0e11; }
-        .btn-declare:hover, .btn-ed-again:hover { background: #e59400; }
+        .btn-ed-again { background: #ffa500; color: #0d0e11; }
+        .btn-ed-again:hover { background: #e59400; }
+        /* Declare and its decoy twin share this identical, muted style on
+           purpose -- same size, same neutral color as every other button,
+           so the impostor's phone doesn't visually shout "I'm different"
+           next to a real player's. The text is the only thing that differs,
+           and only the phone's own holder reads it up close. */
+        .btn-declare, .btn-ed-decoy { background: #1e222b; border: 1px solid #222630; color: #e2e5e9; }
+        .btn-declare:hover, .btn-ed-decoy:hover { background: #262b36; }
         .btn-locked { opacity: 0.4; pointer-events: none; }
 
         /* Full-screen takeover the instant the impostor declares -- fires on
@@ -627,6 +636,30 @@
 
         // ---------- EmpossDurr ----------
 
+        // Pure decoy filler for the real players' second button -- exists
+        // only to make every phone show the same two-button silhouette as
+        // the impostor's, same trick the original pass-around game used for
+        // its "Continue?" confirmation decoy slots. No server call, no
+        // effect -- purely a fun, private flourish for whoever taps it.
+        const ED_DECOY_WORDS = [
+            'Nothing', 'Greetings!', 'Whassup!', 'Boomerang', 'Gandalf', 'I Love You!',
+            'Princess?', 'Delicious!', 'Obligatory', 'Awesome!', '100% Nada', 'Survive!',
+            'UR Beautiful', 'Says Who?!', 'Bazinga!', 'Kazoo', 'Not Today', 'Spaghetti',
+            'Yeet', 'Ta-Da!'
+        ];
+        const ED_DECOY_REACTIONS = [
+            'Solid choice.', 'Bold move.', 'Noted.', '🤐 ...nothing happened.',
+            'That felt good, didn’t it?', 'Achievement unlocked: Nothing.'
+        ];
+        function pickEmpossDurrDecoyWord() {
+            return ED_DECOY_WORDS[Math.floor(Math.random() * ED_DECOY_WORDS.length)];
+        }
+        function clickEmpossDurrDecoy(element) {
+            const feedback = document.getElementById('ed-feedback');
+            const reaction = ED_DECOY_REACTIONS[Math.floor(Math.random() * ED_DECOY_REACTIONS.length)];
+            showFeedback(feedback, reaction, "rgba(30,34,43,0.8)", "#e2e5e9", "rgba(255,255,255,0.06)");
+        }
+
         function renderEmpossDurr(data, nickname, roomCode) {
             document.getElementById('ed-badge-name').innerText = nickname;
             document.getElementById('ed-badge-emoji').innerText = chosenAvatar;
@@ -636,7 +669,7 @@
             const roleBanner = document.getElementById('ed-role-banner');
             if (data.isImpostor) {
                 roleBanner.className = 'ed-role-banner ed-role-impostor';
-                document.getElementById('ed-role-label').innerText = 'Your Clue (you are the impostor)';
+                document.getElementById('ed-role-label').innerText = 'Impostor Clue';
                 document.getElementById('ed-role-value').innerText = (data.displayClue || '-').toUpperCase();
             } else {
                 roleBanner.className = 'ed-role-banner ed-role-word';
@@ -669,14 +702,18 @@
             feedback.style.display = 'none';
 
             if (data.empossdurrPhase === 'DISCUSSION') {
-                const declareButton = data.isImpostor
+                // Same size, same muted style, same position as the
+                // impostor's real Declare button -- a real player's phone
+                // needs to look identical at a glance, so it gets a second
+                // button too. This one just does nothing (see ED_DECOY_WORDS).
+                const secondButton = data.isImpostor
                     ? `<button class="btn btn-declare" onclick="submitEmpossDurrDeclare()">I Declare!</button>`
-                    : '';
+                    : `<button class="btn btn-ed-decoy" onclick="clickEmpossDurrDecoy(this)">${pickEmpossDurrDecoyWord()}</button>`;
                 container.innerHTML = `
                     <p class="ed-status-line">Give your one-word clues out loud. When you're ready to accuse, mark yourself ready below.</p>
                     <div class="ed-status-line" id="ed-ready-tally">0 / 0 ready to accuse</div>
                     <button class="btn btn-ready" id="ed-ready-btn" onclick="toggleEmpossDurrReady()">I'm Ready to Accuse</button>
-                    ${declareButton}
+                    ${secondButton}
                 `;
                 updateEmpossDurrLiveBits(data);
                 return;
