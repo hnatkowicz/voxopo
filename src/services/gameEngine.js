@@ -138,6 +138,18 @@ function broadcastToRoom(roomCode, payload) {
     }
 }
 
+// Fired right before a content-missing bounce-to-lobby (see the empty-bank
+// and EmpossDurr-startup catch above) so the TV shows *why* everyone just
+// got dropped back to module selection instead of it looking like the app
+// silently broke. TV-only -- phones just quietly follow the room back to
+// the lobby like any other reset, same as they already do.
+function broadcastContentUnavailable(roomCode, deckLabel) {
+    broadcastToRoom(roomCode, {
+        type: 'CONTENT_UNAVAILABLE',
+        message: `${deckLabel} isn't ready yet -- back to module selection.`
+    });
+}
+
 // ==========================================
 // PHASE 1: LOBBY MACHINERY
 // ==========================================
@@ -269,6 +281,7 @@ async function executeCategoryPhaseExpiration(roomCode) {
             await startEmpossDurrGame(roomCode);
         } catch (error) {
             console.error(`❌ [EmpossDurr] Failed to start Room ${roomCode}:`, error.message);
+            broadcastContentUnavailable(roomCode, 'EmpossDurr');
             resetRoomToLobby(roomCode);
         }
         return;
@@ -288,6 +301,7 @@ async function executeCategoryPhaseExpiration(roomCode) {
         // with zero feedback -- bounce back to the lobby instead so the
         // room recovers and someone can pick a different deck.
         console.error(`❌ [Question Bank] No eligible questions found for Room ${roomCode} (category: ${room.activeCategoryKey}). Returning to lobby instead of hanging.`);
+        broadcastContentUnavailable(roomCode, room.activeDeckName || 'This deck');
         resetRoomToLobby(roomCode);
         return;
     }

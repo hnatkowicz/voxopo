@@ -252,6 +252,15 @@ let currentActiveRoomCode = '----';
                 // Post-game consensus (everyone voting START from the game-over
                 // screen) sends everyone back to the mode-election lobby -- same
                 // room code and roster, every stat wiped for a genuinely fresh game.
+                // Fired right before a content-missing bounce-to-lobby, so the
+                // room shows *why* it just landed back on module selection
+                // instead of it looking like the app silently broke. Always
+                // arrives just ahead of RETURN_TO_LOBBY, but lives in a fixed
+                // overlay outside #active-content-stage so that panel swap
+                // doesn't wipe it out early.
+                if (data.type === 'CONTENT_UNAVAILABLE') {
+                    showContentWarningToast(data.message);
+                }
                 if (data.type === 'RETURN_TO_LOBBY') {
                     document.getElementById('room-status-text').innerText = "Connected Live";
                     document.getElementById('lobby-countdown').innerText = "60s";
@@ -455,6 +464,24 @@ let currentActiveRoomCode = '----';
                 toastQueue.push(freshPlayersList[0]); // Welcome the very first player into an empty room
                 processToastQueuePipeline();
             }
+        }
+
+        let contentWarningHideTimer = null;
+        function showContentWarningToast(message) {
+            const card = document.getElementById('content-warning-card');
+            const text = document.getElementById('content-warning-text');
+            if (!card || !text) return;
+
+            text.innerText = message;
+            card.classList.add('active');
+
+            // Re-triggerable -- a second warning while one's already showing
+            // just resets the clock rather than stacking or getting cut short.
+            if (contentWarningHideTimer) clearTimeout(contentWarningHideTimer);
+            contentWarningHideTimer = setTimeout(() => {
+                card.classList.remove('active');
+                contentWarningHideTimer = null;
+            }, 10000);
         }
 
         function processToastQueuePipeline() {

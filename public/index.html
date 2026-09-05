@@ -174,6 +174,18 @@
 <audio id="category-music" src="/audio/cat-select.wav" preload="auto"></audio>
 <audio id="win-music" src="/audio/confirm-win.wav" preload="auto"></audio>
 <audio id="declare-music" src="/audio/impostor-declares.wav" preload="auto"></audio>
+
+<!-- Fixed overlay, outside #active-content-stage on purpose -- a
+     RETURN_TO_LOBBY broadcast rewrites that panel almost immediately after
+     this fires, and this needs to survive that swap and stay readable for
+     its full 10s regardless of whatever screen change happens underneath. -->
+<div class="toast-container" id="content-warning-toast">
+    <div class="toast-card warning" id="content-warning-card">
+        <span class="toast-warning-icon">⚠️</span>
+        <span class="toast-text" id="content-warning-text"></span>
+    </div>
+</div>
+
 <script src="/app.js" defer></script>
 </body>
 </html>

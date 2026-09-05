@@ -248,6 +248,16 @@ body {
             color: #00e676;
             font-weight: 600;
         }
+        /* Content-unavailable warning -- same toast shell, orange accent
+           instead of the default neutral border so it reads as "heads up,"
+           not just another routine notification. */
+        .toast-card.warning {
+            border-color: rgba(255, 165, 0, 0.4);
+            background: rgba(255, 165, 0, 0.08);
+        }
+        .toast-warning-icon {
+            font-size: 1.3rem;
+        }
 /* ========================================== */
 /*  GATEWAY VIEW LAYER CONTROLLER              */
 /* ========================================== */
