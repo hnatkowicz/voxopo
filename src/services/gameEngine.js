@@ -30,6 +30,13 @@ const MAX_NAME_LENGTH = 30; // matches the phone's input maxlength
 // never get picked all game while another gets picked repeatedly.
 const EMPOSSDURR_MIN_ROUNDS = 5;
 const EMPOSSDURR_MAX_ROUNDS = 12;
+// Real family play went both ways on this: no timer at all meant a vote
+// could hang forever if someone got absorbed in conversation, but the
+// original 15s/10s timers cut discussion off mid-thought. 30s for both
+// votes is the compromise -- long enough for the group to actually
+// wrap up, short enough that the game doesn't stall on one distracted
+// player. A vote still resolves immediately if everyone submits sooner.
+const EMPOSSDURR_VOTE_SECONDS = 30;
 
 // Clamps a requested question count into [MIN_QUESTIONS_PER_GAME,
 // MAX_QUESTIONS_PER_GAME]. Falls back to the fixed default for anything
@@ -524,6 +531,7 @@ async function startEmpossDurrGame(roomCode) {
         impostorName: null,
         phase: null, // DISCUSSION | ACCUSE_VOTE | DECLARE_VERDICT
         readyToAccuse: new Set(),
+        skipVotes: new Set(), // majority-gated "skip this word/round" during DISCUSSION -- a repeat word or a clue nobody can work with
         accuseVotes: {}, // name -> { mode: 'accuse'|'abstain', target }
         declareVotes: {}, // name -> 'yes'|'no'
         // Score/badge changes from a "continue" accuse-vote outcome (the
@@ -577,6 +585,7 @@ function startEmpossDurrRound(roomCode) {
     ed.starterName = starter.name;
     ed.phase = 'DISCUSSION';
     ed.readyToAccuse = new Set();
+    ed.skipVotes = new Set();
     ed.accuseVotes = {};
     ed.declareVotes = {};
 
@@ -606,11 +615,41 @@ function broadcastEmpossDurrReadyUpdate(roomCode) {
     });
 }
 
-// No countdown -- explicit design decision after real family play: a timer
-// pressured people mid-discussion and cut off votes nobody had actually cast
-// yet. The vote now waits for every active player to submit, however long
-// that takes; tallyEmpossDurrAccuseVotes only ever fires once the vote
-// handler below sees everyone in.
+function broadcastEmpossDurrSkipUpdate(roomCode) {
+    const room = activeRooms[roomCode];
+    if (!room || !room.empossdurr) return;
+    const activePlayers = Object.values(room.players).filter(p => !p.left);
+    broadcastToRoom(roomCode, {
+        type: 'EMPOSSDURR_SKIP_UPDATE',
+        skipNames: Array.from(room.empossdurr.skipVotes),
+        totalActive: activePlayers.length
+    });
+}
+
+// A group mulligan for a repeat word or a clue nobody can work with -- no
+// score or badge changes, and the impostor's identity stays hidden, same as
+// any other still-in-progress round. Doesn't spend one of totalRounds: the
+// round number is decremented first so startEmpossDurrRound's own increment
+// lands back on the same round, just with a freshly-drawn word and impostor.
+function skipEmpossDurrRound(roomCode) {
+    const room = activeRooms[roomCode];
+    if (!room || !room.empossdurr) return;
+    clearEmpossDurrTimers(room);
+
+    const ed = room.empossdurr;
+    broadcastToRoom(roomCode, { type: 'EMPOSSDURR_ROUND_SKIPPED' });
+
+    if (room.revealTimeout) clearTimeout(room.revealTimeout);
+    room.revealTimeout = setTimeout(() => {
+        room.revealTimeout = null;
+        ed.currentRound -= 1;
+        startEmpossDurrRound(roomCode);
+    }, REVEAL_DURATION_MS);
+}
+
+// Resolves as soon as everyone's submitted, or at EMPOSSDURR_VOTE_SECONDS
+// with whoever has voted so far -- a non-voter simply isn't counted either
+// way, same as tallyEmpossDurrAccuseVotes always worked for a partial vote.
 function startEmpossDurrAccuseVote(roomCode) {
     const room = activeRooms[roomCode];
     if (!room || !room.empossdurr) return;
@@ -620,9 +659,25 @@ function startEmpossDurrAccuseVote(roomCode) {
     ed.phase = 'ACCUSE_VOTE';
     ed.accuseVotes = {};
     ed.readyToAccuse = new Set();
+    ed.skipVotes = new Set();
+    ed.accuseSecondsLeft = EMPOSSDURR_VOTE_SECONDS;
 
     const activePlayers = Object.values(room.players).filter(p => !p.left);
-    broadcastToRoom(roomCode, { type: 'EMPOSSDURR_ACCUSE_VOTE_START', votedCount: 0, totalNeeded: activePlayers.length });
+    broadcastToRoom(roomCode, {
+        type: 'EMPOSSDURR_ACCUSE_VOTE_START',
+        votedCount: 0,
+        totalNeeded: activePlayers.length,
+        secondsLeft: ed.accuseSecondsLeft
+    });
+
+    ed.accuseTimerInterval = setInterval(() => {
+        ed.accuseSecondsLeft -= 1;
+        if (ed.accuseSecondsLeft > 0) {
+            broadcastToRoom(roomCode, { type: 'EMPOSSDURR_ACCUSE_TIMER_TICK', secondsLeft: ed.accuseSecondsLeft });
+        } else {
+            tallyEmpossDurrAccuseVotes(roomCode);
+        }
+    }, 1000);
 }
 
 // Mirrors the original single-device game's scoring exactly: every accuse
@@ -766,6 +821,7 @@ function tallyEmpossDurrAccuseVotes(roomCode) {
             room.revealTimeout = null;
             ed.phase = 'DISCUSSION';
             ed.readyToAccuse = new Set();
+            ed.skipVotes = new Set();
             ed.accuseVotes = {};
             broadcastToRoom(roomCode, { type: 'EMPOSSDURR_RESUME_DISCUSSION' });
         }, REVEAL_DURATION_MS);
@@ -777,8 +833,8 @@ function tallyEmpossDurrAccuseVotes(roomCode) {
 // preempts an in-flight accuse vote (see design chat: this is what "handles
 // the impostor being caught out immediately" down to the millisecond,
 // something the original pass-around version had no clean way to do).
-// No countdown here either -- same reasoning as the accuse vote. Waits for
-// every juror (every active player except the impostor) to submit a verdict.
+// Same 30s-or-everyone-in resolution as the accuse vote. Waits for every
+// juror (every active player except the impostor) to submit a verdict.
 function startEmpossDurrDeclare(roomCode) {
     const room = activeRooms[roomCode];
     if (!room || !room.empossdurr) return;
@@ -788,9 +844,26 @@ function startEmpossDurrDeclare(roomCode) {
     ed.phase = 'DECLARE_VERDICT';
     ed.declareVotes = {};
     ed.readyToAccuse = new Set();
+    ed.skipVotes = new Set();
+    ed.declareSecondsLeft = EMPOSSDURR_VOTE_SECONDS;
 
     const jurors = Object.values(room.players).filter(p => !p.left && p.name !== ed.impostorName);
-    broadcastToRoom(roomCode, { type: 'EMPOSSDURR_DECLARE', impostorName: ed.impostorName, votedCount: 0, totalNeeded: jurors.length });
+    broadcastToRoom(roomCode, {
+        type: 'EMPOSSDURR_DECLARE',
+        impostorName: ed.impostorName,
+        votedCount: 0,
+        totalNeeded: jurors.length,
+        secondsLeft: ed.declareSecondsLeft
+    });
+
+    ed.declareTimerInterval = setInterval(() => {
+        ed.declareSecondsLeft -= 1;
+        if (ed.declareSecondsLeft > 0) {
+            broadcastToRoom(roomCode, { type: 'EMPOSSDURR_DECLARE_TIMER_TICK', secondsLeft: ed.declareSecondsLeft });
+        } else {
+            tallyEmpossDurrDeclareVerdict(roomCode);
+        }
+    }, 1000);
 }
 
 function tallyEmpossDurrDeclareVerdict(roomCode) {
@@ -1297,6 +1370,12 @@ export function handleIncomingMessage(fromPhone, bodyText, explicitRoomCode, pre
                     const neededForMajority = Math.floor(remainingActivePlayers.length / 2) + 1;
                     if (ed.readyToAccuse.size >= neededForMajority) {
                         startEmpossDurrAccuseVote(associatedRoomCode);
+                    } else {
+                        ed.skipVotes.delete(actingPlayerName);
+                        broadcastEmpossDurrSkipUpdate(associatedRoomCode);
+                        if (ed.skipVotes.size >= neededForMajority) {
+                            skipEmpossDurrRound(associatedRoomCode);
+                        }
                     }
                 } else if (ed.phase === 'ACCUSE_VOTE') {
                     delete ed.accuseVotes[actingPlayerName];
@@ -1474,6 +1553,29 @@ export function handleIncomingMessage(fromPhone, bodyText, explicitRoomCode, pre
             return ed.readyToAccuse.has(actingPlayerName)
                 ? "You're marked ready to accuse."
                 : "Ready status retracted.";
+        }
+
+        // A repeat word, or a clue nobody can work with -- any player can
+        // flag it, and once a majority agree the round is scrapped for a
+        // freshly-drawn one. No score/badge changes, impostor stays hidden,
+        // same majority threshold as the ready-to-accuse toggle above.
+        if (ed.phase === 'DISCUSSION' && (command === 'SKIP_TOGGLE')) {
+            if (ed.skipVotes.has(actingPlayerName)) {
+                ed.skipVotes.delete(actingPlayerName);
+            } else {
+                ed.skipVotes.add(actingPlayerName);
+            }
+            broadcastEmpossDurrSkipUpdate(associatedRoomCode);
+
+            const activePlayers = Object.values(currentRoom.players).filter(p => !p.left);
+            const neededForMajority = Math.floor(activePlayers.length / 2) + 1;
+            if (ed.skipVotes.size >= neededForMajority) {
+                skipEmpossDurrRound(associatedRoomCode);
+                return "Majority wants to skip -- new word coming up!";
+            }
+            return ed.skipVotes.has(actingPlayerName)
+                ? "You've flagged this round to skip."
+                : "Skip flag retracted.";
         }
 
         if (ed.phase === 'ACCUSE_VOTE' && (command === 'ACCUSE_ABSTAIN' || command.startsWith('ACCUSE_TARGET:'))) {

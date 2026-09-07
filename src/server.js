@@ -157,16 +157,21 @@ app.post('/api/room-status', (req, res) => {
                 displayClue: isImpostor ? ed.impostorClue : null,
                 readyToAccuse: Array.from(ed.readyToAccuse || []),
                 iAmReady: ed.readyToAccuse ? ed.readyToAccuse.has(playerName) : false,
+                skipVotes: Array.from(ed.skipVotes || []),
+                iHaveFlaggedSkip: ed.skipVotes ? ed.skipVotes.has(playerName) : false,
                 totalActive: activePlayers.length,
-                // No countdown -- the vote waits for every required voter to
-                // submit, however long that takes. votedCount/totalNeeded
-                // let the phone show real progress instead of a timer.
+                // A vote resolves the instant everyone required has
+                // submitted, or at accuseSecondsLeft/declareSecondsLeft with
+                // whoever has voted so far -- votedCount/totalNeeded show
+                // real progress, the seconds fields show the backstop clock.
                 votedCount: ed.phase === 'ACCUSE_VOTE'
                     ? Object.keys(ed.accuseVotes).length
                     : (ed.phase === 'DECLARE_VERDICT' ? Object.keys(ed.declareVotes).length : 0),
                 totalNeeded: ed.phase === 'ACCUSE_VOTE'
                     ? activePlayers.length
                     : (ed.phase === 'DECLARE_VERDICT' ? activePlayers.filter(p => p.name !== ed.impostorName).length : 0),
+                accuseSecondsLeft: ed.accuseSecondsLeft,
+                declareSecondsLeft: ed.declareSecondsLeft,
                 iHaveVoted: ed.phase === 'ACCUSE_VOTE'
                     ? (playerName in ed.accuseVotes)
                     : (ed.phase === 'DECLARE_VERDICT' ? (playerName in ed.declareVotes) : false),

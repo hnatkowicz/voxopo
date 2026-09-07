@@ -299,10 +299,15 @@ let currentActiveRoomCode = '----';
                 }
                 if (data.type === 'EMPOSSDURR_ACCUSE_VOTE_START') {
                     document.getElementById('room-status-text').innerText = "EmpossDurr — Accuse Vote";
-                    document.getElementById('lobby-countdown').innerText = '';
-                    switchToEmpossDurrAccuseVoteUI(data.votedCount, data.totalNeeded);
+                    document.getElementById('lobby-countdown').innerText = data.secondsLeft + " s";
+                    switchToEmpossDurrAccuseVoteUI(data.votedCount, data.totalNeeded, data.secondsLeft);
                     playerAnswerStatus = {};
                     updateLeaderboardUI(cachedPlayersSnapshot);
+                }
+                if (data.type === 'EMPOSSDURR_ACCUSE_TIMER_TICK') {
+                    document.getElementById('lobby-countdown').innerText = data.secondsLeft + " s";
+                    const t = document.getElementById('ed-tv-timer');
+                    if (t) t.innerText = data.secondsLeft + " s";
                 }
                 if (data.type === 'EMPOSSDURR_VOTE_SUBMITTED') {
                     playerAnswerStatus[data.playerName] = 'answered';
@@ -321,15 +326,29 @@ let currentActiveRoomCode = '----';
                     playerAnswerStatus = {};
                     updateLeaderboardUI(cachedPlayersSnapshot);
                 }
+                if (data.type === 'EMPOSSDURR_SKIP_UPDATE') {
+                    const skipTally = document.getElementById('ed-tv-skip-tally');
+                    if (skipTally) skipTally.innerText = `${(data.skipNames || []).length} / ${data.totalActive || 0} want to skip`;
+                }
+                if (data.type === 'EMPOSSDURR_ROUND_SKIPPED') {
+                    document.getElementById('room-status-text').innerText = "EmpossDurr — Round Skipped";
+                    switchToEmpossDurrSkippedUI();
+                    playerAnswerStatus = {};
+                }
                 if (data.type === 'EMPOSSDURR_DECLARE') {
                     document.getElementById('room-status-text').innerText = "EmpossDurr — Declaration!";
-                    document.getElementById('lobby-countdown').innerText = '';
-                    switchToEmpossDurrDeclareSplashUI(data.impostorName, data.votedCount, data.totalNeeded);
+                    document.getElementById('lobby-countdown').innerText = data.secondsLeft + " s";
+                    switchToEmpossDurrDeclareSplashUI(data.impostorName, data.votedCount, data.totalNeeded, data.secondsLeft);
                     stopCategoryMusic();
                     stopCountdownMusic();
                     playAudioTrack('declare-music');
                     playerAnswerStatus = {};
                     updateLeaderboardUI(cachedPlayersSnapshot);
+                }
+                if (data.type === 'EMPOSSDURR_DECLARE_TIMER_TICK') {
+                    document.getElementById('lobby-countdown').innerText = data.secondsLeft + " s";
+                    const t = document.getElementById('ed-tv-timer');
+                    if (t) t.innerText = data.secondsLeft + " s";
                 }
                 if (data.type === 'EMPOSSDURR_DECLARE_RESULT') {
                     switchToEmpossDurrDeclareResultUI(data.correct, data.impostorName);
@@ -719,6 +738,7 @@ function switchToEmpossDurrDiscussionUI(round, totalRounds, starterName) {
             </div>
             <div style="font-size: 1rem; color: #94a3b8; margin-bottom: 6px;">Round ${round} of ${totalRounds}</div>
             <div id="ed-tv-ready-tally" style="font-size: 1.1rem; font-weight: 600; color: #ffa500;">0 / 0 ready to vote</div>
+            <div id="ed-tv-skip-tally" style="font-size: 0.9rem; font-weight: 600; color: #64748b; margin-top: 6px;">0 / 0 want to skip</div>
         </div>
     `;
 }
@@ -728,10 +748,11 @@ function updateEmpossDurrReadyTally(readyNames, totalActive) {
     if (el) el.innerText = `${(readyNames || []).length} / ${totalActive || 0} ready to vote`;
 }
 
-// No countdown -- the vote waits for every active player to submit, however
-// long the discussion takes (real family feedback: a timer was cutting off
-// votes mid-conversation). votedCount/totalNeeded show real progress instead.
-function switchToEmpossDurrAccuseVoteUI(votedCount, totalNeeded) {
+// Resolves the instant everyone required has submitted, or at
+// secondsLeft with whoever has voted so far -- votedCount/totalNeeded show
+// real progress, secondsLeft is the backstop clock (real family feedback:
+// no timer at all let a vote hang forever on one distracted player).
+function switchToEmpossDurrAccuseVoteUI(votedCount, totalNeeded, secondsLeft) {
     const panel = document.getElementById('active-content-stage');
     panel.innerHTML = `
         <div class="panel-box" style="padding: 40px; flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; min-height: 400px; box-sizing: border-box;">
@@ -739,7 +760,8 @@ function switchToEmpossDurrAccuseVoteUI(votedCount, totalNeeded) {
                 Accuse Vote In Progress
             </div>
             <div id="ed-tv-tally" style="font-size: 3rem; font-weight: 700; color: #ffffff;">${votedCount ?? 0} / ${totalNeeded ?? 0}</div>
-            <div style="font-size: 1rem; color: #94a3b8; margin-top: 12px;">Votes are secret -- nothing happens until everyone's in. Watch names light up below as they lock in.</div>
+            <div id="ed-tv-timer" style="font-size: 1.3rem; font-weight: 600; color: #ffa500; margin-top: 8px;">${secondsLeft ?? ''} s</div>
+            <div style="font-size: 1rem; color: #94a3b8; margin-top: 12px;">Votes are secret -- resolves once everyone's in, or when time runs out. Watch names light up below as they lock in.</div>
         </div>
     `;
 }
@@ -768,14 +790,25 @@ function switchToEmpossDurrAccuseResultUI(resolution, impostorName) {
 // takeover naming the impostor. Not a secret leak: declaring is inherently
 // self-outing in person (everyone watches them speak up), same as the
 // phone's splash.
-function switchToEmpossDurrDeclareSplashUI(impostorName, votedCount, totalNeeded) {
+function switchToEmpossDurrDeclareSplashUI(impostorName, votedCount, totalNeeded, secondsLeft) {
     const panel = document.getElementById('active-content-stage');
     panel.innerHTML = `
         <div class="panel-box" style="padding: 40px; flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; min-height: 400px; box-sizing: border-box; background: rgba(255, 165, 0, 0.06); border-color: rgba(255, 165, 0, 0.4);">
             <div style="font-size: 3rem; margin-bottom: 12px;">🕵️</div>
             <div style="font-size: 2rem; font-weight: 700; color: #ffa500; letter-spacing: -0.02em; margin-bottom: 12px;">${impostorName} DECLARES!</div>
-            <div style="font-size: 1rem; color: #94a3b8; margin-bottom: 20px;">Everyone but the impostor is voting: was their guess correct? Nothing happens until every juror's in.</div>
+            <div style="font-size: 1rem; color: #94a3b8; margin-bottom: 20px;">Everyone but the impostor is voting: was their guess correct? Resolves once every juror's in, or when time runs out.</div>
             <div id="ed-tv-tally" style="font-size: 2.2rem; font-weight: 700; color: #ffffff;">${votedCount ?? 0} / ${totalNeeded ?? 0}</div>
+            <div id="ed-tv-timer" style="font-size: 1.2rem; font-weight: 600; color: #ffa500; margin-top: 8px;">${secondsLeft ?? ''} s</div>
+        </div>
+    `;
+}
+
+function switchToEmpossDurrSkippedUI() {
+    const panel = document.getElementById('active-content-stage');
+    panel.innerHTML = `
+        <div class="panel-box" style="padding: 40px; flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; min-height: 400px; box-sizing: border-box;">
+            <div style="font-size: 1.6rem; font-weight: 700; color: #ffffff; letter-spacing: -0.02em; margin-bottom: 12px;">Round skipped by group vote!</div>
+            <div style="font-size: 1rem; color: #94a3b8;">A fresh word is coming up -- no scores changed.</div>
         </div>
     `;
 }

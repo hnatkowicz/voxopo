@@ -87,9 +87,12 @@
 
         .ed-round-indicator { font-size: 0.8rem; color: #64748b; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 16px; }
         .ed-status-line { font-size: 0.85rem; color: #64748b; text-align: center; margin: 12px 0; }
+        .ed-timer { font-size: 2rem; font-weight: 700; color: #ffffff; text-align: center; margin: 12px 0; }
 
         .btn-ready { background: #1e222b; border: 1px solid #222630; color: #e2e5e9; }
         .btn-ready.ed-active { background: rgba(0, 230, 118, 0.08); border-color: #00e676; color: #00e676; }
+        .btn-skip { background: #1e222b; border: 1px solid #222630; color: #94a3b8; margin-top: 16px; }
+        .btn-skip.ed-active { background: rgba(255, 165, 0, 0.08); border-color: #ffa500; color: #ffa500; }
         .btn-ed-again { background: #ffa500; color: #0d0e11; }
         .btn-ed-again:hover { background: #e59400; }
         /* Declare and its decoy twin share this identical, muted style on
@@ -776,6 +779,8 @@
                     <div class="ed-status-line" id="ed-ready-tally">0 / 0 ready to vote</div>
                     <button class="btn btn-ready" id="ed-ready-btn" onclick="toggleEmpossDurrReady()">I'm Ready to Vote</button>
                     ${secondButton}
+                    <div class="ed-status-line" id="ed-skip-tally">0 / 0 want to skip</div>
+                    <button class="btn btn-skip" id="ed-skip-btn" onclick="toggleEmpossDurrSkip()">Skip This Word</button>
                 `;
                 updateEmpossDurrLiveBits(data);
                 return;
@@ -792,7 +797,8 @@
                     .join('');
                 container.innerHTML = `
                     <div class="ed-status-line" id="ed-vote-tally">${data.votedCount ?? 0} / ${data.totalNeeded ?? 0} voted</div>
-                    <p class="ed-status-line">Vote is secret. Pick who to accuse, or abstain, then submit. Nothing happens until everyone's in.</p>
+                    <div class="ed-timer" id="ed-timer">${data.accuseSecondsLeft ?? ''}s</div>
+                    <p class="ed-status-line">Vote is secret. Pick who to accuse, or abstain, then submit. Resolves once everyone's in, or when time runs out.</p>
                     <div class="module-list">
                         ${targetRows}
                         <div class="module-row" onclick="selectEmpossDurrChoice('ACCUSE_ABSTAIN', this)">Abstain / Keep Talking</div>
@@ -810,7 +816,8 @@
                     edPendingChoice = null;
                     container.innerHTML = `
                         <div class="ed-status-line" id="ed-vote-tally">${data.votedCount ?? 0} / ${data.totalNeeded ?? 0} voted</div>
-                        <p class="ed-status-line">Was their spoken guess actually correct? Nothing happens until every juror's in.</p>
+                        <div class="ed-timer" id="ed-timer">${data.declareSecondsLeft ?? ''}s</div>
+                        <p class="ed-status-line">Was their spoken guess actually correct? Resolves once every juror's in, or when time runs out.</p>
                         <div class="module-list">
                             <div class="module-row" onclick="selectEmpossDurrChoice('DECLARE_YES', this)">Yes, that's it!</div>
                             <div class="module-row" onclick="selectEmpossDurrChoice('DECLARE_NO', this)">No, that's wrong</div>
@@ -842,15 +849,31 @@
                         readyBtn.innerText = "I'm Ready to Vote";
                     }
                 }
+                const skipTally = document.getElementById('ed-skip-tally');
+                if (skipTally) skipTally.innerText = `${(data.skipVotes || []).length} / ${data.totalActive || 0} want to skip`;
+                const skipBtn = document.getElementById('ed-skip-btn');
+                if (skipBtn) {
+                    if (data.iHaveFlaggedSkip) {
+                        skipBtn.classList.add('ed-active');
+                        skipBtn.innerText = "Flagged to skip ✓ (tap to retract)";
+                    } else {
+                        skipBtn.classList.remove('ed-active');
+                        skipBtn.innerText = "Skip This Word";
+                    }
+                }
             } else if (data.empossdurrPhase === 'ACCUSE_VOTE') {
                 const tally = document.getElementById('ed-vote-tally');
                 if (tally) tally.innerText = `${data.votedCount ?? 0} / ${data.totalNeeded ?? 0} voted`;
+                const timer = document.getElementById('ed-timer');
+                if (timer) timer.innerText = `${data.accuseSecondsLeft ?? 0}s`;
                 if (data.iHaveVoted) {
                     document.querySelectorAll('#ed-phase-content .module-row, #ed-phase-content .btn').forEach(el => el.classList.add('btn-locked'));
                 }
             } else if (data.empossdurrPhase === 'DECLARE_VERDICT' && !data.isImpostor) {
                 const tally = document.getElementById('ed-vote-tally');
                 if (tally) tally.innerText = `${data.votedCount ?? 0} / ${data.totalNeeded ?? 0} voted`;
+                const timer = document.getElementById('ed-timer');
+                if (timer) timer.innerText = `${data.declareSecondsLeft ?? 0}s`;
                 if (data.iHaveVoted) {
                     document.querySelectorAll('#ed-phase-content .btn').forEach(el => el.classList.add('btn-locked'));
                 }
@@ -892,6 +915,7 @@
         }
 
         function toggleEmpossDurrReady() { sendEmpossDurrAction('READY_TOGGLE'); }
+        function toggleEmpossDurrSkip() { sendEmpossDurrAction('SKIP_TOGGLE'); }
         // Select-then-submit for both accuse and verdict votes -- tapping a
         // choice only highlights it (same .selected treatment as trivia's
         // answer rows) and enables Submit; nothing reaches the server until
