@@ -210,7 +210,7 @@ app.post('/api/room-status', (req, res) => {
     }
 });
 
-app.get('/', (req, res) => { res.send('Voxopo Backend Engine Active!'); });
+app.get('/', (req, res) => { res.sendFile(path.resolve('public/index.html')); });
 app.get('/tv', (req, res) => { res.sendFile(path.resolve('public/index.html')); });
 app.get('/play', (req, res) => { res.sendFile(path.resolve('public/play.html')); });
 
