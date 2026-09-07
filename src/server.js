@@ -8,6 +8,7 @@ import {
     isHostAuthorized, grantHostSession, isAccessCodeActive,
     isAdminAuthorized, grantAdminSession,
     isAdminLoginRateLimited, recordFailedAdminLogin, clearAdminLoginAttempts,
+    isRoomCreateRateLimited, recordFailedRoomCreateAttempt, clearRoomCreateAttempts,
     listAccessCodes, addAccessCode, setAccessCodeActive, normalizeCode
 } from './services/accessControl.js';
 import { fileURLToPath } from 'url';
@@ -45,10 +46,24 @@ app.post('/api/create-room', async (req, res) => {
     try {
         let authorized = isHostAuthorized(req);
         if (!authorized) {
+            const ip = req.ip;
+            // A short access code (a bare 4-digit number, say) is otherwise
+            // brute-forceable in a few thousand automated guesses once it
+            // isn't sitting behind a login form the way the admin password
+            // is -- same 5-per-15-minutes floor as admin login.
+            if (isRoomCreateRateLimited(ip)) {
+                return res.status(429).json({ success: false, error: 'Too many attempts. Try again in a bit.' });
+            }
             const submittedCode = req.body && req.body.code;
-            if (!submittedCode) return res.status(400).json({ success: false, error: 'Access code required.' });
-            authorized = await isAccessCodeActive(pool, submittedCode);
-            if (!authorized) return res.status(403).json({ success: false, error: 'Invalid or inactive access code.' });
+            authorized = submittedCode ? await isAccessCodeActive(pool, submittedCode) : false;
+            if (!authorized) {
+                recordFailedRoomCreateAttempt(ip);
+                return res.status(submittedCode ? 403 : 400).json({
+                    success: false,
+                    error: submittedCode ? 'Invalid or inactive access code.' : 'Access code required.'
+                });
+            }
+            clearRoomCreateAttempts(ip);
         }
 
         let code;

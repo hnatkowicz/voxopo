@@ -10,12 +10,42 @@ const adminSessions = new Set();
 const HOST_SESSION_MAX_AGE_SECONDS = 12 * 60 * 60; // covers "one night" without asking again
 const ADMIN_SESSION_MAX_AGE_SECONDS = 30 * 24 * 60 * 60; // trusted single operator, low friction
 
-// Five failed guesses per IP within 15 minutes, then locked out -- the admin
-// password is the one credential that can mint unlimited free access codes,
-// so it's worth a floor even though this is a single-operator tool.
-const ADMIN_RATE_LIMIT_MAX_ATTEMPTS = 5;
-const ADMIN_RATE_LIMIT_WINDOW_MS = 15 * 60 * 1000;
-const adminLoginAttempts = new Map(); // ip -> { count, windowStart }
+// Five failed guesses per IP within 15 minutes, then locked out. Shared by
+// both the admin password (the one credential that can mint unlimited free
+// access codes) and room-creation access codes (a short code like a bare
+// 4-digit number is otherwise brute-forceable in a few thousand guesses with
+// nothing standing in the way, once it isn't behind a login form).
+const RATE_LIMIT_MAX_ATTEMPTS = 5;
+const RATE_LIMIT_WINDOW_MS = 15 * 60 * 1000;
+
+function createRateLimiter() {
+    const attempts = new Map(); // ip -> { count, windowStart }
+    return {
+        isLimited(ip) {
+            const entry = attempts.get(ip);
+            if (!entry) return false;
+            if (Date.now() - entry.windowStart > RATE_LIMIT_WINDOW_MS) {
+                attempts.delete(ip);
+                return false;
+            }
+            return entry.count >= RATE_LIMIT_MAX_ATTEMPTS;
+        },
+        recordFailure(ip) {
+            const entry = attempts.get(ip);
+            if (!entry || Date.now() - entry.windowStart > RATE_LIMIT_WINDOW_MS) {
+                attempts.set(ip, { count: 1, windowStart: Date.now() });
+            } else {
+                entry.count += 1;
+            }
+        },
+        clear(ip) {
+            attempts.delete(ip);
+        }
+    };
+}
+
+const adminLoginLimiter = createRateLimiter();
+const roomCreateLimiter = createRateLimiter();
 
 export function normalizeCode(raw) {
     return (raw || '').toString().trim().toUpperCase();
@@ -79,26 +109,27 @@ export function grantAdminSession(res, req) {
 }
 
 export function isAdminLoginRateLimited(ip) {
-    const entry = adminLoginAttempts.get(ip);
-    if (!entry) return false;
-    if (Date.now() - entry.windowStart > ADMIN_RATE_LIMIT_WINDOW_MS) {
-        adminLoginAttempts.delete(ip);
-        return false;
-    }
-    return entry.count >= ADMIN_RATE_LIMIT_MAX_ATTEMPTS;
+    return adminLoginLimiter.isLimited(ip);
 }
 
 export function recordFailedAdminLogin(ip) {
-    const entry = adminLoginAttempts.get(ip);
-    if (!entry || Date.now() - entry.windowStart > ADMIN_RATE_LIMIT_WINDOW_MS) {
-        adminLoginAttempts.set(ip, { count: 1, windowStart: Date.now() });
-    } else {
-        entry.count += 1;
-    }
+    adminLoginLimiter.recordFailure(ip);
 }
 
 export function clearAdminLoginAttempts(ip) {
-    adminLoginAttempts.delete(ip);
+    adminLoginLimiter.clear(ip);
+}
+
+export function isRoomCreateRateLimited(ip) {
+    return roomCreateLimiter.isLimited(ip);
+}
+
+export function recordFailedRoomCreateAttempt(ip) {
+    roomCreateLimiter.recordFailure(ip);
+}
+
+export function clearRoomCreateAttempts(ip) {
+    roomCreateLimiter.clear(ip);
 }
 
 export async function isAccessCodeActive(pool, rawCode) {
