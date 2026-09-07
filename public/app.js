@@ -6,48 +6,12 @@ document.addEventListener("DOMContentLoaded", () => {
         if (audio) audio.volume = 0.5;
     });
 
-    const btnGenerate = document.getElementById('btn-generate-lobby');
-    const btnToggleSpectate = document.getElementById('btn-toggle-spectate');
-    const spectateDrawer = document.getElementById('spectate-input-drawer');
     const btnSubmitSpectate = document.getElementById('btn-submit-spectate');
     const inputRoomCode = document.getElementById('input-room-code');
 
-// 1. DYNAMIC LIFECYCLE CREATION ROUTINE
-if (btnGenerate) {
-    btnGenerate.addEventListener('click', async () => {
-        unlockAllAudio(); // real user gesture right here -- primes playback for later WebSocket-triggered calls
-        try {
-            const response = await fetch('/api/create-room');
-            const data = await response.json();
-            
-            if (data.success && data.roomCode) {
-                // Update the active room metric tracking element label
-                document.getElementById('display-room-code-badge').innerText = data.roomCode;
-                
-                // Fire the CSS toggle selector rule to drop the gateway screen
-                document.body.setAttribute('data-view', 'game');
-                
-                // ========================================================
-                // 🚀 WAKE UP YOUR SOCKET ENGINE INSTANTLY HERE:
-                // ========================================================
-                connectWebSocketEngine(data.roomCode);
-            }
-        } catch (err) {
-            console.error("Critical server synchronization failure:", err);
-        }
-    });
-}
-
-    // 2. TOGGLE SPECTATOR CODE ENTRY DRAWER
-    if (btnToggleSpectate && spectateDrawer) {
-        btnToggleSpectate.addEventListener('click', () => {
-            const isHidden = spectateDrawer.style.display === 'none';
-            spectateDrawer.style.display = isHidden ? 'flex' : 'none';
-            if (isHidden) inputRoomCode.focus();
-        });
-    }
-
-// 3. SUBMIT MANUALLY ENTERED SPECTATOR CODE
+// 1. SUBMIT MANUALLY ENTERED LOBBY CODE -- the only way into a game from the
+// TV now. Room creation lives exclusively on /host, gated by an access code;
+// the TV only ever joins a lobby that already exists.
 if (btnSubmitSpectate) {
     btnSubmitSpectate.addEventListener('click', () => {
         unlockAllAudio(); // real user gesture right here -- primes playback for later WebSocket-triggered calls
@@ -64,7 +28,6 @@ if (btnSubmitSpectate) {
     });
 }
 
-let currentActiveRoomCode = '----';
         let socket = null;
         let toastQueue = [];
         let isToastPlaying = false;
@@ -111,26 +74,6 @@ let currentActiveRoomCode = '----';
             currentStatusHtml = html;
             const slot = document.getElementById('onboarding-status-slot');
             if (slot) slot.innerHTML = html;
-        }
-
-        // Fetch a randomized code from the server on demand automatically on load
-        async function initializeDynamicRoomSession() {
-            try {
-                const response = await fetch('/api/create-room');
-                const data = await response.json();
-                
-                if (data && data.success) {
-                    currentActiveRoomCode = data.roomCode;
-                    
-                    // Rewrite the top HUD display string visually hands-free
-                    document.getElementById('display-room-code-badge').innerText = currentActiveRoomCode;
-                    
-                    // Fire up the WebSocket pipeline and pass the newly generated room token
-                    connectWebSocketEngine(currentActiveRoomCode);
-                }
-            } catch (e) {
-                console.error("Failed to allocate room index.");
-            }
         }
 
         function connectWebSocketEngine(roomCode) {
@@ -929,10 +872,5 @@ function stopCountdownMusic() { stopAudioTrack('countdown-music'); }
 function playCategoryMusic() { playAudioTrack('category-music'); }
 function stopCategoryMusic() { stopAudioTrack('category-music'); }
 
-// Trigger dynamic assignment protocols on page wakeup
-if (typeof initializeDynamicRoomSession === 'function') { 
-    initializeDynamicRoomSession(); 
-} 
-
-// 🎯 2. THIS CLOSES THE MASTER DOMContentLoaded WRAPPER WE ADDED AT THE VERY TOP!
+// 🎯 THIS CLOSES THE MASTER DOMContentLoaded WRAPPER WE ADDED AT THE VERY TOP!
 });

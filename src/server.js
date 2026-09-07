@@ -4,6 +4,12 @@ import path from 'path';
 import { WebSocketServer } from 'ws';
 import pool from './config/database.js';
 import { handleIncomingMessage, activeRooms, getCategoriesForMode, resolveRequestedQuestionCount, compareByRank } from './services/gameEngine.js';
+import {
+    isHostAuthorized, grantHostSession, isAccessCodeActive,
+    isAdminAuthorized, grantAdminSession,
+    isAdminLoginRateLimited, recordFailedAdminLogin, clearAdminLoginAttempts,
+    listAccessCodes, addAccessCode, setAccessCodeActive, normalizeCode
+} from './services/accessControl.js';
 import { fileURLToPath } from 'url';
 
 // Recreate __dirname cleanly for ES module environments
@@ -14,6 +20,10 @@ dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+// Render terminates TLS and forwards over plain HTTP internally -- without this,
+// req.secure and req.ip would reflect that internal hop, not the real client,
+// which would silently disable the Secure cookie flag and admin-login rate limit.
+app.set('trust proxy', 1);
 
 // Tell Express to serve everything inside the 'public' folder as static assets
 app.use(express.static(path.join(__dirname, '..public')));
@@ -27,11 +37,23 @@ app.use(express.static('public', {
 }));
 
 // 1. DYNAMIC ROOM LIFECYCLE CREATOR ENDPOINT
-app.get('/api/create-room', (req, res) => {
+// Gated: only reachable with a valid access code (checked against the
+// access_codes table) or an existing host session cookie from an earlier
+// successful code entry this "night" -- see accessControl.js. The TV screen
+// no longer calls this at all; only /host does.
+app.post('/api/create-room', async (req, res) => {
     try {
+        let authorized = isHostAuthorized(req);
+        if (!authorized) {
+            const submittedCode = req.body && req.body.code;
+            if (!submittedCode) return res.status(400).json({ success: false, error: 'Access code required.' });
+            authorized = await isAccessCodeActive(pool, submittedCode);
+            if (!authorized) return res.status(403).json({ success: false, error: 'Invalid or inactive access code.' });
+        }
+
         let code;
         let checks = 0;
-        
+
         // Randomly pull numbers until we find an absolute unallocated code string
         do {
             code = Math.floor(1000 + Math.random() * 9000).toString();
@@ -61,17 +83,71 @@ app.get('/api/create-room', (req, res) => {
             questionGroups: {},
             currentQuestionIndex: -1,
             askedQuestionIds: new Set(),
-            requestedQuestionCount: resolveRequestedQuestionCount(req.query.questionCount),
+            requestedQuestionCount: resolveRequestedQuestionCount(req.body && req.body.questionCount),
             votes: { TRIVI_YEAH: 0, COUNTRY_MONKEY: 0, EMPOSSDURR: 0, FLAG_ME_DOWN: 0, ON_THE_SPECTRUM: 0 },
             // Populated with real keys once the category vote phase actually starts.
             categoryVotes: {},
             lastActivity: Date.now() // Time the room was "born"
         };
 
+        if (!isHostAuthorized(req)) grantHostSession(res, req);
+
         console.log(`[Room Organizer] Created dynamic session bubble: ${code}`);
         return res.json({ success: true, roomCode: code });
     } catch (e) {
         return res.status(500).json({ success: false, error: 'Lifecycle allocation failure.' });
+    }
+});
+
+// 1b. ADMIN PASSWORD LOGIN -- gates the access-code management page (/admin)
+app.post('/api/admin/login', (req, res) => {
+    const ip = req.ip;
+    if (isAdminLoginRateLimited(ip)) {
+        return res.status(429).json({ success: false, error: 'Too many attempts. Try again in a bit.' });
+    }
+    const { password } = req.body || {};
+    if (!password || !process.env.ADMIN_PASSWORD || password !== process.env.ADMIN_PASSWORD) {
+        recordFailedAdminLogin(ip);
+        return res.status(401).json({ success: false, error: 'Incorrect password.' });
+    }
+    clearAdminLoginAttempts(ip);
+    grantAdminSession(res, req);
+    return res.json({ success: true });
+});
+
+function requireAdmin(req, res, next) {
+    if (isAdminAuthorized(req)) return next();
+    return res.status(401).json({ success: false, error: 'Not authenticated.' });
+}
+
+app.get('/api/admin/codes', requireAdmin, async (req, res) => {
+    try {
+        const codes = await listAccessCodes(pool);
+        return res.json({ success: true, codes });
+    } catch (e) {
+        return res.status(500).json({ success: false, error: 'Failed to load codes.' });
+    }
+});
+
+app.post('/api/admin/codes', requireAdmin, async (req, res) => {
+    const code = normalizeCode(req.body && req.body.code);
+    const label = ((req.body && req.body.label) || '').trim();
+    if (!code) return res.status(400).json({ success: false, error: 'Code required.' });
+    try {
+        await addAccessCode(pool, code, label);
+        return res.json({ success: true });
+    } catch (e) {
+        return res.status(409).json({ success: false, error: 'That code already exists.' });
+    }
+});
+
+app.post('/api/admin/codes/:code/toggle', requireAdmin, async (req, res) => {
+    try {
+        const active = !!(req.body && req.body.active);
+        await setAccessCodeActive(pool, req.params.code, active);
+        return res.json({ success: true });
+    } catch (e) {
+        return res.status(500).json({ success: false, error: 'Failed to update code.' });
     }
 });
 
@@ -213,6 +289,8 @@ app.post('/api/room-status', (req, res) => {
 app.get('/', (req, res) => { res.sendFile(path.resolve('public/index.html')); });
 app.get('/tv', (req, res) => { res.sendFile(path.resolve('public/index.html')); });
 app.get('/play', (req, res) => { res.sendFile(path.resolve('public/play.html')); });
+app.get('/host', (req, res) => { res.sendFile(path.resolve('public/host.html')); });
+app.get('/admin', (req, res) => { res.sendFile(path.resolve('public/admin.html')); });
 
 async function startServer() {
     try {

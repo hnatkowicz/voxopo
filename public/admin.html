@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RandoMania | Admin</title>
+    <link rel="icon" type="image/x-icon" href="/R.ico" />
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", sans-serif;
+            background: #0d0e11;
+            color: #f4f5f6;
+            margin: 0;
+            padding: 30px 20px;
+            letter-spacing: -0.01em;
+        }
+        .card {
+            background: #14161d;
+            border: 1px solid #222630;
+            border-radius: 12px;
+            padding: 32px 24px;
+            max-width: 480px;
+            margin: 20px auto;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+        }
+        h1 { color: #ffffff; font-size: 1.5rem; font-weight: 600; margin: 0 0 6px 0; letter-spacing: -0.02em; text-align: center; }
+        p.subtitle { color: #64748b; margin: 0 0 32px 0; font-size: 0.9rem; font-weight: 500; text-align: center; }
+
+        .input-group { margin-bottom: 20px; text-align: left; }
+        label { display: block; margin-bottom: 10px; font-size: 0.75rem; color: #64748b; text-transform: uppercase; font-weight: 600; letter-spacing: 0.08em; }
+        input[type="text"], input[type="password"] { width: 100%; padding: 14px; background: #1e222b; border: 1px solid #222630; border-radius: 8px; color: #fff; font-size: 1.05rem; box-sizing: border-box; transition: border-color 0.2s; }
+        input:focus { border-color: #00e676; outline: none; }
+
+        .btn { background: #00e676; color: #0d0e11; border: none; padding: 14px; border-radius: 8px; font-size: 1rem; font-weight: 600; width: 100%; cursor: pointer; letter-spacing: 0.02em; }
+        .btn:hover { background: #00c862; }
+        .btn:disabled { background: #1e222b; color: #64748b; cursor: not-allowed; }
+        .btn-secondary { background: #1e222b; color: #f4f5f6; border: 1px solid #222630; }
+        .btn-secondary:hover { background: #262b36; }
+
+        .feedback { margin-top: 16px; font-weight: 500; padding: 12px; border-radius: 8px; display: none; font-size: 0.9rem; border: 1px solid transparent; }
+        .feedback.error { display: block; background: rgba(255, 71, 87, 0.08); border-color: rgba(255, 71, 87, 0.3); color: #ff4757; }
+
+        #manage-screen { display: none; max-width: 640px; }
+        .code-row { display: flex; align-items: center; gap: 12px; padding: 14px; background: #1e222b; border: 1px solid #222630; border-radius: 8px; margin-bottom: 10px; }
+        .code-row .code-text { font-family: monospace; font-weight: 700; font-size: 1rem; min-width: 110px; }
+        .code-row .code-label { flex: 1; color: #94a3b8; font-size: 0.85rem; text-align: left; }
+        .code-row .code-status { font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; padding: 4px 10px; border-radius: 999px; }
+        .code-status.active { color: #00e676; background: rgba(0, 230, 118, 0.1); }
+        .code-status.inactive { color: #64748b; background: rgba(100, 116, 139, 0.15); }
+        .code-row button { flex-shrink: 0; padding: 8px 14px; font-size: 0.8rem; border-radius: 6px; border: 1px solid #222630; background: #14161d; color: #f4f5f6; cursor: pointer; }
+        .code-row button:hover { background: #222630; }
+
+        .add-code-form { display: flex; gap: 10px; margin-top: 24px; flex-wrap: wrap; }
+        .add-code-form input { flex: 1; min-width: 140px; }
+        .add-code-form button { flex-shrink: 0; }
+        #codes-list { margin-top: 20px; }
+        .empty-state { color: #64748b; text-align: center; padding: 20px; font-size: 0.9rem; }
+    </style>
+</head>
+<body>
+    <div id="login-screen" class="card">
+        <h1>Admin</h1>
+        <p class="subtitle">Manage access codes.</p>
+        <div class="input-group">
+            <label for="admin-password">Password</label>
+            <input type="password" id="admin-password" autocomplete="off">
+        </div>
+        <button class="btn" id="btn-login">Log In</button>
+        <div class="feedback" id="login-feedback"></div>
+    </div>
+
+    <div id="manage-screen" class="card">
+        <h1>Access Codes</h1>
+        <p class="subtitle">Add, activate, or revoke venue access codes.</p>
+
+        <div class="add-code-form">
+            <input type="text" id="new-code" placeholder="Code (e.g. OAK-0912)" autocapitalize="characters">
+            <input type="text" id="new-label" placeholder="Label (e.g. Oak Knoll, Sept 12)">
+            <button class="btn" id="btn-add-code" style="width: auto; padding: 12px 20px;">Add</button>
+        </div>
+        <div class="feedback" id="manage-feedback"></div>
+
+        <div id="codes-list"></div>
+    </div>
+
+    <script>
+        const loginScreen = document.getElementById('login-screen');
+        const manageScreen = document.getElementById('manage-screen');
+        const loginFeedback = document.getElementById('login-feedback');
+        const manageFeedback = document.getElementById('manage-feedback');
+
+        function showFeedback(el, message) {
+            el.textContent = message;
+            el.classList.add('error');
+            el.style.display = 'block';
+        }
+        function hideFeedback(el) {
+            el.style.display = 'none';
+        }
+
+        function renderCodes(codes) {
+            const list = document.getElementById('codes-list');
+            if (!codes.length) {
+                list.innerHTML = '<div class="empty-state">No access codes yet. Add one above.</div>';
+                return;
+            }
+            list.innerHTML = codes.map(c => `
+                <div class="code-row">
+                    <span class="code-text">${c.code}</span>
+                    <span class="code-label">${c.label || ''}</span>
+                    <span class="code-status ${c.active ? 'active' : 'inactive'}">${c.active ? 'Active' : 'Revoked'}</span>
+                    <button onclick="toggleCode('${c.code}', ${!c.active})">${c.active ? 'Revoke' : 'Reactivate'}</button>
+                </div>
+            `).join('');
+        }
+
+        async function loadCodes() {
+            const response = await fetch('/api/admin/codes');
+            if (response.status === 401) {
+                manageScreen.style.display = 'none';
+                loginScreen.style.display = 'block';
+                return;
+            }
+            const data = await response.json();
+            if (data.success) renderCodes(data.codes);
+        }
+
+        async function login() {
+            const password = document.getElementById('admin-password').value;
+            hideFeedback(loginFeedback);
+            try {
+                const response = await fetch('/api/admin/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ password })
+                });
+                const data = await response.json();
+                if (data.success) {
+                    loginScreen.style.display = 'none';
+                    manageScreen.style.display = 'block';
+                    loadCodes();
+                } else {
+                    showFeedback(loginFeedback, data.error || 'Login failed.');
+                }
+            } catch (err) {
+                showFeedback(loginFeedback, 'Could not reach the server.');
+            }
+        }
+
+        async function addCode() {
+            const code = document.getElementById('new-code').value.trim();
+            const label = document.getElementById('new-label').value.trim();
+            hideFeedback(manageFeedback);
+            if (!code) {
+                showFeedback(manageFeedback, 'Enter a code first.');
+                return;
+            }
+            try {
+                const response = await fetch('/api/admin/codes', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ code, label })
+                });
+                const data = await response.json();
+                if (data.success) {
+                    document.getElementById('new-code').value = '';
+                    document.getElementById('new-label').value = '';
+                    loadCodes();
+                } else {
+                    showFeedback(manageFeedback, data.error || 'Could not add code.');
+                }
+            } catch (err) {
+                showFeedback(manageFeedback, 'Could not reach the server.');
+            }
+        }
+
+        async function toggleCode(code, nextActive) {
+            await fetch(`/api/admin/codes/${encodeURIComponent(code)}/toggle`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ active: nextActive })
+            });
+            loadCodes();
+        }
+
+        document.getElementById('btn-login').addEventListener('click', login);
+        document.getElementById('admin-password').addEventListener('keydown', (e) => { if (e.key === 'Enter') login(); });
+        document.getElementById('btn-add-code').addEventListener('click', addCode);
+
+        // If a valid admin_session cookie already exists from an earlier visit,
+        // this succeeds immediately and skips straight past the login screen.
+        loadCodes();
+    </script>
+</body>
+</html>

@@ -30,31 +30,12 @@
             <!-- LEFT PANEL: Dynamic Control Forms -->
             <div class="left-column" style="flex: 65; display: flex; flex-direction: column;">
                 <div class="panel-box" style="flex: 1; display: flex; flex-direction: column; justify-content: center; gap: 24px; padding: 40px;">
-                    <h2 class="panel-title" style="margin-bottom: 8px;">Lobby Generator</h2>
+                    <h2 class="panel-title" style="margin-bottom: 8px;">Join a Lobby</h2>
+                    <p style="color: #64748b; font-size: 0.9rem; margin: -12px 0 0 0;">Enter the lobby code your host gave you.</p>
 
-                    <button id="btn-generate-lobby" class="action-btn-primary">
-                        Generate New Lobby
-                    </button>
-
-                    <!-- Placeholder for the not-yet-designed multi-round "Game Night" mode
-                         (persistent room, replay with a new category, cumulative totals).
-                         Disabled until that mechanic actually exists. -->
-                    <button id="btn-start-game-night" class="action-btn-secondary" disabled title="Coming soon" style="opacity: 0.5; cursor: not-allowed;">
-                        Start Game Night
-                    </button>
-
-                    <div style="border-top: 1px solid #222630; margin: 12px 0;"></div>
-
-                    <div style="display: flex; flex-direction: column; gap: 12px;">
-                        <button id="btn-toggle-spectate" class="action-btn-secondary">
-                            Display Existing Lobby
-                        </button>
-                        
-                        <!-- Smooth sliding drawer container for room verification input -->
-                        <div id="spectate-input-drawer" style="display: none; gap: 12px; margin-top: 8px;">
-                            <input type="text" id="input-room-code" placeholder="Enter 4-Digit Code" maxlength="4" style="flex: 1; background: #14161d; border: 1px solid #222630; border-radius: 8px; color: #fff; padding: 14px; font-family: monospace; font-size: 1.2rem; text-align: center; letter-spacing: 4px;">
-                            <button id="btn-submit-spectate" class="action-btn-primary" style="padding: 0 24px; font-size: 1rem;">View</button>
-                        </div>
+                    <div style="display: flex; gap: 12px;">
+                        <input type="text" id="input-room-code" placeholder="Enter 4-Digit Code" maxlength="4" style="flex: 1; background: #14161d; border: 1px solid #222630; border-radius: 8px; color: #fff; padding: 14px; font-family: monospace; font-size: 1.2rem; text-align: center; letter-spacing: 4px;">
+                        <button id="btn-submit-spectate" class="action-btn-primary" style="padding: 0 24px; font-size: 1rem;">View</button>
                     </div>
                 </div>
 

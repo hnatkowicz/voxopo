@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RandoMania | Host</title>
+    <link rel="icon" type="image/x-icon" href="/R.ico" />
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", sans-serif;
+            background: #0d0e11;
+            color: #f4f5f6;
+            text-align: center;
+            padding: 30px 20px;
+            margin: 0;
+            letter-spacing: -0.01em;
+        }
+        .card {
+            background: #14161d;
+            border: 1px solid #222630;
+            border-radius: 12px;
+            padding: 32px 24px;
+            max-width: 400px;
+            margin: 20px auto;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+        }
+        h1 { color: #ffffff; font-size: 1.5rem; font-weight: 600; margin: 0 0 6px 0; letter-spacing: -0.02em; }
+        p.subtitle { color: #64748b; margin: 0 0 32px 0; font-size: 0.9rem; font-weight: 500; }
+
+        .input-group { margin-bottom: 24px; text-align: left; }
+        label { display: block; margin-bottom: 10px; font-size: 0.75rem; color: #64748b; text-transform: uppercase; font-weight: 600; letter-spacing: 0.08em; }
+        input[type="text"] { width: 100%; padding: 14px; background: #1e222b; border: 1px solid #222630; border-radius: 8px; color: #fff; font-size: 1.05rem; box-sizing: border-box; transition: border-color 0.2s; }
+        input[type="text"]:focus { border-color: #00e676; outline: none; }
+
+        .btn { background: #00e676; color: #0d0e11; border: none; padding: 16px; border-radius: 8px; font-size: 1.05rem; font-weight: 600; width: 100%; cursor: pointer; letter-spacing: 0.02em; }
+        .btn:hover { background: #00c862; }
+        .btn:disabled { background: #1e222b; color: #64748b; cursor: not-allowed; }
+        .btn:disabled:hover { background: #1e222b; }
+
+        .feedback { margin-top: 20px; font-weight: 500; padding: 12px; border-radius: 8px; display: none; font-size: 0.9rem; border: 1px solid transparent; }
+        .feedback.error { display: block; background: rgba(255, 71, 87, 0.08); border-color: rgba(255, 71, 87, 0.3); color: #ff4757; }
+
+        #result-screen { display: none; }
+        .lobby-code-display {
+            font-family: monospace;
+            font-size: 3rem;
+            font-weight: 700;
+            letter-spacing: 8px;
+            color: #00e676;
+            background: #1e222b;
+            border: 1px solid #222630;
+            border-radius: 12px;
+            padding: 24px 12px;
+            margin: 24px 0;
+        }
+        .instruction { color: #94a3b8; font-size: 0.9rem; line-height: 1.5; }
+    </style>
+</head>
+<body>
+    <div id="entry-screen" class="card">
+        <h1>Host a Game</h1>
+        <p class="subtitle">Enter your access code to spin up a lobby.</p>
+        <div class="input-group">
+            <label for="access-code">Access Code</label>
+            <input type="text" id="access-code" placeholder="e.g. OAK-0912" autocapitalize="characters" autocomplete="off">
+        </div>
+        <button class="btn" id="btn-start-hosting">Start Hosting</button>
+        <div class="feedback" id="feedback"></div>
+    </div>
+
+    <div id="result-screen" class="card">
+        <h1>You're Live</h1>
+        <p class="subtitle">Enter this on your TV to open the lobby.</p>
+        <div class="lobby-code-display" id="lobby-code-display">----</div>
+        <div class="instruction">On the TV, go to <strong>randomania.tv</strong> and type this code into the lobby entry field. Every TV at the venue can join with the same code.</div>
+    </div>
+
+    <script>
+        const btnStart = document.getElementById('btn-start-hosting');
+        const codeInput = document.getElementById('access-code');
+        const feedback = document.getElementById('feedback');
+
+        function showError(message) {
+            feedback.textContent = message;
+            feedback.classList.add('error');
+            feedback.style.display = 'block';
+        }
+
+        async function startHosting() {
+            // Deliberately not requiring a non-empty code here -- a host who
+            // already unlocked this browser earlier tonight (host_session
+            // cookie) can start a second room with the field left blank; the
+            // server accepts that via the cookie and only demands a code
+            // when there isn't one.
+            const code = codeInput.value.trim();
+            btnStart.disabled = true;
+            feedback.style.display = 'none';
+            try {
+                const response = await fetch('/api/create-room', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ code })
+                });
+                const data = await response.json();
+                if (data.success && data.roomCode) {
+                    document.getElementById('lobby-code-display').innerText = data.roomCode;
+                    document.getElementById('entry-screen').style.display = 'none';
+                    document.getElementById('result-screen').style.display = 'block';
+                } else {
+                    showError(data.error || 'Something went wrong.');
+                }
+            } catch (err) {
+                showError('Could not reach the server. Check your connection.');
+            } finally {
+                btnStart.disabled = false;
+            }
+        }
+
+        btnStart.addEventListener('click', startHosting);
+        codeInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') startHosting(); });
+    </script>
+</body>
+</html>
