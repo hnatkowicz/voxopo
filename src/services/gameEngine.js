@@ -13,7 +13,13 @@ const ELIGIBLE_SUBCATEGORIES = ['PERSON', 'PLACE', 'THING', 'EVENT', 'DATE'];
 const MIN_GROUP_SIZE_FOR_DISTRACTORS = 4; // correct answer + 3 distractors
 const MAX_QUESTIONS_PER_GAME = 30;
 const MIN_QUESTIONS_PER_GAME = 15;
-const DEFAULT_QUESTIONS_PER_GAME = 20; // fixed length, no lobby picker for this right now
+const DEFAULT_QUESTIONS_PER_GAME = 15; // fixed length, no lobby picker for this right now
+// Post-game "return to lobby" votes wait this long from the FIRST vote cast
+// before resolving with whatever's been cast so far -- long enough that
+// everyone actually gets to read the final leaderboard before the room
+// moves on, but short enough that it can't be stalled forever by someone who
+// never taps anything. See castReturnToLobbyVote.
+const GAME_OVER_RETURN_VOTE_SECONDS = 20;
 const REVEAL_DURATION_MS = 5000;
 const GAME_ROUND_DURATION_SECONDS = 30;
 const FAST_FORWARD_SECONDS = 3; // once everyone's answered, snap the clock down to this for a beat of suspense
@@ -42,7 +48,7 @@ const EMPOSSDURR_VOTE_SECONDS = 30;
 // MAX_QUESTIONS_PER_GAME]. Falls back to the fixed default for anything
 // missing/non-numeric. The bounds stay in place (and this stays exported) for
 // whenever a "Game Night" picker resurfaces the choice; today no caller passes
-// a real value, so every room lands on DEFAULT_QUESTIONS_PER_GAME.
+// a real value, so every room lands on the fixed DEFAULT_QUESTIONS_PER_GAME (15).
 export function resolveRequestedQuestionCount(rawValue) {
     const parsed = parseInt(rawValue, 10);
     if (Number.isNaN(parsed)) return DEFAULT_QUESTIONS_PER_GAME;
@@ -926,6 +932,8 @@ function resetRoomToEmpossDurrCategoryVote(roomCode) {
     if (room.timerInterval) { clearInterval(room.timerInterval); room.timerInterval = null; }
     if (room.categoryTimerInterval) { clearInterval(room.categoryTimerInterval); room.categoryTimerInterval = null; }
     if (room.revealTimeout) { clearTimeout(room.revealTimeout); room.revealTimeout = null; }
+    if (room.returnVoteTimeout) { clearTimeout(room.returnVoteTimeout); room.returnVoteTimeout = null; }
+    room.returnVotes = new Map();
 
     room.winningGameMode = 'EMPOSSDURR';
     room.gameState = 'CATEGORY_VOTE';
@@ -959,6 +967,77 @@ function resetRoomToEmpossDurrCategoryVote(roomCode) {
     startCategoryCountdown(roomCode);
 }
 
+// A single tap on "Play Again"/"Play EmpossDurr Again" used to reset the
+// whole room instantly -- fine for not stranding a room on an AFK player,
+// but real play surfaced the opposite problem: one fast player could yank
+// everyone else off the leaderboard before they'd had a chance to look at
+// it. This is the middle ground -- majority resolves immediately, and a
+// backstop timer (started on the FIRST vote, not at game-over) still
+// guarantees the room can't be stuck forever on one holdout.
+function castReturnToLobbyVote(roomCode, playerName, action) {
+    const room = activeRooms[roomCode];
+    if (!room) return null;
+    if (!room.returnVotes) room.returnVotes = new Map();
+    room.returnVotes.set(playerName, action);
+
+    const activePlayers = Object.values(room.players).filter(p => !p.left);
+    broadcastToRoom(roomCode, {
+        type: 'RETURN_VOTE_UPDATE',
+        votedCount: room.returnVotes.size,
+        totalNeeded: activePlayers.length
+    });
+
+    const neededForMajority = Math.floor(activePlayers.length / 2) + 1;
+    if (room.returnVotes.size >= neededForMajority) {
+        resolveReturnToLobbyVote(roomCode);
+        return `Majority's in -- moving on!`;
+    }
+
+    if (!room.returnVoteTimeout) {
+        room.returnVoteTimeout = setTimeout(() => resolveReturnToLobbyVote(roomCode), GAME_OVER_RETURN_VOTE_SECONDS * 1000);
+    }
+    return `Vote recorded (${room.returnVotes.size}/${activePlayers.length}) -- resolves once a majority agrees, or in ${GAME_OVER_RETURN_VOTE_SECONDS}s.`;
+}
+
+// Resolves whichever destination has more votes cast so far (ties favor the
+// plain lobby, since it's always a valid choice regardless of what the last
+// game was). Only ever called with at least one vote already cast -- either
+// castReturnToLobbyVote just added one, or the backstop timer only starts
+// once the first vote lands.
+function resolveReturnToLobbyVote(roomCode) {
+    const room = activeRooms[roomCode];
+    if (!room || !room.returnVotes || room.returnVotes.size === 0) return;
+    if (room.returnVoteTimeout) { clearTimeout(room.returnVoteTimeout); room.returnVoteTimeout = null; }
+
+    let empossdurrCount = 0;
+    room.returnVotes.forEach(action => { if (action === 'PLAY_EMPOSSDURR_AGAIN') empossdurrCount++; });
+    const total = room.returnVotes.size;
+    room.returnVotes = new Map();
+
+    if (empossdurrCount > total - empossdurrCount) {
+        resetRoomToEmpossDurrCategoryVote(roomCode);
+    } else {
+        resetRoomToLobby(roomCode);
+    }
+}
+
+// Releases a room entirely -- broadcasts the TV back to its gateway/lobby-code
+// screen and frees the room code for reuse. Used both when the last active
+// player leaves (see the LEAVE handler) and by the admin force-reset endpoint.
+export function closeRoom(roomCode) {
+    const room = activeRooms[roomCode];
+    if (!room) return false;
+    if (room.timerInterval) clearInterval(room.timerInterval);
+    if (room.lobbyTimerInterval) clearInterval(room.lobbyTimerInterval);
+    if (room.categoryTimerInterval) clearInterval(room.categoryTimerInterval);
+    if (room.revealTimeout) clearTimeout(room.revealTimeout);
+    if (room.returnVoteTimeout) clearTimeout(room.returnVoteTimeout);
+    clearEmpossDurrTimers(room);
+    broadcastToRoom(roomCode, { type: 'ROOM_CLOSED' });
+    delete activeRooms[roomCode];
+    return true;
+}
+
 // Triggered by post-game consensus (every active player voting START while
 // GAME_OVER) -- keeps the room code and roster intact (nobody rescans a QR
 // code or retypes their name) but wipes every game-specific stat clean, per
@@ -974,6 +1053,8 @@ function resetRoomToLobby(roomCode) {
     if (room.timerInterval) { clearInterval(room.timerInterval); room.timerInterval = null; }
     if (room.categoryTimerInterval) { clearInterval(room.categoryTimerInterval); room.categoryTimerInterval = null; }
     if (room.revealTimeout) { clearTimeout(room.revealTimeout); room.revealTimeout = null; }
+    if (room.returnVoteTimeout) { clearTimeout(room.returnVoteTimeout); room.returnVoteTimeout = null; }
+    room.returnVotes = new Map();
     clearEmpossDurrTimers(room);
 
     room.gameState = 'LOBBY';
@@ -1164,28 +1245,20 @@ export function handleIncomingMessage(fromPhone, bodyText, explicitRoomCode, pre
     // 1. Handle Room Onboarding / Entry Checkout Transactions
     if (!isNaN(firstWord) && firstWord.length === 4) {
         const roomCode = firstWord;
-        
-        if (!activeRooms[roomCode]) {
-            activeRooms[roomCode] = {
-                gameState: 'LOBBY', players: {}, screens: [], timerInterval: null,
-                lobbyTimerInterval: null, categoryTimerInterval: null, revealTimeout: null,
-                lobbySecondsLeft: 60, categorySecondsLeft: 30, gameSecondsLeft: 25, winningGameMode: null,
-                activeQuestionData: null, currentQuestionData: null, activeDeckName: null, activeCategoryKey: null, answers: {},
-                answerOrder: [],
-                questionBank: [], questionGroups: {}, currentQuestionIndex: -1, askedQuestionIds: new Set(),
-                requestedQuestionCount: MAX_QUESTIONS_PER_GAME,
-                votes: { TRIVI_YEAH: 0, COUNTRY_MONKEY: 0, EMPOSSDURR: 0, FLAG_ME_DOWN: 0, ON_THE_SPECTRUM: 0 },
-                // Populated with real keys once the category vote phase actually
-                // starts (executeLobbyPhaseExpiration), since the key set depends
-                // on which game mode won the lobby election.
-                categoryVotes: {}
-            };
-        }
-
-        const currentRoom = activeRooms[roomCode];
-        if (currentRoom) currentRoom.lastActivity = Date.now();
 
         if (parts.length >= 4) {
+            // A room only ever comes into existence through the gated /host
+            // flow now -- this used to auto-create one right here for any
+            // unrecognized code, which was a live bypass of the entire
+            // access-code gate (and hardcoded a 30-question bank on top of
+            // it, independent of whatever the real default was).
+            if (!activeRooms[roomCode]) {
+                return `⚠️ Room ${roomCode} not found. Ask your host for the current lobby code.`;
+            }
+
+            const currentRoom = activeRooms[roomCode];
+            currentRoom.lastActivity = Date.now();
+
             parts.shift(); // Evacuate code segment
             const votedModule = parts.pop();
             const playerEmoji = parts.pop() || '👤';
@@ -1389,7 +1462,24 @@ export function handleIncomingMessage(fromPhone, bodyText, explicitRoomCode, pre
                         tallyEmpossDurrDeclareVerdict(associatedRoomCode);
                     }
                 }
+            } else if (currentRoom.gameState === 'GAME_OVER' && currentRoom.returnVotes) {
+                currentRoom.returnVotes.delete(actingPlayerName);
+                const neededForMajority = Math.floor(remainingActivePlayers.length / 2) + 1;
+                if (currentRoom.returnVotes.size >= neededForMajority) {
+                    resolveReturnToLobbyVote(associatedRoomCode);
+                } else {
+                    broadcastToRoom(associatedRoomCode, {
+                        type: 'RETURN_VOTE_UPDATE',
+                        votedCount: currentRoom.returnVotes.size,
+                        totalNeeded: remainingActivePlayers.length
+                    });
+                }
             }
+        } else {
+            // The last active player just left -- nobody's around to look at
+            // the TV anymore, so release the room entirely rather than let it
+            // sit there dead until the server eventually garbage-collects it.
+            closeRoom(associatedRoomCode);
         }
 
         return `You've left Room ${associatedRoomCode}. Come back any time using the same name to pick up where you left off.`;
@@ -1418,17 +1508,16 @@ export function handleIncomingMessage(fromPhone, bodyText, explicitRoomCode, pre
 
     // 3. DEMOCRACY WITH OOMPH: Clock skipping override calculation loops
     if (cleanText.toUpperCase() === 'START') {
-        // Play Again is a "start a fresh game" request, not a "skip the
-        // timer early" vote like LOBBY/CATEGORY_VOTE's START -- GAME_OVER
-        // has no timer to skip in the first place, so gating it on
-        // unanimous consensus with zero fallback meant one player who'd
-        // wandered off (closed their phone without ever tapping Leave Room)
-        // could silently strand everyone else on the Game Over screen
-        // forever, with nothing but a feedback line on the tapping phone to
-        // explain why. Any single active player is enough to start over.
+        // Play Again used to fire the instant a single active player tapped
+        // it -- that fixed an earlier problem (unanimous consensus let one
+        // player who'd silently wandered off strand everyone else on Game
+        // Over forever) but traded it for a new one real play surfaced: a
+        // fast player could yank the whole table off the leaderboard before
+        // anyone else had a chance to actually look at it. Majority vote
+        // with a backstop timer (see castReturnToLobbyVote) is the middle
+        // ground -- still can't be stranded, but one tap alone isn't enough.
         if (currentRoom.gameState === 'GAME_OVER') {
-            resetRoomToLobby(associatedRoomCode);
-            return "Back to the lobby for a new game!";
+            return castReturnToLobbyVote(associatedRoomCode, actingPlayerName, 'START');
         }
 
         player.requestedStart = true;
@@ -1452,12 +1541,14 @@ export function handleIncomingMessage(fromPhone, bodyText, explicitRoomCode, pre
         return `Start intent recorded (${startRequestsCount}/${playersList.length} votes secured). Waiting for consensus.`;
     }
 
-    // 3.5. "Play EmpossDurr Again" shortcut -- same single-tap reasoning as the
-    // Play Again fix above, but skips the 5-way mode election entirely and
-    // jumps straight back to EmpossDurr's category-vote phase.
+    // 3.5. "Play EmpossDurr Again" shortcut -- same majority-vote reasoning as
+    // the Play Again fix above, but resolving to EmpossDurr's category-vote
+    // phase directly instead of the full 5-way mode election. A room can have
+    // votes cast for both this and plain START at once (some players want a
+    // fresh election, others want to jump straight back into EmpossDurr) --
+    // resolveReturnToLobbyVote breaks that tie by whichever has more votes.
     if (cleanText.toUpperCase() === 'PLAY_EMPOSSDURR_AGAIN' && currentRoom.gameState === 'GAME_OVER' && currentRoom.winningGameMode === 'EMPOSSDURR') {
-        resetRoomToEmpossDurrCategoryVote(associatedRoomCode);
-        return "Back into EmpossDurr!";
+        return castReturnToLobbyVote(associatedRoomCode, actingPlayerName, 'PLAY_EMPOSSDURR_AGAIN');
     }
 
     // 4. Handle Sub-Category Voting Selection Track Overrides (Phase 2)

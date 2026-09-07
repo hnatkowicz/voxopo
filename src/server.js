@@ -3,7 +3,7 @@ import dotenv from 'dotenv';
 import path from 'path';
 import { WebSocketServer } from 'ws';
 import pool from './config/database.js';
-import { handleIncomingMessage, activeRooms, getCategoriesForMode, resolveRequestedQuestionCount, compareByRank } from './services/gameEngine.js';
+import { handleIncomingMessage, activeRooms, getCategoriesForMode, resolveRequestedQuestionCount, compareByRank, closeRoom } from './services/gameEngine.js';
 import {
     isHostAuthorized, grantHostSession, isAccessCodeActive,
     isAdminAuthorized, grantAdminSession,
@@ -164,6 +164,16 @@ app.post('/api/admin/codes/:code/toggle', requireAdmin, async (req, res) => {
     } catch (e) {
         return res.status(500).json({ success: false, error: 'Failed to update code.' });
     }
+});
+
+// Support tool for a stuck or abandoned room -- bounces that room's TV back
+// to its gateway screen and frees the code, same end state as everyone
+// leaving on their own, just admin-triggered on demand instead of waiting on
+// the roster to empty out.
+app.post('/api/admin/rooms/:roomCode/reset', requireAdmin, (req, res) => {
+    const found = closeRoom(req.params.roomCode);
+    if (!found) return res.status(404).json({ success: false, error: 'No active room with that code.' });
+    return res.json({ success: true });
 });
 
 app.post('/api/message', async (req, res) => {

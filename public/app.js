@@ -88,6 +88,15 @@ if (btnSubmitSpectate) {
                 const data = JSON.parse(event.data);
                 console.log("[WebSocket API Event Received]", data);
 
+                // The room's gone -- everyone left, or an admin force-reset it.
+                // Bounce back to the gateway screen and drop this connection;
+                // there's nothing left on the other end to stay wired to.
+                if (data.type === 'ROOM_CLOSED') {
+                    document.body.setAttribute('data-view', 'gateway');
+                    socket.close();
+                    return;
+                }
+
                 // Fired once right after REGISTER_SCREEN if the room is already
                 // mid-game (e.g. the TV screen reloaded). Re-draws whichever
                 // phase the server says is actually active.
@@ -129,6 +138,10 @@ if (btnSubmitSpectate) {
                 }
                 if (data.type === 'VOTE_UPDATE') {
                     updateModuleElectionUI(data.votes, data.totalVotes);
+                }
+                if (data.type === 'RETURN_VOTE_UPDATE') {
+                    const tally = document.getElementById('return-vote-tally');
+                    if (tally) tally.innerText = `${data.votedCount} / ${data.totalNeeded} want to continue`;
                 }
                 // A player just locked in an answer -- flip their status-indicator to
                 // "answered" (yellow) immediately, well before the round's reveal.
@@ -821,6 +834,7 @@ function switchToGameOverUI(players) {
             <h2 class="panel-title" style="margin-bottom: 8px;">Final Leaderboard</h2>
             <p style="color: #64748b; font-size: 0.95rem; margin: 0 0 32px 0; font-weight: 500;">Thanks for playing!</p>
             <div style="display: flex; flex-direction: column; gap: 36px;">${rows}</div>
+            <div id="return-vote-tally" style="color: #64748b; font-size: 0.85rem; text-align: center; margin-top: 28px;"></div>
         </div>
     `;
 

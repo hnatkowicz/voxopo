@@ -39,6 +39,7 @@
 
         .feedback { margin-top: 16px; font-weight: 500; padding: 12px; border-radius: 8px; display: none; font-size: 0.9rem; border: 1px solid transparent; }
         .feedback.error { display: block; background: rgba(255, 71, 87, 0.08); border-color: rgba(255, 71, 87, 0.3); color: #ff4757; }
+        .feedback.success { display: block; background: rgba(0, 230, 118, 0.08); border-color: rgba(0, 230, 118, 0.3); color: #00e676; }
 
         #manage-screen { display: none; max-width: 640px; }
         .code-row { display: flex; align-items: center; gap: 12px; padding: 14px; background: #1e222b; border: 1px solid #222630; border-radius: 8px; margin-bottom: 10px; }
@@ -81,6 +82,15 @@
         <div class="feedback" id="manage-feedback"></div>
 
         <div id="codes-list"></div>
+
+        <div style="border-top: 1px solid #222630; margin: 28px 0 20px 0;"></div>
+        <h1 style="font-size: 1.1rem; margin-bottom: 4px;">Force Reset a Room</h1>
+        <p class="subtitle" style="margin-bottom: 16px;">Bounces that room's TV back to its lobby-code screen and frees the code. Use this if a room is stuck or abandoned.</p>
+        <div class="add-code-form">
+            <input type="text" id="reset-room-code" placeholder="Room code (e.g. 4821)" maxlength="4" style="max-width: 160px;">
+            <button class="btn btn-secondary" id="btn-reset-room" style="width: auto; padding: 12px 20px;">Reset Room</button>
+        </div>
+        <div class="feedback" id="reset-room-feedback"></div>
     </div>
 
     <script>
@@ -89,9 +99,10 @@
         const loginFeedback = document.getElementById('login-feedback');
         const manageFeedback = document.getElementById('manage-feedback');
 
-        function showFeedback(el, message) {
+        function showFeedback(el, message, type = 'error') {
             el.textContent = message;
-            el.classList.add('error');
+            el.classList.remove('error', 'success');
+            el.classList.add(type);
             el.style.display = 'block';
         }
         function hideFeedback(el) {
@@ -183,9 +194,33 @@
             loadCodes();
         }
 
+        async function resetRoom() {
+            const feedback = document.getElementById('reset-room-feedback');
+            const roomCode = document.getElementById('reset-room-code').value.trim();
+            hideFeedback(feedback);
+            if (!roomCode) {
+                showFeedback(feedback, 'Enter a room code first.');
+                return;
+            }
+            try {
+                const response = await fetch(`/api/admin/rooms/${encodeURIComponent(roomCode)}/reset`, { method: 'POST' });
+                const data = await response.json();
+                if (data.success) {
+                    showFeedback(feedback, `Room ${roomCode} released.`, 'success');
+                    document.getElementById('reset-room-code').value = '';
+                } else {
+                    showFeedback(feedback, data.error || 'Could not reset that room.');
+                }
+            } catch (err) {
+                showFeedback(feedback, 'Could not reach the server.');
+            }
+        }
+
         document.getElementById('btn-login').addEventListener('click', login);
         document.getElementById('admin-password').addEventListener('keydown', (e) => { if (e.key === 'Enter') login(); });
         document.getElementById('btn-add-code').addEventListener('click', addCode);
+        document.getElementById('btn-reset-room').addEventListener('click', resetRoom);
+        document.getElementById('reset-room-code').addEventListener('keydown', (e) => { if (e.key === 'Enter') resetRoom(); });
 
         // If a valid admin_session cookie already exists from an earlier visit,
         // this succeeds immediately and skips straight past the login screen.
