@@ -525,7 +525,17 @@ async function startEmpossDurrGame(roomCode) {
         phase: null, // DISCUSSION | ACCUSE_VOTE | DECLARE_VERDICT
         readyToAccuse: new Set(),
         accuseVotes: {}, // name -> { mode: 'accuse'|'abstain', target }
-        declareVotes: {} // name -> 'yes'|'no'
+        declareVotes: {}, // name -> 'yes'|'no'
+        // Score/badge changes from a "continue" accuse-vote outcome (the
+        // round didn't end -- same word, same impostor, discussion resumes)
+        // are held here instead of applied immediately. Revealing them right
+        // away would hand the table exactly what "votes are secret" is
+        // supposed to withhold: whose score just moved (who guessed right)
+        // and a strong tell on the impostor's own score ticking up. Flushed
+        // into real score/awards the instant this round actually ends (a
+        // resolved accusation, right or wrong, or a declare verdict).
+        pendingScoreDeltas: {}, // name -> accumulated, not-yet-applied score delta
+        pendingBadges: {} // name -> array of award types, not yet granted
     };
 
     startEmpossDurrRound(roomCode);
@@ -616,30 +626,47 @@ function startEmpossDurrAccuseVote(roomCode) {
 }
 
 // Mirrors the original single-device game's scoring exactly: every accuse
-// vote scores immediately regardless of outcome, a "continue" result nets
-// the impostor a small survival bonus, and a resolved accusation ends the
-// round -- rewarding the impostor handsomely for a wrong accusation, giving
-// them nothing for a correct one.
+// vote scores regardless of outcome, a "continue" result nets the impostor
+// a small survival bonus, and a resolved accusation ends the round --
+// rewarding the impostor handsomely for a wrong accusation, giving them
+// nothing for a correct one. A "continue" outcome doesn't end the round, so
+// its scoring is queued (see pendingScoreDeltas) rather than applied and
+// revealed immediately -- real family feedback: seeing scores move mid-round
+// told the table who'd guessed right, defeating the point of a secret vote.
 function applyEmpossDurrAccuseScoring(room, resolution) {
     const ed = room.empossdurr;
     const impostorPlayer = room.players[ed.impostorName];
 
+    const voterDeltas = {};
     Object.entries(ed.accuseVotes).forEach(([voterName, vote]) => {
         if (vote.mode !== 'accuse') return;
-        const voterPlayer = room.players[voterName];
-        if (!voterPlayer) return;
-        if (vote.target === ed.impostorName) {
-            voterPlayer.score += 2;
-        } else {
-            voterPlayer.score -= 1;
-        }
+        voterDeltas[voterName] = vote.target === ed.impostorName ? 2 : -1;
     });
 
     if (resolution.type === 'continue') {
-        if (impostorPlayer) { impostorPlayer.score += 1; awardEmpossDurrBadge(impostorPlayer, 'IMPOSTOR_WIN'); }
-    } else if (resolution.type === 'accuse' && resolution.targetName !== ed.impostorName) {
+        Object.entries(voterDeltas).forEach(([voterName, delta]) => {
+            ed.pendingScoreDeltas[voterName] = (ed.pendingScoreDeltas[voterName] || 0) + delta;
+        });
+        if (impostorPlayer) {
+            ed.pendingScoreDeltas[impostorPlayer.name] = (ed.pendingScoreDeltas[impostorPlayer.name] || 0) + 1;
+            ed.pendingBadges[impostorPlayer.name] = ed.pendingBadges[impostorPlayer.name] || [];
+            ed.pendingBadges[impostorPlayer.name].push('IMPOSTOR_WIN');
+        }
+        return;
+    }
+
+    // The round is ending (accusation right or wrong) -- reveal everything
+    // queued from earlier "continue" outcomes this round together with this
+    // vote's own scoring, all at once.
+    flushEmpossDurrPendingScoring(room);
+    Object.entries(voterDeltas).forEach(([voterName, delta]) => {
+        const voterPlayer = room.players[voterName];
+        if (voterPlayer) voterPlayer.score += delta;
+    });
+
+    if (resolution.targetName !== ed.impostorName) {
         if (impostorPlayer) { impostorPlayer.score += 3; awardEmpossDurrBadge(impostorPlayer, 'IMPOSTOR_WIN'); }
-    } else if (resolution.type === 'accuse' && resolution.targetName === ed.impostorName) {
+    } else {
         // Correctly-caught impostor gets 0 score for this outcome, but everyone
         // who voted for the real impostor earns the spyglass -- a persistent
         // badge for the rest of the game, same spirit as STREAK/SPEED3.
@@ -660,6 +687,26 @@ function awardEmpossDurrBadge(player, type) {
     if (!player) return;
     player.awards = player.awards || {};
     player.awards[type] = 1;
+}
+
+// Applies and clears any score/badge changes queued by an earlier
+// "continue" outcome this round -- called right before a round-ending event
+// (a resolved accusation or a declare verdict) applies its own scoring, so
+// the whole round's worth of changes lands and gets revealed in one shot.
+function flushEmpossDurrPendingScoring(room) {
+    const ed = room.empossdurr;
+    if (!ed) return;
+    Object.entries(ed.pendingScoreDeltas || {}).forEach(([name, delta]) => {
+        const player = room.players[name];
+        if (player) player.score += delta;
+    });
+    Object.entries(ed.pendingBadges || {}).forEach(([name, types]) => {
+        const player = room.players[name];
+        if (!player) return;
+        types.forEach(type => awardEmpossDurrBadge(player, type));
+    });
+    ed.pendingScoreDeltas = {};
+    ed.pendingBadges = {};
 }
 
 function tallyEmpossDurrAccuseVotes(roomCode) {
@@ -758,6 +805,11 @@ function tallyEmpossDurrDeclareVerdict(roomCode) {
     let yesCount = 0;
     jurors.forEach(j => { if (ed.declareVotes[j.name] === 'yes') yesCount++; });
     const correct = yesCount >= neededForMajority;
+
+    // Declaring always ends the round -- reveal anything queued from an
+    // earlier "continue" outcome this round together with this verdict's
+    // own scoring, same as a resolved accusation does.
+    flushEmpossDurrPendingScoring(room);
 
     const impostorPlayer = room.players[ed.impostorName];
     if (impostorPlayer) {
