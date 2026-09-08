@@ -325,8 +325,9 @@ app.post('/api/room-status', (req, res) => {
                 totalPlayers: finalStandings.length,
                 myLeft,
                 myEmoji,
-                // Lets the phone show the "Play EmpossDurr Again" shortcut
-                // only when that's actually the mode that just finished.
+                // Lets the phone show a mode-specific "Play X Again" shortcut
+                // (EmpossDurr, On the Spectrum) only when that's actually the
+                // mode that just finished.
                 winningGameMode: targetRoom.winningGameMode
             });
         }

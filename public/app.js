@@ -340,12 +340,18 @@ if (btnSubmitSpectate) {
                 }
                 if (data.type === 'ON_THE_SPECTRUM_REVEAL') {
                     document.getElementById('room-status-text').innerText = "On the Spectrum — Reveal";
-                    switchToOnTheSpectrumRevealUI(data.namedPlayerName, data.statementText, data.targetValue, data.results, data.tvLimit);
+                    document.getElementById('lobby-countdown').innerText = data.secondsLeft + " s";
+                    switchToOnTheSpectrumRevealUI(data.namedPlayerName, data.statementText, data.targetValue, data.results, data.tvLimit, data.secondsLeft);
                     playerAnswerStatus = {};
                     updateLeaderboardUI(cachedPlayersSnapshot);
                 }
                 if (data.type === 'ON_THE_SPECTRUM_CONTINUE_UPDATE') {
                     updateOnTheSpectrumContinueTallyTV(data.votedCount, data.totalNeeded);
+                }
+                if (data.type === 'ON_THE_SPECTRUM_CONTINUE_TIMER_TICK') {
+                    document.getElementById('lobby-countdown').innerText = data.secondsLeft + " s";
+                    const t = document.getElementById('ots-tv-timer');
+                    if (t) t.innerText = data.secondsLeft + " s";
                 }
             };
         }
@@ -885,7 +891,7 @@ function otsBarRow(name, value, isNamed) {
 // handful the rows get too thin to read from across a room) -- the complete
 // sorted list still goes to every phone via /api/room-status. The named
 // player's own row always shows, on top, uncounted against that limit.
-function switchToOnTheSpectrumRevealUI(namedPlayerName, statementText, targetValue, results, tvLimit) {
+function switchToOnTheSpectrumRevealUI(namedPlayerName, statementText, targetValue, results, tvLimit, secondsLeft) {
     const panel = document.getElementById('active-content-stage');
     const shown = (results || []).slice(0, tvLimit || 6);
     const remaining = (results || []).length - shown.length;
@@ -899,6 +905,7 @@ function switchToOnTheSpectrumRevealUI(namedPlayerName, statementText, targetVal
             <div style="display: flex; flex-direction: column; gap: 10px;">${rows}</div>
             ${remaining > 0 ? `<div style="text-align: center; color: #64748b; margin-top: 12px; font-size: 0.9rem;">+${remaining} more -- check your phone for the full list</div>` : ''}
             <div id="ots-tv-continue-tally" style="text-align: center; color: #64748b; margin-top: 20px; font-size: 0.9rem;">0 / 0 want to continue</div>
+            <div id="ots-tv-timer" style="text-align: center; font-size: 1.2rem; font-weight: 600; color: #ffa500; margin-top: 8px;">${secondsLeft ?? ''} s</div>
         </div>
     `;
 }

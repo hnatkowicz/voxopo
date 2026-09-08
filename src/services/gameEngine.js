@@ -545,6 +545,12 @@ function clearEmpossDurrTimers(room) {
     if (room.empossdurr.declareTimerInterval) { clearInterval(room.empossdurr.declareTimerInterval); room.empossdurr.declareTimerInterval = null; }
 }
 
+function clearOnTheSpectrumTimers(room) {
+    if (!room.onTheSpectrum) return;
+    if (room.onTheSpectrum.continueVoteTimeout) { clearTimeout(room.onTheSpectrum.continueVoteTimeout); room.onTheSpectrum.continueVoteTimeout = null; }
+    if (room.onTheSpectrum.continueCountdownInterval) { clearInterval(room.onTheSpectrum.continueCountdownInterval); room.onTheSpectrum.continueCountdownInterval = null; }
+}
+
 // Entry point once EmpossDurr wins the lobby election and its (currently
 // single) category phase resolves -- the equivalent of loadQuestionBank +
 // startNextQuestion for the trivia modes, but EmpossDurr has no
@@ -987,6 +993,11 @@ function resetRoomToEmpossDurrCategoryVote(roomCode) {
 
     console.log(`[Room Engine] Room ${roomCode} jumping straight back into EmpossDurr -- roster kept, stats cleared.`);
 
+    // Without this the TV's Active Standings panel just keeps showing the
+    // previous game's final scores until some unrelated event (a vote tally,
+    // an answer) happens to redraw it -- same fix as resetRoomToLobby already has.
+    broadcastToRoom(roomCode, { type: 'LEADERBOARD_UPDATE', players: activePlayers });
+
     broadcastToRoom(roomCode, {
         type: 'TRANSITION_TO_CATEGORY_VOTE',
         winner: 'EMPOSSDURR',
@@ -994,6 +1005,46 @@ function resetRoomToEmpossDurrCategoryVote(roomCode) {
     });
 
     startCategoryCountdown(roomCode);
+}
+
+// Same shortcut reasoning as resetRoomToEmpossDurrCategoryVote, but On the
+// Spectrum has no category-vote phase to land in first -- it's always drawn
+// from one unified statement pool -- so this jumps straight into
+// startOnTheSpectrumGame instead.
+function resetRoomToOnTheSpectrumGame(roomCode) {
+    const room = activeRooms[roomCode];
+    if (!room) return;
+
+    clearOnTheSpectrumTimers(room);
+    if (room.timerInterval) { clearInterval(room.timerInterval); room.timerInterval = null; }
+    if (room.categoryTimerInterval) { clearInterval(room.categoryTimerInterval); room.categoryTimerInterval = null; }
+    if (room.revealTimeout) { clearTimeout(room.revealTimeout); room.revealTimeout = null; }
+    if (room.returnVoteTimeout) { clearTimeout(room.returnVoteTimeout); room.returnVoteTimeout = null; }
+    room.returnVotes = new Map();
+
+    room.winningGameMode = 'ON_THE_SPECTRUM';
+    room.onTheSpectrum = null;
+
+    const activePlayers = Object.values(room.players).filter(p => !p.left);
+    activePlayers.forEach(player => {
+        player.requestedStart = false;
+        player.score = 0;
+        player.correctAnswers = 0;
+        player.currentStreak = 0;
+        player.timesFastest = 0;
+        player.awards = {};
+        player.bullseyeCount = 0;
+    });
+
+    console.log(`[Room Engine] Room ${roomCode} jumping straight back into On the Spectrum -- roster kept, stats cleared.`);
+
+    broadcastToRoom(roomCode, { type: 'LEADERBOARD_UPDATE', players: activePlayers });
+
+    startOnTheSpectrumGame(roomCode).catch(error => {
+        console.error(`❌ [On the Spectrum] Failed to restart Room ${roomCode}:`, error.message);
+        broadcastContentUnavailable(roomCode, 'On the Spectrum');
+        resetRoomToLobby(roomCode);
+    });
 }
 
 // A single tap on "Play Again"/"Play EmpossDurr Again" used to reset the
@@ -1038,13 +1089,18 @@ function resolveReturnToLobbyVote(roomCode) {
     if (!room || !room.returnVotes || room.returnVotes.size === 0) return;
     if (room.returnVoteTimeout) { clearTimeout(room.returnVoteTimeout); room.returnVoteTimeout = null; }
 
-    let empossdurrCount = 0;
-    room.returnVotes.forEach(action => { if (action === 'PLAY_EMPOSSDURR_AGAIN') empossdurrCount++; });
-    const total = room.returnVotes.size;
+    const counts = { START: 0, PLAY_EMPOSSDURR_AGAIN: 0, PLAY_ON_THE_SPECTRUM_AGAIN: 0 };
+    room.returnVotes.forEach(action => { if (action in counts) counts[action]++; });
     room.returnVotes = new Map();
 
-    if (empossdurrCount > total - empossdurrCount) {
+    // Whichever destination has the STRICTLY most votes wins; a tie for the
+    // top spot (between any combination, including "nobody voted a
+    // shortcut at all") falls through to the plain lobby -- same "always a
+    // valid choice" reasoning as before, just extended from two options to three.
+    if (counts.PLAY_EMPOSSDURR_AGAIN > counts.START && counts.PLAY_EMPOSSDURR_AGAIN > counts.PLAY_ON_THE_SPECTRUM_AGAIN) {
         resetRoomToEmpossDurrCategoryVote(roomCode);
+    } else if (counts.PLAY_ON_THE_SPECTRUM_AGAIN > counts.START && counts.PLAY_ON_THE_SPECTRUM_AGAIN > counts.PLAY_EMPOSSDURR_AGAIN) {
+        resetRoomToOnTheSpectrumGame(roomCode);
     } else {
         resetRoomToLobby(roomCode);
     }
@@ -1061,7 +1117,7 @@ export function closeRoom(roomCode) {
     if (room.categoryTimerInterval) clearInterval(room.categoryTimerInterval);
     if (room.revealTimeout) clearTimeout(room.revealTimeout);
     if (room.returnVoteTimeout) clearTimeout(room.returnVoteTimeout);
-    if (room.onTheSpectrum && room.onTheSpectrum.continueVoteTimeout) clearTimeout(room.onTheSpectrum.continueVoteTimeout);
+    clearOnTheSpectrumTimers(room);
     clearEmpossDurrTimers(room);
     broadcastToRoom(roomCode, { type: 'ROOM_CLOSED' });
     delete activeRooms[roomCode];
@@ -1085,7 +1141,7 @@ function resetRoomToLobby(roomCode) {
     if (room.revealTimeout) { clearTimeout(room.revealTimeout); room.revealTimeout = null; }
     if (room.returnVoteTimeout) { clearTimeout(room.returnVoteTimeout); room.returnVoteTimeout = null; }
     room.returnVotes = new Map();
-    if (room.onTheSpectrum && room.onTheSpectrum.continueVoteTimeout) clearTimeout(room.onTheSpectrum.continueVoteTimeout);
+    clearOnTheSpectrumTimers(room);
     clearEmpossDurrTimers(room);
 
     room.gameState = 'LOBBY';
@@ -1181,7 +1237,8 @@ async function startOnTheSpectrumGame(roomCode) {
         guesses: {}, // name -> locked-in guess value (0-100)
         lastResults: null, // sorted [{name, value, distance, points}] from the most recent reveal
         continueVotes: new Set(),
-        continueVoteTimeout: null
+        continueVoteTimeout: null,
+        continueCountdownInterval: null
     };
 
     startOnTheSpectrumRound(roomCode);
@@ -1192,7 +1249,7 @@ function startOnTheSpectrumRound(roomCode) {
     if (!room || !room.onTheSpectrum) return;
     const ots = room.onTheSpectrum;
 
-    if (ots.continueVoteTimeout) { clearTimeout(ots.continueVoteTimeout); ots.continueVoteTimeout = null; }
+    clearOnTheSpectrumTimers(room);
 
     // Skip forward past any slot whose scheduled named player is no longer
     // active (left before their turn came up) -- they simply lose that turn,
@@ -1285,8 +1342,43 @@ function revealOnTheSpectrumRound(roomCode) {
         statementText: ots.statementText,
         targetValue: ots.targetValue,
         results,
-        tvLimit: ON_THE_SPECTRUM_TV_REVEAL_LIMIT
+        tvLimit: ON_THE_SPECTRUM_TV_REVEAL_LIMIT,
+        secondsLeft: ON_THE_SPECTRUM_CONTINUE_SECONDS
     });
+    // Scoring above changes standings -- without this the TV's Active
+    // Standings panel just sits frozen on pre-round numbers until some
+    // unrelated event (like a new player joining) happens to redraw it.
+    broadcastToRoom(roomCode, {
+        type: 'LEADERBOARD_UPDATE',
+        players: Object.values(room.players).filter(p => !p.left)
+    });
+
+    startOnTheSpectrumContinueCountdown(roomCode);
+}
+
+// Per-second ticks for the reveal screen's 45s backstop -- same shape as
+// startCategoryCountdown/the EmpossDurr accuse-vote timer, so the TV's
+// shared countdown clock behaves identically here. castOnTheSpectrumContinueVote's
+// own continueVoteTimeout still does the actual resolving; this is purely
+// the visual tick alongside it, cleared whenever that vote resolves early.
+function startOnTheSpectrumContinueCountdown(roomCode) {
+    const room = activeRooms[roomCode];
+    if (!room || !room.onTheSpectrum) return;
+    const ots = room.onTheSpectrum;
+
+    if (ots.continueCountdownInterval) clearInterval(ots.continueCountdownInterval);
+
+    let count = ON_THE_SPECTRUM_CONTINUE_SECONDS;
+    ots.continueCountdownInterval = setInterval(() => {
+        count--;
+        const r = activeRooms[roomCode];
+        if (!r || !r.onTheSpectrum || r.onTheSpectrum !== ots || ots.phase !== 'REVEAL' || count <= 0) {
+            clearInterval(ots.continueCountdownInterval);
+            ots.continueCountdownInterval = null;
+            return;
+        }
+        broadcastToRoom(roomCode, { type: 'ON_THE_SPECTRUM_CONTINUE_TIMER_TICK', secondsLeft: count });
+    }, 1000);
 }
 
 // Same majority-with-backstop-timer shape as the GAME_OVER return vote, but
@@ -1723,7 +1815,9 @@ export function handleIncomingMessage(fromPhone, bodyText, explicitRoomCode, pre
                     ots.continueVotes.delete(actingPlayerName);
                     const neededForMajority = Math.floor(remainingActivePlayers.length / 2) + 1;
                     if (ots.continueVotes.size >= neededForMajority) {
-                        if (ots.continueVoteTimeout) { clearTimeout(ots.continueVoteTimeout); ots.continueVoteTimeout = null; }
+                        // startOnTheSpectrumRound clears both the vote's
+                        // backstop timeout and the countdown-tick interval
+                        // itself, right at its top.
                         startOnTheSpectrumRound(associatedRoomCode);
                     } else {
                         broadcastToRoom(associatedRoomCode, {
@@ -1808,6 +1902,13 @@ export function handleIncomingMessage(fromPhone, bodyText, explicitRoomCode, pre
     // resolveReturnToLobbyVote breaks that tie by whichever has more votes.
     if (cleanText.toUpperCase() === 'PLAY_EMPOSSDURR_AGAIN' && currentRoom.gameState === 'GAME_OVER' && currentRoom.winningGameMode === 'EMPOSSDURR') {
         return castReturnToLobbyVote(associatedRoomCode, actingPlayerName, 'PLAY_EMPOSSDURR_AGAIN');
+    }
+
+    // 3.6. "Play On the Spectrum Again" shortcut -- same reasoning as
+    // EmpossDurr's above, but resolving straight into a fresh round instead
+    // of a category-vote phase (this mode never had one to begin with).
+    if (cleanText.toUpperCase() === 'PLAY_ON_THE_SPECTRUM_AGAIN' && currentRoom.gameState === 'GAME_OVER' && currentRoom.winningGameMode === 'ON_THE_SPECTRUM') {
+        return castReturnToLobbyVote(associatedRoomCode, actingPlayerName, 'PLAY_ON_THE_SPECTRUM_AGAIN');
     }
 
     // 4. Handle Sub-Category Voting Selection Track Overrides (Phase 2)

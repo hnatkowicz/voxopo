@@ -91,17 +91,20 @@
         .ed-timer { font-size: 2rem; font-weight: 700; color: #ffffff; text-align: center; margin: 12px 0; }
 
         .ots-statement { font-size: 1.15rem; font-weight: 600; color: #ffffff; text-align: center; line-height: 1.4; margin: 16px 0 24px 0; }
-        /* Above the slider, not overlapping it -- a dragging thumb/finger
-           would otherwise obscure the exact value at the worst moment. */
-        .ots-slider-value { font-size: 2.2rem; font-weight: 700; color: #00e676; text-align: center; margin-bottom: 8px; }
-        .ots-slider-row { display: flex; align-items: center; gap: 12px; margin: 8px 0 20px 0; }
-        .ots-slider-label { font-size: 0.75rem; color: #64748b; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; flex-shrink: 0; width: 64px; }
-        .ots-slider-label.ots-label-right { text-align: right; }
+        /* "Disagree"/"Agree" bracket the number, all above the slider --
+           a dragging finger would otherwise obscure the exact value at the
+           worst moment, and reading the two words either side of the number
+           makes the 0-100 scale legible without the slider itself in view. */
+        .ots-readout-row { display: flex; align-items: center; justify-content: center; gap: 16px; margin-bottom: 12px; }
+        .ots-slider-value { font-size: 2.2rem; font-weight: 700; color: #00e676; text-align: center; min-width: 60px; }
+        .ots-slider-label { font-size: 0.75rem; color: #64748b; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; }
+        .ots-slider-row { margin: 0 0 20px 0; }
         /* Horizontal range input, deliberately not vertical -- a vertical
-           drag gesture on a phone card fights with the page's own scroll. */
-        .ots-slider { flex: 1; -webkit-appearance: none; appearance: none; height: 8px; border-radius: 4px; background: #1e222b; outline: none; }
-        .ots-slider::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 28px; height: 28px; border-radius: 50%; background: #00e676; cursor: pointer; border: 3px solid #0d0e11; }
-        .ots-slider::-moz-range-thumb { width: 28px; height: 28px; border-radius: 50%; background: #00e676; cursor: pointer; border: none; }
+           drag gesture on a phone card fights with the page's own scroll.
+           Sized up from the platform default for an easier thumb target. */
+        .ots-slider { width: 100%; -webkit-appearance: none; appearance: none; height: 14px; border-radius: 7px; background: #1e222b; outline: none; }
+        .ots-slider::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 36px; height: 36px; border-radius: 50%; background: #00e676; cursor: pointer; border: 4px solid #0d0e11; }
+        .ots-slider::-moz-range-thumb { width: 36px; height: 36px; border-radius: 50%; background: #00e676; cursor: pointer; border: 4px solid #0d0e11; }
         .ots-results-list { display: flex; flex-direction: column; gap: 8px; margin: 16px 0; text-align: left; }
         /* Same filled-bar language as the module vote bars elsewhere in
            RandoMania!, all one color (this mode's own purple) -- the bar's
@@ -122,6 +125,8 @@
         .btn-skip.ed-active { background: rgba(255, 165, 0, 0.08); border-color: #ffa500; color: #ffa500; }
         .btn-ed-again { background: #ffa500; color: #0d0e11; }
         .btn-ed-again:hover { background: #e59400; }
+        .btn-ots-again { background: #bb6bd9; color: #0d0e11; }
+        .btn-ots-again:hover { background: #a555c2; }
         /* Declare and its decoy twin share this identical, muted style on
            purpose -- same size, same neutral color as every other button,
            so the impostor's phone doesn't visually shout "I'm different"
@@ -417,6 +422,7 @@
         <!-- Outside #game-over-content on purpose -- renderGameOver() replaces that
              div's innerHTML every time, which would wipe this button out with it. -->
         <button class="btn btn-ed-again" id="btn-play-empossdurr-again" style="display: none;" onclick="requestPlayEmpossDurrAgain()">Play EmpossDurr Again</button>
+        <button class="btn btn-ots-again" id="btn-play-on-the-spectrum-again" style="display: none;" onclick="requestPlayOnTheSpectrumAgain()">Play On the Spectrum Again</button>
         <button class="btn" onclick="requestPlayAgain()">Main Menu</button>
         <div id="playagain-feedback" class="feedback"></div>
         <button class="btn btn-leave" onclick="leaveRoom()">Leave Room</button>
@@ -830,8 +836,16 @@
 
             const phaseKey = `${data.empossdurrPhase}|${data.round}`;
             if (phaseKey !== edLastPhaseKey) {
-                edLastPhaseKey = phaseKey;
-                buildEmpossDurrPhaseContent(data);
+                // Same reasoning as On the Spectrum's identical guard: only
+                // commit the key once the rebuild actually succeeds, so an
+                // exception mid-build retries on the next poll instead of
+                // leaving the screen stuck forever.
+                try {
+                    buildEmpossDurrPhaseContent(data);
+                    edLastPhaseKey = phaseKey;
+                } catch (e) {
+                    console.error('EmpossDurr render failed, will retry next poll:', e);
+                }
             } else {
                 updateEmpossDurrLiveBits(data);
             }
@@ -966,8 +980,17 @@
 
             const phaseKey = `${data.otsPhase}|${data.roundNumber}|${data.isNamedPlayer}|${data.iHaveGuessed}`;
             if (phaseKey !== otsLastPhaseKey) {
-                otsLastPhaseKey = phaseKey;
-                buildOnTheSpectrumPhaseContent(data);
+                // Only commit the key once the rebuild actually succeeds --
+                // committing it first (as this briefly did) means any
+                // exception mid-build leaves the screen stuck on stale
+                // content forever, since a phaseKey that already "matches"
+                // never retries on a later poll.
+                try {
+                    buildOnTheSpectrumPhaseContent(data);
+                    otsLastPhaseKey = phaseKey;
+                } catch (e) {
+                    console.error('On the Spectrum render failed, will retry next poll:', e);
+                }
             } else {
                 updateOnTheSpectrumLiveBits(data);
             }
@@ -979,12 +1002,14 @@
             feedback.style.display = 'none';
 
             const sliderRow = (sliderId, readoutId, startValue) => `
-                <div class="ots-slider-value" id="${readoutId}">${startValue}</div>
-                <div class="ots-slider-row">
+                <div class="ots-readout-row">
                     <span class="ots-slider-label">Disagree</span>
+                    <div class="ots-slider-value" id="${readoutId}">${startValue}</div>
+                    <span class="ots-slider-label">Agree</span>
+                </div>
+                <div class="ots-slider-row">
                     <input type="range" min="0" max="100" value="${startValue}" id="${sliderId}" class="ots-slider"
                         oninput="document.getElementById('${readoutId}').innerText = this.value">
-                    <span class="ots-slider-label ots-label-right">Agree</span>
                 </div>
             `;
 
@@ -1068,7 +1093,7 @@
             }
         }
 
-        async function sendOnTheSpectrumAction(body) {
+        async function sendOnTheSpectrumAction(body, suppressFeedback) {
             const registeredName = localStorage.getItem('randomania_nickname') || 'test-handset';
             const feedback = document.getElementById('ots-feedback');
             try {
@@ -1078,7 +1103,7 @@
                     body: JSON.stringify({ From: registeredName, Body: body, roomCode: localStorage.getItem('randomania_roomcode') })
                 });
                 const data = await response.json();
-                showFeedback(feedback, data.reply, "rgba(0,230,118,0.06)", "#00e676", "rgba(0,230,118,0.1)");
+                if (!suppressFeedback) showFeedback(feedback, data.reply, "rgba(0,230,118,0.06)", "#00e676", "rgba(0,230,118,0.1)");
             } catch (error) {
                 showFeedback(feedback, "❌ Action transmission failed.", "rgba(255,71,87,0.06)", "#ff4757", "rgba(255,71,87,0.1)");
             }
@@ -1092,7 +1117,18 @@
             const value = document.getElementById('ots-guess-slider').value;
             sendOnTheSpectrumAction(`GUESS:${value}`);
         }
-        function submitOtsContinue() { sendOnTheSpectrumAction('CONTINUE'); }
+        function submitOtsContinue() {
+            // The live "X / Y want to continue" tally (and the TV's own
+            // countdown) already says everything the raw server reply would
+            // -- and unlike SET_TARGET/GUESS, nothing about this phase's key
+            // changes when a vote is cast, so without suppressing it here
+            // "Vote recorded..." / "Majority's in..." would sit on screen
+            // for the entire rest of the reveal instead of clearing on the
+            // next natural rebuild.
+            const btn = document.getElementById('ots-continue-btn');
+            if (btn) { btn.disabled = true; btn.innerText = 'Waiting on the room...'; }
+            sendOnTheSpectrumAction('CONTINUE', true);
+        }
 
         function showEmpossDurrDeclareSplash(impostorName, isSelf) {
             const splash = document.getElementById('ed-declare-splash');
@@ -1217,6 +1253,28 @@
             }
         }
 
+        // Same single-tap shortcut, this time straight back into a fresh
+        // On the Spectrum round -- this mode has no category-vote phase to
+        // land in either, so the room jumps directly into round 1.
+        async function requestPlayOnTheSpectrumAgain() {
+            const feedback = document.getElementById('playagain-feedback');
+            const registeredName = localStorage.getItem('randomania_nickname') || 'test-handset';
+
+            showFeedback(feedback, "Locking in...", "rgba(255,165,0,0.06)", "#ffa500", "rgba(255,165,0,0.1)");
+
+            try {
+                const response = await fetch('/api/message', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ From: registeredName, Body: 'PLAY_ON_THE_SPECTRUM_AGAIN', roomCode: localStorage.getItem('randomania_roomcode') })
+                });
+                const data = await response.json();
+                showFeedback(feedback, data.reply, "rgba(0,230,118,0.06)", "#00e676", "rgba(0,230,118,0.1)");
+            } catch (error) {
+                showFeedback(feedback, "❌ Transmission failed.", "rgba(255,71,87,0.06)", "#ff4757", "rgba(255,71,87,0.1)");
+            }
+        }
+
         // Renders this player's own final-standings card, styled to match the TV's
         // gold/silver/bronze medal rows for the top 3. Rank 1 gets a bonus soundboard
         // button -- horn.wav needs to actually exist in public/audio for it to play.
@@ -1226,6 +1284,8 @@
 
             document.getElementById('btn-play-empossdurr-again').style.display =
                 data.winningGameMode === 'EMPOSSDURR' ? 'block' : 'none';
+            document.getElementById('btn-play-on-the-spectrum-again').style.display =
+                data.winningGameMode === 'ON_THE_SPECTRUM' ? 'block' : 'none';
 
             if (!rank) {
                 container.innerHTML = `<p class="subtitle" style="margin-bottom: 0;">Thanks for playing! Check the TV screen for the final leaderboard.</p>`;
