@@ -391,10 +391,11 @@ if (btnSubmitSpectate) {
             // On the Spectrum badges -- distinct key names from EmpossDurr's own
             // BULLSEYE on purpose (different game, different achievement; reusing
             // the name would make them visually indistinguishable in awards).
-            // No custom icon art for these yet, so a plain emoji + tinted
-            // background stands in, same rendering path as STREAK's tiers.
-            SPECTRUM_BULLSEYE: { pulse: false, title: 'Exact match on On the Spectrum', content: '🎯', bg: 'rgba(212, 175, 55, 0.08)', color: '#d4af37' },
-            SPECTRUM_SHARPSHOOTER: { pulse: false, title: 'Within 3 on On the Spectrum', content: '🏹', bg: 'rgba(45, 156, 219, 0.08)', color: '#2d9cdb' }
+            // Same icon-mask path as the EmpossDurr trio above, just with this
+            // mode's own gold/blue instead of the shared "permanent" green --
+            // /spectrum-target.svg and /spectrum-bow.svg are art files, not yet drawn.
+            SPECTRUM_BULLSEYE: { pulse: false, title: 'Exact match on On the Spectrum', imageBadge: true, iconClass: 'badge-spectrum-bullseye' },
+            SPECTRUM_SHARPSHOOTER: { pulse: false, title: 'Within 3 on On the Spectrum', imageBadge: true, iconClass: 'badge-spectrum-sharpshooter' }
         };
 
         function renderAwardBadges(awards) {

@@ -231,6 +231,20 @@ body {
             -webkit-mask-image: url('/muscle.svg');
             mask-image: url('/muscle.svg');
         }
+        /* On the Spectrum's own badges keep this mode's established gold/blue
+           (its reveal screen and vote bar already use these), rather than the
+           shared "permanent" green above -- these two icon files don't exist
+           yet, drawn separately from the EmpossDurr set. */
+        .badge-spectrum-bullseye {
+            background-color: #d4af37;
+            -webkit-mask-image: url('/spectrum-target.svg');
+            mask-image: url('/spectrum-target.svg');
+        }
+        .badge-spectrum-sharpshooter {
+            background-color: #2d9cdb;
+            -webkit-mask-image: url('/spectrum-bow.svg');
+            mask-image: url('/spectrum-bow.svg');
+        }
 
         /* Light, unobtrusive context appended after a module's name -- never
            competes with the name itself for attention. */

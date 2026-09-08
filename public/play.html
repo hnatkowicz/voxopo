@@ -98,6 +98,10 @@
         .ots-readout-row { display: flex; align-items: center; justify-content: center; gap: 16px; margin-bottom: 12px; }
         .ots-slider-value { font-size: 2.2rem; font-weight: 700; color: #00e676; text-align: center; min-width: 60px; }
         .ots-slider-label { font-size: 0.75rem; color: #64748b; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; }
+        /* Visually separates the readout from the slider it belongs to --
+           without it the number reads as floating free rather than clearly
+           "belonging" to the control underneath. */
+        .ots-readout-divider { border: none; border-top: 1px solid #222630; margin: 0 0 20px 0; }
         .ots-slider-row { margin: 0 0 20px 0; }
         /* Horizontal range input, deliberately not vertical -- a vertical
            drag gesture on a phone card fights with the page's own scroll.
@@ -1007,6 +1011,7 @@
                     <div class="ots-slider-value" id="${readoutId}">${startValue}</div>
                     <span class="ots-slider-label">Agree</span>
                 </div>
+                <hr class="ots-readout-divider">
                 <div class="ots-slider-row">
                     <input type="range" min="0" max="100" value="${startValue}" id="${sliderId}" class="ots-slider"
                         oninput="document.getElementById('${readoutId}').innerText = this.value">
