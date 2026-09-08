@@ -44,6 +44,23 @@ const EMPOSSDURR_MAX_ROUNDS = 12;
 // player. A vote still resolves immediately if everyone submits sooner.
 const EMPOSSDURR_VOTE_SECONDS = 30;
 
+// On the Spectrum (agree/disagree slider-guessing mode). Points are a flat
+// lookup by distance from the named player's locked-in target, not a curve --
+// simple to explain out loud at the table, which matters more here than a
+// mathematically "smoother" formula would.
+const ON_THE_SPECTRUM_EXACT_POINTS = 7;
+const ON_THE_SPECTRUM_WITHIN_3_POINTS = 4;
+const ON_THE_SPECTRUM_WITHIN_5_POINTS = 2;
+const ON_THE_SPECTRUM_WITHIN_8_POINTS = 1;
+// Same "give the room time to actually argue about it" reasoning as the
+// GAME_OVER return vote, just longer -- the whole point of the reveal is the
+// discussion afterward, not rushing to the next topic.
+const ON_THE_SPECTRUM_CONTINUE_SECONDS = 45;
+// On a shared TV that can't scroll, this is roughly the ceiling before rows
+// get too thin to read from across a room -- the rest of the sorted list
+// still goes to every phone in full.
+const ON_THE_SPECTRUM_TV_REVEAL_LIMIT = 6;
+
 // Clamps a requested question count into [MIN_QUESTIONS_PER_GAME,
 // MAX_QUESTIONS_PER_GAME]. Falls back to the fixed default for anything
 // missing/non-numeric. The bounds stay in place (and this stays exported) for
@@ -128,13 +145,10 @@ export function getCategoriesForMode(winningGameMode) {
             { key: 'CAT_2', label: 'Historical Standards' },
             { key: 'CAT_3', label: 'Bizarre Banners' }
         ];
-    } else if (winningGameMode === 'ON_THE_SPECTRUM') {
-        return [
-            { key: 'CAT_1', label: 'Numeric Scales' },
-            { key: 'CAT_2', label: 'Extreme Measures' },
-            { key: 'CAT_3', label: 'Chrono Orders' }
-        ];
     }
+    // ON_THE_SPECTRUM has no category vote at all -- see executeLobbyPhaseExpiration,
+    // which skips straight into the game for this mode. One unified statement
+    // pool, no theme to pick between.
     return TRIVIA_CATEGORIES;
 }
 
@@ -192,9 +206,21 @@ function executeLobbyPhaseExpiration(roomCode) {
     }
 
     const winningModule = calculateElectionWinner(room);
-    room.gameState = 'CATEGORY_VOTE';
     room.winningGameMode = winningModule;
 
+    // One unified statement pool, no theme to pick between -- skip the
+    // category vote screen entirely rather than make everyone click through
+    // a "vote" with exactly one option.
+    if (winningModule === 'ON_THE_SPECTRUM') {
+        startOnTheSpectrumGame(roomCode).catch(error => {
+            console.error(`❌ [On the Spectrum] Failed to start Room ${roomCode}:`, error.message);
+            broadcastContentUnavailable(roomCode, 'On the Spectrum');
+            resetRoomToLobby(roomCode);
+        });
+        return;
+    }
+
+    room.gameState = 'CATEGORY_VOTE';
     const categories = getCategoriesForMode(winningModule);
     // Fresh vote tally keyed to this mode's actual categories -- the previous
     // room's categoryVotes (if any) belonged to a different mode's key set.
@@ -464,6 +490,7 @@ function startNextQuestion(roomCode) {
 // screen using the exact same ordering.
 export function compareByRank(a, b) {
     return b.score - a.score
+        || (b.bullseyeCount || 0) - (a.bullseyeCount || 0)
         || (b.correctAnswers || 0) - (a.correctAnswers || 0)
         || (b.timesFastest || 0) - (a.timesFastest || 0)
         || new Date(a.joinedAt) - new Date(b.joinedAt);
@@ -483,7 +510,9 @@ function endGame(roomCode) {
 
     const roundsPlayedDescription = room.winningGameMode === 'EMPOSSDURR'
         ? `${room.empossdurr ? room.empossdurr.currentRound : 0} rounds`
-        : `${room.questionBank.length} questions`;
+        : room.winningGameMode === 'ON_THE_SPECTRUM'
+            ? `${room.onTheSpectrum ? room.onTheSpectrum.roundIndex + 1 : 0} rounds`
+            : `${room.questionBank.length} questions`;
     console.log(`🏁 [Game Engine] Room ${roomCode} finished ${roundsPlayedDescription}. Broadcasting final leaderboard.`);
 
     broadcastToRoom(roomCode, {
@@ -1032,6 +1061,7 @@ export function closeRoom(roomCode) {
     if (room.categoryTimerInterval) clearInterval(room.categoryTimerInterval);
     if (room.revealTimeout) clearTimeout(room.revealTimeout);
     if (room.returnVoteTimeout) clearTimeout(room.returnVoteTimeout);
+    if (room.onTheSpectrum && room.onTheSpectrum.continueVoteTimeout) clearTimeout(room.onTheSpectrum.continueVoteTimeout);
     clearEmpossDurrTimers(room);
     broadcastToRoom(roomCode, { type: 'ROOM_CLOSED' });
     delete activeRooms[roomCode];
@@ -1055,6 +1085,7 @@ function resetRoomToLobby(roomCode) {
     if (room.revealTimeout) { clearTimeout(room.revealTimeout); room.revealTimeout = null; }
     if (room.returnVoteTimeout) { clearTimeout(room.returnVoteTimeout); room.returnVoteTimeout = null; }
     room.returnVotes = new Map();
+    if (room.onTheSpectrum && room.onTheSpectrum.continueVoteTimeout) clearTimeout(room.onTheSpectrum.continueVoteTimeout);
     clearEmpossDurrTimers(room);
 
     room.gameState = 'LOBBY';
@@ -1071,6 +1102,7 @@ function resetRoomToLobby(roomCode) {
     room.askedQuestionIds = new Set();
     room.categoryVotes = {};
     room.empossdurr = null;
+    room.onTheSpectrum = null;
 
     room.votes = { TRIVI_YEAH: 0, COUNTRY_MONKEY: 0, EMPOSSDURR: 0, FLAG_ME_DOWN: 0, ON_THE_SPECTRUM: 0 };
     const activePlayers = Object.values(room.players).filter(p => !p.left);
@@ -1082,6 +1114,7 @@ function resetRoomToLobby(roomCode) {
         player.currentStreak = 0;
         player.timesFastest = 0;
         player.awards = {};
+        player.bullseyeCount = 0;
         if (room.votes[player.vote] !== undefined) room.votes[player.vote]++;
     });
 
@@ -1093,6 +1126,203 @@ function resetRoomToLobby(roomCode) {
 
     startLobbyCountdown(roomCode);
     broadcastToRoom(roomCode, { type: 'LOBBY_TIMER_TICK', secondsLeft: "60 s" });
+}
+
+// ==========================================
+// PHASE 3C: ON THE SPECTRUM ENGINE
+// (agree/disagree slider-guessing mode)
+// ==========================================
+
+// Loaded once per process and cached, same reasoning as the EmpossDurr word
+// pool -- 35+ rows barely ever change mid-runtime, and re-querying every
+// single round would be wasteful. A server restart naturally picks up any
+// newly-added statements.
+let onTheSpectrumStatementCache = null;
+async function loadOnTheSpectrumStatements() {
+    if (onTheSpectrumStatementCache) return onTheSpectrumStatementCache;
+    const result = await pool.query('SELECT id, statement_text FROM on_the_spectrum_statements');
+    onTheSpectrumStatementCache = result.rows;
+    return onTheSpectrumStatementCache;
+}
+
+function pointsForSpectrumDistance(distance) {
+    if (distance === 0) return ON_THE_SPECTRUM_EXACT_POINTS;
+    if (distance <= 3) return ON_THE_SPECTRUM_WITHIN_3_POINTS;
+    if (distance <= 5) return ON_THE_SPECTRUM_WITHIN_5_POINTS;
+    if (distance <= 8) return ON_THE_SPECTRUM_WITHIN_8_POINTS;
+    return 0;
+}
+
+async function startOnTheSpectrumGame(roomCode) {
+    const room = activeRooms[roomCode];
+    if (!room) return;
+
+    const statementPool = await loadOnTheSpectrumStatements();
+    if (statementPool.length === 0) throw new Error('Statement pool is empty.');
+
+    // Deliberately the SAME shuffled order run twice, not two independent
+    // shuffles -- that guarantees the seam between the two passes always
+    // lands on two different people (the shuffle's last name, then its own
+    // first name), so nobody's ever named twice back-to-back, with zero
+    // extra seam-handling logic needed.
+    const activePlayers = Object.values(room.players).filter(p => !p.left);
+    const shuffledOnce = shuffleArray(activePlayers.map(p => p.name));
+    const rotation = shuffledOnce.concat(shuffledOnce);
+
+    room.onTheSpectrum = {
+        rotation,
+        roundIndex: -1, // incremented by startOnTheSpectrumRound before use
+        totalRounds: rotation.length,
+        namedPlayerName: null,
+        statementId: null,
+        statementText: null,
+        phase: null, // SET_TARGET | GUESSING | REVEAL
+        targetValue: null,
+        guesses: {}, // name -> locked-in guess value (0-100)
+        lastResults: null, // sorted [{name, value, distance, points}] from the most recent reveal
+        continueVotes: new Set(),
+        continueVoteTimeout: null
+    };
+
+    startOnTheSpectrumRound(roomCode);
+}
+
+function startOnTheSpectrumRound(roomCode) {
+    const room = activeRooms[roomCode];
+    if (!room || !room.onTheSpectrum) return;
+    const ots = room.onTheSpectrum;
+
+    if (ots.continueVoteTimeout) { clearTimeout(ots.continueVoteTimeout); ots.continueVoteTimeout = null; }
+
+    // Skip forward past any slot whose scheduled named player is no longer
+    // active (left before their turn came up) -- they simply lose that turn,
+    // no makeup round later, same as leaving forfeits a role anywhere else
+    // in this app.
+    let namedPlayerName;
+    do {
+        ots.roundIndex += 1;
+        if (ots.roundIndex >= ots.totalRounds) {
+            endGame(roomCode);
+            return;
+        }
+        namedPlayerName = ots.rotation[ots.roundIndex];
+    } while (!room.players[namedPlayerName] || room.players[namedPlayerName].left);
+
+    const statementPool = onTheSpectrumStatementCache || [];
+    const pick = statementPool[Math.floor(Math.random() * statementPool.length)];
+
+    ots.namedPlayerName = namedPlayerName;
+    ots.statementId = pick.id;
+    ots.statementText = pick.statement_text;
+    ots.phase = 'SET_TARGET';
+    ots.targetValue = null;
+    ots.guesses = {};
+    ots.lastResults = null;
+    ots.continueVotes = new Set();
+
+    room.gameState = 'ON_THE_SPECTRUM_ROUND';
+
+    console.log(`[On the Spectrum] Room ${roomCode} round ${ots.roundIndex + 1}/${ots.totalRounds}. Named: ${namedPlayerName}.`);
+
+    // No statement content here -- the TV never needs it during SET_TARGET,
+    // and it's included in every phone's own /api/room-status poll instead.
+    broadcastToRoom(roomCode, {
+        type: 'ON_THE_SPECTRUM_ROUND_START',
+        namedPlayerName,
+        statementText: ots.statementText,
+        roundNumber: ots.roundIndex + 1,
+        totalRounds: ots.totalRounds
+    });
+}
+
+// Progressive lock-in status only -- never the guessed values themselves,
+// so a slow guesser can't just copy someone else's number instead of
+// guessing independently. Actual values all arrive together at reveal.
+function broadcastOnTheSpectrumLockInUpdate(roomCode) {
+    const room = activeRooms[roomCode];
+    if (!room || !room.onTheSpectrum) return;
+    const ots = room.onTheSpectrum;
+    const activePlayers = Object.values(room.players).filter(p => !p.left);
+    const guessersNeeded = activePlayers.filter(p => p.name !== ots.namedPlayerName).length;
+    broadcastToRoom(roomCode, {
+        type: 'ON_THE_SPECTRUM_LOCKIN_UPDATE',
+        lockedInNames: Object.keys(ots.guesses),
+        totalGuessersNeeded: guessersNeeded
+    });
+}
+
+function revealOnTheSpectrumRound(roomCode) {
+    const room = activeRooms[roomCode];
+    if (!room || !room.onTheSpectrum) return;
+    const ots = room.onTheSpectrum;
+    ots.phase = 'REVEAL';
+
+    const results = Object.entries(ots.guesses).map(([name, value]) => {
+        const distance = Math.abs(value - ots.targetValue);
+        const points = pointsForSpectrumDistance(distance);
+        const player = room.players[name];
+        if (player) {
+            player.score += points;
+            // Mutually exclusive by design -- Sharpshooter means "close but
+            // not perfect" (1-3 away), not "within 3 including a bullseye."
+            if (distance === 0) {
+                player.bullseyeCount = (player.bullseyeCount || 0) + 1;
+                awardEmpossDurrBadge(player, 'SPECTRUM_BULLSEYE');
+            } else if (distance <= 3) {
+                awardEmpossDurrBadge(player, 'SPECTRUM_SHARPSHOOTER');
+            }
+        }
+        return { name, value, distance, points };
+    }).sort((a, b) => a.distance - b.distance);
+
+    ots.lastResults = results;
+
+    console.log(`[On the Spectrum] Room ${roomCode} round ${ots.roundIndex + 1} revealed. Target: ${ots.targetValue}. ${results.length} guesses scored.`);
+
+    broadcastToRoom(roomCode, {
+        type: 'ON_THE_SPECTRUM_REVEAL',
+        namedPlayerName: ots.namedPlayerName,
+        statementText: ots.statementText,
+        targetValue: ots.targetValue,
+        results,
+        tvLimit: ON_THE_SPECTRUM_TV_REVEAL_LIMIT
+    });
+}
+
+// Same majority-with-backstop-timer shape as the GAME_OVER return vote, but
+// deliberately not the same function -- that one resolves BETWEEN two
+// competing destinations (plain lobby vs. EmpossDurr shortcut), which this
+// doesn't need: there's only one action, continue to the next round, so a
+// simpler dedicated version reads more clearly than threading an unused
+// "which action wins" parameter through a shared one.
+function castOnTheSpectrumContinueVote(roomCode, playerName) {
+    const room = activeRooms[roomCode];
+    if (!room || !room.onTheSpectrum) return null;
+    const ots = room.onTheSpectrum;
+    ots.continueVotes.add(playerName);
+
+    const activePlayers = Object.values(room.players).filter(p => !p.left);
+    broadcastToRoom(roomCode, {
+        type: 'ON_THE_SPECTRUM_CONTINUE_UPDATE',
+        votedCount: ots.continueVotes.size,
+        totalNeeded: activePlayers.length
+    });
+
+    const neededForMajority = Math.floor(activePlayers.length / 2) + 1;
+    if (ots.continueVotes.size >= neededForMajority) {
+        startOnTheSpectrumRound(roomCode);
+        return "Majority's in -- next topic!";
+    }
+
+    if (!ots.continueVoteTimeout) {
+        ots.continueVoteTimeout = setTimeout(() => {
+            const r = activeRooms[roomCode];
+            if (!r || !r.onTheSpectrum) return;
+            r.onTheSpectrum.continueVoteTimeout = null;
+            startOnTheSpectrumRound(roomCode);
+        }, ON_THE_SPECTRUM_CONTINUE_SECONDS * 1000);
+    }
+    return `Vote recorded (${ots.continueVotes.size}/${activePlayers.length}) -- resolves once a majority agrees, or in ${ON_THE_SPECTRUM_CONTINUE_SECONDS}s.`;
 }
 
 function calculateCategoryWinner(room) {
@@ -1311,6 +1541,7 @@ export function handleIncomingMessage(fromPhone, bodyText, explicitRoomCode, pre
                     correctAnswers: 0,
                     currentStreak: 0,
                     timesFastest: 0, // lifetime count, purely for tie-breaking -- independent of the bolt badge's live per-round status
+                    bullseyeCount: 0, // On the Spectrum exact matches -- also a tiebreak field
                     awards: {},
                     sessionToken, // proves later requests claiming this name are from the same device -- see play.html's auto-resume flow
                     left: false,
@@ -1473,6 +1704,34 @@ export function handleIncomingMessage(fromPhone, bodyText, explicitRoomCode, pre
                         votedCount: currentRoom.returnVotes.size,
                         totalNeeded: remainingActivePlayers.length
                     });
+                }
+            } else if (currentRoom.gameState === 'ON_THE_SPECTRUM_ROUND' && currentRoom.onTheSpectrum) {
+                const ots = currentRoom.onTheSpectrum;
+                if (actingPlayerName === ots.namedPlayerName && ots.phase === 'SET_TARGET') {
+                    // Nothing to guess without a locked target -- scrap this
+                    // slot and move straight to the next scheduled round.
+                    startOnTheSpectrumRound(associatedRoomCode);
+                } else if (ots.phase === 'GUESSING') {
+                    delete ots.guesses[actingPlayerName];
+                    const guessersNeeded = remainingActivePlayers.filter(p => p.name !== ots.namedPlayerName).length;
+                    if (Object.keys(ots.guesses).length >= guessersNeeded) {
+                        revealOnTheSpectrumRound(associatedRoomCode);
+                    } else {
+                        broadcastOnTheSpectrumLockInUpdate(associatedRoomCode);
+                    }
+                } else if (ots.phase === 'REVEAL') {
+                    ots.continueVotes.delete(actingPlayerName);
+                    const neededForMajority = Math.floor(remainingActivePlayers.length / 2) + 1;
+                    if (ots.continueVotes.size >= neededForMajority) {
+                        if (ots.continueVoteTimeout) { clearTimeout(ots.continueVoteTimeout); ots.continueVoteTimeout = null; }
+                        startOnTheSpectrumRound(associatedRoomCode);
+                    } else {
+                        broadcastToRoom(associatedRoomCode, {
+                            type: 'ON_THE_SPECTRUM_CONTINUE_UPDATE',
+                            votedCount: ots.continueVotes.size,
+                            totalNeeded: remainingActivePlayers.length
+                        });
+                    }
                 }
             }
         } else {
@@ -1723,6 +1982,57 @@ export function handleIncomingMessage(fromPhone, bodyText, explicitRoomCode, pre
                 tallyEmpossDurrDeclareVerdict(associatedRoomCode);
             }
             return `Got it, ${player.name}! Verdict logged.`;
+        }
+
+        return `⚠️ That action isn't available right now.`;
+    }
+
+    // 5.6. On the Spectrum round messages
+    if (currentRoom.gameState === 'ON_THE_SPECTRUM_ROUND') {
+        const ots = currentRoom.onTheSpectrum;
+        const command = cleanText.toUpperCase();
+
+        if (command.startsWith('SET_TARGET:') && ots.phase === 'SET_TARGET') {
+            if (actingPlayerName !== ots.namedPlayerName) {
+                return "⚠️ Only the named player sets the target this round.";
+            }
+            const rawValue = parseInt(command.split(':')[1], 10);
+            if (Number.isNaN(rawValue)) return "⚠️ Invalid slider value.";
+            ots.targetValue = Math.max(0, Math.min(100, rawValue));
+            ots.phase = 'GUESSING';
+
+            broadcastToRoom(associatedRoomCode, {
+                type: 'ON_THE_SPECTRUM_GUESSING_START',
+                namedPlayerName: ots.namedPlayerName,
+                statementText: ots.statementText
+            });
+            broadcastOnTheSpectrumLockInUpdate(associatedRoomCode);
+            return "Target locked in -- let the guessing begin!";
+        }
+
+        if (command.startsWith('GUESS:') && ots.phase === 'GUESSING') {
+            if (actingPlayerName === ots.namedPlayerName) {
+                return "⚠️ You're the named player this round -- nothing to guess.";
+            }
+            if (actingPlayerName in ots.guesses) {
+                return "Guess already locked in for this round.";
+            }
+            const rawValue = parseInt(command.split(':')[1], 10);
+            if (Number.isNaN(rawValue)) return "⚠️ Invalid slider value.";
+            ots.guesses[actingPlayerName] = Math.max(0, Math.min(100, rawValue));
+
+            broadcastOnTheSpectrumLockInUpdate(associatedRoomCode);
+
+            const activePlayers = Object.values(currentRoom.players).filter(p => !p.left);
+            const guessersNeeded = activePlayers.filter(p => p.name !== ots.namedPlayerName).length;
+            if (Object.keys(ots.guesses).length >= guessersNeeded) {
+                revealOnTheSpectrumRound(associatedRoomCode);
+            }
+            return `Got it, ${player.name}! Guess locked in.`;
+        }
+
+        if (command === 'CONTINUE' && ots.phase === 'REVEAL') {
+            return castOnTheSpectrumContinueVote(associatedRoomCode, actingPlayerName);
         }
 
         return `⚠️ That action isn't available right now.`;

@@ -62,6 +62,7 @@ if (btnSubmitSpectate) {
         // gameEngine.js's compareByRank exactly.
         function compareByRank(a, b) {
             return b.score - a.score
+                || (b.bullseyeCount || 0) - (a.bullseyeCount || 0)
                 || (b.correctAnswers || 0) - (a.correctAnswers || 0)
                 || (b.timesFastest || 0) - (a.timesFastest || 0)
                 || new Date(a.joinedAt) - new Date(b.joinedAt);
@@ -130,6 +131,11 @@ if (btnSubmitSpectate) {
                         // whole EmpossDurr sub-state through this payload too.
                         document.getElementById('room-status-text').innerText = "EmpossDurr in progress";
                         switchToEmpossDurrDiscussionUI(data.empossdurrRound || '?', data.empossdurrTotalRounds || '?');
+                    } else if (data.gameState === 'ON_THE_SPECTRUM_ROUND') {
+                        // Same reasoning as EmpossDurr above -- a refreshed TV
+                        // can't recover exactly which sub-phase was live, and
+                        // the next real broadcast corrects it within a second.
+                        document.getElementById('room-status-text').innerText = "On the Spectrum in progress";
                     }
                 }
                 if (data.type === 'LEADERBOARD_UPDATE') {
@@ -310,6 +316,37 @@ if (btnSubmitSpectate) {
                     switchToEmpossDurrDeclareResultUI(data.correct, data.impostorName);
                     playerAnswerStatus = {};
                 }
+
+                // On the Spectrum -- unlike EmpossDurr's secret word/clue, the
+                // statement itself isn't hidden from anyone, so it's fine to
+                // show on the TV from the start. Only the target VALUE stays
+                // hidden until every guess is locked in.
+                if (data.type === 'ON_THE_SPECTRUM_ROUND_START') {
+                    document.getElementById('room-status-text').innerText = "On the Spectrum";
+                    document.getElementById('lobby-countdown').innerText = '';
+                    switchToOnTheSpectrumSetTargetUI(data.namedPlayerName, data.statementText, data.roundNumber, data.totalRounds);
+                    playerAnswerStatus = {};
+                    updateLeaderboardUI(cachedPlayersSnapshot);
+                }
+                if (data.type === 'ON_THE_SPECTRUM_GUESSING_START') {
+                    document.getElementById('room-status-text').innerText = "On the Spectrum — Guessing";
+                    switchToOnTheSpectrumGuessingUI(data.namedPlayerName, data.statementText);
+                }
+                if (data.type === 'ON_THE_SPECTRUM_LOCKIN_UPDATE') {
+                    updateOnTheSpectrumLockInTallyTV(data.lockedInNames, data.totalGuessersNeeded);
+                    playerAnswerStatus = {};
+                    (data.lockedInNames || []).forEach(name => { playerAnswerStatus[name] = 'answered'; });
+                    updateLeaderboardUI(cachedPlayersSnapshot);
+                }
+                if (data.type === 'ON_THE_SPECTRUM_REVEAL') {
+                    document.getElementById('room-status-text').innerText = "On the Spectrum — Reveal";
+                    switchToOnTheSpectrumRevealUI(data.namedPlayerName, data.statementText, data.targetValue, data.results, data.tvLimit);
+                    playerAnswerStatus = {};
+                    updateLeaderboardUI(cachedPlayersSnapshot);
+                }
+                if (data.type === 'ON_THE_SPECTRUM_CONTINUE_UPDATE') {
+                    updateOnTheSpectrumContinueTallyTV(data.votedCount, data.totalNeeded);
+                }
             };
         }
 
@@ -344,7 +381,14 @@ if (btnSubmitSpectate) {
             SPEED3: { pulse: false, title: 'Fastest answer this round', imageBadge: true, iconClass: 'badge-speed3' },
             SPYGLASS: { pulse: false, title: 'Caught the impostor', imageBadge: true, iconClass: 'badge-spyglass' },
             IMPOSTOR_WIN: { pulse: false, title: 'Successful impostor', imageBadge: true, iconClass: 'badge-impostor-win' },
-            BULLSEYE: { pulse: false, title: 'Called a bluff in a split decision', imageBadge: true, iconClass: 'badge-bullseye' }
+            BULLSEYE: { pulse: false, title: 'Called a bluff in a split decision', imageBadge: true, iconClass: 'badge-bullseye' },
+            // On the Spectrum badges -- distinct key names from EmpossDurr's own
+            // BULLSEYE on purpose (different game, different achievement; reusing
+            // the name would make them visually indistinguishable in awards).
+            // No custom icon art for these yet, so a plain emoji + tinted
+            // background stands in, same rendering path as STREAK's tiers.
+            SPECTRUM_BULLSEYE: { pulse: false, title: 'Exact match on On the Spectrum', content: '🎯', bg: 'rgba(212, 175, 55, 0.08)', color: '#d4af37' },
+            SPECTRUM_SHARPSHOOTER: { pulse: false, title: 'Within 3 on On the Spectrum', content: '🏹', bg: 'rgba(45, 156, 219, 0.08)', color: '#2d9cdb' }
         };
 
         function renderAwardBadges(awards) {
@@ -365,6 +409,9 @@ if (btnSubmitSpectate) {
                     content = String(tier.threshold);
                     title = `${tier.threshold} correct answers in a row`;
                     styleAttr = ` style="background: ${tier.bg}; border: 2px solid ${tier.color}; color: ${tier.color};"`;
+                } else if (def.content) {
+                    content = def.content;
+                    styleAttr = ` style="background: ${def.bg}; border: 2px solid ${def.color};"`;
                 }
                 return `<span class="${classes.join(' ')}"${styleAttr} title="${title}">${content}</span>`;
             }).join('');
@@ -779,6 +826,69 @@ function switchToEmpossDurrDeclareResultUI(correct, impostorName) {
             <div style="font-size: 1rem; color: #94a3b8;">Round over -- next round starting shortly.</div>
         </div>
     `;
+}
+
+// ==========================================
+// ON THE SPECTRUM TV UI
+// ==========================================
+
+function switchToOnTheSpectrumSetTargetUI(namedPlayerName, statementText, round, totalRounds) {
+    const panel = document.getElementById('active-content-stage');
+    setStatusMessage(`<div style="font-weight: 600; color: #64748b;">Round ${round} / ${totalRounds}</div>`);
+    panel.innerHTML = `
+        <div class="panel-box" style="padding: 40px; flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; min-height: 400px; box-sizing: border-box;">
+            <div style="font-size: 0.85rem; font-weight: 600; color: #64748b; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 8px;">Active Deck: On the Spectrum</div>
+            <div style="font-size: 1.6rem; font-weight: 700; color: #ffffff; letter-spacing: -0.02em; margin-bottom: 20px;">${namedPlayerName}, set your true answer.</div>
+            <div style="font-size: 1.1rem; color: #e2e5e9; margin-bottom: 6px; max-width: 640px;">${statementText}</div>
+            <div style="font-size: 0.9rem; color: #64748b; margin-top: 12px;">Everyone else, get ready to guess.</div>
+        </div>
+    `;
+}
+
+function switchToOnTheSpectrumGuessingUI(namedPlayerName, statementText) {
+    const panel = document.getElementById('active-content-stage');
+    panel.innerHTML = `
+        <div class="panel-box" style="padding: 40px; flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; min-height: 400px; box-sizing: border-box;">
+            <div style="font-size: 0.85rem; font-weight: 600; color: #64748b; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 8px;">Guessing ${namedPlayerName}'s answer</div>
+            <div style="font-size: 1.3rem; font-weight: 700; color: #ffffff; letter-spacing: -0.02em; margin-bottom: 24px; max-width: 640px;">${statementText}</div>
+            <div id="ots-tv-lockin-tally" style="font-size: 1.1rem; font-weight: 600; color: #ffa500;">0 / 0 locked in</div>
+        </div>
+    `;
+}
+
+function updateOnTheSpectrumLockInTallyTV(lockedInNames, totalGuessersNeeded) {
+    const el = document.getElementById('ots-tv-lockin-tally');
+    if (el) el.innerText = `${(lockedInNames || []).length} / ${totalGuessersNeeded || 0} locked in`;
+}
+
+// Truncates to tvLimit rows (a shared TV can't scroll, and past a handful the
+// rows get too thin to read from across a room) -- the complete sorted list
+// still goes to every phone via /api/room-status, own row highlighted there.
+function switchToOnTheSpectrumRevealUI(namedPlayerName, statementText, targetValue, results, tvLimit) {
+    const panel = document.getElementById('active-content-stage');
+    const shown = (results || []).slice(0, tvLimit || 6);
+    const remaining = (results || []).length - shown.length;
+    const rows = shown.map(r => `
+        <div style="display: flex; justify-content: space-between; align-items: center; background: #14161d; border: 1px solid #222630; border-radius: 8px; padding: 12px 18px;">
+            <span style="font-weight: 600; color: #f4f5f6;">${r.name} — ${r.value}</span>
+            <span style="font-weight: 700; color: #00e676;">&Delta;${r.distance} &middot; +${r.points}</span>
+        </div>
+    `).join('') || '<div style="color: #64748b;">Nobody guessed this round.</div>';
+
+    panel.innerHTML = `
+        <div class="panel-box" style="padding: 40px; flex: 1; display: flex; flex-direction: column; justify-content: center;">
+            <div style="font-size: 0.85rem; font-weight: 600; color: #64748b; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 8px; text-align: center;">${namedPlayerName}'s actual answer: ${targetValue}</div>
+            <div style="font-size: 1rem; color: #94a3b8; margin-bottom: 24px; text-align: center;">${statementText}</div>
+            <div style="display: flex; flex-direction: column; gap: 10px;">${rows}</div>
+            ${remaining > 0 ? `<div style="text-align: center; color: #64748b; margin-top: 12px; font-size: 0.9rem;">+${remaining} more -- check your phone for the full list</div>` : ''}
+            <div id="ots-tv-continue-tally" style="text-align: center; color: #64748b; margin-top: 20px; font-size: 0.9rem;">0 / 0 want to continue</div>
+        </div>
+    `;
+}
+
+function updateOnTheSpectrumContinueTallyTV(votedCount, totalNeeded) {
+    const el = document.getElementById('ots-tv-continue-tally');
+    if (el) el.innerText = `${votedCount ?? 0} / ${totalNeeded ?? 0} want to continue`;
 }
 
 // Rebuilds the "Active Module Election" panel from scratch -- switchToCategoryVotingUI/

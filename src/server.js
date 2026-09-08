@@ -285,6 +285,31 @@ app.post('/api/room-status', (req, res) => {
                 myScore, myCorrectAnswers, myLeft, myEmoji
             });
         }
+        if (targetRoom && targetRoom.gameState === 'ON_THE_SPECTRUM_ROUND' && targetRoom.onTheSpectrum) {
+            const ots = targetRoom.onTheSpectrum;
+            const activePlayers = Object.values(targetRoom.players).filter(p => !p.left);
+            const isNamedPlayer = playerName === ots.namedPlayerName;
+            return res.json({
+                phase: 'ON_THE_SPECTRUM_ROUND_PHASE',
+                otsPhase: ots.phase, // SET_TARGET | GUESSING | REVEAL
+                namedPlayerName: ots.namedPlayerName,
+                statementText: ots.statementText,
+                roundNumber: ots.roundIndex + 1,
+                totalRounds: ots.totalRounds,
+                isNamedPlayer,
+                lockedInNames: ots.phase === 'GUESSING' ? Object.keys(ots.guesses) : [],
+                totalGuessersNeeded: activePlayers.filter(p => p.name !== ots.namedPlayerName).length,
+                iHaveGuessed: playerName ? (playerName in ots.guesses) : false,
+                myGuessValue: (playerName && ots.guesses[playerName] !== undefined) ? ots.guesses[playerName] : null,
+                results: ots.phase === 'REVEAL' ? ots.lastResults : null,
+                targetValue: ots.phase === 'REVEAL' ? ots.targetValue : null,
+                tvLimit: 6,
+                continueVotedCount: ots.phase === 'REVEAL' ? ots.continueVotes.size : 0,
+                continueTotalNeeded: activePlayers.length,
+                iHaveVotedContinue: ots.phase === 'REVEAL' && playerName ? ots.continueVotes.has(playerName) : false,
+                myScore, myCorrectAnswers, myLeft, myEmoji
+            });
+        }
         if (targetRoom && targetRoom.gameState === 'GAME_OVER') {
             // Same ordering the TV's final leaderboard used, so a player's phone
             // shows the exact placement (and can style itself gold/silver/bronze)
@@ -338,20 +363,17 @@ async function startServer() {
                     
                     if (data.type === 'REGISTER_SCREEN') {
                         const roomCode = data.roomCode;
-                        
-                        // Check structural allocation container baseline overrides
+
+                        // A room only ever comes into existence through the gated /host
+                        // flow -- this used to auto-create one right here for any
+                        // unrecognized code sent over a raw WebSocket connection,
+                        // completely independent of (and bypassing) the access-code
+                        // gate. ROOM_CLOSED reuses the exact same client handler that
+                        // already bounces the TV back to its gateway screen and closes
+                        // the socket for an admin-reset or emptied-out room.
                         if (!activeRooms[roomCode]) {
-                            activeRooms[roomCode] = {
-                                gameState: 'LOBBY', players: {}, screens: [], timerInterval: null,
-                                lobbyTimerInterval: null, categoryTimerInterval: null, revealTimeout: null,
-                                lobbySecondsLeft: 60, categorySecondsLeft: 30, gameSecondsLeft: 25, winningGameMode: null,
-                                activeQuestionData: null, currentQuestionData: null, activeDeckName: null, activeCategoryKey: null, answers: {},
-                                answerOrder: [],
-                                questionBank: [], questionGroups: {}, currentQuestionIndex: -1, askedQuestionIds: new Set(),
-                                requestedQuestionCount: resolveRequestedQuestionCount(undefined),
-                                votes: { TRIVI_YEAH: 0, COUNTRY_MONKEY: 0, EMPOSSDURR: 0, FLAG_ME_DOWN: 0, ON_THE_SPECTRUM: 0 },
-                                categoryVotes: {}
-                            };
+                            socket.send(JSON.stringify({ type: 'ROOM_CLOSED' }));
+                            return;
                         }
 
                         activeRooms[roomCode].screens.push(socket);

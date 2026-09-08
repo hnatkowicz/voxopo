@@ -71,6 +71,7 @@
         #game-screen { display: none; }
         #category-screen { display: none; }
         #empossdurr-screen { display: none; }
+        #on-the-spectrum-screen { display: none; }
 
         /* Word (green, "you're a real player") vs clue (orange, "you're the
            impostor") -- color alone should make a glanced-at phone read
@@ -88,6 +89,24 @@
         .ed-round-indicator { font-size: 0.8rem; color: #64748b; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 16px; }
         .ed-status-line { font-size: 0.85rem; color: #64748b; text-align: center; margin: 12px 0; }
         .ed-timer { font-size: 2rem; font-weight: 700; color: #ffffff; text-align: center; margin: 12px 0; }
+
+        .ots-statement { font-size: 1.15rem; font-weight: 600; color: #ffffff; text-align: center; line-height: 1.4; margin: 16px 0 24px 0; }
+        /* Above the slider, not overlapping it -- a dragging thumb/finger
+           would otherwise obscure the exact value at the worst moment. */
+        .ots-slider-value { font-size: 2.2rem; font-weight: 700; color: #00e676; text-align: center; margin-bottom: 8px; }
+        .ots-slider-row { display: flex; align-items: center; gap: 12px; margin: 8px 0 20px 0; }
+        .ots-slider-label { font-size: 0.75rem; color: #64748b; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; flex-shrink: 0; width: 64px; }
+        .ots-slider-label.ots-label-right { text-align: right; }
+        /* Horizontal range input, deliberately not vertical -- a vertical
+           drag gesture on a phone card fights with the page's own scroll. */
+        .ots-slider { flex: 1; -webkit-appearance: none; appearance: none; height: 8px; border-radius: 4px; background: #1e222b; outline: none; }
+        .ots-slider::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 28px; height: 28px; border-radius: 50%; background: #00e676; cursor: pointer; border: 3px solid #0d0e11; }
+        .ots-slider::-moz-range-thumb { width: 28px; height: 28px; border-radius: 50%; background: #00e676; cursor: pointer; border: none; }
+        .ots-results-list { display: flex; flex-direction: column; gap: 8px; margin: 16px 0; text-align: left; }
+        .ots-result-row { display: flex; justify-content: space-between; align-items: center; padding: 10px 14px; background: #1e222b; border: 1px solid #222630; border-radius: 8px; font-size: 0.9rem; }
+        .ots-result-row.ots-result-me { border-color: #00e676; background: rgba(0, 230, 118, 0.06); }
+        .ots-result-name { font-weight: 600; color: #f4f5f6; }
+        .ots-result-points { font-weight: 700; color: #00e676; }
 
         .btn-ready { background: #1e222b; border: 1px solid #222630; color: #e2e5e9; }
         .btn-ready.ed-active { background: rgba(0, 230, 118, 0.08); border-color: #00e676; color: #00e676; }
@@ -204,7 +223,7 @@
                 <div class="module-row" onclick="selectModule(this, 'COUNTRY_MONKEY')">Country Monkey <span class="module-descriptor">Guess the highlighted country on the map.</span></div>
                 <div class="module-row" onclick="selectModule(this, 'EMPOSSDURR')">EmpossDurr <span class="module-descriptor">Find the impostor hiding in the group.</span></div>
                 <div class="module-row" onclick="selectModule(this, 'FLAG_ME_DOWN')">Flag Me Down <span class="module-descriptor">World and historical flags, banners, and symbols.</span></div>
-                <div class="module-row" onclick="selectModule(this, 'ON_THE_SPECTRUM')">On The Spectrum <span class="module-descriptor">Guess where it lands between two extremes.</span></div>
+                <div class="module-row" onclick="selectModule(this, 'ON_THE_SPECTRUM')">On The Spectrum <span class="module-descriptor">Guess how much a friend agrees or disagrees.</span></div>
             </div>
         </div>
 
@@ -238,7 +257,7 @@
                 <div class="module-row" data-mode-key="COUNTRY_MONKEY" onclick="submitModeRevote(this, 'COUNTRY_MONKEY')">Country Monkey <span class="module-descriptor">Guess the highlighted country on the map.</span></div>
                 <div class="module-row" data-mode-key="EMPOSSDURR" onclick="submitModeRevote(this, 'EMPOSSDURR')">EmpossDurr <span class="module-descriptor">Find the impostor hiding in the group.</span></div>
                 <div class="module-row" data-mode-key="FLAG_ME_DOWN" onclick="submitModeRevote(this, 'FLAG_ME_DOWN')">Flag Me Down <span class="module-descriptor">World and historical flags, banners, and symbols.</span></div>
-                <div class="module-row" data-mode-key="ON_THE_SPECTRUM" onclick="submitModeRevote(this, 'ON_THE_SPECTRUM')">On The Spectrum <span class="module-descriptor">Guess where it lands between two extremes.</span></div>
+                <div class="module-row" data-mode-key="ON_THE_SPECTRUM" onclick="submitModeRevote(this, 'ON_THE_SPECTRUM')">On The Spectrum <span class="module-descriptor">Guess how much a friend agrees or disagrees.</span></div>
             </div>
         </div>
 
@@ -303,6 +322,24 @@
         <div class="ed-splash-sub">Everyone, listen up.</div>
     </div>
     <audio id="declare-sound" src="/audio/impostor-declares.wav" preload="auto"></audio>
+
+    <div id="on-the-spectrum-screen" class="card">
+        <h1>On the Spectrum</h1>
+        <div class="ed-round-indicator" id="ots-round-indicator">Round - / -</div>
+        <div class="player-badge">
+            <span class="player-badge-identity"><span id="ots-badge-emoji">-</span> <span id="ots-badge-name" class="player-badge-name">-</span></span>
+            <span class="player-badge-room">Room <strong id="ots-badge-room">-</strong> · Score <strong id="ots-badge-score">0</strong></span>
+        </div>
+
+        <!-- Rebuilt only when the phase (or this player's role in it) actually
+             changes -- same reasoning as EmpossDurr's #ed-phase-content, so a
+             mid-drag slider never gets yanked out from under a finger by a
+             poll tick landing mid-gesture. -->
+        <div id="ots-phase-content"></div>
+
+        <div id="ots-feedback" class="feedback"></div>
+        <button class="btn btn-leave" onclick="leaveRoom()">Leave Room</button>
+    </div>
 
     <!-- SCREEN 4: ULTRA-CLEAN FULL-WIDTH QUESTION ANSWER CONTROLLER -->
     <div id="question-screen" class="card" style="display: none;">
@@ -375,7 +412,7 @@
         // both missed a spot). Hiding every known screen and showing only
         // the requested one makes that whole bug class impossible going
         // forward -- a future new screen just needs adding here once.
-        const ALL_PLAY_SCREENS = ['login-screen', 'game-screen', 'category-screen', 'empossdurr-screen', 'question-screen', 'game-over-screen'];
+        const ALL_PLAY_SCREENS = ['login-screen', 'game-screen', 'category-screen', 'empossdurr-screen', 'on-the-spectrum-screen', 'question-screen', 'game-over-screen'];
         function showOnlyPlayScreen(idToShow) {
             ALL_PLAY_SCREENS.forEach(id => {
                 document.getElementById(id).style.display = (id === idToShow) ? 'block' : 'none';
@@ -554,6 +591,13 @@
                             renderEmpossDurr(data, nickname, roomCode);
                         }
 
+                        // On the Spectrum's own round loop -- set-target, blind
+                        // guessing, and the reveal all live inside this one screen.
+                        if (data.phase === 'ON_THE_SPECTRUM_ROUND_PHASE') {
+                            showOnlyPlayScreen('on-the-spectrum-screen');
+                            renderOnTheSpectrum(data, nickname, roomCode);
+                        }
+
                         // Loop exhausted its question bank: show this player's own placement
                         // (mirrors the TV's medal styling). Polling keeps running (not
                         // cleared here anymore) so this phone can still detect a
@@ -570,6 +614,7 @@
                             showOnlyPlayScreen('game-screen');
                             activeQuestionId = null; // next game's first question should always render fresh
                             edLastPhaseKey = null; // next EmpossDurr game's first round should render fresh
+                            otsLastPhaseKey = null; // next On the Spectrum game's first round should render fresh
 
                             // Highlights whichever mode this player currently has
                             // voted for (their original join-time pick, or a
@@ -879,6 +924,140 @@
                 }
             }
         }
+
+        let otsLastPhaseKey = null; // "<otsPhase>|<round>|<isNamedPlayer>|<iHaveGuessed>" -- rebuild only when this changes
+
+        function renderOnTheSpectrum(data, nickname, roomCode) {
+            document.getElementById('ots-badge-name').innerText = nickname;
+            document.getElementById('ots-badge-emoji').innerText = chosenAvatar;
+            document.getElementById('ots-badge-room').innerText = roomCode;
+            document.getElementById('ots-round-indicator').innerText = `Round ${data.roundNumber} of ${data.totalRounds}`;
+
+            const phaseKey = `${data.otsPhase}|${data.roundNumber}|${data.isNamedPlayer}|${data.iHaveGuessed}`;
+            if (phaseKey !== otsLastPhaseKey) {
+                otsLastPhaseKey = phaseKey;
+                buildOnTheSpectrumPhaseContent(data);
+            } else {
+                updateOnTheSpectrumLiveBits(data);
+            }
+        }
+
+        function buildOnTheSpectrumPhaseContent(data) {
+            const container = document.getElementById('ots-phase-content');
+            const feedback = document.getElementById('ots-feedback');
+            feedback.style.display = 'none';
+
+            const sliderRow = (sliderId, readoutId, startValue) => `
+                <div class="ots-slider-value" id="${readoutId}">${startValue}</div>
+                <div class="ots-slider-row">
+                    <span class="ots-slider-label">Disagree</span>
+                    <input type="range" min="0" max="100" value="${startValue}" id="${sliderId}" class="ots-slider"
+                        oninput="document.getElementById('${readoutId}').innerText = this.value">
+                    <span class="ots-slider-label ots-label-right">Agree</span>
+                </div>
+            `;
+
+            if (data.otsPhase === 'SET_TARGET') {
+                if (data.isNamedPlayer) {
+                    container.innerHTML = `
+                        <p class="ed-status-line">Set where YOU actually land on this one, then lock it in. Nobody sees the number until everyone's guessed.</p>
+                        <div class="ots-statement">${data.statementText}</div>
+                        ${sliderRow('ots-target-slider', 'ots-target-readout', 50)}
+                        <button class="btn" onclick="submitOtsTarget()">Lock In My Answer</button>
+                    `;
+                } else {
+                    container.innerHTML = `
+                        <p class="ed-status-line">${data.namedPlayerName} is setting their answer...</p>
+                        <div class="ots-statement">${data.statementText}</div>
+                    `;
+                }
+                return;
+            }
+
+            if (data.otsPhase === 'GUESSING') {
+                if (data.isNamedPlayer) {
+                    container.innerHTML = `
+                        <p class="ed-status-line">Everyone's guessing your answer now.</p>
+                        <div class="ots-statement">${data.statementText}</div>
+                        <div class="ed-status-line" id="ots-lockin-tally">0 / ${data.totalGuessersNeeded ?? 0} locked in</div>
+                    `;
+                } else if (data.iHaveGuessed) {
+                    container.innerHTML = `
+                        <div class="ots-statement">${data.statementText}</div>
+                        <p class="ed-status-line">You guessed ${data.myGuessValue}. Waiting on everyone else...</p>
+                        <div class="ed-status-line" id="ots-lockin-tally">0 / ${data.totalGuessersNeeded ?? 0} locked in</div>
+                    `;
+                } else {
+                    container.innerHTML = `
+                        <div class="ots-statement">${data.statementText}</div>
+                        ${sliderRow('ots-guess-slider', 'ots-guess-readout', 50)}
+                        <button class="btn" onclick="submitOtsGuess()">Lock In My Guess</button>
+                        <div class="ed-status-line" id="ots-lockin-tally">0 / ${data.totalGuessersNeeded ?? 0} locked in</div>
+                    `;
+                }
+                updateOnTheSpectrumLiveBits(data);
+                return;
+            }
+
+            if (data.otsPhase === 'REVEAL') {
+                const myName = localStorage.getItem('randomania_nickname');
+                const rows = (data.results || []).map(r => `
+                    <div class="ots-result-row ${r.name === myName ? 'ots-result-me' : ''}">
+                        <span class="ots-result-name">${r.name} — ${r.value}</span>
+                        <span class="ots-result-points">Δ${r.distance} · +${r.points}</span>
+                    </div>
+                `).join('') || '<div class="ed-status-line">Nobody guessed this round.</div>';
+                container.innerHTML = `
+                    <div class="ots-statement">${data.statementText}</div>
+                    <p class="ed-status-line">${data.namedPlayerName}'s actual answer: <strong>${data.targetValue}</strong></p>
+                    <div class="ots-results-list">${rows}</div>
+                    <div class="ed-status-line" id="ots-continue-tally">${data.continueVotedCount ?? 0} / ${data.continueTotalNeeded ?? 0} want to continue</div>
+                    <button class="btn" id="ots-continue-btn" onclick="submitOtsContinue()" ${data.iHaveVotedContinue ? 'disabled' : ''}>${data.iHaveVotedContinue ? "Waiting on the room..." : "Continue"}</button>
+                `;
+                return;
+            }
+
+            container.innerHTML = `<p class="ed-status-line">Waiting on the room...</p>`;
+        }
+
+        // Updates just the live numbers (lock-in tally, continue tally) without
+        // rebuilding the slider itself -- same reasoning as EmpossDurr's
+        // updateEmpossDurrLiveBits, so a mid-drag gesture never gets reset.
+        function updateOnTheSpectrumLiveBits(data) {
+            if (data.otsPhase === 'GUESSING') {
+                const tally = document.getElementById('ots-lockin-tally');
+                if (tally) tally.innerText = `${(data.lockedInNames || []).length} / ${data.totalGuessersNeeded ?? 0} locked in`;
+            } else if (data.otsPhase === 'REVEAL') {
+                const tally = document.getElementById('ots-continue-tally');
+                if (tally) tally.innerText = `${data.continueVotedCount ?? 0} / ${data.continueTotalNeeded ?? 0} want to continue`;
+            }
+        }
+
+        async function sendOnTheSpectrumAction(body) {
+            const registeredName = localStorage.getItem('randomania_nickname') || 'test-handset';
+            const feedback = document.getElementById('ots-feedback');
+            try {
+                const response = await fetch('/api/message', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ From: registeredName, Body: body, roomCode: localStorage.getItem('randomania_roomcode') })
+                });
+                const data = await response.json();
+                showFeedback(feedback, data.reply, "rgba(0,230,118,0.06)", "#00e676", "rgba(0,230,118,0.1)");
+            } catch (error) {
+                showFeedback(feedback, "❌ Action transmission failed.", "rgba(255,71,87,0.06)", "#ff4757", "rgba(255,71,87,0.1)");
+            }
+        }
+
+        function submitOtsTarget() {
+            const value = document.getElementById('ots-target-slider').value;
+            sendOnTheSpectrumAction(`SET_TARGET:${value}`);
+        }
+        function submitOtsGuess() {
+            const value = document.getElementById('ots-guess-slider').value;
+            sendOnTheSpectrumAction(`GUESS:${value}`);
+        }
+        function submitOtsContinue() { sendOnTheSpectrumAction('CONTINUE'); }
 
         function showEmpossDurrDeclareSplash(impostorName, isSelf) {
             const splash = document.getElementById('ed-declare-splash');
