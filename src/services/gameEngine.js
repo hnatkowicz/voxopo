@@ -52,6 +52,10 @@ const ON_THE_SPECTRUM_EXACT_POINTS = 7;
 const ON_THE_SPECTRUM_WITHIN_3_POINTS = 4;
 const ON_THE_SPECTRUM_WITHIN_5_POINTS = 2;
 const ON_THE_SPECTRUM_WITHIN_8_POINTS = 1;
+// Purely for the "Lost in Space" badge, not scoring -- anything past 8 away
+// already earns 0 points, so this just adds a laugh on top of a whiff big
+// enough to actually be funny rather than just "not close."
+const ON_THE_SPECTRUM_LOST_IN_SPACE_DISTANCE = 25;
 // Same "give the room time to actually argue about it" reasoning as the
 // GAME_OVER return vote, just longer -- the whole point of the reveal is the
 // discussion afterward, not rushing to the next topic.
@@ -1327,6 +1331,11 @@ function revealOnTheSpectrumRound(roomCode) {
                 awardEmpossDurrBadge(player, 'SPECTRUM_BULLSEYE');
             } else if (distance <= 3) {
                 awardEmpossDurrBadge(player, 'SPECTRUM_SHARPSHOOTER');
+            } else if (distance >= ON_THE_SPECTRUM_LOST_IN_SPACE_DISTANCE) {
+                // Purely for laughs -- every guesser this far off in the same
+                // round gets it, so a room full of wild misses is funnier,
+                // not penalized further.
+                awardEmpossDurrBadge(player, 'SPECTRUM_LOST_IN_SPACE');
             }
         }
         return { name, value, distance, points };

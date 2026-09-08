@@ -245,6 +245,13 @@ body {
             -webkit-mask-image: url('/spectrum-bow.svg');
             mask-image: url('/spectrum-bow.svg');
         }
+        /* A distinct alien-green, separate from every other badge color, so
+           this one reads as its own "just for fun" thing at a glance. */
+        .badge-spectrum-lost-in-space {
+            background-color: #a3e635;
+            -webkit-mask-image: url('/spectrum-lost-in-space.svg');
+            mask-image: url('/spectrum-lost-in-space.svg');
+        }
 
         /* Light, unobtrusive context appended after a module's name -- never
            competes with the name itself for attention. */

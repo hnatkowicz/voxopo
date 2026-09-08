@@ -395,7 +395,10 @@ if (btnSubmitSpectate) {
             // mode's own gold/blue instead of the shared "permanent" green --
             // /spectrum-target.svg and /spectrum-bow.svg are art files, not yet drawn.
             SPECTRUM_BULLSEYE: { pulse: false, title: 'Exact match on On the Spectrum', imageBadge: true, iconClass: 'badge-spectrum-bullseye' },
-            SPECTRUM_SHARPSHOOTER: { pulse: false, title: 'Within 3 on On the Spectrum', imageBadge: true, iconClass: 'badge-spectrum-sharpshooter' }
+            SPECTRUM_SHARPSHOOTER: { pulse: false, title: 'Within 3 on On the Spectrum', imageBadge: true, iconClass: 'badge-spectrum-sharpshooter' },
+            // Just for laughs -- awarded to EVERY guesser 25+ off in the same
+            // round, so a room full of wild misses is funnier, not penalized.
+            SPECTRUM_LOST_IN_SPACE: { pulse: false, title: 'Lost in Space -- 25+ off on On the Spectrum', imageBadge: true, iconClass: 'badge-spectrum-lost-in-space' }
         };
 
         function renderAwardBadges(awards) {
