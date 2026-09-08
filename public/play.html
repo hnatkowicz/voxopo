@@ -103,10 +103,18 @@
         .ots-slider::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 28px; height: 28px; border-radius: 50%; background: #00e676; cursor: pointer; border: 3px solid #0d0e11; }
         .ots-slider::-moz-range-thumb { width: 28px; height: 28px; border-radius: 50%; background: #00e676; cursor: pointer; border: none; }
         .ots-results-list { display: flex; flex-direction: column; gap: 8px; margin: 16px 0; text-align: left; }
-        .ots-result-row { display: flex; justify-content: space-between; align-items: center; padding: 10px 14px; background: #1e222b; border: 1px solid #222630; border-radius: 8px; font-size: 0.9rem; }
+        /* Same filled-bar language as the module vote bars elsewhere in
+           RandoMania!, all one color (this mode's own purple) -- the bar's
+           only job is to show the 0-100 value at a glance, not to also
+           encode accuracy, so it never changes color row to row. */
+        .ots-result-row { display: flex; align-items: center; gap: 12px; padding: 10px 14px; background: #1e222b; border: 1px solid #222630; border-radius: 8px; font-size: 0.9rem; }
         .ots-result-row.ots-result-me { border-color: #00e676; background: rgba(0, 230, 118, 0.06); }
-        .ots-result-name { font-weight: 600; color: #f4f5f6; }
-        .ots-result-points { font-weight: 700; color: #00e676; }
+        .ots-result-row.ots-result-named { border-color: #bb6bd9; }
+        .ots-result-name { font-weight: 600; color: #f4f5f6; flex-shrink: 0; min-width: 30%; }
+        .ots-result-named-tag { color: #bb6bd9; font-weight: 700; font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.06em; margin-left: 6px; }
+        .ots-result-bar-track { flex: 1; background: #14161d; height: 10px; border-radius: 20px; overflow: hidden; }
+        .ots-result-bar-fill { background: #bb6bd9; height: 100%; }
+        .ots-result-value { font-weight: 700; color: #f4f5f6; min-width: 28px; text-align: right; flex-shrink: 0; }
 
         .btn-ready { background: #1e222b; border: 1px solid #222630; color: #e2e5e9; }
         .btn-ready.ed-active { background: rgba(0, 230, 118, 0.08); border-color: #00e676; color: #00e676; }
@@ -250,29 +258,45 @@
              unrelated, competing screens rather than one sequence, since
              typing START is the thing you do once you're happy with the
              mode, not a separate first step. -->
-        <div class="input-group">
-            <label>1. Playing again? Confirm or change the mode</label>
-            <div class="module-list" id="mode-revote-list">
-                <div class="module-row" data-mode-key="TRIVI_YEAH" onclick="submitModeRevote(this, 'TRIVI_YEAH')">Trivi-yeah! <span class="module-descriptor">Multiple-choice trivia across a mix of subjects.</span></div>
-                <div class="module-row" data-mode-key="COUNTRY_MONKEY" onclick="submitModeRevote(this, 'COUNTRY_MONKEY')">Country Monkey <span class="module-descriptor">Guess the highlighted country on the map.</span></div>
-                <div class="module-row" data-mode-key="EMPOSSDURR" onclick="submitModeRevote(this, 'EMPOSSDURR')">EmpossDurr <span class="module-descriptor">Find the impostor hiding in the group.</span></div>
-                <div class="module-row" data-mode-key="FLAG_ME_DOWN" onclick="submitModeRevote(this, 'FLAG_ME_DOWN')">Flag Me Down <span class="module-descriptor">World and historical flags, banners, and symbols.</span></div>
-                <div class="module-row" data-mode-key="ON_THE_SPECTRUM" onclick="submitModeRevote(this, 'ON_THE_SPECTRUM')">On The Spectrum <span class="module-descriptor">Guess how much a friend agrees or disagrees.</span></div>
+        <!-- Normal lobby-wait content -- hidden instead of shown whenever this
+             player has left (see #game-left-content below), since the room's
+             real phase keeps right on changing for everyone else and this
+             screen only makes sense while genuinely sitting in LOBBY_PHASE. -->
+        <div id="game-lobby-content">
+            <div class="input-group">
+                <label>1. Playing again? Confirm or change the mode</label>
+                <div class="module-list" id="mode-revote-list">
+                    <div class="module-row" data-mode-key="TRIVI_YEAH" onclick="submitModeRevote(this, 'TRIVI_YEAH')">Trivi-yeah! <span class="module-descriptor">Multiple-choice trivia across a mix of subjects.</span></div>
+                    <div class="module-row" data-mode-key="COUNTRY_MONKEY" onclick="submitModeRevote(this, 'COUNTRY_MONKEY')">Country Monkey <span class="module-descriptor">Guess the highlighted country on the map.</span></div>
+                    <div class="module-row" data-mode-key="EMPOSSDURR" onclick="submitModeRevote(this, 'EMPOSSDURR')">EmpossDurr <span class="module-descriptor">Find the impostor hiding in the group.</span></div>
+                    <div class="module-row" data-mode-key="FLAG_ME_DOWN" onclick="submitModeRevote(this, 'FLAG_ME_DOWN')">Flag Me Down <span class="module-descriptor">World and historical flags, banners, and symbols.</span></div>
+                    <div class="module-row" data-mode-key="ON_THE_SPECTRUM" onclick="submitModeRevote(this, 'ON_THE_SPECTRUM')">On The Spectrum <span class="module-descriptor">Guess how much a friend agrees or disagrees.</span></div>
+                </div>
             </div>
+
+            <div class="input-group">
+                <label>2. Vote START to lock in</label>
+                <input type="text" id="game-input" placeholder="Type START...">
+            </div>
+            <button class="btn" onclick="submitGameAction()">Submit Action</button>
         </div>
 
-        <div class="input-group">
-            <label>2. Vote START to lock in</label>
-            <input type="text" id="game-input" placeholder="Type START...">
+        <!-- Shown instead of the above whenever this player has left --
+             the room may well be mid-round for everyone else, so the
+             interactive mode-revote/START controls would either do nothing
+             or produce a confusing "not available" reply if left active. -->
+        <div id="game-left-content" style="display: none;">
+            <p class="subtitle" style="margin: 8px 0 20px 0;">You've left the room. Rejoin any time -- your score is right where you left it.</p>
+            <button class="btn" onclick="rejoinRoom()">Rejoin Room</button>
         </div>
-        <button class="btn" onclick="submitGameAction()">Submit Action</button>
+
         <div id="game-feedback" class="feedback"></div>
 
         <!-- Without this, a phone silently auto-resumed into a stale remembered
              room (see attemptAutoResume) has no way back to the login form to
              join a different one -- Leave Room used to exist only on the
              question screen, which this phase never reaches. -->
-        <button class="btn btn-leave" onclick="leaveRoom()">Leave Room</button>
+        <button class="btn btn-leave" id="btn-leave-game-screen" onclick="leaveRoom()">Leave Room</button>
     </div>
 
     <!-- SCREEN 3: CATEGORY VOTING GAMEPAD (CLEAN - NO DECORATIVE EMOJIS!) -->
@@ -446,11 +470,18 @@
                 if (!data || data.myScore === null || data.myScore === undefined) return;
 
                 if (data.myLeft) {
-                    // They chose to leave -- don't silently drop them back in.
-                    // Pre-fill the form so rejoining is still just one tap,
-                    // matching what Leave Room itself already sets up.
-                    document.getElementById('room-code').value = storedRoom;
-                    document.getElementById('player-name').value = storedName;
+                    // They chose to leave -- don't silently drop them back in,
+                    // but land on the same "left" screen Leave Room itself
+                    // shows, not the full pre-join form -- a reload shouldn't
+                    // look any different from tapping Leave Room a moment ago.
+                    chosenAvatar = data.myEmoji || chosenAvatar;
+                    document.getElementById('badge-name').innerText = storedName;
+                    document.getElementById('badge-room').innerText = storedRoom;
+                    document.getElementById('badge-emoji').innerText = chosenAvatar;
+                    document.getElementById('game-lobby-content').style.display = 'none';
+                    document.getElementById('game-left-content').style.display = 'block';
+                    document.getElementById('btn-leave-game-screen').style.display = 'none';
+                    showOnlyPlayScreen('game-screen');
                     return;
                 }
 
@@ -1001,16 +1032,20 @@
 
             if (data.otsPhase === 'REVEAL') {
                 const myName = localStorage.getItem('randomania_nickname');
-                const rows = (data.results || []).map(r => `
-                    <div class="ots-result-row ${r.name === myName ? 'ots-result-me' : ''}">
-                        <span class="ots-result-name">${r.name} — ${r.value}</span>
-                        <span class="ots-result-points">Δ${r.distance} · +${r.points}</span>
+                const otsResultBarRow = (name, value, extraClass, tag) => `
+                    <div class="ots-result-row ${extraClass}">
+                        <span class="ots-result-name">${name}${tag ? `<span class="ots-result-named-tag">${tag}</span>` : ''}</span>
+                        <div class="ots-result-bar-track"><div class="ots-result-bar-fill" style="width: ${Math.max(0, Math.min(100, value))}%;"></div></div>
+                        <span class="ots-result-value">${value}</span>
                     </div>
-                `).join('') || '<div class="ed-status-line">Nobody guessed this round.</div>';
+                `;
+                const namedRow = otsResultBarRow(data.namedPlayerName, data.targetValue, 'ots-result-named', 'actual');
+                const rows = (data.results || []).map(r =>
+                    otsResultBarRow(r.name, r.value, r.name === myName ? 'ots-result-me' : '', '')
+                ).join('') || '<div class="ed-status-line">Nobody guessed this round.</div>';
                 container.innerHTML = `
                     <div class="ots-statement">${data.statementText}</div>
-                    <p class="ed-status-line">${data.namedPlayerName}'s actual answer: <strong>${data.targetValue}</strong></p>
-                    <div class="ots-results-list">${rows}</div>
+                    <div class="ots-results-list">${namedRow}${rows}</div>
                     <div class="ed-status-line" id="ots-continue-tally">${data.continueVotedCount ?? 0} / ${data.continueTotalNeeded ?? 0} want to continue</div>
                     <button class="btn" id="ots-continue-btn" onclick="submitOtsContinue()" ${data.iHaveVotedContinue ? 'disabled' : ''}>${data.iHaveVotedContinue ? "Waiting on the room..." : "Continue"}</button>
                 `;
@@ -1248,16 +1283,63 @@
                 console.error("Leave request failed to transmit.");
             }
 
+            // Stops here rather than the pre-join login form -- the room and
+            // this player's score are both still very much alive (LEAVE only
+            // marks them inactive, it doesn't erase anything), so dropping
+            // back to a blank room-code-and-name form felt like starting
+            // over. Polling stops too; there's nothing left to react to on a
+            // static "you left" screen, and rejoinRoom() restarts it.
             clearInterval(roomStateTrackerInterval);
 
-            // Room code + name stay filled in so rejoining is a single tap away --
-            // the server recognizes the name as a rejoin and restores the score.
-            document.getElementById('room-code').value = roomCode || '';
-            document.getElementById('player-name').value = registeredName || '';
-            showOnlyPlayScreen('login-screen');
+            document.getElementById('badge-name').innerText = registeredName;
+            document.getElementById('badge-room').innerText = roomCode || '';
+            document.getElementById('badge-emoji').innerText = chosenAvatar;
+            document.getElementById('game-lobby-content').style.display = 'none';
+            document.getElementById('game-left-content').style.display = 'block';
+            document.getElementById('btn-leave-game-screen').style.display = 'none';
+            showOnlyPlayScreen('game-screen');
+        }
 
-            const feedback = document.getElementById('login-feedback');
-            showFeedback(feedback, "You left the room. Rejoin any time with the same name to pick up where you left off.", "rgba(255,165,0,0.06)", "#ffa500", "rgba(255,165,0,0.1)");
+        async function rejoinRoom() {
+            const name = localStorage.getItem('randomania_nickname') || 'test-handset';
+            const room = localStorage.getItem('randomania_roomcode');
+            const feedback = document.getElementById('game-feedback');
+
+            try {
+                // A fresh page reload resets chosenModule to '' since the script
+                // re-executes from scratch -- an empty last token would get
+                // trimmed off the body entirely, dropping this below the 4-token
+                // join format the server expects. A rejoin's actual module vote
+                // barely matters (only read back if the room's still in LOBBY),
+                // so any real mode key is a safe stand-in here.
+                const rejoinModule = chosenModule || 'TRIVI_YEAH';
+                const completeBodyText = `${room} ${name} ${chosenAvatar} ${rejoinModule}`;
+                const response = await fetch('/api/message', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ From: name, Body: completeBodyText, sessionToken: localStorage.getItem('randomania_sessiontoken') })
+                });
+                const data = await response.json();
+
+                if (data && data.success === false) {
+                    showFeedback(feedback, data.reply, "rgba(255,71,87,0.06)", "#ff4757", "rgba(255,71,87,0.1)");
+                    return;
+                }
+
+                if (data.sessionToken) localStorage.setItem('randomania_sessiontoken', data.sessionToken);
+
+                document.getElementById('game-left-content').style.display = 'none';
+                document.getElementById('game-lobby-content').style.display = 'block';
+                document.getElementById('btn-leave-game-screen').style.display = 'block';
+                // Polling itself figures out where to actually land -- straight
+                // back to LOBBY_PHASE's mode-revote screen if the room's between
+                // games, or the exact round-in-progress screen (its own poll
+                // branch already says "jumping into the action already in
+                // progress") if not. No need to duplicate that routing here.
+                initRoomStatePoller(room, name);
+            } catch (error) {
+                showFeedback(feedback, "❌ Rejoin request failed to transmit.", "rgba(255,71,87,0.06)", "#ff4757", "rgba(255,71,87,0.1)");
+            }
         }
 
         function showFeedback(element, text, bg, color, border) {

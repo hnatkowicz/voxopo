@@ -861,24 +861,41 @@ function updateOnTheSpectrumLockInTallyTV(lockedInNames, totalGuessersNeeded) {
     if (el) el.innerText = `${(lockedInNames || []).length} / ${totalGuessersNeeded || 0} locked in`;
 }
 
-// Truncates to tvLimit rows (a shared TV can't scroll, and past a handful the
-// rows get too thin to read from across a room) -- the complete sorted list
-// still goes to every phone via /api/room-status, own row highlighted there.
+// Same purple as this mode's own vote bar on the lobby screen -- one
+// consistent color for every row here, the named player's row told apart
+// by label/border instead, so the bar color always just means "On the
+// Spectrum" rather than trying to also encode accuracy.
+const ON_THE_SPECTRUM_BAR_COLOR = '#bb6bd9';
+
+function otsBarRow(name, value, isNamed) {
+    const pct = Math.max(0, Math.min(100, value));
+    const nameLabel = isNamed
+        ? `${name} <span style="color: ${ON_THE_SPECTRUM_BAR_COLOR}; font-weight: 700; font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.06em; margin-left: 6px;">actual</span>`
+        : name;
+    return `
+        <div style="display: flex; align-items: center; gap: 16px; background: #14161d; border: 1px solid ${isNamed ? ON_THE_SPECTRUM_BAR_COLOR : '#222630'}; border-radius: 8px; padding: 10px 18px;">
+            <span style="font-weight: 600; color: #f4f5f6; min-width: 160px; flex-shrink: 0;">${nameLabel}</span>
+            <div class="progress-track" style="flex: 1;"><div class="progress-fill" style="background: ${ON_THE_SPECTRUM_BAR_COLOR}; width: ${pct}%;"></div></div>
+            <span style="font-weight: 700; color: #f4f5f6; min-width: 32px; text-align: right;">${value}</span>
+        </div>
+    `;
+}
+
+// Truncates guesser rows to tvLimit (a shared TV can't scroll, and past a
+// handful the rows get too thin to read from across a room) -- the complete
+// sorted list still goes to every phone via /api/room-status. The named
+// player's own row always shows, on top, uncounted against that limit.
 function switchToOnTheSpectrumRevealUI(namedPlayerName, statementText, targetValue, results, tvLimit) {
     const panel = document.getElementById('active-content-stage');
     const shown = (results || []).slice(0, tvLimit || 6);
     const remaining = (results || []).length - shown.length;
-    const rows = shown.map(r => `
-        <div style="display: flex; justify-content: space-between; align-items: center; background: #14161d; border: 1px solid #222630; border-radius: 8px; padding: 12px 18px;">
-            <span style="font-weight: 600; color: #f4f5f6;">${r.name} — ${r.value}</span>
-            <span style="font-weight: 700; color: #00e676;">&Delta;${r.distance} &middot; +${r.points}</span>
-        </div>
-    `).join('') || '<div style="color: #64748b;">Nobody guessed this round.</div>';
+    const rows = [otsBarRow(namedPlayerName, targetValue, true)]
+        .concat(shown.map(r => otsBarRow(r.name, r.value, false)))
+        .join('');
 
     panel.innerHTML = `
         <div class="panel-box" style="padding: 40px; flex: 1; display: flex; flex-direction: column; justify-content: center;">
-            <div style="font-size: 0.85rem; font-weight: 600; color: #64748b; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 8px; text-align: center;">${namedPlayerName}'s actual answer: ${targetValue}</div>
-            <div style="font-size: 1rem; color: #94a3b8; margin-bottom: 24px; text-align: center;">${statementText}</div>
+            <div style="font-size: 1rem; color: #94a3b8; margin-bottom: 20px; text-align: center;">${statementText}</div>
             <div style="display: flex; flex-direction: column; gap: 10px;">${rows}</div>
             ${remaining > 0 ? `<div style="text-align: center; color: #64748b; margin-top: 12px; font-size: 0.9rem;">+${remaining} more -- check your phone for the full list</div>` : ''}
             <div id="ots-tv-continue-tally" style="text-align: center; color: #64748b; margin-top: 20px; font-size: 0.9rem;">0 / 0 want to continue</div>
