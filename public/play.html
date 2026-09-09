@@ -73,17 +73,21 @@
         #empossdurr-screen { display: none; }
         #on-the-spectrum-screen { display: none; }
 
-        /* Word (green, "you're a real player") vs clue (orange, "you're the
-           impostor") -- color alone should make a glanced-at phone read
-           correctly even before the label text registers. */
         .ed-role-banner { border-radius: 8px; padding: 18px; margin-bottom: 20px; text-align: center; }
-        /* Deliberately IDENTICAL for word and impostor -- a real player's and
-           the impostor's phones must look the same at a glance (or "out of
-           the corner of your eye," per the original pass-around version's
-           own known bug). Only the text inside differs, which requires
-           actually reading it up close. */
-        .ed-role-banner.ed-role-word, .ed-role-banner.ed-role-impostor { background: rgba(0, 230, 118, 0.06); border: 1px solid rgba(0, 230, 118, 0.3); }
-        .ed-role-label { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.08em; font-weight: 600; color: #00e676; margin-bottom: 6px; }
+        /* Used to be deliberately identical for word and impostor -- the
+           idea being a real player's and the impostor's phones should look
+           the same at a glance, or "out of the corner of your eye," per the
+           original pass-around version's own known bug. Real play found the
+           opposite problem: that similarity itself caused genuine
+           misreads (~17% of the time) rather than just adding intended
+           tension, so the impostor's clue now renders in red -- distinct
+           from the real word's green -- while everything else about the two
+           screens (layout, label position, font size) stays identical. */
+        .ed-role-banner.ed-role-word { background: rgba(0, 230, 118, 0.06); border: 1px solid rgba(0, 230, 118, 0.3); }
+        .ed-role-banner.ed-role-impostor { background: rgba(255, 71, 87, 0.06); border: 1px solid rgba(255, 71, 87, 0.3); }
+        .ed-role-label { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.08em; font-weight: 600; margin-bottom: 6px; }
+        .ed-role-word .ed-role-label { color: #00e676; }
+        .ed-role-impostor .ed-role-label { color: #ff4757; }
         .ed-role-value { font-size: 1.4rem; font-weight: 700; color: #ffffff; letter-spacing: -0.01em; }
 
         .ed-round-indicator { font-size: 0.8rem; color: #64748b; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 16px; }

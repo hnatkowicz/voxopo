@@ -807,7 +807,7 @@ function switchToEmpossDurrDeclareSplashUI(impostorName, votedCount, totalNeeded
     const panel = document.getElementById('active-content-stage');
     panel.innerHTML = `
         <div class="panel-box" style="padding: 40px; flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; min-height: 400px; box-sizing: border-box; background: rgba(255, 165, 0, 0.06); border-color: rgba(255, 165, 0, 0.4);">
-            <div style="font-size: 3rem; margin-bottom: 12px;">🕵️</div>
+            <img src="/exclaim.svg" alt="" style="width: 56px; height: 56px; margin-bottom: 12px;">
             <div style="font-size: 2rem; font-weight: 700; color: #ffa500; letter-spacing: -0.02em; margin-bottom: 12px;">${impostorName} DECLARES!</div>
             <div style="font-size: 1rem; color: #94a3b8; margin-bottom: 20px;">Everyone but the impostor is voting: was their guess correct? Resolves once every juror's in, or when time runs out.</div>
             <div id="ed-tv-tally" style="font-size: 2.2rem; font-weight: 700; color: #ffffff;">${votedCount ?? 0} / ${totalNeeded ?? 0}</div>

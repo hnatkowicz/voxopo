@@ -707,11 +707,18 @@ function startEmpossDurrAccuseVote(roomCode) {
     ed.skipVotes = new Set();
     ed.accuseSecondsLeft = EMPOSSDURR_VOTE_SECONDS;
 
-    const activePlayers = Object.values(room.players).filter(p => !p.left);
+    // Same "impostor isn't part of the jury" treatment startEmpossDurrDeclare
+    // already gives its own vote -- the impostor can still tap Abstain so
+    // their hands move like everyone else's, but that tap (or any accusation
+    // they cast as misdirection) never counts toward the tally or its
+    // denominator. A real family game found the opposite treatment (counting
+    // every active player, impostor included) meant a majority of the actual
+    // accusers still wasn't enough to resolve the vote.
+    const accusers = Object.values(room.players).filter(p => !p.left && p.name !== ed.impostorName);
     broadcastToRoom(roomCode, {
         type: 'EMPOSSDURR_ACCUSE_VOTE_START',
         votedCount: 0,
-        totalNeeded: activePlayers.length,
+        totalNeeded: accusers.length,
         secondsLeft: ed.accuseSecondsLeft
     });
 
@@ -737,9 +744,13 @@ function applyEmpossDurrAccuseScoring(room, resolution) {
     const ed = room.empossdurr;
     const impostorPlayer = room.players[ed.impostorName];
 
+    // The impostor's own entry (an abstain, or a decoy accusation cast as
+    // misdirection) is never a real accuser's vote -- excluded here the same
+    // way it's excluded from the tally itself, so it can't accidentally
+    // score or badge the impostor as though they'd voted against themselves.
     const voterDeltas = {};
     Object.entries(ed.accuseVotes).forEach(([voterName, vote]) => {
-        if (vote.mode !== 'accuse') return;
+        if (voterName === ed.impostorName || vote.mode !== 'accuse') return;
         voterDeltas[voterName] = vote.target === ed.impostorName ? 2 : -1;
     });
 
@@ -771,7 +782,7 @@ function applyEmpossDurrAccuseScoring(room, resolution) {
         // who voted for the real impostor earns the spyglass -- a persistent
         // badge for the rest of the game, same spirit as STREAK/SPEED3.
         Object.entries(ed.accuseVotes).forEach(([voterName, vote]) => {
-            if (vote.mode !== 'accuse' || vote.target !== ed.impostorName) return;
+            if (voterName === ed.impostorName || vote.mode !== 'accuse' || vote.target !== ed.impostorName) return;
             const voterPlayer = room.players[voterName];
             if (voterPlayer) awardEmpossDurrBadge(voterPlayer, 'SPYGLASS');
         });
@@ -815,12 +826,17 @@ function tallyEmpossDurrAccuseVotes(roomCode) {
     clearEmpossDurrTimers(room);
 
     const ed = room.empossdurr;
-    const activePlayers = Object.values(room.players).filter(p => !p.left);
-    const neededForMajority = Math.floor(activePlayers.length / 2) + 1;
+    // The impostor isn't part of the jury -- same treatment declare-verdict
+    // already gives its own vote. Real play with 4 players (1 impostor, 3
+    // real accusers) found a 2/3 agreement among the actual accusers still
+    // wasn't enough against a denominator of 4, effectively requiring
+    // unanimity to ever resolve.
+    const accusers = Object.values(room.players).filter(p => !p.left && p.name !== ed.impostorName);
+    const neededForMajority = Math.floor(accusers.length / 2) + 1;
 
     const targetCounts = {};
-    Object.values(ed.accuseVotes).forEach(vote => {
-        if (vote.mode !== 'accuse') return;
+    Object.entries(ed.accuseVotes).forEach(([voterName, vote]) => {
+        if (voterName === ed.impostorName || vote.mode !== 'accuse') return;
         targetCounts[vote.target] = (targetCounts[vote.target] || 0) + 1;
     });
 
@@ -1784,7 +1800,14 @@ export function handleIncomingMessage(fromPhone, bodyText, explicitRoomCode, pre
                     }
                 } else if (ed.phase === 'ACCUSE_VOTE') {
                     delete ed.accuseVotes[actingPlayerName];
-                    if (Object.keys(ed.accuseVotes).length === remainingActivePlayers.length) {
+                    // Same non-juror treatment as DECLARE_VERDICT just below --
+                    // this branch only ever runs for a real accuser leaving
+                    // (the impostor leaving is caught by the branch above), but
+                    // the impostor is still active and still excluded from the
+                    // count being compared against.
+                    const accusers = remainingActivePlayers.filter(p => p.name !== ed.impostorName);
+                    const accuserVotesCast = Object.keys(ed.accuseVotes).filter(n => n !== ed.impostorName).length;
+                    if (accuserVotesCast === accusers.length) {
                         tallyEmpossDurrAccuseVotes(associatedRoomCode);
                     }
                 } else if (ed.phase === 'DECLARE_VERDICT') {
@@ -2053,19 +2076,23 @@ export function handleIncomingMessage(fromPhone, bodyText, explicitRoomCode, pre
             }
 
             // Lets the TV light up this player's tile without revealing
-            // what they chose -- same treatment as ANSWER_SUBMITTED. Also
-            // carries a live votedCount/totalNeeded so the TV and phones can
-            // show real progress instead of a countdown -- nothing tallies
-            // until every one of these is in.
-            const activePlayers = Object.values(currentRoom.players).filter(p => !p.left);
+            // what they chose -- same treatment as ANSWER_SUBMITTED, and
+            // deliberately unconditional (impostor included): their tile
+            // lighting up right along with everyone else's is exactly the
+            // camouflage the Abstain option exists for. The votedCount/
+            // totalNeeded numbers themselves, though, only ever count the
+            // real accusers -- the impostor isn't part of the jury, so
+            // their tap (or a decoy accusation) never moves either number.
+            const accusers = Object.values(currentRoom.players).filter(p => !p.left && p.name !== ed.impostorName);
+            const accuserVotesCast = Object.keys(ed.accuseVotes).filter(n => n !== ed.impostorName).length;
             broadcastToRoom(associatedRoomCode, {
                 type: 'EMPOSSDURR_VOTE_SUBMITTED',
                 playerName: actingPlayerName,
-                votedCount: Object.keys(ed.accuseVotes).length,
-                totalNeeded: activePlayers.length
+                votedCount: accuserVotesCast,
+                totalNeeded: accusers.length
             });
 
-            if (Object.keys(ed.accuseVotes).length === activePlayers.length) {
+            if (accuserVotesCast === accusers.length) {
                 tallyEmpossDurrAccuseVotes(associatedRoomCode);
             }
             return `Got it, ${player.name}! Vote logged.`;

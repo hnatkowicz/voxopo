@@ -265,11 +265,16 @@ app.post('/api/room-status', (req, res) => {
                 // submitted, or at accuseSecondsLeft/declareSecondsLeft with
                 // whoever has voted so far -- votedCount/totalNeeded show
                 // real progress, the seconds fields show the backstop clock.
+                // The impostor isn't part of the jury for either vote -- they
+                // can still cast an accuse-vote action (Abstain, or a decoy
+                // accusation) so their phone behaves identically to a real
+                // player's, but it's excluded from both these counts, same
+                // as DECLARE_VERDICT already excluded it from its own.
                 votedCount: ed.phase === 'ACCUSE_VOTE'
-                    ? Object.keys(ed.accuseVotes).length
+                    ? Object.keys(ed.accuseVotes).filter(n => n !== ed.impostorName).length
                     : (ed.phase === 'DECLARE_VERDICT' ? Object.keys(ed.declareVotes).length : 0),
                 totalNeeded: ed.phase === 'ACCUSE_VOTE'
-                    ? activePlayers.length
+                    ? activePlayers.filter(p => p.name !== ed.impostorName).length
                     : (ed.phase === 'DECLARE_VERDICT' ? activePlayers.filter(p => p.name !== ed.impostorName).length : 0),
                 accuseSecondsLeft: ed.accuseSecondsLeft,
                 declareSecondsLeft: ed.declareSecondsLeft,
