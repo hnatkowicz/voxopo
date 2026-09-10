@@ -1,0 +1,35 @@
+-- ============================================================================
+-- EmpossDurr content expansion_3: 30 new words/clue-sets on top of all others
+-- ============================================================================
+
+INSERT INTO empossdurr_words (word, clue_1, clue_2, clue_3, clue_4) VALUES
+    ('ICE CUBE', 'water', 'rapper', 'tray', 'compton'),
+    ('CHERRY', 'coke', 'pepsi', 'sundae', 'top'),
+    ('DOCTOR', 'pepper', 'house', 'strange', 'visit'),
+    ('BIGFOOT', 'heavy', 'frame', 'dora', 'stuffed'),
+    ('SPIDERMAN', 'new york', 'neighborhood', 'friendly', 'sense'),
+    ('DOLLAR', 'buck', 'general', 'bill', 'paper'),
+    ('HOTEL/MOTEL', 'pool', 'key', 'holiday', 'elevator'),
+    ('BACON', 'grease', 'kevin', 'lettuce', 'cheesburger'),
+    ('TOM HANKS', 'forest', 'wilson', 'nice', 'jenny'),
+    ('BATHROOM', 'tile', 'towel', 'tub', 'wash'),
+    ('TAYLOR SWIFT', 'shake', 'guitar', 'showgirl', 'pop'),
+    ('ISLAND', 'water', 'secluded', 'jamaica', 'long'),
+    ('CAST IRON PAN', 'season', 'black', 'eggs', 'handle'),
+    ('ECHO', 'repeat', 'listen', 'fade', 'canyon'),
+    ('CACTUS', 'southwest', 'sand', 'green', 'hot'),
+    ('ANCHOR', 'stop', 'boat', 'tattoo', 'navy'),
+    ('FLAG', 'pride', 'salute', 'pole', 'red'),
+    ('FEATHER', 'fly', 'light', 'hollow', 'wing'),
+    ('SOCCER', 'slide', 'goal', 'referee', 'shootout'),
+    ('PENGUIN', 'huddle', 'ice', 'tuxedo', 'arctic'),
+    ('PRISM', 'pink floyd', 'spread', 'faces', 'split'),
+    ('LAWYER', 'argue', 'suit', 'case', 'better'),
+    ('DRIVEWAY', 'basketball', 'park', 'road', 'concrete'),
+    ('HEISENBERG (BREAKING BAD)', 'knocks', 'white', 'chemist', 'teacher'),
+    ('SHELDON (BIG BANG)', 'couch', 'doctor', 'penny', 't-shirts'),
+    ('JUDGE (PERSON)', 'sustained', 'bench', 'justice', 'court'),
+    ('HURRICANE', 'miami', 'new orleans', 'category', 'path'),
+    ('WINNIE THE POOH', 'christopher', 't-shirt', 'piglet', 'kind'),
+    ('WEB', 'internet', 'silk', 'spiderman', 'stuck'),
+    ('MOON', 'eclipse', 'half', 'full', 'landing');
