@@ -806,6 +806,16 @@
             'Solid choice.', 'Bold move.', 'Noted.', '🤐 ...nothing happened.',
             'That felt good, didn’t it?', 'Achievement unlocked: Nothing.'
         ];
+        // Nicknames are free-form user text with no character restriction
+        // beyond a length cap -- anything rendered as HTML has to escape it.
+        function escapeHtml(text) {
+            return String(text)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#39;');
+        }
         function pickEmpossDurrDecoyWord() {
             return ED_DECOY_WORDS[Math.floor(Math.random() * ED_DECOY_WORDS.length)];
         }
@@ -889,9 +899,15 @@
                 // Tapping a row only selects it -- nothing reaches the server
                 // until "Submit Vote" is tapped, so a miskeyed accusation can
                 // be corrected before it's ever locked in.
+                // The name is read back from a data attribute at click time
+                // rather than spliced into the onclick's JS source -- a name
+                // containing a quote (very ordinary: "O'Brien", "Dee's")
+                // would otherwise terminate that string early and leave
+                // the row silently unclickable, no console error a player
+                // would ever see.
                 const targetRows = (data.playerNames || [])
                     .filter(n => n !== localStorage.getItem('randomania_nickname'))
-                    .map(n => `<div class="module-row" onclick="selectEmpossDurrChoice('ACCUSE_TARGET:${n}', this)">${n}</div>`)
+                    .map(n => `<div class="module-row" data-player-name="${escapeHtml(n)}" onclick="selectEmpossDurrChoice('ACCUSE_TARGET:' + this.dataset.playerName, this)">${escapeHtml(n)}</div>`)
                     .join('');
                 container.innerHTML = `
                     <div class="ed-status-line" id="ed-vote-tally">${data.votedCount ?? 0} / ${data.totalNeeded ?? 0} voted</div>
