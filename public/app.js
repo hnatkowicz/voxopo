@@ -265,6 +265,13 @@ if (btnSubmitSpectate) {
                     switchToEmpossDurrAccuseVoteUI(data.votedCount, data.totalNeeded, data.secondsLeft);
                     playerAnswerStatus = {};
                     updateLeaderboardUI(cachedPlayersSnapshot);
+                    // The ready-to-accuse mechanic itself tested well, but its
+                    // silent transition into the vote didn't -- real families
+                    // missed that the game had changed phases entirely. A
+                    // one-shot stinger plus this icon (same size/placement as
+                    // the impostor-declares one) makes the switch impossible
+                    // to miss even glancing at the TV.
+                    playAudioTrack('vote-sound');
                 }
                 if (data.type === 'EMPOSSDURR_ACCUSE_TIMER_TICK') {
                     document.getElementById('lobby-countdown').innerText = data.secondsLeft + " s";
@@ -769,6 +776,7 @@ function switchToEmpossDurrAccuseVoteUI(votedCount, totalNeeded, secondsLeft) {
     const panel = document.getElementById('active-content-stage');
     panel.innerHTML = `
         <div class="panel-box" style="padding: 40px; flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; min-height: 400px; box-sizing: border-box;">
+            <img src="/vote.svg" alt="" style="width: 56px; height: 56px; margin-bottom: 12px;">
             <div style="font-size: 0.85rem; font-weight: 600; color: #64748b; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 8px;">
                 Accuse Vote In Progress
             </div>

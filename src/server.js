@@ -102,6 +102,12 @@ app.post('/api/create-room', async (req, res) => {
             votes: { TRIVI_YEAH: 0, COUNTRY_MONKEY: 0, EMPOSSDURR: 0, FLAG_ME_DOWN: 0, ON_THE_SPECTRUM: 0 },
             // Populated with real keys once the category vote phase actually starts.
             categoryVotes: {},
+            // Bumped by every "fresh game" reset (plain lobby return, either
+            // "Play X Again" shortcut) -- lets a rejoining player who missed
+            // one of those resets (they were marked left at the time) get
+            // their stale score/badges cleared on the way back in instead of
+            // carrying them into whatever game the room is on now.
+            gameEpoch: 0,
             lastActivity: Date.now() // Time the room was "born"
         };
 

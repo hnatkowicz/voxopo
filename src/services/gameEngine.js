@@ -758,10 +758,16 @@ function applyEmpossDurrAccuseScoring(room, resolution) {
         Object.entries(voterDeltas).forEach(([voterName, delta]) => {
             ed.pendingScoreDeltas[voterName] = (ed.pendingScoreDeltas[voterName] || 0) + delta;
         });
+        // Points for surviving this one vote, yes -- but NOT the badge.
+        // The badge means "won the round" (a correct declare, or someone
+        // else getting wrongly accused), and this queued via
+        // pendingBadges used to survive a later flush regardless of how
+        // THIS round actually ended: an impostor who out-lasted one
+        // "continue" vote and then declared and guessed wrong still
+        // walked away with the badge once flushEmpossDurrPendingScoring
+        // ran unconditionally at the end of tallyEmpossDurrDeclareVerdict.
         if (impostorPlayer) {
             ed.pendingScoreDeltas[impostorPlayer.name] = (ed.pendingScoreDeltas[impostorPlayer.name] || 0) + 1;
-            ed.pendingBadges[impostorPlayer.name] = ed.pendingBadges[impostorPlayer.name] || [];
-            ed.pendingBadges[impostorPlayer.name].push('IMPOSTOR_WIN');
         }
         return;
     }
@@ -974,6 +980,24 @@ function tallyEmpossDurrDeclareVerdict(roomCode) {
     }, REVEAL_DURATION_MS);
 }
 
+// The one place that has to know every stat field a "fresh game" reset
+// touches -- used by every reset path below (the plain lobby return, both
+// "Play X Again" shortcuts) AND by a rejoining player who missed one of
+// those resets entirely because they were marked left at the time (see
+// player.statsEpoch / room.gameEpoch). Resets fields a given mode doesn't
+// even use (categoryVote for On the Spectrum, bullseyeCount for EmpossDurr)
+// -- harmless, and it means a future mode never has to remember the list.
+function resetPlayerStatsForFreshGame(player) {
+    player.requestedStart = false;
+    player.categoryVote = null;
+    player.score = 0;
+    player.correctAnswers = 0;
+    player.currentStreak = 0;
+    player.timesFastest = 0;
+    player.awards = {};
+    player.bullseyeCount = 0;
+}
+
 // Resets score/roster state exactly like resetRoomToLobby, but short-circuits
 // straight back into EmpossDurr's category-vote phase instead of the full
 // 5-way mode election -- lets a group that's enjoying EmpossDurr jump back in
@@ -1001,14 +1025,14 @@ function resetRoomToEmpossDurrCategoryVote(roomCode) {
     room.categoryVotes = {};
     categories.forEach(c => { room.categoryVotes[c.key] = 0; });
 
+    // Bumping this marks "a fresh game started" -- a player who left before
+    // this reset and rejoins afterward gets caught by the epoch mismatch in
+    // the join handler and reset then too, instead of carrying a stale score
+    // into whatever mode this room plays next.
+    room.gameEpoch = (room.gameEpoch || 0) + 1;
     activePlayers.forEach(player => {
-        player.requestedStart = false;
-        player.categoryVote = null;
-        player.score = 0;
-        player.correctAnswers = 0;
-        player.currentStreak = 0;
-        player.timesFastest = 0;
-        player.awards = {};
+        resetPlayerStatsForFreshGame(player);
+        player.statsEpoch = room.gameEpoch;
     });
 
     console.log(`[Room Engine] Room ${roomCode} jumping straight back into EmpossDurr -- roster kept, stats cleared.`);
@@ -1046,14 +1070,10 @@ function resetRoomToOnTheSpectrumGame(roomCode) {
     room.onTheSpectrum = null;
 
     const activePlayers = Object.values(room.players).filter(p => !p.left);
+    room.gameEpoch = (room.gameEpoch || 0) + 1;
     activePlayers.forEach(player => {
-        player.requestedStart = false;
-        player.score = 0;
-        player.correctAnswers = 0;
-        player.currentStreak = 0;
-        player.timesFastest = 0;
-        player.awards = {};
-        player.bullseyeCount = 0;
+        resetPlayerStatsForFreshGame(player);
+        player.statsEpoch = room.gameEpoch;
     });
 
     console.log(`[Room Engine] Room ${roomCode} jumping straight back into On the Spectrum -- roster kept, stats cleared.`);
@@ -1182,15 +1202,10 @@ function resetRoomToLobby(roomCode) {
 
     room.votes = { TRIVI_YEAH: 0, COUNTRY_MONKEY: 0, EMPOSSDURR: 0, FLAG_ME_DOWN: 0, ON_THE_SPECTRUM: 0 };
     const activePlayers = Object.values(room.players).filter(p => !p.left);
+    room.gameEpoch = (room.gameEpoch || 0) + 1;
     activePlayers.forEach(player => {
-        player.requestedStart = false;
-        player.categoryVote = null;
-        player.score = 0;
-        player.correctAnswers = 0;
-        player.currentStreak = 0;
-        player.timesFastest = 0;
-        player.awards = {};
-        player.bullseyeCount = 0;
+        resetPlayerStatsForFreshGame(player);
+        player.statsEpoch = room.gameEpoch;
         if (room.votes[player.vote] !== undefined) room.votes[player.vote]++;
     });
 
@@ -1640,6 +1655,20 @@ export function handleIncomingMessage(fromPhone, bodyText, explicitRoomCode, pre
 
             let sessionToken;
             if (existingPlayer) {
+                // A player who left mid-game and comes back after the room's
+                // already moved on to a fresh game (a plain lobby return, or
+                // either "Play X Again" shortcut) missed that reset entirely
+                // -- resetRoomToLobby's reset loop only ever touches players
+                // who were still active at the time, so a left player's old
+                // score/badges from the PREVIOUS game would otherwise still
+                // be sitting on their record, ready to carry straight into
+                // whatever mode gets played next. room.gameEpoch bumps on
+                // every such reset; a mismatch here means this player missed
+                // the most recent one and needs it applied now, on rejoin.
+                if (existingPlayer.statsEpoch !== currentRoom.gameEpoch) {
+                    resetPlayerStatsForFreshGame(existingPlayer);
+                    existingPlayer.statsEpoch = currentRoom.gameEpoch;
+                }
                 existingPlayer.left = false;
                 existingPlayer.phoneHandle = fromPhone;
                 existingPlayer.emoji = playerEmoji;
@@ -1660,6 +1689,7 @@ export function handleIncomingMessage(fromPhone, bodyText, explicitRoomCode, pre
                     timesFastest: 0, // lifetime count, purely for tie-breaking -- independent of the bolt badge's live per-round status
                     bullseyeCount: 0, // On the Spectrum exact matches -- also a tiebreak field
                     awards: {},
+                    statsEpoch: currentRoom.gameEpoch || 0, // matches the room's current game -- see the rejoin branch above
                     sessionToken, // proves later requests claiming this name are from the same device -- see play.html's auto-resume flow
                     left: false,
                     joinedAt: new Date()
