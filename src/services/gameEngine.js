@@ -758,14 +758,10 @@ function applyEmpossDurrAccuseScoring(room, resolution) {
         Object.entries(voterDeltas).forEach(([voterName, delta]) => {
             ed.pendingScoreDeltas[voterName] = (ed.pendingScoreDeltas[voterName] || 0) + delta;
         });
-        // Points for surviving this one vote, yes -- but NOT the badge.
-        // The badge means "won the round" (a correct declare, or someone
-        // else getting wrongly accused), and this queued via
-        // pendingBadges used to survive a later flush regardless of how
-        // THIS round actually ended: an impostor who out-lasted one
-        // "continue" vote and then declared and guessed wrong still
-        // walked away with the badge once flushEmpossDurrPendingScoring
-        // ran unconditionally at the end of tallyEmpossDurrDeclareVerdict.
+        // Points for surviving this one vote -- IMPOSTOR_WIN is never in
+        // play here regardless: it's reserved exclusively for a correct
+        // declare (see tallyEmpossDurrDeclareVerdict), not for surviving an
+        // accuse vote of any kind, "continue" or otherwise.
         if (impostorPlayer) {
             ed.pendingScoreDeltas[impostorPlayer.name] = (ed.pendingScoreDeltas[impostorPlayer.name] || 0) + 1;
         }
@@ -782,7 +778,11 @@ function applyEmpossDurrAccuseScoring(room, resolution) {
     });
 
     if (resolution.targetName !== ed.impostorName) {
-        if (impostorPlayer) { impostorPlayer.score += 3; awardEmpossDurrBadge(impostorPlayer, 'IMPOSTOR_WIN'); }
+        // Score-only, no badge -- surviving a wrong accusation reflects the
+        // table's read, not something the impostor actually did. IMPOSTOR_WIN
+        // is reserved for the one outcome that's genuinely the impostor's own
+        // accomplishment: a correct declare (see tallyEmpossDurrDeclareVerdict).
+        if (impostorPlayer) { impostorPlayer.score += 3; }
     } else {
         // Correctly-caught impostor gets 0 score for this outcome, but everyone
         // who voted for the real impostor earns the spyglass -- a persistent
@@ -829,6 +829,15 @@ function flushEmpossDurrPendingScoring(room) {
 function tallyEmpossDurrAccuseVotes(roomCode) {
     const room = activeRooms[roomCode];
     if (!room || !room.empossdurr) return;
+    // A resolution already fired and is just waiting out its reveal pause
+    // before the next round starts -- ed.phase stays 'ACCUSE_VOTE' and
+    // ed.accuseVotes stays populated for that whole gap, so a vote that
+    // arrives late (the impostor's own decoy tap, submitted after every real
+    // accuser already completed the vote) would otherwise re-satisfy the
+    // "everyone's voted" check and re-tally the same votes a second time,
+    // double-applying every score change. room.revealTimeout is the signal
+    // that a resolution is already in flight.
+    if (room.revealTimeout) return;
     clearEmpossDurrTimers(room);
 
     const ed = room.empossdurr;
@@ -936,6 +945,11 @@ function startEmpossDurrDeclare(roomCode) {
 function tallyEmpossDurrDeclareVerdict(roomCode) {
     const room = activeRooms[roomCode];
     if (!room || !room.empossdurr) return;
+    // Same re-entry guard as tallyEmpossDurrAccuseVotes -- a juror leaving
+    // during the reveal pause recomputes a smaller jurors list, which could
+    // spuriously match the already-cast declareVotes count and re-tally
+    // (double-applying score) before the round actually transitions.
+    if (room.revealTimeout) return;
     clearEmpossDurrTimers(room);
 
     const ed = room.empossdurr;

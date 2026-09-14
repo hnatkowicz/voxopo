@@ -836,8 +836,16 @@ function switchToEmpossDurrSkippedUI() {
 
 function switchToEmpossDurrDeclareResultUI(correct, impostorName) {
     const panel = document.getElementById('active-content-stage');
+    // The correct-guess splash already got its moment (the ED_DECLARE
+    // overlay's exclaim.svg); a wrong guess used to resolve into plain text
+    // with no visual beat of its own. Same reasoning as every other
+    // declare-inspired icon: nothing secret is at stake here (the impostor
+    // already self-outed by declaring), so there's no peek-leak risk to
+    // weigh against giving this its own payoff.
+    const wrongGuessIcon = correct ? '' : `<img src="/impostor-no.svg" alt="" style="width: 56px; height: 56px; margin-bottom: 12px;">`;
     panel.innerHTML = `
         <div class="panel-box" style="padding: 40px; flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; min-height: 400px; box-sizing: border-box;">
+            ${wrongGuessIcon}
             <div style="font-size: 1.6rem; font-weight: 700; color: #ffffff; letter-spacing: -0.02em; margin-bottom: 12px;">
                 ${correct ? `${impostorName} guessed correctly!` : `${impostorName} guessed wrong!`}
             </div>
