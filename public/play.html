@@ -74,21 +74,28 @@
         #on-the-spectrum-screen { display: none; }
 
         .ed-role-banner { border-radius: 8px; padding: 18px; margin-bottom: 20px; text-align: center; }
-        /* Used to be deliberately identical for word and impostor -- the
-           idea being a real player's and the impostor's phones should look
-           the same at a glance, or "out of the corner of your eye," per the
-           original pass-around version's own known bug. Real play found the
-           opposite problem: that similarity itself caused genuine
-           misreads (~17% of the time) rather than just adding intended
-           tension, so the impostor's clue now renders in red -- distinct
-           from the real word's green -- while everything else about the two
-           screens (layout, label position, font size) stays identical. */
-        .ed-role-banner.ed-role-word { background: rgba(0, 230, 118, 0.06); border: 1px solid rgba(0, 230, 118, 0.3); }
-        .ed-role-banner.ed-role-impostor { background: rgba(255, 71, 87, 0.06); border: 1px solid rgba(255, 71, 87, 0.3); }
+        /* Deliberately identical for word and impostor -- a real player's
+           and the impostor's phones should look the same at a glance, or
+           "out of the corner of your eye," per the original pass-around
+           version's own known bug. This WAS briefly red-for-impostor to fix
+           a ~17% real-world misread rate, but real play then found the
+           opposite problem: the color itself is exactly as readable at a
+           glance as it is up close, so an accidental peek at someone's
+           phone gives the impostor away just as fast as the misread did.
+           Back to matching green/identical styling; ed-impostor-warning
+           below solves the original misread problem instead, since reading
+           text (unlike registering a background color) takes a deliberate
+           look nobody gets from a glance. */
+        .ed-role-banner.ed-role-word, .ed-role-banner.ed-role-impostor { background: rgba(0, 230, 118, 0.06); border: 1px solid rgba(0, 230, 118, 0.3); }
         .ed-role-label { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.08em; font-weight: 600; margin-bottom: 6px; }
-        .ed-role-word .ed-role-label { color: #00e676; }
-        .ed-role-impostor .ed-role-label { color: #ff4757; }
+        .ed-role-word .ed-role-label, .ed-role-impostor .ed-role-label { color: #00e676; }
         .ed-role-value { font-size: 1.4rem; font-weight: 700; color: #ffffff; letter-spacing: -0.01em; }
+        /* Only ever populated on the impostor's own banner -- short, bold,
+           and impossible to mistake for the real-word banner once actually
+           read, but (unlike a background color) it takes deliberate reading
+           to register at all, so it doesn't leak anything to a passing
+           glance the way the red background used to. */
+        .ed-impostor-warning { font-size: 0.85rem; font-weight: 700; color: #ff4757; margin-bottom: 8px; }
 
         .ed-round-indicator { font-size: 0.8rem; color: #64748b; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 16px; }
         .ed-status-line { font-size: 0.85rem; color: #64748b; text-align: center; margin: 12px 0; }
@@ -338,6 +345,7 @@
         </div>
 
         <div id="ed-role-banner" class="ed-role-banner">
+            <div class="ed-impostor-warning" id="ed-impostor-warning" hidden>You ARE the impostor!</div>
             <div class="ed-role-label" id="ed-role-label">-</div>
             <div class="ed-role-value" id="ed-role-value">-</div>
         </div>
@@ -832,12 +840,15 @@
             document.getElementById('ed-round-indicator').innerText = `Round ${data.round} of ${data.totalRounds}`;
 
             const roleBanner = document.getElementById('ed-role-banner');
+            const impostorWarning = document.getElementById('ed-impostor-warning');
             if (data.isImpostor) {
                 roleBanner.className = 'ed-role-banner ed-role-impostor';
+                impostorWarning.hidden = false;
                 document.getElementById('ed-role-label').innerText = 'Impostor Clue';
                 document.getElementById('ed-role-value').innerText = (data.displayClue || '-').toUpperCase();
             } else {
                 roleBanner.className = 'ed-role-banner ed-role-word';
+                impostorWarning.hidden = true;
                 document.getElementById('ed-role-label').innerText = 'Secret Word';
                 document.getElementById('ed-role-value').innerText = (data.displayWord || '-').toUpperCase();
             }
@@ -909,6 +920,18 @@
                     .filter(n => n !== localStorage.getItem('randomania_nickname'))
                     .map(n => `<div class="module-row" data-player-name="${escapeHtml(n)}" onclick="selectEmpossDurrChoice('ACCUSE_TARGET:' + this.dataset.playerName, this)">${escapeHtml(n)}</div>`)
                     .join('');
+                // The impostor can declare from ACCUSE_VOTE too, not just
+                // DISCUSSION -- the server's always allowed it (declaring
+                // deliberately preempts an in-flight accuse vote), but this
+                // screen never gave the button to press. Without it, an
+                // impostor whose phone's first poll of the round happened to
+                // land after the vote had already started -- a real risk
+                // when the room raced to "ready" fast, round 1 especially --
+                // had no way to declare until the next round's DISCUSSION
+                // screen showed up.
+                const declareButton = data.isImpostor
+                    ? `<button class="btn btn-declare" onclick="submitEmpossDurrDeclare()">I Declare!</button>`
+                    : '';
                 container.innerHTML = `
                     <div class="ed-status-line" id="ed-vote-tally">${data.votedCount ?? 0} / ${data.totalNeeded ?? 0} voted</div>
                     <div class="ed-timer" id="ed-timer">${data.accuseSecondsLeft ?? ''}s</div>
@@ -918,6 +941,7 @@
                         <div class="module-row" onclick="selectEmpossDurrChoice('ACCUSE_ABSTAIN', this)">Abstain / Keep Talking</div>
                     </div>
                     <button class="btn" id="ed-submit-vote-btn" disabled onclick="submitEmpossDurrChoice()">Submit Vote</button>
+                    ${declareButton}
                 `;
                 updateEmpossDurrLiveBits(data);
                 return;
@@ -981,7 +1005,11 @@
                 const timer = document.getElementById('ed-timer');
                 if (timer) timer.innerText = `${data.accuseSecondsLeft ?? 0}s`;
                 if (data.iHaveVoted) {
-                    document.querySelectorAll('#ed-phase-content .module-row, #ed-phase-content .btn').forEach(el => el.classList.add('btn-locked'));
+                    // The declare button is deliberately exempt -- submitting
+                    // an accuse vote doesn't cost the impostor their one
+                    // preempting move, which stays live until the round
+                    // actually ends one way or another.
+                    document.querySelectorAll('#ed-phase-content .module-row, #ed-phase-content .btn:not(.btn-declare)').forEach(el => el.classList.add('btn-locked'));
                 }
             } else if (data.empossdurrPhase === 'DECLARE_VERDICT' && !data.isImpostor) {
                 const tally = document.getElementById('ed-vote-tally');
