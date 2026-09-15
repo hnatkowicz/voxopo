@@ -82,20 +82,17 @@
            opposite problem: the color itself is exactly as readable at a
            glance as it is up close, so an accidental peek at someone's
            phone gives the impostor away just as fast as the misread did.
-           Back to matching green/identical styling; ed-impostor-warning
-           below solves the original misread problem instead, since reading
-           text (unlike registering a background color) takes a deliberate
-           look nobody gets from a glance. */
+           Back to matching green/identical styling -- even a same-length
+           line of differently-colored TEXT (an earlier attempt) turned out
+           to be just as glance-visible as a colored background, so the
+           impostor's own disambiguation is carried entirely by the LABEL's
+           wording now ("You Are the Impostor" vs "Secret Word"), styled
+           identically in every other way. Reading words (unlike registering
+           a color) takes a deliberate look nobody gets from a glance. */
         .ed-role-banner.ed-role-word, .ed-role-banner.ed-role-impostor { background: rgba(0, 230, 118, 0.06); border: 1px solid rgba(0, 230, 118, 0.3); }
         .ed-role-label { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.08em; font-weight: 600; margin-bottom: 6px; }
         .ed-role-word .ed-role-label, .ed-role-impostor .ed-role-label { color: #00e676; }
         .ed-role-value { font-size: 1.4rem; font-weight: 700; color: #ffffff; letter-spacing: -0.01em; }
-        /* Only ever populated on the impostor's own banner -- short, bold,
-           and impossible to mistake for the real-word banner once actually
-           read, but (unlike a background color) it takes deliberate reading
-           to register at all, so it doesn't leak anything to a passing
-           glance the way the red background used to. */
-        .ed-impostor-warning { font-size: 0.85rem; font-weight: 700; color: #ff4757; margin-bottom: 8px; }
 
         .ed-round-indicator { font-size: 0.8rem; color: #64748b; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 16px; }
         .ed-status-line { font-size: 0.85rem; color: #64748b; text-align: center; margin: 12px 0; }
@@ -273,11 +270,11 @@
              changeable again, so a room was stuck replaying the same mode
              forever. Live-updates the same way category voting already does:
              tap a row, it's sent immediately, no separate submit step.
-             Placed BEFORE the START input (not after) and framed as step 1
-             of 2 -- stacking it below "type START to lock in" read as two
-             unrelated, competing screens rather than one sequence, since
-             typing START is the thing you do once you're happy with the
-             mode, not a separate first step. -->
+             Placed BEFORE the Start button (not after) and framed as step 1
+             of 2 -- stacking it below "vote to start" read as two unrelated,
+             competing screens rather than one sequence, since starting is
+             the thing you do once you're happy with the mode, not a
+             separate first step. -->
         <!-- Normal lobby-wait content -- hidden instead of shown whenever this
              player has left (see #game-left-content below), since the room's
              real phase keeps right on changing for everyone else and this
@@ -295,10 +292,9 @@
             </div>
 
             <div class="input-group">
-                <label>2. Vote START to lock in</label>
-                <input type="text" id="game-input" placeholder="Type START...">
+                <label>2. Vote to start</label>
+                <button class="btn" onclick="submitStartVote()">Start</button>
             </div>
-            <button class="btn" onclick="submitGameAction()">Submit Action</button>
         </div>
 
         <!-- Shown instead of the above whenever this player has left --
@@ -345,7 +341,6 @@
         </div>
 
         <div id="ed-role-banner" class="ed-role-banner">
-            <div class="ed-impostor-warning" id="ed-impostor-warning" hidden>You ARE the impostor!</div>
             <div class="ed-role-label" id="ed-role-label">-</div>
             <div class="ed-role-value" id="ed-role-value">-</div>
         </div>
@@ -840,15 +835,12 @@
             document.getElementById('ed-round-indicator').innerText = `Round ${data.round} of ${data.totalRounds}`;
 
             const roleBanner = document.getElementById('ed-role-banner');
-            const impostorWarning = document.getElementById('ed-impostor-warning');
             if (data.isImpostor) {
                 roleBanner.className = 'ed-role-banner ed-role-impostor';
-                impostorWarning.hidden = false;
-                document.getElementById('ed-role-label').innerText = 'Impostor Clue';
+                document.getElementById('ed-role-label').innerText = 'You Are the Impostor';
                 document.getElementById('ed-role-value').innerText = (data.displayClue || '-').toUpperCase();
             } else {
                 roleBanner.className = 'ed-role-banner ed-role-word';
-                impostorWarning.hidden = true;
                 document.getElementById('ed-role-label').innerText = 'Secret Word';
                 document.getElementById('ed-role-value').innerText = (data.displayWord || '-').toUpperCase();
             }
@@ -1240,11 +1232,14 @@
         }
         function submitEmpossDurrDeclare() { sendEmpossDurrAction('DECLARE'); }
 
-        async function submitGameAction() {
-            const actionText = document.getElementById('game-input').value.trim();
+        // One-tap consensus vote -- was a "type START" text field, but the
+        // free-text input was only ever a placeholder for keyword commands
+        // that never materialized, so it's now just a button like every
+        // other consensus vote in the app (requestPlayAgain, etc.). Once
+        // every active player has tapped it, the server starts the game and
+        // every phone's poller picks up the phase change automatically.
+        async function submitStartVote() {
             const feedback = document.getElementById('game-feedback');
-            if (!actionText) return;
-
             showFeedback(feedback, "Transmitting data frame...", "rgba(255,165,0,0.06)", "#ffa500", "rgba(255,165,0,0.1)");
 
             try {
@@ -1252,20 +1247,19 @@
                 const response = await fetch('/api/message', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ From: registeredName, Body: actionText, roomCode: localStorage.getItem('randomania_roomcode') })
+                    body: JSON.stringify({ From: registeredName, Body: 'START', roomCode: localStorage.getItem('randomania_roomcode') })
                 });
                 const data = await response.json();
                 showFeedback(feedback, data.reply, "rgba(0,230,118,0.06)", "#00e676", "rgba(0,230,118,0.1)");
-                document.getElementById('game-input').value = ""; 
             } catch (error) {
                 showFeedback(feedback, "❌ Action transmission failed.", "rgba(255,71,87,0.06)", "#ff4757", "rgba(255,71,87,0.1)");
             }
         }
 
-        // One-tap consensus vote from the game-over screen -- same STAT mechanic
-        // as the lobby's "type START" input, just as a button instead of a text
-        // field. Once every active player has tapped it, the server resets the
-        // room and every phone's poller (LOBBY_PHASE) bounces back automatically.
+        // One-tap consensus vote from the game-over screen -- same mechanic
+        // as the lobby's Start button above. Once every active player has
+        // tapped it, the server resets the room and every phone's poller
+        // (LOBBY_PHASE) bounces back automatically.
         async function requestPlayAgain() {
             const feedback = document.getElementById('playagain-feedback');
             const registeredName = localStorage.getItem('randomania_nickname') || 'test-handset';

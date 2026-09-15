@@ -373,11 +373,11 @@ if (btnSubmitSpectate) {
         // never re-evaluated) -- STREAK used to climb bronze/silver/gold tiers
         // at 3/6/9 in a row, but real play found even 3 rare enough on its own
         // that 6/9 never got reached, so the ladder was dropped in favor of a
-        // single flat badge at 3 (same design as SPYGLASS/IMPOSTOR_WIN/
-        // BULLSEYE). SPEED3 is the exception: a live, contested status (not a
-        // streak) that belongs to whoever answered fastest THIS round and is
-        // lost the instant someone else wins it -- yellow, not the "earned,
-        // permanent" green the rest share.
+        // single flat badge at 3 (same design as SPYGLASS/IMPOSTOR_WIN).
+        // SPEED3 is the exception: a live, contested status (not a streak)
+        // that belongs to whoever answered fastest THIS round and is lost the
+        // instant someone else wins it -- yellow, not the "earned, permanent"
+        // green the rest share.
         //
         // nativeIcon badges (STREAK, SPYGLASS) render their SVG as a plain
         // <img>, keeping the art's own baked-in colors (and, for these two,
@@ -390,13 +390,13 @@ if (btnSubmitSpectate) {
             SPEED3: { pulse: false, title: 'Fastest answer this round', imageBadge: true, iconClass: 'badge-speed3' },
             SPYGLASS: { pulse: false, title: '3 correct impostor calls in a row', nativeIcon: true, iconSrc: '/mag-glass.svg' },
             IMPOSTOR_WIN: { pulse: false, title: 'Successful impostor', imageBadge: true, iconClass: 'badge-impostor-win' },
-            BULLSEYE: { pulse: false, title: 'Called a bluff in a split decision', imageBadge: true, iconClass: 'badge-bullseye' },
             // On the Spectrum badges -- distinct key names from EmpossDurr's own
-            // BULLSEYE on purpose (different game, different achievement; reusing
-            // the name would make them visually indistinguishable in awards).
-            // Same icon-mask path as the EmpossDurr trio above, just with this
-            // mode's own gold/blue instead of the shared "permanent" green --
-            // /spectrum-target.svg and /spectrum-bow.svg are art files, not yet drawn.
+            // BULLSEYE-style achievements on purpose (different game, different
+            // achievement; reusing a name would make them visually
+            // indistinguishable in awards). Same icon-mask path as
+            // IMPOSTOR_WIN above, just with this mode's own gold/blue instead
+            // of the shared "permanent" green -- /spectrum-target.svg and
+            // /spectrum-bow.svg are art files, not yet drawn.
             SPECTRUM_BULLSEYE: { pulse: false, title: 'Exact match on On the Spectrum', imageBadge: true, iconClass: 'badge-spectrum-bullseye' },
             SPECTRUM_SHARPSHOOTER: { pulse: false, title: 'Within 3 on On the Spectrum', imageBadge: true, iconClass: 'badge-spectrum-sharpshooter' },
             // Just for laughs -- awarded to EVERY guesser 25+ off in the same

@@ -833,10 +833,10 @@ function updateImpostorCatchStreaks(room, resolution) {
 }
 
 // Sets a persistent, boolean-style EmpossDurr award the instant it's earned.
-// Unlike STREAK (which climbs tiers) or SPEED3 (which is live/contested),
-// these three are one-shot: once true, they stay on the leaderboard row for
-// the rest of the game (cleared only on the next game-reset, alongside every
-// other stat in player.awards).
+// Unlike SPEED3 (which is live/contested), every badge here is one-shot:
+// once true, it stays on the leaderboard row for the rest of the game
+// (cleared only on the next game-reset, alongside every other stat in
+// player.awards).
 function awardEmpossDurrBadge(player, type) {
     if (!player) return;
     player.awards = player.awards || {};
@@ -1006,16 +1006,6 @@ function tallyEmpossDurrDeclareVerdict(roomCode) {
     if (impostorPlayer) {
         impostorPlayer.score += correct ? 5 : -2;
         if (correct) awardEmpossDurrBadge(impostorPlayer, 'IMPOSTOR_WIN');
-    }
-
-    // Bullseye: reward correctly reading a split room, not just being right
-    // when everyone already agreed. Only counts votes actually cast (a
-    // juror who never responded isn't "wrong," just absent from the split).
-    const yesVoters = jurors.filter(j => ed.declareVotes[j.name] === 'yes');
-    const noVoters = jurors.filter(j => ed.declareVotes[j.name] === 'no');
-    if (yesVoters.length > 0 && noVoters.length > 0) {
-        const correctSideVoters = correct ? yesVoters : noVoters;
-        correctSideVoters.forEach(j => awardEmpossDurrBadge(j, 'BULLSEYE'));
     }
 
     const activePlayersArray = Object.values(room.players).filter(p => !p.left);
@@ -1592,8 +1582,8 @@ function evaluateRoundAndRevealAnswer(roomCode) {
                 player.score += points;
                 player.correctAnswers = (player.correctAnswers || 0) + 1; // tiebreak for the final leaderboard
                 player.currentStreak = (player.currentStreak || 0) + 1;
-                // Flat, one-shot badge (same style as SPYGLASS/IMPOSTOR_WIN/
-                // BULLSEYE) rather than a climbing bronze/silver/gold ladder --
+                // Flat, one-shot badge (same style as SPYGLASS/IMPOSTOR_WIN)
+                // rather than a climbing bronze/silver/gold ladder --
                 // real play found even the first 3-in-a-row rung rare enough on
                 // its own that the 6/9 tiers above it were never actually
                 // reached, so the escalation was dead weight. Streak still
