@@ -194,13 +194,12 @@ body {
             50% { box-shadow: 0 0 6px 3px rgba(255, 255, 255, 0.35); }
         }
         /* Icon badges have no circular backdrop -- it's the SVG's own shape,
-           painted via a CSS mask (rather than an <img>) so its color is ours to
-           set independent of whatever color the source art actually uses. Same
-           footprint as the number badges (22px) so they line up in the awards
-           column. SPEED3 (still up for grabs this round) gets its own electric
-           yellow; IMPOSTOR_WIN is permanent once earned, so it shares the
-           app's own green accent instead -- "yellow = live race, green =
-           you earned this." */
+           painted via a CSS mask (rather than an <img>) so its color is ours
+           to set independent of whatever color the source art actually
+           uses. Same footprint as the number badges (22px) so they line up
+           in the awards column. Only SPEED3 still needs this treatment --
+           "still up for grabs this round" is a live status bolt-icon.svg's
+           own art doesn't encode, so it's forced to electric yellow here. */
         .award-badge-icon {
             background: transparent;
             border-radius: 0;
@@ -216,16 +215,12 @@ body {
             -webkit-mask-image: url('/bolt-icon.svg');
             mask-image: url('/bolt-icon.svg');
         }
-        .badge-impostor-win {
-            background-color: #00e676;
-            -webkit-mask-image: url('/spy.svg');
-            mask-image: url('/spy.svg');
-        }
-        /* STREAK and SPYGLASS render as plain <img>s instead of a masked,
-           recolored shape -- their art (muscle.svg, mag-glass.svg) was drawn
-           with its own specific colors, including a baked-in "3" marking the
-           three-in-a-row threshold both now require, so a forced recolor
-           would paint over the detail that makes them read at a glance. */
+        /* Every other earned badge renders as a plain <img> instead of a
+           masked, recolored shape -- their art was drawn with its own
+           specific colors (STREAK and SPYGLASS also carry a baked-in "3"
+           marking the three-in-a-row threshold both require), so a forced
+           recolor would paint over the detail that makes them read at a
+           glance. */
         .award-badge-native {
             background: transparent;
             border-radius: 0;
@@ -236,15 +231,8 @@ body {
             height: 100%;
             display: block;
         }
-        /* On the Spectrum's own badges keep this mode's established gold/blue
-           (its reveal screen and vote bar already use these), rather than the
-           shared "permanent" green above -- these two icon files don't exist
-           yet, drawn separately from the EmpossDurr set. */
-        .badge-spectrum-bullseye {
-            background-color: #d4af37;
-            -webkit-mask-image: url('/spectrum-target.svg');
-            mask-image: url('/spectrum-target.svg');
-        }
+        /* spectrum-bow.svg is still a CSS-masked placeholder shape, not yet
+           drawn with its own colors like this mode's other badge art. */
         .badge-spectrum-sharpshooter {
             background-color: #2d9cdb;
             -webkit-mask-image: url('/spectrum-bow.svg');
