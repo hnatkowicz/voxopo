@@ -744,6 +744,8 @@ function applyEmpossDurrAccuseScoring(room, resolution) {
     const ed = room.empossdurr;
     const impostorPlayer = room.players[ed.impostorName];
 
+    updateImpostorCatchStreaks(room, resolution);
+
     // The impostor's own entry (an abstain, or a decoy accusation cast as
     // misdirection) is never a real accuser's vote -- excluded here the same
     // way it's excluded from the tally itself, so it can't accidentally
@@ -783,16 +785,51 @@ function applyEmpossDurrAccuseScoring(room, resolution) {
         // is reserved for the one outcome that's genuinely the impostor's own
         // accomplishment: a correct declare (see tallyEmpossDurrDeclareVerdict).
         if (impostorPlayer) { impostorPlayer.score += 3; }
-    } else {
-        // Correctly-caught impostor gets 0 score for this outcome, but everyone
-        // who voted for the real impostor earns the spyglass -- a persistent
-        // badge for the rest of the game, same spirit as STREAK/SPEED3.
-        Object.entries(ed.accuseVotes).forEach(([voterName, vote]) => {
-            if (voterName === ed.impostorName || vote.mode !== 'accuse' || vote.target !== ed.impostorName) return;
-            const voterPlayer = room.players[voterName];
-            if (voterPlayer) awardEmpossDurrBadge(voterPlayer, 'SPYGLASS');
-        });
     }
+    // Correctly-caught impostor gets 0 score for this outcome. SPYGLASS
+    // itself is no longer awarded here -- updateImpostorCatchStreaks above
+    // already handles it (and covers a personally-correct vote even when the
+    // round's own majority got it wrong), so there's nothing outcome-specific
+    // left to do in either branch.
+}
+
+// SPYGLASS now means "three correct accuse-vote calls in a row," not "caught
+// them once" -- a deliberate rarity bump (mag-glass.svg's own art carries a
+// baked-in "3" to match). Tracked per player across every accuse vote they
+// personally cast: voting for the real impostor extends the streak; voting
+// for anyone else, abstaining, or not voting at all before a timer/leave
+// forces the tally breaks it -- the same "sitting it out costs you the same
+// as getting it wrong" rule trivia's own STREAK already uses. A round where
+// this player IS the impostor is skipped entirely (not a break, not real
+// participation), so the streak survives their turn in the hot seat.
+function updateImpostorCatchStreaks(room, resolution) {
+    const ed = room.empossdurr;
+    const isRoundEnding = resolution.type !== 'continue';
+    const accusers = Object.values(room.players).filter(p => !p.left && p.name !== ed.impostorName);
+
+    accusers.forEach(accuser => {
+        const vote = ed.accuseVotes[accuser.name];
+        const correct = !!vote && vote.mode === 'accuse' && vote.target === ed.impostorName;
+        if (!correct) {
+            accuser.impostorCatchStreak = 0;
+            return;
+        }
+        accuser.impostorCatchStreak = (accuser.impostorCatchStreak || 0) + 1;
+        if (accuser.impostorCatchStreak < 3) return;
+        accuser.impostorCatchStreak = 0;
+        // A "continue" outcome doesn't end the round, so awarding (and
+        // thereby revealing) the badge right now would leak exactly what
+        // the secret vote exists to hide -- who guessed right. Queue it the
+        // same way pendingScoreDeltas already does, flushed the instant the
+        // round actually ends (flushEmpossDurrPendingScoring already awards
+        // any badge type generically, SPYGLASS included).
+        if (isRoundEnding) {
+            awardEmpossDurrBadge(accuser, 'SPYGLASS');
+        } else {
+            ed.pendingBadges[accuser.name] = ed.pendingBadges[accuser.name] || [];
+            ed.pendingBadges[accuser.name].push('SPYGLASS');
+        }
+    });
 }
 
 // Sets a persistent, boolean-style EmpossDurr award the instant it's earned.
@@ -1010,6 +1047,7 @@ function resetPlayerStatsForFreshGame(player) {
     player.timesFastest = 0;
     player.awards = {};
     player.bullseyeCount = 0;
+    player.impostorCatchStreak = 0;
 }
 
 // Resets score/roster state exactly like resetRoomToLobby, but short-circuits
@@ -1554,17 +1592,18 @@ function evaluateRoundAndRevealAnswer(roomCode) {
                 player.score += points;
                 player.correctAnswers = (player.correctAnswers || 0) + 1; // tiebreak for the final leaderboard
                 player.currentStreak = (player.currentStreak || 0) + 1;
-                // Every 3-in-a-row bumps a single badge's level (framework for future
-                // award types -- see AWARD_DISPLAY in app.js) instead of stacking a new
-                // icon -- the badge's own label/tier climbs bronze/silver/gold (3/6/9),
-                // capped at level 3 (9). Checkpointing every 3 (not the whole game) means
-                // breaking a streak only ever costs up to 2 questions of progress.
+                // Flat, one-shot badge (same style as SPYGLASS/IMPOSTOR_WIN/
+                // BULLSEYE) rather than a climbing bronze/silver/gold ladder --
+                // real play found even the first 3-in-a-row rung rare enough on
+                // its own that the 6/9 tiers above it were never actually
+                // reached, so the escalation was dead weight. Streak still
+                // resets after hitting 3 (not carried further), so this stays
+                // a genuine "did it happen this game" moment, not a one-time
+                // permanent unlock from an early lucky run.
                 if (player.currentStreak >= 3) {
                     player.currentStreak = 0;
                     player.awards = player.awards || {};
-                    if ((player.awards.STREAK || 0) < 3) {
-                        player.awards.STREAK = (player.awards.STREAK || 0) + 1;
-                    }
+                    player.awards.STREAK = 1;
                 }
             } else {
                 player.currentStreak = 0;
@@ -1702,6 +1741,7 @@ export function handleIncomingMessage(fromPhone, bodyText, explicitRoomCode, pre
                     currentStreak: 0,
                     timesFastest: 0, // lifetime count, purely for tie-breaking -- independent of the bolt badge's live per-round status
                     bullseyeCount: 0, // On the Spectrum exact matches -- also a tiebreak field
+                    impostorCatchStreak: 0, // EmpossDurr: consecutive correct accuse-vote calls, see updateImpostorCatchStreaks
                     awards: {},
                     statsEpoch: currentRoom.gameEpoch || 0, // matches the room's current game -- see the rejoin branch above
                     sessionToken, // proves later requests claiming this name are from the same device -- see play.html's auto-resume flow

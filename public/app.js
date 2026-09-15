@@ -321,6 +321,9 @@ if (btnSubmitSpectate) {
                 }
                 if (data.type === 'EMPOSSDURR_DECLARE_RESULT') {
                     switchToEmpossDurrDeclareResultUI(data.correct, data.impostorName);
+                    if (data.correct) {
+                        playAudioTrack('impostor-correct-sound');
+                    }
                     playerAnswerStatus = {};
                 }
 
@@ -365,34 +368,27 @@ if (btnSubmitSpectate) {
 
         // Award-type framework: each entry in a player's `awards` map (type -> level)
         // renders via this lookup, so adding a new award later is just one more
-        // entry here, no other code to touch. STREAK climbs bronze/silver/gold
-        // tiers (3/6/9 in a row) as its level increases, capped at gold -- a
-        // genuine accumulated achievement. SPEED3 is the opposite: a live,
-        // contested status (not a streak) that belongs to whoever answered
-        // fastest THIS round and is lost the instant someone else wins it.
-        // Tier colors/backgrounds mirror the final-screen medal buttons
-        // (.leaderboard-btn.rank-gold/silver/bronze in styles.css) so a tier
-        // reads as "the same medal," not a re-skin.
+        // entry here, no other code to touch. All awards below are one-shot,
+        // boolean-style badges now (level is always 1, set the instant earned,
+        // never re-evaluated) -- STREAK used to climb bronze/silver/gold tiers
+        // at 3/6/9 in a row, but real play found even 3 rare enough on its own
+        // that 6/9 never got reached, so the ladder was dropped in favor of a
+        // single flat badge at 3 (same design as SPYGLASS/IMPOSTOR_WIN/
+        // BULLSEYE). SPEED3 is the exception: a live, contested status (not a
+        // streak) that belongs to whoever answered fastest THIS round and is
+        // lost the instant someone else wins it -- yellow, not the "earned,
+        // permanent" green the rest share.
         //
-        // SPYGLASS/IMPOSTOR_WIN/BULLSEYE are EmpossDurr's own one-shot badges:
-        // boolean-style (level is always 1), set the instant they're earned and
-        // never re-evaluated afterward -- they stay lit for the rest of that
-        // game once true, same "persists on the leaderboard row" idea as
-        // STREAK, just without tiers. Icon color is deliberately the app's
-        // own green accent (matching everything else) rather than SPEED3's
-        // yellow -- yellow is reserved for "still up for grabs this round,"
-        // green means "earned, permanent."
+        // nativeIcon badges (STREAK, SPYGLASS) render their SVG as a plain
+        // <img>, keeping the art's own baked-in colors (and, for these two,
+        // a "3" marking the three-in-a-row threshold both now require) --
+        // everything else is a single-color shape painted via a CSS mask
+        // (iconClass in styles.css), recolored to whatever this app wants
+        // independent of the source file's own colors.
         const AWARD_DISPLAY = {
-            STREAK: {
-                pulse: false,
-                tiers: [
-                    { threshold: 3, color: '#cd7f32', bg: 'rgba(205, 127, 50, 0.08)' },  // bronze
-                    { threshold: 6, color: '#b8bcc4', bg: 'rgba(184, 188, 196, 0.08)' }, // silver
-                    { threshold: 9, color: '#d4af37', bg: 'rgba(212, 175, 55, 0.08)' }   // gold
-                ]
-            },
+            STREAK: { pulse: false, title: '3 correct answers in a row', nativeIcon: true, iconSrc: '/muscle.svg' },
             SPEED3: { pulse: false, title: 'Fastest answer this round', imageBadge: true, iconClass: 'badge-speed3' },
-            SPYGLASS: { pulse: false, title: 'Caught the impostor', imageBadge: true, iconClass: 'badge-spyglass' },
+            SPYGLASS: { pulse: false, title: '3 correct impostor calls in a row', nativeIcon: true, iconSrc: '/mag-glass.svg' },
             IMPOSTOR_WIN: { pulse: false, title: 'Successful impostor', imageBadge: true, iconClass: 'badge-impostor-win' },
             BULLSEYE: { pulse: false, title: 'Called a bluff in a split decision', imageBadge: true, iconClass: 'badge-bullseye' },
             // On the Spectrum badges -- distinct key names from EmpossDurr's own
@@ -416,21 +412,14 @@ if (btnSubmitSpectate) {
                 const def = AWARD_DISPLAY[type];
                 const classes = ['award-badge'];
                 if (def.pulse) classes.push('award-pulse');
-                if (def.imageBadge) classes.push('award-badge-icon');
-                if (def.iconClass) classes.push(def.iconClass);
-                let content = '';
-                let title = def.title || '';
-                let styleAttr = '';
-                if (def.tiers) {
-                    const tier = def.tiers[Math.min(level, def.tiers.length) - 1];
-                    content = String(tier.threshold);
-                    title = `${tier.threshold} correct answers in a row`;
-                    styleAttr = ` style="background: ${tier.bg}; border: 2px solid ${tier.color}; color: ${tier.color};"`;
-                } else if (def.content) {
-                    content = def.content;
-                    styleAttr = ` style="background: ${def.bg}; border: 2px solid ${def.color};"`;
+                const title = def.title || '';
+                if (def.nativeIcon) {
+                    classes.push('award-badge-native');
+                    return `<span class="${classes.join(' ')}" title="${title}"><img src="${def.iconSrc}" alt=""></span>`;
                 }
-                return `<span class="${classes.join(' ')}"${styleAttr} title="${title}">${content}</span>`;
+                classes.push('award-badge-icon');
+                if (def.iconClass) classes.push(def.iconClass);
+                return `<span class="${classes.join(' ')}" title="${title}"></span>`;
             }).join('');
         }
 
