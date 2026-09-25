@@ -11,6 +11,7 @@ export const activeRooms = {};
 // and aren't filtered against this list -- see loadQuestionBank.
 const ELIGIBLE_SUBCATEGORIES = ['PERSON', 'PLACE', 'THING', 'EVENT', 'DATE'];
 const MIN_GROUP_SIZE_FOR_DISTRACTORS = 4; // correct answer + 3 distractors
+const MIN_OWN_WRONG_ANSWERS = 3; // a question with its own pool needs at least 3 to draw from
 const MAX_QUESTIONS_PER_GAME = 30;
 const MIN_QUESTIONS_PER_GAME = 15;
 const DEFAULT_QUESTIONS_PER_GAME = 15; // fixed length, no lobby picker for this right now
@@ -353,11 +354,14 @@ async function executeCategoryPhaseExpiration(roomCode) {
 // Pulls every row for the room's winning game mode (filtered down to the
 // winning main category whenever that's a real category key -- the
 // content-less modes' synthetic CAT_1/2/3 keys never match a real `category`
-// column value, so they fall back to drawing from that mode's whole pool),
-// groups peers by category+subcategory+faction for distractor sourcing, and
-// keeps only questions whose group has enough peers to supply 3 distractors.
-// Shuffled once per room so question order (and which questions get asked at
-// all) varies game to game.
+// column value, so they fall back to drawing from that mode's whole pool).
+// Two distractor sources coexist: a question with its own wrong_answers pool
+// (>=3 curated wrong answers, 3 drawn at random each play for replayability)
+// never needs peers at all; older content still leans on the original
+// mechanism -- grouping peers by category+subcategory+faction and pulling
+// their correct answers as this question's distractors -- which only works
+// if that group has enough peers to supply 3. Shuffled once per room so
+// question order (and which questions get asked at all) varies game to game.
 async function loadQuestionBank(room) {
     const dbGameMode = gameModeToDbValue(room.winningGameMode);
     const params = [dbGameMode];
@@ -365,9 +369,12 @@ async function loadQuestionBank(room) {
 
     // TRIVI_YEAH's subcategory vocabulary (PERSON/PLACE/THING/EVENT/DATE) is
     // specific to it -- other modes define their own and aren't gated by it.
+    // A question carrying its own wrong_answers pool is exempt: it doesn't
+    // need a subcategory at all since it never draws distractors from peers,
+    // so requiring one here would just make it invisible for no reason.
     if (dbGameMode === 'TRIVIA') {
         params.push(ELIGIBLE_SUBCATEGORIES);
-        filters += ` AND subcategory = ANY($${params.length}::text[])`;
+        filters += ` AND (subcategory = ANY($${params.length}::text[]) OR wrong_answers IS NOT NULL)`;
     }
 
     if (isRealCategoryKey(room.activeCategoryKey)) {
@@ -376,7 +383,7 @@ async function loadQuestionBank(room) {
     }
 
     const result = await pool.query(
-        `SELECT id, category, subcategory, faction, question_text, correct_answer, points, visual_asset
+        `SELECT id, category, subcategory, faction, question_text, correct_answer, wrong_answers, points, visual_asset
          FROM questions
          WHERE game_mode = $1${filters}`,
         params
@@ -400,6 +407,7 @@ async function loadQuestionBank(room) {
     });
 
     const eligibleQuestions = result.rows.filter(row => {
+        if ((row.wrong_answers || []).length >= MIN_OWN_WRONG_ANSWERS) return true;
         const key = `${row.category}|${row.subcategory}|${row.faction}`;
         return distinctAnswerCounts[key] >= MIN_GROUP_SIZE_FOR_DISTRACTORS;
     });
@@ -411,24 +419,30 @@ async function loadQuestionBank(room) {
     room.askedQuestionIds = new Set();
 }
 
-// Builds the shuffled 4-choice payload for one question row: distractors are
-// pulled from sibling rows sharing subcategory+faction (excluding itself).
+// Builds the shuffled 4-choice payload for one question row. A question with
+// its own wrong_answers pool draws 3 at random straight from it; everything
+// else falls back to the original mechanism -- distractors pulled from
+// sibling rows sharing subcategory+faction (excluding itself).
 function buildQuestionPayload(room, row, categoryLabel) {
-    const groupKey = `${row.category}|${row.subcategory}|${row.faction}`;
+    let distractors;
+    if ((row.wrong_answers || []).length >= MIN_OWN_WRONG_ANSWERS) {
+        distractors = shuffleArray(row.wrong_answers).slice(0, 3);
+    } else {
+        const groupKey = `${row.category}|${row.subcategory}|${row.faction}`;
+        // Dedupe by answer text, not row id -- a sibling row can share this row's
+        // own correct answer (e.g. a different map crop of the same country), and
+        // without this it could get pulled in as a "wrong" choice identical to the
+        // right one, or the same wrong answer could appear in two choice slots.
+        const seenAnswers = new Set([row.correct_answer]);
+        const distractorPool = [];
+        (room.questionGroups[groupKey] || []).forEach(peer => {
+            if (peer.id === row.id || seenAnswers.has(peer.correct_answer)) return;
+            seenAnswers.add(peer.correct_answer);
+            distractorPool.push(peer.correct_answer);
+        });
+        distractors = shuffleArray(distractorPool).slice(0, 3);
+    }
 
-    // Dedupe by answer text, not row id -- a sibling row can share this row's
-    // own correct answer (e.g. a different map crop of the same country), and
-    // without this it could get pulled in as a "wrong" choice identical to the
-    // right one, or the same wrong answer could appear in two choice slots.
-    const seenAnswers = new Set([row.correct_answer]);
-    const distractorPool = [];
-    (room.questionGroups[groupKey] || []).forEach(peer => {
-        if (peer.id === row.id || seenAnswers.has(peer.correct_answer)) return;
-        seenAnswers.add(peer.correct_answer);
-        distractorPool.push(peer.correct_answer);
-    });
-
-    const distractors = shuffleArray(distractorPool).slice(0, 3);
     const shuffledChoices = shuffleArray([row.correct_answer, ...distractors]);
     const letters = ['A', 'B', 'C', 'D'];
     const correctLetter = letters[shuffledChoices.indexOf(row.correct_answer)];
