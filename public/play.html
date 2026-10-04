@@ -449,6 +449,32 @@
             <div id="ty2-grid" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px;"></div>
         </div>
 
+        <!-- Doubler sequence: a dramatic reveal, then the picker's private
+             wager, then everyone else's informed side bet at the tile's own
+             value -- all before rejoining the normal question/answers flow. -->
+        <div id="ty2-doubler-container" style="display: none; margin-top: 16px; text-align: center;">
+            <div id="ty2-doubler-reveal-box" style="display: none;">
+                <div style="font-size: 1.8rem; font-weight: 800; color: #ffa500; margin-bottom: 8px;">DOUBLER!</div>
+                <div id="ty2-doubler-reveal-text" style="color: #94a3b8;"></div>
+            </div>
+            <div id="ty2-wager-box" style="display: none;">
+                <div id="ty2-wager-prompt-text" style="font-weight: 600; margin-bottom: 14px;"></div>
+                <div id="ty2-wager-input-row" style="display: none;">
+                    <input type="number" id="ty2-wager-input" min="0" value="0" style="width: 100%; padding: 12px; font-size: 1.1rem; border-radius: 8px; border: 1px solid #222630; background: #14161d; color: #fff; margin-bottom: 10px; box-sizing: border-box;" />
+                    <button class="btn" onclick="submitTriviYeahIIWager()">Lock In Wager</button>
+                </div>
+            </div>
+            <div id="ty2-sidebet-box" style="display: none;">
+                <div id="ty2-sidebet-wager-text" style="font-weight: 700; color: #ffa500; font-size: 1.3rem; margin-bottom: 14px;"></div>
+                <div class="module-list" id="ty2-sidebet-buttons" style="display: none;">
+                    <div class="module-row" id="ty2-bet-row-FOR" onclick="submitTriviYeahIISideBet(this, 'FOR')" style="text-align: center; font-weight: 700; color: #00e676;">For &mdash; they'll get it right</div>
+                    <div class="module-row" id="ty2-bet-row-AGAINST" onclick="submitTriviYeahIISideBet(this, 'AGAINST')" style="text-align: center; font-weight: 700; color: #ff5c5c;">Against &mdash; they'll miss it</div>
+                    <div class="module-row" id="ty2-bet-row-PASS" onclick="submitTriviYeahIISideBet(this, 'PASS')" style="margin-top: 10px; border-style: dashed; color: #94a3b8; text-align: center; font-weight: 600;">Pass -- sit this one out</div>
+                </div>
+                <div id="ty2-sidebet-waiting-text" style="color: #94a3b8; display: none;"></div>
+            </div>
+        </div>
+
         <!-- Staged reveal: category alone, then question, then the answer
              choices -- same category -> +2s -> question -> +2s -> buttons
              pacing as the TV, driven by the server's phase, not a local timer. -->
@@ -462,9 +488,13 @@
                 <div class="module-row" id="ty2-choice-row-D" onclick="submitTriviYeahIIAnswer(this, 'D')"><span style="background: rgba(0, 230, 118, 0.1); color: #00e676; font-weight: 700; padding: 4px 10px; border-radius: 4px; font-size: 0.85rem; margin-right: 12px;">D</span><span id="ty2-choice-text-D">-</span></div>
                 <!-- Deliberately plain/muted, no lettered badge -- this is an
                      opt-out from the wrong-answer penalty, not a 5th choice,
-                     and shouldn't read as one at a glance. -->
+                     and shouldn't read as one at a glance. Hidden entirely
+                     for a Doubler question -- see renderTriviYeahII. -->
                 <div class="module-row" id="ty2-choice-row-PASS" onclick="submitTriviYeahIIAnswer(this, 'PASS')" style="margin-top: 10px; border-style: dashed; color: #94a3b8; text-align: center; font-weight: 600;">Pass -- no points, no penalty</div>
             </div>
+            <!-- Non-picker view of a Doubler's ANSWERING phase -- they already
+                 placed their side bet, so there's nothing left to tap. -->
+            <div id="ty2-doubler-spectator-text" style="display: none; color: #94a3b8; text-align: center; padding: 20px 0;"></div>
             <div id="ty2-feedback" class="feedback" style="margin-top: 24px; font-weight: 600; text-align: left; padding: 14px 20px; display: none;"></div>
         </div>
 
@@ -839,11 +869,13 @@
             document.getElementById('ty2-round-badge').innerText = data.round || 1;
             document.getElementById('ty2-total-rounds-badge').innerText = data.totalRounds || 3;
 
-            const renderKey = `${data.round}|${data.triviYeahIIPhase}|${data.activeCellIndex}|${data.currentPicker}|${data.myAnswer || ''}`;
+            const doublerKey = data.doubler ? `${data.doubler.wagerAmount}|${data.doubler.maxWager}|${data.doubler.mySideBet}|${data.doubler.resolved}` : '';
+            const renderKey = `${data.round}|${data.triviYeahIIPhase}|${data.activeCellIndex}|${data.currentPicker}|${data.myAnswer || ''}|${doublerKey}`;
             if (renderKey === ty2LastRenderKey) return;
             ty2LastRenderKey = renderKey;
 
             const gridContainer = document.getElementById('ty2-grid-container');
+            const doublerContainer = document.getElementById('ty2-doubler-container');
             const revealContainer = document.getElementById('ty2-reveal-container');
             const choicesList = document.getElementById('ty2-choices-list');
             const feedback = document.getElementById('ty2-feedback');
@@ -852,6 +884,7 @@
 
             if (data.triviYeahIIPhase === 'PICK_TILE') {
                 gridContainer.style.display = 'block';
+                doublerContainer.style.display = 'none';
                 revealContainer.style.display = 'none';
 
                 document.getElementById('ty2-status-line').innerText = data.isMyPick
@@ -885,6 +918,17 @@
                 return;
             }
 
+            // Doubler sequence -- detours through its own container entirely,
+            // never touching the grid or the normal reveal flow.
+            if (['DOUBLER_REVEAL', 'DOUBLER_WAGER', 'DOUBLER_SIDE_BET'].includes(data.triviYeahIIPhase)) {
+                gridContainer.style.display = 'none';
+                revealContainer.style.display = 'none';
+                doublerContainer.style.display = 'block';
+                renderTriviYeahIIDoublerStage(data);
+                return;
+            }
+            doublerContainer.style.display = 'none';
+
             // Any reveal stage -- category, question, answering, or the brief
             // round-reveal pause before the next pick.
             gridContainer.style.display = 'none';
@@ -897,6 +941,7 @@
                 document.getElementById('ty2-status-line').innerText = 'Get ready...';
                 document.getElementById('ty2-question-text').innerText = '';
                 choicesList.style.display = 'none';
+                document.getElementById('ty2-doubler-spectator-text').style.display = 'none';
                 return;
             }
 
@@ -904,14 +949,48 @@
                 document.getElementById('ty2-status-line').innerText = 'Read the question...';
                 document.getElementById('ty2-question-text').innerText = data.questionText || '';
                 choicesList.style.display = 'none';
+                document.getElementById('ty2-doubler-spectator-text').style.display = 'none';
                 return;
             }
 
-            // ANSWERING or ROUND_REVEAL -- both show the full question + choices;
-            // ROUND_REVEAL just means the window's closed, so rows stay as they
-            // were left (no new taps matter once the server's stopped listening).
-            document.getElementById('ty2-status-line').innerText = data.triviYeahIIPhase === 'ANSWERING' ? 'Pick your answer!' : 'Resolved! Next pick coming up...';
+            // ANSWERING or ROUND_REVEAL -- both show the full question; a
+            // Doubler question only ever puts choices in front of the picker,
+            // everyone else gets a spectator notice instead (they already
+            // placed their side bet). ROUND_REVEAL just means the window's
+            // closed, so rows/text stay as they were left.
+            const spectatorText = document.getElementById('ty2-doubler-spectator-text');
             document.getElementById('ty2-question-text').innerText = data.questionText || '';
+
+            // currentPicker has already moved on to the NEXT picker once a
+            // Doubler's resolved -- doubler.pickerName is who actually
+            // answered THIS tile, so that's what decides picker-vs-spectator
+            // once we're past ANSWERING (where isMyPick is still accurate).
+            const doublerAnswererName = data.doubler ? (data.doubler.pickerName || data.currentPicker) : null;
+            const amIDoublerAnswerer = data.doubler && (data.triviYeahIIPhase === 'ANSWERING' ? data.isMyPick : nickname === doublerAnswererName);
+
+            if (data.doubler && !amIDoublerAnswerer) {
+                document.getElementById('ty2-status-line').innerText = data.triviYeahIIPhase === 'ANSWERING'
+                    ? `Only ${doublerAnswererName} is answering...`
+                    : 'Resolved! Next pick coming up...';
+                choicesList.style.display = 'none';
+                spectatorText.style.display = 'block';
+                if (data.doubler.resolved) {
+                    const result = data.doubler.mySideBetResult;
+                    if (data.doubler.mySideBet === 'PASS' || result === 0 || result === null) {
+                        spectatorText.innerText = `${doublerAnswererName} ${data.doubler.pickerCorrect ? 'got it right' : 'missed it'}. You sat that one out.`;
+                    } else if (result > 0) {
+                        spectatorText.innerText = `${data.doubler.pickerCorrect ? 'Correct!' : 'Missed!'} You won ${result} points.`;
+                    } else {
+                        spectatorText.innerText = `${data.doubler.pickerCorrect ? 'Correct!' : 'Missed!'} You lost ${Math.abs(result)} points.`;
+                    }
+                } else {
+                    spectatorText.innerText = `You bet ${data.doubler.mySideBet || 'nothing'} on this one. Sit tight...`;
+                }
+                return;
+            }
+            spectatorText.style.display = 'none';
+
+            document.getElementById('ty2-status-line').innerText = data.triviYeahIIPhase === 'ANSWERING' ? 'Pick your answer!' : 'Resolved! Next pick coming up...';
             choicesList.style.display = 'block';
             ['A', 'B', 'C', 'D'].forEach(letter => {
                 const textEl = document.getElementById(`ty2-choice-text-${letter}`);
@@ -920,14 +999,87 @@
                 row.classList.remove('selected');
                 row.style.opacity = data.myAnswer ? (data.myAnswer === letter ? '1' : '0.3') : '1';
             });
+            // A Doubler question is A-D only -- PASS doesn't make sense on a
+            // question you already committed a wager to.
             const passRow = document.getElementById('ty2-choice-row-PASS');
-            passRow.classList.remove('selected');
-            passRow.style.opacity = data.myAnswer ? (data.myAnswer === 'PASS' ? '1' : '0.3') : '1';
-            if (data.myAnswer === 'PASS') {
+            if (data.doubler) {
+                passRow.style.display = 'none';
+            } else {
+                passRow.style.display = '';
+                passRow.classList.remove('selected');
+                passRow.style.opacity = data.myAnswer ? (data.myAnswer === 'PASS' ? '1' : '0.3') : '1';
+            }
+            if (data.doubler && data.triviYeahIIPhase === 'ROUND_REVEAL' && data.doubler.resolved) {
+                const won = data.doubler.pickerCorrect;
+                showFeedback(feedback, won ? `Correct! You won ${data.doubler.wagerAmount} points.` : `Missed it -- you lost ${data.doubler.wagerAmount} points.`,
+                    won ? "rgba(0,230,118,0.06)" : "rgba(255,71,87,0.06)", won ? "#00e676" : "#ff4757", won ? "rgba(0,230,118,0.15)" : "rgba(255,71,87,0.1)");
+            } else if (data.myAnswer === 'PASS') {
                 showFeedback(feedback, `PASSED -- no points, no penalty.`, "rgba(100,116,139,0.08)", "#94a3b8", "rgba(100,116,139,0.2)");
             } else if (data.myAnswer) {
                 showFeedback(feedback, `LOCKED IN: You selected Option ${data.myAnswer}`, "rgba(0,230,118,0.06)", "#00e676", "rgba(0,230,118,0.15)");
             }
+        }
+
+        // The three Doubler sub-phases, each rendered into #ty2-doubler-container.
+        // The picker and everyone else see meaningfully different content at
+        // every stage (wager entry vs. a passive wait; side-bet buttons vs. a
+        // "you're on the hook" notice), so this branches on isMyPick throughout.
+        function renderTriviYeahIIDoublerStage(data) {
+            const revealBox = document.getElementById('ty2-doubler-reveal-box');
+            const wagerBox = document.getElementById('ty2-wager-box');
+            const sidebetBox = document.getElementById('ty2-sidebet-box');
+            revealBox.style.display = 'none';
+            wagerBox.style.display = 'none';
+            sidebetBox.style.display = 'none';
+
+            const tileValue = data.doubler ? data.doubler.tileValue : null;
+
+            if (data.triviYeahIIPhase === 'DOUBLER_REVEAL') {
+                document.getElementById('ty2-status-line').innerText = 'A Doubler tile!';
+                revealBox.style.display = 'block';
+                document.getElementById('ty2-doubler-reveal-text').innerText = data.isMyPick
+                    ? `You're on the hook for this one. Tile worth ${tileValue} points.`
+                    : `${data.currentPicker} is on the hook for this one. Tile worth ${tileValue} points.`;
+                return;
+            }
+
+            if (data.triviYeahIIPhase === 'DOUBLER_WAGER') {
+                document.getElementById('ty2-status-line').innerText = 'Wagering...';
+                wagerBox.style.display = 'block';
+                const inputRow = document.getElementById('ty2-wager-input-row');
+                if (data.isMyPick) {
+                    const maxWager = data.doubler.maxWager || 0;
+                    document.getElementById('ty2-wager-prompt-text').innerText = `How much do you want to wager? (0 - ${maxWager} points)`;
+                    inputRow.style.display = 'block';
+                    const input = document.getElementById('ty2-wager-input');
+                    input.max = maxWager;
+                    input.value = Math.min(parseInt(input.value, 10) || 0, maxWager);
+                } else {
+                    document.getElementById('ty2-wager-prompt-text').innerText = `Waiting for ${data.currentPicker} to lock in their wager...`;
+                    inputRow.style.display = 'none';
+                }
+                return;
+            }
+
+            // DOUBLER_SIDE_BET
+            document.getElementById('ty2-status-line').innerText = data.isMyPick ? 'Sit tight...' : 'Place your side bet!';
+            sidebetBox.style.display = 'block';
+            document.getElementById('ty2-sidebet-wager-text').innerText = `${data.currentPicker} wagered ${data.doubler.wagerAmount} points. Side bets are ${tileValue} points.`;
+            const buttons = document.getElementById('ty2-sidebet-buttons');
+            const waitingText = document.getElementById('ty2-sidebet-waiting-text');
+            if (data.isMyPick) {
+                buttons.style.display = 'none';
+                waitingText.style.display = 'block';
+                waitingText.innerText = "Everyone else is betting on you. Sit tight!";
+                return;
+            }
+            buttons.style.display = 'block';
+            waitingText.style.display = 'none';
+            ['FOR', 'AGAINST', 'PASS'].forEach(choice => {
+                const row = document.getElementById(`ty2-bet-row-${choice}`);
+                row.classList.remove('selected');
+                row.style.opacity = data.doubler.mySideBet ? (data.doubler.mySideBet === choice ? '1' : '0.3') : '1';
+            });
         }
 
         async function submitTriviYeahIIPick(element, index) {
@@ -969,6 +1121,42 @@
                 });
             } catch (error) {
                 showFeedback(feedback, "❌ Transmission failure.", "rgba(255,71,87,0.06)", "#ff4757", "rgba(255,71,87,0.1)");
+            }
+        }
+
+        async function submitTriviYeahIIWager() {
+            const input = document.getElementById('ty2-wager-input');
+            const amount = Math.max(0, parseInt(input.value, 10) || 0);
+            const registeredName = localStorage.getItem('randomania_nickname') || 'test-handset';
+            document.getElementById('ty2-wager-prompt-text').innerText = `Wager locked in at ${amount} points. Waiting on side bets...`;
+            document.getElementById('ty2-wager-input-row').style.display = 'none';
+            try {
+                await fetch('/api/message', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ From: registeredName, Body: `WAGER ${amount}`, roomCode: localStorage.getItem('randomania_roomcode') })
+                });
+                ty2LastRenderKey = null; // force a re-render even if the poll lands before the server's broadcast does
+            } catch (error) {
+                console.error('[Trivi-Yeah II] Wager submission failed.', error);
+            }
+        }
+
+        async function submitTriviYeahIISideBet(element, choice) {
+            const rows = document.getElementById('ty2-sidebet-buttons').getElementsByClassName('module-row');
+            for (let i = 0; i < rows.length; i++) rows[i].style.opacity = '0.3';
+            element.style.opacity = '1';
+
+            const registeredName = localStorage.getItem('randomania_nickname') || 'test-handset';
+            try {
+                await fetch('/api/message', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ From: registeredName, Body: choice, roomCode: localStorage.getItem('randomania_roomcode') })
+                });
+                ty2LastRenderKey = null;
+            } catch (error) {
+                console.error('[Trivi-Yeah II] Side bet submission failed.', error);
             }
         }
 

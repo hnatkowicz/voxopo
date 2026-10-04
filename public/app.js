@@ -292,6 +292,30 @@ if (btnSubmitSpectate) {
                     playerAnswerStatus = {};
                     updateLeaderboardUI(cachedPlayersSnapshot);
                 }
+                // ---------- Trivi-Yeah II: Doubler (Daily Double) ----------
+                // A Doubler tile detours the normal category->question flow through
+                // four extra beats: a dramatic reveal, the picker's private wager,
+                // the room's informed side bets (placed only once the wager is
+                // visible), then back into the shared question/answers staging.
+                if (data.type === 'TRIVI_YEAH_II_DOUBLER_REVEAL') {
+                    document.getElementById('lobby-countdown').innerText = '';
+                    showTriviYeahIIDoublerRevealUI(data.picker, data.points);
+                    stopCountdownMusic();
+                }
+                if (data.type === 'TRIVI_YEAH_II_WAGER_PROMPT') {
+                    showTriviYeahIIWagerPromptUI(data.picker, data.maxWager, data.tileValue);
+                }
+                if (data.type === 'TRIVI_YEAH_II_SIDE_BETS_OPEN') {
+                    showTriviYeahIISideBetsOpenUI(data.picker, data.wagerAmount, data.tileValue);
+                    playCountdownMusic();
+                }
+                if (data.type === 'TRIVI_YEAH_II_DOUBLER_RESULT') {
+                    document.getElementById('room-status-text').innerText = "Trivi-Yeah II — Doubler Result";
+                    document.getElementById('lobby-countdown').innerText = "0 s";
+                    showTriviYeahIIDoublerResultUI(data);
+                    updateLeaderboardUI(cachedPlayersSnapshot);
+                    stopCountdownMusic();
+                }
 
                 // ---------- EmpossDurr ----------
                 // Deliberately never carries the word or who the impostor is --
@@ -928,6 +952,76 @@ function showTriviYeahIISpotlightUI(partial) {
                 ${questionText}
             </div>
             ${choiceGrid}
+        </div>
+    `;
+}
+
+// Dramatic full-panel beat before the wager prompt -- same shape as the
+// round-transition announcement, just themed to call out the twist.
+function showTriviYeahIIDoublerRevealUI(picker, points) {
+    const panel = document.getElementById('active-content-stage');
+    document.getElementById('room-status-text').innerText = "Trivi-Yeah II — Doubler!";
+    panel.innerHTML = `
+        <div class="panel-box" style="padding: 40px; flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; min-height: 400px; box-sizing: border-box;">
+            <div style="font-size: 0.85rem; font-weight: 600; color: #64748b; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 14px;">Surprise tile</div>
+            <div style="font-size: 2.4rem; font-weight: 800; color: #ffa500; margin-bottom: 10px; text-shadow: 0 0 20px rgba(255, 165, 0, 0.4);">DOUBLER!</div>
+            <div style="font-size: 1.2rem; font-weight: 700; color: #ffffff;">${picker} is on the hook for this one.</div>
+            <div style="font-size: 1rem; color: #94a3b8; margin-top: 6px;">Tile value: ${points} points</div>
+        </div>
+    `;
+}
+
+// Waiting room while only the picker's phone shows a wager input -- nothing
+// for anyone else to do yet, so this stays deliberately passive.
+function showTriviYeahIIWagerPromptUI(picker, maxWager, tileValue) {
+    const panel = document.getElementById('active-content-stage');
+    panel.innerHTML = `
+        <div class="panel-box" style="padding: 40px; flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; min-height: 400px; box-sizing: border-box;">
+            <div style="font-size: 0.85rem; font-weight: 600; color: #64748b; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 14px;">Waiting on the wager</div>
+            <div style="font-size: 1.6rem; font-weight: 700; color: #ffffff; margin-bottom: 10px;">${picker} is deciding how much to risk&hellip;</div>
+            <div style="font-size: 1rem; color: #94a3b8;">Anywhere from 0 to ${maxWager} points (tile is worth ${tileValue})</div>
+        </div>
+    `;
+}
+
+// Once the picker's wager locks in, the room sees it immediately -- then
+// everyone else places an informed For/Against/Pass bet at the tile's own
+// fixed value while the shared countdown (GAME_TIMER_TICK, same banner as
+// every other timed phase) ticks down lobby-countdown.
+function showTriviYeahIISideBetsOpenUI(picker, wagerAmount, tileValue) {
+    const panel = document.getElementById('active-content-stage');
+    document.getElementById('room-status-text').innerText = "Trivi-Yeah II — Side Bets Open";
+    panel.innerHTML = `
+        <div class="panel-box" style="padding: 40px; flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; min-height: 400px; box-sizing: border-box;">
+            <div style="font-size: 0.85rem; font-weight: 600; color: #64748b; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 14px;">${picker}'s wager</div>
+            <div style="font-size: 2.2rem; font-weight: 800; color: #ffa500; margin-bottom: 18px;">${wagerAmount} points</div>
+            <div style="font-size: 1.1rem; font-weight: 600; color: #ffffff;">Will ${picker} get it right?</div>
+            <div style="font-size: 1rem; color: #94a3b8; margin-top: 6px;">Place your side bet -- For, Against, or Pass -- at ${tileValue} points</div>
+        </div>
+    `;
+}
+
+// Final beat of the Doubler sequence -- shows the picker's wager outcome
+// plus every side-bettor's own win/lose, since each stakes a different
+// amount against a different outcome.
+function showTriviYeahIIDoublerResultUI(data) {
+    const panel = document.getElementById('active-content-stage');
+
+    const pickerLine = data.pickerCorrect
+        ? `<span style="color: #00e676;">${data.picker} got it right -- +${data.wagerAmount} points!</span>`
+        : `<span style="color: #ff5c5c;">${data.picker} missed it -- &minus;${data.wagerAmount} points.</span>`;
+
+    const sideBetRows = Object.entries(data.sideBetResults || {}).map(([name, delta]) => {
+        if (delta === 0) return `<div style="font-size: 0.95rem; color: #64748b;">${name} passed.</div>`;
+        const won = delta > 0;
+        return `<div style="font-size: 0.95rem; color: ${won ? '#00e676' : '#ff5c5c'};">${name} ${won ? 'won' : 'lost'} ${Math.abs(delta)} points.</div>`;
+    }).join('');
+
+    panel.innerHTML = `
+        <div class="panel-box" style="padding: 40px; flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; min-height: 400px; box-sizing: border-box; gap: 6px;">
+            <div style="font-size: 0.85rem; font-weight: 600; color: #64748b; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 4px;">Correct answer was ${data.correctLetter}</div>
+            <div style="font-size: 1.5rem; font-weight: 700; margin-bottom: 10px;">${pickerLine}</div>
+            ${sideBetRows}
         </div>
     `;
 }

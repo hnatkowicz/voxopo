@@ -609,6 +609,10 @@ const TRIVI_YEAH_II_ANSWER_SECONDS = 10;
 const TRIVI_YEAH_II_COLUMN_SWEEP_BONUS = 200; // one player, fastest-correct on all 4 tiles in a category, solo
 const TRIVI_YEAH_II_TOTAL_ROUNDS = 3;
 const TRIVI_YEAH_II_ROUND_TRANSITION_MS = 3000; // "Round N complete!" announcement, before the next board appears
+const TRIVI_YEAH_II_DOUBLERS_PER_ROUND = [0, 1, 2]; // indexed by round - 1
+const TRIVI_YEAH_II_DOUBLER_REVEAL_MS = 2500; // "DOUBLER!" beat, after the normal category reveal
+const TRIVI_YEAH_II_WAGER_TIMEOUT_MS = 20000; // backstop if the picker never sets a wager
+const TRIVI_YEAH_II_SIDE_BET_SECONDS = 10;
 
 // Used both for the very first tile of the game (no "previous question" yet
 // to crown a picker) and as the fallback when nobody answers a question
@@ -634,8 +638,10 @@ function publicTriviYeahIIGrid(room) {
 // Builds one round's 12-tile board (3 random categories x 4 tiers, one
 // random question per combo) and returns it, throwing if the content pool
 // can't fill every tile. Pure -- no room mutation -- so it's safe to call
-// again for round 2/3 without tearing down state first.
-async function buildTriviYeahIIBoard() {
+// again for round 2/3 without tearing down state first. doublersCount tiles
+// are marked isDoubler at random -- hidden from the public grid view
+// (publicTriviYeahIIGrid never includes it), revealed only once picked.
+async function buildTriviYeahIIBoard(doublersCount) {
     const chosenCategories = shuffleArray(TRIVI_YEAH_II_CATEGORIES).slice(0, TRIVI_YEAH_II_CATEGORIES_PER_BOARD);
 
     const result = await pool.query(
@@ -673,6 +679,11 @@ async function buildTriviYeahIIBoard() {
         throw new Error(`Incomplete Trivi-Yeah II content pool for categories: ${chosenCategories.map(c => c.label).join(', ')}`);
     }
 
+    if (doublersCount > 0) {
+        const doublerIndices = shuffleArray(grid.map((_, i) => i)).slice(0, doublersCount);
+        doublerIndices.forEach(i => { grid[i].isDoubler = true; });
+    }
+
     return { grid, chosenCategories };
 }
 
@@ -691,7 +702,8 @@ async function startTriviYeahIIGame(roomCode) {
         activeQuestionData: null, // server-only, carries correctLetter once a tile is staged
         answers: {},
         answerOrder: [],
-        clearedCount: 0
+        clearedCount: 0,
+        doubler: null // { wagerAmount, sideBets } while a Doubler tile is in progress
     };
 
     await startTriviYeahIIRound(roomCode);
@@ -709,7 +721,8 @@ async function startTriviYeahIIRound(roomCode) {
     if (!room || !room.triviYeahII) return;
     const ty2 = room.triviYeahII;
 
-    const { grid, chosenCategories } = await buildTriviYeahIIBoard();
+    const doublersCount = TRIVI_YEAH_II_DOUBLERS_PER_ROUND[ty2.round - 1] || 0;
+    const { grid, chosenCategories } = await buildTriviYeahIIBoard(doublersCount);
 
     ty2.grid = grid;
     ty2.phase = 'PICK_TILE';
@@ -718,6 +731,7 @@ async function startTriviYeahIIRound(roomCode) {
     ty2.answers = {};
     ty2.answerOrder = [];
     ty2.clearedCount = 0;
+    ty2.doubler = null;
     if (!ty2.currentPicker) ty2.currentPicker = pickRandomActivePlayer(room);
 
     console.log(`[Trivi-Yeah II] Room ${roomCode} round ${ty2.round}/${ty2.totalRounds} board set: ${chosenCategories.map(c => c.label).join(', ')}. First pick: ${ty2.currentPicker}`);
@@ -746,6 +760,7 @@ function startTriviYeahIITileReveal(roomCode, cellIndex) {
     ty2.phase = 'CATEGORY_REVEAL';
     ty2.answers = {};
     ty2.answerOrder = [];
+    ty2.doubler = null;
 
     broadcastToRoom(roomCode, {
         type: 'TRIVI_YEAH_II_CATEGORY_REVEAL',
@@ -757,8 +772,132 @@ function startTriviYeahIITileReveal(roomCode, cellIndex) {
     if (room.revealTimeout) clearTimeout(room.revealTimeout);
     room.revealTimeout = setTimeout(() => {
         room.revealTimeout = null;
-        revealTriviYeahIIQuestion(roomCode);
+        if (cell.isDoubler) {
+            revealTriviYeahIIDoubler(roomCode);
+        } else {
+            revealTriviYeahIIQuestion(roomCode);
+        }
     }, TRIVI_YEAH_II_CATEGORY_REVEAL_MS);
+}
+
+// Doubler sequence: a dramatic "DOUBLER!" beat, then the picker sets a
+// wager (0 up to the greater of their own score or the tile's own value --
+// same floor real Daily Doubles use so a player with a low/negative score
+// can still wager something meaningful), then everyone else gets to see
+// that wager and bet For/Against/Pass at the tile's own value before the
+// question itself ever reveals. Only after side bets close does this
+// rejoin the normal question->answer pipeline (revealTriviYeahIIQuestion),
+// just gated to the picker alone answering.
+function revealTriviYeahIIDoubler(roomCode) {
+    const room = activeRooms[roomCode];
+    if (!room || !room.triviYeahII) return;
+    const ty2 = room.triviYeahII;
+    const cell = ty2.grid[ty2.activeCellIndex];
+
+    ty2.phase = 'DOUBLER_REVEAL';
+    ty2.doubler = { wagerAmount: null, sideBets: {} };
+
+    broadcastToRoom(roomCode, {
+        type: 'TRIVI_YEAH_II_DOUBLER_REVEAL',
+        index: ty2.activeCellIndex,
+        picker: ty2.currentPicker,
+        points: cell.points
+    });
+
+    if (room.revealTimeout) clearTimeout(room.revealTimeout);
+    room.revealTimeout = setTimeout(() => {
+        room.revealTimeout = null;
+        openTriviYeahIIWager(roomCode);
+    }, TRIVI_YEAH_II_DOUBLER_REVEAL_MS);
+}
+
+function openTriviYeahIIWager(roomCode) {
+    const room = activeRooms[roomCode];
+    if (!room || !room.triviYeahII) return;
+    const ty2 = room.triviYeahII;
+    const cell = ty2.grid[ty2.activeCellIndex];
+    const picker = room.players[ty2.currentPicker];
+    const maxWager = Math.max(picker ? picker.score : 0, cell.points);
+
+    ty2.phase = 'DOUBLER_WAGER';
+
+    broadcastToRoom(roomCode, {
+        type: 'TRIVI_YEAH_II_WAGER_PROMPT',
+        picker: ty2.currentPicker,
+        maxWager,
+        tileValue: cell.points
+    });
+
+    if (room.revealTimeout) clearTimeout(room.revealTimeout);
+    room.revealTimeout = setTimeout(() => {
+        room.revealTimeout = null;
+        // Picker never responded -- default to the tile's own value rather
+        // than leave the room stuck waiting forever.
+        if (room.triviYeahII && room.triviYeahII.doubler && room.triviYeahII.doubler.wagerAmount === null) {
+            resolveTriviYeahIIWager(roomCode, cell.points);
+        }
+    }, TRIVI_YEAH_II_WAGER_TIMEOUT_MS);
+}
+
+function resolveTriviYeahIIWager(roomCode, amount) {
+    const room = activeRooms[roomCode];
+    if (!room || !room.triviYeahII || !room.triviYeahII.doubler) return;
+    room.triviYeahII.doubler.wagerAmount = amount;
+
+    if (room.revealTimeout) { clearTimeout(room.revealTimeout); room.revealTimeout = null; }
+
+    openTriviYeahIISideBets(roomCode);
+}
+
+function openTriviYeahIISideBets(roomCode, startCount = TRIVI_YEAH_II_SIDE_BET_SECONDS) {
+    const room = activeRooms[roomCode];
+    if (!room || !room.triviYeahII) return;
+    const ty2 = room.triviYeahII;
+    const cell = ty2.grid[ty2.activeCellIndex];
+
+    ty2.phase = 'DOUBLER_SIDE_BET';
+
+    if (startCount === TRIVI_YEAH_II_SIDE_BET_SECONDS) {
+        broadcastToRoom(roomCode, {
+            type: 'TRIVI_YEAH_II_SIDE_BETS_OPEN',
+            picker: ty2.currentPicker,
+            wagerAmount: ty2.doubler.wagerAmount,
+            tileValue: cell.points
+        });
+    }
+
+    let count = startCount;
+    room.gameSecondsLeft = count;
+    if (room.timerInterval) clearInterval(room.timerInterval);
+    room.timerInterval = setInterval(() => {
+        count--;
+        room.gameSecondsLeft = count;
+        if (count > 0) {
+            broadcastToRoom(roomCode, { type: 'GAME_TIMER_TICK', secondsLeft: count + " s" });
+        } else {
+            closeTriviYeahIISideBets(roomCode);
+        }
+    }, 1000);
+}
+
+// Same "snap to a short beat instead of an instant cut" pacing as the
+// answer clock's fast-forward -- once every eligible bettor (everyone but
+// the picker) has weighed in, there's no reason to sit through the rest of
+// the countdown.
+function fastForwardTriviYeahIISideBets(roomCode) {
+    const room = activeRooms[roomCode];
+    if (!room) return;
+    if (room.gameSecondsLeft > FAST_FORWARD_SECONDS) {
+        broadcastToRoom(roomCode, { type: 'GAME_TIMER_TICK', secondsLeft: FAST_FORWARD_SECONDS + " s" });
+        openTriviYeahIISideBets(roomCode, FAST_FORWARD_SECONDS);
+    }
+}
+
+function closeTriviYeahIISideBets(roomCode) {
+    const room = activeRooms[roomCode];
+    if (!room || !room.triviYeahII) return;
+    if (room.timerInterval) { clearInterval(room.timerInterval); room.timerInterval = null; }
+    revealTriviYeahIIQuestion(roomCode);
 }
 
 function revealTriviYeahIIQuestion(roomCode) {
@@ -795,6 +934,10 @@ function openTriviYeahIIAnswering(roomCode) {
     broadcastToRoom(roomCode, {
         type: 'TRIVI_YEAH_II_ANSWERS_REVEAL',
         index: ty2.activeCellIndex,
+        // Lets every phone know whether this is the normal everyone-answers
+        // question or a Doubler (picker alone) without needing a second
+        // round-trip -- the non-pickers' screen stays in a spectator view.
+        doublerPicker: ty2.doubler ? ty2.currentPicker : null,
         ...publicQuestionData
     });
 
@@ -833,6 +976,88 @@ function fastForwardTriviYeahIIReveal(roomCode) {
     }
 }
 
+// Shared by both resolution paths below -- cell.cleared/wonBy, clearedCount,
+// and the column-sweep check are identical whether a tile resolved normally
+// or via a Doubler wager. Column sweep: this category's all 4 tiles are now
+// cleared, and the same single player actually earned every one of them
+// (wonBy: null -- a random-fallback pick, or someone else's wager win --
+// breaks the sweep same as a different winner would). Awarded before the
+// caller's own leaderboard broadcast so the bonus is reflected in it.
+function finalizeTriviYeahIITileClear(room, roomCode, cell, wonByName) {
+    const ty2 = room.triviYeahII;
+    cell.cleared = true;
+    cell.wonBy = wonByName || null;
+    ty2.clearedCount++;
+
+    const categoryTiles = ty2.grid.filter(c => c.categoryKey === cell.categoryKey);
+    const sweptBy = cell.wonBy && categoryTiles.every(c => c.cleared && c.wonBy === cell.wonBy) ? cell.wonBy : null;
+    if (sweptBy) {
+        const sweepingPlayer = room.players[sweptBy];
+        if (sweepingPlayer) {
+            sweepingPlayer.score += TRIVI_YEAH_II_COLUMN_SWEEP_BONUS;
+            broadcastToRoom(roomCode, {
+                type: 'TRIVI_YEAH_II_COLUMN_BONUS',
+                playerName: sweptBy,
+                categoryLabel: cell.categoryLabel,
+                bonusPoints: TRIVI_YEAH_II_COLUMN_SWEEP_BONUS
+            });
+        }
+    }
+}
+
+// Shared by both resolution paths below -- once a tile (normal or Doubler)
+// has fully resolved and broadcast its own result, decide what's next:
+// another pick this round, a round transition, or game over after round 3.
+function scheduleTriviYeahIINextStep(roomCode) {
+    const room = activeRooms[roomCode];
+    if (!room || !room.triviYeahII) return;
+    const ty2 = room.triviYeahII;
+
+    console.log(`[Trivi-Yeah II] Room ${roomCode} tile ${ty2.activeCellIndex} resolved. Next picker: ${ty2.currentPicker}. Cleared ${ty2.clearedCount}/${ty2.grid.length}.`);
+
+    if (room.revealTimeout) clearTimeout(room.revealTimeout);
+    room.revealTimeout = setTimeout(() => {
+        room.revealTimeout = null;
+        if (ty2.clearedCount >= ty2.grid.length) {
+            if (ty2.round >= ty2.totalRounds) {
+                endGame(roomCode);
+                return;
+            }
+            // Board's done but more rounds remain -- announce the round
+            // change, give the room a beat to read it, then build and
+            // broadcast the next board. currentPicker carries over untouched
+            // (set earlier this tile), so whoever just earned the pick opens
+            // the new round too.
+            const completedRound = ty2.round;
+            ty2.round += 1;
+            broadcastToRoom(roomCode, {
+                type: 'TRIVI_YEAH_II_ROUND_TRANSITION',
+                completedRound,
+                nextRound: ty2.round,
+                totalRounds: ty2.totalRounds
+            });
+            room.revealTimeout = setTimeout(() => {
+                room.revealTimeout = null;
+                startTriviYeahIIRound(roomCode).catch(error => {
+                    console.error(`❌ [Trivi-Yeah II] Failed to start round ${ty2.round} for Room ${roomCode}:`, error.message);
+                    broadcastContentUnavailable(roomCode, 'Trivi-Yeah II');
+                    resetRoomToLobby(roomCode);
+                });
+            }, TRIVI_YEAH_II_ROUND_TRANSITION_MS);
+            return;
+        }
+        ty2.phase = 'PICK_TILE';
+        ty2.activeCellIndex = null;
+        ty2.activeQuestionData = null;
+        ty2.doubler = null;
+        broadcastToRoom(roomCode, {
+            type: 'TRIVI_YEAH_II_PICK_TURN',
+            currentPicker: ty2.currentPicker,
+            grid: publicTriviYeahIIGrid(room)
+        });
+    }, REVEAL_DURATION_MS);
+}
+
 function evaluateTriviYeahIIAnswers(roomCode) {
     const room = activeRooms[roomCode];
     if (!room || !room.triviYeahII) return;
@@ -846,6 +1071,11 @@ function evaluateTriviYeahIIAnswers(roomCode) {
 
     ty2.phase = 'ROUND_REVEAL';
     broadcastToRoom(roomCode, { type: 'GAME_TIMER_TICK', secondsLeft: "TIME'S UP!" });
+
+    if (ty2.doubler) {
+        evaluateTriviYeahIIDoublerAnswer(room, roomCode, cell, correctLetter);
+        return;
+    }
 
     // Picker privilege: whoever answered correctly fastest earns the next
     // pick (answerOrder is submission order, so the first match is the
@@ -884,33 +1114,8 @@ function evaluateTriviYeahIIAnswers(roomCode) {
         }
     });
 
-    cell.cleared = true;
-    // Who (if anyone) actually earned this tile -- null when nobody answered
-    // correctly, so a random-fallback pick never counts toward a column-sweep
-    // bonus below.
-    cell.wonBy = fastestCorrectName || null;
-    ty2.clearedCount++;
     ty2.currentPicker = nextPicker;
-
-    // Column sweep: this category's all 4 tiles are now cleared, and the
-    // same single player was fastest-correct on every one of them (not just
-    // "cleared" -- a random-fallback pick, tracked as wonBy: null, breaks
-    // the sweep same as a different winner would). Awarded before the
-    // leaderboard broadcast below so the bonus is reflected in that same update.
-    const categoryTiles = ty2.grid.filter(c => c.categoryKey === cell.categoryKey);
-    const sweptBy = cell.wonBy && categoryTiles.every(c => c.cleared && c.wonBy === cell.wonBy) ? cell.wonBy : null;
-    if (sweptBy) {
-        const sweepingPlayer = room.players[sweptBy];
-        if (sweepingPlayer) {
-            sweepingPlayer.score += TRIVI_YEAH_II_COLUMN_SWEEP_BONUS;
-            broadcastToRoom(roomCode, {
-                type: 'TRIVI_YEAH_II_COLUMN_BONUS',
-                playerName: sweptBy,
-                categoryLabel: cell.categoryLabel,
-                bonusPoints: TRIVI_YEAH_II_COLUMN_SWEEP_BONUS
-            });
-        }
-    }
+    finalizeTriviYeahIITileClear(room, roomCode, cell, fastestCorrectName || null);
 
     broadcastToRoom(roomCode, {
         type: 'TRIVI_YEAH_II_ROUND_REVEAL',
@@ -925,48 +1130,74 @@ function evaluateTriviYeahIIAnswers(roomCode) {
         players: Object.values(room.players).filter(p => !p.left)
     });
 
-    console.log(`[Trivi-Yeah II] Room ${roomCode} tile ${ty2.activeCellIndex} resolved (${correctLetter}). Next picker: ${nextPicker}. Cleared ${ty2.clearedCount}/${ty2.grid.length}.`);
+    scheduleTriviYeahIINextStep(roomCode);
+}
 
-    if (room.revealTimeout) clearTimeout(room.revealTimeout);
-    room.revealTimeout = setTimeout(() => {
-        room.revealTimeout = null;
-        if (ty2.clearedCount >= ty2.grid.length) {
-            if (ty2.round >= ty2.totalRounds) {
-                endGame(roomCode);
-                return;
-            }
-            // Board's done but more rounds remain -- announce the round
-            // change, give the room a beat to read it, then build and
-            // broadcast the next board. currentPicker carries over untouched
-            // (set earlier this tile, above), so whoever just earned the
-            // pick opens the new round too.
-            const completedRound = ty2.round;
-            ty2.round += 1;
-            broadcastToRoom(roomCode, {
-                type: 'TRIVI_YEAH_II_ROUND_TRANSITION',
-                completedRound,
-                nextRound: ty2.round,
-                totalRounds: ty2.totalRounds
-            });
-            room.revealTimeout = setTimeout(() => {
-                room.revealTimeout = null;
-                startTriviYeahIIRound(roomCode).catch(error => {
-                    console.error(`❌ [Trivi-Yeah II] Failed to start round ${ty2.round} for Room ${roomCode}:`, error.message);
-                    broadcastContentUnavailable(roomCode, 'Trivi-Yeah II');
-                    resetRoomToLobby(roomCode);
-                });
-            }, TRIVI_YEAH_II_ROUND_TRANSITION_MS);
-            return;
-        }
-        ty2.phase = 'PICK_TILE';
-        ty2.activeCellIndex = null;
-        ty2.activeQuestionData = null;
-        broadcastToRoom(roomCode, {
-            type: 'TRIVI_YEAH_II_PICK_TURN',
-            currentPicker: ty2.currentPicker,
-            grid: publicTriviYeahIIGrid(room)
-        });
-    }, REVEAL_DURATION_MS);
+// Doubler resolution -- only the picker actually answered (everyone else
+// placed a side bet instead), so this is a solo win/lose on their own
+// wager, plus every side bet resolving against that same outcome: For wins
+// when the picker's right, Against wins when they're wrong, Pass is inert
+// either way. SPEED3 (the bolt) is deliberately left untouched here -- it
+// means "fastest," which doesn't mean anything when only one person answered.
+function evaluateTriviYeahIIDoublerAnswer(room, roomCode, cell, correctLetter) {
+    const ty2 = room.triviYeahII;
+    const pickerName = ty2.currentPicker;
+    const pickerCorrect = ty2.answers[pickerName] === correctLetter;
+    const wagerAmount = ty2.doubler.wagerAmount;
+    const tileValue = cell.points;
+
+    const picker = room.players[pickerName];
+    if (picker) {
+        picker.score += pickerCorrect ? wagerAmount : -wagerAmount;
+        if (pickerCorrect) picker.correctAnswers = (picker.correctAnswers || 0) + 1;
+    }
+
+    const sideBetResults = {};
+    Object.entries(ty2.doubler.sideBets).forEach(([name, bet]) => {
+        const bettor = room.players[name];
+        if (!bettor || bet === 'PASS') { sideBetResults[name] = 0; return; }
+        const won = (bet === 'FOR' && pickerCorrect) || (bet === 'AGAINST' && !pickerCorrect);
+        bettor.score += won ? tileValue : -tileValue;
+        sideBetResults[name] = won ? tileValue : -tileValue;
+    });
+
+    // ty2.currentPicker is about to move on to whoever picks next -- stash
+    // who actually answered this Doubler (and the result) on ty2.doubler
+    // itself so a polling phone can still tell the two apart once the
+    // "next picker" has already changed out from under it.
+    ty2.doubler.pickerName = pickerName;
+    ty2.doubler.resolved = true;
+    ty2.doubler.pickerCorrect = pickerCorrect;
+    ty2.doubler.sideBetResults = sideBetResults;
+
+    // Daily-Double continuity: a correct picker keeps control and opens the
+    // next tile themselves; a wrong one forfeits it, same random fallback
+    // as nobody answering a normal tile correctly.
+    const nextPicker = pickerCorrect ? pickerName : pickRandomActivePlayer(room);
+    ty2.currentPicker = nextPicker;
+    finalizeTriviYeahIITileClear(room, roomCode, cell, pickerCorrect ? pickerName : null);
+
+    broadcastToRoom(roomCode, {
+        type: 'TRIVI_YEAH_II_DOUBLER_RESULT',
+        index: ty2.activeCellIndex,
+        correctLetter,
+        picker: pickerName,
+        pickerCorrect,
+        wagerAmount,
+        sideBetResults,
+        nextPicker,
+        grid: publicTriviYeahIIGrid(room)
+    });
+    broadcastToRoom(roomCode, {
+        type: 'LEADERBOARD_UPDATE',
+        players: Object.values(room.players).filter(p => !p.left)
+    });
+
+    // ty2.doubler stays populated (now carrying the result) through the
+    // ROUND_REVEAL pause so a polling phone can render the outcome --
+    // cleared only once the next tile's pick phase actually opens, same
+    // moment activeCellIndex/activeQuestionData reset below.
+    scheduleTriviYeahIINextStep(roomCode);
 }
 
 // ==========================================
@@ -2556,22 +2787,77 @@ export function handleIncomingMessage(fromPhone, bodyText, explicitRoomCode, pre
     // the deliberate "sit this one out" opt-out from the wrong-answer
     // penalty (see evaluateTriviYeahIIAnswers), tracked and broadcast
     // exactly like a lettered answer so the room sees it as a real response.
+    // A Doubler tile is different: only the picker answers (everyone else
+    // already placed their side bet instead), and PASS doesn't make sense
+    // on a question you already committed a wager to -- A-D only, from the
+    // picker alone.
     if (currentRoom.gameState === 'TRIVI_YEAH_II_ROUND' && currentRoom.triviYeahII.phase === 'ANSWERING') {
+        const ty2 = currentRoom.triviYeahII;
         const answerChoice = cleanText.toUpperCase();
-        if (['A', 'B', 'C', 'D', 'PASS'].includes(answerChoice)) {
-            const ty2 = currentRoom.triviYeahII;
+        const isDoublerQuestion = !!ty2.doubler;
+        const validChoices = isDoublerQuestion ? ['A', 'B', 'C', 'D'] : ['A', 'B', 'C', 'D', 'PASS'];
+
+        if (validChoices.includes(answerChoice)) {
+            if (isDoublerQuestion && actingPlayerName !== ty2.currentPicker) {
+                return `⚠️ Only ${ty2.currentPicker} answers this one -- it's their Doubler.`;
+            }
             if (!(actingPlayerName in ty2.answers)) {
                 ty2.answerOrder.push(actingPlayerName);
             }
             ty2.answers[actingPlayerName] = answerChoice;
             broadcastToRoom(associatedRoomCode, { type: 'ANSWER_SUBMITTED', playerName: actingPlayerName });
 
-            const totalPlayersCount = Object.values(currentRoom.players).filter(p => !p.left).length;
+            // A Doubler only ever waits on one answer (the picker's); a
+            // normal tile waits on everyone.
             const totalAnswersLogged = Object.keys(ty2.answers).length;
-            if (totalAnswersLogged === totalPlayersCount) {
+            if (isDoublerQuestion) {
                 fastForwardTriviYeahIIReveal(associatedRoomCode);
+            } else {
+                const totalPlayersCount = Object.values(currentRoom.players).filter(p => !p.left).length;
+                if (totalAnswersLogged === totalPlayersCount) {
+                    fastForwardTriviYeahIIReveal(associatedRoomCode);
+                }
             }
             return answerChoice === 'PASS' ? `Got it, ${player.name} -- passing this one.` : `Got it, ${player.name}! Option ${answerChoice} logged.`;
+        }
+    }
+
+    // 5.3 Trivi-Yeah II: Doubler wager -- current picker only, DOUBLER_WAGER phase.
+    if (currentRoom.gameState === 'TRIVI_YEAH_II_ROUND' && currentRoom.triviYeahII.phase === 'DOUBLER_WAGER') {
+        const wagerMatch = /^WAGER (\d+)$/.exec(cleanText.toUpperCase());
+        if (wagerMatch) {
+            const ty2 = currentRoom.triviYeahII;
+            if (actingPlayerName !== ty2.currentPicker) {
+                return `⚠️ Only ${ty2.currentPicker} wagers on their own Doubler.`;
+            }
+            const cell = ty2.grid[ty2.activeCellIndex];
+            const maxWager = Math.max(player.score, cell.points);
+            const amount = Math.min(Math.max(0, parseInt(wagerMatch[1], 10)), maxWager);
+            resolveTriviYeahIIWager(associatedRoomCode, amount);
+            return `Wager locked in at ${amount} points, ${player.name}!`;
+        }
+    }
+
+    // 5.4 Trivi-Yeah II: Doubler side bets -- everyone except the picker,
+    // DOUBLER_SIDE_BET phase. Betting FOR/AGAINST/PASS all stake the tile's
+    // own fixed value, not the picker's wager -- see design chat.
+    if (currentRoom.gameState === 'TRIVI_YEAH_II_ROUND' && currentRoom.triviYeahII.phase === 'DOUBLER_SIDE_BET') {
+        const betChoice = cleanText.toUpperCase();
+        if (['FOR', 'AGAINST', 'PASS'].includes(betChoice) || betChoice === 'BET_FOR' || betChoice === 'BET_AGAINST' || betChoice === 'BET_PASS') {
+            const ty2 = currentRoom.triviYeahII;
+            if (actingPlayerName === ty2.currentPicker) {
+                return `⚠️ You're the one on the hook this time -- no side bet for you.`;
+            }
+            const normalized = betChoice.replace('BET_', '');
+            ty2.doubler.sideBets[actingPlayerName] = normalized;
+            broadcastToRoom(associatedRoomCode, { type: 'ANSWER_SUBMITTED', playerName: actingPlayerName });
+
+            const eligibleBettors = Object.values(currentRoom.players).filter(p => !p.left && p.name !== ty2.currentPicker);
+            const betsLogged = eligibleBettors.filter(p => p.name in ty2.doubler.sideBets).length;
+            if (betsLogged === eligibleBettors.length) {
+                fastForwardTriviYeahIISideBets(associatedRoomCode);
+            }
+            return normalized === 'PASS' ? `Got it, ${player.name} -- sitting this bet out.` : `Got it, ${player.name}! Betting ${normalized} at ${currentRoom.triviYeahII.grid[currentRoom.triviYeahII.activeCellIndex].points} points.`;
         }
     }
 

@@ -269,6 +269,28 @@ app.post('/api/room-status', (req, res) => {
                 currentPicker: ty2.currentPicker,
                 isMyPick: playerName === ty2.currentPicker,
                 activeCellIndex: ty2.activeCellIndex,
+                // Doubler state -- null outside a Doubler tile's lifecycle (from
+                // DOUBLER_REVEAL through DOUBLER_SIDE_BET). maxWager only comes
+                // through for the picker, during DOUBLER_WAGER, same clamp rule
+                // the WAGER message handler itself enforces server-side.
+                doubler: ty2.doubler ? {
+                    tileValue: ty2.grid[ty2.activeCellIndex] ? ty2.grid[ty2.activeCellIndex].points : null,
+                    wagerAmount: ty2.doubler.wagerAmount,
+                    maxWager: (ty2.phase === 'DOUBLER_WAGER' && playerName === ty2.currentPicker)
+                        ? Math.max(myScore || 0, ty2.grid[ty2.activeCellIndex].points)
+                        : null,
+                    mySideBet: ty2.doubler.sideBets ? (ty2.doubler.sideBets[playerName] || null) : null,
+                    // currentPicker has already moved on to the NEXT picker by
+                    // the time resolved flips true (see evaluateTriviYeahIIDoublerAnswer) --
+                    // pickerName is who actually answered this tile, stashed
+                    // separately so a polling phone can still tell them apart.
+                    resolved: !!ty2.doubler.resolved,
+                    pickerName: ty2.doubler.pickerName || ty2.currentPicker,
+                    pickerCorrect: ty2.doubler.resolved ? ty2.doubler.pickerCorrect : null,
+                    mySideBetResult: (ty2.doubler.resolved && ty2.doubler.sideBetResults && playerName in ty2.doubler.sideBetResults)
+                        ? ty2.doubler.sideBetResults[playerName]
+                        : null
+                } : null,
                 // Only populated once the matching reveal stage has actually
                 // fired -- a phone reconnecting mid-stage sees exactly what it
                 // would have seen if it had never disconnected.
