@@ -138,12 +138,6 @@ export function getCategoriesForMode(winningGameMode) {
             { key: 'PACIFIC_ISLANDS', label: 'Pacific Islands' },
             { key: ALL_REGIONS_KEY, label: 'World Wide!' }
         ];
-    } else if (winningGameMode === 'EMPOSSDURR') {
-        return [
-            { key: 'CAT_1', label: 'Standard Circle' },
-            { key: 'CAT_2', label: 'Traitor Pack' },
-            { key: 'CAT_3', label: 'Chaos Mode' }
-        ];
     } else if (winningGameMode === 'FLAG_ME_DOWN') {
         return [
             { key: 'CAT_1', label: 'Modern Nations' },
@@ -151,9 +145,13 @@ export function getCategoriesForMode(winningGameMode) {
             { key: 'CAT_3', label: 'Bizarre Banners' }
         ];
     }
-    // ON_THE_SPECTRUM has no category vote at all -- see executeLobbyPhaseExpiration,
-    // which skips straight into the game for this mode. One unified statement
-    // pool, no theme to pick between.
+    // ON_THE_SPECTRUM and EMPOSSDURR have no category vote at all -- see
+    // executeLobbyPhaseExpiration, which skips straight into the game for
+    // both. ON_THE_SPECTRUM has one unified statement pool with no theme to
+    // pick between; EmpossDurr's word pool was already unified the same way,
+    // with nothing behind its old CAT_1/2/3 vote screen to actually filter.
+    // TRIVI_YEAH also bypasses the vote now (see executeLobbyPhaseExpiration)
+    // but still picks a real category -- just automatically instead of by vote.
     return TRIVIA_CATEGORIES;
 }
 
@@ -222,6 +220,31 @@ function executeLobbyPhaseExpiration(roomCode) {
             broadcastContentUnavailable(roomCode, 'On the Spectrum');
             resetRoomToLobby(roomCode);
         });
+        return;
+    }
+
+    // EmpossDurr's category vote was always cosmetic -- its word pool is
+    // unified same as On the Spectrum's statements, with nothing behind the
+    // old CAT_1/2/3 screen to actually filter. Skip straight into the round.
+    if (winningModule === 'EMPOSSDURR') {
+        startEmpossDurrGame(roomCode).catch(error => {
+            console.error(`❌ [EmpossDurr] Failed to start Room ${roomCode}:`, error.message);
+            broadcastContentUnavailable(roomCode, 'EmpossDurr');
+            resetRoomToLobby(roomCode);
+        });
+        return;
+    }
+
+    // Trivi-Yeah's categories are real and still filter the question bank --
+    // just picked automatically now instead of through a player vote, so the
+    // group lands straight on a question instead of a click-through screen.
+    if (winningModule === 'TRIVI_YEAH') {
+        const categories = getCategoriesForMode('TRIVI_YEAH');
+        const picked = categories[Math.floor(Math.random() * categories.length)];
+        room.activeCategoryKey = picked.key;
+        room.activeDeckName = picked.label;
+        console.log(`[Room Engine] Lobby phase closed for Room ${roomCode}. Winner: TRIVI_YEAH. Auto-picked deck: ${picked.label}`);
+        startQuestionBankGame(roomCode);
         return;
     }
 
@@ -315,19 +338,20 @@ async function executeCategoryPhaseExpiration(roomCode) {
 
     console.log(`[Room Engine] Category selection finalized for Room ${roomCode}. Loaded: ${room.activeDeckName}`);
 
-    // EmpossDurr has no multiple-choice question bank at all -- it's a
-    // completely separate engine (see PHASE 3B below) with its own word deck,
-    // round counting, and phase machine.
-    if (room.winningGameMode === 'EMPOSSDURR') {
-        try {
-            await startEmpossDurrGame(roomCode);
-        } catch (error) {
-            console.error(`❌ [EmpossDurr] Failed to start Room ${roomCode}:`, error.message);
-            broadcastContentUnavailable(roomCode, 'EmpossDurr');
-            resetRoomToLobby(roomCode);
-        }
-        return;
-    }
+    await startQuestionBankGame(roomCode);
+}
+
+// Shared tail for every mode whose gameplay is a multiple-choice question
+// bank (Trivi-Yeah, Country Monkey, Flag Me Down) -- loads the bank for
+// whatever category is already set on the room (room.activeCategoryKey), then
+// starts the first question. Called straight from executeLobbyPhaseExpiration
+// for Trivi-Yeah (which auto-picks its category, no vote) and from
+// executeCategoryPhaseExpiration for the modes that still vote on one.
+// EmpossDurr never reaches here -- it has no multiple-choice question bank at
+// all, it's a completely separate engine (see PHASE 3B below).
+async function startQuestionBankGame(roomCode) {
+    const room = activeRooms[roomCode];
+    if (!room) return;
 
     try {
         await loadQuestionBank(room);
@@ -339,9 +363,9 @@ async function executeCategoryPhaseExpiration(roomCode) {
     if (room.questionBank.length === 0) {
         // A deck with real map/content assets but no matching DB rows yet
         // (e.g. a region's SQL not applied to this environment) would
-        // otherwise leave every player stuck on the category screen forever
-        // with zero feedback -- bounce back to the lobby instead so the
-        // room recovers and someone can pick a different deck.
+        // otherwise leave everyone stuck with zero feedback -- bounce back to
+        // the lobby instead so the room recovers and someone can pick a
+        // different deck.
         console.error(`❌ [Question Bank] No eligible questions found for Room ${roomCode} (category: ${room.activeCategoryKey}). Returning to lobby instead of hanging.`);
         broadcastContentUnavailable(roomCode, room.activeDeckName || 'This deck');
         resetRoomToLobby(roomCode);
@@ -1056,11 +1080,12 @@ function resetPlayerStatsForFreshGame(player) {
 }
 
 // Resets score/roster state exactly like resetRoomToLobby, but short-circuits
-// straight back into EmpossDurr's category-vote phase instead of the full
-// 5-way mode election -- lets a group that's enjoying EmpossDurr jump back in
-// without re-litigating the mode vote every time. Single-tap, same reasoning
-// as the Play Again fix: no unanimous consensus required.
-function resetRoomToEmpossDurrCategoryVote(roomCode) {
+// straight back into a fresh EmpossDurr round instead of the full 5-way mode
+// election -- lets a group that's enjoying EmpossDurr jump back in without
+// re-litigating the mode vote every time. Single-tap, same reasoning as the
+// Play Again fix: no unanimous consensus required. No category-vote detour
+// either, same as a fresh EmpossDurr game (see executeLobbyPhaseExpiration).
+function resetRoomToEmpossDurrGame(roomCode) {
     const room = activeRooms[roomCode];
     if (!room) return;
 
@@ -1072,15 +1097,11 @@ function resetRoomToEmpossDurrCategoryVote(roomCode) {
     room.returnVotes = new Map();
 
     room.winningGameMode = 'EMPOSSDURR';
-    room.gameState = 'CATEGORY_VOTE';
     room.empossdurr = null;
     room.answers = {};
     room.answerOrder = [];
 
     const activePlayers = Object.values(room.players).filter(p => !p.left);
-    const categories = getCategoriesForMode('EMPOSSDURR');
-    room.categoryVotes = {};
-    categories.forEach(c => { room.categoryVotes[c.key] = 0; });
 
     // Bumping this marks "a fresh game started" -- a player who left before
     // this reset and rejoins afterward gets caught by the epoch mismatch in
@@ -1099,16 +1120,14 @@ function resetRoomToEmpossDurrCategoryVote(roomCode) {
     // an answer) happens to redraw it -- same fix as resetRoomToLobby already has.
     broadcastToRoom(roomCode, { type: 'LEADERBOARD_UPDATE', players: activePlayers });
 
-    broadcastToRoom(roomCode, {
-        type: 'TRANSITION_TO_CATEGORY_VOTE',
-        winner: 'EMPOSSDURR',
-        categories
+    startEmpossDurrGame(roomCode).catch(error => {
+        console.error(`❌ [EmpossDurr] Failed to restart Room ${roomCode}:`, error.message);
+        broadcastContentUnavailable(roomCode, 'EmpossDurr');
+        resetRoomToLobby(roomCode);
     });
-
-    startCategoryCountdown(roomCode);
 }
 
-// Same shortcut reasoning as resetRoomToEmpossDurrCategoryVote, but On the
+// Same shortcut reasoning as resetRoomToEmpossDurrGame, but On the
 // Spectrum has no category-vote phase to land in first -- it's always drawn
 // from one unified statement pool -- so this jumps straight into
 // startOnTheSpectrumGame instead.
@@ -1195,7 +1214,7 @@ function resolveReturnToLobbyVote(roomCode) {
     // shortcut at all") falls through to the plain lobby -- same "always a
     // valid choice" reasoning as before, just extended from two options to three.
     if (counts.PLAY_EMPOSSDURR_AGAIN > counts.START && counts.PLAY_EMPOSSDURR_AGAIN > counts.PLAY_ON_THE_SPECTRUM_AGAIN) {
-        resetRoomToEmpossDurrCategoryVote(roomCode);
+        resetRoomToEmpossDurrGame(roomCode);
     } else if (counts.PLAY_ON_THE_SPECTRUM_AGAIN > counts.START && counts.PLAY_ON_THE_SPECTRUM_AGAIN > counts.PLAY_EMPOSSDURR_AGAIN) {
         resetRoomToOnTheSpectrumGame(roomCode);
     } else {
@@ -2006,7 +2025,11 @@ export function handleIncomingMessage(fromPhone, bodyText, explicitRoomCode, pre
 
             if (currentRoom.gameState === 'LOBBY') {
                 executeLobbyPhaseExpiration(associatedRoomCode);
-                return "Consensus secured! Shifting to category selections.";
+                // Most modes skip the category-vote screen entirely now (On the
+                // Spectrum, EmpossDurr, and Trivi-Yeah's auto-picked deck) -- this
+                // reply has to stay true whether the room lands on a category
+                // vote or straight on the first question/round.
+                return "Consensus secured! Game's starting!";
             } else if (currentRoom.gameState === 'CATEGORY_VOTE') {
                 executeCategoryPhaseExpiration(associatedRoomCode);
                 return "Consensus secured! Shifting to active trivia round.";
@@ -2016,10 +2039,11 @@ export function handleIncomingMessage(fromPhone, bodyText, explicitRoomCode, pre
     }
 
     // 3.5. "Play EmpossDurr Again" shortcut -- same majority-vote reasoning as
-    // the Play Again fix above, but resolving to EmpossDurr's category-vote
-    // phase directly instead of the full 5-way mode election. A room can have
-    // votes cast for both this and plain START at once (some players want a
-    // fresh election, others want to jump straight back into EmpossDurr) --
+    // the Play Again fix above, but resolving straight into a fresh EmpossDurr
+    // round instead of the full 5-way mode election (no category-vote detour
+    // either, same as a fresh EmpossDurr game). A room can have votes cast for
+    // both this and plain START at once (some players want a fresh election,
+    // others want to jump straight back into EmpossDurr) --
     // resolveReturnToLobbyVote breaks that tie by whichever has more votes.
     if (cleanText.toUpperCase() === 'PLAY_EMPOSSDURR_AGAIN' && currentRoom.gameState === 'GAME_OVER' && currentRoom.winningGameMode === 'EMPOSSDURR') {
         return castReturnToLobbyVote(associatedRoomCode, actingPlayerName, 'PLAY_EMPOSSDURR_AGAIN');
