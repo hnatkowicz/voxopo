@@ -985,9 +985,10 @@ function showTriviYeahIIWagerPromptUI(picker, maxWager, tileValue) {
 }
 
 // Once the picker's wager locks in, the room sees it immediately -- then
-// everyone else places an informed For/Against/Pass bet at the tile's own
-// fixed value while the shared countdown (GAME_TIMER_TICK, same banner as
-// every other timed phase) ticks down lobby-countdown.
+// everyone else places an informed For/Against/Pass bet, each at whatever
+// amount they choose (up to their own current score, not a fixed stake)
+// while the shared countdown (GAME_TIMER_TICK, same banner as every other
+// timed phase) ticks down lobby-countdown.
 function showTriviYeahIISideBetsOpenUI(picker, wagerAmount, tileValue) {
     const panel = document.getElementById('active-content-stage');
     document.getElementById('room-status-text').innerText = "Trivi-Yeah II — Side Bets Open";
@@ -996,7 +997,7 @@ function showTriviYeahIISideBetsOpenUI(picker, wagerAmount, tileValue) {
             <div style="font-size: 0.85rem; font-weight: 600; color: #64748b; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 14px;">${picker}'s wager</div>
             <div style="font-size: 2.2rem; font-weight: 800; color: #ffa500; margin-bottom: 18px;">${wagerAmount} points</div>
             <div style="font-size: 1.1rem; font-weight: 600; color: #ffffff;">Will ${picker} get it right?</div>
-            <div style="font-size: 1rem; color: #94a3b8; margin-top: 6px;">Place your side bet -- For, Against, or Pass -- at ${tileValue} points</div>
+            <div style="font-size: 1rem; color: #94a3b8; margin-top: 6px;">Place your side bet -- For, Against, or Pass -- for however much you're willing to risk</div>
         </div>
     `;
 }

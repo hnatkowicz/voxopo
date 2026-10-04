@@ -466,10 +466,16 @@
             </div>
             <div id="ty2-sidebet-box" style="display: none;">
                 <div id="ty2-sidebet-wager-text" style="font-weight: 700; color: #ffa500; font-size: 1.3rem; margin-bottom: 14px;"></div>
-                <div class="module-list" id="ty2-sidebet-buttons" style="display: none;">
-                    <div class="module-row" id="ty2-bet-row-FOR" onclick="submitTriviYeahIISideBet(this, 'FOR')" style="text-align: center; font-weight: 700; color: #00e676;">For &mdash; they'll get it right</div>
-                    <div class="module-row" id="ty2-bet-row-AGAINST" onclick="submitTriviYeahIISideBet(this, 'AGAINST')" style="text-align: center; font-weight: 700; color: #ff5c5c;">Against &mdash; they'll miss it</div>
-                    <div class="module-row" id="ty2-bet-row-PASS" onclick="submitTriviYeahIISideBet(this, 'PASS')" style="margin-top: 10px; border-style: dashed; color: #94a3b8; text-align: center; font-weight: 600;">Pass -- sit this one out</div>
+                <div id="ty2-sidebet-input-row" style="display: none;">
+                    <!-- Each bettor picks their own stake (up to their own
+                         current score), not a fixed amount -- For/Against
+                         both read this same input when tapped. -->
+                    <input type="number" id="ty2-sidebet-amount" min="0" value="0" style="width: 100%; padding: 12px; font-size: 1.1rem; border-radius: 8px; border: 1px solid #222630; background: #14161d; color: #fff; margin-bottom: 10px; box-sizing: border-box;" />
+                    <div class="module-list" id="ty2-sidebet-buttons">
+                        <div class="module-row" id="ty2-bet-row-FOR" onclick="submitTriviYeahIISideBet(this, 'FOR')" style="text-align: center; font-weight: 700; color: #00e676;">For &mdash; they'll get it right</div>
+                        <div class="module-row" id="ty2-bet-row-AGAINST" onclick="submitTriviYeahIISideBet(this, 'AGAINST')" style="text-align: center; font-weight: 700; color: #ff5c5c;">Against &mdash; they'll miss it</div>
+                        <div class="module-row" id="ty2-bet-row-PASS" onclick="submitTriviYeahIISideBet(this, 'PASS')" style="margin-top: 10px; border-style: dashed; color: #94a3b8; text-align: center; font-weight: 600;">Pass -- sit this one out</div>
+                    </div>
                 </div>
                 <div id="ty2-sidebet-waiting-text" style="color: #94a3b8; display: none;"></div>
             </div>
@@ -869,7 +875,7 @@
             document.getElementById('ty2-round-badge').innerText = data.round || 1;
             document.getElementById('ty2-total-rounds-badge').innerText = data.totalRounds || 3;
 
-            const doublerKey = data.doubler ? `${data.doubler.wagerAmount}|${data.doubler.maxWager}|${data.doubler.mySideBet}|${data.doubler.resolved}` : '';
+            const doublerKey = data.doubler ? `${data.doubler.wagerAmount}|${data.doubler.maxWager}|${JSON.stringify(data.doubler.mySideBet)}|${data.doubler.resolved}` : '';
             const renderKey = `${data.round}|${data.triviYeahIIPhase}|${data.activeCellIndex}|${data.currentPicker}|${data.myAnswer || ''}|${doublerKey}`;
             if (renderKey === ty2LastRenderKey) return;
             ty2LastRenderKey = renderKey;
@@ -1061,25 +1067,42 @@
                 return;
             }
 
-            // DOUBLER_SIDE_BET
-            document.getElementById('ty2-status-line').innerText = data.isMyPick ? 'Sit tight...' : 'Place your side bet!';
+            // DOUBLER_SIDE_BET -- each bettor stakes their own chosen amount
+            // (capped to their own current score, data.myScore), not a fixed
+            // tile-value bet.
             sidebetBox.style.display = 'block';
-            document.getElementById('ty2-sidebet-wager-text').innerText = `${data.currentPicker} wagered ${data.doubler.wagerAmount} points. Side bets are ${tileValue} points.`;
-            const buttons = document.getElementById('ty2-sidebet-buttons');
+            document.getElementById('ty2-sidebet-wager-text').innerText = `${data.currentPicker} wagered ${data.doubler.wagerAmount} points.`;
+            const inputRow = document.getElementById('ty2-sidebet-input-row');
             const waitingText = document.getElementById('ty2-sidebet-waiting-text');
+
             if (data.isMyPick) {
-                buttons.style.display = 'none';
+                document.getElementById('ty2-status-line').innerText = 'Sit tight...';
+                inputRow.style.display = 'none';
                 waitingText.style.display = 'block';
                 waitingText.innerText = "Everyone else is betting on you. Sit tight!";
                 return;
             }
-            buttons.style.display = 'block';
+
+            if (data.doubler.mySideBet) {
+                // Already placed -- lock the controls and show what was bet
+                // instead of leaving tappable buttons sitting there.
+                document.getElementById('ty2-status-line').innerText = 'Bet locked in.';
+                inputRow.style.display = 'none';
+                waitingText.style.display = 'block';
+                const { choice, amount } = data.doubler.mySideBet;
+                waitingText.innerText = choice === 'PASS'
+                    ? "You're sitting this one out. Waiting on the room..."
+                    : `You bet ${amount} points ${choice}. Waiting on the room...`;
+                return;
+            }
+
+            document.getElementById('ty2-status-line').innerText = 'Place your side bet!';
+            inputRow.style.display = 'block';
             waitingText.style.display = 'none';
-            ['FOR', 'AGAINST', 'PASS'].forEach(choice => {
-                const row = document.getElementById(`ty2-bet-row-${choice}`);
-                row.classList.remove('selected');
-                row.style.opacity = data.doubler.mySideBet ? (data.doubler.mySideBet === choice ? '1' : '0.3') : '1';
-            });
+            const amountInput = document.getElementById('ty2-sidebet-amount');
+            const maxBet = data.myScore || 0;
+            amountInput.max = maxBet;
+            amountInput.value = Math.min(parseInt(amountInput.value, 10) || 0, maxBet);
         }
 
         async function submitTriviYeahIIPick(element, index) {
@@ -1147,12 +1170,18 @@
             for (let i = 0; i < rows.length; i++) rows[i].style.opacity = '0.3';
             element.style.opacity = '1';
 
+            // For/Against carry whatever amount is in the stake input; Pass
+            // never needs one -- sitting out risks nothing.
+            const body = choice === 'PASS'
+                ? 'PASS'
+                : `${choice} ${Math.max(0, parseInt(document.getElementById('ty2-sidebet-amount').value, 10) || 0)}`;
+
             const registeredName = localStorage.getItem('randomania_nickname') || 'test-handset';
             try {
                 await fetch('/api/message', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ From: registeredName, Body: choice, roomCode: localStorage.getItem('randomania_roomcode') })
+                    body: JSON.stringify({ From: registeredName, Body: body, roomCode: localStorage.getItem('randomania_roomcode') })
                 });
                 ty2LastRenderKey = null;
             } catch (error) {

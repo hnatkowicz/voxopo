@@ -1144,7 +1144,6 @@ function evaluateTriviYeahIIDoublerAnswer(room, roomCode, cell, correctLetter) {
     const pickerName = ty2.currentPicker;
     const pickerCorrect = ty2.answers[pickerName] === correctLetter;
     const wagerAmount = ty2.doubler.wagerAmount;
-    const tileValue = cell.points;
 
     const picker = room.players[pickerName];
     if (picker) {
@@ -1152,13 +1151,16 @@ function evaluateTriviYeahIIDoublerAnswer(room, roomCode, cell, correctLetter) {
         if (pickerCorrect) picker.correctAnswers = (picker.correctAnswers || 0) + 1;
     }
 
+    // Each side bettor staked their own chosen amount (capped to their own
+    // score at bet time, not the tile's value) -- so unlike the picker's
+    // single shared wager, every bettor's win/loss is sized independently.
     const sideBetResults = {};
     Object.entries(ty2.doubler.sideBets).forEach(([name, bet]) => {
         const bettor = room.players[name];
-        if (!bettor || bet === 'PASS') { sideBetResults[name] = 0; return; }
-        const won = (bet === 'FOR' && pickerCorrect) || (bet === 'AGAINST' && !pickerCorrect);
-        bettor.score += won ? tileValue : -tileValue;
-        sideBetResults[name] = won ? tileValue : -tileValue;
+        if (!bettor || bet.choice === 'PASS' || !bet.amount) { sideBetResults[name] = 0; return; }
+        const won = (bet.choice === 'FOR' && pickerCorrect) || (bet.choice === 'AGAINST' && !pickerCorrect);
+        bettor.score += won ? bet.amount : -bet.amount;
+        sideBetResults[name] = won ? bet.amount : -bet.amount;
     });
 
     // ty2.currentPicker is about to move on to whoever picks next -- stash
@@ -2839,17 +2841,28 @@ export function handleIncomingMessage(fromPhone, bodyText, explicitRoomCode, pre
     }
 
     // 5.4 Trivi-Yeah II: Doubler side bets -- everyone except the picker,
-    // DOUBLER_SIDE_BET phase. Betting FOR/AGAINST/PASS all stake the tile's
-    // own fixed value, not the picker's wager -- see design chat.
+    // DOUBLER_SIDE_BET phase. Each bettor picks their own stake (0 up to
+    // their own current score, same floor-free cap the picker doesn't get --
+    // a side bet is optional, so there's no need to guarantee a minimum)
+    // alongside For/Against, or sits out entirely with Pass.
     if (currentRoom.gameState === 'TRIVI_YEAH_II_ROUND' && currentRoom.triviYeahII.phase === 'DOUBLER_SIDE_BET') {
-        const betChoice = cleanText.toUpperCase();
-        if (['FOR', 'AGAINST', 'PASS'].includes(betChoice) || betChoice === 'BET_FOR' || betChoice === 'BET_AGAINST' || betChoice === 'BET_PASS') {
+        const betText = cleanText.toUpperCase();
+        const betMatch = /^(FOR|AGAINST|BET_FOR|BET_AGAINST)\s+(\d+)$/.exec(betText);
+        const isPass = betText === 'PASS' || betText === 'BET_PASS';
+        if (betMatch || isPass) {
             const ty2 = currentRoom.triviYeahII;
             if (actingPlayerName === ty2.currentPicker) {
                 return `⚠️ You're the one on the hook this time -- no side bet for you.`;
             }
-            const normalized = betChoice.replace('BET_', '');
-            ty2.doubler.sideBets[actingPlayerName] = normalized;
+            let choice, amount;
+            if (isPass) {
+                choice = 'PASS';
+                amount = 0;
+            } else {
+                choice = betMatch[1].replace('BET_', '');
+                amount = Math.min(Math.max(0, parseInt(betMatch[2], 10)), player.score);
+            }
+            ty2.doubler.sideBets[actingPlayerName] = { choice, amount };
             broadcastToRoom(associatedRoomCode, { type: 'ANSWER_SUBMITTED', playerName: actingPlayerName });
 
             const eligibleBettors = Object.values(currentRoom.players).filter(p => !p.left && p.name !== ty2.currentPicker);
@@ -2857,7 +2870,7 @@ export function handleIncomingMessage(fromPhone, bodyText, explicitRoomCode, pre
             if (betsLogged === eligibleBettors.length) {
                 fastForwardTriviYeahIISideBets(associatedRoomCode);
             }
-            return normalized === 'PASS' ? `Got it, ${player.name} -- sitting this bet out.` : `Got it, ${player.name}! Betting ${normalized} at ${currentRoom.triviYeahII.grid[currentRoom.triviYeahII.activeCellIndex].points} points.`;
+            return choice === 'PASS' ? `Got it, ${player.name} -- sitting this bet out.` : `Got it, ${player.name}! Betting ${amount} points ${choice}.`;
         }
     }
 
