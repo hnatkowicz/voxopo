@@ -503,6 +503,44 @@
         <button class="btn btn-leave" onclick="leaveRoom()">Leave Room</button>
     </div>
 
+    <!-- SCREEN 4.6: TRIVI-YEAH II FINAL WAGER (Final-Jeopardy-style closer) -->
+    <div id="trivi-yeah-ii-final-wager-screen" class="card" style="display: none;">
+        <h1>Final Wager</h1>
+        <p class="subtitle" id="fw-status-line" style="margin-bottom: 20px;">...</p>
+
+        <div class="player-badge">
+            <span class="player-badge-identity"><span id="fw-badge-emoji">-</span> <span id="fw-badge-name" class="player-badge-name">-</span></span>
+            <span class="player-badge-room">Room <strong id="fw-badge-room">-</strong> &middot; Score <strong id="fw-badge-score">0</strong></span>
+        </div>
+
+        <div id="fw-topic-meta" style="font-size: 0.85rem; font-weight: 600; color: #64748b; text-transform: uppercase; letter-spacing: 0.06em; margin-top: 16px; margin-bottom: 10px; text-align: center;"></div>
+
+        <!-- WAGER: private, one-shot -- no changing it after submit. -->
+        <div id="fw-wager-box" style="display: none; margin-top: 10px;">
+            <div id="fw-wager-prompt-text" style="font-weight: 600; margin-bottom: 14px; text-align: center;"></div>
+            <div id="fw-wager-input-row" style="display: none;">
+                <input type="number" id="fw-wager-input" min="0" value="0" style="width: 100%; padding: 12px; font-size: 1.1rem; border-radius: 8px; border: 1px solid #222630; background: #14161d; color: #fff; margin-bottom: 10px; box-sizing: border-box;" />
+                <button class="btn" onclick="submitTriviYeahIIFinalWager()">Lock In Wager</button>
+            </div>
+        </div>
+
+        <!-- ANSWER: free text, toUppercase as typed, resubmittable until
+             the 30s clock runs out. -->
+        <div id="fw-answer-box" style="display: none; margin-top: 10px;">
+            <div id="fw-question-text" style="text-align: left; font-size: 1.05rem; font-weight: 600; color: #ffffff; line-height: 1.4; margin-bottom: 16px;"></div>
+            <input type="text" id="fw-answer-input" placeholder="YOUR ANSWER" style="width: 100%; padding: 12px; font-size: 1.1rem; font-weight: 700; text-transform: uppercase; border-radius: 8px; border: 1px solid #222630; background: #14161d; color: #fff; margin-bottom: 10px; box-sizing: border-box;" oninput="this.value = this.value.toUpperCase();" />
+            <button class="btn" onclick="submitTriviYeahIIFinalAnswer()">Lock In Final Answer</button>
+            <div id="fw-answer-feedback" class="feedback" style="margin-top: 16px; font-weight: 600; text-align: left; padding: 14px 20px; display: none;"></div>
+        </div>
+
+        <!-- REVEAL: all the drama happens on the TV from here. -->
+        <div id="fw-reveal-box" style="display: none; margin-top: 10px; text-align: center; color: #94a3b8; padding: 30px 0;">
+            👀 Watch the TV for the results!
+        </div>
+
+        <button class="btn btn-leave" onclick="leaveRoom()">Leave Room</button>
+    </div>
+
     <!-- SCREEN 5: GAME OVER -->
     <div id="game-over-screen" class="card" style="display: none;">
         <h1>Game Over</h1>
@@ -532,7 +570,7 @@
         // both missed a spot). Hiding every known screen and showing only
         // the requested one makes that whole bug class impossible going
         // forward -- a future new screen just needs adding here once.
-        const ALL_PLAY_SCREENS = ['login-screen', 'game-screen', 'category-screen', 'empossdurr-screen', 'on-the-spectrum-screen', 'question-screen', 'trivi-yeah-ii-screen', 'game-over-screen'];
+        const ALL_PLAY_SCREENS = ['login-screen', 'game-screen', 'category-screen', 'empossdurr-screen', 'on-the-spectrum-screen', 'question-screen', 'trivi-yeah-ii-screen', 'trivi-yeah-ii-final-wager-screen', 'game-over-screen'];
         function showOnlyPlayScreen(idToShow) {
             ALL_PLAY_SCREENS.forEach(id => {
                 document.getElementById(id).style.display = (id === idToShow) ? 'block' : 'none';
@@ -731,6 +769,14 @@
                         if (data.phase === 'TRIVI_YEAH_II_ROUND_PHASE') {
                             showOnlyPlayScreen('trivi-yeah-ii-screen');
                             renderTriviYeahII(data, nickname, roomCode);
+                        }
+
+                        // Final Wager -- category, a private wager, then a
+                        // timed free-text answer. The reveal itself is
+                        // TV-only; this screen just goes passive for it.
+                        if (data.phase === 'TRIVI_YEAH_II_FINAL_WAGER_PHASE') {
+                            showOnlyPlayScreen('trivi-yeah-ii-final-wager-screen');
+                            renderTriviYeahIIFinalWager(data, nickname, roomCode);
                         }
 
                         // Loop exhausted its question bank: show this player's own placement
@@ -1176,6 +1222,108 @@
                 ty2LastRenderKey = null;
             } catch (error) {
                 console.error('[Trivi-Yeah II] Side bet submission failed.', error);
+            }
+        }
+
+        // ---------- Trivi-Yeah II: Final Wager ----------
+        // Its own gameState entirely (TRIVI_YEAH_II_FINAL_WAGER, not
+        // TRIVI_YEAH_II_ROUND), so this is a standalone screen/render
+        // function, not another branch inside renderTriviYeahII.
+        let fwLastRenderKey = null;
+
+        function renderTriviYeahIIFinalWager(data, nickname, roomCode) {
+            document.getElementById('fw-badge-name').innerText = nickname;
+            document.getElementById('fw-badge-emoji').innerText = chosenAvatar;
+            document.getElementById('fw-badge-room').innerText = roomCode;
+            document.getElementById('fw-badge-score').innerText = data.myScore || 0;
+            document.getElementById('fw-topic-meta').innerText = data.topicLabel || '';
+
+            const renderKey = `${data.finalWagerPhase}|${data.myWager}|${data.myAnswer || ''}|${data.gameSecondsLeft}`;
+            if (renderKey === fwLastRenderKey) return;
+            fwLastRenderKey = renderKey;
+
+            const wagerBox = document.getElementById('fw-wager-box');
+            const answerBox = document.getElementById('fw-answer-box');
+            const revealBox = document.getElementById('fw-reveal-box');
+            wagerBox.style.display = 'none';
+            answerBox.style.display = 'none';
+            revealBox.style.display = 'none';
+
+            if (data.finalWagerPhase === 'CATEGORY_REVEAL') {
+                document.getElementById('fw-status-line').innerText = 'Get ready...';
+                return;
+            }
+
+            if (data.finalWagerPhase === 'WAGER') {
+                wagerBox.style.display = 'block';
+                const inputRow = document.getElementById('fw-wager-input-row');
+                if (data.myWager !== null) {
+                    document.getElementById('fw-status-line').innerText = 'Wager locked in.';
+                    document.getElementById('fw-wager-prompt-text').innerText = `You wagered ${data.myWager} points. Waiting on the room...`;
+                    inputRow.style.display = 'none';
+                } else {
+                    document.getElementById('fw-status-line').innerText = 'Place your wager!';
+                    const maxWager = Math.max(data.myScore || 0, 0);
+                    document.getElementById('fw-wager-prompt-text').innerText = `How much do you want to risk? (0 - ${maxWager} points) Keep it secret!`;
+                    const input = document.getElementById('fw-wager-input');
+                    input.max = maxWager;
+                    input.value = Math.min(parseInt(input.value, 10) || 0, maxWager);
+                    inputRow.style.display = 'block';
+                }
+                return;
+            }
+
+            if (data.finalWagerPhase === 'ANSWER') {
+                document.getElementById('fw-status-line').innerText = `Answer now! ${data.gameSecondsLeft != null ? data.gameSecondsLeft + 's left' : ''}`;
+                answerBox.style.display = 'block';
+                document.getElementById('fw-question-text').innerText = data.questionText || '';
+                const feedback = document.getElementById('fw-answer-feedback');
+                if (data.myAnswer) {
+                    showFeedback(feedback, `LOCKED IN: "${data.myAnswer}" -- you can still change it before time's up.`, "rgba(0,230,118,0.06)", "#00e676", "rgba(0,230,118,0.15)");
+                } else {
+                    feedback.style.display = 'none';
+                }
+                return;
+            }
+
+            // REVEAL -- the drama happens on the TV, not here.
+            document.getElementById('fw-status-line').innerText = 'Time\'s up!';
+            revealBox.style.display = 'block';
+        }
+
+        async function submitTriviYeahIIFinalWager() {
+            const input = document.getElementById('fw-wager-input');
+            const amount = Math.max(0, parseInt(input.value, 10) || 0);
+            const registeredName = localStorage.getItem('randomania_nickname') || 'test-handset';
+            document.getElementById('fw-wager-prompt-text').innerText = `Wager locked in at ${amount} points. Waiting on the room...`;
+            document.getElementById('fw-wager-input-row').style.display = 'none';
+            try {
+                await fetch('/api/message', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ From: registeredName, Body: `FWAGER ${amount}`, roomCode: localStorage.getItem('randomania_roomcode') })
+                });
+                fwLastRenderKey = null;
+            } catch (error) {
+                console.error('[Final Wager] Wager submission failed.', error);
+            }
+        }
+
+        async function submitTriviYeahIIFinalAnswer() {
+            const input = document.getElementById('fw-answer-input');
+            const answerText = input.value.trim();
+            const feedback = document.getElementById('fw-answer-feedback');
+            const registeredName = localStorage.getItem('randomania_nickname') || 'test-handset';
+            try {
+                await fetch('/api/message', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ From: registeredName, Body: `FANSWER ${answerText}`, roomCode: localStorage.getItem('randomania_roomcode') })
+                });
+                fwLastRenderKey = null;
+                showFeedback(feedback, `LOCKED IN: "${answerText}" -- you can still change it before time's up.`, "rgba(0,230,118,0.06)", "#00e676", "rgba(0,230,118,0.15)");
+            } catch (error) {
+                showFeedback(feedback, "❌ Transmission failure.", "rgba(255,71,87,0.06)", "#ff4757", "rgba(255,71,87,0.1)");
             }
         }
 

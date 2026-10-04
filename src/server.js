@@ -309,6 +309,25 @@ app.post('/api/room-status', (req, res) => {
                 myScore, myCorrectAnswers, myLeft, myEmoji
             });
         }
+        if (targetRoom && targetRoom.gameState === 'TRIVI_YEAH_II_FINAL_WAGER' && targetRoom.finalWager) {
+            const fw = targetRoom.finalWager;
+            // Everyone's own wager is secret from everyone else until the
+            // reveal sequence -- this only ever returns the POLLING
+            // player's own value, never anyone else's. The reveal itself
+            // (TRIVI_YEAH_II_FINAL_REVEAL_STEP) is TV-only, same as the
+            // user's own framing: phones watch the TV for results, so no
+            // reveal-step polling fields are needed here at all.
+            return res.json({
+                phase: 'TRIVI_YEAH_II_FINAL_WAGER_PHASE',
+                finalWagerPhase: fw.phase, // CATEGORY_REVEAL | WAGER | ANSWER | REVEAL
+                topicLabel: fw.topicLabel,
+                questionText: fw.phase === 'ANSWER' || fw.phase === 'REVEAL' ? fw.questionText : null,
+                gameSecondsLeft: targetRoom.gameSecondsLeft,
+                myWager: fw.wagers && (playerName in fw.wagers) ? fw.wagers[playerName] : null,
+                myAnswer: fw.answers ? (fw.answers[playerName] || null) : null,
+                myScore, myCorrectAnswers, myLeft, myEmoji
+            });
+        }
         if (targetRoom && targetRoom.gameState === 'EMPOSSDURR_ROUND' && targetRoom.empossdurr) {
             const ed = targetRoom.empossdurr;
             const isImpostor = playerName === ed.impostorName;

@@ -614,6 +614,18 @@ const TRIVI_YEAH_II_DOUBLER_REVEAL_MS = 2500; // "DOUBLER!" beat, after the norm
 const TRIVI_YEAH_II_WAGER_TIMEOUT_MS = 20000; // backstop if the picker never sets a wager
 const TRIVI_YEAH_II_SIDE_BET_SECONDS = 10;
 
+// Final Wager -- a Final-Jeopardy-style closer after round 3's board clears.
+// Every active player privately wagers against their OWN score, then
+// everyone gets the same single (harder) free-text question, then wagers
+// and answers reveal one player at a time, lowest score first, building to
+// the leader last -- the one dramatic beat the Doubler's informed betting
+// deliberately doesn't have.
+const TRIVI_YEAH_II_FINAL_CATEGORY_REVEAL_MS = 3000; // "FINAL WAGER" + topic, before wagering opens
+const TRIVI_YEAH_II_FINAL_WAGER_TIMEOUT_MS = 30000; // backstop if a player never wagers -- defaults to 0
+const TRIVI_YEAH_II_FINAL_ANSWER_SECONDS = 30; // fixed, matches thirty-second-timer.mp3 -- never fast-forwarded, even if everyone's answered early
+const TRIVI_YEAH_II_FINAL_REVEAL_STEP_MS = 4500; // pause between each player's one-by-one reveal
+const TRIVI_YEAH_II_FINAL_GAME_OVER_DELAY_MS = 2500; // beat after the last reveal before GAME_OVER takes over
+
 // Used both for the very first tile of the game (no "previous question" yet
 // to crown a picker) and as the fallback when nobody answers a question
 // correctly (nobody earns the pick honestly, so it falls to chance instead).
@@ -1020,7 +1032,11 @@ function scheduleTriviYeahIINextStep(roomCode) {
         room.revealTimeout = null;
         if (ty2.clearedCount >= ty2.grid.length) {
             if (ty2.round >= ty2.totalRounds) {
-                endGame(roomCode);
+                startTriviYeahIIFinalWager(roomCode).catch(error => {
+                    console.error(`❌ [Trivi-Yeah II] Failed to start Final Wager for Room ${roomCode}:`, error.message);
+                    broadcastContentUnavailable(roomCode, 'Trivi-Yeah II');
+                    resetRoomToLobby(roomCode);
+                });
                 return;
             }
             // Board's done but more rounds remain -- announce the round
@@ -1200,6 +1216,200 @@ function evaluateTriviYeahIIDoublerAnswer(room, roomCode, cell, correctLetter) {
     // cleared only once the next tile's pick phase actually opens, same
     // moment activeCellIndex/activeQuestionData reset below.
     scheduleTriviYeahIINextStep(roomCode);
+}
+
+// ==========================================
+// PHASE 3C-2: TRIVI-YEAH II FINAL WAGER (Final-Jeopardy-style closer)
+// ==========================================
+// Free-text matching: trim, uppercase, collapse whitespace, and strip the
+// handful of punctuation marks a typed answer might include -- "Mars."
+// and "mars" both need to match 'Mars' without requiring a letter-perfect
+// retype. Deliberately NOT lenient about articles or synonyms (yet) --
+// start strict, loosen later only if real play shows it's too harsh.
+function normalizeFinalWagerAnswer(text) {
+    return (text || '')
+        .trim()
+        .toUpperCase()
+        .replace(/[.,!?'"]/g, '')
+        .replace(/\s+/g, ' ');
+}
+
+// One random question from its own 'FINAL_WAGER' category -- a pool
+// entirely separate from the 5 regular board categories (never added to
+// TRIVI_YEAH_II_CATEGORIES), so it can never show up mid-game and is only
+// ever drawn here. subcategory doubles as the dramatic "topic" shown
+// before wagering opens, same way real Final Jeopardy announces a category
+// before the question itself.
+async function pickFinalWagerQuestion() {
+    const result = await pool.query(
+        `SELECT question_text, correct_answer, subcategory
+         FROM questions
+         WHERE game_mode = 'TRIVI_YEAH_II' AND category = 'FINAL_WAGER'
+         ORDER BY random() LIMIT 1`
+    );
+    if (result.rows.length === 0) {
+        throw new Error('No Final Wager content available.');
+    }
+    const row = result.rows[0];
+    return { questionText: row.question_text, correctAnswer: row.correct_answer, topicLabel: row.subcategory || 'Final Wager' };
+}
+
+async function startTriviYeahIIFinalWager(roomCode) {
+    const room = activeRooms[roomCode];
+    if (!room) return;
+
+    const { questionText, correctAnswer, topicLabel } = await pickFinalWagerQuestion();
+
+    room.gameState = 'TRIVI_YEAH_II_FINAL_WAGER';
+    room.finalWager = {
+        topicLabel,
+        questionText,
+        correctAnswer, // server-only -- never broadcast until the reveal step that needs it
+        wagers: {},
+        answers: {},
+        phase: 'CATEGORY_REVEAL',
+        revealSteps: [],
+        revealIndex: -1
+    };
+
+    console.log(`[Trivi-Yeah II] Room ${roomCode} entering Final Wager. Topic: ${topicLabel}`);
+
+    broadcastToRoom(roomCode, {
+        type: 'TRIVI_YEAH_II_FINAL_CATEGORY_REVEAL',
+        topicLabel
+    });
+
+    if (room.revealTimeout) clearTimeout(room.revealTimeout);
+    room.revealTimeout = setTimeout(() => {
+        room.revealTimeout = null;
+        openTriviYeahIIFinalWagerPhase(roomCode);
+    }, TRIVI_YEAH_II_FINAL_CATEGORY_REVEAL_MS);
+}
+
+function openTriviYeahIIFinalWagerPhase(roomCode) {
+    const room = activeRooms[roomCode];
+    if (!room || !room.finalWager) return;
+
+    room.finalWager.phase = 'WAGER';
+
+    broadcastToRoom(roomCode, { type: 'TRIVI_YEAH_II_FINAL_WAGER_OPEN' });
+
+    if (room.revealTimeout) clearTimeout(room.revealTimeout);
+    room.revealTimeout = setTimeout(() => {
+        room.revealTimeout = null;
+        // Any active player who never wagered defaults to 0 -- same "don't
+        // leave the room stuck waiting forever" backstop as the Doubler.
+        const activePlayers = Object.values(room.players).filter(p => !p.left);
+        activePlayers.forEach(p => {
+            if (!(p.name in room.finalWager.wagers)) room.finalWager.wagers[p.name] = 0;
+        });
+        openTriviYeahIIFinalAnswerPhase(roomCode);
+    }, TRIVI_YEAH_II_FINAL_WAGER_TIMEOUT_MS);
+}
+
+function openTriviYeahIIFinalAnswerPhase(roomCode) {
+    const room = activeRooms[roomCode];
+    if (!room || !room.finalWager) return;
+    const fw = room.finalWager;
+
+    fw.phase = 'ANSWER';
+
+    broadcastToRoom(roomCode, {
+        type: 'TRIVI_YEAH_II_FINAL_ANSWER_OPEN',
+        topicLabel: fw.topicLabel,
+        questionText: fw.questionText,
+        secondsLeft: TRIVI_YEAH_II_FINAL_ANSWER_SECONDS
+    });
+
+    // Deliberately no fast-forward-on-everyone-answered here, unlike every
+    // other timed phase in this mode -- the full 30 seconds plays out no
+    // matter what (see design chat), both for suspense and because it's
+    // timed to match thirty-second-timer.mp3 exactly.
+    let count = TRIVI_YEAH_II_FINAL_ANSWER_SECONDS;
+    room.gameSecondsLeft = count;
+    if (room.timerInterval) clearInterval(room.timerInterval);
+    room.timerInterval = setInterval(() => {
+        count--;
+        room.gameSecondsLeft = count;
+        if (count > 0) {
+            broadcastToRoom(roomCode, { type: 'GAME_TIMER_TICK', secondsLeft: count + " s" });
+        } else {
+            closeTriviYeahIIFinalAnswerPhase(roomCode);
+        }
+    }, 1000);
+}
+
+function closeTriviYeahIIFinalAnswerPhase(roomCode) {
+    const room = activeRooms[roomCode];
+    if (!room || !room.finalWager) return;
+    const fw = room.finalWager;
+
+    if (room.timerInterval) { clearInterval(room.timerInterval); room.timerInterval = null; }
+    fw.phase = 'REVEAL';
+
+    // Lowest score first, building to the leader last -- the deliberate
+    // "comeback or confirm the win" climax a hidden wager is for. Ties keep
+    // insertion order, which is fine; there's no meaningful tiebreak rule
+    // for who reveals first among equals.
+    const activePlayers = Object.values(room.players).filter(p => !p.left).sort((a, b) => a.score - b.score);
+
+    fw.revealSteps = activePlayers.map(p => {
+        const wagerAmount = fw.wagers[p.name] || 0;
+        const rawAnswer = fw.answers[p.name] || '';
+        const correct = rawAnswer.length > 0 && normalizeFinalWagerAnswer(rawAnswer) === normalizeFinalWagerAnswer(fw.correctAnswer);
+        return { playerName: p.name, wagerAmount, answerText: rawAnswer, correct };
+    });
+    fw.revealIndex = -1;
+
+    broadcastToRoom(roomCode, {
+        type: 'TRIVI_YEAH_II_FINAL_REVEAL_START',
+        correctAnswer: fw.correctAnswer,
+        totalSteps: fw.revealSteps.length
+    });
+
+    if (room.revealTimeout) clearTimeout(room.revealTimeout);
+    room.revealTimeout = setTimeout(() => advanceTriviYeahIIFinalReveal(roomCode), TRIVI_YEAH_II_FINAL_REVEAL_STEP_MS);
+}
+
+// Score deltas are applied one at a time, right as each player's own step
+// reveals -- not all at once up front -- so the TV leaderboard visibly
+// shifts player by player instead of jumping straight to the final order.
+function advanceTriviYeahIIFinalReveal(roomCode) {
+    const room = activeRooms[roomCode];
+    if (!room || !room.finalWager) return;
+    const fw = room.finalWager;
+
+    fw.revealIndex++;
+    if (fw.revealIndex >= fw.revealSteps.length) {
+        if (room.revealTimeout) clearTimeout(room.revealTimeout);
+        room.revealTimeout = setTimeout(() => endGame(roomCode), TRIVI_YEAH_II_FINAL_GAME_OVER_DELAY_MS);
+        return;
+    }
+
+    const step = fw.revealSteps[fw.revealIndex];
+    const player = room.players[step.playerName];
+    if (player) {
+        player.score += step.correct ? step.wagerAmount : -step.wagerAmount;
+        if (step.correct) player.correctAnswers = (player.correctAnswers || 0) + 1;
+    }
+
+    broadcastToRoom(roomCode, {
+        type: 'TRIVI_YEAH_II_FINAL_REVEAL_STEP',
+        playerName: step.playerName,
+        wagerAmount: step.wagerAmount,
+        answerText: step.answerText,
+        correct: step.correct,
+        newScore: player ? player.score : null,
+        stepIndex: fw.revealIndex,
+        totalSteps: fw.revealSteps.length
+    });
+    broadcastToRoom(roomCode, {
+        type: 'LEADERBOARD_UPDATE',
+        players: Object.values(room.players).filter(p => !p.left)
+    });
+
+    if (room.revealTimeout) clearTimeout(room.revealTimeout);
+    room.revealTimeout = setTimeout(() => advanceTriviYeahIIFinalReveal(roomCode), TRIVI_YEAH_II_FINAL_REVEAL_STEP_MS);
 }
 
 // ==========================================
@@ -1915,8 +2125,9 @@ function resetRoomToLobby(roomCode) {
     room.categoryVotes = {};
     room.empossdurr = null;
     room.onTheSpectrum = null;
+    room.finalWager = null;
 
-    room.votes = { TRIVI_YEAH: 0, COUNTRY_MONKEY: 0, EMPOSSDURR: 0, FLAG_ME_DOWN: 0, ON_THE_SPECTRUM: 0 };
+    room.votes = { TRIVI_YEAH: 0, COUNTRY_MONKEY: 0, EMPOSSDURR: 0, FLAG_ME_DOWN: 0, ON_THE_SPECTRUM: 0, TRIVI_YEAH_II: 0 };
     const activePlayers = Object.values(room.players).filter(p => !p.left);
     room.gameEpoch = (room.gameEpoch || 0) + 1;
     activePlayers.forEach(player => {
@@ -2864,6 +3075,42 @@ export function handleIncomingMessage(fromPhone, bodyText, explicitRoomCode, pre
                 fastForwardTriviYeahIISideBets(associatedRoomCode);
             }
             return choice === 'PASS' ? `Got it, ${player.name} -- sitting this bet out.` : `Got it, ${player.name}! Betting ${amount} points ${choice}.`;
+        }
+    }
+
+    // 5.4b Trivi-Yeah II: Final Wager -- private wager against your own
+    // score, WAGER phase, any active player. One-shot (no resubmitting) --
+    // the whole point is it stays secret from everyone else until reveal.
+    if (currentRoom.gameState === 'TRIVI_YEAH_II_FINAL_WAGER' && currentRoom.finalWager.phase === 'WAGER') {
+        const wagerMatch = /^FWAGER\s+(\d+)$/i.exec(cleanText);
+        if (wagerMatch) {
+            const fw = currentRoom.finalWager;
+            if (actingPlayerName in fw.wagers) {
+                return `⚠️ Wager already locked in -- no changing it now.`;
+            }
+            const amount = Math.min(Math.max(0, parseInt(wagerMatch[1], 10)), Math.max(player.score, 0));
+            fw.wagers[actingPlayerName] = amount;
+            broadcastToRoom(associatedRoomCode, { type: 'ANSWER_SUBMITTED', playerName: actingPlayerName });
+
+            const activePlayers = Object.values(currentRoom.players).filter(p => !p.left);
+            if (activePlayers.every(p => p.name in fw.wagers)) {
+                openTriviYeahIIFinalAnswerPhase(associatedRoomCode);
+            }
+            return `Wager locked in, ${player.name} -- keep it secret!`;
+        }
+    }
+
+    // 5.4c Trivi-Yeah II: Final Wager -- free-text answer, ANSWER phase, any
+    // active player. Resubmittable right up until time's up, same as
+    // changing your mind on a written answer before the buzzer -- only the
+    // last value in before the 30s clock hits zero counts.
+    if (currentRoom.gameState === 'TRIVI_YEAH_II_FINAL_WAGER' && currentRoom.finalWager.phase === 'ANSWER') {
+        const answerMatch = /^FANSWER(?:\s+([\s\S]*))?$/i.exec(cleanText);
+        if (answerMatch) {
+            const fw = currentRoom.finalWager;
+            fw.answers[actingPlayerName] = (answerMatch[1] || '').trim();
+            broadcastToRoom(associatedRoomCode, { type: 'ANSWER_SUBMITTED', playerName: actingPlayerName });
+            return `Final answer locked in, ${player.name}!`;
         }
     }
 

@@ -1,7 +1,7 @@
 document.addEventListener("DOMContentLoaded", () => {
     document.body.setAttribute('data-view', 'gateway');
 
-    ['countdown-music', 'category-music', 'win-music', 'declare-music'].forEach(id => {
+    ['countdown-music', 'category-music', 'win-music', 'declare-music', 'final-wager-timer-sound'].forEach(id => {
         const audio = document.getElementById(id);
         if (audio) audio.volume = 0.5;
     });
@@ -46,7 +46,7 @@ if (btnSubmitSpectate) {
         // later programmatic .play() calls fired from WebSocket handlers aren't blocked
         // by the browser's autoplay policy, which only allows audio after interaction.
         function unlockAllAudio() {
-            ['countdown-music', 'category-music', 'win-music', 'declare-music'].forEach(id => {
+            ['countdown-music', 'category-music', 'win-music', 'declare-music', 'final-wager-timer-sound'].forEach(id => {
                 const audio = document.getElementById(id);
                 if (!audio) return;
                 const p = audio.play();
@@ -215,6 +215,7 @@ if (btnSubmitSpectate) {
                     document.getElementById('lobby-countdown').innerText = "FINAL";
                     stopCategoryMusic();
                     stopCountdownMusic();
+                    stopAudioTrack('final-wager-timer-sound');
                     switchToGameOverUI(data.players);
                     playAudioTrack('win-music');
                 }
@@ -315,6 +316,37 @@ if (btnSubmitSpectate) {
                     showTriviYeahIIDoublerResultUI(data);
                     updateLeaderboardUI(cachedPlayersSnapshot);
                     stopCountdownMusic();
+                }
+
+                // ---------- Trivi-Yeah II: Final Wager (Final-Jeopardy-style closer) ----------
+                // Fires once after round 3's board fully clears, never mid-round.
+                // Wagers stay hidden the whole way through -- the TV never learns
+                // any player's wager amount until their own reveal step.
+                if (data.type === 'TRIVI_YEAH_II_FINAL_CATEGORY_REVEAL') {
+                    document.getElementById('lobby-countdown').innerText = '';
+                    showTriviYeahIIFinalCategoryRevealUI(data.topicLabel);
+                    stopCountdownMusic();
+                }
+                if (data.type === 'TRIVI_YEAH_II_FINAL_WAGER_OPEN') {
+                    showTriviYeahIIFinalWagerOpenUI();
+                    playerAnswerStatus = {};
+                    updateLeaderboardUI(cachedPlayersSnapshot);
+                }
+                if (data.type === 'TRIVI_YEAH_II_FINAL_ANSWER_OPEN') {
+                    document.getElementById('room-status-text').innerText = "Trivi-Yeah II — Final Wager";
+                    showTriviYeahIIFinalAnswerOpenUI(data.topicLabel, data.questionText);
+                    playerAnswerStatus = {};
+                    updateLeaderboardUI(cachedPlayersSnapshot);
+                    playAudioTrack('final-wager-timer-sound');
+                }
+                if (data.type === 'TRIVI_YEAH_II_FINAL_REVEAL_START') {
+                    stopAudioTrack('final-wager-timer-sound');
+                    document.getElementById('lobby-countdown').innerText = "0 s";
+                    showTriviYeahIIFinalRevealStartUI(data.correctAnswer);
+                }
+                if (data.type === 'TRIVI_YEAH_II_FINAL_REVEAL_STEP') {
+                    showTriviYeahIIFinalRevealStepUI(data);
+                    updateLeaderboardUI(cachedPlayersSnapshot);
                 }
 
                 // ---------- EmpossDurr ----------
@@ -1026,6 +1058,87 @@ function showTriviYeahIIDoublerResultUI(data) {
     `;
 }
 
+// ---------- Trivi-Yeah II: Final Wager ----------
+// Accumulates one entry per TRIVI_YEAH_II_FINAL_REVEAL_STEP so the reveal
+// renders as a growing list (everyone revealed so far stays on screen)
+// rather than wiping between players -- the climbing suspense depends on
+// being able to see how the room is shaping up, not just the latest name.
+let finalWagerRevealLog = [];
+
+function showTriviYeahIIFinalCategoryRevealUI(topicLabel) {
+    const panel = document.getElementById('active-content-stage');
+    document.getElementById('room-status-text').innerText = "Trivi-Yeah II — Final Wager";
+    panel.innerHTML = `
+        <div class="panel-box" style="padding: 40px; flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; min-height: 400px; box-sizing: border-box;">
+            <div style="font-size: 0.85rem; font-weight: 600; color: #64748b; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 14px;">One question left. Everything's on the line.</div>
+            <div style="font-size: 2.6rem; font-weight: 800; color: #ffd700; margin-bottom: 14px; text-shadow: 0 0 24px rgba(255, 215, 0, 0.35);">FINAL WAGER</div>
+            <div style="font-size: 1.3rem; font-weight: 700; color: #ffffff;">Topic: ${topicLabel}</div>
+        </div>
+    `;
+}
+
+function showTriviYeahIIFinalWagerOpenUI() {
+    const panel = document.getElementById('active-content-stage');
+    panel.innerHTML = `
+        <div class="panel-box" style="padding: 40px; flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; min-height: 400px; box-sizing: border-box;">
+            <div style="font-size: 0.85rem; font-weight: 600; color: #64748b; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 14px;">Wagering now</div>
+            <div style="font-size: 1.6rem; font-weight: 700; color: #ffffff; margin-bottom: 10px;">Everyone's deciding how much to risk&hellip;</div>
+            <div style="font-size: 1rem; color: #94a3b8;">Every wager stays secret until the big reveal.</div>
+        </div>
+    `;
+}
+
+function showTriviYeahIIFinalAnswerOpenUI(topicLabel, questionText) {
+    const panel = document.getElementById('active-content-stage');
+    panel.innerHTML = `
+        <div class="panel-box" style="padding: 40px; flex: 1; display: flex; flex-direction: column; justify-content: center; text-align: left; min-height: 400px; box-sizing: border-box;">
+            <div style="font-size: 0.85rem; font-weight: 600; color: #64748b; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 16px;">Final Wager &middot; ${topicLabel}</div>
+            <div style="font-size: 1.5rem; font-weight: 600; color: #ffffff; line-height: 1.4; letter-spacing: -0.01em;">
+                ${questionText}
+            </div>
+        </div>
+    `;
+}
+
+function showTriviYeahIIFinalRevealStartUI(correctAnswer) {
+    finalWagerRevealLog = [];
+    const panel = document.getElementById('active-content-stage');
+    panel.innerHTML = `
+        <div class="panel-box" style="padding: 32px 40px; flex: 1; display: flex; flex-direction: column; min-height: 400px; box-sizing: border-box;">
+            <div style="text-align: center; margin-bottom: 20px;">
+                <div style="font-size: 0.85rem; font-weight: 600; color: #64748b; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 8px;">Time's up! The correct answer was</div>
+                <div style="font-size: 1.8rem; font-weight: 800; color: #00e676;">${correctAnswer}</div>
+            </div>
+            <div id="final-wager-reveal-log" style="display: flex; flex-direction: column; gap: 10px; overflow-y: auto;"></div>
+        </div>
+    `;
+}
+
+function showTriviYeahIIFinalRevealStepUI(data) {
+    finalWagerRevealLog.push(data);
+    const log = document.getElementById('final-wager-reveal-log');
+    if (!log) return;
+
+    const rows = finalWagerRevealLog.map((step, i) => {
+        const isLatest = i === finalWagerRevealLog.length - 1;
+        const resultColor = step.correct ? '#00e676' : '#ff5c5c';
+        const sign = step.correct ? '+' : '&minus;';
+        return `
+            <div style="background: ${isLatest ? 'rgba(255, 215, 0, 0.08)' : '#1e222b'}; border: 1px solid ${isLatest ? '#ffd700' : '#222630'}; border-radius: 8px; padding: 14px 18px; display: flex; justify-content: space-between; align-items: center; gap: 16px;">
+                <div style="text-align: left;">
+                    <div style="font-weight: 700; font-size: 1.05rem; color: #ffffff;">${step.playerName}</div>
+                    <div style="font-size: 0.9rem; color: #94a3b8; margin-top: 2px;">Answered: "${step.answerText ? escapeHtml(step.answerText) : '(no answer)'}"</div>
+                </div>
+                <div style="text-align: right;">
+                    <div style="font-weight: 700; color: ${resultColor};">${step.correct ? 'Correct' : 'Incorrect'} &middot; ${sign}${step.wagerAmount}</div>
+                    <div style="font-size: 0.9rem; color: #94a3b8; margin-top: 2px;">New score: ${step.newScore}</div>
+                </div>
+            </div>
+        `;
+    });
+    log.innerHTML = rows.join('');
+}
+
 // ---------- EmpossDurr ----------
 // Deliberately sparse -- there's no question text or visual asset to show
 // (the secret word/clue is private, phone-only), so the panel is mostly a
@@ -1313,6 +1426,13 @@ function highlightCorrectAnswerOnTV(correctLetter) {
             if (rowNode) rowNode.style.opacity = "0.15";
         }
     });
+}
+
+// A Final Wager answer is free-typed player input rendered straight into
+// innerHTML (unlike a letter choice or a tile index) -- escape it before
+// display so a typed "answer" can't inject markup into the TV page.
+function escapeHtml(text) {
+    return (text || '').replace(/[&<>"']/g, ch => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[ch]));
 }
 
 function playAudioTrack(elementId) {
