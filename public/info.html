@@ -139,12 +139,30 @@
             vertical-align: middle;
         }
 
-        table.stakes { width: 100%; border-collapse: collapse; margin-top: 12px; font-size: 0.88rem; }
-        table.stakes th, table.stakes td { text-align: left; padding: 8px 10px; border-bottom: 1px solid #222630; }
-        table.stakes th { color: #64748b; font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.04em; font-weight: 600; }
+        table.stakes, table.tv-table { width: 100%; border-collapse: collapse; margin-top: 12px; font-size: 0.88rem; }
+        table.stakes th, table.stakes td, table.tv-table th, table.tv-table td { text-align: left; padding: 8px 10px; border-bottom: 1px solid #222630; }
+        table.stakes th, table.tv-table th { color: #64748b; font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.04em; font-weight: 600; }
         table.stakes td.points { font-weight: 700; text-align: right; }
         table.stakes td.points.pos { color: #00e676; }
         table.stakes td.points.neg { color: #ff4757; }
+        table.tv-table td { color: #cbd5e1; }
+        table.tv-table td.status-ok { color: #00e676; font-weight: 600; white-space: nowrap; }
+        table.tv-table td.status-no { color: #ff4757; font-weight: 600; white-space: nowrap; }
+        @media (max-width: 620px) {
+            table.tv-table { font-size: 0.82rem; }
+            table.tv-table th, table.tv-table td { padding: 8px 6px; }
+            table.tv-table th:nth-child(2), table.tv-table td:nth-child(2) { display: none; }
+        }
+        .failsafe-box {
+            background: rgba(45, 156, 219, 0.05);
+            border: 1px solid rgba(45, 156, 219, 0.25);
+            border-radius: 12px;
+            padding: 20px 22px;
+            margin-top: 16px;
+        }
+        .failsafe-box ul { margin: 0; padding-left: 20px; color: #cbd5e1; font-size: 0.9rem; }
+        .failsafe-box li { margin-bottom: 8px; }
+        .failsafe-box li:last-child { margin-bottom: 0; }
 
         .privacy-box {
             background: rgba(0, 230, 118, 0.04);
@@ -177,6 +195,7 @@
 
         <nav class="page-nav">
             <a href="#how-it-works">How It Works</a>
+            <a href="#tv-setup">TV Setup</a>
             <a href="#how-to-play">How to Play</a>
             <a href="#privacy">Privacy</a>
             <a href="#about">About</a>
@@ -222,6 +241,30 @@
             </div>
 
             <p style="margin-top: 20px;">The one thing to know going in: the room code gets typed in <em>twice</em> on two different devices -- once on the TV, once (per player) on each phone. That's normal, not a bug.</p>
+        </section>
+
+        <section id="tv-setup">
+            <h2>TV Setup</h2>
+            <p>The display just needs any browser pointed at this site. Not every TV has one -- here's what to expect, and what to do if yours doesn't.</p>
+
+            <table class="tv-table">
+                <tr><th>TV / Situation</th><th>Has a browser?</th><th>Fix</th></tr>
+                <tr><td>Samsung (Tizen) or LG (webOS) smart TV</td><td class="status-ok">Yes</td><td>Nothing -- open the browser and go.</td></tr>
+                <tr><td>Google TV / Android TV</td><td class="status-no">No</td><td>Bring your own device (see below)</td></tr>
+                <tr><td>Apple TV</td><td class="status-no">No, never has</td><td>Bring your own device (see below)</td></tr>
+                <tr><td>Roku</td><td class="status-no">No, never has</td><td>Bring your own device (see below)</td></tr>
+                <tr><td>Hotel / hospitality TV (any brand)</td><td class="status-no">Almost always locked down</td><td>Bring your own device (see below)</td></tr>
+                <tr><td>Older TV with no smart features</td><td class="status-no">No</td><td>Bring your own device (see below)</td></tr>
+            </table>
+
+            <div class="failsafe-box">
+                <p style="color: #cbd5e1; margin: 0 0 10px 0; font-weight: 600;">Bring your own device (works on any TV, no subscription needed)</p>
+                <ul>
+                    <li><strong style="color:#fff;">HDMI cable, straight from a laptop</strong> -- the simplest option. No WiFi pairing, no account, nothing to buy if you already own the cable. Just plug in and switch the TV's input.</li>
+                    <li><strong style="color:#fff;">Phone + USB-C/Lightning-to-HDMI adapter</strong> -- same idea if a laptop isn't handy. Rotate the phone to landscape first and request the "Desktop site" in your browser -- mirroring a phone held upright wastes most of the screen as black bars on a widescreen TV.</li>
+                    <li><strong style="color:#fff;">A personal streaming stick</strong> (Chromecast, Fire TV Stick, Roku Stick) -- a one-time purchase, no ongoing subscription required to cast your own browser tab. Needs to join the same WiFi network as the device casting to it, which can be unreliable on hotel guest networks.</li>
+                </ul>
+            </div>
         </section>
 
         <section id="how-to-play">
