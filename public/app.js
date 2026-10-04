@@ -136,6 +136,12 @@ if (btnSubmitSpectate) {
                         // can't recover exactly which sub-phase was live, and
                         // the next real broadcast corrects it within a second.
                         document.getElementById('room-status-text').innerText = "On the Spectrum in progress";
+                    } else if (data.gameState === 'TRIVI_YEAH_II_ROUND') {
+                        // Same lean-reconnect reasoning as EmpossDurr/On the Spectrum
+                        // above -- the next pick/reveal broadcast corrects the board
+                        // within a few seconds, not worth serializing the full staged-
+                        // reveal state through this payload too.
+                        document.getElementById('room-status-text').innerText = "Trivi-Yeah II in progress";
                     }
                 }
                 if (data.type === 'LEADERBOARD_UPDATE') {
@@ -233,6 +239,52 @@ if (btnSubmitSpectate) {
                     // Otherwise the last round's green "correct" dot would still be
                     // sitting next to a player's name on the fresh lobby screen.
                     playerAnswerStatus = {};
+                }
+
+                // ---------- Trivi-Yeah II (Jeopardy-style grid, prototype) ----------
+                // Two view modes within #active-content-stage: the grid (picking
+                // phase) and a focused "spotlight" panel (category/question/answers),
+                // reusing the exact choice-row markup/ids classic Trivi-yeah! already
+                // uses -- highlightCorrectAnswerOnTV works unmodified on either.
+                if (data.type === 'TRANSITION_TO_TRIVI_YEAH_II') {
+                    document.getElementById('room-status-text').innerText = "Trivi-Yeah II";
+                    document.getElementById('lobby-countdown').innerText = '';
+                    switchToTriviYeahIIBoardUI(data.grid, data.currentPicker);
+                    playerAnswerStatus = {};
+                    updateLeaderboardUI(cachedPlayersSnapshot);
+                    stopCategoryMusic();
+                    stopCountdownMusic();
+                }
+                if (data.type === 'TRIVI_YEAH_II_CATEGORY_REVEAL') {
+                    showTriviYeahIISpotlightUI({ stage: 'category', categoryLabel: data.categoryLabel, points: data.points });
+                }
+                if (data.type === 'TRIVI_YEAH_II_QUESTION_REVEAL') {
+                    showTriviYeahIISpotlightUI({ stage: 'question', questionText: data.questionText, points: data.points });
+                }
+                if (data.type === 'TRIVI_YEAH_II_ANSWERS_REVEAL') {
+                    showTriviYeahIISpotlightUI({ stage: 'answers', questionText: data.questionText, points: data.points, choiceA: data.choiceA, choiceB: data.choiceB, choiceC: data.choiceC, choiceD: data.choiceD });
+                    playerAnswerStatus = {};
+                    updateLeaderboardUI(cachedPlayersSnapshot);
+                    playCountdownMusic();
+                }
+                if (data.type === 'TRIVI_YEAH_II_ROUND_REVEAL') {
+                    document.getElementById('room-status-text').innerText = "Trivi-Yeah II — Round Evaluation";
+                    document.getElementById('lobby-countdown').innerText = "0 s";
+                    highlightCorrectAnswerOnTV(data.correctLetter);
+                    if (data.answers) {
+                        Object.keys(data.answers).forEach(name => {
+                            playerAnswerStatus[name] = (data.answers[name] === data.correctLetter) ? 'correct' : undefined;
+                            if (!playerAnswerStatus[name]) delete playerAnswerStatus[name];
+                        });
+                    }
+                    stopCountdownMusic();
+                }
+                if (data.type === 'TRIVI_YEAH_II_PICK_TURN') {
+                    document.getElementById('room-status-text').innerText = "Trivi-Yeah II";
+                    document.getElementById('lobby-countdown').innerText = '';
+                    switchToTriviYeahIIBoardUI(data.grid, data.currentPicker);
+                    playerAnswerStatus = {};
+                    updateLeaderboardUI(cachedPlayersSnapshot);
                 }
 
                 // ---------- EmpossDurr ----------
@@ -467,7 +519,7 @@ if (btnSubmitSpectate) {
 
         function updateModuleElectionUI(votes, totalVotes) {
             if (!totalVotes || totalVotes === 0) return;
-            const keys = ['TRIVI_YEAH', 'COUNTRY_MONKEY', 'EMPOSSDURR', 'FLAG_ME_DOWN', 'ON_THE_SPECTRUM'];
+            const keys = ['TRIVI_YEAH', 'COUNTRY_MONKEY', 'EMPOSSDURR', 'FLAG_ME_DOWN', 'ON_THE_SPECTRUM', 'TRIVI_YEAH_II'];
             keys.forEach(key => {
                 const count = votes[key] || 0;
                 const percentage = Math.round((count / totalVotes) * 100);
@@ -581,7 +633,8 @@ if (btnSubmitSpectate) {
             COUNTRY_MONKEY: 'Country Monkey',
             EMPOSSDURR: 'EmpossDurr',
             FLAG_ME_DOWN: 'Flag Me Down',
-            ON_THE_SPECTRUM: 'On The Spectrum'
+            ON_THE_SPECTRUM: 'On The Spectrum',
+            TRIVI_YEAH_II: 'Trivi-Yeah II'
         };
 
         function switchToCategoryVotingUI(winnerModule, categories) {
@@ -714,7 +767,124 @@ if (btnSubmitSpectate) {
                 </div>
             `;
         }
-        
+
+// ---------- Trivi-Yeah II (Jeopardy-style grid, prototype) ----------
+// Accumulates across the staged CATEGORY_REVEAL -> QUESTION_REVEAL ->
+// ANSWERS_REVEAL broadcasts (each one only carries the fields new to that
+// stage) so the spotlight panel can keep showing the category label once
+// the question/choices arrive later, rather than it blanking out.
+let triviYeahIISpotlightCache = {};
+
+function switchToTriviYeahIIBoardUI(grid, currentPicker) {
+    const panel = document.getElementById('active-content-stage');
+    const boardGrid = grid || [];
+    triviYeahIISpotlightCache = {};
+
+    currentGamePhase = 'TRIVI_YEAH_II_ROUND';
+    setStatusMessage(`<div style="font-weight: 600; color: #00e676;">${currentPicker}'s pick!</div>`);
+
+    // The grid arrives category-major (3 categories x 4 tiers, flat array of
+    // 12) -- transposed here into a 3-column x 4-row CSS grid so categories
+    // read as columns and point tiers read as rows, the familiar board shape.
+    const categoryCount = 3;
+    const tierCount = boardGrid.length / categoryCount || 4;
+
+    const headerCells = [];
+    for (let c = 0; c < categoryCount; c++) {
+        const first = boardGrid[c * tierCount];
+        headerCells.push(`<div style="padding: 8px 4px; text-align: center; font-size: 0.72rem; font-weight: 700; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.04em;">${first ? first.categoryLabel : ''}</div>`);
+    }
+
+    const tileCells = [];
+    for (let t = 0; t < tierCount; t++) {
+        for (let c = 0; c < categoryCount; c++) {
+            const cell = boardGrid[c * tierCount + t];
+            if (!cell) { tileCells.push('<div></div>'); continue; }
+            tileCells.push(cell.cleared
+                ? `<div style="background: #14161d; border: 1px solid #1c1f28; border-radius: 8px; padding: 16px 4px; text-align: center; color: #334155; font-size: 1.1rem; font-weight: 700;">&mdash;</div>`
+                : `<div style="background: #14161d; border: 1px solid #222630; border-radius: 8px; padding: 16px 4px; text-align: center; color: #00e676; font-size: 1.25rem; font-weight: 800;">${cell.points}</div>`);
+        }
+    }
+
+    panel.innerHTML = `
+        <div class="panel-box" style="padding: 24px; flex: 1; display: flex; flex-direction: column; justify-content: center;">
+            <div style="display: grid; grid-template-columns: repeat(${categoryCount}, 1fr); gap: 8px;">
+                ${headerCells.join('')}
+                ${tileCells.join('')}
+            </div>
+        </div>
+    `;
+}
+
+function showTriviYeahIISpotlightUI(partial) {
+    const panel = document.getElementById('active-content-stage');
+    Object.assign(triviYeahIISpotlightCache, partial);
+    const { stage, categoryLabel, questionText, points, choiceA, choiceB, choiceC, choiceD } = triviYeahIISpotlightCache;
+
+    const categoryBlock = `
+        <div style="font-size: 0.85rem; font-weight: 600; color: #64748b; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 16px;">
+            ${categoryLabel || ''}${points ? ` &middot; ${points} pts` : ''}
+        </div>
+    `;
+
+    if (stage === 'category') {
+        panel.innerHTML = `
+            <div class="panel-box" style="padding: 40px; flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; min-height: 400px; box-sizing: border-box;">
+                <div style="font-size: 0.85rem; font-weight: 600; color: #64748b; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 14px;">Up next</div>
+                <div style="font-size: 2rem; font-weight: 800; color: #ffffff; margin-bottom: 10px;">${categoryLabel}</div>
+                <div style="font-size: 1.1rem; font-weight: 700; color: #00e676;">${points} points</div>
+            </div>
+        `;
+        return;
+    }
+
+    if (stage === 'question') {
+        panel.innerHTML = `
+            <div class="panel-box" style="padding: 40px; flex: 1; display: flex; flex-direction: column; justify-content: center; text-align: left; min-height: 400px; box-sizing: border-box;">
+                ${categoryBlock}
+                <div style="font-size: 1.4rem; font-weight: 600; color: #ffffff; line-height: 1.4; letter-spacing: -0.01em;">
+                    ${questionText}
+                </div>
+            </div>
+        `;
+        return;
+    }
+
+    // stage === 'answers' -- identical choice-row markup/ids to classic
+    // Trivi-yeah!'s switchToQuestionUI, so highlightCorrectAnswerOnTV (fired
+    // on TRIVI_YEAH_II_ROUND_REVEAL) works completely unmodified on it.
+    const choiceGrid = `
+        <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; width: 100%;">
+            <div id="choice-row-A" style="background: #1e222b; border: 1px solid #222630; border-radius: 8px; padding: 16px; display: flex; align-items: center; gap: 12px; transition: all 0.3s ease;">
+                <span style="background: rgba(0, 230, 118, 0.1); color: #00e676; font-weight: 700; padding: 4px 10px; border-radius: 4px; font-size: 0.85rem;">A</span>
+                <span style="font-size: 1rem; font-weight: 500; color: #e2e5e9;">${choiceA}</span>
+            </div>
+            <div id="choice-row-B" style="background: #1e222b; border: 1px solid #222630; border-radius: 8px; padding: 16px; display: flex; align-items: center; gap: 12px; transition: all 0.3s ease;">
+                <span style="background: rgba(0, 230, 118, 0.1); color: #00e676; font-weight: 700; padding: 4px 10px; border-radius: 4px; font-size: 0.85rem;">B</span>
+                <span style="font-size: 1rem; font-weight: 500; color: #e2e5e9;">${choiceB}</span>
+            </div>
+            <div id="choice-row-C" style="background: #1e222b; border: 1px solid #222630; border-radius: 8px; padding: 16px; display: flex; align-items: center; gap: 12px; transition: all 0.3s ease;">
+                <span style="background: rgba(0, 230, 118, 0.1); color: #00e676; font-weight: 700; padding: 4px 10px; border-radius: 4px; font-size: 0.85rem;">C</span>
+                <span style="font-size: 1rem; font-weight: 500; color: #e2e5e9;">${choiceC}</span>
+            </div>
+            <div id="choice-row-D" style="background: #1e222b; border: 1px solid #222630; border-radius: 8px; padding: 16px; display: flex; align-items: center; gap: 12px; transition: all 0.3s ease;">
+                <span style="background: rgba(0, 230, 118, 0.1); color: #00e676; font-weight: 700; padding: 4px 10px; border-radius: 4px; font-size: 0.85rem;">D</span>
+                <span style="font-size: 1rem; font-weight: 500; color: #e2e5e9;">${choiceD}</span>
+            </div>
+        </div>
+    `;
+
+    panel.innerHTML = `
+        <div class="panel-box" style="padding: 40px; flex: 1; display: flex; flex-direction: column; justify-content: space-between; text-align: left; min-height: 400px; box-sizing: border-box;">
+            ${categoryBlock}
+            <div style="font-size: 1.4rem; font-weight: 600; color: #ffffff; line-height: 1.4; flex: 1; display: flex; align-items: center; margin-bottom: 24px; letter-spacing: -0.01em;">
+                ${questionText}
+            </div>
+            ${choiceGrid}
+        </div>
+    `;
+}
+
 // ---------- EmpossDurr ----------
 // Deliberately sparse -- there's no question text or visual asset to show
 // (the secret word/clue is private, phone-only), so the panel is mostly a
@@ -949,6 +1119,10 @@ function switchToLobbyVoteUI() {
                 <div class="vote-row">
                     <div class="vote-meta"><span>On The Spectrum <span class="module-descriptor">Guess where it lands between two extremes.</span></span><span id="vcount-ON_THE_SPECTRUM" style="color: #64748b;">0 votes (0%)</span></div>
                     <div class="progress-track"><div id="vbar-ON_THE_SPECTRUM" class="progress-fill" style="background: #bb6bd9;"></div></div>
+                </div>
+                <div class="vote-row">
+                    <div class="vote-meta"><span>Trivi-Yeah II <span class="module-descriptor">(Beta) Jeopardy-style board -- pick a tile, race to answer.</span></span><span id="vcount-TRIVI_YEAH_II" style="color: #64748b;">0 votes (0%)</span></div>
+                    <div class="progress-track"><div id="vbar-TRIVI_YEAH_II" class="progress-fill" style="background: #06b6d4;"></div></div>
                 </div>
             </div>
         </div>

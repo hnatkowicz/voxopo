@@ -254,6 +254,7 @@
                 <div class="module-row" onclick="selectModule(this, 'EMPOSSDURR')">EmpossDurr <span class="module-descriptor">Find the impostor hiding in the group.</span></div>
                 <div class="module-row" onclick="selectModule(this, 'FLAG_ME_DOWN')">Flag Me Down <span class="module-descriptor">World and historical flags, banners, and symbols.</span></div>
                 <div class="module-row" onclick="selectModule(this, 'ON_THE_SPECTRUM')">On The Spectrum <span class="module-descriptor">Guess how much a friend agrees or disagrees.</span></div>
+                <div class="module-row" onclick="selectModule(this, 'TRIVI_YEAH_II')">Trivi-Yeah II <span class="module-descriptor">(Beta) Jeopardy-style board -- pick a tile, race to answer.</span></div>
             </div>
         </div>
 
@@ -293,6 +294,7 @@
                     <div class="module-row" data-mode-key="EMPOSSDURR" onclick="submitModeRevote(this, 'EMPOSSDURR')">EmpossDurr <span class="module-descriptor">Find the impostor hiding in the group.</span></div>
                     <div class="module-row" data-mode-key="FLAG_ME_DOWN" onclick="submitModeRevote(this, 'FLAG_ME_DOWN')">Flag Me Down <span class="module-descriptor">World and historical flags, banners, and symbols.</span></div>
                     <div class="module-row" data-mode-key="ON_THE_SPECTRUM" onclick="submitModeRevote(this, 'ON_THE_SPECTRUM')">On The Spectrum <span class="module-descriptor">Guess how much a friend agrees or disagrees.</span></div>
+                    <div class="module-row" data-mode-key="TRIVI_YEAH_II" onclick="submitModeRevote(this, 'TRIVI_YEAH_II')">Trivi-Yeah II <span class="module-descriptor">(Beta) Jeopardy-style board -- pick a tile, race to answer.</span></div>
                 </div>
             </div>
 
@@ -429,6 +431,40 @@
         <button class="btn btn-leave" onclick="leaveRoom()">Leave Room</button>
     </div>
 
+    <!-- SCREEN 4.5: TRIVI-YEAH II (Jeopardy-style grid, prototype) -->
+    <div id="trivi-yeah-ii-screen" class="card" style="display: none;">
+        <h1>Trivi-Yeah II <span style="font-size: 0.5em; color: #64748b; font-weight: 700; vertical-align: middle;">BETA</span></h1>
+        <p class="subtitle" id="ty2-status-line" style="margin-bottom: 20px;">...</p>
+
+        <div class="player-badge">
+            <span class="player-badge-identity"><span id="ty2-badge-emoji">-</span> <span id="ty2-badge-name" class="player-badge-name">-</span></span>
+            <span class="player-badge-room">Room <strong id="ty2-badge-room">-</strong> &middot; Score <strong id="ty2-badge-score">0</strong></span>
+        </div>
+
+        <!-- PICK_TILE phase: open board. Tiles are only clickable when isMyPick --
+             everyone else sees the same grid, dimmed and inert. -->
+        <div id="ty2-grid-container" style="display: none; margin-top: 16px;">
+            <div id="ty2-grid" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px;"></div>
+        </div>
+
+        <!-- Staged reveal: category alone, then question, then the answer
+             choices -- same category -> +2s -> question -> +2s -> buttons
+             pacing as the TV, driven by the server's phase, not a local timer. -->
+        <div id="ty2-reveal-container" style="display: none; margin-top: 16px;">
+            <div id="ty2-category-meta" style="font-size: 0.8rem; font-weight: 600; color: #64748b; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 10px;"></div>
+            <div id="ty2-question-text" style="text-align: left; font-size: 1.05rem; font-weight: 600; color: #ffffff; line-height: 1.4; margin-bottom: 16px;"></div>
+            <div class="module-list" id="ty2-choices-list" style="display: none;">
+                <div class="module-row" id="ty2-choice-row-A" onclick="submitTriviYeahIIAnswer(this, 'A')"><span style="background: rgba(0, 230, 118, 0.1); color: #00e676; font-weight: 700; padding: 4px 10px; border-radius: 4px; font-size: 0.85rem; margin-right: 12px;">A</span><span id="ty2-choice-text-A">-</span></div>
+                <div class="module-row" id="ty2-choice-row-B" onclick="submitTriviYeahIIAnswer(this, 'B')"><span style="background: rgba(0, 230, 118, 0.1); color: #00e676; font-weight: 700; padding: 4px 10px; border-radius: 4px; font-size: 0.85rem; margin-right: 12px;">B</span><span id="ty2-choice-text-B">-</span></div>
+                <div class="module-row" id="ty2-choice-row-C" onclick="submitTriviYeahIIAnswer(this, 'C')"><span style="background: rgba(0, 230, 118, 0.1); color: #00e676; font-weight: 700; padding: 4px 10px; border-radius: 4px; font-size: 0.85rem; margin-right: 12px;">C</span><span id="ty2-choice-text-C">-</span></div>
+                <div class="module-row" id="ty2-choice-row-D" onclick="submitTriviYeahIIAnswer(this, 'D')"><span style="background: rgba(0, 230, 118, 0.1); color: #00e676; font-weight: 700; padding: 4px 10px; border-radius: 4px; font-size: 0.85rem; margin-right: 12px;">D</span><span id="ty2-choice-text-D">-</span></div>
+            </div>
+            <div id="ty2-feedback" class="feedback" style="margin-top: 24px; font-weight: 600; text-align: left; padding: 14px 20px; display: none;"></div>
+        </div>
+
+        <button class="btn btn-leave" onclick="leaveRoom()">Leave Room</button>
+    </div>
+
     <!-- SCREEN 5: GAME OVER -->
     <div id="game-over-screen" class="card" style="display: none;">
         <h1>Game Over</h1>
@@ -458,7 +494,7 @@
         // both missed a spot). Hiding every known screen and showing only
         // the requested one makes that whole bug class impossible going
         // forward -- a future new screen just needs adding here once.
-        const ALL_PLAY_SCREENS = ['login-screen', 'game-screen', 'category-screen', 'empossdurr-screen', 'on-the-spectrum-screen', 'question-screen', 'game-over-screen'];
+        const ALL_PLAY_SCREENS = ['login-screen', 'game-screen', 'category-screen', 'empossdurr-screen', 'on-the-spectrum-screen', 'question-screen', 'trivi-yeah-ii-screen', 'game-over-screen'];
         function showOnlyPlayScreen(idToShow) {
             ALL_PLAY_SCREENS.forEach(id => {
                 document.getElementById(id).style.display = (id === idToShow) ? 'block' : 'none';
@@ -651,6 +687,14 @@
                             renderOnTheSpectrum(data, nickname, roomCode);
                         }
 
+                        // Trivi-Yeah II's own loop -- picking a tile (only when
+                        // isMyPick), then the staged category/question/answers
+                        // reveal, all live inside this one screen.
+                        if (data.phase === 'TRIVI_YEAH_II_ROUND_PHASE') {
+                            showOnlyPlayScreen('trivi-yeah-ii-screen');
+                            renderTriviYeahII(data, nickname, roomCode);
+                        }
+
                         // Loop exhausted its question bank: show this player's own placement
                         // (mirrors the TV's medal styling). Polling keeps running (not
                         // cleared here anymore) so this phone can still detect a
@@ -668,6 +712,7 @@
                             activeQuestionId = null; // next game's first question should always render fresh
                             edLastPhaseKey = null; // next EmpossDurr game's first round should render fresh
                             otsLastPhaseKey = null; // next On the Spectrum game's first round should render fresh
+                            ty2LastRenderKey = null; // next Trivi-Yeah II game's first tile should always render fresh
 
                             // Highlights whichever mode this player currently has
                             // voted for (their original join-time pick, or a
@@ -769,6 +814,144 @@
                 showFeedback(feedback, data.reply, "rgba(0,230,118,0.06)", "#00e676", "rgba(0,230,118,0.1)");
             } catch (error) {
                 showFeedback(feedback, "❌ Transmission failed.", "rgba(255,71,87,0.06)", "#ff4757", "rgba(255,71,87,0.1)");
+            }
+        }
+
+        // ---------- Trivi-Yeah II (Jeopardy-style grid, prototype) ----------
+        // Keyed on phase + active tile + current picker rather than a simple
+        // "did the question change" id (classic Trivi-yeah!'s activeQuestionId) --
+        // the same tile index is reused across its own CATEGORY_REVEAL ->
+        // QUESTION_REVEAL -> ANSWERING stages, so the phase has to be part of
+        // the key too or those stages would never re-render into each other.
+        let ty2LastRenderKey = null;
+
+        function renderTriviYeahII(data, nickname, roomCode) {
+            document.getElementById('ty2-badge-name').innerText = nickname;
+            document.getElementById('ty2-badge-emoji').innerText = chosenAvatar;
+            document.getElementById('ty2-badge-room').innerText = roomCode;
+            document.getElementById('ty2-badge-score').innerText = data.myScore || 0;
+
+            const renderKey = `${data.triviYeahIIPhase}|${data.activeCellIndex}|${data.currentPicker}|${data.myAnswer || ''}`;
+            if (renderKey === ty2LastRenderKey) return;
+            ty2LastRenderKey = renderKey;
+
+            const gridContainer = document.getElementById('ty2-grid-container');
+            const revealContainer = document.getElementById('ty2-reveal-container');
+            const choicesList = document.getElementById('ty2-choices-list');
+            const feedback = document.getElementById('ty2-feedback');
+            feedback.style.display = 'none';
+            feedback.innerText = '';
+
+            if (data.triviYeahIIPhase === 'PICK_TILE') {
+                gridContainer.style.display = 'block';
+                revealContainer.style.display = 'none';
+
+                document.getElementById('ty2-status-line').innerText = data.isMyPick
+                    ? 'Your pick! Tap an open tile.'
+                    : `Waiting on ${data.currentPicker} to pick a tile...`;
+
+                // Grid arrives category-major (3 categories x 4 tiers, flat
+                // array of 12) -- transposed into 3 columns x 4 rows, same
+                // layout logic as the TV's board.
+                const categoryCount = 3;
+                const tierCount = (data.grid || []).length / categoryCount || 4;
+                let html = '';
+                for (let c = 0; c < categoryCount; c++) {
+                    const first = data.grid[c * tierCount];
+                    html += `<div style="padding: 4px; text-align: center; font-size: 0.6rem; font-weight: 700; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.02em;">${first ? first.categoryLabel : ''}</div>`;
+                }
+                for (let t = 0; t < tierCount; t++) {
+                    for (let c = 0; c < categoryCount; c++) {
+                        const cell = data.grid[c * tierCount + t];
+                        if (!cell) { html += '<div></div>'; continue; }
+                        if (cell.cleared) {
+                            html += `<div style="background: #14161d; border: 1px solid #1c1f28; border-radius: 8px; padding: 14px 2px; text-align: center; color: #334155; font-weight: 700;">&mdash;</div>`;
+                        } else if (data.isMyPick) {
+                            html += `<div class="module-row" style="padding: 14px 2px; text-align: center; color: #00e676; font-weight: 800;" onclick="submitTriviYeahIIPick(this, ${cell.index})">${cell.points}</div>`;
+                        } else {
+                            html += `<div style="background: #14161d; border: 1px solid #222630; border-radius: 8px; padding: 14px 2px; text-align: center; color: #00e676; font-weight: 800; opacity: 0.5;">${cell.points}</div>`;
+                        }
+                    }
+                }
+                document.getElementById('ty2-grid').innerHTML = html;
+                return;
+            }
+
+            // Any reveal stage -- category, question, answering, or the brief
+            // round-reveal pause before the next pick.
+            gridContainer.style.display = 'none';
+            revealContainer.style.display = 'block';
+
+            const cell = (data.grid || [])[data.activeCellIndex];
+            document.getElementById('ty2-category-meta').innerText = cell ? `${cell.categoryLabel} · ${cell.points} pts` : '';
+
+            if (data.triviYeahIIPhase === 'CATEGORY_REVEAL') {
+                document.getElementById('ty2-status-line').innerText = 'Get ready...';
+                document.getElementById('ty2-question-text').innerText = '';
+                choicesList.style.display = 'none';
+                return;
+            }
+
+            if (data.triviYeahIIPhase === 'QUESTION_REVEAL') {
+                document.getElementById('ty2-status-line').innerText = 'Read the question...';
+                document.getElementById('ty2-question-text').innerText = data.questionText || '';
+                choicesList.style.display = 'none';
+                return;
+            }
+
+            // ANSWERING or ROUND_REVEAL -- both show the full question + choices;
+            // ROUND_REVEAL just means the window's closed, so rows stay as they
+            // were left (no new taps matter once the server's stopped listening).
+            document.getElementById('ty2-status-line').innerText = data.triviYeahIIPhase === 'ANSWERING' ? 'Pick your answer!' : 'Resolved! Next pick coming up...';
+            document.getElementById('ty2-question-text').innerText = data.questionText || '';
+            choicesList.style.display = 'block';
+            ['A', 'B', 'C', 'D'].forEach(letter => {
+                const textEl = document.getElementById(`ty2-choice-text-${letter}`);
+                if (data.choices) textEl.innerText = data.choices[letter] || '-';
+                const row = document.getElementById(`ty2-choice-row-${letter}`);
+                row.classList.remove('selected');
+                row.style.opacity = data.myAnswer ? (data.myAnswer === letter ? '1' : '0.3') : '1';
+            });
+            if (data.myAnswer) {
+                showFeedback(feedback, `LOCKED IN: You selected Option ${data.myAnswer}`, "rgba(0,230,118,0.06)", "#00e676", "rgba(0,230,118,0.15)");
+            }
+        }
+
+        async function submitTriviYeahIIPick(element, index) {
+            const registeredName = localStorage.getItem('randomania_nickname') || 'test-handset';
+            try {
+                await fetch('/api/message', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ From: registeredName, Body: `PICK ${index}`, roomCode: localStorage.getItem('randomania_roomcode') })
+                });
+                ty2LastRenderKey = null; // force a re-render even if the poll lands before the server's broadcast does
+            } catch (error) {
+                console.error('[Trivi-Yeah II] Pick submission failed.', error);
+            }
+        }
+
+        async function submitTriviYeahIIAnswer(element, selectedLetter) {
+            const rows = document.getElementById('ty2-choices-list').getElementsByClassName('module-row');
+            for (let i = 0; i < rows.length; i++) {
+                rows[i].classList.remove('selected');
+                rows[i].style.opacity = '0.3';
+            }
+            element.classList.add('selected');
+            element.style.opacity = '1';
+
+            const feedback = document.getElementById('ty2-feedback');
+            const registeredName = localStorage.getItem('randomania_nickname') || 'test-handset';
+            showFeedback(feedback, `LOCKED IN: You selected Option ${selectedLetter}`, "rgba(0,230,118,0.06)", "#00e676", "rgba(0,230,118,0.15)");
+
+            try {
+                await fetch('/api/message', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ From: registeredName, Body: selectedLetter, roomCode: localStorage.getItem('randomania_roomcode') })
+                });
+            } catch (error) {
+                showFeedback(feedback, "❌ Transmission failure.", "rgba(255,71,87,0.06)", "#ff4757", "rgba(255,71,87,0.1)");
             }
         }
 
