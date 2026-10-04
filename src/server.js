@@ -103,7 +103,7 @@ app.post('/api/create-room', async (req, res) => {
             currentQuestionIndex: -1,
             askedQuestionIds: new Set(),
             requestedQuestionCount: resolveRequestedQuestionCount(req.body && req.body.questionCount),
-            votes: { TRIVI_YEAH: 0, COUNTRY_MONKEY: 0, EMPOSSDURR: 0, FLAG_ME_DOWN: 0, ON_THE_SPECTRUM: 0 },
+            votes: { TRIVI_YEAH: 0, COUNTRY_MONKEY: 0, EMPOSSDURR: 0, FLAG_ME_DOWN: 0, ON_THE_SPECTRUM: 0, TRIVI_YEAH_II: 0 },
             // Populated with real keys once the category vote phase actually starts.
             categoryVotes: {},
             // Bumped by every "fresh game" reset (plain lobby return, either
@@ -251,6 +251,35 @@ app.post('/api/room-status', (req, res) => {
         if (targetRoom && targetRoom.gameState === 'GAME_ROUND' && targetRoom.activeQuestionData) {
             // activeQuestionData is already answer-safe (correctLetter stripped in gameEngine.js)
             return res.json({ phase: 'GAME_ROUND_PHASE', ...targetRoom.activeQuestionData, myScore, myCorrectAnswers, myLeft, myEmoji });
+        }
+        if (targetRoom && targetRoom.gameState === 'TRIVI_YEAH_II_ROUND' && targetRoom.triviYeahII) {
+            const ty2 = targetRoom.triviYeahII;
+            // activeQuestionData (server-only) carries correctLetter -- strip it
+            // the same way GAME_ROUND's activeQuestionData already does, same
+            // reasoning: never let the answer reach the wire before it's revealed.
+            const safeQuestionData = ty2.activeQuestionData
+                ? (({ correctLetter, ...rest }) => rest)(ty2.activeQuestionData)
+                : null;
+            return res.json({
+                phase: 'TRIVI_YEAH_II_ROUND_PHASE',
+                triviYeahIIPhase: ty2.phase, // PICK_TILE | CATEGORY_REVEAL | QUESTION_REVEAL | ANSWERING | ROUND_REVEAL
+                grid: ty2.grid.map((cell, index) => ({ index, categoryLabel: cell.categoryLabel, points: cell.points, cleared: cell.cleared })),
+                currentPicker: ty2.currentPicker,
+                isMyPick: playerName === ty2.currentPicker,
+                activeCellIndex: ty2.activeCellIndex,
+                // Only populated once the matching reveal stage has actually
+                // fired -- a phone reconnecting mid-stage sees exactly what it
+                // would have seen if it had never disconnected.
+                questionText: ty2.phase === 'QUESTION_REVEAL' || ty2.phase === 'ANSWERING' || ty2.phase === 'ROUND_REVEAL'
+                    ? (safeQuestionData ? safeQuestionData.questionText : null)
+                    : null,
+                choices: ty2.phase === 'ANSWERING' || ty2.phase === 'ROUND_REVEAL'
+                    ? (safeQuestionData ? { A: safeQuestionData.choiceA, B: safeQuestionData.choiceB, C: safeQuestionData.choiceC, D: safeQuestionData.choiceD } : null)
+                    : null,
+                gameSecondsLeft: targetRoom.gameSecondsLeft,
+                myAnswer: ty2.answers ? ty2.answers[playerName] : null,
+                myScore, myCorrectAnswers, myLeft, myEmoji
+            });
         }
         if (targetRoom && targetRoom.gameState === 'EMPOSSDURR_ROUND' && targetRoom.empossdurr) {
             const ed = targetRoom.empossdurr;

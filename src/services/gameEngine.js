@@ -235,6 +235,18 @@ function executeLobbyPhaseExpiration(roomCode) {
         return;
     }
 
+    // Jeopardy-style grid prototype -- its own category selection (3 random
+    // picks from TRIVI_YEAH_II_CATEGORIES) happens inside startTriviYeahIIGame,
+    // no vote screen involved at all.
+    if (winningModule === 'TRIVI_YEAH_II') {
+        startTriviYeahIIGame(roomCode).catch(error => {
+            console.error(`❌ [Trivi-Yeah II] Failed to start Room ${roomCode}:`, error.message);
+            broadcastContentUnavailable(roomCode, 'Trivi-Yeah II');
+            resetRoomToLobby(roomCode);
+        });
+        return;
+    }
+
     // Trivi-Yeah's categories are real and still filter the question bank --
     // just picked automatically now instead of through a player vote, so the
     // group lands straight on a question instead of a click-through screen.
@@ -552,6 +564,8 @@ function endGame(roomCode) {
 
     const roundsPlayedDescription = room.winningGameMode === 'EMPOSSDURR'
         ? `${room.empossdurr ? room.empossdurr.currentRound : 0} rounds`
+        : room.winningGameMode === 'TRIVI_YEAH_II'
+            ? `${room.triviYeahII ? room.triviYeahII.clearedCount : 0} tiles`
         : room.winningGameMode === 'ON_THE_SPECTRUM'
             ? `${room.onTheSpectrum ? room.onTheSpectrum.roundIndex + 1 : 0} rounds`
             : `${room.questionBank.length} questions`;
@@ -561,6 +575,274 @@ function endGame(roomCode) {
         type: 'GAME_OVER',
         players: finalStandings
     });
+}
+
+// ==========================================
+// PHASE 3C: TRIVI-YEAH II ENGINE (Jeopardy-style grid, prototype)
+// ==========================================
+// Board shape: 3 categories x 4 point tiers = 12 tiles, drawn from the
+// TRIVI_YEAH_II question pool seeded separately (trivi_yeah_ii_prototype.sql).
+// No category vote, no sub-category filtering -- categories are picked at
+// random when the board is built, same "skip straight into it" philosophy
+// as every other mode's lobby-close bypass. Phase 1 scope deliberately
+// excludes Daily Double/side-betting and the Bonus/speed currency -- picker
+// privilege is the one piece of that design pulled forward, since "fastest
+// correct answerer picks next" is core to how the board actually plays.
+const TRIVI_YEAH_II_CATEGORIES = [
+    { key: 'SCIENCE_NATURE', label: 'Science & Nature' },
+    { key: 'MOVIES_TV', label: 'Movies & TV' },
+    { key: 'MUSIC', label: 'Music' },
+    { key: 'SPORTS', label: 'Sports' },
+    { key: 'WORLD_HISTORY', label: 'World History' }
+];
+const TRIVI_YEAH_II_CATEGORIES_PER_BOARD = 3;
+const TRIVI_YEAH_II_TIERS = [100, 200, 300, 400];
+const TRIVI_YEAH_II_CATEGORY_REVEAL_MS = 2000; // category shown alone
+const TRIVI_YEAH_II_QUESTION_REVEAL_MS = 2000; // question text shown before answer buttons appear
+const TRIVI_YEAH_II_ANSWER_SECONDS = 10;
+
+// Used both for the very first tile of the game (no "previous question" yet
+// to crown a picker) and as the fallback when nobody answers a question
+// correctly (nobody earns the pick honestly, so it falls to chance instead).
+function pickRandomActivePlayer(room) {
+    const activePlayers = Object.values(room.players).filter(p => !p.left);
+    if (activePlayers.length === 0) return null;
+    return activePlayers[Math.floor(Math.random() * activePlayers.length)].name;
+}
+
+// The client-safe view of the board -- category/points/cleared only. The
+// underlying question row (and its correct answer) stays server-side until
+// a tile is actually picked and staged through the reveal sequence below.
+function publicTriviYeahIIGrid(room) {
+    return room.triviYeahII.grid.map((cell, index) => ({
+        index,
+        categoryLabel: cell.categoryLabel,
+        points: cell.points,
+        cleared: cell.cleared
+    }));
+}
+
+async function startTriviYeahIIGame(roomCode) {
+    const room = activeRooms[roomCode];
+    if (!room) return;
+
+    const chosenCategories = shuffleArray(TRIVI_YEAH_II_CATEGORIES).slice(0, TRIVI_YEAH_II_CATEGORIES_PER_BOARD);
+
+    const result = await pool.query(
+        `SELECT id, category, question_text, correct_answer, wrong_answers, points
+         FROM questions
+         WHERE game_mode = 'TRIVI_YEAH_II' AND category = ANY($1::text[])`,
+        [chosenCategories.map(c => c.key)]
+    );
+
+    // One random question per category+tier combo -- 3 categories x 4 tiers
+    // = 12 tiles. A category+tier with zero matching rows would leave
+    // `row` undefined here, which surfaces as a thrown error the caller
+    // already catches (see executeLobbyPhaseExpiration's TRIVI_YEAH_II
+    // branch) -- same bounce-to-lobby-with-a-reason behavior as any other
+    // mode's missing-content case, so no separate guard is needed here.
+    const grid = [];
+    chosenCategories.forEach(cat => {
+        TRIVI_YEAH_II_TIERS.forEach(tier => {
+            const tierRows = result.rows.filter(r => r.category === cat.key && r.points === tier);
+            const row = shuffleArray(tierRows)[0];
+            grid.push({
+                categoryKey: cat.key,
+                categoryLabel: cat.label,
+                points: tier,
+                row,
+                cleared: false
+            });
+        });
+    });
+
+    room.gameState = 'TRIVI_YEAH_II_ROUND';
+    room.triviYeahII = {
+        grid,
+        currentPicker: pickRandomActivePlayer(room),
+        phase: 'PICK_TILE',
+        activeCellIndex: null,
+        activeQuestionData: null, // server-only, carries correctLetter once a tile is staged
+        answers: {},
+        answerOrder: [],
+        clearedCount: 0
+    };
+
+    console.log(`[Trivi-Yeah II] Room ${roomCode} board set: ${chosenCategories.map(c => c.label).join(', ')}. First pick: ${room.triviYeahII.currentPicker}`);
+
+    broadcastToRoom(roomCode, {
+        type: 'TRANSITION_TO_TRIVI_YEAH_II',
+        grid: publicTriviYeahIIGrid(room),
+        currentPicker: room.triviYeahII.currentPicker
+    });
+}
+
+// Staged reveal, start to finish: category+points alone, then (after a
+// beat) the question text, then (after another beat) the answer choices and
+// the answer clock -- matching the "category before question before
+// buttons" pacing agreed on, so nobody's reading answers before they've
+// even seen what's being asked.
+function startTriviYeahIITileReveal(roomCode, cellIndex) {
+    const room = activeRooms[roomCode];
+    if (!room || !room.triviYeahII) return;
+    const ty2 = room.triviYeahII;
+    const cell = ty2.grid[cellIndex];
+
+    ty2.activeCellIndex = cellIndex;
+    ty2.phase = 'CATEGORY_REVEAL';
+    ty2.answers = {};
+    ty2.answerOrder = [];
+
+    broadcastToRoom(roomCode, {
+        type: 'TRIVI_YEAH_II_CATEGORY_REVEAL',
+        index: cellIndex,
+        categoryLabel: cell.categoryLabel,
+        points: cell.points
+    });
+
+    if (room.revealTimeout) clearTimeout(room.revealTimeout);
+    room.revealTimeout = setTimeout(() => {
+        room.revealTimeout = null;
+        revealTriviYeahIIQuestion(roomCode);
+    }, TRIVI_YEAH_II_CATEGORY_REVEAL_MS);
+}
+
+function revealTriviYeahIIQuestion(roomCode) {
+    const room = activeRooms[roomCode];
+    if (!room || !room.triviYeahII) return;
+    const ty2 = room.triviYeahII;
+    const cell = ty2.grid[ty2.activeCellIndex];
+
+    ty2.phase = 'QUESTION_REVEAL';
+    ty2.activeQuestionData = buildQuestionPayload(room, cell.row, cell.categoryLabel);
+
+    broadcastToRoom(roomCode, {
+        type: 'TRIVI_YEAH_II_QUESTION_REVEAL',
+        index: ty2.activeCellIndex,
+        questionText: ty2.activeQuestionData.questionText,
+        points: cell.points
+    });
+
+    if (room.revealTimeout) clearTimeout(room.revealTimeout);
+    room.revealTimeout = setTimeout(() => {
+        room.revealTimeout = null;
+        openTriviYeahIIAnswering(roomCode);
+    }, TRIVI_YEAH_II_QUESTION_REVEAL_MS);
+}
+
+function openTriviYeahIIAnswering(roomCode) {
+    const room = activeRooms[roomCode];
+    if (!room || !room.triviYeahII) return;
+    const ty2 = room.triviYeahII;
+    const { correctLetter, ...publicQuestionData } = ty2.activeQuestionData;
+
+    ty2.phase = 'ANSWERING';
+
+    broadcastToRoom(roomCode, {
+        type: 'TRIVI_YEAH_II_ANSWERS_REVEAL',
+        index: ty2.activeCellIndex,
+        ...publicQuestionData
+    });
+
+    startTriviYeahIIAnswerCountdown(roomCode);
+}
+
+function startTriviYeahIIAnswerCountdown(roomCode, startCount = TRIVI_YEAH_II_ANSWER_SECONDS) {
+    const room = activeRooms[roomCode];
+    if (!room) return;
+
+    let count = startCount;
+    room.gameSecondsLeft = count;
+    if (room.timerInterval) clearInterval(room.timerInterval);
+
+    room.timerInterval = setInterval(() => {
+        count--;
+        room.gameSecondsLeft = count;
+        if (count > 0) {
+            broadcastToRoom(roomCode, { type: 'GAME_TIMER_TICK', secondsLeft: count + " s" });
+        } else {
+            evaluateTriviYeahIIAnswers(roomCode);
+        }
+    }, 1000);
+}
+
+// Same "snap to a short beat instead of an instant cut" pacing as the
+// classic mode's fastForwardToReveal, kept as its own copy (rather than
+// generalizing the shared one) so this prototype can't destabilize the
+// live classic Trivi-Yeah timer logic while it's still being iterated on.
+function fastForwardTriviYeahIIReveal(roomCode) {
+    const room = activeRooms[roomCode];
+    if (!room) return;
+    if (room.gameSecondsLeft > FAST_FORWARD_SECONDS) {
+        broadcastToRoom(roomCode, { type: 'GAME_TIMER_TICK', secondsLeft: FAST_FORWARD_SECONDS + " s" });
+        startTriviYeahIIAnswerCountdown(roomCode, FAST_FORWARD_SECONDS);
+    }
+}
+
+function evaluateTriviYeahIIAnswers(roomCode) {
+    const room = activeRooms[roomCode];
+    if (!room || !room.triviYeahII) return;
+
+    if (room.timerInterval) { clearInterval(room.timerInterval); room.timerInterval = null; }
+
+    const ty2 = room.triviYeahII;
+    const cell = ty2.grid[ty2.activeCellIndex];
+    const correctLetter = ty2.activeQuestionData.correctLetter;
+    const points = cell.points;
+
+    ty2.phase = 'ROUND_REVEAL';
+    broadcastToRoom(roomCode, { type: 'GAME_TIMER_TICK', secondsLeft: "TIME'S UP!" });
+
+    Object.values(room.players).forEach(player => {
+        if (player.left) return;
+        if (ty2.answers[player.name] === correctLetter) {
+            player.score += points;
+            player.correctAnswers = (player.correctAnswers || 0) + 1;
+        }
+    });
+
+    // Picker privilege: whoever answered correctly fastest earns the next
+    // pick (answerOrder is submission order, so the first match is the
+    // fastest). Nobody correct -- including nobody answering at all --
+    // falls back to a random active player, same as the opening tile.
+    const fastestCorrectName = ty2.answerOrder.find(name => ty2.answers[name] === correctLetter);
+    const nextPicker = fastestCorrectName || pickRandomActivePlayer(room);
+
+    cell.cleared = true;
+    ty2.clearedCount++;
+    ty2.currentPicker = nextPicker;
+
+    broadcastToRoom(roomCode, {
+        type: 'TRIVI_YEAH_II_ROUND_REVEAL',
+        index: ty2.activeCellIndex,
+        correctLetter,
+        answers: ty2.answers,
+        nextPicker,
+        grid: publicTriviYeahIIGrid(room)
+    });
+    broadcastToRoom(roomCode, {
+        type: 'LEADERBOARD_UPDATE',
+        players: Object.values(room.players).filter(p => !p.left)
+    });
+
+    console.log(`[Trivi-Yeah II] Room ${roomCode} tile ${ty2.activeCellIndex} resolved (${correctLetter}). Next picker: ${nextPicker}. Cleared ${ty2.clearedCount}/${ty2.grid.length}.`);
+
+    if (room.revealTimeout) clearTimeout(room.revealTimeout);
+    room.revealTimeout = setTimeout(() => {
+        room.revealTimeout = null;
+        if (ty2.clearedCount >= ty2.grid.length) {
+            endGame(roomCode);
+            return;
+        }
+        ty2.phase = 'PICK_TILE';
+        ty2.activeCellIndex = null;
+        ty2.activeQuestionData = null;
+        broadcastToRoom(roomCode, {
+            type: 'TRIVI_YEAH_II_PICK_TURN',
+            currentPicker: ty2.currentPicker,
+            grid: publicTriviYeahIIGrid(room)
+        });
+    }, REVEAL_DURATION_MS);
 }
 
 // ==========================================
@@ -1782,7 +2064,7 @@ export function handleIncomingMessage(fromPhone, bodyText, explicitRoomCode, pre
             // already in progress (executeLobbyPhaseExpiration would fire again
             // in 60s and stomp on whatever real phase is live by then).
             if (currentRoom.gameState === 'LOBBY') {
-                currentRoom.votes = { TRIVI_YEAH: 0, COUNTRY_MONKEY: 0, EMPOSSDURR: 0, FLAG_ME_DOWN: 0, ON_THE_SPECTRUM: 0 };
+                currentRoom.votes = { TRIVI_YEAH: 0, COUNTRY_MONKEY: 0, EMPOSSDURR: 0, FLAG_ME_DOWN: 0, ON_THE_SPECTRUM: 0, TRIVI_YEAH_II: 0 };
                 playersArray.forEach(p => {
                     if (currentRoom.votes[p.vote] !== undefined) currentRoom.votes[p.vote]++;
                 });
@@ -1990,7 +2272,7 @@ export function handleIncomingMessage(fromPhone, bodyText, explicitRoomCode, pre
             player.vote = modeChoice;
 
             const activePlayers = Object.values(currentRoom.players).filter(p => !p.left);
-            currentRoom.votes = { TRIVI_YEAH: 0, COUNTRY_MONKEY: 0, EMPOSSDURR: 0, FLAG_ME_DOWN: 0, ON_THE_SPECTRUM: 0 };
+            currentRoom.votes = { TRIVI_YEAH: 0, COUNTRY_MONKEY: 0, EMPOSSDURR: 0, FLAG_ME_DOWN: 0, ON_THE_SPECTRUM: 0, TRIVI_YEAH_II: 0 };
             activePlayers.forEach(p => { if (currentRoom.votes[p.vote] !== undefined) currentRoom.votes[p.vote]++; });
 
             broadcastToRoom(associatedRoomCode, { type: 'VOTE_UPDATE', votes: currentRoom.votes, totalVotes: activePlayers.length });
@@ -2106,6 +2388,44 @@ export function handleIncomingMessage(fromPhone, bodyText, explicitRoomCode, pre
             if (totalAnswersLogged === totalPlayersCount) {
                 console.log(`🚀 [Match Engine] Final submission secured! Fast-forwarding clock to ${FAST_FORWARD_SECONDS}s.`);
                 fastForwardToReveal(associatedRoomCode);
+            }
+            return `Got it, ${player.name}! Option ${answerChoice} logged.`;
+        }
+    }
+
+    // 5.1 Trivi-Yeah II: tile pick -- current picker only, PICK_TILE phase only
+    if (currentRoom.gameState === 'TRIVI_YEAH_II_ROUND' && currentRoom.triviYeahII.phase === 'PICK_TILE') {
+        const pickMatch = /^PICK (\d+)$/.exec(cleanText.toUpperCase());
+        if (pickMatch) {
+            const ty2 = currentRoom.triviYeahII;
+            if (actingPlayerName !== ty2.currentPicker) {
+                return `⚠️ Not your pick -- waiting on ${ty2.currentPicker}.`;
+            }
+            const cellIndex = parseInt(pickMatch[1], 10);
+            const cell = ty2.grid[cellIndex];
+            if (!cell || cell.cleared) {
+                return `⚠️ That tile isn't available.`;
+            }
+            startTriviYeahIITileReveal(associatedRoomCode, cellIndex);
+            return `Nice pick, ${player.name}!`;
+        }
+    }
+
+    // 5.2 Trivi-Yeah II: live answer submissions -- ANSWERING phase only
+    if (currentRoom.gameState === 'TRIVI_YEAH_II_ROUND' && currentRoom.triviYeahII.phase === 'ANSWERING') {
+        const answerChoice = cleanText.toUpperCase();
+        if (['A', 'B', 'C', 'D'].includes(answerChoice)) {
+            const ty2 = currentRoom.triviYeahII;
+            if (!(actingPlayerName in ty2.answers)) {
+                ty2.answerOrder.push(actingPlayerName);
+            }
+            ty2.answers[actingPlayerName] = answerChoice;
+            broadcastToRoom(associatedRoomCode, { type: 'ANSWER_SUBMITTED', playerName: actingPlayerName });
+
+            const totalPlayersCount = Object.values(currentRoom.players).filter(p => !p.left).length;
+            const totalAnswersLogged = Object.keys(ty2.answers).length;
+            if (totalAnswersLogged === totalPlayersCount) {
+                fastForwardTriviYeahIIReveal(associatedRoomCode);
             }
             return `Got it, ${player.name}! Option ${answerChoice} logged.`;
         }
