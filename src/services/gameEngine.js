@@ -808,20 +808,34 @@ function evaluateTriviYeahIIAnswers(roomCode) {
     ty2.phase = 'ROUND_REVEAL';
     broadcastToRoom(roomCode, { type: 'GAME_TIMER_TICK', secondsLeft: "TIME'S UP!" });
 
-    Object.values(room.players).forEach(player => {
-        if (player.left) return;
-        if (ty2.answers[player.name] === correctLetter) {
-            player.score += points;
-            player.correctAnswers = (player.correctAnswers || 0) + 1;
-        }
-    });
-
     // Picker privilege: whoever answered correctly fastest earns the next
     // pick (answerOrder is submission order, so the first match is the
     // fastest). Nobody correct -- including nobody answering at all --
     // falls back to a random active player, same as the opening tile.
     const fastestCorrectName = ty2.answerOrder.find(name => ty2.answers[name] === correctLetter);
     const nextPicker = fastestCorrectName || pickRandomActivePlayer(room);
+
+    Object.values(room.players).forEach(player => {
+        if (player.left) return;
+        if (ty2.answers[player.name] === correctLetter) {
+            player.score += points;
+            player.correctAnswers = (player.correctAnswers || 0) + 1;
+        }
+
+        // The bolt is a live, contested status, not an accumulated streak --
+        // it belongs to whoever earned picker privilege THIS tile (fastest
+        // correct, same person the "next pick" banner already names), full
+        // stop. Taken away from anyone else holding it, same as classic
+        // Trivi-yeah!'s version, so it's always showing the room's current
+        // fastest-correct player, never a stale one from a prior tile.
+        player.awards = player.awards || {};
+        if (player.name === fastestCorrectName) {
+            player.awards.SPEED3 = 1;
+            player.timesFastest = (player.timesFastest || 0) + 1;
+        } else if (player.awards.SPEED3) {
+            delete player.awards.SPEED3;
+        }
+    });
 
     cell.cleared = true;
     ty2.clearedCount++;
