@@ -642,11 +642,7 @@ async function startTriviYeahIIGame(roomCode) {
     );
 
     // One random question per category+tier combo -- 3 categories x 4 tiers
-    // = 12 tiles. A category+tier with zero matching rows would leave
-    // `row` undefined here, which surfaces as a thrown error the caller
-    // already catches (see executeLobbyPhaseExpiration's TRIVI_YEAH_II
-    // branch) -- same bounce-to-lobby-with-a-reason behavior as any other
-    // mode's missing-content case, so no separate guard is needed here.
+    // = 12 tiles.
     const grid = [];
     chosenCategories.forEach(cat => {
         TRIVI_YEAH_II_TIERS.forEach(tier => {
@@ -661,6 +657,19 @@ async function startTriviYeahIIGame(roomCode) {
             });
         });
     });
+
+    // A category+tier with zero matching rows (an incomplete content pool)
+    // would otherwise sit silently in the grid as `row: undefined` -- the
+    // board would display just fine (categoryLabel/points don't need the
+    // row) and only crash much later, uncaught inside a bare setTimeout,
+    // the moment some player actually picks that one specific tile. Catching
+    // it here instead -- before gameState changes or anything broadcasts --
+    // means the caller's existing .catch() (executeLobbyPhaseExpiration)
+    // bounces the room to the lobby with an honest reason up front, instead
+    // of the room silently hanging mid-game once someone finally hits it.
+    if (grid.some(cell => !cell.row)) {
+        throw new Error(`Incomplete Trivi-Yeah II content pool for categories: ${chosenCategories.map(c => c.label).join(', ')}`);
+    }
 
     room.gameState = 'TRIVI_YEAH_II_ROUND';
     room.triviYeahII = {
