@@ -311,6 +311,7 @@
         <div id="game-left-content" style="display: none;">
             <p class="subtitle" style="margin: 8px 0 20px 0;">You've left the room. Rejoin any time -- your score is right where you left it.</p>
             <button class="btn" onclick="rejoinRoom()">Rejoin Room</button>
+            <button class="btn btn-leave" style="margin-top: 10px;" onclick="switchToDifferentRoom()">Join a Different Room</button>
         </div>
 
         <div id="game-feedback" class="feedback"></div>
@@ -1635,6 +1636,28 @@
             } catch (error) {
                 showFeedback(feedback, "❌ Rejoin request failed to transmit.", "rgba(255,71,87,0.06)", "#ff4757", "rgba(255,71,87,0.1)");
             }
+        }
+
+        // The "left" screen only ever offered rejoining the SAME room --
+        // there was no way back to a blank join form at all, since
+        // attemptAutoResume deliberately lands a reload on this exact same
+        // screen too (see its own comment) rather than silently dropping
+        // back to login. This clears the stored identity on purpose, so the
+        // next load has nothing to auto-resume into.
+        function switchToDifferentRoom() {
+            clearInterval(roomStateTrackerInterval);
+            localStorage.removeItem('randomania_roomcode');
+            localStorage.removeItem('randomania_nickname');
+            localStorage.removeItem('randomania_sessiontoken');
+            chosenAvatar = '👤';
+            chosenModule = '';
+
+            Array.from(document.getElementsByClassName('emoji-btn')).forEach(el => el.classList.remove('selected'));
+            Array.from(document.getElementsByClassName('module-row')).forEach(el => el.classList.remove('selected'));
+            document.getElementById('room-code').value = '';
+            document.getElementById('player-name').value = '';
+
+            showOnlyPlayScreen('login-screen');
         }
 
         function showFeedback(element, text, bg, color, border) {
