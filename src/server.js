@@ -263,6 +263,8 @@ app.post('/api/room-status', (req, res) => {
             return res.json({
                 phase: 'TRIVI_YEAH_II_ROUND_PHASE',
                 triviYeahIIPhase: ty2.phase, // PICK_TILE | CATEGORY_REVEAL | QUESTION_REVEAL | ANSWERING | ROUND_REVEAL
+                round: ty2.round,
+                totalRounds: ty2.totalRounds,
                 grid: ty2.grid.map((cell, index) => ({ index, categoryLabel: cell.categoryLabel, points: cell.points, cleared: cell.cleared })),
                 currentPicker: ty2.currentPicker,
                 isMyPick: playerName === ty2.currentPicker,

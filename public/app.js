@@ -247,12 +247,15 @@ if (btnSubmitSpectate) {
                 // reusing the exact choice-row markup/ids classic Trivi-yeah! already
                 // uses -- highlightCorrectAnswerOnTV works unmodified on either.
                 if (data.type === 'TRANSITION_TO_TRIVI_YEAH_II') {
-                    document.getElementById('room-status-text').innerText = "Trivi-Yeah II";
                     document.getElementById('lobby-countdown').innerText = '';
-                    switchToTriviYeahIIBoardUI(data.grid, data.currentPicker);
+                    switchToTriviYeahIIBoardUI(data.grid, data.currentPicker, data.round, data.totalRounds);
                     playerAnswerStatus = {};
                     updateLeaderboardUI(cachedPlayersSnapshot);
                     stopCategoryMusic();
+                    stopCountdownMusic();
+                }
+                if (data.type === 'TRIVI_YEAH_II_ROUND_TRANSITION') {
+                    showTriviYeahIIRoundTransitionUI(data.completedRound, data.nextRound, data.totalRounds);
                     stopCountdownMusic();
                 }
                 if (data.type === 'TRIVI_YEAH_II_CATEGORY_REVEAL') {
@@ -284,7 +287,6 @@ if (btnSubmitSpectate) {
                     playAudioTrack('win-music');
                 }
                 if (data.type === 'TRIVI_YEAH_II_PICK_TURN') {
-                    document.getElementById('room-status-text').innerText = "Trivi-Yeah II";
                     document.getElementById('lobby-countdown').innerText = '';
                     switchToTriviYeahIIBoardUI(data.grid, data.currentPicker);
                     playerAnswerStatus = {};
@@ -794,13 +796,23 @@ if (btnSubmitSpectate) {
 // stage) so the spotlight panel can keep showing the category label once
 // the question/choices arrive later, rather than it blanking out.
 let triviYeahIISpotlightCache = {};
+// TRIVI_YEAH_II_PICK_TURN (fired after every tile, not just round starts)
+// doesn't resend round/totalRounds since neither changes between tiles --
+// cached here from the last TRANSITION_TO_TRIVI_YEAH_II so the room-status
+// text can keep showing it on every redraw regardless of which broadcast
+// triggered this call.
+let triviYeahIICurrentRound = 1;
+let triviYeahIITotalRounds = 3;
 
-function switchToTriviYeahIIBoardUI(grid, currentPicker) {
+function switchToTriviYeahIIBoardUI(grid, currentPicker, round, totalRounds) {
     const panel = document.getElementById('active-content-stage');
     const boardGrid = grid || [];
     triviYeahIISpotlightCache = {};
+    if (round) triviYeahIICurrentRound = round;
+    if (totalRounds) triviYeahIITotalRounds = totalRounds;
 
     currentGamePhase = 'TRIVI_YEAH_II_ROUND';
+    document.getElementById('room-status-text').innerText = `Trivi-Yeah II — Round ${triviYeahIICurrentRound}/${triviYeahIITotalRounds}`;
     setStatusMessage(`<div style="font-weight: 600; color: #00e676;">${currentPicker}'s pick!</div>`);
 
     // The grid arrives category-major (3 categories x 4 tiers, flat array of
@@ -832,6 +844,21 @@ function switchToTriviYeahIIBoardUI(grid, currentPicker) {
                 ${headerCells.join('')}
                 ${tileCells.join('')}
             </div>
+        </div>
+    `;
+}
+
+// Brief full-panel announcement between rounds -- fires once a board's fully
+// cleared but more rounds remain, giving the room a beat to register "round
+// over" before the next board silently appears underneath it.
+function showTriviYeahIIRoundTransitionUI(completedRound, nextRound, totalRounds) {
+    const panel = document.getElementById('active-content-stage');
+    document.getElementById('room-status-text').innerText = `Trivi-Yeah II — Round ${completedRound} Complete`;
+
+    panel.innerHTML = `
+        <div class="panel-box" style="padding: 40px; flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; min-height: 400px; box-sizing: border-box;">
+            <div style="font-size: 0.9rem; font-weight: 600; color: #64748b; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 14px;">Round ${completedRound} Complete</div>
+            <div style="font-size: 2rem; font-weight: 800; color: #ffffff; margin-bottom: 8px;">Starting Round ${nextRound} of ${totalRounds}</div>
         </div>
     `;
 }

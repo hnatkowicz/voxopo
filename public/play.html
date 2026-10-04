@@ -435,6 +435,7 @@
     <!-- SCREEN 4.5: TRIVI-YEAH II (Jeopardy-style grid, prototype) -->
     <div id="trivi-yeah-ii-screen" class="card" style="display: none;">
         <h1>Trivi-Yeah II <span style="font-size: 0.5em; color: #64748b; font-weight: 700; vertical-align: middle;">BETA</span></h1>
+        <p class="subtitle" style="margin-bottom: 2px;">Round <span id="ty2-round-badge">1</span> of <span id="ty2-total-rounds-badge">3</span></p>
         <p class="subtitle" id="ty2-status-line" style="margin-bottom: 20px;">...</p>
 
         <div class="player-badge">
@@ -835,8 +836,10 @@
             document.getElementById('ty2-badge-emoji').innerText = chosenAvatar;
             document.getElementById('ty2-badge-room').innerText = roomCode;
             document.getElementById('ty2-badge-score').innerText = data.myScore || 0;
+            document.getElementById('ty2-round-badge').innerText = data.round || 1;
+            document.getElementById('ty2-total-rounds-badge').innerText = data.totalRounds || 3;
 
-            const renderKey = `${data.triviYeahIIPhase}|${data.activeCellIndex}|${data.currentPicker}|${data.myAnswer || ''}`;
+            const renderKey = `${data.round}|${data.triviYeahIIPhase}|${data.activeCellIndex}|${data.currentPicker}|${data.myAnswer || ''}`;
             if (renderKey === ty2LastRenderKey) return;
             ty2LastRenderKey = renderKey;
 

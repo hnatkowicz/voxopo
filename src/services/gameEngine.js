@@ -571,7 +571,7 @@ function endGame(roomCode) {
     const roundsPlayedDescription = room.winningGameMode === 'EMPOSSDURR'
         ? `${room.empossdurr ? room.empossdurr.currentRound : 0} rounds`
         : room.winningGameMode === 'TRIVI_YEAH_II'
-            ? `${room.triviYeahII ? room.triviYeahII.clearedCount : 0} tiles`
+            ? `${room.triviYeahII ? room.triviYeahII.round : 0}/${room.triviYeahII ? room.triviYeahII.totalRounds : 0} rounds`
         : room.winningGameMode === 'ON_THE_SPECTRUM'
             ? `${room.onTheSpectrum ? room.onTheSpectrum.roundIndex + 1 : 0} rounds`
             : `${room.questionBank.length} questions`;
@@ -607,6 +607,8 @@ const TRIVI_YEAH_II_CATEGORY_REVEAL_MS = 2000; // category shown alone
 const TRIVI_YEAH_II_QUESTION_REVEAL_MS = 2000; // question text shown before answer buttons appear
 const TRIVI_YEAH_II_ANSWER_SECONDS = 10;
 const TRIVI_YEAH_II_COLUMN_SWEEP_BONUS = 200; // one player, fastest-correct on all 4 tiles in a category, solo
+const TRIVI_YEAH_II_TOTAL_ROUNDS = 3;
+const TRIVI_YEAH_II_ROUND_TRANSITION_MS = 3000; // "Round N complete!" announcement, before the next board appears
 
 // Used both for the very first tile of the game (no "previous question" yet
 // to crown a picker) and as the fallback when nobody answers a question
@@ -629,10 +631,11 @@ function publicTriviYeahIIGrid(room) {
     }));
 }
 
-async function startTriviYeahIIGame(roomCode) {
-    const room = activeRooms[roomCode];
-    if (!room) return;
-
+// Builds one round's 12-tile board (3 random categories x 4 tiers, one
+// random question per combo) and returns it, throwing if the content pool
+// can't fill every tile. Pure -- no room mutation -- so it's safe to call
+// again for round 2/3 without tearing down state first.
+async function buildTriviYeahIIBoard() {
     const chosenCategories = shuffleArray(TRIVI_YEAH_II_CATEGORIES).slice(0, TRIVI_YEAH_II_CATEGORIES_PER_BOARD);
 
     const result = await pool.query(
@@ -642,8 +645,6 @@ async function startTriviYeahIIGame(roomCode) {
         [chosenCategories.map(c => c.key)]
     );
 
-    // One random question per category+tier combo -- 3 categories x 4 tiers
-    // = 12 tiles.
     const grid = [];
     chosenCategories.forEach(cat => {
         TRIVI_YEAH_II_TIERS.forEach(tier => {
@@ -664,17 +665,26 @@ async function startTriviYeahIIGame(roomCode) {
     // board would display just fine (categoryLabel/points don't need the
     // row) and only crash much later, uncaught inside a bare setTimeout,
     // the moment some player actually picks that one specific tile. Catching
-    // it here instead -- before gameState changes or anything broadcasts --
-    // means the caller's existing .catch() (executeLobbyPhaseExpiration)
-    // bounces the room to the lobby with an honest reason up front, instead
-    // of the room silently hanging mid-game once someone finally hits it.
+    // it here instead -- before the caller touches gameState or broadcasts
+    // anything -- means the room can bounce to the lobby with an honest
+    // reason up front, instead of silently hanging mid-game once someone
+    // finally hits it.
     if (grid.some(cell => !cell.row)) {
         throw new Error(`Incomplete Trivi-Yeah II content pool for categories: ${chosenCategories.map(c => c.label).join(', ')}`);
     }
 
+    return { grid, chosenCategories };
+}
+
+async function startTriviYeahIIGame(roomCode) {
+    const room = activeRooms[roomCode];
+    if (!room) return;
+
     room.gameState = 'TRIVI_YEAH_II_ROUND';
     room.triviYeahII = {
-        grid,
+        round: 1,
+        totalRounds: TRIVI_YEAH_II_TOTAL_ROUNDS,
+        grid: [],
         currentPicker: pickRandomActivePlayer(room),
         phase: 'PICK_TILE',
         activeCellIndex: null,
@@ -684,12 +694,40 @@ async function startTriviYeahIIGame(roomCode) {
         clearedCount: 0
     };
 
-    console.log(`[Trivi-Yeah II] Room ${roomCode} board set: ${chosenCategories.map(c => c.label).join(', ')}. First pick: ${room.triviYeahII.currentPicker}`);
+    await startTriviYeahIIRound(roomCode);
+}
+
+// Builds and broadcasts the board for whatever round room.triviYeahII.round
+// is currently set to -- used both for the game's opening board (round 1,
+// called from startTriviYeahIIGame) and for every subsequent round's fresh
+// board once the previous one fully clears (see evaluateTriviYeahIIAnswers).
+// currentPicker is deliberately left untouched -- whoever earned the next
+// pick at the end of the previous round carries that privilege straight
+// into the new board, same continuity Daily Double-style shows use.
+async function startTriviYeahIIRound(roomCode) {
+    const room = activeRooms[roomCode];
+    if (!room || !room.triviYeahII) return;
+    const ty2 = room.triviYeahII;
+
+    const { grid, chosenCategories } = await buildTriviYeahIIBoard();
+
+    ty2.grid = grid;
+    ty2.phase = 'PICK_TILE';
+    ty2.activeCellIndex = null;
+    ty2.activeQuestionData = null;
+    ty2.answers = {};
+    ty2.answerOrder = [];
+    ty2.clearedCount = 0;
+    if (!ty2.currentPicker) ty2.currentPicker = pickRandomActivePlayer(room);
+
+    console.log(`[Trivi-Yeah II] Room ${roomCode} round ${ty2.round}/${ty2.totalRounds} board set: ${chosenCategories.map(c => c.label).join(', ')}. First pick: ${ty2.currentPicker}`);
 
     broadcastToRoom(roomCode, {
         type: 'TRANSITION_TO_TRIVI_YEAH_II',
         grid: publicTriviYeahIIGrid(room),
-        currentPicker: room.triviYeahII.currentPicker
+        currentPicker: ty2.currentPicker,
+        round: ty2.round,
+        totalRounds: ty2.totalRounds
     });
 }
 
@@ -893,7 +931,31 @@ function evaluateTriviYeahIIAnswers(roomCode) {
     room.revealTimeout = setTimeout(() => {
         room.revealTimeout = null;
         if (ty2.clearedCount >= ty2.grid.length) {
-            endGame(roomCode);
+            if (ty2.round >= ty2.totalRounds) {
+                endGame(roomCode);
+                return;
+            }
+            // Board's done but more rounds remain -- announce the round
+            // change, give the room a beat to read it, then build and
+            // broadcast the next board. currentPicker carries over untouched
+            // (set earlier this tile, above), so whoever just earned the
+            // pick opens the new round too.
+            const completedRound = ty2.round;
+            ty2.round += 1;
+            broadcastToRoom(roomCode, {
+                type: 'TRIVI_YEAH_II_ROUND_TRANSITION',
+                completedRound,
+                nextRound: ty2.round,
+                totalRounds: ty2.totalRounds
+            });
+            room.revealTimeout = setTimeout(() => {
+                room.revealTimeout = null;
+                startTriviYeahIIRound(roomCode).catch(error => {
+                    console.error(`❌ [Trivi-Yeah II] Failed to start round ${ty2.round} for Room ${roomCode}:`, error.message);
+                    broadcastContentUnavailable(roomCode, 'Trivi-Yeah II');
+                    resetRoomToLobby(roomCode);
+                });
+            }, TRIVI_YEAH_II_ROUND_TRANSITION_MS);
             return;
         }
         ty2.phase = 'PICK_TILE';
