@@ -21,6 +21,12 @@ const DEFAULT_QUESTIONS_PER_GAME = 15; // fixed length, no lobby picker for this
 // moves on, but short enough that it can't be stalled forever by someone who
 // never taps anything. See castReturnToLobbyVote.
 const GAME_OVER_RETURN_VOTE_SECONDS = 20;
+// How long a room survives after its last active player leaves, before it's
+// actually closed and the room code freed up -- long enough that a group
+// stepping away for a short break (or just wrapping up for now) can come
+// straight back to the same code instead of recreating the room from
+// scratch. Cancelled the moment anyone (re)joins -- see the join handler.
+const ROOM_EMPTY_GRACE_MS = 30 * 60 * 1000;
 const REVEAL_DURATION_MS = 5000;
 const GAME_ROUND_DURATION_SECONDS = 30;
 const FAST_FORWARD_SECONDS = 3; // once everyone's answered, snap the clock down to this for a beat of suspense
@@ -1515,6 +1521,7 @@ export function closeRoom(roomCode) {
     if (room.categoryTimerInterval) clearInterval(room.categoryTimerInterval);
     if (room.revealTimeout) clearTimeout(room.revealTimeout);
     if (room.returnVoteTimeout) clearTimeout(room.returnVoteTimeout);
+    if (room.emptyRoomTimeout) clearTimeout(room.emptyRoomTimeout);
     clearOnTheSpectrumTimers(room);
     clearEmpossDurrTimers(room);
     broadcastToRoom(roomCode, { type: 'ROOM_CLOSED' });
@@ -1979,6 +1986,13 @@ export function handleIncomingMessage(fromPhone, bodyText, explicitRoomCode, pre
 
             const currentRoom = activeRooms[roomCode];
             currentRoom.lastActivity = Date.now();
+            // A room sitting in its post-empty grace period is still fully
+            // alive -- anyone walking back in (new face or a returning
+            // player) cancels the countdown to closing it.
+            if (currentRoom.emptyRoomTimeout) {
+                clearTimeout(currentRoom.emptyRoomTimeout);
+                currentRoom.emptyRoomTimeout = null;
+            }
 
             parts.shift(); // Evacuate code segment
             const votedModule = parts.pop();
@@ -2251,10 +2265,18 @@ export function handleIncomingMessage(fromPhone, bodyText, explicitRoomCode, pre
                 }
             }
         } else {
-            // The last active player just left -- nobody's around to look at
-            // the TV anymore, so release the room entirely rather than let it
-            // sit there dead until the server eventually garbage-collects it.
-            closeRoom(associatedRoomCode);
+            // The last active player just left -- rather than releasing the
+            // room immediately, give it ROOM_EMPTY_GRACE_MS before actually
+            // closing it. The room (and its room code) stays reserved and
+            // exactly as it was the whole time, so a group that's just
+            // stepping away briefly can walk right back into the same code
+            // instead of recreating everything. Cancelled on the way back in
+            // -- see the join handler.
+            if (currentRoom.emptyRoomTimeout) clearTimeout(currentRoom.emptyRoomTimeout);
+            currentRoom.emptyRoomTimeout = setTimeout(() => {
+                currentRoom.emptyRoomTimeout = null;
+                closeRoom(associatedRoomCode);
+            }, ROOM_EMPTY_GRACE_MS);
         }
 
         return `You've left Room ${associatedRoomCode}. Come back any time using the same name to pick up where you left off.`;

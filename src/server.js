@@ -469,49 +469,55 @@ async function startServer() {
                     console.error('❌ [Socket Error]:', err.message);
                 }
             });
-            // ========================================================
-            // 🧹 AUTOMATED GARBAGE COLLECTION REAPER (Keeps room pool fresh)
-            // ========================================================
-            const ROOM_TIMEOUT_MS = 60 * 60 * 1000; // 1 Hour (Adjust this to whatever you like!)
-            
-            setInterval(() => {
-                const now = Date.now();
-                let reapedCount = 0;
-            
-                for (const code in activeRooms) {
-                    const room = activeRooms[code];
-                    
-                    // If the room has been sitting completely idle for over an hour, wipe it out
-                    if (now - room.lastActivity > ROOM_TIMEOUT_MS) {
-                        
-                        // Clean up and clear out any active room countdown intervals to prevent RAM leaks
-                        if (room.timerInterval) clearInterval(room.timerInterval);
-                        if (room.lobbyTimerInterval) clearInterval(room.lobbyTimerInterval);
-                        if (room.categoryTimerInterval) clearInterval(room.categoryTimerInterval);
-                        if (room.revealTimeout) clearTimeout(room.revealTimeout);
-                        
-                        // Securely drop the sockets
-                        room.screens.forEach(socket => {
-                            try { socket.close(); } catch (e) {}
-                        });
-            
-                        // Erase the room memory mapping completely out of RAM
-                        delete activeRooms[code];
-                        reapedCount++;
-                    }
-                }
-                
-                if (reapedCount > 0) {
-                    console.log(`[Reaper Engine] Cleaned up ${reapedCount} dead/abandoned lobby sessions.`);
-                }
-            }, 5 * 60 * 1000); // Wakes up automatically every 5 minutes to sweep the server
-
             socket.on('close', () => {
                 for (const code in activeRooms) {
                     activeRooms[code].screens = activeRooms[code].screens.filter(s => s !== socket);
                 }
             });
         });
+
+        // ========================================================
+        // 🧹 AUTOMATED GARBAGE COLLECTION REAPER (Keeps room pool fresh)
+        // ========================================================
+        // Registered once here, outside wss.on('connection', ...) -- it used
+        // to be registered INSIDE that callback, so every single new TV
+        // connection quietly added another redundant sweep interval that
+        // never got cleared, leaking one more every reconnect/page reload
+        // for the life of the process.
+        const ROOM_TIMEOUT_MS = 60 * 60 * 1000; // 1 Hour (Adjust this to whatever you like!)
+
+        setInterval(() => {
+            const now = Date.now();
+            let reapedCount = 0;
+
+            for (const code in activeRooms) {
+                const room = activeRooms[code];
+
+                // If the room has been sitting completely idle for over an hour, wipe it out
+                if (now - room.lastActivity > ROOM_TIMEOUT_MS) {
+
+                    // Clean up and clear out any active room countdown intervals to prevent RAM leaks
+                    if (room.timerInterval) clearInterval(room.timerInterval);
+                    if (room.lobbyTimerInterval) clearInterval(room.lobbyTimerInterval);
+                    if (room.categoryTimerInterval) clearInterval(room.categoryTimerInterval);
+                    if (room.revealTimeout) clearTimeout(room.revealTimeout);
+                    if (room.emptyRoomTimeout) clearTimeout(room.emptyRoomTimeout);
+
+                    // Securely drop the sockets
+                    room.screens.forEach(socket => {
+                        try { socket.close(); } catch (e) {}
+                    });
+
+                    // Erase the room memory mapping completely out of RAM
+                    delete activeRooms[code];
+                    reapedCount++;
+                }
+            }
+
+            if (reapedCount > 0) {
+                console.log(`[Reaper Engine] Cleaned up ${reapedCount} dead/abandoned lobby sessions.`);
+            }
+        }, 5 * 60 * 1000); // Wakes up automatically every 5 minutes to sweep the server
 
     } catch (error) {
         console.error('❌ [Initialization Exception]:', error.message);
