@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rules &amp; Info | RandoMania!</title>
+    <link rel="icon" type="image/x-icon" href="/R.ico" />
+    <style>
+        * { box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", sans-serif;
+            background: #0d0e11;
+            color: #f4f5f6;
+            margin: 0;
+            letter-spacing: -0.01em;
+            line-height: 1.5;
+        }
+        .top-bar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 20px 24px;
+            border-bottom: 1px solid #222630;
+        }
+        .top-bar a.home-link {
+            color: #64748b;
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+        .top-bar a.home-link:hover { color: #00e676; }
+        .top-bar img.logo { height: 28px; width: auto; }
+
+        .page-wrap { max-width: 760px; margin: 0 auto; padding: 0 20px 64px; }
+
+        .page-nav {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            padding: 24px 0;
+            border-bottom: 1px solid #222630;
+            margin-bottom: 40px;
+        }
+        .page-nav a {
+            color: #94a3b8;
+            text-decoration: none;
+            font-size: 0.85rem;
+            font-weight: 600;
+            padding: 8px 14px;
+            border-radius: 20px;
+            background: #14161d;
+            border: 1px solid #222630;
+        }
+        .page-nav a:hover { color: #00e676; border-color: #00e676; }
+
+        section { margin-bottom: 56px; scroll-margin-top: 24px; }
+        h1 { font-size: 1.8rem; font-weight: 700; color: #ffffff; letter-spacing: -0.02em; margin: 0 0 8px 0; }
+        h2 { font-size: 1.3rem; font-weight: 700; color: #ffffff; letter-spacing: -0.02em; margin: 0 0 16px 0; }
+        h3 { font-size: 1rem; font-weight: 600; color: #00e676; margin: 0 0 6px 0; }
+        p { color: #94a3b8; font-size: 0.95rem; margin: 0 0 12px 0; }
+        p.lead { color: #cbd5e1; font-size: 1.05rem; }
+
+        /* ---- How It Works flow diagram ---- */
+        .flow {
+            display: flex;
+            align-items: stretch;
+            gap: 0;
+            flex-wrap: wrap;
+            margin: 32px 0 8px;
+        }
+        .flow-node {
+            background: #14161d;
+            border: 1px solid #222630;
+            border-radius: 12px;
+            padding: 16px 10px;
+            text-align: center;
+            flex: 1 1 110px;
+            min-width: 110px;
+        }
+        .flow-node .badge {
+            width: 40px; height: 40px;
+            border-radius: 50%;
+            background: rgba(0, 230, 118, 0.08);
+            border: 1px solid rgba(0, 230, 118, 0.3);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.2rem;
+            margin: 0 auto 8px;
+        }
+        .flow-node .title { font-weight: 700; color: #ffffff; font-size: 0.85rem; margin-bottom: 4px; }
+        .flow-node .desc { color: #64748b; font-size: 0.72rem; line-height: 1.35; }
+        .flow-arrow {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            flex: 0 0 auto;
+            padding: 0 4px;
+            min-width: 44px;
+        }
+        .flow-arrow .arrow-glyph { color: #00e676; font-size: 1.1rem; line-height: 1; }
+        .flow-arrow .arrow-label {
+            color: #94a3b8;
+            font-size: 0.6rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.03em;
+            text-align: center;
+            margin-top: 4px;
+            max-width: 70px;
+        }
+        @media (max-width: 620px) {
+            .flow { flex-direction: column; }
+            .flow-arrow { flex-direction: row; min-width: 0; padding: 6px 0; }
+            .flow-arrow .arrow-glyph { transform: rotate(90deg); }
+            .flow-arrow .arrow-label { margin-top: 0; margin-left: 10px; max-width: none; text-align: left; }
+        }
+
+        /* ---- Mode cards ---- */
+        .mode-card {
+            background: #14161d;
+            border: 1px solid #222630;
+            border-radius: 12px;
+            padding: 20px 22px;
+            margin-bottom: 16px;
+        }
+        .mode-card.soon { opacity: 0.6; }
+        .mode-card .tag {
+            display: inline-block;
+            font-size: 0.68rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: #ffa500;
+            background: rgba(255, 165, 0, 0.1);
+            border: 1px solid rgba(255, 165, 0, 0.3);
+            border-radius: 4px;
+            padding: 2px 8px;
+            margin-left: 8px;
+            vertical-align: middle;
+        }
+
+        table.stakes { width: 100%; border-collapse: collapse; margin-top: 12px; font-size: 0.88rem; }
+        table.stakes th, table.stakes td { text-align: left; padding: 8px 10px; border-bottom: 1px solid #222630; }
+        table.stakes th { color: #64748b; font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.04em; font-weight: 600; }
+        table.stakes td.points { font-weight: 700; text-align: right; }
+        table.stakes td.points.pos { color: #00e676; }
+        table.stakes td.points.neg { color: #ff4757; }
+
+        .privacy-box {
+            background: rgba(0, 230, 118, 0.04);
+            border: 1px solid rgba(0, 230, 118, 0.25);
+            border-radius: 12px;
+            padding: 20px 22px;
+        }
+        .placeholder-box {
+            border: 1px dashed #334155;
+            border-radius: 12px;
+            padding: 20px 22px;
+            color: #64748b;
+            font-size: 0.88rem;
+            font-style: italic;
+        }
+    </style>
+</head>
+<body>
+    <div class="top-bar">
+        <a class="home-link" href="/">&larr; Home</a>
+        <img class="logo" src="/randomania-logo.svg" alt="RandoMania!" />
+        <span style="width: 60px;"></span>
+    </div>
+
+    <div class="page-wrap">
+        <section style="margin-top: 32px; margin-bottom: 0;">
+            <h1>Rules &amp; Info</h1>
+            <p class="lead">Everything that doesn't belong cluttering the TV or your phone mid-game.</p>
+        </section>
+
+        <nav class="page-nav">
+            <a href="#how-it-works">How It Works</a>
+            <a href="#how-to-play">How to Play</a>
+            <a href="#privacy">Privacy</a>
+            <a href="#about">About</a>
+        </nav>
+
+        <section id="how-it-works">
+            <h2>How It Works</h2>
+            <p>Three devices, one game. The access code and room code are the two things that move between them.</p>
+
+            <div class="flow">
+                <div class="flow-node">
+                    <div class="badge">🔑</div>
+                    <div class="title">Access Code</div>
+                    <div class="desc">Given to whoever's hosting tonight.</div>
+                </div>
+                <div class="flow-arrow">
+                    <span class="arrow-glyph">&rarr;</span>
+                    <span class="arrow-label">unlocks hosting</span>
+                </div>
+                <div class="flow-node">
+                    <div class="badge">📱</div>
+                    <div class="title">Host's Phone</div>
+                    <div class="desc">Enters the access code at <strong style="color:#cbd5e1;">/host</strong>, gets back a room code.</div>
+                </div>
+                <div class="flow-arrow">
+                    <span class="arrow-glyph">&rarr;</span>
+                    <span class="arrow-label">room code</span>
+                </div>
+                <div class="flow-node">
+                    <div class="badge">📺</div>
+                    <div class="title">TV / Display</div>
+                    <div class="desc">That room code gets typed in on the TV, which becomes the shared screen.</div>
+                </div>
+                <div class="flow-arrow">
+                    <span class="arrow-glyph">&rarr;</span>
+                    <span class="arrow-label">same code, via QR</span>
+                </div>
+                <div class="flow-node">
+                    <div class="badge">👥</div>
+                    <div class="title">Players</div>
+                    <div class="desc">Scan the TV's QR code (or type the room code at <strong style="color:#cbd5e1;">/play</strong>) to join on their own phones.</div>
+                </div>
+            </div>
+
+            <p style="margin-top: 20px;">The one thing to know going in: the room code gets typed in <em>twice</em> on two different devices -- once on the TV, once (per player) on each phone. That's normal, not a bug.</p>
+        </section>
+
+        <section id="how-to-play">
+            <h2>How to Play</h2>
+
+            <div class="mode-card">
+                <h3>Trivi-yeah!</h3>
+                <p>Multiple-choice trivia across a mix of subjects. Everyone answers on their own phone; the TV reveals the correct answer and awards points once everyone's locked in (or the clock runs out). Faster correct answers, and a streak of 3-in-a-row, earn bonus recognition on the leaderboard.</p>
+            </div>
+
+            <div class="mode-card">
+                <h3>Country Monkey</h3>
+                <p>A country is highlighted on the map on the TV -- tap the right one on your phone before time runs out. Covers Africa, the Americas, Asia, Europe, the Middle East, Southeast Asia, and the Pacific Islands.</p>
+            </div>
+
+            <div class="mode-card">
+                <h3>EmpossDurr</h3>
+                <p>A social-deduction party game. Everyone but one secret impostor gets the same word; the impostor gets only a one-word clue. Talk it out, then vote on who you think is faking it -- or if you're the impostor, declare and try to guess the real word before you're caught.</p>
+                <table class="stakes">
+                    <tr><th>Outcome</th><th>Points</th></tr>
+                    <tr><td>Correctly accuse the real impostor</td><td class="points pos">+2</td></tr>
+                    <tr><td>Wrongly accuse someone else</td><td class="points neg">&minus;1</td></tr>
+                    <tr><td>Impostor survives a round (no majority reached)</td><td class="points pos">+1</td></tr>
+                    <tr><td>Impostor survives via a wrong accusation</td><td class="points pos">+3</td></tr>
+                    <tr><td>Impostor declares and guesses right</td><td class="points pos">+5</td></tr>
+                    <tr><td>Impostor declares and guesses wrong</td><td class="points neg">&minus;2</td></tr>
+                    <tr><td>Abstain</td><td class="points">0</td></tr>
+                </table>
+            </div>
+
+            <div class="mode-card">
+                <h3>On The Spectrum</h3>
+                <p>One player sets a "true" answer on a slider for a statement about themselves. Everyone else tries to guess where they landed -- the closer your guess, the more points you earn.</p>
+            </div>
+
+            <div class="mode-card soon">
+                <h3>Flag Me Down <span class="tag">Coming soon</span></h3>
+                <p>World and historical flags, banners, and symbols. Content's still being written -- this mode isn't playable yet.</p>
+            </div>
+        </section>
+
+        <section id="privacy">
+            <h2>Privacy</h2>
+            <div class="privacy-box">
+                <p style="color: #e2e5e9; margin-bottom: 0;">We don't store anything about you or your game. Player names, scores, and session info exist only in server memory for as long as your room is active -- nothing is written to a database, and it's gone the moment the room closes or the server restarts. The only things we keep in permanent storage are the trivia/word content itself and a list of access codes -- neither has anything to do with who played or how they did.</p>
+            </div>
+        </section>
+
+        <section id="about">
+            <h2>About</h2>
+            <div class="placeholder-box">
+                Mission statement, credits, and contact information coming soon.
+            </div>
+        </section>
+    </div>
+</body>
+</html>

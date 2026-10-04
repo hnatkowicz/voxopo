@@ -724,15 +724,16 @@ function startEmpossDurrAccuseVote(roomCode) {
     // Same "impostor isn't part of the jury" treatment startEmpossDurrDeclare
     // already gives its own vote -- the impostor can still tap Abstain so
     // their hands move like everyone else's, but that tap (or any accusation
-    // they cast as misdirection) never counts toward the tally or its
-    // denominator. A real family game found the opposite treatment (counting
-    // every active player, impostor included) meant a majority of the actual
-    // accusers still wasn't enough to resolve the vote.
-    const accusers = Object.values(room.players).filter(p => !p.left && p.name !== ed.impostorName);
+    // they cast as misdirection) never counts toward the RESOLUTION threshold
+    // (tallyEmpossDurrAccuseVotes recomputes that on its own). The DISPLAYED
+    // totalNeeded below is a different number on purpose -- see the matching
+    // comment at the EMPOSSDURR_VOTE_SUBMITTED broadcast for why it's literal
+    // activity (every active player) rather than an accuser-only count.
+    const activePlayers = Object.values(room.players).filter(p => !p.left);
     broadcastToRoom(roomCode, {
         type: 'EMPOSSDURR_ACCUSE_VOTE_START',
         votedCount: 0,
-        totalNeeded: accusers.length,
+        totalNeeded: activePlayers.length,
         secondsLeft: ed.accuseSecondsLeft
     });
 
@@ -2167,17 +2168,27 @@ export function handleIncomingMessage(fromPhone, bodyText, explicitRoomCode, pre
             // what they chose -- same treatment as ANSWER_SUBMITTED, and
             // deliberately unconditional (impostor included): their tile
             // lighting up right along with everyone else's is exactly the
-            // camouflage the Abstain option exists for. The votedCount/
-            // totalNeeded numbers themselves, though, only ever count the
-            // real accusers -- the impostor isn't part of the jury, so
-            // their tap (or a decoy accusation) never moves either number.
-            const accusers = Object.values(currentRoom.players).filter(p => !p.left && p.name !== ed.impostorName);
+            // camouflage the Abstain option exists for.
+            //
+            // The displayed votedCount/totalNeeded used to only count real
+            // accusers (the actual resolution threshold), which created a
+            // real leak: the impostor's own tap always lit their tile
+            // without ever moving the number, and that mismatch was visible
+            // and consistent round after round -- watch the TV for one
+            // round and you've identified the impostor with zero vote
+            // content involved. Fixed by decoupling the two: what's shown
+            // now is literal activity (every submission, impostor included,
+            // against every active player), which always matches the lit
+            // tiles 1:1 and leaks nothing. The actual resolution check right
+            // below is untouched -- still gated on real accusers only.
+            const activePlayers = Object.values(currentRoom.players).filter(p => !p.left);
+            const accusers = activePlayers.filter(p => p.name !== ed.impostorName);
             const accuserVotesCast = Object.keys(ed.accuseVotes).filter(n => n !== ed.impostorName).length;
             broadcastToRoom(associatedRoomCode, {
                 type: 'EMPOSSDURR_VOTE_SUBMITTED',
                 playerName: actingPlayerName,
-                votedCount: accuserVotesCast,
-                totalNeeded: accusers.length
+                votedCount: Object.keys(ed.accuseVotes).length,
+                totalNeeded: activePlayers.length
             });
 
             if (accuserVotesCast === accusers.length) {

@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RandoMania!</title>
+    <link rel="canonical" href="https://randomania.tv/" />
+    <link rel="icon" type="image/x-icon" href="/R.ico" />
+    <style>
+        * { box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", sans-serif;
+            background: #0d0e11;
+            color: #f4f5f6;
+            margin: 0;
+            letter-spacing: -0.01em;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 48px 20px 32px;
+        }
+        .logo { height: 48px; width: auto; max-width: 90vw; margin-bottom: 20px; }
+        .tagline {
+            color: #94a3b8;
+            font-size: 1.05rem;
+            text-align: center;
+            max-width: 480px;
+            margin: 0 0 40px 0;
+            line-height: 1.5;
+        }
+        .role-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 16px;
+            width: 100%;
+            max-width: 560px;
+        }
+        @media (max-width: 480px) {
+            .role-grid { grid-template-columns: 1fr; }
+        }
+        .role-card {
+            background: #14161d;
+            border: 1px solid #222630;
+            border-radius: 12px;
+            padding: 24px 20px;
+            text-align: left;
+            text-decoration: none;
+            color: inherit;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            transition: border-color 0.2s, transform 0.2s;
+        }
+        .role-card:hover { border-color: #00e676; transform: translateY(-2px); }
+        .role-icon { font-size: 1.6rem; margin-bottom: 4px; }
+        .role-title { font-size: 1.05rem; font-weight: 600; color: #ffffff; letter-spacing: -0.01em; }
+        .role-desc { font-size: 0.85rem; color: #64748b; line-height: 1.4; }
+        .role-card.primary { border-color: rgba(0, 230, 118, 0.3); background: rgba(0, 230, 118, 0.04); }
+        .role-card.primary .role-title { color: #00e676; }
+
+        footer {
+            margin-top: 48px;
+            color: #475569;
+            font-size: 0.8rem;
+            text-align: center;
+        }
+        footer a { color: #64748b; text-decoration: none; }
+        footer a:hover { color: #00e676; }
+    </style>
+</head>
+<body>
+    <img class="logo" src="/randomania-logo.svg" alt="RandoMania!" />
+    <p class="tagline">A party game you host from your phone and play together on the TV. Pick the role that's yours tonight.</p>
+
+    <div class="role-grid">
+        <a class="role-card primary" href="/host">
+            <span class="role-icon">🎬</span>
+            <span class="role-title">Host a Game</span>
+            <span class="role-desc">Have an access code? Spin up a new lobby and get a room code to share.</span>
+        </a>
+        <a class="role-card" href="/tv">
+            <span class="role-icon">📺</span>
+            <span class="role-title">I'm the TV</span>
+            <span class="role-desc">Enter a room code here to turn this screen into the shared game display.</span>
+        </a>
+        <a class="role-card" href="/play">
+            <span class="role-icon">📱</span>
+            <span class="role-title">I'm a Player</span>
+            <span class="role-desc">Join a room already in progress from your own phone.</span>
+        </a>
+        <a class="role-card" href="/info">
+            <span class="role-icon">ℹ️</span>
+            <span class="role-title">Rules &amp; Info</span>
+            <span class="role-desc">How the setup works, how each mode is scored, and our privacy note.</span>
+        </a>
+    </div>
+
+    <footer>
+        <a href="/info">randomania.tv</a>
+    </footer>
+</body>
+</html>

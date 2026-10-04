@@ -37,7 +37,7 @@ if (btnSubmitSpectate) {
         // resolved to 'correct' or deleted on REVEAL_CORRECT_ANSWER.
         let playerAnswerStatus = {};
         let currentStatusHtml = ''; // Whatever the status slot should show at rest for the current phase (toasts restore to this)
-        let currentGamePhase = 'LOBBY'; // LOBBY / CATEGORY_VOTE / GAME_ROUND / GAME_OVER -- gates the "TYPE START" nudge to lobby only
+        let currentGamePhase = 'LOBBY'; // LOBBY / CATEGORY_VOTE / GAME_ROUND / GAME_OVER -- gates the "PRESS START" nudge to lobby only
         let currentEmpossDurrRound = null; // cached so EMPOSSDURR_RESUME_DISCUSSION can redraw the same round header
         let currentEmpossDurrTotalRounds = null;
         let currentEmpossDurrStarterName = null; // same reason -- resuming discussion keeps the same starter, no new broadcast for it
@@ -442,7 +442,7 @@ if (btnSubmitSpectate) {
             // and would otherwise stomp the in-game/game-over status message.
             if (currentGamePhase === 'LOBBY' && !currentStatusHtml.includes('START')) {
                 setStatusMessage(`
-                    <div style="font-weight: 600; color: #8892b0; margin-bottom: 2px;">TYPE "START" TO CONFIRM</div>
+                    <div style="font-weight: 600; color: #8892b0; margin-bottom: 2px;">PRESS START TO CONFIRM</div>
                     <div style="font-size: 0.8rem; color: #64748b;">Skips the countdown once everyone's in</div>
                 `);
             }
@@ -594,10 +594,9 @@ if (btnSubmitSpectate) {
             const displayGameName = GAME_MODE_LABELS[winnerModule] || winnerModule;
 
             currentGamePhase = 'CATEGORY_VOTE';
-            // The category-screen on the phone has no free-text input (only the
-            // lobby's game-screen does), so there's no way to actually act on a
-            // "TYPE START" nudge here -- leave the status slot blank instead of
-            // showing an instruction nobody can follow.
+            // The category screen has its own vote mechanic (tap a category row) --
+            // no START button to nudge here, so leave the status slot blank
+            // instead of showing a lobby-only instruction that doesn't apply.
             setStatusMessage('');
 
             const rows = categoryList.map((c, index) => `

@@ -26,14 +26,18 @@ const PORT = process.env.PORT || 3000;
 // which would silently disable the Secure cookie flag and admin-login rate limit.
 app.set('trust proxy', 1);
 
-// Tell Express to serve everything inside the 'public' folder as static assets
-app.use(express.static(path.join(__dirname, '..public')));
+// Tell Express to serve everything inside the 'public' folder as static assets.
+// index: false on both -- express.static auto-serves index.html for a bare
+// "/" request by default, which would silently short-circuit the explicit
+// "/" route below (the landing page) before it ever runs.
+app.use(express.static(path.join(__dirname, '..public'), { index: false }));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 // no-cache (not no-store) so browsers still revalidate via ETag/Last-Modified
 // instead of serving a stale cached copy of index.html/app.js/play.html after
 // a deploy -- avoids "I don't see the fix" confusion from a cached old build.
 app.use(express.static('public', {
+    index: false,
     setHeaders: (res) => res.setHeader('Cache-Control', 'no-cache')
 }));
 
@@ -269,18 +273,25 @@ app.post('/api/room-status', (req, res) => {
                 totalActive: activePlayers.length,
                 // A vote resolves the instant everyone required has
                 // submitted, or at accuseSecondsLeft/declareSecondsLeft with
-                // whoever has voted so far -- votedCount/totalNeeded show
-                // real progress, the seconds fields show the backstop clock.
-                // The impostor isn't part of the jury for either vote -- they
-                // can still cast an accuse-vote action (Abstain, or a decoy
-                // accusation) so their phone behaves identically to a real
-                // player's, but it's excluded from both these counts, same
-                // as DECLARE_VERDICT already excluded it from its own.
+                // whoever has voted so far. DECLARE_VERDICT's votedCount/
+                // totalNeeded are the real resolution threshold (jurors
+                // only -- the impostor never casts a declare vote at all, so
+                // there's no mismatch to leak). ACCUSE_VOTE's pair used to
+                // be accuser-only too, which created a real leak on the TV:
+                // the impostor's own tap always lit their tile (deliberately
+                // unconditional, so their hands move like everyone else's)
+                // without ever moving this number, and that mismatch was
+                // visible and consistent round after round. These two are
+                // now literal activity -- every submission against every
+                // active player -- so the number always matches the lit
+                // tiles 1:1. The actual resolution threshold (gameEngine.js's
+                // tallyEmpossDurrAccuseVotes) is unaffected -- still gated on
+                // real accusers only, computed independently of this display.
                 votedCount: ed.phase === 'ACCUSE_VOTE'
-                    ? Object.keys(ed.accuseVotes).filter(n => n !== ed.impostorName).length
+                    ? Object.keys(ed.accuseVotes).length
                     : (ed.phase === 'DECLARE_VERDICT' ? Object.keys(ed.declareVotes).length : 0),
                 totalNeeded: ed.phase === 'ACCUSE_VOTE'
-                    ? activePlayers.filter(p => p.name !== ed.impostorName).length
+                    ? activePlayers.length
                     : (ed.phase === 'DECLARE_VERDICT' ? activePlayers.filter(p => p.name !== ed.impostorName).length : 0),
                 accuseSecondsLeft: ed.accuseSecondsLeft,
                 declareSecondsLeft: ed.declareSecondsLeft,
@@ -348,10 +359,15 @@ app.post('/api/room-status', (req, res) => {
     }
 });
 
-app.get('/', (req, res) => { res.sendFile(path.resolve('public/index.html')); });
+// `/` is the role-picker hub (host/TV/player/info) -- `/tv` stays a stable,
+// direct alias straight to the TV experience for anyone who already knows
+// that URL (a bookmark, a QR code printed somewhere), so it keeps working
+// exactly as it always has even though `/` no longer serves the same file.
+app.get('/', (req, res) => { res.sendFile(path.resolve('public/landing.html')); });
 app.get('/tv', (req, res) => { res.sendFile(path.resolve('public/index.html')); });
 app.get('/play', (req, res) => { res.sendFile(path.resolve('public/play.html')); });
 app.get('/host', (req, res) => { res.sendFile(path.resolve('public/host.html')); });
+app.get('/info', (req, res) => { res.sendFile(path.resolve('public/info.html')); });
 app.get('/admin', (req, res) => { res.sendFile(path.resolve('public/admin.html')); });
 
 async function startServer() {
