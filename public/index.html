@@ -108,6 +108,10 @@
                                 <div class="progress-track"><div id="vbar-TRIVI_YEAH" class="progress-fill"></div></div>
                             </div>
                             <div class="vote-row">
+                                <div class="vote-meta"><span>Trivi-Yeah II <span class="module-descriptor">(Beta) Jeopardy-style board -- pick a tile, race to answer.</span></span><span id="vcount-TRIVI_YEAH_II" style="color: #64748b;">0 votes (0%)</span></div>
+                                <div class="progress-track"><div id="vbar-TRIVI_YEAH_II" class="progress-fill" style="background: #06b6d4;"></div></div>
+                            </div>
+                            <div class="vote-row">
                                 <div class="vote-meta"><span>Country Monkey <span class="module-descriptor">Guess the highlighted country on the map.</span></span><span id="vcount-COUNTRY_MONKEY" style="color: #64748b;">0 votes (0%)</span></div>
                                 <div class="progress-track"><div id="vbar-COUNTRY_MONKEY" class="progress-fill" style="background: #ffa500;"></div></div>
                             </div>
@@ -122,10 +126,6 @@
                             <div class="vote-row">
                                 <div class="vote-meta"><span>On The Spectrum <span class="module-descriptor">Guess how much a friend agrees or disagrees.</span></span><span id="vcount-ON_THE_SPECTRUM" style="color: #64748b;">0 votes (0%)</span></div>
                                 <div class="progress-track"><div id="vbar-ON_THE_SPECTRUM" class="progress-fill" style="background: #bb6bd9;"></div></div>
-                            </div>
-                            <div class="vote-row">
-                                <div class="vote-meta"><span>Trivi-Yeah II <span class="module-descriptor">(Beta) Jeopardy-style board -- pick a tile, race to answer.</span></span><span id="vcount-TRIVI_YEAH_II" style="color: #64748b;">0 votes (0%)</span></div>
-                                <div class="progress-track"><div id="vbar-TRIVI_YEAH_II" class="progress-fill" style="background: #06b6d4;"></div></div>
                             </div>
                         </div>
                     </div>
@@ -172,6 +172,15 @@
     <div class="toast-card warning" id="content-warning-card">
         <span class="toast-warning-icon">⚠️</span>
         <span class="toast-text" id="content-warning-text"></span>
+    </div>
+</div>
+
+<!-- Same fixed-overlay reasoning as content-warning-toast above -- survives
+     the PICK_TILE panel swap that follows right after a column sweep. -->
+<div class="toast-container" id="column-bonus-toast">
+    <div class="toast-card celebration" id="column-bonus-card">
+        <span class="toast-celebration-icon">🏆</span>
+        <span class="toast-text" id="column-bonus-text"></span>
     </div>
 </div>
 

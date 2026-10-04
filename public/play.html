@@ -250,11 +250,11 @@
             <label>Select Module Preference</label>
             <div class="module-list">
                 <div class="module-row" onclick="selectModule(this, 'TRIVI_YEAH')">Trivi-yeah! <span class="module-descriptor">Multiple-choice trivia across a mix of subjects.</span></div>
+                <div class="module-row" onclick="selectModule(this, 'TRIVI_YEAH_II')">Trivi-Yeah II <span class="module-descriptor">(Beta) Jeopardy-style board -- pick a tile, race to answer.</span></div>
                 <div class="module-row" onclick="selectModule(this, 'COUNTRY_MONKEY')">Country Monkey <span class="module-descriptor">Guess the highlighted country on the map.</span></div>
                 <div class="module-row" onclick="selectModule(this, 'EMPOSSDURR')">EmpossDurr <span class="module-descriptor">Find the impostor hiding in the group.</span></div>
                 <div class="module-row" onclick="selectModule(this, 'FLAG_ME_DOWN')">Flag Me Down <span class="module-descriptor">World and historical flags, banners, and symbols.</span></div>
                 <div class="module-row" onclick="selectModule(this, 'ON_THE_SPECTRUM')">On The Spectrum <span class="module-descriptor">Guess how much a friend agrees or disagrees.</span></div>
-                <div class="module-row" onclick="selectModule(this, 'TRIVI_YEAH_II')">Trivi-Yeah II <span class="module-descriptor">(Beta) Jeopardy-style board -- pick a tile, race to answer.</span></div>
             </div>
         </div>
 
@@ -290,11 +290,11 @@
                 <label>1. Playing again? Confirm or change the mode</label>
                 <div class="module-list" id="mode-revote-list">
                     <div class="module-row" data-mode-key="TRIVI_YEAH" onclick="submitModeRevote(this, 'TRIVI_YEAH')">Trivi-yeah! <span class="module-descriptor">Multiple-choice trivia across a mix of subjects.</span></div>
+                    <div class="module-row" data-mode-key="TRIVI_YEAH_II" onclick="submitModeRevote(this, 'TRIVI_YEAH_II')">Trivi-Yeah II <span class="module-descriptor">(Beta) Jeopardy-style board -- pick a tile, race to answer.</span></div>
                     <div class="module-row" data-mode-key="COUNTRY_MONKEY" onclick="submitModeRevote(this, 'COUNTRY_MONKEY')">Country Monkey <span class="module-descriptor">Guess the highlighted country on the map.</span></div>
                     <div class="module-row" data-mode-key="EMPOSSDURR" onclick="submitModeRevote(this, 'EMPOSSDURR')">EmpossDurr <span class="module-descriptor">Find the impostor hiding in the group.</span></div>
                     <div class="module-row" data-mode-key="FLAG_ME_DOWN" onclick="submitModeRevote(this, 'FLAG_ME_DOWN')">Flag Me Down <span class="module-descriptor">World and historical flags, banners, and symbols.</span></div>
                     <div class="module-row" data-mode-key="ON_THE_SPECTRUM" onclick="submitModeRevote(this, 'ON_THE_SPECTRUM')">On The Spectrum <span class="module-descriptor">Guess how much a friend agrees or disagrees.</span></div>
-                    <div class="module-row" data-mode-key="TRIVI_YEAH_II" onclick="submitModeRevote(this, 'TRIVI_YEAH_II')">Trivi-Yeah II <span class="module-descriptor">(Beta) Jeopardy-style board -- pick a tile, race to answer.</span></div>
                 </div>
             </div>
 
@@ -459,6 +459,10 @@
                 <div class="module-row" id="ty2-choice-row-B" onclick="submitTriviYeahIIAnswer(this, 'B')"><span style="background: rgba(0, 230, 118, 0.1); color: #00e676; font-weight: 700; padding: 4px 10px; border-radius: 4px; font-size: 0.85rem; margin-right: 12px;">B</span><span id="ty2-choice-text-B">-</span></div>
                 <div class="module-row" id="ty2-choice-row-C" onclick="submitTriviYeahIIAnswer(this, 'C')"><span style="background: rgba(0, 230, 118, 0.1); color: #00e676; font-weight: 700; padding: 4px 10px; border-radius: 4px; font-size: 0.85rem; margin-right: 12px;">C</span><span id="ty2-choice-text-C">-</span></div>
                 <div class="module-row" id="ty2-choice-row-D" onclick="submitTriviYeahIIAnswer(this, 'D')"><span style="background: rgba(0, 230, 118, 0.1); color: #00e676; font-weight: 700; padding: 4px 10px; border-radius: 4px; font-size: 0.85rem; margin-right: 12px;">D</span><span id="ty2-choice-text-D">-</span></div>
+                <!-- Deliberately plain/muted, no lettered badge -- this is an
+                     opt-out from the wrong-answer penalty, not a 5th choice,
+                     and shouldn't read as one at a glance. -->
+                <div class="module-row" id="ty2-choice-row-PASS" onclick="submitTriviYeahIIAnswer(this, 'PASS')" style="margin-top: 10px; border-style: dashed; color: #94a3b8; text-align: center; font-weight: 600;">Pass -- no points, no penalty</div>
             </div>
             <div id="ty2-feedback" class="feedback" style="margin-top: 24px; font-weight: 600; text-align: left; padding: 14px 20px; display: none;"></div>
         </div>
@@ -868,9 +872,9 @@
                         if (cell.cleared) {
                             html += `<div style="background: #14161d; border: 1px solid #1c1f28; border-radius: 8px; padding: 14px 2px; text-align: center; color: #334155; font-weight: 700;">&mdash;</div>`;
                         } else if (data.isMyPick) {
-                            html += `<div class="module-row" style="padding: 14px 2px; text-align: center; color: #00e676; font-weight: 800;" onclick="submitTriviYeahIIPick(this, ${cell.index})">${cell.points}</div>`;
+                            html += `<div class="module-row" style="border: 2px solid #00e676; box-shadow: 0 0 8px rgba(0, 230, 118, 0.25); padding: 13px 2px; text-align: center; color: #00e676; font-weight: 800;" onclick="submitTriviYeahIIPick(this, ${cell.index})">${cell.points}</div>`;
                         } else {
-                            html += `<div style="background: #14161d; border: 1px solid #222630; border-radius: 8px; padding: 14px 2px; text-align: center; color: #00e676; font-weight: 800; opacity: 0.5;">${cell.points}</div>`;
+                            html += `<div style="background: #14161d; border: 2px solid #00e676; box-shadow: 0 0 8px rgba(0, 230, 118, 0.25); border-radius: 8px; padding: 13px 2px; text-align: center; color: #00e676; font-weight: 800; opacity: 0.5;">${cell.points}</div>`;
                         }
                     }
                 }
@@ -913,7 +917,12 @@
                 row.classList.remove('selected');
                 row.style.opacity = data.myAnswer ? (data.myAnswer === letter ? '1' : '0.3') : '1';
             });
-            if (data.myAnswer) {
+            const passRow = document.getElementById('ty2-choice-row-PASS');
+            passRow.classList.remove('selected');
+            passRow.style.opacity = data.myAnswer ? (data.myAnswer === 'PASS' ? '1' : '0.3') : '1';
+            if (data.myAnswer === 'PASS') {
+                showFeedback(feedback, `PASSED -- no points, no penalty.`, "rgba(100,116,139,0.08)", "#94a3b8", "rgba(100,116,139,0.2)");
+            } else if (data.myAnswer) {
                 showFeedback(feedback, `LOCKED IN: You selected Option ${data.myAnswer}`, "rgba(0,230,118,0.06)", "#00e676", "rgba(0,230,118,0.15)");
             }
         }
@@ -943,7 +952,11 @@
 
             const feedback = document.getElementById('ty2-feedback');
             const registeredName = localStorage.getItem('randomania_nickname') || 'test-handset';
-            showFeedback(feedback, `LOCKED IN: You selected Option ${selectedLetter}`, "rgba(0,230,118,0.06)", "#00e676", "rgba(0,230,118,0.15)");
+            if (selectedLetter === 'PASS') {
+                showFeedback(feedback, 'PASSED -- no points, no penalty.', "rgba(100,116,139,0.08)", "#94a3b8", "rgba(100,116,139,0.2)");
+            } else {
+                showFeedback(feedback, `LOCKED IN: You selected Option ${selectedLetter}`, "rgba(0,230,118,0.06)", "#00e676", "rgba(0,230,118,0.15)");
+            }
 
             try {
                 await fetch('/api/message', {

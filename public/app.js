@@ -279,6 +279,10 @@ if (btnSubmitSpectate) {
                     }
                     stopCountdownMusic();
                 }
+                if (data.type === 'TRIVI_YEAH_II_COLUMN_BONUS') {
+                    showColumnBonusToast(data.playerName, data.categoryLabel);
+                    playAudioTrack('win-music');
+                }
                 if (data.type === 'TRIVI_YEAH_II_PICK_TURN') {
                     document.getElementById('room-status-text').innerText = "Trivi-Yeah II";
                     document.getElementById('lobby-countdown').innerText = '';
@@ -568,6 +572,22 @@ if (btnSubmitSpectate) {
             }, 10000);
         }
 
+        let columnBonusHideTimer = null;
+        function showColumnBonusToast(playerName, categoryLabel) {
+            const card = document.getElementById('column-bonus-card');
+            const text = document.getElementById('column-bonus-text');
+            if (!card || !text) return;
+
+            text.innerHTML = `<span class="toast-highlight">${playerName}</span> swept ${categoryLabel} solo -- +200!`;
+            card.classList.add('active');
+
+            if (columnBonusHideTimer) clearTimeout(columnBonusHideTimer);
+            columnBonusHideTimer = setTimeout(() => {
+                card.classList.remove('active');
+                columnBonusHideTimer = null;
+            }, 5000);
+        }
+
         function processToastQueuePipeline() {
             if (isToastPlaying || toastQueue.length === 0) return;
 
@@ -802,7 +822,7 @@ function switchToTriviYeahIIBoardUI(grid, currentPicker) {
             if (!cell) { tileCells.push('<div></div>'); continue; }
             tileCells.push(cell.cleared
                 ? `<div style="background: #14161d; border: 1px solid #1c1f28; border-radius: 8px; padding: 16px 4px; text-align: center; color: #334155; font-size: 1.1rem; font-weight: 700;">&mdash;</div>`
-                : `<div style="background: #14161d; border: 1px solid #222630; border-radius: 8px; padding: 16px 4px; text-align: center; color: #00e676; font-size: 1.25rem; font-weight: 800;">${cell.points}</div>`);
+                : `<div style="background: #14161d; border: 2px solid #00e676; box-shadow: 0 0 10px rgba(0, 230, 118, 0.25); border-radius: 8px; padding: 15px 4px; text-align: center; color: #00e676; font-size: 1.25rem; font-weight: 800;">${cell.points}</div>`);
         }
     }
 
@@ -1105,6 +1125,10 @@ function switchToLobbyVoteUI() {
                     <div class="progress-track"><div id="vbar-TRIVI_YEAH" class="progress-fill"></div></div>
                 </div>
                 <div class="vote-row">
+                    <div class="vote-meta"><span>Trivi-Yeah II <span class="module-descriptor">(Beta) Jeopardy-style board -- pick a tile, race to answer.</span></span><span id="vcount-TRIVI_YEAH_II" style="color: #64748b;">0 votes (0%)</span></div>
+                    <div class="progress-track"><div id="vbar-TRIVI_YEAH_II" class="progress-fill" style="background: #06b6d4;"></div></div>
+                </div>
+                <div class="vote-row">
                     <div class="vote-meta"><span>Country Monkey <span class="module-descriptor">Guess the highlighted country on the map.</span></span><span id="vcount-COUNTRY_MONKEY" style="color: #64748b;">0 votes (0%)</span></div>
                     <div class="progress-track"><div id="vbar-COUNTRY_MONKEY" class="progress-fill" style="background: #ffa500;"></div></div>
                 </div>
@@ -1119,10 +1143,6 @@ function switchToLobbyVoteUI() {
                 <div class="vote-row">
                     <div class="vote-meta"><span>On The Spectrum <span class="module-descriptor">Guess where it lands between two extremes.</span></span><span id="vcount-ON_THE_SPECTRUM" style="color: #64748b;">0 votes (0%)</span></div>
                     <div class="progress-track"><div id="vbar-ON_THE_SPECTRUM" class="progress-fill" style="background: #bb6bd9;"></div></div>
-                </div>
-                <div class="vote-row">
-                    <div class="vote-meta"><span>Trivi-Yeah II <span class="module-descriptor">(Beta) Jeopardy-style board -- pick a tile, race to answer.</span></span><span id="vcount-TRIVI_YEAH_II" style="color: #64748b;">0 votes (0%)</span></div>
-                    <div class="progress-track"><div id="vbar-TRIVI_YEAH_II" class="progress-fill" style="background: #06b6d4;"></div></div>
                 </div>
             </div>
         </div>

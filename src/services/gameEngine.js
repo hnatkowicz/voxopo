@@ -606,6 +606,7 @@ const TRIVI_YEAH_II_TIERS = [100, 200, 300, 400];
 const TRIVI_YEAH_II_CATEGORY_REVEAL_MS = 2000; // category shown alone
 const TRIVI_YEAH_II_QUESTION_REVEAL_MS = 2000; // question text shown before answer buttons appear
 const TRIVI_YEAH_II_ANSWER_SECONDS = 10;
+const TRIVI_YEAH_II_COLUMN_SWEEP_BONUS = 200; // one player, fastest-correct on all 4 tiles in a category, solo
 
 // Used both for the very first tile of the game (no "previous question" yet
 // to crown a picker) and as the fallback when nobody answers a question
@@ -817,9 +818,17 @@ function evaluateTriviYeahIIAnswers(roomCode) {
 
     Object.values(room.players).forEach(player => {
         if (player.left) return;
-        if (ty2.answers[player.name] === correctLetter) {
+        const submitted = ty2.answers[player.name];
+        if (submitted === correctLetter) {
             player.score += points;
             player.correctAnswers = (player.correctAnswers || 0) + 1;
+        } else if (submitted && submitted !== 'PASS') {
+            // A real wrong guess costs the same amount the tile would have
+            // paid out -- symmetric risk, scaling with how hard the question
+            // was. PASS and silence (no submission at all) are both treated
+            // as sitting this one out, never penalized -- the penalty is for
+            // guessing wrong, not for being unsure.
+            player.score -= points;
         }
 
         // The bolt is a live, contested status, not an accumulated streak --
@@ -838,8 +847,32 @@ function evaluateTriviYeahIIAnswers(roomCode) {
     });
 
     cell.cleared = true;
+    // Who (if anyone) actually earned this tile -- null when nobody answered
+    // correctly, so a random-fallback pick never counts toward a column-sweep
+    // bonus below.
+    cell.wonBy = fastestCorrectName || null;
     ty2.clearedCount++;
     ty2.currentPicker = nextPicker;
+
+    // Column sweep: this category's all 4 tiles are now cleared, and the
+    // same single player was fastest-correct on every one of them (not just
+    // "cleared" -- a random-fallback pick, tracked as wonBy: null, breaks
+    // the sweep same as a different winner would). Awarded before the
+    // leaderboard broadcast below so the bonus is reflected in that same update.
+    const categoryTiles = ty2.grid.filter(c => c.categoryKey === cell.categoryKey);
+    const sweptBy = cell.wonBy && categoryTiles.every(c => c.cleared && c.wonBy === cell.wonBy) ? cell.wonBy : null;
+    if (sweptBy) {
+        const sweepingPlayer = room.players[sweptBy];
+        if (sweepingPlayer) {
+            sweepingPlayer.score += TRIVI_YEAH_II_COLUMN_SWEEP_BONUS;
+            broadcastToRoom(roomCode, {
+                type: 'TRIVI_YEAH_II_COLUMN_BONUS',
+                playerName: sweptBy,
+                categoryLabel: cell.categoryLabel,
+                bonusPoints: TRIVI_YEAH_II_COLUMN_SWEEP_BONUS
+            });
+        }
+    }
 
     broadcastToRoom(roomCode, {
         type: 'TRIVI_YEAH_II_ROUND_REVEAL',
@@ -2456,10 +2489,14 @@ export function handleIncomingMessage(fromPhone, bodyText, explicitRoomCode, pre
         }
     }
 
-    // 5.2 Trivi-Yeah II: live answer submissions -- ANSWERING phase only
+    // 5.2 Trivi-Yeah II: live answer submissions -- ANSWERING phase only.
+    // PASS is a genuine third option alongside A-D, not a fallback -- it's
+    // the deliberate "sit this one out" opt-out from the wrong-answer
+    // penalty (see evaluateTriviYeahIIAnswers), tracked and broadcast
+    // exactly like a lettered answer so the room sees it as a real response.
     if (currentRoom.gameState === 'TRIVI_YEAH_II_ROUND' && currentRoom.triviYeahII.phase === 'ANSWERING') {
         const answerChoice = cleanText.toUpperCase();
-        if (['A', 'B', 'C', 'D'].includes(answerChoice)) {
+        if (['A', 'B', 'C', 'D', 'PASS'].includes(answerChoice)) {
             const ty2 = currentRoom.triviYeahII;
             if (!(actingPlayerName in ty2.answers)) {
                 ty2.answerOrder.push(actingPlayerName);
@@ -2472,7 +2509,7 @@ export function handleIncomingMessage(fromPhone, bodyText, explicitRoomCode, pre
             if (totalAnswersLogged === totalPlayersCount) {
                 fastForwardTriviYeahIIReveal(associatedRoomCode);
             }
-            return `Got it, ${player.name}! Option ${answerChoice} logged.`;
+            return answerChoice === 'PASS' ? `Got it, ${player.name} -- passing this one.` : `Got it, ${player.name}! Option ${answerChoice} logged.`;
         }
     }
 
