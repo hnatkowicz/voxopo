@@ -1151,9 +1151,9 @@ function evaluateTriviYeahIIDoublerAnswer(room, roomCode, cell, correctLetter) {
         if (pickerCorrect) picker.correctAnswers = (picker.correctAnswers || 0) + 1;
     }
 
-    // Each side bettor staked their own chosen amount (capped to their own
-    // score at bet time, not the tile's value) -- so unlike the picker's
-    // single shared wager, every bettor's win/loss is sized independently.
+    // Every side bettor staked the same fixed amount -- the tile's own
+    // value (bet.amount, set when the bet was placed) -- so this is simpler
+    // than the picker's own wager, just a shared stake split by direction.
     const sideBetResults = {};
     Object.entries(ty2.doubler.sideBets).forEach(([name, bet]) => {
         const bettor = room.players[name];
@@ -2841,27 +2841,20 @@ export function handleIncomingMessage(fromPhone, bodyText, explicitRoomCode, pre
     }
 
     // 5.4 Trivi-Yeah II: Doubler side bets -- everyone except the picker,
-    // DOUBLER_SIDE_BET phase. Each bettor picks their own stake (0 up to
-    // their own current score, same floor-free cap the picker doesn't get --
-    // a side bet is optional, so there's no need to guarantee a minimum)
-    // alongside For/Against, or sits out entirely with Pass.
+    // DOUBLER_SIDE_BET phase. Every side bet stakes the tile's own fixed
+    // value, same for every bettor -- no amount to enter, just a direction
+    // (or Pass to sit it out). (Briefly let each bettor pick their own
+    // amount -- reverted after playtesting: not worth the typing-on-a-phone
+    // friction for how rarely a Doubler comes up.)
     if (currentRoom.gameState === 'TRIVI_YEAH_II_ROUND' && currentRoom.triviYeahII.phase === 'DOUBLER_SIDE_BET') {
-        const betText = cleanText.toUpperCase();
-        const betMatch = /^(FOR|AGAINST|BET_FOR|BET_AGAINST)\s+(\d+)$/.exec(betText);
-        const isPass = betText === 'PASS' || betText === 'BET_PASS';
-        if (betMatch || isPass) {
+        const betChoice = cleanText.toUpperCase();
+        if (['FOR', 'AGAINST', 'PASS'].includes(betChoice) || betChoice === 'BET_FOR' || betChoice === 'BET_AGAINST' || betChoice === 'BET_PASS') {
             const ty2 = currentRoom.triviYeahII;
             if (actingPlayerName === ty2.currentPicker) {
                 return `⚠️ You're the one on the hook this time -- no side bet for you.`;
             }
-            let choice, amount;
-            if (isPass) {
-                choice = 'PASS';
-                amount = 0;
-            } else {
-                choice = betMatch[1].replace('BET_', '');
-                amount = Math.min(Math.max(0, parseInt(betMatch[2], 10)), player.score);
-            }
+            const choice = betChoice.replace('BET_', '');
+            const amount = choice === 'PASS' ? 0 : ty2.grid[ty2.activeCellIndex].points;
             ty2.doubler.sideBets[actingPlayerName] = { choice, amount };
             broadcastToRoom(associatedRoomCode, { type: 'ANSWER_SUBMITTED', playerName: actingPlayerName });
 

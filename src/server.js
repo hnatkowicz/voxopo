@@ -273,10 +273,10 @@ app.post('/api/room-status', (req, res) => {
                 // DOUBLER_REVEAL through DOUBLER_SIDE_BET). maxWager only comes
                 // through for the picker, during DOUBLER_WAGER, same clamp rule
                 // the WAGER message handler itself enforces server-side. A side
-                // bettor's own cap is just their current score (myScore, already
-                // in this payload) -- no separate field needed. mySideBet is
-                // {choice, amount} once placed, same shape the FOR/AGAINST
-                // message handler stores.
+                // bet always stakes the tile's own value (tileValue, above) --
+                // mySideBet is {choice, amount} once placed, same shape the
+                // FOR/AGAINST message handler stores, with amount always equal
+                // to that tile value.
                 doubler: ty2.doubler ? {
                     tileValue: ty2.grid[ty2.activeCellIndex] ? ty2.grid[ty2.activeCellIndex].points : null,
                     wagerAmount: ty2.doubler.wagerAmount,
