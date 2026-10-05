@@ -599,7 +599,12 @@ const TRIVI_YEAH_II_CATEGORIES = [
     { key: 'MOVIES_TV', label: 'Movies & TV' },
     { key: 'MUSIC', label: 'Music' },
     { key: 'SPORTS', label: 'Sports' },
-    { key: 'WORLD_HISTORY', label: 'World History' }
+    { key: 'WORLD_HISTORY', label: 'World History' },
+    { key: 'GEOGRAPHY', label: 'Geography' },
+    { key: 'TECHNOLOGY', label: 'Technology' },
+    { key: 'FOOD_AND_DRINK', label: 'Food & Drink' },
+    { key: 'MYTHOLOGY', label: 'Mythology' },
+    { key: 'LITERATURE', label: 'Literature' }
 ];
 const TRIVI_YEAH_II_CATEGORIES_PER_BOARD = 3;
 const TRIVI_YEAH_II_TIERS = [100, 200, 300, 400];
