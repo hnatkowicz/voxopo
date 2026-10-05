@@ -609,7 +609,7 @@ const TRIVI_YEAH_II_CATEGORIES = [
 const TRIVI_YEAH_II_CATEGORIES_PER_BOARD = 3;
 const TRIVI_YEAH_II_TIERS = [100, 200, 300, 400];
 const TRIVI_YEAH_II_CATEGORY_REVEAL_MS = 2000; // category shown alone
-const TRIVI_YEAH_II_QUESTION_REVEAL_MS = 2000; // question text shown before answer buttons appear
+const TRIVI_YEAH_II_QUESTION_REVEAL_MS = 4000; // question text shown before answer buttons appear -- doubled per family feedback, more time to read before options bias the room
 const TRIVI_YEAH_II_ANSWER_SECONDS = 10;
 const TRIVI_YEAH_II_COLUMN_SWEEP_BONUS = 200; // one player, fastest-correct on all 4 tiles in a category, solo
 const TRIVI_YEAH_II_TOTAL_ROUNDS = 3;
@@ -617,7 +617,7 @@ const TRIVI_YEAH_II_ROUND_TRANSITION_MS = 3000; // "Round N complete!" announcem
 const TRIVI_YEAH_II_DOUBLERS_PER_ROUND = [0, 1, 2]; // indexed by round - 1
 const TRIVI_YEAH_II_DOUBLER_REVEAL_MS = 2500; // "DOUBLER!" beat, after the normal category reveal
 const TRIVI_YEAH_II_WAGER_TIMEOUT_MS = 20000; // backstop if the picker never sets a wager
-const TRIVI_YEAH_II_SIDE_BET_SECONDS = 10;
+const TRIVI_YEAH_II_SIDE_BET_SECONDS = 20; // was 10 -- too tight in practice: a late bet (polling lag + reaction time) landed after the phase had already moved on and got silently dropped, which read as "it timed out" / "didn't record" / defaulted to a sat-out result
 
 // Final Wager -- a Final-Jeopardy-style closer after round 3's board clears.
 // Every active player privately wagers against their OWN score, then

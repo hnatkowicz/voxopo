@@ -1024,7 +1024,8 @@
                 spectatorText.style.display = 'block';
                 if (data.doubler.resolved) {
                     const result = data.doubler.mySideBetResult;
-                    if (data.doubler.mySideBet === 'PASS' || result === 0 || result === null) {
+                    const myChoice = data.doubler.mySideBet ? data.doubler.mySideBet.choice : null;
+                    if (myChoice === 'PASS' || result === 0 || result === null) {
                         spectatorText.innerText = `${doublerAnswererName} ${data.doubler.pickerCorrect ? 'got it right' : 'missed it'}. You sat that one out.`;
                     } else if (result > 0) {
                         spectatorText.innerText = `${data.doubler.pickerCorrect ? 'Correct!' : 'Missed!'} You won ${result} points.`;
@@ -1032,7 +1033,7 @@
                         spectatorText.innerText = `${data.doubler.pickerCorrect ? 'Correct!' : 'Missed!'} You lost ${Math.abs(result)} points.`;
                     }
                 } else {
-                    spectatorText.innerText = `You bet ${data.doubler.mySideBet || 'nothing'} on this one. Sit tight...`;
+                    spectatorText.innerText = `You bet ${data.doubler.mySideBet ? data.doubler.mySideBet.choice : 'nothing'} on this one. Sit tight...`;
                 }
                 return;
             }

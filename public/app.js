@@ -1,7 +1,7 @@
 document.addEventListener("DOMContentLoaded", () => {
     document.body.setAttribute('data-view', 'gateway');
 
-    ['countdown-music', 'category-music', 'win-music', 'declare-music', 'final-wager-timer-sound'].forEach(id => {
+    ['countdown-music', 'category-music', 'win-music', 'declare-music', 'final-wager-timer-sound', 'answer-warning-sound'].forEach(id => {
         const audio = document.getElementById(id);
         if (audio) audio.volume = 0.5;
     });
@@ -41,12 +41,18 @@ if (btnSubmitSpectate) {
         let currentEmpossDurrRound = null; // cached so EMPOSSDURR_RESUME_DISCUSSION can redraw the same round header
         let currentEmpossDurrTotalRounds = null;
         let currentEmpossDurrStarterName = null; // same reason -- resuming discussion keeps the same starter, no new broadcast for it
+        // True only while a Trivi-Yeah II tile's ANSWERING countdown is live
+        // (normal or Doubler) -- gates the 3-tone warning chime so it never
+        // fires during classic Trivi-yeah!, side bets, or the Final Wager
+        // (which has its own dedicated timer sound). Armed on
+        // TRIVI_YEAH_II_ANSWERS_REVEAL, disarmed the moment that tile resolves.
+        let ty2AnswerCountdownActive = false;
 
         // Primes all three <audio> elements against a real user gesture (a click), so
         // later programmatic .play() calls fired from WebSocket handlers aren't blocked
         // by the browser's autoplay policy, which only allows audio after interaction.
         function unlockAllAudio() {
-            ['countdown-music', 'category-music', 'win-music', 'declare-music', 'final-wager-timer-sound'].forEach(id => {
+            ['countdown-music', 'category-music', 'win-music', 'declare-music', 'final-wager-timer-sound', 'answer-warning-sound'].forEach(id => {
                 const audio = document.getElementById(id);
                 if (!audio) return;
                 const p = audio.play();
@@ -170,6 +176,14 @@ if (btnSubmitSpectate) {
                 // Listen for Phase 3 active question clock ticks to drive the round countdown banner!
                 if (data.type === 'GAME_TIMER_TICK') {
                     document.getElementById('lobby-countdown').innerText = data.secondsLeft;
+                    // The family asked for NO music through a Trivi-Yeah II tile's
+                    // countdown -- just a light three-tone cue near the end so the
+                    // room still knows the question is live. Fires once, right as
+                    // 3 seconds remain (answer-warning.wav is a 3-tone, ~2.3s clip
+                    // timed to finish just as the clock hits zero).
+                    if (ty2AnswerCountdownActive && parseInt(data.secondsLeft, 10) === 3) {
+                        playAudioTrack('answer-warning-sound');
+                    }
                 }
                 // Listen for the server's clock expiration to reveal the correct answer
                 if (data.type === 'REVEAL_CORRECT_ANSWER') {
@@ -269,7 +283,7 @@ if (btnSubmitSpectate) {
                     showTriviYeahIISpotlightUI({ stage: 'answers', questionText: data.questionText, points: data.points, choiceA: data.choiceA, choiceB: data.choiceB, choiceC: data.choiceC, choiceD: data.choiceD });
                     playerAnswerStatus = {};
                     updateLeaderboardUI(cachedPlayersSnapshot);
-                    playCountdownMusic();
+                    ty2AnswerCountdownActive = true;
                 }
                 if (data.type === 'TRIVI_YEAH_II_ROUND_REVEAL') {
                     document.getElementById('room-status-text').innerText = "Trivi-Yeah II — Round Evaluation";
@@ -281,6 +295,7 @@ if (btnSubmitSpectate) {
                             if (!playerAnswerStatus[name]) delete playerAnswerStatus[name];
                         });
                     }
+                    ty2AnswerCountdownActive = false;
                     stopCountdownMusic();
                 }
                 if (data.type === 'TRIVI_YEAH_II_COLUMN_BONUS') {
@@ -308,13 +323,13 @@ if (btnSubmitSpectate) {
                 }
                 if (data.type === 'TRIVI_YEAH_II_SIDE_BETS_OPEN') {
                     showTriviYeahIISideBetsOpenUI(data.picker, data.wagerAmount, data.tileValue);
-                    playCountdownMusic();
                 }
                 if (data.type === 'TRIVI_YEAH_II_DOUBLER_RESULT') {
                     document.getElementById('room-status-text').innerText = "Trivi-Yeah II — Doubler Result";
                     document.getElementById('lobby-countdown').innerText = "0 s";
                     showTriviYeahIIDoublerResultUI(data);
                     updateLeaderboardUI(cachedPlayersSnapshot);
+                    ty2AnswerCountdownActive = false;
                     stopCountdownMusic();
                 }
 
