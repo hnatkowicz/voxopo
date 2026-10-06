@@ -153,7 +153,7 @@ if (btnSubmitSpectate) {
                         // above -- the next pick/reveal broadcast corrects the board
                         // within a few seconds, not worth serializing the full staged-
                         // reveal state through this payload too.
-                        document.getElementById('room-status-text').innerText = "Trivi-Yeah II in progress";
+                        document.getElementById('room-status-text').innerText = "Thinking Pants in progress";
                     }
                 }
                 if (data.type === 'LEADERBOARD_UPDATE') {
@@ -294,7 +294,7 @@ if (btnSubmitSpectate) {
                     ty2AnswerCountdownActive = true;
                 }
                 if (data.type === 'TRIVI_YEAH_II_ROUND_REVEAL') {
-                    document.getElementById('room-status-text').innerText = "Trivi-Yeah II — Round Evaluation";
+                    document.getElementById('room-status-text').innerText = "Thinking Pants — Round Evaluation";
                     document.getElementById('lobby-countdown').innerText = "0 s";
                     highlightCorrectAnswerOnTV(data.correctLetter);
                     if (data.answers) {
@@ -334,7 +334,7 @@ if (btnSubmitSpectate) {
                     showTriviYeahIISideBetsOpenUI(data.picker, data.wagerAmount, data.tileValue, data.categoryLabel);
                 }
                 if (data.type === 'TRIVI_YEAH_II_DOUBLER_RESULT') {
-                    document.getElementById('room-status-text').innerText = "Trivi-Yeah II — Doubler Result";
+                    document.getElementById('room-status-text').innerText = "Thinking Pants — Doubler Result";
                     document.getElementById('lobby-countdown').innerText = "0 s";
                     playAudioTrack(data.pickerCorrect ? 'doubler-correct-sound' : 'doubler-wrong-sound');
                     showTriviYeahIIDoublerResultUI(data);
@@ -358,7 +358,7 @@ if (btnSubmitSpectate) {
                     updateLeaderboardUI(cachedPlayersSnapshot);
                 }
                 if (data.type === 'TRIVI_YEAH_II_FINAL_ANSWER_OPEN') {
-                    document.getElementById('room-status-text').innerText = "Trivi-Yeah II — Final Wager";
+                    document.getElementById('room-status-text').innerText = "Thinking Pants — Final Wager";
                     showTriviYeahIIFinalAnswerOpenUI(data.topicLabel, data.questionText);
                     playerAnswerStatus = {};
                     updateLeaderboardUI(cachedPlayersSnapshot);
@@ -737,7 +737,7 @@ if (btnSubmitSpectate) {
             EMPOSSDURR: 'EmpossDurr',
             FLAG_ME_DOWN: 'Flag Me Down',
             ON_THE_SPECTRUM: 'On The Spectrum',
-            TRIVI_YEAH_II: 'Trivi-Yeah II'
+            TRIVI_YEAH_II: 'Thinking Pants'
         };
 
         function switchToCategoryVotingUI(winnerModule, categories) {
@@ -893,7 +893,7 @@ function switchToTriviYeahIIBoardUI(grid, currentPicker, round, totalRounds) {
     if (totalRounds) triviYeahIITotalRounds = totalRounds;
 
     currentGamePhase = 'TRIVI_YEAH_II_ROUND';
-    document.getElementById('room-status-text').innerText = `Trivi-Yeah II — Round ${triviYeahIICurrentRound}/${triviYeahIITotalRounds}`;
+    document.getElementById('room-status-text').innerText = `Thinking Pants — Round ${triviYeahIICurrentRound}/${triviYeahIITotalRounds}`;
     setStatusMessage(`<div style="font-weight: 600; color: #00e676;">${currentPicker}'s pick!</div>`);
 
     // The grid arrives category-major (3 categories x 4 tiers, flat array of
@@ -934,7 +934,7 @@ function switchToTriviYeahIIBoardUI(grid, currentPicker, round, totalRounds) {
 // over" before the next board silently appears underneath it.
 function showTriviYeahIIRoundTransitionUI(completedRound, nextRound, totalRounds) {
     const panel = document.getElementById('active-content-stage');
-    document.getElementById('room-status-text').innerText = `Trivi-Yeah II — Round ${completedRound} Complete`;
+    document.getElementById('room-status-text').innerText = `Thinking Pants — Round ${completedRound} Complete`;
 
     panel.innerHTML = `
         <div class="panel-box" style="padding: 40px; flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; min-height: 400px; box-sizing: border-box;">
@@ -1027,7 +1027,7 @@ function doublerCategoryBadge(categoryLabel) {
 
 function showTriviYeahIIDoublerRevealUI(picker, points, categoryLabel) {
     const panel = document.getElementById('active-content-stage');
-    document.getElementById('room-status-text').innerText = "Trivi-Yeah II — Doubler!";
+    document.getElementById('room-status-text').innerText = "Thinking Pants — Doubler!";
     panel.innerHTML = `
         <div class="panel-box" style="padding: 40px; flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; min-height: 400px; box-sizing: border-box;">
             ${doublerCategoryBadge(categoryLabel)}
@@ -1059,7 +1059,7 @@ function showTriviYeahIIWagerPromptUI(picker, maxWager, tileValue, categoryLabel
 // every other timed phase) ticks down lobby-countdown.
 function showTriviYeahIISideBetsOpenUI(picker, wagerAmount, tileValue, categoryLabel) {
     const panel = document.getElementById('active-content-stage');
-    document.getElementById('room-status-text').innerText = "Trivi-Yeah II — Side Bets Open";
+    document.getElementById('room-status-text').innerText = "Thinking Pants — Side Bets Open";
     panel.innerHTML = `
         <div class="panel-box" style="padding: 40px; flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; min-height: 400px; box-sizing: border-box;">
             ${doublerCategoryBadge(categoryLabel)}
@@ -1105,7 +1105,7 @@ let finalWagerRevealLog = [];
 
 function showTriviYeahIIFinalCategoryRevealUI(topicLabel) {
     const panel = document.getElementById('active-content-stage');
-    document.getElementById('room-status-text').innerText = "Trivi-Yeah II — Final Wager";
+    document.getElementById('room-status-text').innerText = "Thinking Pants — Final Wager";
     panel.innerHTML = `
         <div class="panel-box" style="padding: 40px; flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; min-height: 400px; box-sizing: border-box;">
             <div style="font-size: 0.85rem; font-weight: 600; color: #64748b; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 14px;">One question left. Everything's on the line.</div>
@@ -1397,7 +1397,7 @@ function switchToLobbyVoteUI() {
                     <div class="progress-track"><div id="vbar-TRIVI_YEAH" class="progress-fill"></div></div>
                 </div>
                 <div class="vote-row">
-                    <div class="vote-meta"><span>Trivi-Yeah II <span class="module-descriptor">(Beta) Jeopardy-style board -- pick a tile, race to answer.</span></span><span id="vcount-TRIVI_YEAH_II" style="color: #64748b;">0 votes (0%)</span></div>
+                    <div class="vote-meta"><span>Thinking Pants <span class="module-descriptor">(Beta) Jeopardy-style board -- pick a tile, race to answer.</span></span><span id="vcount-TRIVI_YEAH_II" style="color: #64748b;">0 votes (0%)</span></div>
                     <div class="progress-track"><div id="vbar-TRIVI_YEAH_II" class="progress-fill" style="background: #06b6d4;"></div></div>
                 </div>
                 <div class="vote-row">

@@ -68,7 +68,9 @@ Mode keys are used in room votes and in `gameEngine.js`:
 - **TRIVI_YEAH** (Trivi-yeah!): multiple-choice trivia. Its rows are stored
   under `game_mode = 'TRIVIA'`, a legacy exception that is kept on purpose (see
   the mapping near the top of `gameEngine.js`).
-- **TRIVI_YEAH_II**: a Jeopardy-style board with 3 rounds, the Doubler
+- **TRIVI_YEAH_II** (shown to players as **Thinking Pants**, renamed from
+  "Trivi-Yeah II"; the internal key and `game_mode` value kept the old name):
+  a Jeopardy-style board with 3 rounds, the Doubler
   (wagering + side bets), column-sweep bonuses, and a Final Wager closer.
   Categories are listed in `TRIVI_YEAH_II_CATEGORIES`. Every category needs a
   full pool for every tier (the engine fails fast if one is incomplete).
@@ -131,6 +133,23 @@ and forth until we both agree the idea is good **and** worth the effort. So:
 - Explain in plain language. SQL is the part of the code that makes the most
   sense to Randy, so for everything else say what changed and why it matters
   for play, not just which functions moved.
+
+## Ideas in the works
+
+- **Thinking Pants art:** a jeans mascot, "pants on fire" for a missed
+  Doubler, a leg kick for a correct one, and gold pants spinning for the
+  winner. "Answers in Your Pants" is a candidate name for the speed badge.
+- **Profiler** (home mode, 4+ players): each round everyone privately answers
+  a personality/values question (2–7 options), then the TV posts one answer
+  ("2 of you said X") and everyone picks who said it. Detective points for
+  reading others, open-book points for being read, so honesty pays. Scoring
+  should be by share of a perfect read so ties of 1, 2 or 3 people score
+  fairly. End screen: a bar per player plus awards. Content rule: every
+  option must be one a person would comfortably own out loud. No politics,
+  religion as identity, sex, bodies, money, health, or questions about people
+  in the room.
+- **Mind Field:** a name saved for a future mode built around hidden traps
+  on a board.
 
 ## Known loose ends
 

@@ -258,7 +258,7 @@ function startGameForMode(roomCode, winningModule) {
     if (winningModule === 'TRIVI_YEAH_II') {
         startTriviYeahIIGame(roomCode).catch(error => {
             console.error(`❌ [Trivi-Yeah II] Failed to start Room ${roomCode}:`, error.message);
-            broadcastContentUnavailable(roomCode, 'Trivi-Yeah II');
+            broadcastContentUnavailable(roomCode, 'Thinking Pants');
             resetRoomToLobby(roomCode);
         });
         return;
@@ -1060,7 +1060,7 @@ function scheduleTriviYeahIINextStep(roomCode) {
             if (ty2.round >= ty2.totalRounds) {
                 startTriviYeahIIFinalWager(roomCode).catch(error => {
                     console.error(`❌ [Trivi-Yeah II] Failed to start Final Wager for Room ${roomCode}:`, error.message);
-                    broadcastContentUnavailable(roomCode, 'Trivi-Yeah II');
+                    broadcastContentUnavailable(roomCode, 'Thinking Pants');
                     resetRoomToLobby(roomCode);
                 });
                 return;
@@ -1082,7 +1082,7 @@ function scheduleTriviYeahIINextStep(roomCode) {
                 room.revealTimeout = null;
                 startTriviYeahIIRound(roomCode).catch(error => {
                     console.error(`❌ [Trivi-Yeah II] Failed to start round ${ty2.round} for Room ${roomCode}:`, error.message);
-                    broadcastContentUnavailable(roomCode, 'Trivi-Yeah II');
+                    broadcastContentUnavailable(roomCode, 'Thinking Pants');
                     resetRoomToLobby(roomCode);
                 });
             }, TRIVI_YEAH_II_ROUND_TRANSITION_MS);
