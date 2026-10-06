@@ -3,7 +3,7 @@ import dotenv from 'dotenv';
 import path from 'path';
 import { WebSocketServer } from 'ws';
 import pool from './config/database.js';
-import { handleIncomingMessage, activeRooms, getCategoriesForMode, resolveRequestedQuestionCount, compareByRank, closeRoom } from './services/gameEngine.js';
+import { handleIncomingMessage, activeRooms, getCategoriesForMode, resolveRequestedQuestionCount, compareByRank, closeRoom, profilerStatusFor, profilerTvSnapshot } from './services/gameEngine.js';
 import {
     isHostAuthorized, grantHostSession, isAccessCodeActive,
     isAdminAuthorized, grantAdminSession,
@@ -103,7 +103,7 @@ app.post('/api/create-room', async (req, res) => {
             currentQuestionIndex: -1,
             askedQuestionIds: new Set(),
             requestedQuestionCount: resolveRequestedQuestionCount(req.body && req.body.questionCount),
-            votes: { TRIVI_YEAH: 0, COUNTRY_MONKEY: 0, EMPOSSDURR: 0, FLAG_ME_DOWN: 0, ON_THE_SPECTRUM: 0, TRIVI_YEAH_II: 0 },
+            votes: { TRIVI_YEAH: 0, COUNTRY_MONKEY: 0, EMPOSSDURR: 0, FLAG_ME_DOWN: 0, ON_THE_SPECTRUM: 0, TRIVI_YEAH_II: 0, PROFILER: 0 },
             // Populated with real keys once the category vote phase actually starts.
             categoryVotes: {},
             // Bumped by every "fresh game" reset (Main Menu or Play Again
@@ -409,6 +409,13 @@ app.post('/api/room-status', (req, res) => {
                 myScore, myCorrectAnswers, myLeft, myEmoji
             });
         }
+        if (targetRoom && targetRoom.gameState === 'PROFILER_ROUND' && targetRoom.profiler) {
+            return res.json({
+                phase: 'PROFILER_ROUND_PHASE',
+                ...profilerStatusFor(targetRoom, playerName),
+                myScore, myCorrectAnswers, myLeft, myEmoji
+            });
+        }
         if (targetRoom && targetRoom.gameState === 'GAME_OVER') {
             // Same ordering the TV's final leaderboard used, so a player's phone
             // shows the exact placement (and can style itself gold/silver/bronze)
@@ -427,7 +434,13 @@ app.post('/api/room-status', (req, res) => {
                 // Lets the phone show a mode-specific "Play X Again" shortcut
                 // (EmpossDurr, On the Spectrum) only when that's actually the
                 // mode that just finished.
-                winningGameMode: targetRoom.winningGameMode
+                winningGameMode: targetRoom.winningGameMode,
+                // Profiler's "you know X best / X knows you best" lines,
+                // kept on the Game Over card so they don't vanish with the
+                // awards screen.
+                profilerPersonal: (targetRoom.winningGameMode === 'PROFILER' && targetRoom.profiler && targetRoom.profiler.results)
+                    ? (targetRoom.profiler.results.personal[playerName] || null)
+                    : null
             });
         }
         return res.json({ phase: 'WAITING', myScore, myCorrectAnswers, myLeft, myEmoji });
@@ -508,7 +521,8 @@ async function startServer() {
                                     // Round numbers only -- never the secret word or who the
                                     // impostor is, same rule as every other EmpossDurr broadcast.
                                     empossdurrRound: currentRoomState.empossdurr ? currentRoomState.empossdurr.currentRound : null,
-                                    empossdurrTotalRounds: currentRoomState.empossdurr ? currentRoomState.empossdurr.totalRounds : null
+                                    empossdurrTotalRounds: currentRoomState.empossdurr ? currentRoomState.empossdurr.totalRounds : null,
+                                    profiler: currentRoomState.gameState === 'PROFILER_ROUND' ? profilerTvSnapshot(currentRoomState) : null
                                 }));
                                 console.log(`[Sync Engine] Sent catch-up payload for active room ${roomCode} to fresh display listener.`);
                             }

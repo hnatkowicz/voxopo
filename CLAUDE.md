@@ -79,6 +79,13 @@ Mode keys are used in room votes and in `gameEngine.js`:
 - **EMPOSSDURR**: impostor social deduction. Impostor selection is
   *intentionally* pure random every round, not a rotation. Don't "fix" it.
 - **ON_THE_SPECTRUM**: guess where a player landed on a slider.
+- **PROFILER**: home mode, 4+ players. Each round everyone privately answers
+  a question about themselves, the TV posts the rarest answer given ("2 of
+  you said X"), and everyone picks who said it. Questions live in their own
+  `profiler_questions` table (`profiler_questions_seed.sql`), not in
+  `questions`. Scoring: a perfect read is 6 points split across the people
+  to find (+2 bonus when there were 2+), and +2 open-book for each person who
+  found you. Ends on a "Who Knows Who" awards screen before Game Over.
 - **FLAG_ME_DOWN**: not playable yet. Its content still needs to be written.
 
 ## Content
@@ -139,15 +146,9 @@ and forth until we both agree the idea is good **and** worth the effort. So:
 - **Thinking Pants art:** a jeans mascot, "pants on fire" for a missed
   Doubler, a leg kick for a correct one, and gold pants spinning for the
   winner. "Answers in Your Pants" is a candidate name for the speed badge.
-- **Profiler** (home mode, 4+ players): each round everyone privately answers
-  a personality/values question (2–7 options), then the TV posts one answer
-  ("2 of you said X") and everyone picks who said it. Detective points for
-  reading others, open-book points for being read, so honesty pays. Scoring
-  should be by share of a perfect read so ties of 1, 2 or 3 people score
-  fairly. End screen: a bar per player plus awards. Content rule: every
-  option must be one a person would comfortably own out loud. No politics,
-  religion as identity, sex, bodies, money, health, or questions about people
-  in the room.
+- **Profiler** content rule: every option must be one a person would
+  comfortably own out loud. No politics, religion as identity, sex, bodies,
+  money, health, or questions about people in the room.
 - **Mind Field:** a name saved for a future mode built around hidden traps
   on a board.
 
