@@ -122,6 +122,12 @@ and forth until we both agree the idea is good **and** worth the effort. So:
   Disagree out loud when you disagree. Agreeable-but-wrong helps nobody.
 - Build once we've landed on something. For a small, clear fix or request,
   just do it.
+- **Ship it yourself.** Once a change is built and verified, Claude commits,
+  pushes, opens the PR and merges it into `main`. Randy doesn't want to be a
+  step in the git workflow. Merging deploys to the live site on Render, so
+  "verified" means it really works as intended (and say plainly what
+  couldn't be checked). Two things still go to Randy first: design decisions
+  (per the pushback loop above) and anything touching the live database.
 - Explain in plain language. SQL is the part of the code that makes the most
   sense to Randy, so for everything else say what changed and why it matters
   for play, not just which functions moved.
