@@ -818,7 +818,8 @@ function revealTriviYeahIIDoubler(roomCode) {
         type: 'TRIVI_YEAH_II_DOUBLER_REVEAL',
         index: ty2.activeCellIndex,
         picker: ty2.currentPicker,
-        points: cell.points
+        points: cell.points,
+        categoryLabel: cell.categoryLabel
     });
 
     if (room.revealTimeout) clearTimeout(room.revealTimeout);
@@ -842,7 +843,8 @@ function openTriviYeahIIWager(roomCode) {
         type: 'TRIVI_YEAH_II_WAGER_PROMPT',
         picker: ty2.currentPicker,
         maxWager,
-        tileValue: cell.points
+        tileValue: cell.points,
+        categoryLabel: cell.categoryLabel
     });
 
     if (room.revealTimeout) clearTimeout(room.revealTimeout);
@@ -879,7 +881,8 @@ function openTriviYeahIISideBets(roomCode, startCount = TRIVI_YEAH_II_SIDE_BET_S
             type: 'TRIVI_YEAH_II_SIDE_BETS_OPEN',
             picker: ty2.currentPicker,
             wagerAmount: ty2.doubler.wagerAmount,
-            tileValue: cell.points
+            tileValue: cell.points,
+            categoryLabel: cell.categoryLabel
         });
     }
 
@@ -1229,14 +1232,64 @@ function evaluateTriviYeahIIDoublerAnswer(room, roomCode, cell, correctLetter) {
 // Free-text matching: trim, uppercase, collapse whitespace, and strip the
 // handful of punctuation marks a typed answer might include -- "Mars."
 // and "mars" both need to match 'Mars' without requiring a letter-perfect
-// retype. Deliberately NOT lenient about articles or synonyms (yet) --
-// start strict, loosen later only if real play shows it's too harsh.
+// retype.
 function normalizeFinalWagerAnswer(text) {
     return (text || '')
         .trim()
         .toUpperCase()
         .replace(/[.,!?'"]/g, '')
         .replace(/\s+/g, ' ');
+}
+
+// Standard dynamic-programming edit distance (insert/delete/substitute, all
+// cost 1) between two already-normalized strings. No dependency needed --
+// this is the whole algorithm.
+function levenshteinDistance(a, b) {
+    const m = a.length, n = b.length;
+    if (m === 0) return n;
+    if (n === 0) return m;
+    let prevRow = Array.from({ length: n + 1 }, (_, j) => j);
+    for (let i = 1; i <= m; i++) {
+        const currRow = [i];
+        for (let j = 1; j <= n; j++) {
+            currRow[j] = a[i - 1] === b[j - 1]
+                ? prevRow[j - 1]
+                : 1 + Math.min(prevRow[j - 1], prevRow[j], currRow[j - 1]);
+        }
+        prevRow = currRow;
+    }
+    return prevRow[n];
+}
+
+// How many typo'd characters to forgive for a string this long -- short
+// answers ("Atlas") still need a real match, longer ones ("Sleipnir",
+// "Alexander Graham Bell") can absorb more drift before it stops looking
+// like the same word. Deliberately modest: this is a safety net for
+// genuine misspellings, not a license to guess loosely on a question
+// worth real points.
+function finalWagerFuzzyTolerance(normalizedLength) {
+    if (normalizedLength <= 4) return 1;
+    if (normalizedLength <= 8) return 2;
+    if (normalizedLength <= 14) return 3;
+    return 4;
+}
+
+// A Final Wager answer is correct if it exactly matches ANY authored
+// variant (full name, surname-only, short title vs. long title -- whatever
+// the question's own accepted_answers lists), or is within a small typo
+// tolerance of one. Authored variants are for legitimately different
+// phrasings; the fuzzy fallback is for misspellings of a phrasing nobody
+// explicitly listed -- two different problems, two different mechanisms
+// (see design chat).
+function isFinalWagerAnswerCorrect(submittedRaw, acceptedAnswers) {
+    const submitted = normalizeFinalWagerAnswer(submittedRaw);
+    if (!submitted) return false;
+    return acceptedAnswers.some(variant => {
+        const normalizedVariant = normalizeFinalWagerAnswer(variant);
+        if (submitted === normalizedVariant) return true;
+        const tolerance = finalWagerFuzzyTolerance(normalizedVariant.length);
+        return tolerance > 0 && levenshteinDistance(submitted, normalizedVariant) <= tolerance;
+    });
 }
 
 // One random question from its own 'FINAL_WAGER' category -- a pool
@@ -1247,7 +1300,7 @@ function normalizeFinalWagerAnswer(text) {
 // before the question itself.
 async function pickFinalWagerQuestion() {
     const result = await pool.query(
-        `SELECT question_text, correct_answer, subcategory
+        `SELECT question_text, correct_answer, subcategory, accepted_answers
          FROM questions
          WHERE game_mode = 'TRIVI_YEAH_II' AND category = 'FINAL_WAGER'
          ORDER BY random() LIMIT 1`
@@ -1256,20 +1309,28 @@ async function pickFinalWagerQuestion() {
         throw new Error('No Final Wager content available.');
     }
     const row = result.rows[0];
-    return { questionText: row.question_text, correctAnswer: row.correct_answer, topicLabel: row.subcategory || 'Final Wager' };
+    // accepted_answers is the author's list of legitimate alternate
+    // phrasings (surname-only, short title vs. long title, etc.) -- falls
+    // back to just the one correct_answer for any row that doesn't bother
+    // customizing it.
+    const acceptedAnswers = (row.accepted_answers && row.accepted_answers.length > 0)
+        ? row.accepted_answers
+        : [row.correct_answer];
+    return { questionText: row.question_text, correctAnswer: row.correct_answer, acceptedAnswers, topicLabel: row.subcategory || 'Final Wager' };
 }
 
 async function startTriviYeahIIFinalWager(roomCode) {
     const room = activeRooms[roomCode];
     if (!room) return;
 
-    const { questionText, correctAnswer, topicLabel } = await pickFinalWagerQuestion();
+    const { questionText, correctAnswer, acceptedAnswers, topicLabel } = await pickFinalWagerQuestion();
 
     room.gameState = 'TRIVI_YEAH_II_FINAL_WAGER';
     room.finalWager = {
         topicLabel,
         questionText,
         correctAnswer, // server-only -- never broadcast until the reveal step that needs it
+        acceptedAnswers, // server-only -- the variants correct is actually checked against
         wagers: {},
         answers: {},
         phase: 'CATEGORY_REVEAL',
@@ -1361,7 +1422,7 @@ function closeTriviYeahIIFinalAnswerPhase(roomCode) {
     fw.revealSteps = activePlayers.map(p => {
         const wagerAmount = fw.wagers[p.name] || 0;
         const rawAnswer = fw.answers[p.name] || '';
-        const correct = rawAnswer.length > 0 && normalizeFinalWagerAnswer(rawAnswer) === normalizeFinalWagerAnswer(fw.correctAnswer);
+        const correct = rawAnswer.length > 0 && isFinalWagerAnswerCorrect(rawAnswer, fw.acceptedAnswers);
         return { playerName: p.name, wagerAmount, answerText: rawAnswer, correct };
     });
     fw.revealIndex = -1;

@@ -278,6 +278,7 @@ app.post('/api/room-status', (req, res) => {
                 // FOR/AGAINST message handler stores, with amount always equal
                 // to that tile value.
                 doubler: ty2.doubler ? {
+                    categoryLabel: ty2.grid[ty2.activeCellIndex] ? ty2.grid[ty2.activeCellIndex].categoryLabel : null,
                     tileValue: ty2.grid[ty2.activeCellIndex] ? ty2.grid[ty2.activeCellIndex].points : null,
                     wagerAmount: ty2.doubler.wagerAmount,
                     maxWager: (ty2.phase === 'DOUBLER_WAGER' && playerName === ty2.currentPicker)

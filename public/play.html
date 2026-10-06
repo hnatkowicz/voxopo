@@ -453,6 +453,10 @@
              wager, then everyone else's informed side bet at the tile's own
              value -- all before rejoining the normal question/answers flow. -->
         <div id="ty2-doubler-container" style="display: none; margin-top: 16px; text-align: center;">
+            <!-- Persistent through reveal/wager/side-bet -- players kept
+                 losing track of the category once it vanished after the
+                 opening beat. -->
+            <div id="ty2-doubler-category-badge" style="font-size: 0.8rem; font-weight: 600; color: #ffa500; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 10px; display: none;"></div>
             <div id="ty2-doubler-reveal-box" style="display: none;">
                 <div style="font-size: 1.8rem; font-weight: 800; color: #ffa500; margin-bottom: 8px;">DOUBLER!</div>
                 <div id="ty2-doubler-reveal-text" style="color: #94a3b8;"></div>
@@ -1080,6 +1084,14 @@
             revealBox.style.display = 'none';
             wagerBox.style.display = 'none';
             sidebetBox.style.display = 'none';
+
+            const categoryBadge = document.getElementById('ty2-doubler-category-badge');
+            if (data.doubler && data.doubler.categoryLabel) {
+                categoryBadge.innerText = `Category: ${data.doubler.categoryLabel}`;
+                categoryBadge.style.display = 'block';
+            } else {
+                categoryBadge.style.display = 'none';
+            }
 
             const tileValue = data.doubler ? data.doubler.tileValue : null;
 

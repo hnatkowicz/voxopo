@@ -1,7 +1,7 @@
 document.addEventListener("DOMContentLoaded", () => {
     document.body.setAttribute('data-view', 'gateway');
 
-    ['countdown-music', 'category-music', 'win-music', 'declare-music', 'final-wager-timer-sound', 'answer-warning-sound'].forEach(id => {
+    ['countdown-music', 'category-music', 'win-music', 'declare-music', 'final-wager-timer-sound', 'answer-warning-sound', 'doubler-reveal-sound', 'doubler-correct-sound', 'doubler-wrong-sound'].forEach(id => {
         const audio = document.getElementById(id);
         if (audio) audio.volume = 0.5;
     });
@@ -47,12 +47,18 @@ if (btnSubmitSpectate) {
         // (which has its own dedicated timer sound). Armed on
         // TRIVI_YEAH_II_ANSWERS_REVEAL, disarmed the moment that tile resolves.
         let ty2AnswerCountdownActive = false;
+        // Last secondsLeft value seen on a GAME_TIMER_TICK, so the chime can
+        // tell a natural 4->3 tick (time's genuinely running low) apart from
+        // a fast-forward snap landing on "3" because everyone already
+        // answered -- the family doesn't want the chime firing on the
+        // latter, since the round's already resolving.
+        let lastSeenGameSecondsLeft = null;
 
         // Primes all three <audio> elements against a real user gesture (a click), so
         // later programmatic .play() calls fired from WebSocket handlers aren't blocked
         // by the browser's autoplay policy, which only allows audio after interaction.
         function unlockAllAudio() {
-            ['countdown-music', 'category-music', 'win-music', 'declare-music', 'final-wager-timer-sound', 'answer-warning-sound'].forEach(id => {
+            ['countdown-music', 'category-music', 'win-music', 'declare-music', 'final-wager-timer-sound', 'answer-warning-sound', 'doubler-reveal-sound', 'doubler-correct-sound', 'doubler-wrong-sound'].forEach(id => {
                 const audio = document.getElementById(id);
                 if (!audio) return;
                 const p = audio.play();
@@ -178,12 +184,14 @@ if (btnSubmitSpectate) {
                     document.getElementById('lobby-countdown').innerText = data.secondsLeft;
                     // The family asked for NO music through a Trivi-Yeah II tile's
                     // countdown -- just a light three-tone cue near the end so the
-                    // room still knows the question is live. Fires once, right as
-                    // 3 seconds remain (answer-warning.wav is a 3-tone, ~2.3s clip
-                    // timed to finish just as the clock hits zero).
-                    if (ty2AnswerCountdownActive && parseInt(data.secondsLeft, 10) === 3) {
+                    // room still knows the question is live. Only on a genuine
+                    // 4->3 tick, never when "3" arrives via the fast-forward snap
+                    // (everyone already answered -- nothing left to warn about).
+                    const secondsNum = parseInt(data.secondsLeft, 10);
+                    if (ty2AnswerCountdownActive && secondsNum === 3 && lastSeenGameSecondsLeft === 4) {
                         playAudioTrack('answer-warning-sound');
                     }
+                    lastSeenGameSecondsLeft = secondsNum;
                 }
                 // Listen for the server's clock expiration to reveal the correct answer
                 if (data.type === 'REVEAL_CORRECT_ANSWER') {
@@ -315,18 +323,20 @@ if (btnSubmitSpectate) {
                 // visible), then back into the shared question/answers staging.
                 if (data.type === 'TRIVI_YEAH_II_DOUBLER_REVEAL') {
                     document.getElementById('lobby-countdown').innerText = '';
-                    showTriviYeahIIDoublerRevealUI(data.picker, data.points);
+                    showTriviYeahIIDoublerRevealUI(data.picker, data.points, data.categoryLabel);
                     stopCountdownMusic();
+                    playAudioTrack('doubler-reveal-sound');
                 }
                 if (data.type === 'TRIVI_YEAH_II_WAGER_PROMPT') {
-                    showTriviYeahIIWagerPromptUI(data.picker, data.maxWager, data.tileValue);
+                    showTriviYeahIIWagerPromptUI(data.picker, data.maxWager, data.tileValue, data.categoryLabel);
                 }
                 if (data.type === 'TRIVI_YEAH_II_SIDE_BETS_OPEN') {
-                    showTriviYeahIISideBetsOpenUI(data.picker, data.wagerAmount, data.tileValue);
+                    showTriviYeahIISideBetsOpenUI(data.picker, data.wagerAmount, data.tileValue, data.categoryLabel);
                 }
                 if (data.type === 'TRIVI_YEAH_II_DOUBLER_RESULT') {
                     document.getElementById('room-status-text').innerText = "Trivi-Yeah II — Doubler Result";
                     document.getElementById('lobby-countdown').innerText = "0 s";
+                    playAudioTrack(data.pickerCorrect ? 'doubler-correct-sound' : 'doubler-wrong-sound');
                     showTriviYeahIIDoublerResultUI(data);
                     updateLeaderboardUI(cachedPlayersSnapshot);
                     ty2AnswerCountdownActive = false;
@@ -1005,11 +1015,22 @@ function showTriviYeahIISpotlightUI(partial) {
 
 // Dramatic full-panel beat before the wager prompt -- same shape as the
 // round-transition announcement, just themed to call out the twist.
-function showTriviYeahIIDoublerRevealUI(picker, points) {
+// categoryBadge is shown through the whole Doubler sequence (reveal, wager,
+// side bets) -- players kept losing track of which category they were
+// wagering on once the tile's category label disappeared after the opening
+// beat.
+function doublerCategoryBadge(categoryLabel) {
+    return categoryLabel
+        ? `<div style="font-size: 0.8rem; font-weight: 600; color: #ffa500; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 10px;">Category: ${categoryLabel}</div>`
+        : '';
+}
+
+function showTriviYeahIIDoublerRevealUI(picker, points, categoryLabel) {
     const panel = document.getElementById('active-content-stage');
     document.getElementById('room-status-text').innerText = "Trivi-Yeah II — Doubler!";
     panel.innerHTML = `
         <div class="panel-box" style="padding: 40px; flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; min-height: 400px; box-sizing: border-box;">
+            ${doublerCategoryBadge(categoryLabel)}
             <div style="font-size: 0.85rem; font-weight: 600; color: #64748b; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 14px;">Surprise tile</div>
             <div style="font-size: 2.4rem; font-weight: 800; color: #ffa500; margin-bottom: 10px; text-shadow: 0 0 20px rgba(255, 165, 0, 0.4);">DOUBLER!</div>
             <div style="font-size: 1.2rem; font-weight: 700; color: #ffffff;">${picker} is on the hook for this one.</div>
@@ -1020,10 +1041,11 @@ function showTriviYeahIIDoublerRevealUI(picker, points) {
 
 // Waiting room while only the picker's phone shows a wager input -- nothing
 // for anyone else to do yet, so this stays deliberately passive.
-function showTriviYeahIIWagerPromptUI(picker, maxWager, tileValue) {
+function showTriviYeahIIWagerPromptUI(picker, maxWager, tileValue, categoryLabel) {
     const panel = document.getElementById('active-content-stage');
     panel.innerHTML = `
         <div class="panel-box" style="padding: 40px; flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; min-height: 400px; box-sizing: border-box;">
+            ${doublerCategoryBadge(categoryLabel)}
             <div style="font-size: 0.85rem; font-weight: 600; color: #64748b; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 14px;">Waiting on the wager</div>
             <div style="font-size: 1.6rem; font-weight: 700; color: #ffffff; margin-bottom: 10px;">${picker} is deciding how much to risk&hellip;</div>
             <div style="font-size: 1rem; color: #94a3b8;">Anywhere from 0 to ${maxWager} points (tile is worth ${tileValue})</div>
@@ -1035,11 +1057,12 @@ function showTriviYeahIIWagerPromptUI(picker, maxWager, tileValue) {
 // everyone else places an informed For/Against/Pass bet at the tile's own
 // fixed value while the shared countdown (GAME_TIMER_TICK, same banner as
 // every other timed phase) ticks down lobby-countdown.
-function showTriviYeahIISideBetsOpenUI(picker, wagerAmount, tileValue) {
+function showTriviYeahIISideBetsOpenUI(picker, wagerAmount, tileValue, categoryLabel) {
     const panel = document.getElementById('active-content-stage');
     document.getElementById('room-status-text').innerText = "Trivi-Yeah II — Side Bets Open";
     panel.innerHTML = `
         <div class="panel-box" style="padding: 40px; flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; min-height: 400px; box-sizing: border-box;">
+            ${doublerCategoryBadge(categoryLabel)}
             <div style="font-size: 0.85rem; font-weight: 600; color: #64748b; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 14px;">${picker}'s wager</div>
             <div style="font-size: 2.2rem; font-weight: 800; color: #ffa500; margin-bottom: 18px;">${wagerAmount} points</div>
             <div style="font-size: 1.1rem; font-weight: 600; color: #ffffff;">Will ${picker} get it right?</div>
