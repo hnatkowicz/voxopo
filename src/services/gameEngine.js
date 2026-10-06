@@ -15,12 +15,15 @@ const MIN_OWN_WRONG_ANSWERS = 3; // a question with its own pool needs at least 
 const MAX_QUESTIONS_PER_GAME = 30;
 const MIN_QUESTIONS_PER_GAME = 15;
 const DEFAULT_QUESTIONS_PER_GAME = 15; // fixed length, no lobby picker for this right now
-// Post-game "return to lobby" votes wait this long from the FIRST vote cast
-// before resolving with whatever's been cast so far -- long enough that
+// Post-game Play Again / Main Menu votes wait this long from the FIRST vote
+// cast before resolving with whatever's been cast so far -- long enough that
 // everyone actually gets to read the final leaderboard before the room
 // moves on, but short enough that it can't be stalled forever by someone who
-// never taps anything. See castReturnToLobbyVote.
-const GAME_OVER_RETURN_VOTE_SECONDS = 20;
+// never taps anything. Was 20s with a majority early-out; Randy's call was
+// that the room only moves on once EVERYONE has voted (or this runs out), so
+// 3 of 5 can't drag the table off a game the others were still enjoying.
+// See castReturnToLobbyVote.
+const GAME_OVER_RETURN_VOTE_SECONDS = 30;
 // How long a room survives after its last active player leaves, before it's
 // actually closed and the room code freed up -- long enough that a group
 // stepping away for a short break (or just wrapping up for now) can come
@@ -214,7 +217,15 @@ function executeLobbyPhaseExpiration(roomCode) {
         room.lobbyTimerInterval = null;
     }
 
-    const winningModule = calculateElectionWinner(room);
+    startGameForMode(roomCode, calculateElectionWinner(room));
+}
+
+// Everything that happens once a mode has been chosen -- shared by the lobby
+// election above and by Play Again (resetRoomForReplay), so every mode gets
+// Play Again for free instead of each one needing its own shortcut.
+function startGameForMode(roomCode, winningModule) {
+    const room = activeRooms[roomCode];
+    if (!room) return;
     room.winningGameMode = winningModule;
 
     // One unified statement pool, no theme to pick between -- skip the
@@ -261,7 +272,7 @@ function executeLobbyPhaseExpiration(roomCode) {
         const picked = categories[Math.floor(Math.random() * categories.length)];
         room.activeCategoryKey = picked.key;
         room.activeDeckName = picked.label;
-        console.log(`[Room Engine] Lobby phase closed for Room ${roomCode}. Winner: TRIVI_YEAH. Auto-picked deck: ${picked.label}`);
+        console.log(`[Room Engine] Room ${roomCode} starting TRIVI_YEAH. Auto-picked deck: ${picked.label}`);
         startQuestionBankGame(roomCode);
         return;
     }
@@ -273,7 +284,7 @@ function executeLobbyPhaseExpiration(roomCode) {
     room.categoryVotes = {};
     categories.forEach(c => { room.categoryVotes[c.key] = 0; });
 
-    console.log(`[Room Engine] Lobby phase closed for Room ${roomCode}. Winner: ${winningModule}`);
+    console.log(`[Room Engine] Room ${roomCode} starting ${winningModule} -- opening its category vote.`);
 
     broadcastToRoom(roomCode, {
         type: 'TRANSITION_TO_CATEGORY_VOTE',
@@ -2001,97 +2012,37 @@ function resetPlayerStatsForFreshGame(player) {
     player.impostorCatchStreak = 0;
 }
 
-// Resets score/roster state exactly like resetRoomToLobby, but short-circuits
-// straight back into a fresh EmpossDurr round instead of the full 5-way mode
-// election -- lets a group that's enjoying EmpossDurr jump back in without
-// re-litigating the mode vote every time. Single-tap, same reasoning as the
-// Play Again fix: no unanimous consensus required. No category-vote detour
-// either, same as a fresh EmpossDurr game (see executeLobbyPhaseExpiration).
-function resetRoomToEmpossDurrGame(roomCode) {
+// Play Again: same roster, same mode, every stat cleared -- skips the mode
+// election and goes straight into whatever that mode does first (its round,
+// its board, or for Country Monkey its region vote, since replaying the same
+// region would mostly repeat countries). One shared path for every mode so a
+// new mode gets Play Again automatically -- this used to be a separate
+// hand-built shortcut per mode, and only EmpossDurr and On the Spectrum ever
+// got one.
+function resetRoomForReplay(roomCode) {
     const room = activeRooms[roomCode];
     if (!room) return;
 
-    clearEmpossDurrTimers(room);
-    if (room.timerInterval) { clearInterval(room.timerInterval); room.timerInterval = null; }
-    if (room.categoryTimerInterval) { clearInterval(room.categoryTimerInterval); room.categoryTimerInterval = null; }
-    if (room.revealTimeout) { clearTimeout(room.revealTimeout); room.revealTimeout = null; }
-    if (room.returnVoteTimeout) { clearTimeout(room.returnVoteTimeout); room.returnVoteTimeout = null; }
-    room.returnVotes = new Map();
+    const mode = room.winningGameMode;
+    const activePlayers = clearRoomForFreshGame(room);
 
-    room.winningGameMode = 'EMPOSSDURR';
-    room.empossdurr = null;
-    room.answers = {};
-    room.answerOrder = [];
-
-    const activePlayers = Object.values(room.players).filter(p => !p.left);
-
-    // Bumping this marks "a fresh game started" -- a player who left before
-    // this reset and rejoins afterward gets caught by the epoch mismatch in
-    // the join handler and reset then too, instead of carrying a stale score
-    // into whatever mode this room plays next.
-    room.gameEpoch = (room.gameEpoch || 0) + 1;
-    activePlayers.forEach(player => {
-        resetPlayerStatsForFreshGame(player);
-        player.statsEpoch = room.gameEpoch;
-    });
-
-    console.log(`[Room Engine] Room ${roomCode} jumping straight back into EmpossDurr -- roster kept, stats cleared.`);
+    console.log(`[Room Engine] Room ${roomCode} playing ${mode} again -- roster kept, stats cleared.`);
 
     // Without this the TV's Active Standings panel just keeps showing the
     // previous game's final scores until some unrelated event (a vote tally,
-    // an answer) happens to redraw it -- same fix as resetRoomToLobby already has.
+    // an answer) happens to redraw it -- same fix as resetRoomToLobby has.
     broadcastToRoom(roomCode, { type: 'LEADERBOARD_UPDATE', players: activePlayers });
 
-    startEmpossDurrGame(roomCode).catch(error => {
-        console.error(`❌ [EmpossDurr] Failed to restart Room ${roomCode}:`, error.message);
-        broadcastContentUnavailable(roomCode, 'EmpossDurr');
-        resetRoomToLobby(roomCode);
-    });
+    startGameForMode(roomCode, mode);
 }
 
-// Same shortcut reasoning as resetRoomToEmpossDurrGame, but On the
-// Spectrum has no category-vote phase to land in first -- it's always drawn
-// from one unified statement pool -- so this jumps straight into
-// startOnTheSpectrumGame instead.
-function resetRoomToOnTheSpectrumGame(roomCode) {
-    const room = activeRooms[roomCode];
-    if (!room) return;
-
-    clearOnTheSpectrumTimers(room);
-    if (room.timerInterval) { clearInterval(room.timerInterval); room.timerInterval = null; }
-    if (room.categoryTimerInterval) { clearInterval(room.categoryTimerInterval); room.categoryTimerInterval = null; }
-    if (room.revealTimeout) { clearTimeout(room.revealTimeout); room.revealTimeout = null; }
-    if (room.returnVoteTimeout) { clearTimeout(room.returnVoteTimeout); room.returnVoteTimeout = null; }
-    room.returnVotes = new Map();
-
-    room.winningGameMode = 'ON_THE_SPECTRUM';
-    room.onTheSpectrum = null;
-
-    const activePlayers = Object.values(room.players).filter(p => !p.left);
-    room.gameEpoch = (room.gameEpoch || 0) + 1;
-    activePlayers.forEach(player => {
-        resetPlayerStatsForFreshGame(player);
-        player.statsEpoch = room.gameEpoch;
-    });
-
-    console.log(`[Room Engine] Room ${roomCode} jumping straight back into On the Spectrum -- roster kept, stats cleared.`);
-
-    broadcastToRoom(roomCode, { type: 'LEADERBOARD_UPDATE', players: activePlayers });
-
-    startOnTheSpectrumGame(roomCode).catch(error => {
-        console.error(`❌ [On the Spectrum] Failed to restart Room ${roomCode}:`, error.message);
-        broadcastContentUnavailable(roomCode, 'On the Spectrum');
-        resetRoomToLobby(roomCode);
-    });
-}
-
-// A single tap on "Play Again"/"Play EmpossDurr Again" used to reset the
-// whole room instantly -- fine for not stranding a room on an AFK player,
-// but real play surfaced the opposite problem: one fast player could yank
-// everyone else off the leaderboard before they'd had a chance to look at
-// it. This is the middle ground -- majority resolves immediately, and a
-// backstop timer (started on the FIRST vote, not at game-over) still
-// guarantees the room can't be stuck forever on one holdout.
+// The Game Over screen's Play Again / Main Menu vote. A single tap used to
+// reset the whole room instantly (one fast player could yank everyone off
+// the leaderboard), then a majority did (still let 3 of 5 end things for
+// the other 2). Now it waits for EVERYONE -- the group's already talked it
+// over out loud by the time they're tapping -- with a backstop timer
+// (started on the FIRST vote, not at game-over) so one player who wandered
+// off can't strand the room.
 function castReturnToLobbyVote(roomCode, playerName, action) {
     const room = activeRooms[roomCode];
     if (!room) return null;
@@ -2105,40 +2056,33 @@ function castReturnToLobbyVote(roomCode, playerName, action) {
         totalNeeded: activePlayers.length
     });
 
-    const neededForMajority = Math.floor(activePlayers.length / 2) + 1;
-    if (room.returnVotes.size >= neededForMajority) {
+    if (activePlayers.every(p => room.returnVotes.has(p.name))) {
         resolveReturnToLobbyVote(roomCode);
-        return `Majority's in -- moving on!`;
+        return `Everyone's in -- moving on!`;
     }
 
     if (!room.returnVoteTimeout) {
         room.returnVoteTimeout = setTimeout(() => resolveReturnToLobbyVote(roomCode), GAME_OVER_RETURN_VOTE_SECONDS * 1000);
     }
-    return `Vote recorded (${room.returnVotes.size}/${activePlayers.length}) -- resolves once a majority agrees, or in ${GAME_OVER_RETURN_VOTE_SECONDS}s.`;
+    return `Vote recorded (${room.returnVotes.size}/${activePlayers.length}) -- moves on once everyone's voted, or ${GAME_OVER_RETURN_VOTE_SECONDS}s after the first vote.`;
 }
 
-// Resolves whichever destination has more votes cast so far (ties favor the
-// plain lobby, since it's always a valid choice regardless of what the last
-// game was). Only ever called with at least one vote already cast -- either
-// castReturnToLobbyVote just added one, or the backstop timer only starts
-// once the first vote lands.
+// Play Again needs STRICTLY more votes than Main Menu; a tie goes to the
+// lobby, since it's always a valid choice whatever the last game was.
+// Anyone who never voted simply isn't counted. Only ever called with at
+// least one vote already cast -- either castReturnToLobbyVote just added
+// one, or the backstop timer only starts once the first vote lands.
 function resolveReturnToLobbyVote(roomCode) {
     const room = activeRooms[roomCode];
     if (!room || !room.returnVotes || room.returnVotes.size === 0) return;
     if (room.returnVoteTimeout) { clearTimeout(room.returnVoteTimeout); room.returnVoteTimeout = null; }
 
-    const counts = { START: 0, PLAY_EMPOSSDURR_AGAIN: 0, PLAY_ON_THE_SPECTRUM_AGAIN: 0 };
+    const counts = { START: 0, PLAY_AGAIN: 0 };
     room.returnVotes.forEach(action => { if (action in counts) counts[action]++; });
     room.returnVotes = new Map();
 
-    // Whichever destination has the STRICTLY most votes wins; a tie for the
-    // top spot (between any combination, including "nobody voted a
-    // shortcut at all") falls through to the plain lobby -- same "always a
-    // valid choice" reasoning as before, just extended from two options to three.
-    if (counts.PLAY_EMPOSSDURR_AGAIN > counts.START && counts.PLAY_EMPOSSDURR_AGAIN > counts.PLAY_ON_THE_SPECTRUM_AGAIN) {
-        resetRoomToEmpossDurrGame(roomCode);
-    } else if (counts.PLAY_ON_THE_SPECTRUM_AGAIN > counts.START && counts.PLAY_ON_THE_SPECTRUM_AGAIN > counts.PLAY_EMPOSSDURR_AGAIN) {
-        resetRoomToOnTheSpectrumGame(roomCode);
+    if (counts.PLAY_AGAIN > counts.START) {
+        resetRoomForReplay(roomCode);
     } else {
         resetRoomToLobby(roomCode);
     }
@@ -2163,18 +2107,12 @@ export function closeRoom(roomCode) {
     return true;
 }
 
-// Triggered by post-game consensus (every active player voting START while
-// GAME_OVER) -- keeps the room code and roster intact (nobody rescans a QR
-// code or retypes their name) but wipes every game-specific stat clean, per
-// the explicit "no score/badges/streaks carry over" design: this starts a
-// fresh game, not a running Game Night total. Mode votes are the one thing
-// left untouched -- they're cast once at join time with no separate "change
-// your vote" command, so clearing them would leave a player with no way to
-// ever vote again.
-function resetRoomToLobby(roomCode) {
-    const room = activeRooms[roomCode];
-    if (!room) return;
-
+// Wipes every game-specific stat and timer clean while keeping the room code
+// and roster intact (nobody rescans a QR code or retypes their name), per
+// the explicit "no score/badges/streaks carry over" design: what comes next
+// is a fresh game, not a running Game Night total. Shared by
+// resetRoomToLobby and resetRoomForReplay. Returns the active players.
+function clearRoomForFreshGame(room) {
     if (room.timerInterval) { clearInterval(room.timerInterval); room.timerInterval = null; }
     if (room.categoryTimerInterval) { clearInterval(room.categoryTimerInterval); room.categoryTimerInterval = null; }
     if (room.revealTimeout) { clearTimeout(room.revealTimeout); room.revealTimeout = null; }
@@ -2183,8 +2121,6 @@ function resetRoomToLobby(roomCode) {
     clearOnTheSpectrumTimers(room);
     clearEmpossDurrTimers(room);
 
-    room.gameState = 'LOBBY';
-    room.winningGameMode = null;
     room.activeQuestionData = null;
     room.currentQuestionData = null;
     room.activeDeckName = null;
@@ -2198,14 +2134,36 @@ function resetRoomToLobby(roomCode) {
     room.categoryVotes = {};
     room.empossdurr = null;
     room.onTheSpectrum = null;
+    room.triviYeahII = null;
     room.finalWager = null;
 
-    room.votes = { TRIVI_YEAH: 0, COUNTRY_MONKEY: 0, EMPOSSDURR: 0, FLAG_ME_DOWN: 0, ON_THE_SPECTRUM: 0, TRIVI_YEAH_II: 0 };
     const activePlayers = Object.values(room.players).filter(p => !p.left);
+    // Bumping this marks "a fresh game started" -- a player who left before
+    // this reset and rejoins afterward gets caught by the epoch mismatch in
+    // the join handler and reset then too, instead of carrying a stale score
+    // into whatever this room plays next.
     room.gameEpoch = (room.gameEpoch || 0) + 1;
     activePlayers.forEach(player => {
         resetPlayerStatsForFreshGame(player);
         player.statsEpoch = room.gameEpoch;
+    });
+    return activePlayers;
+}
+
+// Main Menu from Game Over: back to the mode election. Mode votes are the
+// one thing left untouched -- they're cast once at join time with no
+// separate "change your vote" command, so clearing them would leave a
+// player with no way to ever vote again.
+function resetRoomToLobby(roomCode) {
+    const room = activeRooms[roomCode];
+    if (!room) return;
+
+    const activePlayers = clearRoomForFreshGame(room);
+    room.gameState = 'LOBBY';
+    room.winningGameMode = null;
+
+    room.votes = { TRIVI_YEAH: 0, COUNTRY_MONKEY: 0, EMPOSSDURR: 0, FLAG_ME_DOWN: 0, ON_THE_SPECTRUM: 0, TRIVI_YEAH_II: 0 };
+    activePlayers.forEach(player => {
         if (room.votes[player.vote] !== undefined) room.votes[player.vote]++;
     });
 
@@ -2858,8 +2816,9 @@ export function handleIncomingMessage(fromPhone, bodyText, explicitRoomCode, pre
                 }
             } else if (currentRoom.gameState === 'GAME_OVER' && currentRoom.returnVotes) {
                 currentRoom.returnVotes.delete(actingPlayerName);
-                const neededForMajority = Math.floor(remainingActivePlayers.length / 2) + 1;
-                if (currentRoom.returnVotes.size >= neededForMajority) {
+                // Whoever's left may now all have voted -- don't make them
+                // wait out the backstop for someone who's gone.
+                if (currentRoom.returnVotes.size > 0 && remainingActivePlayers.every(p => currentRoom.returnVotes.has(p.name))) {
                     resolveReturnToLobbyVote(associatedRoomCode);
                 } else {
                     broadcastToRoom(associatedRoomCode, {
@@ -2940,14 +2899,8 @@ export function handleIncomingMessage(fromPhone, bodyText, explicitRoomCode, pre
 
     // 3. DEMOCRACY WITH OOMPH: Clock skipping override calculation loops
     if (cleanText.toUpperCase() === 'START') {
-        // Play Again used to fire the instant a single active player tapped
-        // it -- that fixed an earlier problem (unanimous consensus let one
-        // player who'd silently wandered off strand everyone else on Game
-        // Over forever) but traded it for a new one real play surfaced: a
-        // fast player could yank the whole table off the leaderboard before
-        // anyone else had a chance to actually look at it. Majority vote
-        // with a backstop timer (see castReturnToLobbyVote) is the middle
-        // ground -- still can't be stranded, but one tap alone isn't enough.
+        // Main Menu from Game Over -- everyone-votes-or-backstop-timer, see
+        // castReturnToLobbyVote for how that rule got here.
         if (currentRoom.gameState === 'GAME_OVER') {
             return castReturnToLobbyVote(associatedRoomCode, actingPlayerName, 'START');
         }
@@ -2977,22 +2930,11 @@ export function handleIncomingMessage(fromPhone, bodyText, explicitRoomCode, pre
         return `Start intent recorded (${startRequestsCount}/${playersList.length} votes secured). Waiting for consensus.`;
     }
 
-    // 3.5. "Play EmpossDurr Again" shortcut -- same majority-vote reasoning as
-    // the Play Again fix above, but resolving straight into a fresh EmpossDurr
-    // round instead of the full 5-way mode election (no category-vote detour
-    // either, same as a fresh EmpossDurr game). A room can have votes cast for
-    // both this and plain START at once (some players want a fresh election,
-    // others want to jump straight back into EmpossDurr) --
-    // resolveReturnToLobbyVote breaks that tie by whichever has more votes.
-    if (cleanText.toUpperCase() === 'PLAY_EMPOSSDURR_AGAIN' && currentRoom.gameState === 'GAME_OVER' && currentRoom.winningGameMode === 'EMPOSSDURR') {
-        return castReturnToLobbyVote(associatedRoomCode, actingPlayerName, 'PLAY_EMPOSSDURR_AGAIN');
-    }
-
-    // 3.6. "Play On the Spectrum Again" shortcut -- same reasoning as
-    // EmpossDurr's above, but resolving straight into a fresh round instead
-    // of a category-vote phase (this mode never had one to begin with).
-    if (cleanText.toUpperCase() === 'PLAY_ON_THE_SPECTRUM_AGAIN' && currentRoom.gameState === 'GAME_OVER' && currentRoom.winningGameMode === 'ON_THE_SPECTRUM') {
-        return castReturnToLobbyVote(associatedRoomCode, actingPlayerName, 'PLAY_ON_THE_SPECTRUM_AGAIN');
+    // 3.5. "Play Again" -- same mode, same roster, fresh stats. Shares the
+    // Game Over vote with Main Menu (START above); resolveReturnToLobbyVote
+    // decides between them once everyone's voted or the backstop runs out.
+    if (cleanText.toUpperCase() === 'PLAY_AGAIN' && currentRoom.gameState === 'GAME_OVER') {
+        return castReturnToLobbyVote(associatedRoomCode, actingPlayerName, 'PLAY_AGAIN');
     }
 
     // 4. Handle Sub-Category Voting Selection Track Overrides (Phase 2)

@@ -135,10 +135,8 @@
         .btn-ready.ed-active { background: rgba(0, 230, 118, 0.08); border-color: #00e676; color: #00e676; }
         .btn-skip { background: #1e222b; border: 1px solid #222630; color: #94a3b8; margin-top: 16px; }
         .btn-skip.ed-active { background: rgba(255, 165, 0, 0.08); border-color: #ffa500; color: #ffa500; }
-        .btn-ed-again { background: #ffa500; color: #0d0e11; }
-        .btn-ed-again:hover { background: #e59400; }
-        .btn-ots-again { background: #bb6bd9; color: #0d0e11; }
-        .btn-ots-again:hover { background: #a555c2; }
+        .btn-play-again { background: #ffa500; color: #0d0e11; }
+        .btn-play-again:hover { background: #e59400; }
         /* Declare and its decoy twin share this identical, muted style on
            purpose -- same size, same neutral color as every other button,
            so the impostor's phone doesn't visually shout "I'm different"
@@ -552,10 +550,11 @@
             <p class="subtitle" style="margin-bottom: 0;">Thanks for playing! Check the TV screen for the final leaderboard.</p>
         </div>
         <!-- Outside #game-over-content on purpose -- renderGameOver() replaces that
-             div's innerHTML every time, which would wipe this button out with it. -->
-        <button class="btn btn-ed-again" id="btn-play-empossdurr-again" style="display: none;" onclick="requestPlayEmpossDurrAgain()">Play EmpossDurr Again</button>
-        <button class="btn btn-ots-again" id="btn-play-on-the-spectrum-again" style="display: none;" onclick="requestPlayOnTheSpectrumAgain()">Play On the Spectrum Again</button>
-        <button class="btn" onclick="requestPlayAgain()">Main Menu</button>
+             div's innerHTML every time, which would wipe these buttons out with it.
+             Every mode gets the same three: Play Again and Main Menu are two
+             options in one room-wide vote; Leave Room is just you, instantly. -->
+        <button class="btn btn-play-again" id="btn-play-again" onclick="castGameOverVote('PLAY_AGAIN')">Play Again</button>
+        <button class="btn" onclick="castGameOverVote('START')">Main Menu</button>
         <div id="playagain-feedback" class="feedback"></div>
         <button class="btn btn-leave" onclick="leaveRoom()">Leave Room</button>
         <audio id="horn-sound" src="/audio/horn.wav" preload="auto"></audio>
@@ -788,8 +787,24 @@
                         // cleared here anymore) so this phone can still detect a
                         // "return to lobby" reset if the room votes to play again.
                         if (data.phase === 'GAME_OVER_PHASE') {
+                            // Fresh arrival on Game Over: clear the last game's
+                            // "Everyone's in -- moving on!" so it isn't still
+                            // sitting under the buttons this time around.
+                            if (document.getElementById('game-over-screen').style.display !== 'block') {
+                                document.getElementById('playagain-feedback').style.display = 'none';
+                            }
                             showOnlyPlayScreen('game-over-screen');
                             renderGameOver(data, nickname);
+                            // Play Again goes straight from here into the next
+                            // game without passing through LOBBY_PHASE (which
+                            // is where these normally get cleared) -- so clear
+                            // them now, or a first question/round that happens
+                            // to match the last game's key would never render.
+                            activeQuestionId = null;
+                            edLastPhaseKey = null;
+                            otsLastPhaseKey = null;
+                            ty2LastRenderKey = null;
+                            fwLastRenderKey = null;
                         }
 
                         // Post-game consensus reset the room -- same code, same roster,
@@ -1808,7 +1823,7 @@
         // One-tap consensus vote -- was a "type START" text field, but the
         // free-text input was only ever a placeholder for keyword commands
         // that never materialized, so it's now just a button like every
-        // other consensus vote in the app (requestPlayAgain, etc.). Once
+        // other consensus vote in the app (castGameOverVote, etc.). Once
         // every active player has tapped it, the server starts the game and
         // every phone's poller picks up the phase change automatically.
         async function submitStartVote() {
@@ -1829,11 +1844,11 @@
             }
         }
 
-        // One-tap consensus vote from the game-over screen -- same mechanic
-        // as the lobby's Start button above. Once every active player has
-        // tapped it, the server resets the room and every phone's poller
-        // (LOBBY_PHASE) bounces back automatically.
-        async function requestPlayAgain() {
+        // Game Over's Play Again ('PLAY_AGAIN') or Main Menu ('START') -- one
+        // room-wide vote between the two. The server moves on once everyone's
+        // voted (or 30s after the first vote), and every phone's poller
+        // follows the room wherever it lands.
+        async function castGameOverVote(action) {
             const feedback = document.getElementById('playagain-feedback');
             const registeredName = localStorage.getItem('randomania_nickname') || 'test-handset';
 
@@ -1843,7 +1858,7 @@
                 const response = await fetch('/api/message', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ From: registeredName, Body: 'START', roomCode: localStorage.getItem('randomania_roomcode') })
+                    body: JSON.stringify({ From: registeredName, Body: action, roomCode: localStorage.getItem('randomania_roomcode') })
                 });
                 const data = await response.json();
                 showFeedback(feedback, data.reply, "rgba(0,230,118,0.06)", "#00e676", "rgba(0,230,118,0.1)");
@@ -1852,48 +1867,15 @@
             }
         }
 
-        // Single-tap shortcut, same reasoning as requestPlayAgain -- skips the
-        // full mode election and jumps straight back into EmpossDurr.
-        async function requestPlayEmpossDurrAgain() {
-            const feedback = document.getElementById('playagain-feedback');
-            const registeredName = localStorage.getItem('randomania_nickname') || 'test-handset';
-
-            showFeedback(feedback, "Locking in...", "rgba(255,165,0,0.06)", "#ffa500", "rgba(255,165,0,0.1)");
-
-            try {
-                const response = await fetch('/api/message', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ From: registeredName, Body: 'PLAY_EMPOSSDURR_AGAIN', roomCode: localStorage.getItem('randomania_roomcode') })
-                });
-                const data = await response.json();
-                showFeedback(feedback, data.reply, "rgba(0,230,118,0.06)", "#00e676", "rgba(0,230,118,0.1)");
-            } catch (error) {
-                showFeedback(feedback, "❌ Transmission failed.", "rgba(255,71,87,0.06)", "#ff4757", "rgba(255,71,87,0.1)");
-            }
-        }
-
-        // Same single-tap shortcut, this time straight back into a fresh
-        // On the Spectrum round -- this mode has no category-vote phase to
-        // land in either, so the room jumps directly into round 1.
-        async function requestPlayOnTheSpectrumAgain() {
-            const feedback = document.getElementById('playagain-feedback');
-            const registeredName = localStorage.getItem('randomania_nickname') || 'test-handset';
-
-            showFeedback(feedback, "Locking in...", "rgba(255,165,0,0.06)", "#ffa500", "rgba(255,165,0,0.1)");
-
-            try {
-                const response = await fetch('/api/message', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ From: registeredName, Body: 'PLAY_ON_THE_SPECTRUM_AGAIN', roomCode: localStorage.getItem('randomania_roomcode') })
-                });
-                const data = await response.json();
-                showFeedback(feedback, data.reply, "rgba(0,230,118,0.06)", "#00e676", "rgba(0,230,118,0.1)");
-            } catch (error) {
-                showFeedback(feedback, "❌ Transmission failed.", "rgba(255,71,87,0.06)", "#ff4757", "rgba(255,71,87,0.1)");
-            }
-        }
+        // Display names for the Play Again button, matching the lobby's mode list.
+        const MODE_DISPLAY_NAMES = {
+            TRIVI_YEAH: 'Trivi-yeah!',
+            TRIVI_YEAH_II: 'Trivi-Yeah II',
+            COUNTRY_MONKEY: 'Country Monkey',
+            EMPOSSDURR: 'EmpossDurr',
+            FLAG_ME_DOWN: 'Flag Me Down',
+            ON_THE_SPECTRUM: 'On The Spectrum'
+        };
 
         // Renders this player's own final-standings card, styled to match the TV's
         // gold/silver/bronze medal rows for the top 3. Rank 1 gets a bonus soundboard
@@ -1902,10 +1884,8 @@
             const container = document.getElementById('game-over-content');
             const rank = data.myRank;
 
-            document.getElementById('btn-play-empossdurr-again').style.display =
-                data.winningGameMode === 'EMPOSSDURR' ? 'block' : 'none';
-            document.getElementById('btn-play-on-the-spectrum-again').style.display =
-                data.winningGameMode === 'ON_THE_SPECTRUM' ? 'block' : 'none';
+            const modeName = MODE_DISPLAY_NAMES[data.winningGameMode];
+            document.getElementById('btn-play-again').innerText = modeName ? `Play ${modeName} Again` : 'Play Again';
 
             if (!rank) {
                 container.innerHTML = `<p class="subtitle" style="margin-bottom: 0;">Thanks for playing! Check the TV screen for the final leaderboard.</p>`;
