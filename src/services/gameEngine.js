@@ -1009,7 +1009,11 @@ function fastForwardTriviYeahIIReveal(roomCode) {
     const room = activeRooms[roomCode];
     if (!room) return;
     if (room.gameSecondsLeft > FAST_FORWARD_SECONDS) {
-        broadcastToRoom(roomCode, { type: 'GAME_TIMER_TICK', secondsLeft: FAST_FORWARD_SECONDS + " s" });
+        // fastForward marks this as the everyone's-answered snap, not a real
+        // tick -- the TV's low-time chime must stay silent for it. Without
+        // the flag, a snap that happens to land right after the "4 s" tick
+        // looked exactly like a natural 4->3 tick and chimed anyway.
+        broadcastToRoom(roomCode, { type: 'GAME_TIMER_TICK', secondsLeft: FAST_FORWARD_SECONDS + " s", fastForward: true });
         startTriviYeahIIAnswerCountdown(roomCode, FAST_FORWARD_SECONDS);
     }
 }
