@@ -34,6 +34,10 @@ const REVEAL_DURATION_MS = 5000;
 const GAME_ROUND_DURATION_SECONDS = 30;
 const FAST_FORWARD_SECONDS = 3; // once everyone's answered, snap the clock down to this for a beat of suspense
 const MAX_NAME_LENGTH = 30; // matches the phone's input maxlength
+// Phones poll the room every second. One that's been silent this long has
+// almost certainly been closed, so its name can be reclaimed by whoever
+// types it in next (see the join handler).
+const PLAYER_QUIET_RECLAIM_MS = 20 * 1000;
 
 // EmpossDurr (impostor social-deduction mode). Round count scales with the
 // roster instead of a flat number -- "roster + 3" gives a small table (5-6
@@ -146,12 +150,6 @@ export function getCategoriesForMode(winningGameMode) {
             { key: 'SOUTHEAST_ASIA', label: 'Southeast Asia' },
             { key: 'PACIFIC_ISLANDS', label: 'Pacific Islands' },
             { key: ALL_REGIONS_KEY, label: 'World Wide!' }
-        ];
-    } else if (winningGameMode === 'FLAG_ME_DOWN') {
-        return [
-            { key: 'CAT_1', label: 'Modern Nations' },
-            { key: 'CAT_2', label: 'Historical Standards' },
-            { key: 'CAT_3', label: 'Bizarre Banners' }
         ];
     }
     // ON_THE_SPECTRUM and EMPOSSDURR have no category vote at all -- see
@@ -393,7 +391,7 @@ async function executeCategoryPhaseExpiration(roomCode) {
 }
 
 // Shared tail for every mode whose gameplay is a multiple-choice question
-// bank (Trivi-Yeah, Country Monkey, Flag Me Down) -- loads the bank for
+// bank (Trivi-Yeah, Country Monkey) -- loads the bank for
 // whatever category is already set on the room (room.activeCategoryKey), then
 // starts the first question. Called straight from executeLobbyPhaseExpiration
 // for Trivi-Yeah (which auto-picks its category, no vote) and from
@@ -650,8 +648,16 @@ const TRIVI_YEAH_II_CATEGORIES = [
 ];
 const TRIVI_YEAH_II_CATEGORIES_PER_BOARD = 3;
 const TRIVI_YEAH_II_TIERS = [100, 200, 300, 400];
-const TRIVI_YEAH_II_CATEGORY_REVEAL_MS = 2000; // category shown alone
-const TRIVI_YEAH_II_QUESTION_REVEAL_MS = 4000; // question text shown before answer buttons appear -- doubled per family feedback, more time to read before options bias the room
+// Both pauses grow with the tile's value -- per family playtest, harder
+// (higher-point) questions deserve more time to take in. 100 -> 400 points:
+// category 2.0 -> 3.5s, question reading 4 -> 7s. The 100-point values are
+// the old flat ones (the reading pause was already doubled once per family
+// feedback, so options don't bias the room before everyone's read it).
+const TRIVI_YEAH_II_CATEGORY_REVEAL_MS = { 100: 2000, 200: 2500, 300: 3000, 400: 3500 };
+const TRIVI_YEAH_II_QUESTION_REVEAL_MS = { 100: 4000, 200: 5000, 300: 6000, 400: 7000 };
+function triviYeahIIPauseFor(pauses, points) {
+    return pauses[points] || pauses[400];
+}
 const TRIVI_YEAH_II_ANSWER_SECONDS = 10;
 const TRIVI_YEAH_II_COLUMN_SWEEP_BONUS = 200; // one player, fastest-correct on all 4 tiles in a category, solo
 const TRIVI_YEAH_II_TOTAL_ROUNDS = 3;
@@ -836,7 +842,7 @@ function startTriviYeahIITileReveal(roomCode, cellIndex) {
         } else {
             revealTriviYeahIIQuestion(roomCode);
         }
-    }, TRIVI_YEAH_II_CATEGORY_REVEAL_MS);
+    }, triviYeahIIPauseFor(TRIVI_YEAH_II_CATEGORY_REVEAL_MS, cell.points));
 }
 
 // Doubler sequence: a dramatic "DOUBLER!" beat, then the picker sets a
@@ -982,7 +988,7 @@ function revealTriviYeahIIQuestion(roomCode) {
     room.revealTimeout = setTimeout(() => {
         room.revealTimeout = null;
         openTriviYeahIIAnswering(roomCode);
-    }, TRIVI_YEAH_II_QUESTION_REVEAL_MS);
+    }, triviYeahIIPauseFor(TRIVI_YEAH_II_QUESTION_REVEAL_MS, cell.points));
 }
 
 function openTriviYeahIIAnswering(roomCode) {
@@ -1042,6 +1048,43 @@ function fastForwardTriviYeahIIReveal(roomCode) {
     }
 }
 
+// Someone left mid-game. Thinking Pants used to have no handling for this
+// at all -- and since picking a tile has no clock, a picker who left froze
+// the board forever (it broke a whole family game night). Hand the pick to
+// someone still here, and don't make anyone wait on the person who's gone.
+function handleTriviYeahIILeave(roomCode, leaverName) {
+    const room = activeRooms[roomCode];
+    if (!room || !room.triviYeahII) return;
+    const ty2 = room.triviYeahII;
+    const active = Object.values(room.players).filter(p => !p.left);
+    if (active.length === 0) return;
+
+    if (ty2.phase === 'PICK_TILE' && ty2.currentPicker === leaverName) {
+        ty2.currentPicker = pickRandomActivePlayer(room);
+        broadcastToRoom(roomCode, {
+            type: 'TRIVI_YEAH_II_PICK_TURN',
+            currentPicker: ty2.currentPicker,
+            grid: publicTriviYeahIIGrid(room)
+        });
+        return;
+    }
+    if (ty2.phase === 'ANSWERING') {
+        if (ty2.doubler) {
+            // The Doubler's picker answers alone -- if they're gone, there's
+            // nothing to wait for.
+            if (ty2.currentPicker === leaverName) fastForwardTriviYeahIIReveal(roomCode);
+        } else if (active.every(p => p.name in ty2.answers)) {
+            fastForwardTriviYeahIIReveal(roomCode);
+        }
+        return;
+    }
+    if (ty2.phase === 'DOUBLER_SIDE_BET' && ty2.doubler) {
+        const eligibleBettors = active.filter(p => p.name !== ty2.currentPicker);
+        if (eligibleBettors.every(p => p.name in ty2.doubler.sideBets)) fastForwardTriviYeahIISideBets(roomCode);
+    }
+    // DOUBLER_WAGER and the Final Wager already have backstop timers.
+}
+
 // Shared by both resolution paths below -- cell.cleared/wonBy, clearedCount,
 // and the column-sweep check are identical whether a tile resolved normally
 // or via a Doubler wager. Column sweep: this category's all 4 tiles are now
@@ -1087,9 +1130,16 @@ function scheduleTriviYeahIINextStep(roomCode) {
         if (ty2.clearedCount >= ty2.grid.length) {
             if (ty2.round >= ty2.totalRounds) {
                 startTriviYeahIIFinalWager(roomCode).catch(error => {
+                    // Used to bounce the whole room back to the lobby, throwing
+                    // away three full rounds of scores (a playtest lost its
+                    // Final Wager this way). If the closer can't load, the
+                    // game still ends properly, on its real final standings.
                     console.error(`❌ [Trivi-Yeah II] Failed to start Final Wager for Room ${roomCode}:`, error.message);
-                    broadcastContentUnavailable(roomCode, 'Thinking Pants');
-                    resetRoomToLobby(roomCode);
+                    broadcastToRoom(roomCode, {
+                        type: 'CONTENT_UNAVAILABLE',
+                        message: `The Final Wager question couldn't load -- here are the final standings.`
+                    });
+                    endGame(roomCode);
                 });
                 return;
             }
@@ -1345,12 +1395,27 @@ function isFinalWagerAnswerCorrect(submittedRaw, acceptedAnswers) {
 // before wagering opens, same way real Final Jeopardy announces a category
 // before the question itself.
 async function pickFinalWagerQuestion() {
-    const result = await pool.query(
-        `SELECT question_text, correct_answer, subcategory, accepted_answers
-         FROM questions
-         WHERE game_mode = 'TRIVI_YEAH_II' AND category = 'FINAL_WAGER'
-         ORDER BY random() LIMIT 1`
-    );
+    let result;
+    try {
+        result = await pool.query(
+            `SELECT question_text, correct_answer, subcategory, accepted_answers
+             FROM questions
+             WHERE game_mode = 'TRIVI_YEAH_II' AND category = 'FINAL_WAGER'
+             ORDER BY random() LIMIT 1`
+        );
+    } catch (error) {
+        // A database that never got the accepted_answers column (it came with
+        // a later revision of trivi_yeah_ii_final_wager_content.sql) shouldn't
+        // cost the room its Final Wager -- the fuzzy matcher still works off
+        // correct_answer alone.
+        console.error(`⚠️ [Trivi-Yeah II] Final Wager query failed (${error.message}) -- retrying without accepted_answers.`);
+        result = await pool.query(
+            `SELECT question_text, correct_answer, subcategory
+             FROM questions
+             WHERE game_mode = 'TRIVI_YEAH_II' AND category = 'FINAL_WAGER'
+             ORDER BY random() LIMIT 1`
+        );
+    }
     if (result.rows.length === 0) {
         throw new Error('No Final Wager content available.');
     }
@@ -2192,7 +2257,7 @@ function resetRoomToLobby(roomCode) {
     room.gameState = 'LOBBY';
     room.winningGameMode = null;
 
-    room.votes = { TRIVI_YEAH: 0, COUNTRY_MONKEY: 0, EMPOSSDURR: 0, FLAG_ME_DOWN: 0, ON_THE_SPECTRUM: 0, TRIVI_YEAH_II: 0, PROFILER: 0 };
+    room.votes = { TRIVI_YEAH: 0, COUNTRY_MONKEY: 0, EMPOSSDURR: 0, ON_THE_SPECTRUM: 0, TRIVI_YEAH_II: 0, PROFILER: 0 };
     activePlayers.forEach(player => {
         if (room.votes[player.vote] !== undefined) room.votes[player.vote]++;
     });
@@ -2221,9 +2286,11 @@ function resetRoomToLobby(roomCode) {
 const PROFILER_MIN_PLAYERS = 4; // with 3, every post is close to a coin flip
 const PROFILER_MIN_PLAYERS_MIDGAME = 3; // below this after leavers, skip to the results
 const PROFILER_TOTAL_ROUNDS = 12;
-const PROFILER_ANSWER_SECONDS = 15; // up to 7 options to read, so longer than trivia's 10
-const PROFILER_GUESS_SECONDS = 20; // picking people takes real thought
-const PROFILER_REVEAL_MS = 8000;
+// All three got +5s after the first family playtest -- the pace was fun,
+// but a few players felt pressured.
+const PROFILER_ANSWER_SECONDS = 20; // up to 7 options to read, so longer than trivia's 10
+const PROFILER_GUESS_SECONDS = 25; // picking people takes real thought
+const PROFILER_REVEAL_MS = 13000;
 const PROFILER_UNANIMOUS_MS = 3500; // "Unanimous!" beat before a replacement question
 const PROFILER_MAX_REPLACEMENTS_PER_ROUND = 2; // then the round just counts, so a game always ends
 const PROFILER_AWARDS_MS = 15000; // long enough to read the TV awards and your own phone
@@ -2729,7 +2796,7 @@ function handleProfilerAction(roomCode, room, playerName, cleanText) {
             return `⚠️ Pick exactly ${needed} ${needed === 1 ? 'person' : 'people'}.`;
         }
         pf.guesses[playerName] = picks;
-        broadcastToRoom(roomCode, { type: 'PROFILER_GUESS_SUBMITTED', playerName });
+        broadcastToRoom(roomCode, { type: 'PROFILER_GUESS_SUBMITTED' }); // no name: who's locked in hints at who gave the answer
         checkProfilerPhaseComplete(roomCode);
         return `Picks locked in!`;
     }
@@ -3175,7 +3242,15 @@ export function handleIncomingMessage(fromPhone, bodyText, explicitRoomCode, pre
             // active or not, can't just inherit it). A brand-new name has no
             // existingPlayer at all, so this never blocks a genuine first join.
             const existingPlayer = currentRoom.players[playerNickname];
-            if (existingPlayer && existingPlayer.sessionToken !== presentedToken) {
+            // ...unless that name is effectively abandoned: its player left,
+            // or their phone has stopped checking in (a closed tab, a dead
+            // battery, a different browser). Real play hit this -- someone
+            // left by accident, lost their saved session, and couldn't get
+            // back in under their own name, which stalled the whole night.
+            // A name that's actively in use stays protected.
+            const nameIsAbandoned = existingPlayer && (existingPlayer.left
+                || Date.now() - (existingPlayer.lastSeen || 0) > PLAYER_QUIET_RECLAIM_MS);
+            if (existingPlayer && existingPlayer.sessionToken !== presentedToken && !nameIsAbandoned) {
                 return `⚠️ Name taken inside Room ${roomCode}.`;
             }
 
@@ -3205,6 +3280,7 @@ export function handleIncomingMessage(fromPhone, bodyText, explicitRoomCode, pre
                     existingPlayer.statsEpoch = currentRoom.gameEpoch;
                 }
                 existingPlayer.left = false;
+                existingPlayer.lastSeen = Date.now();
                 existingPlayer.phoneHandle = fromPhone;
                 existingPlayer.emoji = playerEmoji;
                 existingPlayer.vote = votedModule;
@@ -3228,6 +3304,7 @@ export function handleIncomingMessage(fromPhone, bodyText, explicitRoomCode, pre
                     statsEpoch: currentRoom.gameEpoch || 0, // matches the room's current game -- see the rejoin branch above
                     sessionToken, // proves later requests claiming this name are from the same device -- see play.html's auto-resume flow
                     left: false,
+                    lastSeen: Date.now(), // refreshed by every status poll -- see PLAYER_QUIET_RECLAIM_MS
                     joinedAt: new Date()
                 };
             }
@@ -3240,7 +3317,7 @@ export function handleIncomingMessage(fromPhone, bodyText, explicitRoomCode, pre
             // already in progress (executeLobbyPhaseExpiration would fire again
             // in 60s and stomp on whatever real phase is live by then).
             if (currentRoom.gameState === 'LOBBY') {
-                currentRoom.votes = { TRIVI_YEAH: 0, COUNTRY_MONKEY: 0, EMPOSSDURR: 0, FLAG_ME_DOWN: 0, ON_THE_SPECTRUM: 0, TRIVI_YEAH_II: 0, PROFILER: 0 };
+                currentRoom.votes = { TRIVI_YEAH: 0, COUNTRY_MONKEY: 0, EMPOSSDURR: 0, ON_THE_SPECTRUM: 0, TRIVI_YEAH_II: 0, PROFILER: 0 };
                 playersArray.forEach(p => {
                     if (currentRoom.votes[p.vote] !== undefined) currentRoom.votes[p.vote]++;
                 });
@@ -3398,6 +3475,8 @@ export function handleIncomingMessage(fromPhone, bodyText, explicitRoomCode, pre
                 }
             } else if (currentRoom.gameState === 'PROFILER_ROUND' && currentRoom.profiler) {
                 handleProfilerLeave(associatedRoomCode);
+            } else if (currentRoom.gameState === 'TRIVI_YEAH_II_ROUND' && currentRoom.triviYeahII) {
+                handleTriviYeahIILeave(associatedRoomCode, actingPlayerName);
             } else if (currentRoom.gameState === 'ON_THE_SPECTRUM_ROUND' && currentRoom.onTheSpectrum) {
                 const ots = currentRoom.onTheSpectrum;
                 if (actingPlayerName === ots.namedPlayerName && ots.phase === 'SET_TARGET') {
@@ -3459,7 +3538,7 @@ export function handleIncomingMessage(fromPhone, bodyText, explicitRoomCode, pre
             player.vote = modeChoice;
 
             const activePlayers = Object.values(currentRoom.players).filter(p => !p.left);
-            currentRoom.votes = { TRIVI_YEAH: 0, COUNTRY_MONKEY: 0, EMPOSSDURR: 0, FLAG_ME_DOWN: 0, ON_THE_SPECTRUM: 0, TRIVI_YEAH_II: 0, PROFILER: 0 };
+            currentRoom.votes = { TRIVI_YEAH: 0, COUNTRY_MONKEY: 0, EMPOSSDURR: 0, ON_THE_SPECTRUM: 0, TRIVI_YEAH_II: 0, PROFILER: 0 };
             activePlayers.forEach(p => { if (currentRoom.votes[p.vote] !== undefined) currentRoom.votes[p.vote]++; });
 
             broadcastToRoom(associatedRoomCode, { type: 'VOTE_UPDATE', votes: currentRoom.votes, totalVotes: activePlayers.length });
