@@ -187,8 +187,11 @@ if (btnSubmitSpectate) {
                     // room still knows the question is live. Only on a genuine
                     // 4->3 tick, never when "3" arrives via the fast-forward snap
                     // (everyone already answered -- nothing left to warn about).
+                    // The server flags that snap (fastForward) because the
+                    // 4->3 check alone misses a snap that lands right after
+                    // the "4 s" tick, when everyone answers with 4s left.
                     const secondsNum = parseInt(data.secondsLeft, 10);
-                    if (ty2AnswerCountdownActive && secondsNum === 3 && lastSeenGameSecondsLeft === 4) {
+                    if (ty2AnswerCountdownActive && secondsNum === 3 && lastSeenGameSecondsLeft === 4 && !data.fastForward) {
                         playAudioTrack('answer-warning-sound');
                     }
                     lastSeenGameSecondsLeft = secondsNum;
