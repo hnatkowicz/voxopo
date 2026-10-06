@@ -165,7 +165,7 @@ if (btnSubmitSpectate) {
                 }
                 if (data.type === 'RETURN_VOTE_UPDATE') {
                     const tally = document.getElementById('return-vote-tally');
-                    if (tally) tally.innerText = `${data.votedCount} / ${data.totalNeeded} want to continue`;
+                    if (tally) tally.innerText = `${data.votedCount} / ${data.totalNeeded} have voted`;
                 }
                 // A player just locked in an answer -- flip their status-indicator to
                 // "answered" (yellow) immediately, well before the round's reveal.
