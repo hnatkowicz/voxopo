@@ -72,6 +72,15 @@
         #category-screen { display: none; }
         #empossdurr-screen { display: none; }
         #on-the-spectrum-screen { display: none; }
+        #profiler-screen { display: none; }
+        .pf-question { font-size: 1.15rem; font-weight: 600; color: #ffffff; text-align: center; line-height: 1.4; margin: 16px 0 20px 0; }
+        .pf-post-label { text-align: center; color: #f472b6; font-weight: 600; margin-top: 4px; }
+        .pf-post-answer { text-align: center; font-size: 1.5rem; font-weight: 800; color: #ffffff; margin: 4px 0 18px 0; line-height: 1.3; }
+        .pf-pick-row { display: flex; align-items: center; justify-content: space-between; }
+        .pf-pick-check { font-weight: 800; color: #f472b6; }
+        .pf-result { background: #14161d; border: 1px solid #222630; border-radius: 10px; padding: 14px; text-align: center; margin: 10px 0; }
+        .pf-result-points { font-size: 1.6rem; font-weight: 800; color: #00e676; }
+        .pf-personal { background: rgba(244, 114, 182, 0.08); border: 1px solid rgba(244, 114, 182, 0.4); border-radius: 10px; padding: 12px 14px; margin-top: 14px; text-align: left; color: #e2e5e9; font-size: 0.95rem; line-height: 1.6; }
 
         .ed-role-banner { border-radius: 8px; padding: 18px; margin-bottom: 20px; text-align: center; }
         /* Deliberately identical for word and impostor -- a real player's
@@ -253,6 +262,7 @@
                 <div class="module-row" onclick="selectModule(this, 'EMPOSSDURR')">EmpossDurr <span class="module-descriptor">Find the impostor hiding in the group.</span></div>
                 <div class="module-row" onclick="selectModule(this, 'FLAG_ME_DOWN')">Flag Me Down <span class="module-descriptor">World and historical flags, banners, and symbols.</span></div>
                 <div class="module-row" onclick="selectModule(this, 'ON_THE_SPECTRUM')">On The Spectrum <span class="module-descriptor">Guess how much a friend agrees or disagrees.</span></div>
+                <div class="module-row" onclick="selectModule(this, 'PROFILER')">Profiler <span class="module-descriptor">(4+ players) How well do you know each other?</span></div>
             </div>
         </div>
 
@@ -293,6 +303,7 @@
                     <div class="module-row" data-mode-key="EMPOSSDURR" onclick="submitModeRevote(this, 'EMPOSSDURR')">EmpossDurr <span class="module-descriptor">Find the impostor hiding in the group.</span></div>
                     <div class="module-row" data-mode-key="FLAG_ME_DOWN" onclick="submitModeRevote(this, 'FLAG_ME_DOWN')">Flag Me Down <span class="module-descriptor">World and historical flags, banners, and symbols.</span></div>
                     <div class="module-row" data-mode-key="ON_THE_SPECTRUM" onclick="submitModeRevote(this, 'ON_THE_SPECTRUM')">On The Spectrum <span class="module-descriptor">Guess how much a friend agrees or disagrees.</span></div>
+                    <div class="module-row" data-mode-key="PROFILER" onclick="submitModeRevote(this, 'PROFILER')">Profiler <span class="module-descriptor">(4+ players) How well do you know each other?</span></div>
                 </div>
             </div>
 
@@ -384,6 +395,22 @@
         <div id="ots-phase-content"></div>
 
         <div id="ots-feedback" class="feedback"></div>
+        <button class="btn btn-leave" onclick="leaveRoom()">Leave Room</button>
+    </div>
+
+    <div id="profiler-screen" class="card">
+        <h1>Profiler</h1>
+        <div class="ed-round-indicator" id="pf-round-indicator">Round - / -</div>
+        <div class="player-badge">
+            <span class="player-badge-identity"><span id="pf-badge-emoji">-</span> <span id="pf-badge-name" class="player-badge-name">-</span></span>
+            <span class="player-badge-room">Room <strong id="pf-badge-room">-</strong> · Score <strong id="pf-badge-score">0</strong></span>
+        </div>
+
+        <!-- Rebuilt only when the phase (or this player's part in it) changes,
+             so a half-made selection never gets wiped by a poll tick. -->
+        <div id="pf-phase-content"></div>
+
+        <div id="pf-feedback" class="feedback"></div>
         <button class="btn btn-leave" onclick="leaveRoom()">Leave Room</button>
     </div>
 
@@ -573,7 +600,7 @@
         // both missed a spot). Hiding every known screen and showing only
         // the requested one makes that whole bug class impossible going
         // forward -- a future new screen just needs adding here once.
-        const ALL_PLAY_SCREENS = ['login-screen', 'game-screen', 'category-screen', 'empossdurr-screen', 'on-the-spectrum-screen', 'question-screen', 'trivi-yeah-ii-screen', 'trivi-yeah-ii-final-wager-screen', 'game-over-screen'];
+        const ALL_PLAY_SCREENS = ['login-screen', 'game-screen', 'category-screen', 'empossdurr-screen', 'on-the-spectrum-screen', 'profiler-screen', 'question-screen', 'trivi-yeah-ii-screen', 'trivi-yeah-ii-final-wager-screen', 'game-over-screen'];
         function showOnlyPlayScreen(idToShow) {
             ALL_PLAY_SCREENS.forEach(id => {
                 document.getElementById(id).style.display = (id === idToShow) ? 'block' : 'none';
@@ -766,6 +793,12 @@
                             renderOnTheSpectrum(data, nickname, roomCode);
                         }
 
+                        // Profiler: answer privately, then pick who said it.
+                        if (data.phase === 'PROFILER_ROUND_PHASE') {
+                            showOnlyPlayScreen('profiler-screen');
+                            renderProfiler(data, nickname, roomCode);
+                        }
+
                         // Trivi-Yeah II's own loop -- picking a tile (only when
                         // isMyPick), then the staged category/question/answers
                         // reveal, all live inside this one screen.
@@ -805,6 +838,7 @@
                             otsLastPhaseKey = null;
                             ty2LastRenderKey = null;
                             fwLastRenderKey = null;
+                            pfLastPhaseKey = null;
                         }
 
                         // Post-game consensus reset the room -- same code, same roster,
@@ -816,6 +850,7 @@
                             edLastPhaseKey = null; // next EmpossDurr game's first round should render fresh
                             otsLastPhaseKey = null; // next On the Spectrum game's first round should render fresh
                             ty2LastRenderKey = null; // next Trivi-Yeah II game's first tile should always render fresh
+                            pfLastPhaseKey = null; // next Profiler game's first round should render fresh
 
                             // Highlights whichever mode this player currently has
                             // voted for (their original join-time pick, or a
@@ -1602,6 +1637,200 @@
             }
         }
 
+        // ---------- Profiler ----------
+        let pfLastPhaseKey = null;
+        let pfSelectedPicks = [];
+
+        function pfEscape(text) {
+            const div = document.createElement('div');
+            div.innerText = text == null ? '' : String(text);
+            return div.innerHTML;
+        }
+
+        function profilerPersonalHtml(personal) {
+            if (!personal) return '';
+            const lines = [];
+            if (personal.youKnowBest) lines.push(`🔍 You know <strong>${pfEscape(personal.youKnowBest)}</strong> best.`);
+            if (personal.knowsYouBest) lines.push(`📖 <strong>${pfEscape(personal.knowsYouBest)}</strong> knows you best.`);
+            lines.push(`🎯 You read the room ${personal.accuracy}% of the time.`);
+            return `<div class="pf-personal">${lines.join('<br>')}</div>`;
+        }
+
+        function renderProfiler(data, nickname, roomCode) {
+            document.getElementById('pf-badge-name').innerText = nickname;
+            document.getElementById('pf-badge-emoji').innerText = chosenAvatar;
+            document.getElementById('pf-badge-room').innerText = roomCode;
+            document.getElementById('pf-badge-score').innerText = data.myScore || 0;
+            document.getElementById('pf-round-indicator').innerText = data.profilerPhase === 'AWARDS'
+                ? 'Final results'
+                : `Round ${Math.min(data.round, data.totalRounds)} of ${data.totalRounds}`;
+
+            const phaseKey = `${data.profilerPhase}|${data.round}|${data.replacement}|${data.inRoster}|${data.myAnswer || ''}|${data.myPicks ? 'picked' : ''}`;
+            if (phaseKey !== pfLastPhaseKey) {
+                try {
+                    buildProfilerPhaseContent(data);
+                    pfLastPhaseKey = phaseKey;
+                } catch (e) {
+                    console.error('Profiler render failed, will retry next poll:', e);
+                }
+            } else {
+                const tally = document.getElementById('pf-tally');
+                if (tally && data.profilerPhase === 'ANSWER') tally.innerText = `${data.answeredCount} / ${data.rosterCount} answered`;
+                if (tally && data.profilerPhase === 'GUESS') tally.innerText = `${data.guessedCount} / ${data.guessersNeeded} locked in`;
+            }
+        }
+
+        function buildProfilerPhaseContent(data) {
+            const container = document.getElementById('pf-phase-content');
+            document.getElementById('pf-feedback').style.display = 'none';
+            const q = data.questionText ? `<div class="pf-question">${pfEscape(data.questionText)}</div>` : '';
+
+            if (!data.inRoster && data.profilerPhase !== 'AWARDS') {
+                container.innerHTML = `${q}<p class="ed-status-line">You'll jump in at the start of the next round. Watch the TV!</p>`;
+                return;
+            }
+
+            if (data.profilerPhase === 'ANSWER') {
+                if (data.myAnswer) {
+                    const mine = (data.options || []).find(o => o.key === data.myAnswer);
+                    container.innerHTML = `${q}
+                        <p class="ed-status-line">You said <strong style="color:#fff;">${pfEscape(mine ? mine.text : data.myAnswer)}</strong>. Keep a straight face...</p>
+                        <div class="ed-status-line" id="pf-tally">${data.answeredCount} / ${data.rosterCount} answered</div>`;
+                } else {
+                    const rows = (data.options || []).map(o =>
+                        `<div class="module-row" onclick="submitProfilerAnswer('${o.key}')">${pfEscape(o.text)}</div>`
+                    ).join('');
+                    container.innerHTML = `${q}
+                        <p class="ed-status-line">Answer honestly -- nobody sees it yet.</p>
+                        <div class="module-list">${rows}</div>
+                        <div class="ed-status-line" id="pf-tally">${data.answeredCount} / ${data.rosterCount} answered</div>`;
+                }
+                return;
+            }
+
+            if (data.profilerPhase === 'GUESS' && data.post) {
+                const postHtml = `${q}
+                    <div class="pf-post-label">${data.post.count === 1 ? '1 of you said' : `${data.post.count} of you said`}</div>
+                    <div class="pf-post-answer">“${pfEscape(data.post.answerText)}”</div>`;
+                if (data.picksNeeded === 0) {
+                    container.innerHTML = `${postHtml}
+                        <p class="ed-status-line">${data.iGaveThisAnswer ? "That's you -- and only you! Watch them try to find you." : 'Nothing to pick this round.'}</p>`;
+                    return;
+                }
+                if (data.myPicks) {
+                    container.innerHTML = `${postHtml}
+                        <p class="ed-status-line">You picked <strong style="color:#fff;">${data.myPicks.map(pfEscape).join(', ')}</strong>.</p>
+                        <div class="ed-status-line" id="pf-tally">${data.guessedCount} / ${data.guessersNeeded} locked in</div>`;
+                    return;
+                }
+                pfSelectedPicks = [];
+                const instruction = data.iGaveThisAnswer
+                    ? (data.picksNeeded === 1 ? "You're one of them -- find the other!" : `You're one of them -- find the other ${data.picksNeeded}!`)
+                    : (data.picksNeeded === 1 ? 'Who said it? Pick 1.' : `Who said it? Pick ${data.picksNeeded}.`);
+                const rows = (data.pickCandidates || []).map((name, i) =>
+                    `<div class="module-row pf-pick-row" data-pick-index="${i}" onclick="toggleProfilerPick(${i})"><span>${pfEscape(name)}</span><span class="pf-pick-check"></span></div>`
+                ).join('');
+                container.innerHTML = `${postHtml}
+                    <p class="ed-status-line">${instruction}</p>
+                    <div class="module-list" id="pf-pick-list">${rows}</div>
+                    <button class="btn" id="pf-pick-submit" onclick="submitProfilerPicks()" disabled>Lock In (0 / ${data.picksNeeded})</button>
+                    <div class="ed-status-line" id="pf-tally">${data.guessedCount} / ${data.guessersNeeded} locked in</div>`;
+                container.dataset.picksNeeded = data.picksNeeded;
+                container.dataset.candidates = JSON.stringify(data.pickCandidates || []);
+                return;
+            }
+
+            if (data.profilerPhase === 'REVEAL' && data.reveal) {
+                const me = localStorage.getItem('randomania_nickname');
+                const mine = (data.reveal.results || []).find(r => r.name === me);
+                const openBook = data.reveal.openBook ? data.reveal.openBook[me] : 0;
+                const iWasIt = (data.reveal.choosers || []).includes(me);
+                let line;
+                if (mine) {
+                    line = mine.perfect
+                        ? `Perfect read! ${mine.needed >= 2 ? '🎯 ' : ''}<span class="pf-result-points">+${mine.points}</span>`
+                        : mine.hits.length
+                            ? `${mine.hits.length} of ${mine.needed} right: <span class="pf-result-points">+${mine.points}</span>`
+                            : `No luck this time.`;
+                } else {
+                    line = iWasIt ? `They were looking for you!` : `You didn't pick this round.`;
+                }
+                container.innerHTML = `
+                    <div class="pf-post-label">“${pfEscape(data.reveal.answerText)}” was...</div>
+                    <div class="pf-post-answer">${(data.reveal.choosers || []).map(pfEscape).join(' & ')}</div>
+                    <div class="pf-result">${line}${iWasIt ? `<div style="margin-top:6px;color:#f472b6;font-weight:700;">Open book: +${openBook || 0}</div>` : ''}</div>
+                    <p class="ed-status-line">Next round in a moment...</p>`;
+                return;
+            }
+
+            if (data.profilerPhase === 'UNANIMOUS') {
+                container.innerHTML = `${q}<p class="ed-status-line">Unanimous! Nothing to guess -- new question coming up.</p>`;
+                return;
+            }
+
+            if (data.profilerPhase === 'AWARDS') {
+                container.innerHTML = `<p class="ed-status-line">👀 Results are on the TV!</p>${profilerPersonalHtml(data.personal)}`;
+                return;
+            }
+
+            container.innerHTML = `<p class="ed-status-line">Waiting on the room...</p>`;
+        }
+
+        function toggleProfilerPick(index) {
+            const container = document.getElementById('pf-phase-content');
+            const needed = parseInt(container.dataset.picksNeeded, 10) || 0;
+            const candidates = JSON.parse(container.dataset.candidates || '[]');
+            const name = candidates[index];
+            if (name === undefined) return;
+            if (pfSelectedPicks.includes(name)) {
+                pfSelectedPicks = pfSelectedPicks.filter(n => n !== name);
+            } else if (needed === 1) {
+                pfSelectedPicks = [name]; // single pick: tapping another just switches
+            } else if (pfSelectedPicks.length < needed) {
+                pfSelectedPicks.push(name);
+            }
+            document.querySelectorAll('#pf-pick-list .module-row').forEach(row => {
+                const picked = pfSelectedPicks.includes(candidates[parseInt(row.dataset.pickIndex, 10)]);
+                row.classList.toggle('selected', picked);
+                row.querySelector('.pf-pick-check').innerText = picked ? '✓' : '';
+            });
+            const btn = document.getElementById('pf-pick-submit');
+            btn.disabled = pfSelectedPicks.length !== needed;
+            btn.innerText = `Lock In (${pfSelectedPicks.length} / ${needed})`;
+        }
+
+        async function sendProfilerAction(body) {
+            const registeredName = localStorage.getItem('randomania_nickname') || 'test-handset';
+            const feedback = document.getElementById('pf-feedback');
+            try {
+                const response = await fetch('/api/message', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ From: registeredName, Body: body, roomCode: localStorage.getItem('randomania_roomcode') })
+                });
+                const data = await response.json();
+                // Success needs no message -- the screen itself flips to the
+                // locked-in view on the next poll. Only surface problems.
+                if (data.reply && data.reply.startsWith('⚠️')) {
+                    showFeedback(feedback, data.reply, "rgba(255,71,87,0.06)", "#ff4757", "rgba(255,71,87,0.1)");
+                    pfLastPhaseKey = null; // rebuild so the buttons come back for another try
+                }
+            } catch (error) {
+                showFeedback(feedback, "❌ Action transmission failed.", "rgba(255,71,87,0.06)", "#ff4757", "rgba(255,71,87,0.1)");
+            }
+        }
+
+        function submitProfilerAnswer(key) {
+            document.querySelectorAll('#pf-phase-content .module-row').forEach(el => el.classList.add('btn-locked'));
+            sendProfilerAction(`PROFILER_ANSWER:${key}`);
+        }
+
+        function submitProfilerPicks() {
+            const btn = document.getElementById('pf-pick-submit');
+            if (btn) { btn.disabled = true; btn.innerText = 'Locking in...'; }
+            sendProfilerAction(`PROFILER_PICK:${JSON.stringify(pfSelectedPicks)}`);
+        }
+
         let otsLastPhaseKey = null; // "<otsPhase>|<round>|<isNamedPlayer>|<iHaveGuessed>" -- rebuild only when this changes
 
         function renderOnTheSpectrum(data, nickname, roomCode) {
@@ -1874,7 +2103,8 @@
             COUNTRY_MONKEY: 'Country Monkey',
             EMPOSSDURR: 'EmpossDurr',
             FLAG_ME_DOWN: 'Flag Me Down',
-            ON_THE_SPECTRUM: 'On The Spectrum'
+            ON_THE_SPECTRUM: 'On The Spectrum',
+            PROFILER: 'Profiler'
         };
 
         // Renders this player's own final-standings card, styled to match the TV's
@@ -1917,6 +2147,7 @@
                 </div>
                 <p class="subtitle" style="margin: 14px 0 0 0;">${headline}</p>
                 <p style="color: #64748b; font-size: 0.85rem; margin: 4px 0 0 0;">${subline}</p>
+                ${data.profilerPersonal ? profilerPersonalHtml(data.profilerPersonal) : ''}
                 ${hornButton}
             `;
         }

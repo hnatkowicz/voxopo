@@ -240,6 +240,28 @@ function startGameForMode(roomCode, winningModule) {
         return;
     }
 
+    // Profiler only works among people who know each other, and with fewer
+    // than 4 every post is close to a coin flip -- so it won't start. Back
+    // to the lobby with a notice on the TV saying why, so the room can pick
+    // something else (mode votes carry over, so whoever voted Profiler can
+    // switch from their phone).
+    if (winningModule === 'PROFILER') {
+        if (Object.values(room.players).filter(p => !p.left).length < PROFILER_MIN_PLAYERS) {
+            broadcastToRoom(roomCode, {
+                type: 'CONTENT_UNAVAILABLE',
+                message: `Profiler needs at least ${PROFILER_MIN_PLAYERS} players. Pick another game!`
+            });
+            resetRoomToLobby(roomCode);
+            return;
+        }
+        startProfilerGame(roomCode).catch(error => {
+            console.error(`❌ [Profiler] Failed to start Room ${roomCode}:`, error.message);
+            broadcastContentUnavailable(roomCode, 'Profiler');
+            resetRoomToLobby(roomCode);
+        });
+        return;
+    }
+
     // EmpossDurr's category vote was always cosmetic -- its word pool is
     // unified same as On the Spectrum's statements, with nothing behind the
     // old CAT_1/2/3 screen to actually filter. Skip straight into the round.
@@ -585,6 +607,8 @@ function endGame(roomCode) {
             ? `${room.triviYeahII ? room.triviYeahII.round : 0}/${room.triviYeahII ? room.triviYeahII.totalRounds : 0} rounds`
         : room.winningGameMode === 'ON_THE_SPECTRUM'
             ? `${room.onTheSpectrum ? room.onTheSpectrum.roundIndex + 1 : 0} rounds`
+        : room.winningGameMode === 'PROFILER'
+            ? `${room.profiler ? Math.min(room.profiler.round, room.profiler.totalRounds) : 0} rounds`
             : `${room.questionBank.length} questions`;
     console.log(`🏁 [Game Engine] Room ${roomCode} finished ${roundsPlayedDescription}. Broadcasting final leaderboard.`);
 
@@ -2140,6 +2164,8 @@ function clearRoomForFreshGame(room) {
     room.onTheSpectrum = null;
     room.triviYeahII = null;
     room.finalWager = null;
+    room.profiler = null;
+    room.profilerOnExpire = null;
 
     const activePlayers = Object.values(room.players).filter(p => !p.left);
     // Bumping this marks "a fresh game started" -- a player who left before
@@ -2166,7 +2192,7 @@ function resetRoomToLobby(roomCode) {
     room.gameState = 'LOBBY';
     room.winningGameMode = null;
 
-    room.votes = { TRIVI_YEAH: 0, COUNTRY_MONKEY: 0, EMPOSSDURR: 0, FLAG_ME_DOWN: 0, ON_THE_SPECTRUM: 0, TRIVI_YEAH_II: 0 };
+    room.votes = { TRIVI_YEAH: 0, COUNTRY_MONKEY: 0, EMPOSSDURR: 0, FLAG_ME_DOWN: 0, ON_THE_SPECTRUM: 0, TRIVI_YEAH_II: 0, PROFILER: 0 };
     activePlayers.forEach(player => {
         if (room.votes[player.vote] !== undefined) room.votes[player.vote]++;
     });
@@ -2179,6 +2205,545 @@ function resetRoomToLobby(roomCode) {
 
     startLobbyCountdown(roomCode);
     broadcastToRoom(roomCode, { type: 'LOBBY_TIMER_TICK', secondsLeft: "60 s" });
+}
+
+// ==========================================
+// PHASE 3D: PROFILER ENGINE
+// (how well do you know each other)
+// ==========================================
+// Each round: everyone privately answers a personality/values question, the
+// TV posts ONE answer that was given ("2 of you said: Gentle truth"), and
+// everyone picks exactly that many people they think said it. Detective
+// points for reading people, open-book points for being read -- so answering
+// honestly pays, and lying only hurts yourself. Home mode: it only works
+// among people who know each other, so it needs at least 4 players to start.
+
+const PROFILER_MIN_PLAYERS = 4; // with 3, every post is close to a coin flip
+const PROFILER_MIN_PLAYERS_MIDGAME = 3; // below this after leavers, skip to the results
+const PROFILER_TOTAL_ROUNDS = 12;
+const PROFILER_ANSWER_SECONDS = 15; // up to 7 options to read, so longer than trivia's 10
+const PROFILER_GUESS_SECONDS = 20; // picking people takes real thought
+const PROFILER_REVEAL_MS = 8000;
+const PROFILER_UNANIMOUS_MS = 3500; // "Unanimous!" beat before a replacement question
+const PROFILER_MAX_REPLACEMENTS_PER_ROUND = 2; // then the round just counts, so a game always ends
+const PROFILER_AWARDS_MS = 15000; // long enough to read the TV awards and your own phone
+// A perfect read is worth the same however many people gave the answer --
+// split evenly across the people you have to find (6 divides by 1, 2 and 3).
+// The bonus only applies when there was more than one person to find.
+const PROFILER_PERFECT_READ_POINTS = 6;
+const PROFILER_PERFECT_READ_BONUS = 2;
+const PROFILER_OPEN_BOOK_POINTS = 2; // per person who correctly picked you
+const PROFILER_OPTION_KEYS = ['A', 'B', 'C', 'D', 'E', 'F', 'G'];
+
+// Cached once per process, same as On the Spectrum's statements -- a server
+// restart picks up newly-added questions.
+let profilerQuestionCache = null;
+async function loadProfilerQuestions() {
+    if (profilerQuestionCache) return profilerQuestionCache;
+    const result = await pool.query(
+        `SELECT id, question_text, intensity, option_a, option_b, option_c, option_d, option_e, option_f, option_g
+           FROM profiler_questions WHERE active = true`
+    );
+    profilerQuestionCache = result.rows.map(row => ({
+        id: row.id,
+        text: row.question_text,
+        intensity: row.intensity,
+        options: PROFILER_OPTION_KEYS
+            .map(key => ({ key, text: row[`option_${key.toLowerCase()}`] }))
+            .filter(option => option.text)
+    })).filter(q => q.options.length >= 2);
+    return profilerQuestionCache;
+}
+
+function activePlayerNames(room) {
+    return Object.values(room.players).filter(p => !p.left).map(p => p.name);
+}
+
+// Roughly one deeper question for every two lighter ones, so the game never
+// stays heavy for long: light, medium, deep, light, medium, deep...
+function profilerIntensityForRound(round) {
+    return [1, 2, 3][(round - 1) % 3];
+}
+
+function drawProfilerQuestion(pf, intensity) {
+    const bucket = pf.deck[intensity];
+    if (bucket && bucket.length) return bucket.pop();
+    const fallback = [1, 2, 3].map(i => pf.deck[i]).find(b => b && b.length);
+    return fallback ? fallback.pop() : null;
+}
+
+function profilerStatsFor(pf, name) {
+    if (!pf.stats[name]) {
+        pf.stats[name] = { correctPicks: 0, picksNeeded: 0, timesFeatured: 0, timesFound: 0, timesSought: 0 };
+    }
+    return pf.stats[name];
+}
+
+async function startProfilerGame(roomCode) {
+    const room = activeRooms[roomCode];
+    if (!room) return;
+
+    const questionPool = await loadProfilerQuestions();
+    if (questionPool.length < PROFILER_TOTAL_ROUNDS) throw new Error(`Profiler needs at least ${PROFILER_TOTAL_ROUNDS} questions, found ${questionPool.length}.`);
+
+    const deck = { 1: [], 2: [], 3: [] };
+    shuffleArray(questionPool).forEach(q => { (deck[q.intensity] || deck[2]).push(q); });
+
+    room.profiler = {
+        round: 0,
+        totalRounds: PROFILER_TOTAL_ROUNDS,
+        replacementsThisRound: 0,
+        phase: null, // ANSWER | GUESS | REVEAL | UNANIMOUS | AWARDS
+        deck,
+        roster: [], // who's playing THIS round -- a mid-round joiner waits for the next one
+        question: null,
+        answers: {}, // name -> option key
+        post: null, // { key, text, choosers: [names] }
+        guesses: {}, // name -> [picked names]
+        lastReveal: null,
+        stats: {}, // name -> running totals for the awards
+        reads: {}, // reads[guesser][target] = { hits, chances }
+        results: null // filled in at AWARDS
+    };
+
+    startProfilerRound(roomCode, false);
+}
+
+// isReplacement: the last question was unanimous, so draw a new one without
+// using up a round.
+function startProfilerRound(roomCode, isReplacement) {
+    const room = activeRooms[roomCode];
+    if (!room || !room.profiler) return;
+    const pf = room.profiler;
+
+    if (room.timerInterval) { clearInterval(room.timerInterval); room.timerInterval = null; }
+    if (room.revealTimeout) { clearTimeout(room.revealTimeout); room.revealTimeout = null; }
+
+    if (isReplacement) {
+        pf.replacementsThisRound += 1;
+    } else {
+        pf.round += 1;
+        pf.replacementsThisRound = 0;
+    }
+    if (pf.round > pf.totalRounds) { finishProfilerGame(roomCode); return; }
+
+    const roster = activePlayerNames(room);
+    if (roster.length < PROFILER_MIN_PLAYERS_MIDGAME) { finishProfilerGame(roomCode); return; }
+
+    const question = drawProfilerQuestion(pf, profilerIntensityForRound(pf.round));
+    if (!question) { finishProfilerGame(roomCode); return; }
+
+    pf.roster = roster;
+    pf.question = question;
+    pf.answers = {};
+    pf.post = null;
+    pf.guesses = {};
+    pf.lastReveal = null;
+    pf.phase = 'ANSWER';
+    room.gameState = 'PROFILER_ROUND';
+
+    console.log(`[Profiler] Room ${roomCode} round ${pf.round}/${pf.totalRounds}${isReplacement ? ' (replacement)' : ''}: ${question.text}`);
+
+    broadcastToRoom(roomCode, {
+        type: 'PROFILER_QUESTION',
+        round: pf.round,
+        totalRounds: pf.totalRounds,
+        questionText: question.text,
+        options: question.options,
+        rosterCount: roster.length,
+        isReplacement: !!isReplacement
+    });
+
+    startProfilerCountdown(roomCode, PROFILER_ANSWER_SECONDS, () => resolveProfilerAnswers(roomCode));
+}
+
+// Shared clock for both the answer and the guess phase -- same GAME_TIMER_TICK
+// shape every other mode uses, so the TV's countdown and its low-time chime
+// work unchanged.
+function startProfilerCountdown(roomCode, seconds, onExpire) {
+    const room = activeRooms[roomCode];
+    if (!room) return;
+    let count = seconds;
+    room.gameSecondsLeft = count;
+    room.profilerOnExpire = onExpire;
+    if (room.timerInterval) clearInterval(room.timerInterval);
+    room.timerInterval = setInterval(() => {
+        count--;
+        room.gameSecondsLeft = count;
+        if (count > 0) {
+            broadcastToRoom(roomCode, { type: 'GAME_TIMER_TICK', secondsLeft: count + " s" });
+        } else {
+            clearInterval(room.timerInterval);
+            room.timerInterval = null;
+            onExpire();
+        }
+    }, 1000);
+}
+
+// Everyone's in -- snap to a short beat instead of waiting out the clock,
+// same as every other mode. Flagged so the TV doesn't play the low-time
+// chime for it (see the Thinking Pants fix).
+function fastForwardProfiler(roomCode) {
+    const room = activeRooms[roomCode];
+    if (!room || !room.profilerOnExpire) return;
+    if (room.gameSecondsLeft > FAST_FORWARD_SECONDS) {
+        broadcastToRoom(roomCode, { type: 'GAME_TIMER_TICK', secondsLeft: FAST_FORWARD_SECONDS + " s", fastForward: true });
+        startProfilerCountdown(roomCode, FAST_FORWARD_SECONDS, room.profilerOnExpire);
+    }
+}
+
+function profilerActiveRoster(room) {
+    return room.profiler.roster.filter(name => room.players[name] && !room.players[name].left);
+}
+
+// Who still owes a pick this round, and how many they need to make. If you
+// gave the posted answer yourself, you're finding the OTHERS who did -- and
+// if you were the only one, there's nobody to find, so you just watch.
+function profilerPicksNeeded(pf, name) {
+    if (!pf.post) return 0;
+    return pf.post.choosers.includes(name) ? pf.post.choosers.length - 1 : pf.post.choosers.length;
+}
+
+function profilerGuessers(room) {
+    const pf = room.profiler;
+    return profilerActiveRoster(room).filter(name => profilerPicksNeeded(pf, name) > 0);
+}
+
+function checkProfilerPhaseComplete(roomCode) {
+    const room = activeRooms[roomCode];
+    if (!room || !room.profiler) return;
+    const pf = room.profiler;
+    if (pf.phase === 'ANSWER') {
+        const roster = profilerActiveRoster(room);
+        if (roster.length > 0 && roster.every(name => name in pf.answers)) fastForwardProfiler(roomCode);
+    } else if (pf.phase === 'GUESS') {
+        const guessers = profilerGuessers(room);
+        if (guessers.every(name => name in pf.guesses)) fastForwardProfiler(roomCode);
+    }
+}
+
+function resolveProfilerAnswers(roomCode) {
+    const room = activeRooms[roomCode];
+    if (!room || !room.profiler) return;
+    const pf = room.profiler;
+    room.profilerOnExpire = null;
+
+    const answered = profilerActiveRoster(room).filter(name => name in pf.answers);
+    const choosersByKey = {};
+    answered.forEach(name => { (choosersByKey[pf.answers[name]] = choosersByKey[pf.answers[name]] || []).push(name); });
+
+    // Only an answer SOME but not all of the answerers gave is guessable.
+    const candidates = Object.entries(choosersByKey).filter(([, choosers]) => choosers.length < answered.length);
+
+    if (candidates.length === 0) {
+        // Everyone agreed (or almost nobody answered): show the beat, then a
+        // fresh question -- unless this round has already been replaced
+        // enough times, in which case it just counts and the game moves on.
+        const unanimousKey = Object.keys(choosersByKey)[0];
+        const unanimousOption = unanimousKey ? pf.question.options.find(o => o.key === unanimousKey) : null;
+        pf.phase = 'UNANIMOUS';
+        broadcastToRoom(roomCode, {
+            type: 'PROFILER_UNANIMOUS',
+            questionText: pf.question.text,
+            answerText: answered.length >= 2 && unanimousOption ? unanimousOption.text : null
+        });
+        const replace = pf.replacementsThisRound < PROFILER_MAX_REPLACEMENTS_PER_ROUND;
+        room.revealTimeout = setTimeout(() => {
+            room.revealTimeout = null;
+            startProfilerRound(roomCode, replace);
+        }, PROFILER_UNANIMOUS_MS);
+        return;
+    }
+
+    // Post the RAREST answer -- that's where knowing each other matters most.
+    // Ties go to whoever's been featured least, so everyone gets a turn in
+    // the spotlight; still tied, chance decides.
+    const featuredScore = choosers => choosers.reduce((sum, name) => sum + profilerStatsFor(pf, name).timesFeatured, 0);
+    const [postKey, postChoosers] = shuffleArray(candidates).sort((a, b) =>
+        a[1].length - b[1].length || featuredScore(a[1]) - featuredScore(b[1])
+    )[0];
+    const postOption = pf.question.options.find(o => o.key === postKey);
+    postChoosers.forEach(name => { profilerStatsFor(pf, name).timesFeatured += 1; });
+
+    pf.post = { key: postKey, text: postOption.text, choosers: postChoosers };
+    pf.guesses = {};
+    pf.phase = 'GUESS';
+
+    console.log(`[Profiler] Room ${roomCode} posting "${postOption.text}" (${postChoosers.length} of ${answered.length}).`);
+
+    broadcastToRoom(roomCode, {
+        type: 'PROFILER_POST',
+        round: pf.round,
+        totalRounds: pf.totalRounds,
+        questionText: pf.question.text,
+        answerText: postOption.text,
+        count: postChoosers.length,
+        answeredCount: answered.length,
+        guessersNeeded: profilerGuessers(room).length
+    });
+
+    // Nobody has anything to pick (can't happen with 2+ distinct answers, but
+    // cheap insurance) -- go straight to the reveal.
+    if (profilerGuessers(room).length === 0) { revealProfilerRound(roomCode); return; }
+    startProfilerCountdown(roomCode, PROFILER_GUESS_SECONDS, () => revealProfilerRound(roomCode));
+}
+
+function revealProfilerRound(roomCode) {
+    const room = activeRooms[roomCode];
+    if (!room || !room.profiler) return;
+    const pf = room.profiler;
+    room.profilerOnExpire = null;
+    if (room.timerInterval) { clearInterval(room.timerInterval); room.timerInterval = null; }
+    pf.phase = 'REVEAL';
+
+    const choosers = pf.post.choosers;
+    const foundBy = {};
+    choosers.forEach(name => { foundBy[name] = []; });
+
+    const results = Object.entries(pf.guesses).map(([guesser, picks]) => {
+        const needed = profilerPicksNeeded(pf, guesser);
+        const hits = picks.filter(name => choosers.includes(name) && name !== guesser);
+        hits.forEach(name => foundBy[name].push(guesser));
+        const perfect = needed > 0 && hits.length === needed;
+        const points = Math.round(PROFILER_PERFECT_READ_POINTS * hits.length / needed)
+            + (perfect && needed >= 2 ? PROFILER_PERFECT_READ_BONUS : 0);
+
+        const stats = profilerStatsFor(pf, guesser);
+        stats.correctPicks += hits.length;
+        stats.picksNeeded += needed;
+        // Who-knows-who bookkeeping: every chooser this guesser was looking
+        // for counts as one chance to read them.
+        choosers.filter(name => name !== guesser).forEach(target => {
+            const row = (pf.reads[guesser] = pf.reads[guesser] || {});
+            const cell = (row[target] = row[target] || { hits: 0, chances: 0 });
+            cell.chances += 1;
+            if (hits.includes(target)) cell.hits += 1;
+        });
+
+        const player = room.players[guesser];
+        if (player) {
+            player.score += points;
+            player.correctAnswers = (player.correctAnswers || 0) + hits.length;
+        }
+        return { name: guesser, picks, hits, needed, points, perfect };
+    });
+
+    const openBook = {};
+    choosers.forEach(name => {
+        const finders = foundBy[name];
+        const stats = profilerStatsFor(pf, name);
+        stats.timesFound += finders.length;
+        stats.timesSought += results.filter(r => r.name !== name).length;
+        openBook[name] = finders.length * PROFILER_OPEN_BOOK_POINTS;
+        if (room.players[name]) room.players[name].score += openBook[name];
+    });
+
+    pf.lastReveal = {
+        questionText: pf.question.text,
+        answerText: pf.post.text,
+        choosers,
+        foundBy,
+        openBook,
+        results: results.sort((a, b) => b.points - a.points)
+    };
+
+    broadcastToRoom(roomCode, { type: 'PROFILER_REVEAL', round: pf.round, totalRounds: pf.totalRounds, ...pf.lastReveal });
+    broadcastToRoom(roomCode, { type: 'LEADERBOARD_UPDATE', players: Object.values(room.players).filter(p => !p.left) });
+
+    room.revealTimeout = setTimeout(() => {
+        room.revealTimeout = null;
+        startProfilerRound(roomCode, false);
+    }, PROFILER_REVEAL_MS);
+}
+
+// "Who knows who best": ratio of hits to chances, preferring more evidence on
+// a tie (2/2 beats 1/1).
+function bestRead(cells) {
+    return cells
+        .filter(c => c.chances > 0)
+        .sort((a, b) => (b.hits / b.chances) - (a.hits / a.chances) || b.chances - a.chances)[0] || null;
+}
+
+function computeProfilerResults(room) {
+    const pf = room.profiler;
+    const names = activePlayerNames(room);
+    const accuracy = name => {
+        const s = profilerStatsFor(pf, name);
+        return s.picksNeeded ? s.correctPicks / s.picksNeeded : 0;
+    };
+
+    // One bar per player: how well they read the room.
+    const bars = names
+        .map(name => ({ name, accuracy: Math.round(accuracy(name) * 100), score: room.players[name].score }))
+        .sort((a, b) => b.accuracy - a.accuracy || b.score - a.score);
+
+    const awards = [];
+    const detective = [...names].sort((a, b) => profilerStatsFor(pf, b).correctPicks - profilerStatsFor(pf, a).correctPicks || accuracy(b) - accuracy(a))[0];
+    if (detective && profilerStatsFor(pf, detective).correctPicks > 0) {
+        awards.push({ key: 'DETECTIVE', title: 'Best Detective', emoji: '🔍', names: [detective], detail: `${profilerStatsFor(pf, detective).correctPicks} correct picks` });
+    }
+    const featured = names.filter(name => profilerStatsFor(pf, name).timesSought > 0);
+    const foundRatio = name => profilerStatsFor(pf, name).timesFound / profilerStatsFor(pf, name).timesSought;
+    const openBook = [...featured].sort((a, b) => foundRatio(b) - foundRatio(a) || profilerStatsFor(pf, b).timesFound - profilerStatsFor(pf, a).timesFound)[0];
+    if (openBook && profilerStatsFor(pf, openBook).timesFound > 0) {
+        awards.push({ key: 'OPEN_BOOK', title: 'Open Book', emoji: '📖', names: [openBook], detail: 'Easiest to read' });
+    }
+    const mystery = [...featured].sort((a, b) => foundRatio(a) - foundRatio(b) || profilerStatsFor(pf, b).timesSought - profilerStatsFor(pf, a).timesSought)[0];
+    if (mystery && mystery !== openBook) {
+        awards.push({ key: 'MYSTERY', title: 'Total Mystery', emoji: '🌀', names: [mystery], detail: 'Hardest to read' });
+    }
+
+    // Soulmates: the pair who read EACH OTHER best, both directions combined.
+    let soulmates = null;
+    for (let i = 0; i < names.length; i++) {
+        for (let j = i + 1; j < names.length; j++) {
+            const a = names[i], b = names[j];
+            const ab = (pf.reads[a] && pf.reads[a][b]) || { hits: 0, chances: 0 };
+            const ba = (pf.reads[b] && pf.reads[b][a]) || { hits: 0, chances: 0 };
+            const hits = ab.hits + ba.hits, chances = ab.chances + ba.chances;
+            if (chances < 2 || hits === 0) continue;
+            const candidate = { names: [a, b], hits, chances, ratio: hits / chances };
+            if (!soulmates || candidate.ratio > soulmates.ratio || (candidate.ratio === soulmates.ratio && candidate.hits > soulmates.hits)) {
+                soulmates = candidate;
+            }
+        }
+    }
+    if (soulmates) {
+        awards.push({ key: 'SOULMATES', title: 'Soulmates', emoji: '💞', names: soulmates.names, detail: 'Read each other best' });
+    }
+
+    // Per-player lines for their own phone.
+    const personal = {};
+    names.forEach(me => {
+        const iRead = bestRead(names.filter(n => n !== me).map(n => ({ name: n, ...((pf.reads[me] && pf.reads[me][n]) || { hits: 0, chances: 0 }) })));
+        const readMe = bestRead(names.filter(n => n !== me).map(n => ({ name: n, ...((pf.reads[n] && pf.reads[n][me]) || { hits: 0, chances: 0 }) })));
+        personal[me] = {
+            accuracy: Math.round(accuracy(me) * 100),
+            youKnowBest: iRead && iRead.hits > 0 ? iRead.name : null,
+            knowsYouBest: readMe && readMe.hits > 0 ? readMe.name : null
+        };
+    });
+
+    return { bars, awards, personal };
+}
+
+function finishProfilerGame(roomCode) {
+    const room = activeRooms[roomCode];
+    if (!room || !room.profiler) return;
+    const pf = room.profiler;
+    if (room.timerInterval) { clearInterval(room.timerInterval); room.timerInterval = null; }
+    if (room.revealTimeout) { clearTimeout(room.revealTimeout); room.revealTimeout = null; }
+    room.profilerOnExpire = null;
+
+    pf.phase = 'AWARDS';
+    pf.results = computeProfilerResults(room);
+    console.log(`[Profiler] Room ${roomCode} finished after ${Math.min(pf.round, pf.totalRounds)} rounds.`);
+
+    broadcastToRoom(roomCode, { type: 'PROFILER_AWARDS', bars: pf.results.bars, awards: pf.results.awards, secondsLeft: PROFILER_AWARDS_MS / 1000 });
+    room.revealTimeout = setTimeout(() => {
+        room.revealTimeout = null;
+        endGame(roomCode);
+    }, PROFILER_AWARDS_MS);
+}
+
+// Phone-side view of the round for /api/room-status -- only what this player
+// is allowed to see. Nobody learns who gave the posted answer until REVEAL.
+export function profilerStatusFor(room, playerName) {
+    const pf = room.profiler;
+    if (!pf) return null;
+    const inRoster = pf.roster.includes(playerName);
+    const showQuestion = ['ANSWER', 'GUESS', 'REVEAL', 'UNANIMOUS'].includes(pf.phase);
+    const picksNeeded = pf.phase === 'GUESS' && inRoster ? profilerPicksNeeded(pf, playerName) : 0;
+    return {
+        profilerPhase: pf.phase,
+        round: pf.round,
+        totalRounds: pf.totalRounds,
+        replacement: pf.replacementsThisRound,
+        inRoster,
+        questionText: showQuestion && pf.question ? pf.question.text : null,
+        options: pf.phase === 'ANSWER' && pf.question ? pf.question.options : null,
+        myAnswer: pf.answers[playerName] || null,
+        answeredCount: Object.keys(pf.answers).length,
+        rosterCount: pf.roster.length,
+        post: pf.post && pf.phase !== 'ANSWER' ? { answerText: pf.post.text, count: pf.post.choosers.length } : null,
+        iGaveThisAnswer: !!(pf.post && pf.post.choosers.includes(playerName)),
+        picksNeeded,
+        pickCandidates: pf.phase === 'GUESS' ? profilerActiveRoster(room).filter(name => name !== playerName) : [],
+        myPicks: pf.guesses[playerName] || null,
+        guessedCount: Object.keys(pf.guesses).length,
+        guessersNeeded: pf.phase === 'GUESS' ? profilerGuessers(room).length : 0,
+        reveal: pf.phase === 'REVEAL' ? pf.lastReveal : null,
+        personal: pf.results ? (pf.results.personal[playerName] || null) : null,
+        awards: pf.results ? pf.results.awards : null,
+        gameSecondsLeft: room.gameSecondsLeft
+    };
+}
+
+// TV-side snapshot for a reloaded TV (STATE_CATCH_UP) -- everything the TV
+// would have been shown by the live broadcasts for the current phase.
+export function profilerTvSnapshot(room) {
+    const pf = room.profiler;
+    if (!pf) return null;
+    return {
+        phase: pf.phase,
+        round: pf.round,
+        totalRounds: pf.totalRounds,
+        questionText: pf.question ? pf.question.text : null,
+        options: pf.question ? pf.question.options : null,
+        rosterCount: pf.roster.length,
+        answeredNames: Object.keys(pf.answers),
+        post: pf.post ? { answerText: pf.post.text, count: pf.post.choosers.length } : null,
+        guessedNames: Object.keys(pf.guesses),
+        guessersNeeded: pf.phase === 'GUESS' ? profilerGuessers(room).length : 0,
+        reveal: pf.phase === 'REVEAL' ? pf.lastReveal : null,
+        results: pf.phase === 'AWARDS' ? { bars: pf.results.bars, awards: pf.results.awards } : null
+    };
+}
+
+// Phone actions: PROFILER_ANSWER:<key> and PROFILER_PICK:<JSON array of names>.
+function handleProfilerAction(roomCode, room, playerName, cleanText) {
+    const pf = room.profiler;
+    if (!pf) return `⚠️ That action isn't available right now.`;
+    if (!pf.roster.includes(playerName)) return `You'll join in at the start of the next round.`;
+
+    if (cleanText.toUpperCase().startsWith('PROFILER_ANSWER:')) {
+        if (pf.phase !== 'ANSWER') return `⚠️ Answering is closed for this round.`;
+        if (playerName in pf.answers) return `Answer already locked in.`;
+        const key = cleanText.slice('PROFILER_ANSWER:'.length).trim().toUpperCase();
+        if (!pf.question.options.some(o => o.key === key)) return `⚠️ That isn't one of the options.`;
+        pf.answers[playerName] = key;
+        broadcastToRoom(roomCode, { type: 'ANSWER_SUBMITTED', playerName });
+        checkProfilerPhaseComplete(roomCode);
+        return `Locked in!`;
+    }
+
+    if (cleanText.toUpperCase().startsWith('PROFILER_PICK:')) {
+        if (pf.phase !== 'GUESS') return `⚠️ Picking is closed for this round.`;
+        if (playerName in pf.guesses) return `Picks already locked in.`;
+        const needed = profilerPicksNeeded(pf, playerName);
+        if (needed === 0) return `Nothing to pick this round -- you're the one they're looking for!`;
+        let picks;
+        try { picks = JSON.parse(cleanText.slice('PROFILER_PICK:'.length)); } catch (e) { picks = null; }
+        const valid = profilerActiveRoster(room).filter(name => name !== playerName);
+        if (!Array.isArray(picks) || new Set(picks).size !== picks.length || picks.length !== needed || !picks.every(name => valid.includes(name))) {
+            return `⚠️ Pick exactly ${needed} ${needed === 1 ? 'person' : 'people'}.`;
+        }
+        pf.guesses[playerName] = picks;
+        broadcastToRoom(roomCode, { type: 'PROFILER_GUESS_SUBMITTED', playerName });
+        checkProfilerPhaseComplete(roomCode);
+        return `Picks locked in!`;
+    }
+
+    return `⚠️ That action isn't available right now.`;
+}
+
+// Someone left mid-round: the game may now be too small, or they may have
+// been the last one the phase was waiting on.
+function handleProfilerLeave(roomCode) {
+    const room = activeRooms[roomCode];
+    if (!room || !room.profiler || room.profiler.phase === 'AWARDS') return;
+    if (activePlayerNames(room).length < PROFILER_MIN_PLAYERS_MIDGAME) { finishProfilerGame(roomCode); return; }
+    checkProfilerPhaseComplete(roomCode);
 }
 
 // ==========================================
@@ -2675,7 +3240,7 @@ export function handleIncomingMessage(fromPhone, bodyText, explicitRoomCode, pre
             // already in progress (executeLobbyPhaseExpiration would fire again
             // in 60s and stomp on whatever real phase is live by then).
             if (currentRoom.gameState === 'LOBBY') {
-                currentRoom.votes = { TRIVI_YEAH: 0, COUNTRY_MONKEY: 0, EMPOSSDURR: 0, FLAG_ME_DOWN: 0, ON_THE_SPECTRUM: 0, TRIVI_YEAH_II: 0 };
+                currentRoom.votes = { TRIVI_YEAH: 0, COUNTRY_MONKEY: 0, EMPOSSDURR: 0, FLAG_ME_DOWN: 0, ON_THE_SPECTRUM: 0, TRIVI_YEAH_II: 0, PROFILER: 0 };
                 playersArray.forEach(p => {
                     if (currentRoom.votes[p.vote] !== undefined) currentRoom.votes[p.vote]++;
                 });
@@ -2831,6 +3396,8 @@ export function handleIncomingMessage(fromPhone, bodyText, explicitRoomCode, pre
                         totalNeeded: remainingActivePlayers.length
                     });
                 }
+            } else if (currentRoom.gameState === 'PROFILER_ROUND' && currentRoom.profiler) {
+                handleProfilerLeave(associatedRoomCode);
             } else if (currentRoom.gameState === 'ON_THE_SPECTRUM_ROUND' && currentRoom.onTheSpectrum) {
                 const ots = currentRoom.onTheSpectrum;
                 if (actingPlayerName === ots.namedPlayerName && ots.phase === 'SET_TARGET') {
@@ -2892,7 +3459,7 @@ export function handleIncomingMessage(fromPhone, bodyText, explicitRoomCode, pre
             player.vote = modeChoice;
 
             const activePlayers = Object.values(currentRoom.players).filter(p => !p.left);
-            currentRoom.votes = { TRIVI_YEAH: 0, COUNTRY_MONKEY: 0, EMPOSSDURR: 0, FLAG_ME_DOWN: 0, ON_THE_SPECTRUM: 0, TRIVI_YEAH_II: 0 };
+            currentRoom.votes = { TRIVI_YEAH: 0, COUNTRY_MONKEY: 0, EMPOSSDURR: 0, FLAG_ME_DOWN: 0, ON_THE_SPECTRUM: 0, TRIVI_YEAH_II: 0, PROFILER: 0 };
             activePlayers.forEach(p => { if (currentRoom.votes[p.vote] !== undefined) currentRoom.votes[p.vote]++; });
 
             broadcastToRoom(associatedRoomCode, { type: 'VOTE_UPDATE', votes: currentRoom.votes, totalVotes: activePlayers.length });
@@ -3267,6 +3834,11 @@ export function handleIncomingMessage(fromPhone, bodyText, explicitRoomCode, pre
         }
 
         return `⚠️ That action isn't available right now.`;
+    }
+
+    // 5.55. Profiler round messages
+    if (currentRoom.gameState === 'PROFILER_ROUND') {
+        return handleProfilerAction(associatedRoomCode, currentRoom, actingPlayerName, cleanText);
     }
 
     // 5.6. On the Spectrum round messages

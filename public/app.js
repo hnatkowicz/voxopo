@@ -47,6 +47,9 @@ if (btnSubmitSpectate) {
         // (which has its own dedicated timer sound). Armed on
         // TRIVI_YEAH_II_ANSWERS_REVEAL, disarmed the moment that tile resolves.
         let ty2AnswerCountdownActive = false;
+        // Same idea for Profiler: armed while its answer or pick clock is
+        // live, so the 3-second chime warns anyone who hasn't locked in yet.
+        let profilerCountdownActive = false;
         // Last secondsLeft value seen on a GAME_TIMER_TICK, so the chime can
         // tell a natural 4->3 tick (time's genuinely running low) apart from
         // a fast-forward snap landing on "3" because everyone already
@@ -154,6 +157,11 @@ if (btnSubmitSpectate) {
                         // within a few seconds, not worth serializing the full staged-
                         // reveal state through this payload too.
                         document.getElementById('room-status-text').innerText = "Thinking Pants in progress";
+                    } else if (data.gameState === 'PROFILER_ROUND' && data.profiler) {
+                        // Unlike the modes above, Profiler's snapshot carries
+                        // everything the current phase needs, so a reloaded TV
+                        // redraws exactly what everyone else is looking at.
+                        restoreProfilerTV(data.profiler);
                     }
                 }
                 if (data.type === 'LEADERBOARD_UPDATE') {
@@ -191,7 +199,7 @@ if (btnSubmitSpectate) {
                     // 4->3 check alone misses a snap that lands right after
                     // the "4 s" tick, when everyone answers with 4s left.
                     const secondsNum = parseInt(data.secondsLeft, 10);
-                    if (ty2AnswerCountdownActive && secondsNum === 3 && lastSeenGameSecondsLeft === 4 && !data.fastForward) {
+                    if ((ty2AnswerCountdownActive || profilerCountdownActive) && secondsNum === 3 && lastSeenGameSecondsLeft === 4 && !data.fastForward) {
                         playAudioTrack('answer-warning-sound');
                     }
                     lastSeenGameSecondsLeft = secondsNum;
@@ -236,6 +244,7 @@ if (btnSubmitSpectate) {
                 }
                 // Fired once the question loop runs out of questions for this game.
                 if (data.type === 'GAME_OVER') {
+                    profilerCountdownActive = false;
                     document.getElementById('room-status-text').innerText = "Game Over";
                     document.getElementById('lobby-countdown').innerText = "FINAL";
                     stopCategoryMusic();
@@ -257,6 +266,7 @@ if (btnSubmitSpectate) {
                     showContentWarningToast(data.message);
                 }
                 if (data.type === 'RETURN_TO_LOBBY') {
+                    profilerCountdownActive = false;
                     document.getElementById('room-status-text').innerText = "Connected Live";
                     document.getElementById('lobby-countdown').innerText = "60s";
                     stopCategoryMusic();
@@ -505,6 +515,56 @@ if (btnSubmitSpectate) {
                     const t = document.getElementById('ots-tv-timer');
                     if (t) t.innerText = data.secondsLeft + " s";
                 }
+
+                // ---------- Profiler ----------
+                // Lock-in dots: ANSWER_SUBMITTED (shared with every mode, above)
+                // marks answers; PROFILER_GUESS_SUBMITTED marks picks.
+                if (data.type === 'PROFILER_QUESTION') {
+                    document.getElementById('room-status-text').innerText = "Profiler";
+                    document.getElementById('lobby-countdown').innerText = '';
+                    playerAnswerStatus = {};
+                    updateLeaderboardUI(cachedPlayersSnapshot);
+                    switchToProfilerQuestionUI(data);
+                    profilerAnsweredCount = 0;
+                    profilerCountdownActive = true;
+                }
+                if (data.type === 'ANSWER_SUBMITTED' && currentGamePhase === 'PROFILER_ANSWER') {
+                    profilerAnsweredCount += 1;
+                    updateProfilerTally();
+                }
+                if (data.type === 'PROFILER_POST') {
+                    document.getElementById('room-status-text').innerText = "Profiler — Who said it?";
+                    playerAnswerStatus = {};
+                    updateLeaderboardUI(cachedPlayersSnapshot);
+                    switchToProfilerPostUI(data);
+                    profilerGuessedCount = 0;
+                    profilerCountdownActive = true;
+                }
+                if (data.type === 'PROFILER_GUESS_SUBMITTED') {
+                    playerAnswerStatus[data.playerName] = 'answered';
+                    updateLeaderboardUI(cachedPlayersSnapshot);
+                    profilerGuessedCount += 1;
+                    updateProfilerTally();
+                }
+                if (data.type === 'PROFILER_UNANIMOUS') {
+                    profilerCountdownActive = false;
+                    document.getElementById('lobby-countdown').innerText = '';
+                    switchToProfilerUnanimousUI(data);
+                }
+                if (data.type === 'PROFILER_REVEAL') {
+                    profilerCountdownActive = false;
+                    document.getElementById('room-status-text').innerText = "Profiler — Reveal";
+                    document.getElementById('lobby-countdown').innerText = '';
+                    playerAnswerStatus = {};
+                    switchToProfilerRevealUI(data);
+                }
+                if (data.type === 'PROFILER_AWARDS') {
+                    profilerCountdownActive = false;
+                    document.getElementById('room-status-text').innerText = "Profiler — Results";
+                    document.getElementById('lobby-countdown').innerText = '';
+                    switchToProfilerAwardsUI(data);
+                    playAudioTrack('win-music');
+                }
             };
         }
 
@@ -609,7 +669,7 @@ if (btnSubmitSpectate) {
 
         function updateModuleElectionUI(votes, totalVotes) {
             if (!totalVotes || totalVotes === 0) return;
-            const keys = ['TRIVI_YEAH', 'COUNTRY_MONKEY', 'EMPOSSDURR', 'FLAG_ME_DOWN', 'ON_THE_SPECTRUM', 'TRIVI_YEAH_II'];
+            const keys = ['TRIVI_YEAH', 'COUNTRY_MONKEY', 'EMPOSSDURR', 'FLAG_ME_DOWN', 'ON_THE_SPECTRUM', 'TRIVI_YEAH_II', 'PROFILER'];
             keys.forEach(key => {
                 const count = votes[key] || 0;
                 const percentage = Math.round((count / totalVotes) * 100);
@@ -740,7 +800,8 @@ if (btnSubmitSpectate) {
             EMPOSSDURR: 'EmpossDurr',
             FLAG_ME_DOWN: 'Flag Me Down',
             ON_THE_SPECTRUM: 'On The Spectrum',
-            TRIVI_YEAH_II: 'Thinking Pants'
+            TRIVI_YEAH_II: 'Thinking Pants',
+            PROFILER: 'Profiler'
         };
 
         function switchToCategoryVotingUI(winnerModule, categories) {
@@ -1385,6 +1446,170 @@ function updateOnTheSpectrumContinueTallyTV(votedCount, totalNeeded) {
     if (el) el.innerText = `${votedCount ?? 0} / ${totalNeeded ?? 0} want to continue`;
 }
 
+// ==========================================
+// PROFILER TV UI
+// ==========================================
+
+const PROFILER_COLOR = '#f472b6';
+let profilerAnsweredCount = 0;
+let profilerGuessedCount = 0;
+let profilerTallyTotal = 0;
+let profilerTallyVerb = 'answered';
+
+function profilerEmojiFor(name) {
+    const p = (cachedPlayersSnapshot || []).find(player => player.name === name);
+    return p && p.emoji ? p.emoji : '👤';
+}
+
+function profilerHeader(round, totalRounds) {
+    setStatusMessage(`<div style="font-weight: 600; color: #64748b;">Round ${round} / ${totalRounds}</div>`);
+    return `<div style="font-size: 0.85rem; font-weight: 600; color: #64748b; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 10px;">Profiler · Round ${round} of ${totalRounds}</div>`;
+}
+
+function updateProfilerTally() {
+    const el = document.getElementById('pf-tv-tally');
+    if (!el) return;
+    const count = currentGamePhase === 'PROFILER_ANSWER' ? profilerAnsweredCount : profilerGuessedCount;
+    el.innerText = `${Math.min(count, profilerTallyTotal)} / ${profilerTallyTotal} ${profilerTallyVerb}`;
+}
+
+function switchToProfilerQuestionUI(data) {
+    const panel = document.getElementById('active-content-stage');
+    const options = (data.options || []).map(o => `
+        <div style="background: #14161d; border: 1px solid #222630; border-radius: 10px; padding: 12px 18px; font-size: 1.15rem; font-weight: 600; color: #f4f5f6;">${escapeHtml(o.text)}</div>
+    `).join('');
+    panel.innerHTML = `
+        <div class="panel-box" style="padding: 40px; flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; min-height: 400px; box-sizing: border-box;">
+            ${profilerHeader(data.round, data.totalRounds)}
+            ${data.isReplacement ? `<div style="color: ${PROFILER_COLOR}; font-weight: 700; margin-bottom: 10px;">New question!</div>` : ''}
+            <div style="font-size: 1.9rem; font-weight: 700; color: #ffffff; letter-spacing: -0.02em; margin-bottom: 28px; max-width: 760px;">${escapeHtml(data.questionText)}</div>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; width: 100%; max-width: 760px; margin-bottom: 24px;">${options}</div>
+            <div style="font-size: 0.95rem; color: #94a3b8; margin-bottom: 8px;">Answer honestly on your phone -- nobody sees it yet.</div>
+            <div id="pf-tv-tally" style="font-size: 1.1rem; font-weight: 600; color: #ffa500;"></div>
+        </div>
+    `;
+    currentGamePhase = 'PROFILER_ANSWER';
+    profilerTallyTotal = data.rosterCount || 0;
+    profilerTallyVerb = 'answered';
+    updateProfilerTally();
+}
+
+function switchToProfilerPostUI(data) {
+    const panel = document.getElementById('active-content-stage');
+    const who = data.count === 1 ? '1 of you said' : `${data.count} of you said`;
+    const pickLine = data.count === 1 ? 'Who was it? Pick them on your phone.' : `Who were they? Pick ${data.count} people on your phone.`;
+    panel.innerHTML = `
+        <div class="panel-box" style="padding: 40px; flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; min-height: 400px; box-sizing: border-box;">
+            ${profilerHeader(data.round, data.totalRounds)}
+            <div style="font-size: 1.1rem; color: #94a3b8; margin-bottom: 22px; max-width: 760px;">${escapeHtml(data.questionText)}</div>
+            <div style="font-size: 1.3rem; font-weight: 600; color: ${PROFILER_COLOR}; margin-bottom: 6px;">${who}</div>
+            <div style="font-size: 2.6rem; font-weight: 800; color: #ffffff; letter-spacing: -0.02em; margin-bottom: 26px; max-width: 760px;">“${escapeHtml(data.answerText)}”</div>
+            <div style="font-size: 1rem; color: #94a3b8; margin-bottom: 8px;">${pickLine}</div>
+            <div id="pf-tv-tally" style="font-size: 1.1rem; font-weight: 600; color: #ffa500;"></div>
+        </div>
+    `;
+    currentGamePhase = 'PROFILER_GUESS';
+    profilerTallyTotal = data.guessersNeeded || 0;
+    profilerTallyVerb = 'locked in';
+    updateProfilerTally();
+}
+
+function switchToProfilerUnanimousUI(data) {
+    const panel = document.getElementById('active-content-stage');
+    panel.innerHTML = `
+        <div class="panel-box" style="padding: 40px; flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; min-height: 400px; box-sizing: border-box;">
+            <div style="font-size: 3rem; font-weight: 800; color: ${PROFILER_COLOR}; margin-bottom: 12px;">Unanimous!</div>
+            ${data.answerText
+                ? `<div style="font-size: 1.3rem; color: #e2e5e9; margin-bottom: 18px;">Everyone said “${escapeHtml(data.answerText)}”</div>`
+                : `<div style="font-size: 1.3rem; color: #e2e5e9; margin-bottom: 18px;">Not enough answers to play this one.</div>`}
+            <div style="font-size: 1rem; color: #64748b;">Nothing to guess -- here comes a new question.</div>
+        </div>
+    `;
+    currentGamePhase = 'PROFILER_UNANIMOUS';
+}
+
+function switchToProfilerRevealUI(data) {
+    const panel = document.getElementById('active-content-stage');
+    const choosers = (data.choosers || []).map(name => {
+        const finders = (data.foundBy && data.foundBy[name]) || [];
+        return `
+            <div style="background: rgba(244, 114, 182, 0.08); border: 1px solid ${PROFILER_COLOR}; border-radius: 12px; padding: 16px 22px; min-width: 200px;">
+                <div style="font-size: 1.7rem; font-weight: 800; color: #ffffff;">${profilerEmojiFor(name)} ${escapeHtml(name)}</div>
+                <div style="font-size: 0.95rem; color: #94a3b8; margin-top: 4px;">${finders.length ? `Found by ${finders.map(escapeHtml).join(', ')}` : 'Nobody found them!'}</div>
+                ${data.openBook && data.openBook[name] ? `<div style="font-weight: 700; color: ${PROFILER_COLOR}; margin-top: 4px;">+${data.openBook[name]} open book</div>` : ''}
+            </div>
+        `;
+    }).join('');
+    const scorers = (data.results || []).filter(r => r.points > 0).map(r => `
+        <span style="background: #14161d; border: 1px solid #222630; border-radius: 20px; padding: 6px 14px; font-weight: 600; color: #f4f5f6;">
+            ${escapeHtml(r.name)} <span style="color: #00e676;">+${r.points}</span>${r.perfect && r.needed >= 2 ? ' 🎯' : ''}
+        </span>
+    `).join('');
+    panel.innerHTML = `
+        <div class="panel-box" style="padding: 40px; flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; min-height: 400px; box-sizing: border-box;">
+            ${profilerHeader(data.round, data.totalRounds)}
+            <div style="font-size: 1.1rem; color: #94a3b8; margin-bottom: 6px;">${escapeHtml(data.questionText)}</div>
+            <div style="font-size: 1.6rem; font-weight: 700; color: #ffffff; margin-bottom: 24px;">“${escapeHtml(data.answerText)}” was...</div>
+            <div style="display: flex; flex-wrap: wrap; gap: 14px; justify-content: center; margin-bottom: 24px;">${choosers}</div>
+            <div style="display: flex; flex-wrap: wrap; gap: 8px; justify-content: center;">${scorers || '<span style="color: #64748b;">Nobody read this one right.</span>'}</div>
+        </div>
+    `;
+    currentGamePhase = 'PROFILER_REVEAL';
+}
+
+function switchToProfilerAwardsUI(data) {
+    const panel = document.getElementById('active-content-stage');
+    const awards = (data.awards || []).map(a => `
+        <div style="background: #14161d; border: 1px solid #222630; border-radius: 12px; padding: 14px 18px; text-align: center; flex: 1 1 160px;">
+            <div style="font-size: 1.8rem;">${a.emoji}</div>
+            <div style="font-size: 0.75rem; font-weight: 700; color: ${PROFILER_COLOR}; text-transform: uppercase; letter-spacing: 0.06em; margin-top: 4px;">${escapeHtml(a.title)}</div>
+            <div style="font-size: 1.15rem; font-weight: 700; color: #ffffff; margin-top: 4px;">${a.names.map(escapeHtml).join(' & ')}</div>
+            <div style="font-size: 0.8rem; color: #64748b; margin-top: 2px;">${escapeHtml(a.detail || '')}</div>
+        </div>
+    `).join('');
+    const bars = (data.bars || []).map(b => `
+        <div style="display: flex; align-items: center; gap: 14px;">
+            <span style="font-weight: 600; color: #f4f5f6; min-width: 150px; text-align: left; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${profilerEmojiFor(b.name)} ${escapeHtml(b.name)}</span>
+            <div class="progress-track" style="flex: 1;"><div class="progress-fill" style="background: ${PROFILER_COLOR}; width: ${Math.max(0, Math.min(100, b.accuracy))}%;"></div></div>
+            <span style="font-weight: 700; color: #f4f5f6; min-width: 48px; text-align: right;">${b.accuracy}%</span>
+        </div>
+    `).join('');
+    panel.innerHTML = `
+        <div class="panel-box" style="padding: 36px; flex: 1; display: flex; flex-direction: column; justify-content: center; box-sizing: border-box;">
+            <h2 class="panel-title" style="margin-bottom: 18px; text-align: center;">Who Knows Who</h2>
+            <div style="display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 26px;">${awards}</div>
+            <div style="font-size: 0.8rem; font-weight: 600; color: #64748b; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 10px;">How well you read the room</div>
+            <div style="display: flex; flex-direction: column; gap: 10px;">${bars}</div>
+            <div style="text-align: center; color: #64748b; margin-top: 20px; font-size: 0.9rem;">Check your phone for who you know best.</div>
+        </div>
+    `;
+    currentGamePhase = 'PROFILER_AWARDS';
+    setStatusMessage(`<div style="font-weight: 600; color: #8892b0;">Final results</div>`);
+}
+
+// A reloaded TV gets a full snapshot of the current phase (see
+// profilerTvSnapshot in gameEngine.js) and redraws it.
+function restoreProfilerTV(snap) {
+    document.getElementById('room-status-text').innerText = "Profiler";
+    if (snap.phase === 'ANSWER') {
+        switchToProfilerQuestionUI({ round: snap.round, totalRounds: snap.totalRounds, questionText: snap.questionText, options: snap.options, rosterCount: snap.rosterCount });
+        profilerAnsweredCount = (snap.answeredNames || []).length;
+        updateProfilerTally();
+        profilerCountdownActive = true;
+    } else if (snap.phase === 'GUESS' && snap.post) {
+        switchToProfilerPostUI({ round: snap.round, totalRounds: snap.totalRounds, questionText: snap.questionText, answerText: snap.post.answerText, count: snap.post.count, guessersNeeded: snap.guessersNeeded });
+        profilerGuessedCount = (snap.guessedNames || []).length;
+        updateProfilerTally();
+        profilerCountdownActive = true;
+    } else if (snap.phase === 'REVEAL' && snap.reveal) {
+        switchToProfilerRevealUI({ round: snap.round, totalRounds: snap.totalRounds, ...snap.reveal });
+    } else if (snap.phase === 'AWARDS' && snap.results) {
+        switchToProfilerAwardsUI(snap.results);
+    } else if (snap.phase === 'UNANIMOUS') {
+        switchToProfilerUnanimousUI({});
+    }
+}
+
 // Rebuilds the "Active Module Election" panel from scratch -- switchToCategoryVotingUI/
 // switchToQuestionUI/switchToGameOverUI all overwrite this same #active-content-stage,
 // so returning to the lobby (post-game consensus) needs to reconstruct the exact
@@ -1418,6 +1643,10 @@ function switchToLobbyVoteUI() {
                 <div class="vote-row">
                     <div class="vote-meta"><span>On The Spectrum <span class="module-descriptor">Guess where it lands between two extremes.</span></span><span id="vcount-ON_THE_SPECTRUM" style="color: #64748b;">0 votes (0%)</span></div>
                     <div class="progress-track"><div id="vbar-ON_THE_SPECTRUM" class="progress-fill" style="background: #bb6bd9;"></div></div>
+                </div>
+                <div class="vote-row">
+                    <div class="vote-meta"><span>Profiler <span class="module-descriptor">(4+ players) How well do you know each other?</span></span><span id="vcount-PROFILER" style="color: #64748b;">0 votes (0%)</span></div>
+                    <div class="progress-track"><div id="vbar-PROFILER" class="progress-fill" style="background: ${PROFILER_COLOR};"></div></div>
                 </div>
             </div>
         </div>
