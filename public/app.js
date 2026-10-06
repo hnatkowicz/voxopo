@@ -1397,7 +1397,7 @@ function switchToLobbyVoteUI() {
                     <div class="progress-track"><div id="vbar-TRIVI_YEAH" class="progress-fill"></div></div>
                 </div>
                 <div class="vote-row">
-                    <div class="vote-meta"><span>Thinking Pants <span class="module-descriptor">(Beta) Jeopardy-style board -- pick a tile, race to answer.</span></span><span id="vcount-TRIVI_YEAH_II" style="color: #64748b;">0 votes (0%)</span></div>
+                    <div class="vote-meta"><span>Thinking Pants <span class="module-descriptor">(Beta) Pick a tile, race to answer, bet big.</span></span><span id="vcount-TRIVI_YEAH_II" style="color: #64748b;">0 votes (0%)</span></div>
                     <div class="progress-track"><div id="vbar-TRIVI_YEAH_II" class="progress-fill" style="background: #06b6d4;"></div></div>
                 </div>
                 <div class="vote-row">
