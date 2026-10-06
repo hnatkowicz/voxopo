@@ -86,7 +86,8 @@ Mode keys are used in room votes and in `gameEngine.js`:
   `questions`. Scoring: a perfect read is 6 points split across the people
   to find (+2 bonus when there were 2+), and +2 open-book for each person who
   found you. Ends on a "Who Knows Who" awards screen before Game Over.
-- **FLAG_ME_DOWN**: not playable yet. Its content still needs to be written.
+- **Flag Me Down** was removed from the lobby (it was never built). Flags
+  will be folded into Country Monkey instead, to give that mode more depth.
 
 ## Content
 
@@ -149,6 +150,9 @@ and forth until we both agree the idea is good **and** worth the effort. So:
 - **Profiler** content rule: every option must be one a person would
   comfortably own out loud. No politics, religion as identity, sex, bodies,
   money, health, or questions about people in the room.
+- **Thinking Pants:** a picker who goes AFK (without leaving) still stalls
+  the board, since picking a tile has no clock. A pick timer would fix it
+  but changes the feel, so it's Randy's call.
 - **Mind Field:** a name saved for a future mode built around hidden traps
   on a board.
 

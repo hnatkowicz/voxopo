@@ -103,7 +103,7 @@ app.post('/api/create-room', async (req, res) => {
             currentQuestionIndex: -1,
             askedQuestionIds: new Set(),
             requestedQuestionCount: resolveRequestedQuestionCount(req.body && req.body.questionCount),
-            votes: { TRIVI_YEAH: 0, COUNTRY_MONKEY: 0, EMPOSSDURR: 0, FLAG_ME_DOWN: 0, ON_THE_SPECTRUM: 0, TRIVI_YEAH_II: 0, PROFILER: 0 },
+            votes: { TRIVI_YEAH: 0, COUNTRY_MONKEY: 0, EMPOSSDURR: 0, ON_THE_SPECTRUM: 0, TRIVI_YEAH_II: 0, PROFILER: 0 },
             // Populated with real keys once the category vote phase actually starts.
             categoryVotes: {},
             // Bumped by every "fresh game" reset (Main Menu or Play Again
@@ -220,6 +220,9 @@ app.post('/api/room-status', (req, res) => {
         // Current-round score only -- no cross-round "Game Night" total exists yet,
         // and that mechanic isn't designed, so deliberately not stubbing a field for it.
         const myPlayer = (targetRoom && playerName) ? targetRoom.players[playerName] : null;
+        // Proof of life for the rejoin rule: a name whose phone stops
+        // checking in can be reclaimed (see PLAYER_QUIET_RECLAIM_MS).
+        if (myPlayer) myPlayer.lastSeen = Date.now();
         const myScore = myPlayer ? myPlayer.score : null;
         // Included in every phase (not just GAME_OVER) so the phone can show a
         // running "X/Y correct" stat during active gameplay, not just at the end.

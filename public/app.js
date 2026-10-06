@@ -60,13 +60,20 @@ if (btnSubmitSpectate) {
         // Primes all three <audio> elements against a real user gesture (a click), so
         // later programmatic .play() calls fired from WebSocket handlers aren't blocked
         // by the browser's autoplay policy, which only allows audio after interaction.
+        // Primed MUTED: playing them audibly made a burst of every game
+        // sound at once when the TV joined the lobby (family playtest).
+        // A muted play still counts as the user-gesture unlock.
         function unlockAllAudio() {
-            ['countdown-music', 'category-music', 'win-music', 'declare-music', 'final-wager-timer-sound', 'answer-warning-sound', 'doubler-reveal-sound', 'doubler-correct-sound', 'doubler-wrong-sound'].forEach(id => {
+            ['countdown-music', 'category-music', 'win-music', 'declare-music', 'final-wager-timer-sound', 'answer-warning-sound', 'doubler-reveal-sound', 'doubler-correct-sound', 'doubler-wrong-sound', 'vote-sound', 'impostor-correct-sound'].forEach(id => {
                 const audio = document.getElementById(id);
                 if (!audio) return;
+                audio.muted = true;
                 const p = audio.play();
-                if (p && typeof p.catch === 'function') {
-                    p.then(() => { audio.pause(); audio.currentTime = 0; }).catch(() => {});
+                const reset = () => { audio.pause(); audio.currentTime = 0; audio.muted = false; };
+                if (p && typeof p.then === 'function') {
+                    p.then(reset).catch(() => { audio.muted = false; });
+                } else {
+                    reset();
                 }
             });
         }
@@ -541,8 +548,10 @@ if (btnSubmitSpectate) {
                     profilerCountdownActive = true;
                 }
                 if (data.type === 'PROFILER_GUESS_SUBMITTED') {
-                    playerAnswerStatus[data.playerName] = 'answered';
-                    updateLeaderboardUI(cachedPlayersSnapshot);
+                    // Count only -- no per-player dot. Whoever gave the posted
+                    // answer has fewer people to find (or none at all), so a
+                    // dot that lit up early (or never) gave away exactly who
+                    // said it. Caught in the first family playtest.
                     profilerGuessedCount += 1;
                     updateProfilerTally();
                 }
@@ -669,7 +678,7 @@ if (btnSubmitSpectate) {
 
         function updateModuleElectionUI(votes, totalVotes) {
             if (!totalVotes || totalVotes === 0) return;
-            const keys = ['TRIVI_YEAH', 'COUNTRY_MONKEY', 'EMPOSSDURR', 'FLAG_ME_DOWN', 'ON_THE_SPECTRUM', 'TRIVI_YEAH_II', 'PROFILER'];
+            const keys = ['TRIVI_YEAH', 'COUNTRY_MONKEY', 'EMPOSSDURR', 'ON_THE_SPECTRUM', 'TRIVI_YEAH_II', 'PROFILER'];
             keys.forEach(key => {
                 const count = votes[key] || 0;
                 const percentage = Math.round((count / totalVotes) * 100);
@@ -798,7 +807,6 @@ if (btnSubmitSpectate) {
             TRIVI_YEAH: 'Trivi-yeah!',
             COUNTRY_MONKEY: 'Country Monkey',
             EMPOSSDURR: 'EmpossDurr',
-            FLAG_ME_DOWN: 'Flag Me Down',
             ON_THE_SPECTRUM: 'On The Spectrum',
             TRIVI_YEAH_II: 'Thinking Pants',
             PROFILER: 'Profiler'
@@ -1635,10 +1643,6 @@ function switchToLobbyVoteUI() {
                 <div class="vote-row">
                     <div class="vote-meta"><span>EmpossDurr <span class="module-descriptor">Find the impostor hiding in the group.</span></span><span id="vcount-EMPOSSDURR" style="color: #64748b;">0 votes (0%)</span></div>
                     <div class="progress-track"><div id="vbar-EMPOSSDURR" class="progress-fill" style="background: #ff4757;"></div></div>
-                </div>
-                <div class="vote-row">
-                    <div class="vote-meta"><span>Flag Me Down <span class="module-descriptor">World and historical flags, banners, and symbols.</span></span><span id="vcount-FLAG_ME_DOWN" style="color: #64748b;">0 votes (0%)</span></div>
-                    <div class="progress-track"><div id="vbar-FLAG_ME_DOWN" class="progress-fill" style="background: #2d9cdb;"></div></div>
                 </div>
                 <div class="vote-row">
                     <div class="vote-meta"><span>On The Spectrum <span class="module-descriptor">Guess where it lands between two extremes.</span></span><span id="vcount-ON_THE_SPECTRUM" style="color: #64748b;">0 votes (0%)</span></div>
