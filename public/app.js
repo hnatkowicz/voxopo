@@ -330,6 +330,9 @@ if (btnSubmitSpectate) {
                     showColumnBonusToast(data.playerName, data.categoryLabel);
                     playAudioTrack('impostor-correct-sound');
                 }
+                if (data.type === 'TRIVI_YEAH_II_AUTO_PICK') {
+                    document.getElementById('room-status-text').innerText = `Time's up, ${data.picker}! Random tile...`;
+                }
                 if (data.type === 'TRIVI_YEAH_II_PICK_TURN') {
                     document.getElementById('lobby-countdown').innerText = '';
                     switchToTriviYeahIIBoardUI(data.grid, data.currentPicker);

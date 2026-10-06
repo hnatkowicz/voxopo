@@ -72,6 +72,8 @@ Mode keys are used in room votes and in `gameEngine.js`:
   "Trivi-Yeah II"; the internal key and `game_mode` value kept the old name):
   a Jeopardy-style board with 3 rounds, the Doubler
   (wagering + side bets), column-sweep bonuses, and a Final Wager closer.
+  The picker gets 30s to choose a tile, then a random one is picked; a
+  picker who leaves hands the pick to someone still in the room.
   Categories are listed in `TRIVI_YEAH_II_CATEGORIES`. Every category needs a
   full pool for every tier (the engine fails fast if one is incomplete).
 - **COUNTRY_MONKEY**: find the highlighted country on the map. Country art is
@@ -150,9 +152,6 @@ and forth until we both agree the idea is good **and** worth the effort. So:
 - **Profiler** content rule: every option must be one a person would
   comfortably own out loud. No politics, religion as identity, sex, bodies,
   money, health, or questions about people in the room.
-- **Thinking Pants:** a picker who goes AFK (without leaving) still stalls
-  the board, since picking a tile has no clock. A pick timer would fix it
-  but changes the feel, so it's Randy's call.
 - **Mind Field:** a name saved for a future mode built around hidden traps
   on a board.
 

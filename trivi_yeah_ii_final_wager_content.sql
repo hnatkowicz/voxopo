@@ -46,6 +46,13 @@
 -- onto every question, since a contrived or misleading pun is worse than
 -- no pun at all.
 
+-- Adds the accepted_answers column if this database doesn't have it yet.
+-- Without it, the INSERT below fails AFTER the DELETE has already run --
+-- which silently left a database with zero Final Wager questions (found
+-- after a family playtest lost its final question). Safe to re-run: does
+-- nothing if the column already exists.
+ALTER TABLE questions ADD COLUMN IF NOT EXISTS accepted_answers TEXT[];
+
 DELETE FROM questions WHERE game_mode = 'TRIVI_YEAH_II' AND category = 'FINAL_WAGER';
 
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, accepted_answers, points)
@@ -70,3 +77,6 @@ VALUES
 (2218, 'TRIVI_YEAH_II', 'FINAL_WAGER', 'FILM HISTORY', NULL, 'Which German director''s 1927 film "Metropolis" is considered one of the first major works of science fiction cinema?', NULL, 'Fritz Lang', NULL, ARRAY['Fritz Lang', 'Lang'], 500),
 (2219, 'TRIVI_YEAH_II', 'FINAL_WAGER', 'WORLD LANDMARKS', NULL, 'Which Indian mausoleum was built by Emperor Shah Jahan in memory of his wife Mumtaz Mahal?', NULL, 'The Taj Mahal', NULL, ARRAY['The Taj Mahal', 'Taj Mahal'], 500),
 (2220, 'TRIVI_YEAH_II', 'FINAL_WAGER', 'SPORTS HISTORY', NULL, 'Which boxer became the youngest heavyweight champion in history at age 20 in 1986?', NULL, 'Mike Tyson', NULL, ARRAY['Mike Tyson', 'Tyson', 'Michael Tyson'], 500);
+
+-- Check: this should return 20.
+-- SELECT COUNT(*) FROM questions WHERE game_mode = 'TRIVI_YEAH_II' AND category = 'FINAL_WAGER';

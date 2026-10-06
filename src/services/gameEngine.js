@@ -659,6 +659,9 @@ function triviYeahIIPauseFor(pauses, points) {
     return pauses[points] || pauses[400];
 }
 const TRIVI_YEAH_II_ANSWER_SECONDS = 10;
+// Picking a tile used to have no clock, so a picker who wandered off froze
+// the board. Randy's call after a family playtest: 30s, then a random tile.
+const TRIVI_YEAH_II_PICK_SECONDS = 30;
 const TRIVI_YEAH_II_COLUMN_SWEEP_BONUS = 200; // one player, fastest-correct on all 4 tiles in a category, solo
 const TRIVI_YEAH_II_TOTAL_ROUNDS = 3;
 const TRIVI_YEAH_II_ROUND_TRANSITION_MS = 3000; // "Round N complete!" announcement, before the next board appears
@@ -808,6 +811,7 @@ async function startTriviYeahIIRound(roomCode) {
         round: ty2.round,
         totalRounds: ty2.totalRounds
     });
+    startTriviYeahIIPickTimer(roomCode);
 }
 
 // Staged reveal, start to finish: category+points alone, then (after a
@@ -815,12 +819,44 @@ async function startTriviYeahIIRound(roomCode) {
 // the answer clock -- matching the "category before question before
 // buttons" pacing agreed on, so nobody's reading answers before they've
 // even seen what's being asked.
+function startTriviYeahIIPickTimer(roomCode) {
+    const room = activeRooms[roomCode];
+    if (!room || !room.triviYeahII) return;
+    const ty2 = room.triviYeahII;
+    let count = TRIVI_YEAH_II_PICK_SECONDS;
+    room.gameSecondsLeft = count;
+    if (room.timerInterval) clearInterval(room.timerInterval);
+    broadcastToRoom(roomCode, { type: 'GAME_TIMER_TICK', secondsLeft: count + " s" });
+    room.timerInterval = setInterval(() => {
+        count--;
+        room.gameSecondsLeft = count;
+        if (ty2 !== room.triviYeahII || ty2.phase !== 'PICK_TILE') {
+            clearInterval(room.timerInterval);
+            room.timerInterval = null;
+            return;
+        }
+        if (count > 0) {
+            broadcastToRoom(roomCode, { type: 'GAME_TIMER_TICK', secondsLeft: count + " s" });
+            return;
+        }
+        clearInterval(room.timerInterval);
+        room.timerInterval = null;
+        const open = ty2.grid.map((cell, index) => ({ cell, index })).filter(({ cell }) => !cell.cleared);
+        if (open.length === 0) return;
+        const { index } = open[Math.floor(Math.random() * open.length)];
+        console.log(`[Trivi-Yeah II] Room ${roomCode}: ${ty2.currentPicker} ran out of time -- random tile ${index}.`);
+        broadcastToRoom(roomCode, { type: 'TRIVI_YEAH_II_AUTO_PICK', picker: ty2.currentPicker, index });
+        startTriviYeahIITileReveal(roomCode, index);
+    }, 1000);
+}
+
 function startTriviYeahIITileReveal(roomCode, cellIndex) {
     const room = activeRooms[roomCode];
     if (!room || !room.triviYeahII) return;
     const ty2 = room.triviYeahII;
     const cell = ty2.grid[cellIndex];
 
+    if (room.timerInterval) { clearInterval(room.timerInterval); room.timerInterval = null; } // the pick clock
     ty2.activeCellIndex = cellIndex;
     ty2.phase = 'CATEGORY_REVEAL';
     ty2.answers = {};
@@ -1066,6 +1102,7 @@ function handleTriviYeahIILeave(roomCode, leaverName) {
             currentPicker: ty2.currentPicker,
             grid: publicTriviYeahIIGrid(room)
         });
+        startTriviYeahIIPickTimer(roomCode); // a fresh 30s for whoever took over
         return;
     }
     if (ty2.phase === 'ANSWERING') {
@@ -1175,6 +1212,7 @@ function scheduleTriviYeahIINextStep(roomCode) {
             currentPicker: ty2.currentPicker,
             grid: publicTriviYeahIIGrid(room)
         });
+        startTriviYeahIIPickTimer(roomCode);
     }, REVEAL_DURATION_MS);
 }
 
