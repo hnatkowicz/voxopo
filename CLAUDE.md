@@ -6,9 +6,30 @@ live at the same time, so nobody waits for a turn. It's built by Randy H.,
 with Claude as a co-developer. It's played for real, mostly with family, and
 playtest feedback drives most changes.
 
-<!-- TODO(Randy): In a few sentences, what is this *for*? Who do you picture
-     playing it, and what should a night of RandoMania! feel like? What would
-     "done" or "successful" look like to you? -->
+## Why it exists
+
+It started at home. Our family watched geography and trivia quizzes on
+YouTube, TikTok quizzes, and Jeopardy! together, and RandoMania! was a way to
+*play* those things instead of passively watching them. It was also a chance to
+build better versions of the party apps we already played. The core idea:
+**phones are the controllers, and the TV stays the center of the room.**
+
+From there it grew into something that could run in pubs, libraries, PTO
+meetings and similar places, hosting general trivia or trivia built for the
+event, for a small fee. That's why hosting is gated behind access codes.
+
+### Design principles
+
+- **The TV is the focus.** Phones are for input. The shared moment happens on
+  the big screen, with everyone looking up together.
+- **No game leader.** Proctoring is democratic: the room votes, the clock
+  runs, and the server decides. The host's only job is opening the room. They
+  aren't a game master and don't get extra powers mid-game. New features
+  shouldn't sneak a "someone has to run this" role back in.
+- **Everyone plays at once.** No hot seat, no waiting for your turn.
+- **Two audiences.** It has to be fun around the family TV *and* hold up when
+  a stranger runs it at a pub night. That means clear on-screen instructions,
+  no insider knowledge, and robust handling of reconnects and stragglers.
 
 ## How it fits together
 
@@ -62,8 +83,12 @@ Mode keys are used in room votes and in `gameEngine.js`:
 
 - New or changed game content ships as standalone `.sql` files at the repo
   root (e.g. `trivi_yeah_ii_new_categories.sql`), named for what they add.
-- <!-- TODO(Randy): How do these get applied? Do you run them by hand in the
-     Neon console? Should Claude ever touch the live DB directly? -->
+- **Randy applies these by hand** in the Neon console. Content is the part of
+  the codebase Randy works on directly, so keep it that way: Claude writes and
+  reviews `.sql` files but never runs anything against the live database.
+  Write SQL that a person can read and check: one statement per question,
+  consistent column order, and a short header comment saying what the file
+  adds and whether it's safe to re-run.
 - `seed.js` is the original schema bootstrap. It **drops the `questions`
   table**, so never run it against the live database.
 - Trivia quality bar: distractors should be plausible and shouldn't give away
@@ -87,15 +112,22 @@ Mode keys are used in room votes and in `gameEngine.js`:
 - Timing, sounds, and pacing matter a lot here. They're tuned by feel during
   real play, so change them only when asked.
 
-<!-- TODO(Randy): How do you like to work with Claude? For example: ask
-     first or just build? How much explanation do you want? Anything you
-     wish every new session already knew? -->
+### Working together
+
+Randy's style is to brain-dump an idea, get honest pushback, and refine it back
+and forth until we both agree the idea is good **and** worth the effort. So:
+
+- When an idea comes in, engage with it before building. Say what's great,
+  what's risky, what it would cost, and whether there's a simpler version.
+  Disagree out loud when you disagree. Agreeable-but-wrong helps nobody.
+- Build once we've landed on something. For a small, clear fix or request,
+  just do it.
+- Explain in plain language. SQL is the part of the code that makes the most
+  sense to Randy, so for everything else say what changed and why it matters
+  for play, not just which functions moved.
 
 ## Known loose ends
 
 - `src/server.js` has a first `express.static` call with the path `'..public'`
   (missing a slash). It's harmless because the second static mount serves
   `public/`, but it's dead code.
-- `voxopo-state-catchup.patch` sits at the repo root. It's unclear whether it
-  has been applied or is still pending.
-  <!-- TODO(Randy): keep, apply, or delete? -->
