@@ -604,7 +604,14 @@ const TRIVI_YEAH_II_CATEGORIES = [
     { key: 'TECHNOLOGY', label: 'Technology' },
     { key: 'FOOD_AND_DRINK', label: 'Food & Drink' },
     { key: 'MYTHOLOGY', label: 'Mythology' },
-    { key: 'LITERATURE', label: 'Literature' }
+    { key: 'LITERATURE', label: 'Literature' },
+    { key: 'ASTRONOMY_SPACE', label: 'Astronomy & Space' },
+    { key: 'ART_AND_ARCHITECTURE', label: 'Art & Architecture' },
+    { key: 'FAMOUS_FIRSTS', label: 'Famous Firsts' },
+    { key: 'FAMOUS_KNIGHTS', label: 'Famous (K)nights' },
+    { key: 'JUST_IN_TIME', label: 'Just in Time' },
+    { key: 'FICTIONAL_LOCATIONS', label: 'Fictional Locations' },
+    { key: 'LYRICS', label: 'Lyrics' }
 ];
 const TRIVI_YEAH_II_CATEGORIES_PER_BOARD = 3;
 const TRIVI_YEAH_II_TIERS = [100, 200, 300, 400];
