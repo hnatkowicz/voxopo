@@ -1854,26 +1854,22 @@
                 const postHtml = `${q}
                     <div class="pf-post-label">${data.post.count === 1 ? '1 of you said' : `${data.post.count} of you said`}</div>
                     <div class="pf-post-answer">“${pfEscape(data.post.answerText)}”</div>`;
-                if (data.picksNeeded === 0) {
-                    container.innerHTML = `${postHtml}
-                        <p class="ed-status-line">${data.iGaveThisAnswer ? "That's you -- and only you! Watch them try to find you." : 'Nothing to pick this round.'}</p>`;
-                    return;
-                }
                 if (data.myPicks) {
                     container.innerHTML = `${postHtml}
                         <p class="ed-status-line">You picked <strong style="color:#fff;">${data.myPicks.map(pfEscape).join(', ')}</strong>.</p>
                         <div class="ed-status-line" id="pf-tally">${data.guessedCount} / ${data.guessersNeeded} locked in</div>`;
                     return;
                 }
+                // Identical on every phone, so a glance gives nothing away:
+                // same list (your own name included), same count, same words.
                 pfSelectedPicks = [];
-                const instruction = data.iGaveThisAnswer
-                    ? (data.picksNeeded === 1 ? "You're one of them -- find the other!" : `You're one of them -- find the other ${data.picksNeeded}!`)
-                    : (data.picksNeeded === 1 ? 'Who said it? Pick 1.' : `Who said it? Pick ${data.picksNeeded}.`);
+                const me = localStorage.getItem('randomania_nickname');
+                const instruction = `Who said it? Pick ${data.picksNeeded}.`;
                 const rows = (data.pickCandidates || []).map((name, i) =>
-                    `<div class="module-row pf-pick-row" data-pick-index="${i}" onclick="toggleProfilerPick(${i})"><span>${pfEscape(name)}</span><span class="pf-pick-check"></span></div>`
+                    `<div class="module-row pf-pick-row" data-pick-index="${i}" onclick="toggleProfilerPick(${i})"><span>${pfEscape(name)}${name === me ? ' <span style="color:#64748b;font-weight:400;">(you)</span>' : ''}</span><span class="pf-pick-check"></span></div>`
                 ).join('');
                 container.innerHTML = `${postHtml}
-                    <p class="ed-status-line">${instruction}</p>
+                    <p class="ed-status-line">${instruction}<br><span style="font-size: 0.75rem;">If you said it, pick yourself too.</span></p>
                     <div class="module-list" id="pf-pick-list">${rows}</div>
                     <button class="btn" id="pf-pick-submit" onclick="submitProfilerPicks()" disabled>Lock In (0 / ${data.picksNeeded})</button>
                     <div class="ed-status-line" id="pf-tally">${data.guessedCount} / ${data.guessersNeeded} locked in</div>`;
@@ -1888,7 +1884,9 @@
                 const openBook = data.reveal.openBook ? data.reveal.openBook[me] : 0;
                 const iWasIt = (data.reveal.choosers || []).includes(me);
                 let line;
-                if (mine) {
+                if (iWasIt && (!mine || mine.needed === 0)) {
+                    line = `They were looking for you!`;
+                } else if (mine) {
                     line = mine.perfect
                         ? `Perfect read! ${mine.needed >= 2 ? '🎯 ' : ''}<span class="pf-result-points">+${mine.points}</span>`
                         : mine.hits.length
