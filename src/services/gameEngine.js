@@ -2705,17 +2705,25 @@ function profilerActiveRoster(room) {
     return room.profiler.roster.filter(name => room.players[name] && !room.players[name].left);
 }
 
-// Who still owes a pick this round, and how many they need to make. If you
-// gave the posted answer yourself, you're finding the OTHERS who did -- and
-// if you were the only one, there's nobody to find, so you just watch.
+// How many people this player is actually trying to FIND (for scoring): if
+// you gave the posted answer yourself, you're finding the others who did --
+// and if you were the only one, nobody.
 function profilerPicksNeeded(pf, name) {
     if (!pf.post) return 0;
     return pf.post.choosers.includes(name) ? pf.post.choosers.length - 1 : pf.post.choosers.length;
 }
 
+// ...but EVERY phone makes the same number of picks from the same list
+// (their own name included), so nobody's screen gives them away. People who
+// gave the answer just pick themselves as one of them -- a dummy tap that
+// looks like everyone else's and never scores. Family playtest: a phone
+// showing "that's you!" with nothing to tap was a dead giveaway at a glance.
+function profilerPickCount(pf) {
+    return pf.post ? pf.post.choosers.length : 0;
+}
+
 function profilerGuessers(room) {
-    const pf = room.profiler;
-    return profilerActiveRoster(room).filter(name => profilerPicksNeeded(pf, name) > 0);
+    return profilerActiveRoster(room); // everyone picks -- see profilerPickCount
 }
 
 function checkProfilerPhaseComplete(roomCode) {
@@ -2816,8 +2824,12 @@ function revealProfilerRound(roomCode) {
     const results = Object.entries(pf.guesses).map(([guesser, picks]) => {
         const needed = profilerPicksNeeded(pf, guesser);
         const hits = picks.filter(name => choosers.includes(name) && name !== guesser);
+        if (needed === 0) {
+            // The only one who said it -- their pick was the dummy tap.
+            return { name: guesser, picks, hits: [], needed: 0, points: 0, perfect: false };
+        }
         hits.forEach(name => foundBy[name].push(guesser));
-        const perfect = needed > 0 && hits.length === needed;
+        const perfect = hits.length === needed;
         const points = Math.round(PROFILER_PERFECT_READ_POINTS * hits.length / needed)
             + (perfect && needed >= 2 ? PROFILER_PERFECT_READ_BONUS : 0);
 
@@ -2968,7 +2980,7 @@ export function profilerStatusFor(room, playerName) {
     if (!pf) return null;
     const inRoster = pf.roster.includes(playerName);
     const showQuestion = ['ANSWER', 'GUESS', 'REVEAL', 'UNANIMOUS'].includes(pf.phase);
-    const picksNeeded = pf.phase === 'GUESS' && inRoster ? profilerPicksNeeded(pf, playerName) : 0;
+    const picksNeeded = pf.phase === 'GUESS' && inRoster ? profilerPickCount(pf) : 0;
     return {
         profilerPhase: pf.phase,
         round: pf.round,
@@ -2981,9 +2993,10 @@ export function profilerStatusFor(room, playerName) {
         answeredCount: Object.keys(pf.answers).length,
         rosterCount: pf.roster.length,
         post: pf.post && pf.phase !== 'ANSWER' ? { answerText: pf.post.text, count: pf.post.choosers.length } : null,
-        iGaveThisAnswer: !!(pf.post && pf.post.choosers.includes(playerName)),
+        // Never sent while picking -- every phone has to look identical then.
+        iGaveThisAnswer: pf.phase === 'REVEAL' && !!(pf.post && pf.post.choosers.includes(playerName)),
         picksNeeded,
-        pickCandidates: pf.phase === 'GUESS' ? profilerActiveRoster(room).filter(name => name !== playerName) : [],
+        pickCandidates: pf.phase === 'GUESS' ? profilerActiveRoster(room) : [], // your own name included -- see profilerPickCount
         myPicks: pf.guesses[playerName] || null,
         guessedCount: Object.keys(pf.guesses).length,
         guessersNeeded: pf.phase === 'GUESS' ? profilerGuessers(room).length : 0,
@@ -3040,11 +3053,10 @@ function handleProfilerAction(roomCode, room, playerName, cleanText) {
     if (cleanText.toUpperCase().startsWith('PROFILER_PICK:')) {
         if (pf.phase !== 'GUESS') return `⚠️ Picking is closed for this round.`;
         if (playerName in pf.guesses) return `Picks already locked in.`;
-        const needed = profilerPicksNeeded(pf, playerName);
-        if (needed === 0) return `Nothing to pick this round -- you're the one they're looking for!`;
+        const needed = profilerPickCount(pf);
         let picks;
         try { picks = JSON.parse(cleanText.slice('PROFILER_PICK:'.length)); } catch (e) { picks = null; }
-        const valid = profilerActiveRoster(room).filter(name => name !== playerName);
+        const valid = profilerActiveRoster(room);
         if (!Array.isArray(picks) || new Set(picks).size !== picks.length || picks.length !== needed || !picks.every(name => valid.includes(name))) {
             return `⚠️ Pick exactly ${needed} ${needed === 1 ? 'person' : 'people'}.`;
         }
