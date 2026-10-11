@@ -1254,6 +1254,13 @@
             { key: 'WEDGIE', emoji: '🩲', label: 'Wedgie', rule: 'If the picker misses it, you collect the points.' }
         ];
 
+        // Randy's trap art (public/traps/), with the emoji as a fallback if a file's missing.
+        const TY2_TRAP_ICONS = { SETTING: ['trap-setting', '🤫'], PANTS_ON_FIRE: ['trap-pants-on-fire', '🔥'], HOT_SEAT: ['trap-hot-seat', '🪑'], WEDGIE: ['trap-wedgie', '🩲'] };
+        function phoneTrapIcon(key, sizePx) {
+            const [file, emoji] = TY2_TRAP_ICONS[key] || ['', '⚠️'];
+            return `<img src="/traps/${file}.svg" alt="" style="height: ${sizePx}px; width: auto; vertical-align: middle;" onerror="this.outerHTML='<span style=&quot;font-size: ${Math.round(sizePx * 0.8)}px; line-height: 1;&quot;>${emoji}</span>'">`;
+        }
+
         function trapOutcomeLine(outcome, nickname) {
             if (outcome.type === 'HOT_SEAT' && outcome.picker === nickname) {
                 return outcome.pickerCorrect ? `🪑 You survived the Hot Seat: +${outcome.delta}!` : `🪑 Burned in the Hot Seat: ${outcome.delta}.`;
@@ -1275,7 +1282,7 @@
                     ? (t.picker === localStorage.getItem('randomania_nickname') ? "You answer alone -- no passing. Right or wrong, it's double." : `${t.picker} answers alone. Right or wrong, double.`)
                     : t.type === 'WEDGIE' ? `If ${t.picker} misses it, ${t.setter} collects the points.` : t.rule;
                 box.innerHTML = `
-                    <div style="font-size: 3.2rem; line-height: 1;">${t.emoji}</div>
+                    <div>${phoneTrapIcon(t.type, 90)}</div>
                     <div style="font-size: 1.8rem; font-weight: 800; color: #ff5c5c; margin: 8px 0;">${t.label.toUpperCase()}</div>
                     <div style="color: #e2e5e9; font-weight: 600;">${rule}</div>
                     <div style="color: #64748b; margin-top: 8px; font-size: 0.9rem;">Set by ${t.setter}</div>`;
@@ -1284,7 +1291,7 @@
             if (!data.isTrapSetter) {
                 status.innerText = 'Shhh...';
                 box.innerHTML = `
-                    <div style="font-size: 3rem; line-height: 1;">🤫</div>
+                    <div>${phoneTrapIcon('SETTING', 80)}</div>
                     <div style="font-weight: 700; color: #ffffff; margin-top: 10px;">${data.trapSetter} swept a column...</div>
                     <div style="color: #94a3b8; margin-top: 4px;">...and is up to something.</div>`;
                 return;
@@ -1318,7 +1325,7 @@
                 <p class="ed-status-line" style="margin-top: 0;">${cell ? `${cell.categoryLabel} · ${cell.points} pts` : ''}</p>
                 <div class="module-list">${TY2_TRAPS.map(t => `
                     <div class="module-row" style="text-align: left;" onclick="sendTrapCommand('TRAP ${ty2TrapStep} ${t.key}')">
-                        <div style="font-weight: 800;">${t.emoji} ${t.label}</div>
+                        <div style="font-weight: 800; display: flex; align-items: center; gap: 8px;">${phoneTrapIcon(t.key, 30)} ${t.label}</div>
                         <div style="font-size: 0.8rem; color: #94a3b8; margin-top: 2px;">${t.rule}</div>
                     </div>`).join('')}</div>
                 <button class="btn btn-leave" style="margin-top: 12px; color: #94a3b8; border-color: #222630;" onclick="chooseTrapTile(null)">Back</button>
