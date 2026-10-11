@@ -74,6 +74,12 @@ Mode keys are used in room votes and in `gameEngine.js`:
   (wagering + side bets), column-sweep bonuses, and a Final Wager closer.
   The picker gets 30s to choose a tile, then a random one is picked; a
   picker who leaves hands the pick to someone still in the room.
+  **Traps:** a column sweep in round 2 or 3, with tiles left on the board,
+  lets the sweeper secretly hide one trap (Pants on Fire / Hot Seat /
+  Wedgie) or decline; 30s, then no trap. Secret by design: nobody learns
+  whether or where until it's picked. No carry-over, and a trap on a
+  Doubler fizzles silently. Trap icons load from `public/traps/*.svg`
+  (Randy's art) and fall back to emoji when missing.
   Categories are listed in `TRIVI_YEAH_II_CATEGORIES`. Every category needs a
   full pool for every tier (the engine fails fast if one is incomplete).
 - **COUNTRY_MONKEY**: find the highlighted country on the map. Country art is
@@ -153,6 +159,8 @@ and forth until we both agree the idea is good **and** worth the effort. So:
 - **Thinking Pants art:** a jeans mascot, "pants on fire" for a missed
   Doubler, a leg kick for a correct one, and gold pants spinning for the
   winner. "Answers in Your Pants" is a candidate name for the speed badge.
+  Trap icons Randy may supply: `public/traps/trap-setting.svg`,
+  `trap-pants-on-fire.svg`, `trap-hot-seat.svg`, `trap-wedgie.svg`.
 - **Profiler** content rule: every option must be one a person would
   comfortably own out loud. No politics, religion as identity, sex, bodies,
   money, health, or questions about people in the room.

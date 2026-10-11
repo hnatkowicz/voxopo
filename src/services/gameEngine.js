@@ -662,6 +662,20 @@ const TRIVI_YEAH_II_ANSWER_SECONDS = 10;
 // Picking a tile used to have no clock, so a picker who wandered off froze
 // the board. Randy's call after a family playtest: 30s, then a random tile.
 const TRIVI_YEAH_II_PICK_SECONDS = 30;
+
+// Traps (Randy's design, Oct 2026): sweeping a column in round 2 or 3 earns
+// the sweeper a secret trap to hide on one of the board's remaining tiles.
+// Deliberately rare and deliberately secret -- nobody else learns whether a
+// trap was set, or where, until someone picks that tile. No carry-over: if
+// the sweep cleared the board, or it's round 1, there's simply no trap. A
+// trap placed on a Doubler tile fizzles silently (the Doubler wins).
+const TRIVI_YEAH_II_TRAP_SET_SECONDS = 30; // then no trap -- an idle setter can't freeze the board
+const TRIVI_YEAH_II_TRAP_REVEAL_MS = 3500; // "TRAP! Set by Jake" beat before the question
+const TRIVI_YEAH_II_TRAPS = {
+    PANTS_ON_FIRE: { label: 'Pants on Fire', emoji: '🔥', rule: 'Everyone must answer -- no passing. Wrong answers lose double.' },
+    HOT_SEAT: { label: 'Hot Seat', emoji: '🪑', rule: 'The picker answers alone -- no passing. Right or wrong, it counts double.' },
+    WEDGIE: { label: 'Wedgie', emoji: '🩲', rule: "Normal question -- but if the picker misses it, the trap setter collects the points." }
+};
 const TRIVI_YEAH_II_COLUMN_SWEEP_BONUS = 200; // one player, fastest-correct on all 4 tiles in a category, solo
 const TRIVI_YEAH_II_TOTAL_ROUNDS = 3;
 const TRIVI_YEAH_II_ROUND_TRANSITION_MS = 3000; // "Round N complete!" announcement, before the next board appears
@@ -800,6 +814,8 @@ async function startTriviYeahIIRound(roomCode) {
     ty2.answerOrder = [];
     ty2.clearedCount = 0;
     ty2.doubler = null;
+    ty2.trap = null; // traps never carry over -- each board starts clean
+    ty2.pendingTrapSetter = null;
     if (!ty2.currentPicker) ty2.currentPicker = pickRandomActivePlayer(room);
 
     console.log(`[Trivi-Yeah II] Room ${roomCode} round ${ty2.round}/${ty2.totalRounds} board set: ${chosenCategories.map(c => c.label).join(', ')}. First pick: ${ty2.currentPicker}`);
@@ -858,6 +874,8 @@ function startTriviYeahIITileReveal(roomCode, cellIndex) {
 
     if (room.timerInterval) { clearInterval(room.timerInterval); room.timerInterval = null; } // the pick clock
     ty2.activeCellIndex = cellIndex;
+    ty2.trap = null;
+    ty2.lastTrapOutcome = null;
     ty2.phase = 'CATEGORY_REVEAL';
     ty2.answers = {};
     ty2.answerOrder = [];
@@ -875,6 +893,8 @@ function startTriviYeahIITileReveal(roomCode, cellIndex) {
         room.revealTimeout = null;
         if (cell.isDoubler) {
             revealTriviYeahIIDoubler(roomCode);
+        } else if (cell.trap) {
+            revealTriviYeahIITrap(roomCode);
         } else {
             revealTriviYeahIIQuestion(roomCode);
         }
@@ -1042,6 +1062,7 @@ function openTriviYeahIIAnswering(roomCode) {
         // question or a Doubler (picker alone) without needing a second
         // round-trip -- the non-pickers' screen stays in a spectator view.
         doublerPicker: ty2.doubler ? ty2.currentPicker : null,
+        trap: triviYeahIITrapInfo(ty2),
         ...publicQuestionData
     });
 
@@ -1105,10 +1126,14 @@ function handleTriviYeahIILeave(roomCode, leaverName) {
         startTriviYeahIIPickTimer(roomCode); // a fresh 30s for whoever took over
         return;
     }
+    if (ty2.phase === 'TRAP_SET' && ty2.trapSetter === leaverName) {
+        openTriviYeahIIPickTurn(roomCode); // setter left -- no trap
+        return;
+    }
     if (ty2.phase === 'ANSWERING') {
-        if (ty2.doubler) {
-            // The Doubler's picker answers alone -- if they're gone, there's
-            // nothing to wait for.
+        if (ty2.doubler || (ty2.trap && ty2.trap.type === 'HOT_SEAT')) {
+            // The Doubler's (or Hot Seat's) picker answers alone -- if
+            // they're gone, there's nothing to wait for.
             if (ty2.currentPicker === leaverName) fastForwardTriviYeahIIReveal(roomCode);
         } else if (active.every(p => p.name in ty2.answers)) {
             fastForwardTriviYeahIIReveal(roomCode);
@@ -1138,6 +1163,10 @@ function finalizeTriviYeahIITileClear(room, roomCode, cell, wonByName) {
     const categoryTiles = ty2.grid.filter(c => c.categoryKey === cell.categoryKey);
     const sweptBy = cell.wonBy && categoryTiles.every(c => c.cleared && c.wonBy === cell.wonBy) ? cell.wonBy : null;
     if (sweptBy) {
+        // A sweep in round 2+ with untouched tiles still on the board earns a
+        // secret trap -- set up after this tile's reveal (see
+        // scheduleTriviYeahIINextStep). No tiles left means no trap.
+        if (ty2.round >= 2 && ty2.grid.some(c => !c.cleared)) ty2.pendingTrapSetter = sweptBy;
         const sweepingPlayer = room.players[sweptBy];
         if (sweepingPlayer) {
             sweepingPlayer.score += TRIVI_YEAH_II_COLUMN_SWEEP_BONUS;
@@ -1203,17 +1232,155 @@ function scheduleTriviYeahIINextStep(roomCode) {
             }, TRIVI_YEAH_II_ROUND_TRANSITION_MS);
             return;
         }
-        ty2.phase = 'PICK_TILE';
         ty2.activeCellIndex = null;
         ty2.activeQuestionData = null;
         ty2.doubler = null;
-        broadcastToRoom(roomCode, {
-            type: 'TRIVI_YEAH_II_PICK_TURN',
-            currentPicker: ty2.currentPicker,
-            grid: publicTriviYeahIIGrid(room)
-        });
-        startTriviYeahIIPickTimer(roomCode);
+        ty2.trap = null;
+        const setter = ty2.pendingTrapSetter;
+        ty2.pendingTrapSetter = null;
+        if (setter && room.players[setter] && !room.players[setter].left) {
+            startTriviYeahIITrapSetting(roomCode, setter);
+            return;
+        }
+        openTriviYeahIIPickTurn(roomCode);
     }, REVEAL_DURATION_MS);
+}
+
+function openTriviYeahIIPickTurn(roomCode) {
+    const room = activeRooms[roomCode];
+    if (!room || !room.triviYeahII) return;
+    const ty2 = room.triviYeahII;
+    ty2.phase = 'PICK_TILE';
+    ty2.trapSetter = null;
+    broadcastToRoom(roomCode, {
+        type: 'TRIVI_YEAH_II_PICK_TURN',
+        currentPicker: ty2.currentPicker,
+        grid: publicTriviYeahIIGrid(room)
+    });
+    startTriviYeahIIPickTimer(roomCode);
+}
+
+// The sweeper gets a private screen to hide a trap (or decline). Everyone
+// else only sees that they're "up to something" -- and the outcome is the
+// same "done" either way, so nobody can tell whether a trap was actually set.
+function startTriviYeahIITrapSetting(roomCode, setter) {
+    const room = activeRooms[roomCode];
+    if (!room || !room.triviYeahII) return;
+    const ty2 = room.triviYeahII;
+    ty2.phase = 'TRAP_SET';
+    ty2.trapSetter = setter;
+    console.log(`[Trivi-Yeah II] Room ${roomCode}: ${setter} swept a column and may set a trap.`);
+    broadcastToRoom(roomCode, { type: 'TRIVI_YEAH_II_TRAP_SETTING', setter });
+
+    let count = TRIVI_YEAH_II_TRAP_SET_SECONDS;
+    room.gameSecondsLeft = count;
+    if (room.timerInterval) clearInterval(room.timerInterval);
+    broadcastToRoom(roomCode, { type: 'GAME_TIMER_TICK', secondsLeft: count + " s" });
+    room.timerInterval = setInterval(() => {
+        count--;
+        room.gameSecondsLeft = count;
+        if (ty2 !== room.triviYeahII || ty2.phase !== 'TRAP_SET') {
+            clearInterval(room.timerInterval);
+            room.timerInterval = null;
+            return;
+        }
+        if (count > 0) {
+            broadcastToRoom(roomCode, { type: 'GAME_TIMER_TICK', secondsLeft: count + " s" });
+            return;
+        }
+        clearInterval(room.timerInterval);
+        room.timerInterval = null;
+        console.log(`[Trivi-Yeah II] Room ${roomCode}: ${setter} ran out of time -- no trap.`);
+        openTriviYeahIIPickTurn(roomCode);
+    }, 1000);
+}
+
+// type null = the setter chose "No trap". Returns nothing about whether the
+// trap actually stuck -- a Doubler tile (or an already-trapped one) quietly
+// swallows it, and the setter is never told.
+function placeTriviYeahIITrap(roomCode, cellIndex, type) {
+    const room = activeRooms[roomCode];
+    if (!room || !room.triviYeahII) return;
+    const ty2 = room.triviYeahII;
+    if (room.timerInterval) { clearInterval(room.timerInterval); room.timerInterval = null; }
+    const cell = type ? ty2.grid[cellIndex] : null;
+    if (cell && !cell.isDoubler && !cell.trap) {
+        cell.trap = { type, setter: ty2.trapSetter };
+        console.log(`[Trivi-Yeah II] Room ${roomCode}: ${ty2.trapSetter} hid ${type} on tile ${cellIndex}.`);
+    } else if (cell) {
+        console.log(`[Trivi-Yeah II] Room ${roomCode}: ${ty2.trapSetter}'s ${type} on tile ${cellIndex} fizzled (${cell.isDoubler ? 'Doubler' : 'already trapped'}).`);
+    } else {
+        console.log(`[Trivi-Yeah II] Room ${roomCode}: ${ty2.trapSetter} chose no trap.`);
+    }
+    openTriviYeahIIPickTurn(roomCode);
+}
+
+function revealTriviYeahIITrap(roomCode) {
+    const room = activeRooms[roomCode];
+    if (!room || !room.triviYeahII) return;
+    const ty2 = room.triviYeahII;
+    const cell = ty2.grid[ty2.activeCellIndex];
+    ty2.trap = { ...cell.trap, picker: ty2.currentPicker };
+    ty2.phase = 'TRAP_REVEAL';
+    const info = TRIVI_YEAH_II_TRAPS[ty2.trap.type];
+    broadcastToRoom(roomCode, {
+        type: 'TRIVI_YEAH_II_TRAP_REVEAL',
+        trapType: ty2.trap.type,
+        label: info.label,
+        emoji: info.emoji,
+        rule: info.rule,
+        setter: ty2.trap.setter,
+        picker: ty2.currentPicker,
+        points: cell.points,
+        categoryLabel: cell.categoryLabel
+    });
+    if (room.revealTimeout) clearTimeout(room.revealTimeout);
+    room.revealTimeout = setTimeout(() => {
+        room.revealTimeout = null;
+        revealTriviYeahIIQuestion(roomCode);
+    }, TRIVI_YEAH_II_TRAP_REVEAL_MS);
+}
+
+// Status-friendly view of the live trap (null when there isn't one).
+export function triviYeahIITrapInfo(ty2) {
+    if (!ty2 || !ty2.trap) return null;
+    const info = TRIVI_YEAH_II_TRAPS[ty2.trap.type];
+    return { type: ty2.trap.type, label: info.label, emoji: info.emoji, rule: info.rule, setter: ty2.trap.setter, picker: ty2.trap.picker };
+}
+
+// Hot Seat: the picker answered alone, double or nothing either way. The
+// fastest-correct bolt isn't touched (same as a Doubler -- "fastest" means
+// nothing with one answerer).
+function evaluateTriviYeahIIHotSeat(room, roomCode, cell, correctLetter, pickerName) {
+    const ty2 = room.triviYeahII;
+    const pickerCorrect = ty2.answers[pickerName] === correctLetter;
+    const delta = cell.points * 2 * (pickerCorrect ? 1 : -1);
+    const picker = room.players[pickerName];
+    if (picker) {
+        picker.score += delta;
+        if (pickerCorrect) picker.correctAnswers = (picker.correctAnswers || 0) + 1;
+    }
+    const nextPicker = pickerCorrect && picker && !picker.left ? pickerName : pickRandomActivePlayer(room);
+    const trapOutcome = { ...triviYeahIITrapInfo(ty2), pickerCorrect, delta };
+    ty2.lastTrapOutcome = trapOutcome;
+
+    ty2.currentPicker = nextPicker;
+    finalizeTriviYeahIITileClear(room, roomCode, cell, pickerCorrect ? pickerName : null);
+
+    broadcastToRoom(roomCode, {
+        type: 'TRIVI_YEAH_II_ROUND_REVEAL',
+        index: ty2.activeCellIndex,
+        correctLetter,
+        answers: ty2.answers,
+        nextPicker,
+        grid: publicTriviYeahIIGrid(room),
+        trap: trapOutcome
+    });
+    broadcastToRoom(roomCode, {
+        type: 'LEADERBOARD_UPDATE',
+        players: Object.values(room.players).filter(p => !p.left)
+    });
+    scheduleTriviYeahIINextStep(roomCode);
 }
 
 function evaluateTriviYeahIIAnswers(roomCode) {
@@ -1235,12 +1402,20 @@ function evaluateTriviYeahIIAnswers(roomCode) {
         return;
     }
 
+    const trap = ty2.trap;
+    const tilePicker = ty2.currentPicker; // still this tile's picker until nextPicker is set below
+    if (trap && trap.type === 'HOT_SEAT') {
+        evaluateTriviYeahIIHotSeat(room, roomCode, cell, correctLetter, tilePicker);
+        return;
+    }
+
     // Picker privilege: whoever answered correctly fastest earns the next
     // pick (answerOrder is submission order, so the first match is the
     // fastest). Nobody correct -- including nobody answering at all --
     // falls back to a random active player, same as the opening tile.
     const fastestCorrectName = ty2.answerOrder.find(name => ty2.answers[name] === correctLetter);
     const nextPicker = fastestCorrectName || pickRandomActivePlayer(room);
+    const onFire = trap && trap.type === 'PANTS_ON_FIRE';
 
     Object.values(room.players).forEach(player => {
         if (player.left) return;
@@ -1248,6 +1423,10 @@ function evaluateTriviYeahIIAnswers(roomCode) {
         if (submitted === correctLetter) {
             player.score += points;
             player.correctAnswers = (player.correctAnswers || 0) + 1;
+        } else if (onFire) {
+            // Pants on Fire: everyone MUST answer -- a wrong answer or no
+            // answer at all costs double.
+            player.score -= points * 2;
         } else if (submitted && submitted !== 'PASS') {
             // A real wrong guess costs the same amount the tile would have
             // paid out -- symmetric risk, scaling with how hard the question
@@ -1272,6 +1451,18 @@ function evaluateTriviYeahIIAnswers(roomCode) {
         }
     });
 
+    // Wedgie: the picker missed (wrong, passed, or silent) -> the trap
+    // setter collects the tile's points. Can't wedgie yourself.
+    let trapOutcome = trap ? { ...triviYeahIITrapInfo(ty2) } : null;
+    if (trap && trap.type === 'WEDGIE') {
+        const pickerCorrect = ty2.answers[tilePicker] === correctLetter;
+        const setterPlayer = room.players[trap.setter];
+        const collected = !pickerCorrect && trap.setter !== tilePicker && setterPlayer && !setterPlayer.left ? points : 0;
+        if (collected) setterPlayer.score += collected;
+        trapOutcome = { ...trapOutcome, pickerCorrect, collected };
+    }
+    ty2.lastTrapOutcome = trapOutcome;
+
     ty2.currentPicker = nextPicker;
     finalizeTriviYeahIITileClear(room, roomCode, cell, fastestCorrectName || null);
 
@@ -1281,7 +1472,8 @@ function evaluateTriviYeahIIAnswers(roomCode) {
         correctLetter,
         answers: ty2.answers,
         nextPicker,
-        grid: publicTriviYeahIIGrid(room)
+        grid: publicTriviYeahIIGrid(room),
+        trap: trapOutcome
     });
     broadcastToRoom(roomCode, {
         type: 'LEADERBOARD_UPDATE',
@@ -3721,6 +3913,26 @@ export function handleIncomingMessage(fromPhone, bodyText, explicitRoomCode, pre
         }
     }
 
+    // 5.15 Trivi-Yeah II: trap setting -- the sweeper only, TRAP_SET phase.
+    // "TRAP <tile> <TYPE>" or "TRAP_SKIP". Same reply either way, and
+    // whether it actually stuck (vs. fizzling on a Doubler) is never said.
+    if (currentRoom.gameState === 'TRIVI_YEAH_II_ROUND' && currentRoom.triviYeahII.phase === 'TRAP_SET') {
+        const ty2 = currentRoom.triviYeahII;
+        const upper = cleanText.toUpperCase();
+        if (upper === 'TRAP_SKIP' || upper.startsWith('TRAP ')) {
+            if (actingPlayerName !== ty2.trapSetter) return `⚠️ ${ty2.trapSetter} is busy with something. Hang tight!`;
+            if (upper === 'TRAP_SKIP') {
+                placeTriviYeahIITrap(associatedRoomCode, null, null);
+                return `No trap this time. Back to the board!`;
+            }
+            const match = /^TRAP (\d+) (PANTS_ON_FIRE|HOT_SEAT|WEDGIE)$/.exec(upper);
+            const cell = match ? ty2.grid[parseInt(match[1], 10)] : null;
+            if (!cell || cell.cleared) return `⚠️ Pick an open tile and a trap.`;
+            placeTriviYeahIITrap(associatedRoomCode, parseInt(match[1], 10), match[2]);
+            return `Trap set. 🤫`;
+        }
+    }
+
     // 5.2 Trivi-Yeah II: live answer submissions -- ANSWERING phase only.
     // PASS is a genuine third option alongside A-D, not a fallback -- it's
     // the deliberate "sit this one out" opt-out from the wrong-answer
@@ -3733,12 +3945,19 @@ export function handleIncomingMessage(fromPhone, bodyText, explicitRoomCode, pre
     if (currentRoom.gameState === 'TRIVI_YEAH_II_ROUND' && currentRoom.triviYeahII.phase === 'ANSWERING') {
         const ty2 = currentRoom.triviYeahII;
         const answerChoice = cleanText.toUpperCase();
-        const isDoublerQuestion = !!ty2.doubler;
-        const validChoices = isDoublerQuestion ? ['A', 'B', 'C', 'D'] : ['A', 'B', 'C', 'D', 'PASS'];
+        const trapType = ty2.trap ? ty2.trap.type : null;
+        // Doubler and Hot Seat: the picker answers alone. Those two plus
+        // Pants on Fire: no passing.
+        const isDoublerQuestion = !!ty2.doubler || trapType === 'HOT_SEAT';
+        const noPass = isDoublerQuestion || trapType === 'PANTS_ON_FIRE';
+        const validChoices = noPass ? ['A', 'B', 'C', 'D'] : ['A', 'B', 'C', 'D', 'PASS'];
+        if (noPass && answerChoice === 'PASS') return `⚠️ No passing on this one!`;
 
         if (validChoices.includes(answerChoice)) {
             if (isDoublerQuestion && actingPlayerName !== ty2.currentPicker) {
-                return `⚠️ Only ${ty2.currentPicker} answers this one -- it's their Doubler.`;
+                return trapType === 'HOT_SEAT'
+                    ? `⚠️ Only ${ty2.currentPicker} answers this one -- they're in the Hot Seat.`
+                    : `⚠️ Only ${ty2.currentPicker} answers this one -- it's their Doubler.`;
             }
             if (!(actingPlayerName in ty2.answers)) {
                 ty2.answerOrder.push(actingPlayerName);
