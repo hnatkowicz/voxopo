@@ -37,6 +37,8 @@ if (btnSubmitSpectate) {
         // resolved to 'correct' or deleted on REVEAL_CORRECT_ANSWER.
         let playerAnswerStatus = {};
         let currentStatusHtml = ''; // Whatever the status slot should show at rest for the current phase (toasts restore to this)
+        let contentWarningHideTimer = null; // set while a notice is showing in the status slot
+        let contentWarningHtml = '';
         let currentGamePhase = 'LOBBY'; // LOBBY / CATEGORY_VOTE / GAME_ROUND / GAME_OVER -- gates the "PRESS START" nudge to lobby only
         let currentEmpossDurrRound = null; // cached so EMPOSSDURR_RESUME_DISCUSSION can redraw the same round header
         let currentEmpossDurrTotalRounds = null;
@@ -95,6 +97,9 @@ if (btnSubmitSpectate) {
         // always scan in -- this slot is the only thing that varies by phase.
         function setStatusMessage(html) {
             currentStatusHtml = html;
+            // A notice is showing in the slot -- remember the new message and
+            // show it once the notice clears (see showContentWarningToast).
+            if (contentWarningHideTimer) return;
             const slot = document.getElementById('onboarding-status-slot');
             if (slot) slot.innerHTML = html;
         }
@@ -569,6 +574,10 @@ if (btnSubmitSpectate) {
                     document.getElementById('lobby-countdown').innerText = '';
                     playerAnswerStatus = {};
                     switchToProfilerRevealUI(data);
+                    document.getElementById('lobby-countdown').innerText = (data.secondsLeft || 60) + ' s';
+                }
+                if (data.type === 'PROFILER_CONTINUE_UPDATE') {
+                    updateProfilerContinueTally(data.votedCount, data.totalNeeded);
                 }
                 if (data.type === 'PROFILER_AWARDS') {
                     profilerCountdownActive = false;
@@ -712,21 +721,25 @@ if (btnSubmitSpectate) {
             }
         }
 
-        let contentWarningHideTimer = null;
+        // Shown in the status slot beside the QR code (where "Press Start"
+        // lives) -- it used to be a floating card that covered the QR code
+        // itself, right when people needed it to join (family playtest).
         function showContentWarningToast(message) {
-            const card = document.getElementById('content-warning-card');
-            const text = document.getElementById('content-warning-text');
-            if (!card || !text) return;
-
-            text.innerText = message;
-            card.classList.add('active');
+            const slot = document.getElementById('onboarding-status-slot');
+            if (!slot) return;
+            contentWarningHtml = `
+                <div style="font-weight: 700; color: #ffa500; margin-bottom: 2px;">⚠️ Heads up</div>
+                <div style="font-size: 0.85rem; color: #e2e5e9;">${escapeHtml(message)}</div>
+            `;
+            slot.innerHTML = contentWarningHtml;
+            slot.style.opacity = "1";
 
             // Re-triggerable -- a second warning while one's already showing
             // just resets the clock rather than stacking or getting cut short.
             if (contentWarningHideTimer) clearTimeout(contentWarningHideTimer);
             contentWarningHideTimer = setTimeout(() => {
-                card.classList.remove('active');
                 contentWarningHideTimer = null;
+                slot.innerHTML = currentStatusHtml;
             }, 10000);
         }
 
@@ -748,6 +761,9 @@ if (btnSubmitSpectate) {
 
         function processToastQueuePipeline() {
             if (isToastPlaying || toastQueue.length === 0) return;
+            // A notice is using the slot -- join announcements wait their
+            // turn instead of overwriting it.
+            if (contentWarningHideTimer) { setTimeout(processToastQueuePipeline, 1000); return; }
 
             isToastPlaying = true;
             const nextPlayer = toastQueue.shift();
@@ -785,7 +801,8 @@ if (btnSubmitSpectate) {
                 setTimeout(() => {
                     // Restore whatever the current phase's real status message is,
                     // rather than a hardcoded string -- the toast is just a brief overlay.
-                    slot.innerHTML = currentStatusHtml;
+                    // (A notice that arrived mid-toast wins over both.)
+                    slot.innerHTML = contentWarningHideTimer ? contentWarningHtml : currentStatusHtml;
                     slot.style.opacity = "1";
 
                     setTimeout(() => {
@@ -1563,9 +1580,17 @@ function switchToProfilerRevealUI(data) {
             <div style="font-size: 1.6rem; font-weight: 700; color: #ffffff; margin-bottom: 24px;">“${escapeHtml(data.answerText)}” was...</div>
             <div style="display: flex; flex-wrap: wrap; gap: 14px; justify-content: center; margin-bottom: 24px;">${choosers}</div>
             <div style="display: flex; flex-wrap: wrap; gap: 8px; justify-content: center;">${scorers || '<span style="color: #64748b;">Nobody read this one right.</span>'}</div>
+            <div style="margin-top: 26px; font-size: 0.95rem; color: #94a3b8;">Talk it over -- tap <strong style="color: #f4f5f6;">Continue</strong> on your phone when you're ready.</div>
+            <div id="pf-tv-continue-tally" style="font-size: 1.05rem; font-weight: 600; color: #ffa500; margin-top: 6px;"></div>
         </div>
     `;
     currentGamePhase = 'PROFILER_REVEAL';
+    updateProfilerContinueTally(data.continueVotedCount || 0, data.continueTotalNeeded || 0);
+}
+
+function updateProfilerContinueTally(votedCount, totalNeeded) {
+    const el = document.getElementById('pf-tv-continue-tally');
+    if (el) el.innerText = `${votedCount} / ${totalNeeded} ready for the next question`;
 }
 
 function switchToProfilerAwardsUI(data) {
@@ -1613,7 +1638,7 @@ function restoreProfilerTV(snap) {
         updateProfilerTally();
         profilerCountdownActive = true;
     } else if (snap.phase === 'REVEAL' && snap.reveal) {
-        switchToProfilerRevealUI({ round: snap.round, totalRounds: snap.totalRounds, ...snap.reveal });
+        switchToProfilerRevealUI({ round: snap.round, totalRounds: snap.totalRounds, ...snap.reveal, continueVotedCount: snap.continueVotedCount, continueTotalNeeded: snap.continueTotalNeeded });
     } else if (snap.phase === 'AWARDS' && snap.results) {
         switchToProfilerAwardsUI(snap.results);
     } else if (snap.phase === 'UNANIMOUS') {

@@ -87,7 +87,11 @@ Mode keys are used in room votes and in `gameEngine.js`:
   `profiler_questions` table (`profiler_questions_seed.sql`), not in
   `questions`. Scoring: a perfect read is 6 points split across the people
   to find (+2 bonus when there were 2+), and +2 open-book for each person who
-  found you. Ends on a "Who Knows Who" awards screen before Game Over.
+  found you. Each reveal waits for everyone to tap Continue (60s backstop),
+  so the room can talk it over. Ends on a "Who Knows Who" awards screen
+  before Game Over. The pool is 300 questions (`profiler_questions_seed.sql`
+  + `profiler_questions_batch_2.sql`), balanced 100/100/100 across
+  intensity 1/2/3 because each game cycles light -> medium -> deep.
 - **Flag Me Down** was removed from the lobby (it was never built). Flags
   will be folded into Country Monkey instead, to give that mode more depth.
 

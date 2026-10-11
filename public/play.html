@@ -1663,7 +1663,7 @@
                 ? 'Final results'
                 : `Round ${Math.min(data.round, data.totalRounds)} of ${data.totalRounds}`;
 
-            const phaseKey = `${data.profilerPhase}|${data.round}|${data.replacement}|${data.inRoster}|${data.myAnswer || ''}|${data.myPicks ? 'picked' : ''}`;
+            const phaseKey = `${data.profilerPhase}|${data.round}|${data.replacement}|${data.inRoster}|${data.myAnswer || ''}|${data.myPicks ? 'picked' : ''}|${data.iHaveVotedContinue ? 'continued' : ''}`;
             if (phaseKey !== pfLastPhaseKey) {
                 try {
                     buildProfilerPhaseContent(data);
@@ -1675,6 +1675,7 @@
                 const tally = document.getElementById('pf-tally');
                 if (tally && data.profilerPhase === 'ANSWER') tally.innerText = `${data.answeredCount} / ${data.rosterCount} answered`;
                 if (tally && data.profilerPhase === 'GUESS') tally.innerText = `${data.guessedCount} / ${data.guessersNeeded} locked in`;
+                if (tally && data.profilerPhase === 'REVEAL') tally.innerText = `${data.continueVotedCount} / ${data.continueTotalNeeded} ready`;
             }
         }
 
@@ -1757,7 +1758,8 @@
                     <div class="pf-post-label">“${pfEscape(data.reveal.answerText)}” was...</div>
                     <div class="pf-post-answer">${(data.reveal.choosers || []).map(pfEscape).join(' & ')}</div>
                     <div class="pf-result">${line}${iWasIt ? `<div style="margin-top:6px;color:#f472b6;font-weight:700;">Open book: +${openBook || 0}</div>` : ''}</div>
-                    <p class="ed-status-line">Next round in a moment...</p>`;
+                    <button class="btn" id="pf-continue-btn" onclick="submitProfilerContinue()" ${data.iHaveVotedContinue ? 'disabled' : ''}>${data.iHaveVotedContinue ? 'Waiting on the room...' : 'Continue'}</button>
+                    <div class="ed-status-line" id="pf-tally">${data.continueVotedCount} / ${data.continueTotalNeeded} ready</div>`;
                 return;
             }
 
@@ -1821,6 +1823,12 @@
         function submitProfilerAnswer(key) {
             document.querySelectorAll('#pf-phase-content .module-row').forEach(el => el.classList.add('btn-locked'));
             sendProfilerAction(`PROFILER_ANSWER:${key}`);
+        }
+
+        function submitProfilerContinue() {
+            const btn = document.getElementById('pf-continue-btn');
+            if (btn) { btn.disabled = true; btn.innerText = 'Waiting on the room...'; }
+            sendProfilerAction('PROFILER_CONTINUE');
         }
 
         function submitProfilerPicks() {

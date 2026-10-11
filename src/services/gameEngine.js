@@ -2328,7 +2328,12 @@ const PROFILER_TOTAL_ROUNDS = 12;
 // but a few players felt pressured.
 const PROFILER_ANSWER_SECONDS = 20; // up to 7 options to read, so longer than trivia's 10
 const PROFILER_GUESS_SECONDS = 25; // picking people takes real thought
-const PROFILER_REVEAL_MS = 13000;
+// The reveal waits for everyone to tap Continue (60s backstop) instead of a
+// fixed beat -- the family kept wanting to talk about the answers, and the
+// old 8s (then 13s) clock cut those conversations off. Everyone, not a
+// majority, same reasoning as the Game Over vote: nobody's mid-sentence
+// gets cut short by the people who are already done.
+const PROFILER_CONTINUE_SECONDS = 60;
 const PROFILER_UNANIMOUS_MS = 3500; // "Unanimous!" beat before a replacement question
 const PROFILER_MAX_REPLACEMENTS_PER_ROUND = 2; // then the round just counts, so a game always ends
 const PROFILER_AWARDS_MS = 15000; // long enough to read the TV awards and your own phone
@@ -2524,6 +2529,10 @@ function checkProfilerPhaseComplete(roomCode) {
     } else if (pf.phase === 'GUESS') {
         const guessers = profilerGuessers(room);
         if (guessers.every(name => name in pf.guesses)) fastForwardProfiler(roomCode);
+    } else if (pf.phase === 'REVEAL') {
+        const roster = profilerActiveRoster(room);
+        broadcastToRoom(roomCode, { type: 'PROFILER_CONTINUE_UPDATE', votedCount: roster.filter(n => pf.continueVotes.has(n)).length, totalNeeded: roster.length });
+        if (roster.length > 0 && roster.every(name => pf.continueVotes.has(name))) startProfilerRound(roomCode, false);
     }
 }
 
@@ -2652,13 +2661,15 @@ function revealProfilerRound(roomCode) {
         results: results.sort((a, b) => b.points - a.points)
     };
 
-    broadcastToRoom(roomCode, { type: 'PROFILER_REVEAL', round: pf.round, totalRounds: pf.totalRounds, ...pf.lastReveal });
+    pf.continueVotes = new Set();
+    broadcastToRoom(roomCode, {
+        type: 'PROFILER_REVEAL', round: pf.round, totalRounds: pf.totalRounds, ...pf.lastReveal,
+        continueTotalNeeded: profilerActiveRoster(room).length, secondsLeft: PROFILER_CONTINUE_SECONDS
+    });
     broadcastToRoom(roomCode, { type: 'LEADERBOARD_UPDATE', players: Object.values(room.players).filter(p => !p.left) });
 
-    room.revealTimeout = setTimeout(() => {
-        room.revealTimeout = null;
-        startProfilerRound(roomCode, false);
-    }, PROFILER_REVEAL_MS);
+    startProfilerCountdown(roomCode, PROFILER_CONTINUE_SECONDS, () => startProfilerRound(roomCode, false));
+    room.profilerOnExpire = null; // the continue clock is never fast-forwarded -- only "everyone's in" ends it early
 }
 
 // "Who knows who best": ratio of hits to chances, preferring more evidence on
@@ -2778,6 +2789,9 @@ export function profilerStatusFor(room, playerName) {
         guessedCount: Object.keys(pf.guesses).length,
         guessersNeeded: pf.phase === 'GUESS' ? profilerGuessers(room).length : 0,
         reveal: pf.phase === 'REVEAL' ? pf.lastReveal : null,
+        continueVotedCount: pf.phase === 'REVEAL' && pf.continueVotes ? profilerActiveRoster(room).filter(n => pf.continueVotes.has(n)).length : 0,
+        continueTotalNeeded: pf.phase === 'REVEAL' ? profilerActiveRoster(room).length : 0,
+        iHaveVotedContinue: !!(pf.phase === 'REVEAL' && pf.continueVotes && pf.continueVotes.has(playerName)),
         personal: pf.results ? (pf.results.personal[playerName] || null) : null,
         awards: pf.results ? pf.results.awards : null,
         gameSecondsLeft: room.gameSecondsLeft
@@ -2801,6 +2815,8 @@ export function profilerTvSnapshot(room) {
         guessedNames: Object.keys(pf.guesses),
         guessersNeeded: pf.phase === 'GUESS' ? profilerGuessers(room).length : 0,
         reveal: pf.phase === 'REVEAL' ? pf.lastReveal : null,
+        continueVotedCount: pf.phase === 'REVEAL' && pf.continueVotes ? profilerActiveRoster(room).filter(n => pf.continueVotes.has(n)).length : 0,
+        continueTotalNeeded: pf.phase === 'REVEAL' ? profilerActiveRoster(room).length : 0,
         results: pf.phase === 'AWARDS' ? { bars: pf.results.bars, awards: pf.results.awards } : null
     };
 }
@@ -2837,6 +2853,13 @@ function handleProfilerAction(roomCode, room, playerName, cleanText) {
         broadcastToRoom(roomCode, { type: 'PROFILER_GUESS_SUBMITTED' }); // no name: who's locked in hints at who gave the answer
         checkProfilerPhaseComplete(roomCode);
         return `Picks locked in!`;
+    }
+
+    if (cleanText.toUpperCase() === 'PROFILER_CONTINUE') {
+        if (pf.phase !== 'REVEAL') return `⚠️ Nothing to continue right now.`;
+        pf.continueVotes.add(playerName);
+        checkProfilerPhaseComplete(roomCode);
+        return `Ready for the next one!`;
     }
 
     return `⚠️ That action isn't available right now.`;
