@@ -3,7 +3,7 @@ import dotenv from 'dotenv';
 import path from 'path';
 import { WebSocketServer } from 'ws';
 import pool from './config/database.js';
-import { handleIncomingMessage, activeRooms, getCategoriesForMode, resolveRequestedQuestionCount, compareByRank, closeRoom, profilerStatusFor, profilerTvSnapshot } from './services/gameEngine.js';
+import { handleIncomingMessage, activeRooms, getCategoriesForMode, resolveRequestedQuestionCount, compareByRank, closeRoom, profilerStatusFor, profilerTvSnapshot, triviYeahIITrapInfo } from './services/gameEngine.js';
 import {
     isHostAuthorized, grantHostSession, isAccessCodeActive,
     isAdminAuthorized, grantAdminSession,
@@ -309,6 +309,13 @@ app.post('/api/room-status', (req, res) => {
                     ? (safeQuestionData ? { A: safeQuestionData.choiceA, B: safeQuestionData.choiceB, C: safeQuestionData.choiceC, D: safeQuestionData.choiceD } : null)
                     : null,
                 gameSecondsLeft: targetRoom.gameSecondsLeft,
+                // Traps: only who's setting one (never where, or whether one
+                // was set) during TRAP_SET; the live trap once it's revealed;
+                // and the result on the reveal screen.
+                trapSetter: ty2.phase === 'TRAP_SET' ? ty2.trapSetter : null,
+                isTrapSetter: ty2.phase === 'TRAP_SET' && playerName === ty2.trapSetter,
+                trap: triviYeahIITrapInfo(ty2),
+                trapOutcome: ty2.phase === 'ROUND_REVEAL' ? (ty2.lastTrapOutcome || null) : null,
                 myAnswer: ty2.answers ? ty2.answers[playerName] : null,
                 myScore, myCorrectAnswers, myLeft, myEmoji
             });

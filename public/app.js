@@ -307,13 +307,24 @@ if (btnSubmitSpectate) {
                     stopCountdownMusic();
                 }
                 if (data.type === 'TRIVI_YEAH_II_CATEGORY_REVEAL') {
+                    activeTrapTV = null; // a fresh tile -- any trap shows up via its own reveal
                     showTriviYeahIISpotlightUI({ stage: 'category', categoryLabel: data.categoryLabel, points: data.points });
+                }
+                if (data.type === 'TRIVI_YEAH_II_TRAP_SETTING') {
+                    showTriviYeahIITrapSettingUI(data.setter);
+                }
+                if (data.type === 'TRIVI_YEAH_II_TRAP_REVEAL') {
+                    activeTrapTV = data;
+                    document.getElementById('lobby-countdown').innerText = ''; // the setting clock's last tick
+                    showTriviYeahIITrapRevealUI(data);
                 }
                 if (data.type === 'TRIVI_YEAH_II_QUESTION_REVEAL') {
                     showTriviYeahIISpotlightUI({ stage: 'question', questionText: data.questionText, points: data.points });
+                    addTriviYeahIITrapBanner();
                 }
                 if (data.type === 'TRIVI_YEAH_II_ANSWERS_REVEAL') {
                     showTriviYeahIISpotlightUI({ stage: 'answers', questionText: data.questionText, points: data.points, choiceA: data.choiceA, choiceB: data.choiceB, choiceC: data.choiceC, choiceD: data.choiceD });
+                    addTriviYeahIITrapBanner();
                     playerAnswerStatus = {};
                     updateLeaderboardUI(cachedPlayersSnapshot);
                     ty2AnswerCountdownActive = true;
@@ -330,6 +341,7 @@ if (btnSubmitSpectate) {
                     }
                     ty2AnswerCountdownActive = false;
                     stopCountdownMusic();
+                    if (data.trap) showTriviYeahIITrapOutcome(data.trap);
                 }
                 if (data.type === 'TRIVI_YEAH_II_COLUMN_BONUS') {
                     showColumnBonusToast(data.playerName, data.categoryLabel);
@@ -1115,6 +1127,80 @@ function doublerCategoryBadge(categoryLabel) {
     return categoryLabel
         ? `<div style="font-size: 0.8rem; font-weight: 600; color: #ffa500; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 10px;">Category: ${categoryLabel}</div>`
         : '';
+}
+
+// ---------- Thinking Pants traps ----------
+// Icons: Randy's SVGs in public/traps/ when they exist, emoji until then --
+// a missing file just falls back, so dropping the art in needs no code change.
+const TRAP_ICON_FILES = { SETTING: 'trap-setting', PANTS_ON_FIRE: 'trap-pants-on-fire', HOT_SEAT: 'trap-hot-seat', WEDGIE: 'trap-wedgie' };
+const TRAP_ICON_EMOJI = { SETTING: '🤫', PANTS_ON_FIRE: '🔥', HOT_SEAT: '🪑', WEDGIE: '🩲' };
+let activeTrapTV = null; // the revealed trap on the current tile, for the question-phase banner
+
+function trapIconHtml(key, sizePx) {
+    const emoji = TRAP_ICON_EMOJI[key] || '⚠️';
+    return `<img src="/traps/${TRAP_ICON_FILES[key]}.svg" alt="" style="height: ${sizePx}px; width: auto;" onerror="this.outerHTML='<span style=&quot;font-size: ${Math.round(sizePx * 0.8)}px; line-height: 1;&quot;>${emoji}</span>'">`;
+}
+
+function trapRuleFor(trap) {
+    if (trap.trapType === 'HOT_SEAT' || trap.type === 'HOT_SEAT') return `${escapeHtml(trap.picker)} answers alone -- no passing. Right or wrong, it counts double.`;
+    if (trap.trapType === 'WEDGIE' || trap.type === 'WEDGIE') return `Normal question -- but if ${escapeHtml(trap.picker)} misses it, ${escapeHtml(trap.setter)} collects the points.`;
+    return 'Everyone must answer -- no passing. Wrong answers lose double.';
+}
+
+function showTriviYeahIITrapSettingUI(setter) {
+    const panel = document.getElementById('active-content-stage');
+    document.getElementById('room-status-text').innerText = "Thinking Pants — Shhh...";
+    panel.innerHTML = `
+        <div class="panel-box" style="padding: 40px; flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; min-height: 400px; box-sizing: border-box;">
+            <div style="margin-bottom: 14px;">${trapIconHtml('SETTING', 90)}</div>
+            <div style="font-size: 1.9rem; font-weight: 800; color: #ffffff; margin-bottom: 8px;">${escapeHtml(setter)} swept a column...</div>
+            <div style="font-size: 1.2rem; color: #94a3b8;">...and is up to something.</div>
+        </div>
+    `;
+    setStatusMessage(`<div style="font-weight: 600; color: #8892b0;">🤫 Shhh...</div>`);
+}
+
+function showTriviYeahIITrapRevealUI(data) {
+    const panel = document.getElementById('active-content-stage');
+    document.getElementById('room-status-text').innerText = `Thinking Pants — ${data.label}!`;
+    panel.innerHTML = `
+        <div class="panel-box" style="padding: 40px; flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; min-height: 400px; box-sizing: border-box;">
+            ${doublerCategoryBadge(data.categoryLabel)}
+            <div style="font-size: 0.85rem; font-weight: 600; color: #64748b; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 10px;">It's a trap!</div>
+            <div style="margin-bottom: 10px;">${trapIconHtml(data.trapType, 110)}</div>
+            <div style="font-size: 2.6rem; font-weight: 800; color: #ff5c5c; margin-bottom: 10px; text-shadow: 0 0 20px rgba(255, 92, 92, 0.35);">${escapeHtml(data.label).toUpperCase()}</div>
+            <div style="font-size: 1.2rem; font-weight: 600; color: #ffffff; max-width: 700px;">${trapRuleFor(data)}</div>
+            <div style="font-size: 1rem; color: #94a3b8; margin-top: 10px;">Set by ${escapeHtml(data.setter)} · ${data.points} points</div>
+        </div>
+    `;
+}
+
+// Keeps the trap visible while the question plays out.
+function addTriviYeahIITrapBanner() {
+    if (!activeTrapTV) return;
+    const box = document.querySelector('#active-content-stage .panel-box');
+    if (!box) return;
+    const banner = document.createElement('div');
+    banner.style.cssText = 'display: flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 14px; font-weight: 700; color: #ff5c5c;';
+    banner.innerHTML = `${trapIconHtml(activeTrapTV.trapType, 34)}<span>${escapeHtml(activeTrapTV.label).toUpperCase()} · ${trapRuleFor(activeTrapTV)}</span>`;
+    box.insertBefore(banner, box.firstChild);
+    document.getElementById('room-status-text').innerText = `Thinking Pants — ${activeTrapTV.label}`;
+}
+
+function showTriviYeahIITrapOutcome(trap) {
+    let line;
+    if (trap.type === 'WEDGIE') {
+        line = trap.collected
+            ? `🩲 Wedgie! ${escapeHtml(trap.picker)} missed -- ${escapeHtml(trap.setter)} collects ${trap.collected}.`
+            : `🩲 ${escapeHtml(trap.picker)} dodged the Wedgie!`;
+    } else if (trap.type === 'HOT_SEAT') {
+        line = trap.pickerCorrect
+            ? `🪑 ${escapeHtml(trap.picker)} survived the Hot Seat: +${Math.abs(trap.delta)}!`
+            : `🪑 ${escapeHtml(trap.picker)} got burned in the Hot Seat: -${Math.abs(trap.delta)}.`;
+    } else {
+        line = `🔥 Pants on Fire! Wrong answers cost double.`;
+    }
+    setStatusMessage(`<div style="font-weight: 700; color: #ff5c5c;">${line}</div>`);
 }
 
 function showTriviYeahIIDoublerRevealUI(picker, points, categoryLabel) {
