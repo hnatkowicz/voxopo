@@ -3,6 +3,13 @@ import { randomUUID } from 'node:crypto';
 
 export const activeRooms = {};
 
+// Every votable game mode. The display side (names, blurbs, icons) lives in
+// public/modes.js -- keep the keys in step when adding a mode.
+export const GAME_MODE_KEYS = ['TRIVI_YEAH', 'TRIVI_YEAH_II', 'COUNTRY_MONKEY', 'EMPOSSDURR', 'ON_THE_SPECTRUM', 'PROFILER'];
+export function emptyModeVotes() {
+    return Object.fromEntries(GAME_MODE_KEYS.map(key => [key, 0]));
+}
+
 // Recognized subcategory values for TRIVI_YEAH specifically; the per-group
 // depth check below (MIN_GROUP_SIZE_FOR_DISTRACTORS) is what actually excludes
 // any specific category+subcategory+faction combo that's too thin to supply
@@ -2487,7 +2494,7 @@ function resetRoomToLobby(roomCode) {
     room.gameState = 'LOBBY';
     room.winningGameMode = null;
 
-    room.votes = { TRIVI_YEAH: 0, COUNTRY_MONKEY: 0, EMPOSSDURR: 0, ON_THE_SPECTRUM: 0, TRIVI_YEAH_II: 0, PROFILER: 0 };
+    room.votes = emptyModeVotes();
     activePlayers.forEach(player => {
         if (room.votes[player.vote] !== undefined) room.votes[player.vote]++;
     });
@@ -3570,7 +3577,7 @@ export function handleIncomingMessage(fromPhone, bodyText, explicitRoomCode, pre
             // already in progress (executeLobbyPhaseExpiration would fire again
             // in 60s and stomp on whatever real phase is live by then).
             if (currentRoom.gameState === 'LOBBY') {
-                currentRoom.votes = { TRIVI_YEAH: 0, COUNTRY_MONKEY: 0, EMPOSSDURR: 0, ON_THE_SPECTRUM: 0, TRIVI_YEAH_II: 0, PROFILER: 0 };
+                currentRoom.votes = emptyModeVotes();
                 playersArray.forEach(p => {
                     if (currentRoom.votes[p.vote] !== undefined) currentRoom.votes[p.vote]++;
                 });
@@ -3791,7 +3798,7 @@ export function handleIncomingMessage(fromPhone, bodyText, explicitRoomCode, pre
             player.vote = modeChoice;
 
             const activePlayers = Object.values(currentRoom.players).filter(p => !p.left);
-            currentRoom.votes = { TRIVI_YEAH: 0, COUNTRY_MONKEY: 0, EMPOSSDURR: 0, ON_THE_SPECTRUM: 0, TRIVI_YEAH_II: 0, PROFILER: 0 };
+            currentRoom.votes = emptyModeVotes();
             activePlayers.forEach(p => { if (currentRoom.votes[p.vote] !== undefined) currentRoom.votes[p.vote]++; });
 
             broadcastToRoom(associatedRoomCode, { type: 'VOTE_UPDATE', votes: currentRoom.votes, totalVotes: activePlayers.length });
