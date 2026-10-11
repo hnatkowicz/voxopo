@@ -100,35 +100,7 @@
                 
                 <!-- THE ACTIVE STAGE CONTAINER: Isolated handle for code layout swaps -->
                 <div id="active-content-stage" style="display: flex; flex-direction: column; flex: 1;">
-                    <div class="panel-box">
-                        <h2 class="panel-title">Active Module Election</h2>
-                        <div style="display: flex; flex-direction: column;">
-                            <div class="vote-row">
-                                <div class="vote-meta"><span>Trivi-yeah! <span class="module-descriptor">Multiple-choice trivia across a mix of subjects.</span></span><span id="vcount-TRIVI_YEAH" style="color: #64748b;">0 votes (0%)</span></div>
-                                <div class="progress-track"><div id="vbar-TRIVI_YEAH" class="progress-fill"></div></div>
-                            </div>
-                            <div class="vote-row">
-                                <div class="vote-meta"><span>Thinking Pants <span class="module-descriptor">(Beta) Pick a tile, race to answer, bet big.</span></span><span id="vcount-TRIVI_YEAH_II" style="color: #64748b;">0 votes (0%)</span></div>
-                                <div class="progress-track"><div id="vbar-TRIVI_YEAH_II" class="progress-fill" style="background: #06b6d4;"></div></div>
-                            </div>
-                            <div class="vote-row">
-                                <div class="vote-meta"><span>Country Monkey <span class="module-descriptor">Guess the highlighted country on the map.</span></span><span id="vcount-COUNTRY_MONKEY" style="color: #64748b;">0 votes (0%)</span></div>
-                                <div class="progress-track"><div id="vbar-COUNTRY_MONKEY" class="progress-fill" style="background: #ffa500;"></div></div>
-                            </div>
-                            <div class="vote-row">
-                                <div class="vote-meta"><span>EmpossDurr <span class="module-descriptor">Find the impostor hiding in the group.</span></span><span id="vcount-EMPOSSDURR" style="color: #64748b;">0 votes (0%)</span></div>
-                                <div class="progress-track"><div id="vbar-EMPOSSDURR" class="progress-fill" style="background: #ff4757;"></div></div>
-                            </div>
-                            <div class="vote-row">
-                                <div class="vote-meta"><span>On The Spectrum <span class="module-descriptor">Guess how much a friend agrees or disagrees.</span></span><span id="vcount-ON_THE_SPECTRUM" style="color: #64748b;">0 votes (0%)</span></div>
-                                <div class="progress-track"><div id="vbar-ON_THE_SPECTRUM" class="progress-fill" style="background: #bb6bd9;"></div></div>
-                            </div>
-                            <div class="vote-row">
-                                <div class="vote-meta"><span>Profiler <span class="module-descriptor">(4+ players) How well do you know each other?</span></span><span id="vcount-PROFILER" style="color: #64748b;">0 votes (0%)</span></div>
-                                <div class="progress-track"><div id="vbar-PROFILER" class="progress-fill" style="background: #f472b6;"></div></div>
-                            </div>
-                        </div>
-                    </div>
+                    <!-- Mode tiles are built from public/modes.js (see app.js). -->
                 </div>
     
                 <!-- MODERN HIGH-UTILITY ONBOARDING PANEL (Stays locked permanently!) -->
@@ -189,6 +161,7 @@
     </div>
 </div>
 
+<script src="/modes.js" defer></script>
 <script src="/app.js" defer></script>
 </body>
 </html>

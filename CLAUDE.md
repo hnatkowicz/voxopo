@@ -63,6 +63,12 @@ join on their phones via the TV's QR code or `/play`.
 
 ## Game modes
 
+**Adding a mode to the lobby:** one entry in `public/modes.js` (name, short
+blurb, tag, color, emoji, icon file) plus its key in `GAME_MODE_KEYS` in
+`gameEngine.js`. The TV and phones both build their 2-column mode tiles from
+that one list. Mode icons are Randy's art at `public/modes/mode-*.svg`, with
+the emoji as a fallback until a file exists.
+
 Mode keys are used in room votes and in `gameEngine.js`:
 
 - **TRIVI_YEAH** (Trivi-yeah!): multiple-choice trivia. Its rows are stored

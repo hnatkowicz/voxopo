@@ -1,5 +1,6 @@
 document.addEventListener("DOMContentLoaded", () => {
     document.body.setAttribute('data-view', 'gateway');
+    document.getElementById('active-content-stage').innerHTML = window.renderModeElectionTiles();
 
     ['countdown-music', 'category-music', 'win-music', 'declare-music', 'final-wager-timer-sound', 'answer-warning-sound', 'doubler-reveal-sound', 'doubler-correct-sound', 'doubler-wrong-sound'].forEach(id => {
         const audio = document.getElementById(id);
@@ -702,12 +703,12 @@ if (btnSubmitSpectate) {
 
         function updateModuleElectionUI(votes, totalVotes) {
             if (!totalVotes || totalVotes === 0) return;
-            const keys = ['TRIVI_YEAH', 'COUNTRY_MONKEY', 'EMPOSSDURR', 'ON_THE_SPECTRUM', 'TRIVI_YEAH_II', 'PROFILER'];
+            const keys = window.RANDOMANIA_MODES.map(m => m.key);
             keys.forEach(key => {
                 const count = votes[key] || 0;
                 const percentage = Math.round((count / totalVotes) * 100);
                 document.getElementById(`vbar-${key}`).style.width = `${percentage}%`;
-                document.getElementById(`vcount-${key}`).innerText = `${count} votes (${percentage}%)`;
+                document.getElementById(`vcount-${key}`).innerText = `${count} ${count === 1 ? 'vote' : 'votes'} (${percentage}%)`;
             });
         }
 
@@ -835,14 +836,7 @@ if (btnSubmitSpectate) {
         // election rows show (index.html). A generic key.replace('_', ' ') +
         // title-case transform used to derive this instead, which silently turned
         // TRIVI_YEAH into "Trivi Yeah" -- losing the hyphen and the exclamation mark.
-        const GAME_MODE_LABELS = {
-            TRIVI_YEAH: 'Trivi-yeah!',
-            COUNTRY_MONKEY: 'Country Monkey',
-            EMPOSSDURR: 'EmpossDurr',
-            ON_THE_SPECTRUM: 'On The Spectrum',
-            TRIVI_YEAH_II: 'Thinking Pants',
-            PROFILER: 'Profiler'
-        };
+        const GAME_MODE_LABELS = window.RANDOMANIA_MODE_NAMES; // public/modes.js
 
         function switchToCategoryVotingUI(winnerModule, categories) {
             const panel = document.getElementById('active-content-stage');
@@ -895,7 +889,7 @@ if (btnSubmitSpectate) {
                 const barNode = document.getElementById(`cbar-${key}`);
                 if (barNode) barNode.style.width = `${percentage}%`;
                 const countNode = document.getElementById(`ccount-${key}`);
-                if (countNode) countNode.innerText = `${count} votes (${percentage}%)`;
+                if (countNode) countNode.innerText = `${count} ${count === 1 ? 'vote' : 'votes'} (${percentage}%)`;
             });
         }
 
@@ -1737,38 +1731,7 @@ function restoreProfilerTV(snap) {
 // so returning to the lobby (post-game consensus) needs to reconstruct the exact
 // markup index.html originally shipped with, not just toggle visibility.
 function switchToLobbyVoteUI() {
-    const panel = document.getElementById('active-content-stage');
-    panel.innerHTML = `
-        <div class="panel-box">
-            <h2 class="panel-title">Active Module Election</h2>
-            <div style="display: flex; flex-direction: column;">
-                <div class="vote-row">
-                    <div class="vote-meta"><span>Trivi-yeah! <span class="module-descriptor">Multiple-choice trivia across a mix of subjects.</span></span><span id="vcount-TRIVI_YEAH" style="color: #64748b;">0 votes (0%)</span></div>
-                    <div class="progress-track"><div id="vbar-TRIVI_YEAH" class="progress-fill"></div></div>
-                </div>
-                <div class="vote-row">
-                    <div class="vote-meta"><span>Thinking Pants <span class="module-descriptor">(Beta) Pick a tile, race to answer, bet big.</span></span><span id="vcount-TRIVI_YEAH_II" style="color: #64748b;">0 votes (0%)</span></div>
-                    <div class="progress-track"><div id="vbar-TRIVI_YEAH_II" class="progress-fill" style="background: #06b6d4;"></div></div>
-                </div>
-                <div class="vote-row">
-                    <div class="vote-meta"><span>Country Monkey <span class="module-descriptor">Guess the highlighted country on the map.</span></span><span id="vcount-COUNTRY_MONKEY" style="color: #64748b;">0 votes (0%)</span></div>
-                    <div class="progress-track"><div id="vbar-COUNTRY_MONKEY" class="progress-fill" style="background: #ffa500;"></div></div>
-                </div>
-                <div class="vote-row">
-                    <div class="vote-meta"><span>EmpossDurr <span class="module-descriptor">Find the impostor hiding in the group.</span></span><span id="vcount-EMPOSSDURR" style="color: #64748b;">0 votes (0%)</span></div>
-                    <div class="progress-track"><div id="vbar-EMPOSSDURR" class="progress-fill" style="background: #ff4757;"></div></div>
-                </div>
-                <div class="vote-row">
-                    <div class="vote-meta"><span>On The Spectrum <span class="module-descriptor">Guess where it lands between two extremes.</span></span><span id="vcount-ON_THE_SPECTRUM" style="color: #64748b;">0 votes (0%)</span></div>
-                    <div class="progress-track"><div id="vbar-ON_THE_SPECTRUM" class="progress-fill" style="background: #bb6bd9;"></div></div>
-                </div>
-                <div class="vote-row">
-                    <div class="vote-meta"><span>Profiler <span class="module-descriptor">(4+ players) How well do you know each other?</span></span><span id="vcount-PROFILER" style="color: #64748b;">0 votes (0%)</span></div>
-                    <div class="progress-track"><div id="vbar-PROFILER" class="progress-fill" style="background: ${PROFILER_COLOR};"></div></div>
-                </div>
-            </div>
-        </div>
-    `;
+    document.getElementById('active-content-stage').innerHTML = window.renderModeElectionTiles();
     currentGamePhase = 'LOBBY';
 }
 

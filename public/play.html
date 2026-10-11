@@ -48,6 +48,11 @@
             color: #e2e5e9;
             transition: all 0.15s ease;
         }
+        /* Mode picker: two tappable tiles per row, icon on top. */
+        .mode-pick-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        .module-row.mode-pick { display: flex; flex-direction: column; align-items: center; text-align: center; gap: 6px; padding: 14px 10px; }
+        .mode-pick-name { font-weight: 700; font-size: 0.95rem; line-height: 1.2; }
+        .mode-pick-blurb { font-size: 0.72rem; color: #64748b; line-height: 1.25; font-weight: 400; }
         .module-row.selected { 
             border-color: #00e676; 
             background: rgba(0, 230, 118, 0.04); 
@@ -255,14 +260,7 @@
         <!-- MODULE CHOICE ROWS (CLEAN - NO DECORATIVE EMOJIS!) -->
         <div class="input-group">
             <label>Select Module Preference</label>
-            <div class="module-list">
-                <div class="module-row" onclick="selectModule(this, 'TRIVI_YEAH')">Trivi-yeah! <span class="module-descriptor">Multiple-choice trivia across a mix of subjects.</span></div>
-                <div class="module-row" onclick="selectModule(this, 'TRIVI_YEAH_II')">Thinking Pants <span class="module-descriptor">(Beta) Pick a tile, race to answer, bet big.</span></div>
-                <div class="module-row" onclick="selectModule(this, 'COUNTRY_MONKEY')">Country Monkey <span class="module-descriptor">Guess the highlighted country on the map.</span></div>
-                <div class="module-row" onclick="selectModule(this, 'EMPOSSDURR')">EmpossDurr <span class="module-descriptor">Find the impostor hiding in the group.</span></div>
-                <div class="module-row" onclick="selectModule(this, 'ON_THE_SPECTRUM')">On The Spectrum <span class="module-descriptor">Guess how much a friend agrees or disagrees.</span></div>
-                <div class="module-row" onclick="selectModule(this, 'PROFILER')">Profiler <span class="module-descriptor">(4+ players) How well do you know each other?</span></div>
-            </div>
+            <div class="module-list mode-pick-grid" id="mode-join-list"></div>
         </div>
 
         <button class="btn" onclick="executeRoomOnboarding()">Submit Entry</button>
@@ -295,14 +293,7 @@
         <div id="game-lobby-content">
             <div class="input-group">
                 <label>1. Playing again? Confirm or change the mode</label>
-                <div class="module-list" id="mode-revote-list">
-                    <div class="module-row" data-mode-key="TRIVI_YEAH" onclick="submitModeRevote(this, 'TRIVI_YEAH')">Trivi-yeah! <span class="module-descriptor">Multiple-choice trivia across a mix of subjects.</span></div>
-                    <div class="module-row" data-mode-key="TRIVI_YEAH_II" onclick="submitModeRevote(this, 'TRIVI_YEAH_II')">Thinking Pants <span class="module-descriptor">(Beta) Pick a tile, race to answer, bet big.</span></div>
-                    <div class="module-row" data-mode-key="COUNTRY_MONKEY" onclick="submitModeRevote(this, 'COUNTRY_MONKEY')">Country Monkey <span class="module-descriptor">Guess the highlighted country on the map.</span></div>
-                    <div class="module-row" data-mode-key="EMPOSSDURR" onclick="submitModeRevote(this, 'EMPOSSDURR')">EmpossDurr <span class="module-descriptor">Find the impostor hiding in the group.</span></div>
-                    <div class="module-row" data-mode-key="ON_THE_SPECTRUM" onclick="submitModeRevote(this, 'ON_THE_SPECTRUM')">On The Spectrum <span class="module-descriptor">Guess how much a friend agrees or disagrees.</span></div>
-                    <div class="module-row" data-mode-key="PROFILER" onclick="submitModeRevote(this, 'PROFILER')">Profiler <span class="module-descriptor">(4+ players) How well do you know each other?</span></div>
-                </div>
+                <div class="module-list mode-pick-grid" id="mode-revote-list"></div>
             </div>
 
             <div class="input-group">
@@ -590,7 +581,13 @@
         <audio id="horn-sound" src="/audio/horn.wav" preload="auto"></audio>
     </div>
 
+    <script src="/modes.js"></script>
     <script>
+        // Mode tiles come from public/modes.js -- the same list the TV uses.
+        document.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('mode-join-list').innerHTML = window.renderModePickerTiles('selectModule');
+            document.getElementById('mode-revote-list').innerHTML = window.renderModePickerTiles('submitModeRevote');
+        });
         let chosenAvatar = '👤';
         let chosenModule = '';
         let roomStateTrackerInterval = null;
@@ -2249,14 +2246,7 @@
         }
 
         // Display names for the Play Again button, matching the lobby's mode list.
-        const MODE_DISPLAY_NAMES = {
-            TRIVI_YEAH: 'Trivi-yeah!',
-            TRIVI_YEAH_II: 'Thinking Pants',
-            COUNTRY_MONKEY: 'Country Monkey',
-            EMPOSSDURR: 'EmpossDurr',
-            ON_THE_SPECTRUM: 'On The Spectrum',
-            PROFILER: 'Profiler'
-        };
+        const MODE_DISPLAY_NAMES = window.RANDOMANIA_MODE_NAMES; // public/modes.js
 
         // Renders this player's own final-standings card, styled to match the TV's
         // gold/silver/bronze medal rows for the top 3. Rank 1 gets a bonus soundboard
