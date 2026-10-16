@@ -417,7 +417,7 @@
         <!-- Visual questions (Country Monkey's highlighted-map SVGs, etc.) -- hidden
              whenever a question has no visualAsset. -->
         <div id="q-visual-container" style="display: none; text-align: center; margin: 20px 0;">
-            <img id="q-visual-image" src="" alt="" style="max-width: 100%; max-height: 220px; border-radius: 8px;">
+            <img id="q-visual-image" src="" alt="" style="width: 100%; aspect-ratio: 4 / 3; max-height: 220px; object-fit: contain; border-radius: 8px;">
         </div>
 
         <div id="question-text-display" style="text-align: left; font-size: 1.1rem; font-weight: 600; color: #ffffff; line-height: 1.4; margin: 20px 0;"></div>
@@ -510,7 +510,7 @@
                  who can't make out the TV from the couch. Kept to about a
                  quarter of the screen so all the answer buttons still fit. -->
             <div id="ty2-visual-container" style="display: none; text-align: center; margin: 0 0 16px;">
-                <img id="ty2-visual-image" src="" alt="" style="max-width: 100%; max-height: 26vh; border-radius: 8px;">
+                <img id="ty2-visual-image" src="" alt="" style="width: 100%; aspect-ratio: 4 / 3; max-height: 26vh; object-fit: contain; border-radius: 8px;">
             </div>
             <div class="module-list" id="ty2-choices-list" style="display: none;">
                 <div class="module-row" id="ty2-choice-row-A" onclick="submitTriviYeahIIAnswer(this, 'A')"><span style="background: rgba(0, 230, 118, 0.1); color: #00e676; font-weight: 700; padding: 4px 10px; border-radius: 4px; font-size: 0.85rem; margin-right: 12px;">A</span><span id="ty2-choice-text-A">-</span></div>
@@ -559,7 +559,7 @@
             <div id="fw-question-text" style="text-align: left; font-size: 1.05rem; font-weight: 600; color: #ffffff; line-height: 1.4; margin-bottom: 16px;"></div>
             <!-- Country Monkey's Final Wager map (hidden for Thinking Pants). -->
             <div id="fw-visual-container" style="display: none; text-align: center; margin: 0 0 14px;">
-                <img id="fw-visual-image" src="" alt="" style="max-width: 100%; max-height: 26vh; border-radius: 8px;">
+                <img id="fw-visual-image" src="" alt="" style="width: 100%; aspect-ratio: 4 / 3; max-height: 26vh; object-fit: contain; border-radius: 8px;">
             </div>
             <input type="text" id="fw-answer-input" placeholder="YOUR ANSWER" style="width: 100%; padding: 12px; font-size: 1.1rem; font-weight: 700; text-transform: uppercase; border-radius: 8px; border: 1px solid #222630; background: #14161d; color: #fff; margin-bottom: 10px; box-sizing: border-box;" oninput="this.value = this.value.toUpperCase();" />
             <button class="btn" onclick="submitTriviYeahIIFinalAnswer()">Lock In Final Answer</button>
