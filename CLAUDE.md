@@ -80,8 +80,12 @@ Mode keys are used in room votes and in `gameEngine.js`:
   (wagering + side bets), column-sweep bonuses, and a Final Wager closer.
   The picker gets 30s to choose a tile, then a random one is picked; a
   picker who leaves hands the pick to someone still in the room.
-  **Traps:** a column sweep in round 2 or 3, with tiles left on the board,
-  lets the sweeper secretly hide one trap (Pants on Fire / Hot Seat /
+  **Column sweep:** every tile in a category right, speed doesn't matter;
+  a winning Doubler side bet counts as right, passing or not betting
+  doesn't, and a Hot Seat you were locked out of is skipped (still need the
+  other 3). +400 to every sweeper.
+  **Traps:** a *lone* column sweep in round 2 or 3, with tiles left on the
+  board, lets the sweeper secretly hide one trap (Pants on Fire / Hot Seat /
   Wedgie) or decline; 30s, then no trap. Secret by design: nobody learns
   whether or where until it's picked. No carry-over, and a trap on a
   Doubler fizzles silently. Trap icons are Randy's art in `public/traps/`
