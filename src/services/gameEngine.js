@@ -2055,13 +2055,15 @@ async function startCountryMonkeyFinalWager(roomCode) {
     const typeRows = regionRows.filter(r => countryMonkeyType(r) === type);
     let finalRows;
     if (type === 'FLAG') {
-        // Flags: the middle levels only (Randy, Oct 2026 -- "I don't want
-        // someone to fight me over this!"). The easiest (US, Japan) are a
-        // flat finale; the hardest (East African Community, Ascension
-        // Island) are a coin flip to type.
+        // Flags: the easier half of the middle levels (Randy, Oct 2026 --
+        // "I don't want someone to fight me over this!", then "I want all to
+        // have a chance at glory!"). The easiest (US, Japan) are a flat
+        // finale; the hardest (East African Community, Ascension Island)
+        // are a coin flip to type -- and typing any flag's name is hard.
         const levels = [...new Set(typeRows.map(r => r.points))].sort((a, b) => a - b);
         const middle = levels.length >= 3 ? levels.slice(1, -1) : levels;
-        finalRows = typeRows.filter(r => middle.includes(r.points));
+        const easierMiddle = middle.slice(0, Math.ceil(middle.length / 2));
+        finalRows = typeRows.filter(r => easierMiddle.includes(r.points));
     } else {
         // Maps and water: the hardest level.
         const hardest = Math.max(...typeRows.map(r => r.points));
