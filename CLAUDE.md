@@ -117,8 +117,10 @@ Mode keys are used in room votes and in `gameEngine.js`:
     independently. 5 regions + World Wide (Africa, Europe, Asia & Pacific,
     Middle East, Americas); `WORLD` rows (UN, Antarctica) are World Wide only.
   Every game closes on a **Final Wager**
-  (shared with Thinking Pants): a hard, unseen map, flag or water feature
-  (equally likely) from the region played, answered by typing. Typos are forgiven, `accepted_answers` holds alternate
+  (shared with Thinking Pants): an unseen map, flag or water feature
+  (equally likely) from the region played, answered by typing. Maps and
+  water use their hardest level; flags skip both the easiest and the
+  hardest levels (too flat / too obscure to type -- Randy's call). Typos are forgiven, `accepted_answers` holds alternate
   names (Swaziland, Burma, ...), and a near-miss that is really a different
   country ("Niger" for Nigeria) is never accepted. The same maps power the **Country Monkey** category
   in Thinking Pants (`trivi_yeah_ii_country_monkey.sql`, 80 maps, 20 per tier).
