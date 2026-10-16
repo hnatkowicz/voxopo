@@ -71,6 +71,8 @@ the emoji as a fallback until a file exists.
 
 Mode keys are used in room votes and in `gameEngine.js`:
 
+- **Game length:** Trivi-yeah! and Country Monkey are 12 questions, matching
+  Profiler's 12 rounds (Randy's call, for consistency across modes).
 - **TRIVI_YEAH** (Trivi-yeah!): multiple-choice trivia. Its rows are stored
   under `game_mode = 'TRIVIA'`, a legacy exception that is kept on purpose (see
   the mapping near the top of `gameEngine.js`).
@@ -98,9 +100,9 @@ Mode keys are used in room votes and in `gameEngine.js`:
   he keeps on his computer (only the WebPs go in the repo). Content is
   `country_monkey_new_maps.sql`: one row per map file per region, each with
   6 hand-picked wrong answers (neighbors, look-alike names); a game never asks
-  the same country twice. The same maps power the **Country Monkey** category
+  the same country twice. 5 regions + World Wide (Africa, Europe, Asia &
+  Pacific, Middle East, Americas). The same maps power the **Country Monkey** category
   in Thinking Pants (`trivi_yeah_ii_country_monkey.sql`, 80 maps, 20 per tier).
-  The old SVGs in `public/countries/` go once the new SQL is confirmed live.
 - **Question pictures** (any mode) are shown on the TV *and* phones, fetched in
   the background before they're needed, and served under a disguised address
   (`/q-img/<random>`) so a filename like `nigeria.webp` never reaches a phone.

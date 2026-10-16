@@ -20,8 +20,10 @@ const ELIGIBLE_SUBCATEGORIES = ['PERSON', 'PLACE', 'THING', 'EVENT', 'DATE'];
 const MIN_GROUP_SIZE_FOR_DISTRACTORS = 4; // correct answer + 3 distractors
 const MIN_OWN_WRONG_ANSWERS = 3; // a question with its own pool needs at least 3 to draw from
 const MAX_QUESTIONS_PER_GAME = 30;
-const MIN_QUESTIONS_PER_GAME = 15;
-const DEFAULT_QUESTIONS_PER_GAME = 15; // fixed length, no lobby picker for this right now
+const MIN_QUESTIONS_PER_GAME = 12;
+// Fixed length, no lobby picker for this right now. Was 15; Randy cut it to
+// 12 (Oct 2026) to match Profiler's 12 rounds -- consistency across modes.
+const DEFAULT_QUESTIONS_PER_GAME = 12;
 // Post-game Play Again / Main Menu votes wait this long from the FIRST vote
 // cast before resolving with whatever's been cast so far -- long enough that
 // everyone actually gets to read the final leaderboard before the room
@@ -90,7 +92,7 @@ const ON_THE_SPECTRUM_TV_REVEAL_LIMIT = 6;
 // MAX_QUESTIONS_PER_GAME]. Falls back to the fixed default for anything
 // missing/non-numeric. The bounds stay in place (and this stays exported) for
 // whenever a "Game Night" picker resurfaces the choice; today no caller passes
-// a real value, so every room lands on the fixed DEFAULT_QUESTIONS_PER_GAME (15).
+// a real value, so every room lands on the fixed DEFAULT_QUESTIONS_PER_GAME (12).
 export function resolveRequestedQuestionCount(rawValue) {
     const parsed = parseInt(rawValue, 10);
     if (Number.isNaN(parsed)) return DEFAULT_QUESTIONS_PER_GAME;
@@ -149,13 +151,14 @@ function isRealCategoryKey(categoryKey) {
 export function getCategoriesForMode(winningGameMode) {
     if (winningGameMode === 'COUNTRY_MONKEY') {
         return [
+            // 5 regions + World Wide (Randy's call, Oct 2026): Southeast
+            // Asia (11 countries) and the Pacific (8) were too thin for a
+            // full game, so they folded into ASIA -- same key, new label.
             { key: 'AFRICA', label: 'Africa' },
             { key: 'EUROPE', label: 'Europe' },
-            { key: 'ASIA', label: 'Asia' },
+            { key: 'ASIA', label: 'Asia & Pacific' },
             { key: 'MIDDLE_EAST_ASIA', label: 'Middle East' },
             { key: 'AMERICAS', label: 'Americas' },
-            { key: 'SOUTHEAST_ASIA', label: 'Southeast Asia' },
-            { key: 'PACIFIC_ISLANDS', label: 'Pacific Islands' },
             { key: ALL_REGIONS_KEY, label: 'World Wide!' }
         ];
     }

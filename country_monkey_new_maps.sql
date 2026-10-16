@@ -3,7 +3,7 @@
 --
 -- REPLACES every existing Country Monkey question: the DELETE below removes the
 -- old rows (which point at the old public/countries/*.svg maps), then one row
--- is inserted per new map file per region it belongs to -- 239 rows from
+-- is inserted per new map file per region it belongs to -- 237 rows from
 -- 228 map files covering 173 countries/territories.
 --
 -- Safe to re-run: it always deletes and re-inserts the same set. Wrapped in a
@@ -20,8 +20,12 @@
 -- country twice in one game. A few countries also appear in a second region
 -- (Russia: Europe + Asia, Egypt: Africa + Middle East, ...).
 --
+-- Regions (5 + World Wide): Africa, Europe, Asia & Pacific (key ASIA -- the
+-- old Southeast Asia and Pacific Islands regions folded in), Middle East
+-- (key MIDDLE_EAST_ASIA, incl. the Caucasus and Central Asia), Americas.
+--
 -- Points keep the old 100-300 scale: 100 famous, 150, 200, 250, 300 obscure.
--- Rows per region: AFRICA 60, EUROPE 53, ASIA 20, MIDDLE_EAST_ASIA 39, AMERICAS 42, SOUTHEAST_ASIA 16, PACIFIC_ISLANDS 9.
+-- Rows per region: AFRICA 60, EUROPE 53, ASIA 43, MIDDLE_EAST_ASIA 39, AMERICAS 42.
 -- ============================================================================
 
 BEGIN;
@@ -151,25 +155,48 @@ FROM (VALUES
 ('EUROPE',            '/maps/united-kingdom-2.webp',           'United Kingdom',          ARRAY['Ireland', 'Iceland', 'Denmark', 'Netherlands', 'Norway', 'France'], 100),
 -- ASIA
 ('ASIA',              '/maps/afghanistan.webp',                'Afghanistan',             ARRAY['Pakistan', 'Tajikistan', 'Turkmenistan', 'Uzbekistan', 'Iran', 'Kyrgyzstan'], 200),
+('ASIA',              '/maps/australia.webp',                  'Australia',               ARRAY['New Zealand', 'Papua New Guinea', 'Indonesia', 'Fiji', 'Austria', 'Madagascar'], 100),
 ('ASIA',              '/maps/bangladesh.webp',                 'Bangladesh',              ARRAY['Myanmar', 'Bhutan', 'Nepal', 'Sri Lanka', 'Pakistan', 'Cambodia'], 200),
 ('ASIA',              '/maps/bhutan.webp',                     'Bhutan',                  ARRAY['Nepal', 'Bangladesh', 'Myanmar', 'Laos', 'Mongolia', 'Sri Lanka'], 300),
+('ASIA',              '/maps/brunei.webp',                     'Brunei',                  ARRAY['Malaysia', 'Singapore', 'Timor-Leste', 'Bahrain', 'Indonesia', 'Philippines'], 300),
+('ASIA',              '/maps/cambodia.webp',                   'Cambodia',                ARRAY['Laos', 'Thailand', 'Vietnam', 'Myanmar', 'Malaysia', 'Bangladesh'], 200),
 ('ASIA',              '/maps/china-2.webp',                    'China',                   ARRAY['Mongolia', 'Russia', 'India', 'Kazakhstan', 'Japan', 'North Korea'], 100),
 ('ASIA',              '/maps/china.webp',                      'China',                   ARRAY['Mongolia', 'Russia', 'India', 'Kazakhstan', 'Japan', 'North Korea'], 100),
+('ASIA',              '/maps/fiji.webp',                       'Fiji',                    ARRAY['Vanuatu', 'Tonga', 'Samoa', 'Solomon Islands', 'Kiribati', 'Tuvalu'], 200),
 ('ASIA',              '/maps/india-2.webp',                    'India',                   ARRAY['Pakistan', 'Bangladesh', 'Nepal', 'Sri Lanka', 'Myanmar', 'China'], 100),
 ('ASIA',              '/maps/india.webp',                      'India',                   ARRAY['Pakistan', 'Bangladesh', 'Nepal', 'Sri Lanka', 'Myanmar', 'China'], 100),
+('ASIA',              '/maps/indonesia-2.webp',                'Indonesia',               ARRAY['Philippines', 'Malaysia', 'Papua New Guinea', 'Timor-Leste', 'Brunei', 'Thailand'], 100),
+('ASIA',              '/maps/indonesia.webp',                  'Indonesia',               ARRAY['Philippines', 'Malaysia', 'Papua New Guinea', 'Timor-Leste', 'Brunei', 'Thailand'], 100),
 ('ASIA',              '/maps/japan-2.webp',                    'Japan',                   ARRAY['South Korea', 'North Korea', 'Taiwan', 'Philippines', 'China', 'Mongolia'], 100),
 ('ASIA',              '/maps/japan.webp',                      'Japan',                   ARRAY['South Korea', 'North Korea', 'Taiwan', 'Philippines', 'China', 'Mongolia'], 100),
 ('ASIA',              '/maps/kazakhstan.webp',                 'Kazakhstan',              ARRAY['Uzbekistan', 'Kyrgyzstan', 'Turkmenistan', 'Mongolia', 'Tajikistan', 'Russia'], 200),
+('ASIA',              '/maps/laos.webp',                       'Laos',                    ARRAY['Cambodia', 'Vietnam', 'Thailand', 'Myanmar', 'Bhutan', 'Nepal'], 250),
+('ASIA',              '/maps/malaysia-2.webp',                 'Malaysia',                ARRAY['Indonesia', 'Thailand', 'Brunei', 'Singapore', 'Philippines', 'Myanmar'], 150),
+('ASIA',              '/maps/malaysia.webp',                   'Malaysia',                ARRAY['Indonesia', 'Thailand', 'Brunei', 'Singapore', 'Philippines', 'Myanmar'], 150),
 ('ASIA',              '/maps/mongolia.webp',                   'Mongolia',                ARRAY['Kazakhstan', 'China', 'Kyrgyzstan', 'Russia', 'Uzbekistan', 'Turkmenistan'], 200),
 ('ASIA',              '/maps/myanmar-2.webp',                  'Myanmar',                 ARRAY['Thailand', 'Laos', 'Bangladesh', 'Cambodia', 'Bhutan', 'Vietnam'], 200),
 ('ASIA',              '/maps/myanmar.webp',                    'Myanmar',                 ARRAY['Thailand', 'Laos', 'Bangladesh', 'Cambodia', 'Bhutan', 'Vietnam'], 200),
 ('ASIA',              '/maps/nepal.webp',                      'Nepal',                   ARRAY['Bhutan', 'Bangladesh', 'Mongolia', 'Sri Lanka', 'Pakistan', 'Myanmar'], 200),
+('ASIA',              '/maps/new-zealand-2.webp',              'New Zealand',             ARRAY['Australia', 'Fiji', 'Papua New Guinea', 'Tonga', 'Vanuatu', 'Solomon Islands'], 100),
+('ASIA',              '/maps/new-zealand.webp',                'New Zealand',             ARRAY['Australia', 'Fiji', 'Papua New Guinea', 'Tonga', 'Vanuatu', 'Solomon Islands'], 100),
 ('ASIA',              '/maps/north-korea.webp',                'North Korea',             ARRAY['South Korea', 'Japan', 'Taiwan', 'Mongolia', 'China', 'Laos'], 150),
 ('ASIA',              '/maps/pakistan.webp',                   'Pakistan',                ARRAY['Afghanistan', 'India', 'Iran', 'Turkmenistan', 'Bangladesh', 'Tajikistan'], 150),
+('ASIA',              '/maps/palau.webp',                      'Palau',                   ARRAY['Micronesia', 'Marshall Islands', 'Nauru', 'Kiribati', 'Tuvalu', 'Samoa'], 300),
+('ASIA',              '/maps/papua-new-guinea-2.webp',         'Papua New Guinea',        ARRAY['Indonesia', 'Solomon Islands', 'Timor-Leste', 'Equatorial Guinea', 'Vanuatu', 'Fiji'], 150),
+('ASIA',              '/maps/papua-new-guinea.webp',           'Papua New Guinea',        ARRAY['Indonesia', 'Solomon Islands', 'Timor-Leste', 'Equatorial Guinea', 'Vanuatu', 'Fiji'], 150),
+('ASIA',              '/maps/phillipines-2.webp',              'Philippines',             ARRAY['Indonesia', 'Malaysia', 'Taiwan', 'Japan', 'Vietnam', 'Papua New Guinea'], 150),
+('ASIA',              '/maps/phillipines.webp',                'Philippines',             ARRAY['Indonesia', 'Malaysia', 'Taiwan', 'Japan', 'Vietnam', 'Papua New Guinea'], 150),
 ('ASIA',              '/maps/russia.webp',                     'Russia',                  ARRAY['Kazakhstan', 'China', 'Mongolia', 'Ukraine', 'Canada', 'Belarus'], 100),
+('ASIA',              '/maps/singapore.webp',                  'Singapore',               ARRAY['Brunei', 'Malaysia', 'Bahrain', 'Timor-Leste', 'Indonesia', 'Maldives'], 150),
+('ASIA',              '/maps/solomon-islands-2.webp',          'Solomon Islands',         ARRAY['Vanuatu', 'Papua New Guinea', 'Fiji', 'Marshall Islands', 'Tonga', 'Samoa'], 250),
 ('ASIA',              '/maps/south-korea.webp',                'South Korea',             ARRAY['North Korea', 'Japan', 'Taiwan', 'China', 'Philippines', 'Vietnam'], 150),
 ('ASIA',              '/maps/sri-lanka-2.webp',                'Sri Lanka',               ARRAY['Maldives', 'Bangladesh', 'Madagascar', 'Taiwan', 'Nepal', 'Bhutan'], 150),
 ('ASIA',              '/maps/sri-lanka.webp',                  'Sri Lanka',               ARRAY['Maldives', 'Bangladesh', 'Madagascar', 'Taiwan', 'Nepal', 'Bhutan'], 150),
+('ASIA',              '/maps/thailand-2.webp',                 'Thailand',                ARRAY['Myanmar', 'Laos', 'Cambodia', 'Vietnam', 'Malaysia', 'Taiwan'], 100),
+('ASIA',              '/maps/thailand.webp',                   'Thailand',                ARRAY['Myanmar', 'Laos', 'Cambodia', 'Vietnam', 'Malaysia', 'Taiwan'], 100),
+('ASIA',              '/maps/tonga.webp',                      'Tonga',                   ARRAY['Samoa', 'Fiji', 'Tuvalu', 'Vanuatu', 'Kiribati', 'Togo'], 250),
+('ASIA',              '/maps/vanuatu.webp',                    'Vanuatu',                 ARRAY['Solomon Islands', 'Fiji', 'Kiribati', 'Tonga', 'Samoa', 'Tuvalu'], 300),
+('ASIA',              '/maps/vietnam.webp',                    'Vietnam',                 ARRAY['Laos', 'Cambodia', 'Thailand', 'Myanmar', 'Malaysia', 'Philippines'], 100),
 -- MIDDLE_EAST_ASIA
 ('MIDDLE_EAST_ASIA',  '/maps/afghanistan.webp',                'Afghanistan',             ARRAY['Pakistan', 'Tajikistan', 'Turkmenistan', 'Uzbekistan', 'Iran', 'Kyrgyzstan'], 200),
 ('MIDDLE_EAST_ASIA',  '/maps/albania-2.webp',                  'Albania',                 ARRAY['North Macedonia', 'Montenegro', 'Kosovo', 'Greece', 'Armenia', 'Bosnia and Herzegovina'], 250),
@@ -252,37 +279,10 @@ FROM (VALUES
 ('AMERICAS',          '/maps/uruguay-2.webp',                  'Uruguay',                 ARRAY['Paraguay', 'Argentina', 'Brazil', 'Bolivia', 'Ecuador', 'Chile'], 200),
 ('AMERICAS',          '/maps/uruguay.webp',                    'Uruguay',                 ARRAY['Paraguay', 'Argentina', 'Brazil', 'Bolivia', 'Ecuador', 'Chile'], 200),
 ('AMERICAS',          '/maps/venezuela-2.webp',                'Venezuela',               ARRAY['Colombia', 'Guyana', 'Ecuador', 'Suriname', 'Peru', 'Bolivia'], 150),
-('AMERICAS',          '/maps/venezuela.webp',                  'Venezuela',               ARRAY['Colombia', 'Guyana', 'Ecuador', 'Suriname', 'Peru', 'Bolivia'], 150),
--- SOUTHEAST_ASIA
-('SOUTHEAST_ASIA',    '/maps/brunei.webp',                     'Brunei',                  ARRAY['Malaysia', 'Singapore', 'Timor-Leste', 'Bahrain', 'Indonesia', 'Philippines'], 300),
-('SOUTHEAST_ASIA',    '/maps/cambodia.webp',                   'Cambodia',                ARRAY['Laos', 'Thailand', 'Vietnam', 'Myanmar', 'Malaysia', 'Bangladesh'], 200),
-('SOUTHEAST_ASIA',    '/maps/indonesia-2.webp',                'Indonesia',               ARRAY['Philippines', 'Malaysia', 'Papua New Guinea', 'Timor-Leste', 'Brunei', 'Thailand'], 100),
-('SOUTHEAST_ASIA',    '/maps/indonesia.webp',                  'Indonesia',               ARRAY['Philippines', 'Malaysia', 'Papua New Guinea', 'Timor-Leste', 'Brunei', 'Thailand'], 100),
-('SOUTHEAST_ASIA',    '/maps/laos.webp',                       'Laos',                    ARRAY['Cambodia', 'Vietnam', 'Thailand', 'Myanmar', 'Bhutan', 'Nepal'], 250),
-('SOUTHEAST_ASIA',    '/maps/malaysia-2.webp',                 'Malaysia',                ARRAY['Indonesia', 'Thailand', 'Brunei', 'Singapore', 'Philippines', 'Myanmar'], 150),
-('SOUTHEAST_ASIA',    '/maps/malaysia.webp',                   'Malaysia',                ARRAY['Indonesia', 'Thailand', 'Brunei', 'Singapore', 'Philippines', 'Myanmar'], 150),
-('SOUTHEAST_ASIA',    '/maps/myanmar-2.webp',                  'Myanmar',                 ARRAY['Thailand', 'Laos', 'Bangladesh', 'Cambodia', 'Bhutan', 'Vietnam'], 200),
-('SOUTHEAST_ASIA',    '/maps/myanmar.webp',                    'Myanmar',                 ARRAY['Thailand', 'Laos', 'Bangladesh', 'Cambodia', 'Bhutan', 'Vietnam'], 200),
-('SOUTHEAST_ASIA',    '/maps/papua-new-guinea-2.webp',         'Papua New Guinea',        ARRAY['Indonesia', 'Solomon Islands', 'Timor-Leste', 'Equatorial Guinea', 'Vanuatu', 'Fiji'], 150),
-('SOUTHEAST_ASIA',    '/maps/phillipines-2.webp',              'Philippines',             ARRAY['Indonesia', 'Malaysia', 'Taiwan', 'Japan', 'Vietnam', 'Papua New Guinea'], 150),
-('SOUTHEAST_ASIA',    '/maps/phillipines.webp',                'Philippines',             ARRAY['Indonesia', 'Malaysia', 'Taiwan', 'Japan', 'Vietnam', 'Papua New Guinea'], 150),
-('SOUTHEAST_ASIA',    '/maps/singapore.webp',                  'Singapore',               ARRAY['Brunei', 'Malaysia', 'Bahrain', 'Timor-Leste', 'Indonesia', 'Maldives'], 150),
-('SOUTHEAST_ASIA',    '/maps/thailand-2.webp',                 'Thailand',                ARRAY['Myanmar', 'Laos', 'Cambodia', 'Vietnam', 'Malaysia', 'Taiwan'], 100),
-('SOUTHEAST_ASIA',    '/maps/thailand.webp',                   'Thailand',                ARRAY['Myanmar', 'Laos', 'Cambodia', 'Vietnam', 'Malaysia', 'Taiwan'], 100),
-('SOUTHEAST_ASIA',    '/maps/vietnam.webp',                    'Vietnam',                 ARRAY['Laos', 'Cambodia', 'Thailand', 'Myanmar', 'Malaysia', 'Philippines'], 100),
--- PACIFIC_ISLANDS
-('PACIFIC_ISLANDS',   '/maps/australia.webp',                  'Australia',               ARRAY['New Zealand', 'Papua New Guinea', 'Indonesia', 'Fiji', 'Austria', 'Madagascar'], 100),
-('PACIFIC_ISLANDS',   '/maps/fiji.webp',                       'Fiji',                    ARRAY['Vanuatu', 'Tonga', 'Samoa', 'Solomon Islands', 'Kiribati', 'Tuvalu'], 200),
-('PACIFIC_ISLANDS',   '/maps/new-zealand-2.webp',              'New Zealand',             ARRAY['Australia', 'Fiji', 'Papua New Guinea', 'Tonga', 'Vanuatu', 'Solomon Islands'], 100),
-('PACIFIC_ISLANDS',   '/maps/new-zealand.webp',                'New Zealand',             ARRAY['Australia', 'Fiji', 'Papua New Guinea', 'Tonga', 'Vanuatu', 'Solomon Islands'], 100),
-('PACIFIC_ISLANDS',   '/maps/palau.webp',                      'Palau',                   ARRAY['Micronesia', 'Marshall Islands', 'Nauru', 'Kiribati', 'Tuvalu', 'Samoa'], 300),
-('PACIFIC_ISLANDS',   '/maps/papua-new-guinea.webp',           'Papua New Guinea',        ARRAY['Indonesia', 'Solomon Islands', 'Timor-Leste', 'Equatorial Guinea', 'Vanuatu', 'Fiji'], 150),
-('PACIFIC_ISLANDS',   '/maps/solomon-islands-2.webp',          'Solomon Islands',         ARRAY['Vanuatu', 'Papua New Guinea', 'Fiji', 'Marshall Islands', 'Tonga', 'Samoa'], 250),
-('PACIFIC_ISLANDS',   '/maps/tonga.webp',                      'Tonga',                   ARRAY['Samoa', 'Fiji', 'Tuvalu', 'Vanuatu', 'Kiribati', 'Togo'], 250),
-('PACIFIC_ISLANDS',   '/maps/vanuatu.webp',                    'Vanuatu',                 ARRAY['Solomon Islands', 'Fiji', 'Kiribati', 'Tonga', 'Samoa', 'Tuvalu'], 300)
+('AMERICAS',          '/maps/venezuela.webp',                  'Venezuela',               ARRAY['Colombia', 'Guyana', 'Ecuador', 'Suriname', 'Peru', 'Bolivia'], 150)
 ) AS v(region, visual_asset, correct_answer, wrong_answers, points);
 
 COMMIT;
 
--- Check: should return 239.
+-- Check: should return 237.
 SELECT COUNT(*) FROM questions WHERE game_mode = 'COUNTRY_MONKEY';
