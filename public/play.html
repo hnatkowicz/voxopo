@@ -506,6 +506,12 @@
         <div id="ty2-reveal-container" style="display: none; margin-top: 16px;">
             <div id="ty2-category-meta" style="font-size: 0.8rem; font-weight: 600; color: #64748b; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 10px;"></div>
             <div id="ty2-question-text" style="text-align: left; font-size: 1.05rem; font-weight: 600; color: #ffffff; line-height: 1.4; margin-bottom: 16px;"></div>
+            <!-- Picture questions (Country Monkey maps): a close-up for anyone
+                 who can't make out the TV from the couch. Kept to about a
+                 quarter of the screen so all the answer buttons still fit. -->
+            <div id="ty2-visual-container" style="display: none; text-align: center; margin: 0 0 16px;">
+                <img id="ty2-visual-image" src="" alt="" style="max-width: 100%; max-height: 26vh; border-radius: 8px;">
+            </div>
             <div class="module-list" id="ty2-choices-list" style="display: none;">
                 <div class="module-row" id="ty2-choice-row-A" onclick="submitTriviYeahIIAnswer(this, 'A')"><span style="background: rgba(0, 230, 118, 0.1); color: #00e676; font-weight: 700; padding: 4px 10px; border-radius: 4px; font-size: 0.85rem; margin-right: 12px;">A</span><span id="ty2-choice-text-A">-</span></div>
                 <div class="module-row" id="ty2-choice-row-B" onclick="submitTriviYeahIIAnswer(this, 'B')"><span style="background: rgba(0, 230, 118, 0.1); color: #00e676; font-weight: 700; padding: 4px 10px; border-radius: 4px; font-size: 0.85rem; margin-right: 12px;">B</span><span id="ty2-choice-text-B">-</span></div>
@@ -879,13 +885,8 @@
             document.getElementById('q-correct-stat').innerText = `${data.myCorrectAnswers || 0}/${questionsCompleted} correct`;
             document.getElementById('question-text-display').innerText = data.questionText || '';
 
-            const visualContainer = document.getElementById('q-visual-container');
-            if (data.visualAsset) {
-                document.getElementById('q-visual-image').src = data.visualAsset;
-                visualContainer.style.display = 'block';
-            } else {
-                visualContainer.style.display = 'none';
-            }
+            showQuestionPicture('q-visual-container', 'q-visual-image', data.visualAsset);
+            preloadQuestionPicture(data.preloadAsset); // the next question's picture
 
             document.getElementById('choice-text-A').innerText = data.choiceA || '-';
             document.getElementById('choice-text-B').innerText = data.choiceB || '-';
@@ -964,6 +965,28 @@
         let ty2LastRenderKey = null;
 
         let ty2LastRenderArgs = null; // so a local tap (trap setup) can redraw without waiting for the next poll
+
+        // Question pictures (disguised addresses -- see gameEngine.js). The
+        // src is only touched when it changes, since this runs on every poll.
+        function showQuestionPicture(containerId, imageId, url) {
+            const container = document.getElementById(containerId);
+            const image = document.getElementById(imageId);
+            if (!container || !image) return;
+            if (url) {
+                if (image.dataset.src !== url) { image.dataset.src = url; image.src = url; }
+                container.style.display = 'block';
+            } else {
+                container.style.display = 'none';
+            }
+        }
+        const preloadedPictures = {};
+        function preloadQuestionPicture(url) {
+            if (!url || preloadedPictures[url]) return;
+            const keys = Object.keys(preloadedPictures);
+            if (keys.length > 4) delete preloadedPictures[keys[0]];
+            preloadedPictures[url] = new Image();
+            preloadedPictures[url].src = url;
+        }
 
         function renderTriviYeahII(data, nickname, roomCode) {
             ty2LastRenderArgs = [data, nickname, roomCode];
@@ -1052,6 +1075,8 @@
 
             const cell = (data.grid || [])[data.activeCellIndex];
             document.getElementById('ty2-category-meta').innerText = cell ? `${cell.categoryLabel} · ${cell.points} pts` : '';
+            showQuestionPicture('ty2-visual-container', 'ty2-visual-image', data.visualAsset);
+            preloadQuestionPicture(data.preloadAsset);
 
             if (data.triviYeahIIPhase === 'CATEGORY_REVEAL') {
                 document.getElementById('ty2-status-line').innerText = 'Get ready...';

@@ -249,6 +249,7 @@ if (btnSubmitSpectate) {
                     document.getElementById('room-status-text').innerText = "Gameplay Phase";
                     document.getElementById('lobby-countdown').innerText = "30 s"; // Reset banner clock visually
                     switchToQuestionUI(data.categoryLabel, data.questionText, data.choiceA, data.choiceB, data.choiceC, data.choiceD, data.questionNumber, data.totalQuestions, data.visualAsset);
+                    preloadQuestionImage(data.preloadAsset); // the next question's picture
                     // Fresh question: every player's status-indicator goes back to invisible.
                     playerAnswerStatus = {};
                     updateLeaderboardUI(cachedPlayersSnapshot);
@@ -309,7 +310,8 @@ if (btnSubmitSpectate) {
                 }
                 if (data.type === 'TRIVI_YEAH_II_CATEGORY_REVEAL') {
                     activeTrapTV = null; // a fresh tile -- any trap shows up via its own reveal
-                    showTriviYeahIISpotlightUI({ stage: 'category', categoryLabel: data.categoryLabel, points: data.points });
+                    showTriviYeahIISpotlightUI({ stage: 'category', categoryLabel: data.categoryLabel, points: data.points, visualAsset: null });
+                    preloadQuestionImage(data.preloadAsset);
                 }
                 if (data.type === 'TRIVI_YEAH_II_TRAP_SETTING') {
                     showTriviYeahIITrapSettingUI(data.setter);
@@ -320,7 +322,7 @@ if (btnSubmitSpectate) {
                     showTriviYeahIITrapRevealUI(data);
                 }
                 if (data.type === 'TRIVI_YEAH_II_QUESTION_REVEAL') {
-                    showTriviYeahIISpotlightUI({ stage: 'question', questionText: data.questionText, points: data.points });
+                    showTriviYeahIISpotlightUI({ stage: 'question', questionText: data.questionText, points: data.points, visualAsset: data.visualAsset || null });
                     addTriviYeahIITrapBanner();
                 }
                 if (data.type === 'TRIVI_YEAH_II_ANSWERS_REVEAL') {
@@ -1048,10 +1050,29 @@ function showTriviYeahIIRoundTransitionUI(completedRound, nextRound, totalRounds
     `;
 }
 
+// Fetches a question picture in the background so it's already in the
+// browser's cache when the question appears (see preloadAsset in gameEngine).
+const preloadedQuestionImages = [];
+function preloadQuestionImage(url) {
+    if (!url) return;
+    const img = new Image();
+    img.src = url;
+    preloadedQuestionImages.push(img);
+    if (preloadedQuestionImages.length > 4) preloadedQuestionImages.shift();
+}
+
 function showTriviYeahIISpotlightUI(partial) {
     const panel = document.getElementById('active-content-stage');
     Object.assign(triviYeahIISpotlightCache, partial);
-    const { stage, categoryLabel, questionText, points, choiceA, choiceB, choiceC, choiceD } = triviYeahIISpotlightCache;
+    const { stage, categoryLabel, questionText, points, choiceA, choiceB, choiceC, choiceD, visualAsset } = triviYeahIISpotlightCache;
+
+    // Picture questions (Country Monkey maps, etc.): picture on the left,
+    // text on the right -- same layout as the Country Monkey mode's screen.
+    const pictureBlock = visualAsset ? `
+        <div style="flex: 1.2; text-align: center; min-width: 0;">
+            <img src="${visualAsset}" alt="" style="max-width: 100%; max-height: 420px; border-radius: 8px; display: block; margin: 0 auto;">
+        </div>
+    ` : '';
 
     const categoryBlock = `
         <div style="font-size: 0.85rem; font-weight: 600; color: #64748b; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 16px;">
@@ -1065,6 +1086,21 @@ function showTriviYeahIISpotlightUI(partial) {
                 <div style="font-size: 0.85rem; font-weight: 600; color: #64748b; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 14px;">Up next</div>
                 <div style="font-size: 2rem; font-weight: 800; color: #ffffff; margin-bottom: 10px;">${categoryLabel}</div>
                 <div style="font-size: 1.1rem; font-weight: 700; color: #00e676;">${points} points</div>
+            </div>
+        `;
+        return;
+    }
+
+    if (stage === 'question' && visualAsset) {
+        panel.innerHTML = `
+            <div class="panel-box" style="padding: 40px; flex: 1; display: flex; flex-direction: row; align-items: center; gap: 32px; min-height: 400px; box-sizing: border-box;">
+                ${pictureBlock}
+                <div style="flex: 1; text-align: left; min-width: 0;">
+                    ${categoryBlock}
+                    <div style="font-size: 1.4rem; font-weight: 600; color: #ffffff; line-height: 1.4; letter-spacing: -0.01em;">
+                        ${questionText}
+                    </div>
+                </div>
             </div>
         `;
         return;
@@ -1105,6 +1141,24 @@ function showTriviYeahIISpotlightUI(partial) {
             </div>
         </div>
     `;
+
+    if (visualAsset) {
+        // Choices stack in one column beside the picture (same ids, so the
+        // correct-answer highlight still works).
+        panel.innerHTML = `
+            <div class="panel-box" style="padding: 40px; flex: 1; display: flex; flex-direction: row; align-items: center; gap: 32px; min-height: 400px; box-sizing: border-box;">
+                ${pictureBlock}
+                <div style="flex: 1; text-align: left; min-width: 0;">
+                    ${categoryBlock}
+                    <div style="font-size: 1.2rem; font-weight: 600; color: #ffffff; line-height: 1.3; margin-bottom: 18px; letter-spacing: -0.01em;">
+                        ${questionText}
+                    </div>
+                    ${choiceGrid.replace('grid-template-columns: repeat(2, 1fr)', 'grid-template-columns: 1fr')}
+                </div>
+            </div>
+        `;
+        return;
+    }
 
     panel.innerHTML = `
         <div class="panel-box" style="padding: 40px; flex: 1; display: flex; flex-direction: column; justify-content: space-between; text-align: left; min-height: 400px; box-sizing: border-box;">

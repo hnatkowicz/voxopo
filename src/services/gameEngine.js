@@ -493,10 +493,53 @@ async function loadQuestionBank(room) {
     });
 
     room.questionGroups = groups;
-    const targetCount = Math.min(room.requestedQuestionCount || MAX_QUESTIONS_PER_GAME, eligibleQuestions.length);
-    room.questionBank = shuffleArray(eligibleQuestions).slice(0, targetCount);
+    let candidates = shuffleArray(eligibleQuestions);
+    // Country Monkey has several framings of some maps (albania.webp,
+    // albania-2.webp, ...) and a few countries in two regions -- keep a
+    // different one in rotation each game, but never ask the same country
+    // twice in one game.
+    if (room.winningGameMode === 'COUNTRY_MONKEY') {
+        const seenAnswers = new Set();
+        candidates = candidates.filter(row => !seenAnswers.has(row.correct_answer) && seenAnswers.add(row.correct_answer));
+    }
+    const targetCount = Math.min(room.requestedQuestionCount || MAX_QUESTIONS_PER_GAME, candidates.length);
+    room.questionBank = candidates.slice(0, targetCount);
     room.currentQuestionIndex = -1;
     room.askedQuestionIds = new Set();
+}
+
+// Question pictures go out under a disguised address (/q-img/<random>), never
+// their real path -- a map file named "nigeria.webp" would otherwise hand the
+// answer to anyone who long-presses the picture on their phone and opens it
+// in a new tab (Randy's catch, Oct 2026). Each room gets its own random
+// address per question row, so nothing carries over between rooms.
+// server.js's /q-img/:token route turns the address back into the file.
+const disguisedAssets = new Map(); // token -> { path, createdAt }
+const DISGUISED_ASSET_TTL_MS = 12 * 60 * 60 * 1000; // far longer than any game night
+let disguisedAssetSweepAt = Date.now();
+
+function disguisedAssetUrl(room, row) {
+    if (!row || !row.visual_asset) return null;
+    room.assetTokens = room.assetTokens || {};
+    if (room.assetTokens[row.id]) return `/q-img/${room.assetTokens[row.id]}`;
+
+    const now = Date.now();
+    if (now - disguisedAssetSweepAt > 60 * 60 * 1000) {
+        disguisedAssetSweepAt = now;
+        for (const [token, entry] of disguisedAssets) {
+            if (now - entry.createdAt > DISGUISED_ASSET_TTL_MS) disguisedAssets.delete(token);
+        }
+    }
+    const token = randomUUID().replace(/-/g, '');
+    disguisedAssets.set(token, { path: row.visual_asset, createdAt: now });
+    room.assetTokens[row.id] = token;
+    return `/q-img/${token}`;
+}
+
+// The real public/ path behind a disguised address, or null if unknown.
+export function resolveDisguisedAsset(token) {
+    const entry = disguisedAssets.get(String(token || ''));
+    return entry ? entry.path : null;
 }
 
 // Builds the shuffled 4-choice payload for one question row. A question with
@@ -532,7 +575,7 @@ function buildQuestionPayload(room, row, categoryLabel) {
         categoryLabel,
         questionText: row.question_text,
         points: row.points,
-        visualAsset: row.visual_asset,
+        visualAsset: disguisedAssetUrl(room, row),
         choiceA: shuffledChoices[0],
         choiceB: shuffledChoices[1],
         choiceC: shuffledChoices[2],
@@ -569,7 +612,11 @@ function startNextQuestion(roomCode) {
     room.activeQuestionData = {
         ...publicQuestionData,
         questionNumber: room.currentQuestionIndex + 1,
-        totalQuestions: room.questionBank.length
+        totalQuestions: room.questionBank.length,
+        // This mode starts the clock the moment a question appears, so the
+        // NEXT question's picture is fetched in the background now -- nobody
+        // should lose seconds to a slow download.
+        preloadAsset: disguisedAssetUrl(room, room.questionBank[room.currentQuestionIndex + 1])
     };
 
     broadcastToRoom(roomCode, {
@@ -651,7 +698,10 @@ const TRIVI_YEAH_II_CATEGORIES = [
     { key: 'FAMOUS_KNIGHTS', label: 'Famous (K)nights' },
     { key: 'JUST_IN_TIME', label: 'Just in Time' },
     { key: 'FICTIONAL_LOCATIONS', label: 'Fictional Locations' },
-    { key: 'LYRICS', label: 'Lyrics' }
+    { key: 'LYRICS', label: 'Lyrics' },
+    // Picture category: Randy's maps (public/maps/), shared with the Country
+    // Monkey mode. 80 maps, 20 per tier (trivi_yeah_ii_country_monkey.sql).
+    { key: 'COUNTRY_MONKEY', label: 'Country Monkey' }
 ];
 const TRIVI_YEAH_II_CATEGORIES_PER_BOARD = 3;
 const TRIVI_YEAH_II_TIERS = [100, 200, 300, 400];
@@ -738,10 +788,27 @@ function publicTriviYeahIIGrid(room) {
 // are marked isDoubler at random -- hidden from the public grid view
 // (publicTriviYeahIIGrid never includes it), revealed only once picked.
 async function buildTriviYeahIIBoard(doublersCount) {
-    const chosenCategories = shuffleArray(TRIVI_YEAH_II_CATEGORIES).slice(0, TRIVI_YEAH_II_CATEGORIES_PER_BOARD);
+    // Only categories with a question at every tier in the database are
+    // eligible -- so a category can ship in code before its .sql file has been
+    // run in Neon (or be missing a tier) without ever breaking a game.
+    const tierCounts = await pool.query(
+        `SELECT category, COUNT(DISTINCT points) AS tiers
+         FROM questions
+         WHERE game_mode = 'TRIVI_YEAH_II' AND points = ANY($1::int[])
+         GROUP BY category`,
+        [TRIVI_YEAH_II_TIERS]
+    );
+    const completeKeys = new Set(tierCounts.rows
+        .filter(r => Number(r.tiers) === TRIVI_YEAH_II_TIERS.length)
+        .map(r => r.category));
+    const eligibleCategories = TRIVI_YEAH_II_CATEGORIES.filter(c => completeKeys.has(c.key));
+    const chosenCategories = shuffleArray(eligibleCategories).slice(0, TRIVI_YEAH_II_CATEGORIES_PER_BOARD);
+    if (chosenCategories.length < TRIVI_YEAH_II_CATEGORIES_PER_BOARD) {
+        throw new Error(`Only ${chosenCategories.length} complete Trivi-Yeah II categories in the database`);
+    }
 
     const result = await pool.query(
-        `SELECT id, category, question_text, correct_answer, wrong_answers, points
+        `SELECT id, category, question_text, correct_answer, wrong_answers, points, visual_asset
          FROM questions
          WHERE game_mode = 'TRIVI_YEAH_II' AND category = ANY($1::text[])`,
         [chosenCategories.map(c => c.key)]
@@ -891,6 +958,7 @@ function startTriviYeahIITileReveal(roomCode, cellIndex) {
     ty2.trap = null;
     ty2.lastTrapOutcome = null;
     ty2.phase = 'CATEGORY_REVEAL';
+    ty2.preloadAsset = cell.isDoubler ? null : disguisedAssetUrl(room, cell.row);
     ty2.answers = {};
     ty2.answerOrder = [];
     ty2.doubler = null;
@@ -899,7 +967,11 @@ function startTriviYeahIITileReveal(roomCode, cellIndex) {
         type: 'TRIVI_YEAH_II_CATEGORY_REVEAL',
         index: cellIndex,
         categoryLabel: cell.categoryLabel,
-        points: cell.points
+        points: cell.points,
+        // Fetched in the background during the category beat so the picture
+        // is ready when the question appears. Never for a Doubler: the picker
+        // wagers before seeing the question.
+        preloadAsset: ty2.preloadAsset
     });
 
     if (room.revealTimeout) clearTimeout(room.revealTimeout);
@@ -1051,6 +1123,7 @@ function revealTriviYeahIIQuestion(roomCode) {
         type: 'TRIVI_YEAH_II_QUESTION_REVEAL',
         index: ty2.activeCellIndex,
         questionText: ty2.activeQuestionData.questionText,
+        visualAsset: ty2.activeQuestionData.visualAsset,
         points: cell.points
     });
 
