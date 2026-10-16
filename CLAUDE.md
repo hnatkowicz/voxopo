@@ -153,6 +153,21 @@ Mode keys are used in room votes and in `gameEngine.js`:
   Down** (flags, `trivi_yeah_ii_flag_me_down.sql`, 80) and **Wet Pants**
   (water, `trivi_yeah_ii_wet_pants.sql`, 48) -- the cross-play with Country
   Monkey is deliberate.
+- **FLAG_ME_DOWN** (also a standalone mode, after the family asked where it
+  went): 15 flags, 5 easy -> 5 medium -> 5 hard, each with 4 country choices
+  (1 wrong answer from the same local region, 2 from the same continent).
+  Clues unlock over time: flag alone 400, + local region 300, + capital 200,
+  + map 100. One lock-in, no changing it (Randy: "Lock it and no changing
+  back"); wrong = 0, no penalty; once everyone's locked in it skips to the
+  reveal. A capital that contains the country's name is shown as "The
+  capital shares the country's name". Its own table,
+  `flag_me_down_countries` (`flag_me_down_countries.sql`, 170 countries
+  that have both a flag and a map; countries only for now -- US states and
+  Canadian/Mexican provinces maybe later). Final Wager: a medium unused
+  flag, typed; region/capital/map clues open privately on your phone, each
+  taking 25% off the winnings, rounded up to a whole point (Randy's call);
+  a wrong answer loses the full wager. The stage timings
+  (`FLAG_ME_DOWN_STAGE_MS`) are first guesses, to be tuned in play.
 
 ## Content
 
