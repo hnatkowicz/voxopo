@@ -497,18 +497,55 @@ async function loadQuestionBank(room) {
 
     room.questionGroups = groups;
     let candidates = shuffleArray(eligibleQuestions);
-    // Country Monkey has several framings of some maps (albania.webp,
-    // albania-2.webp, ...) and a few countries in two regions -- keep a
-    // different one in rotation each game, but never ask the same country
-    // twice in one game.
     if (room.winningGameMode === 'COUNTRY_MONKEY') {
-        const seenAnswers = new Set();
-        candidates = candidates.filter(row => !seenAnswers.has(row.correct_answer) && seenAnswers.add(row.correct_answer));
+        room.questionBank = buildCountryMonkeyBank(candidates);
+        room.currentQuestionIndex = -1;
+        room.askedQuestionIds = new Set();
+        return;
     }
     const targetCount = Math.min(room.requestedQuestionCount || MAX_QUESTIONS_PER_GAME, candidates.length);
     room.questionBank = candidates.slice(0, targetCount);
     room.currentQuestionIndex = -1;
     room.askedQuestionIds = new Set();
+}
+
+// Country Monkey's question mix, by type (the row's subcategory). Randy's
+// starting point (Oct 2026): 15 questions -- 10 maps, 3 flags, 2 water --
+// "to be adjusted if necessary... my hunch is more countries." A type with
+// too few questions for the region (no Asia & Pacific water yet) is topped
+// up with maps. Future types (capitals, landmarks, skylines) are a new
+// subcategory plus a number here.
+const COUNTRY_MONKEY_MIX = { FLAG: 3, WATER: 2, COUNTRY: 10 };
+const COUNTRY_MONKEY_TYPE_LABELS = { COUNTRY: 'Maps', FLAG: 'Flags', WATER: 'Water' };
+const countryMonkeyType = row => (row.subcategory && COUNTRY_MONKEY_MIX[row.subcategory] !== undefined) ? row.subcategory : 'COUNTRY';
+
+// Fills the mix from already-shuffled rows. Several maps have more than one
+// framing (albania.webp, albania-2.webp) and a country has both a map and a
+// flag -- a game never asks about the same answer twice, so each country,
+// flag or body of water shows up at most once.
+function buildCountryMonkeyBank(shuffledRows) {
+    const seenAnswers = new Set();
+    const picked = [];
+    const takeFrom = (rows, n) => {
+        for (const row of rows) {
+            if (n <= 0) break;
+            if (seenAnswers.has(row.correct_answer)) continue;
+            seenAnswers.add(row.correct_answer);
+            picked.push(row);
+            n--;
+        }
+        return n; // how many it couldn't fill
+    };
+    // Flags and water first; whatever they couldn't fill goes to maps.
+    let missing = 0;
+    Object.entries(COUNTRY_MONKEY_MIX).forEach(([type, count]) => {
+        if (type === 'COUNTRY') return;
+        missing += takeFrom(shuffledRows.filter(row => countryMonkeyType(row) === type), count);
+    });
+    missing = takeFrom(shuffledRows.filter(row => countryMonkeyType(row) === 'COUNTRY'), COUNTRY_MONKEY_MIX.COUNTRY + missing);
+    // Still short (a thin region)? Take whatever's left, any type.
+    if (missing > 0) takeFrom(shuffledRows, missing);
+    return shuffleArray(picked);
 }
 
 // Question pictures go out under a disguised address (/q-img/<random>), never
@@ -713,7 +750,11 @@ const TRIVI_YEAH_II_CATEGORIES = [
     { key: 'LYRICS', label: 'Lyrics' },
     // Picture category: Randy's maps (public/maps/), shared with the Country
     // Monkey mode. 80 maps, 20 per tier (trivi_yeah_ii_country_monkey.sql).
-    { key: 'COUNTRY_MONKEY', label: 'Country Monkey' }
+    { key: 'COUNTRY_MONKEY', label: 'Country Monkey' },
+    // Randy's flags (public/flags/, trivi_yeah_ii_flag_me_down.sql, 80) and
+    // water maps (public/water/, trivi_yeah_ii_wet_pants.sql, 48).
+    { key: 'FLAG_ME_DOWN', label: 'Flag Me Down' },
+    { key: 'WET_PANTS', label: 'Wet Pants' }
 ];
 const TRIVI_YEAH_II_CATEGORIES_PER_BOARD = 3;
 const TRIVI_YEAH_II_TIERS = [100, 200, 300, 400];
@@ -1979,8 +2020,10 @@ function advanceTriviYeahIIFinalReveal(roomCode) {
     room.revealTimeout = setTimeout(() => advanceTriviYeahIIFinalReveal(roomCode), TRIVI_YEAH_II_FINAL_REVEAL_STEP_MS);
 }
 
-// Country Monkey's closer: a map from the region just played (World Wide:
-// any), one nobody saw this game, preferring the hardest ones -- typed in,
+// Country Monkey's closer: a map, flag or body of water (Randy: "can be
+// country, flag, or water feature" -- each type equally likely, among those
+// the region has) from the region just played (World Wide: any), one nobody
+// saw this game, preferring the hardest of that type -- typed in,
 // with the usual typo net. accepted_answers carries alternate names
 // ("Swaziland", "Burma", "Ivory Coast"/"Côte d'Ivoire"); every other answer
 // and wrong answer in the mode becomes a rival, so a near-miss that's really
@@ -1993,13 +2036,13 @@ async function startCountryMonkeyFinalWager(roomCode) {
     let result;
     try {
         result = await pool.query(
-            `SELECT id, category, question_text, correct_answer, wrong_answers, accepted_answers, points, visual_asset
+            `SELECT id, category, subcategory, question_text, correct_answer, wrong_answers, accepted_answers, points, visual_asset
              FROM questions WHERE game_mode = 'COUNTRY_MONKEY'`, []
         );
     } catch (error) {
         console.error(`⚠️ [Country Monkey] Final Wager query failed (${error.message}) -- retrying without accepted_answers.`);
         result = await pool.query(
-            `SELECT id, category, question_text, correct_answer, wrong_answers, points, visual_asset
+            `SELECT id, category, subcategory, question_text, correct_answer, wrong_answers, points, visual_asset
              FROM questions WHERE game_mode = 'COUNTRY_MONKEY'`, []
         );
     }
@@ -2007,8 +2050,11 @@ async function startCountryMonkeyFinalWager(roomCode) {
     const asked = new Set(room.questionBank.map(row => row.correct_answer));
     const regionRows = allRows.filter(row => row.visual_asset && (!region || row.category === region) && !asked.has(row.correct_answer));
     if (regionRows.length === 0) throw new Error('No Country Monkey Final Wager question available.');
-    const hardest = Math.max(...regionRows.map(row => row.points));
-    const row = shuffleArray(regionRows.filter(r => r.points === hardest))[0];
+    const types = [...new Set(regionRows.map(countryMonkeyType))];
+    const type = types[Math.floor(Math.random() * types.length)];
+    const typeRows = regionRows.filter(r => countryMonkeyType(r) === type);
+    const hardest = Math.max(...typeRows.map(r => r.points));
+    const row = shuffleArray(typeRows.filter(r => r.points === hardest))[0];
 
     const acceptedAnswers = [row.correct_answer, ...(row.accepted_answers || [])];
     const rivalSet = new Set();
@@ -2025,7 +2071,9 @@ async function startCountryMonkeyFinalWager(roomCode) {
         correctAnswer: row.correct_answer,
         acceptedAnswers,
         rivalAnswers: [...rivalSet],
-        topicLabel: room.activeDeckName || 'World Wide!',
+        // "Africa · Flags" -- the wager is placed knowing the region and the
+        // kind of question, never the picture itself.
+        topicLabel: `${room.activeDeckName || 'World Wide!'} · ${COUNTRY_MONKEY_TYPE_LABELS[type]}`,
         visualAsset: disguisedAssetUrl(room, row),
         modeLabel: 'Country Monkey'
     });

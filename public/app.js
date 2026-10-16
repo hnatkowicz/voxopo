@@ -940,6 +940,8 @@ if (btnSubmitSpectate) {
                 </div>
             `;
 
+            // Pictures (maps, flags, water -- all 4:3) fill a 4:3 frame:
+            // flag SVGs carry no size of their own and would otherwise render tiny.
             // Visual questions (Country Monkey's highlighted-map SVGs, etc.) put the
             // image on the left and the choice buttons on the right, instead of
             // stacking the choices under a full-width question block -- naming the
@@ -948,7 +950,7 @@ if (btnSubmitSpectate) {
                 panel.innerHTML = `
                     <div class="panel-box" style="padding: 40px; flex: 1; display: flex; flex-direction: row; align-items: center; gap: 32px; box-sizing: border-box; min-height: 400px;">
                         <div style="flex: 1; text-align: center;">
-                            <img src="${visualAsset}" alt="" style="max-width: 100%; max-height: 340px; border-radius: 8px;">
+                            <img src="${visualAsset}" alt="" style="width: 100%; aspect-ratio: 4 / 3; max-height: 340px; object-fit: contain; border-radius: 8px;">
                         </div>
                         <div style="flex: 1; text-align: left; display: flex; flex-direction: column; gap: 16px;">
                             <div style="font-size: 0.85rem; font-weight: 600; color: #64748b; text-transform: uppercase; letter-spacing: 0.08em;">
@@ -1073,7 +1075,7 @@ function showTriviYeahIISpotlightUI(partial) {
     // text on the right -- same layout as the Country Monkey mode's screen.
     const pictureBlock = visualAsset ? `
         <div style="flex: 1.2; text-align: center; min-width: 0;">
-            <img src="${visualAsset}" alt="" style="max-width: 100%; max-height: 420px; border-radius: 8px; display: block; margin: 0 auto;">
+            <img src="${visualAsset}" alt="" style="width: 100%; aspect-ratio: 4 / 3; max-height: 420px; object-fit: contain; border-radius: 8px; display: block; margin: 0 auto;">
         </div>
     ` : '';
 
@@ -1371,7 +1373,7 @@ function showTriviYeahIIFinalAnswerOpenUI(topicLabel, questionText, visualAsset)
         panel.innerHTML = `
             <div class="panel-box" style="padding: 40px; flex: 1; display: flex; flex-direction: row; align-items: center; gap: 32px; min-height: 400px; box-sizing: border-box;">
                 <div style="flex: 1.2; text-align: center; min-width: 0;">
-                    <img src="${visualAsset}" alt="" style="max-width: 100%; max-height: 420px; border-radius: 8px; display: block; margin: 0 auto;">
+                    <img src="${visualAsset}" alt="" style="width: 100%; aspect-ratio: 4 / 3; max-height: 420px; object-fit: contain; border-radius: 8px; display: block; margin: 0 auto;">
                 </div>
                 <div style="flex: 1; text-align: left; min-width: 0;">
                     <div style="font-size: 0.85rem; font-weight: 600; color: #64748b; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 16px;">Final Wager &middot; ${topicLabel}</div>

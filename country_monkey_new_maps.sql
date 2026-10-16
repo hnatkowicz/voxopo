@@ -1,14 +1,15 @@
 -- ============================================================================
--- Country Monkey: switch to Randy's new maps (public/maps/*.webp).
+-- Country Monkey: the MAP questions (Randy's maps, public/maps/*.webp).
 --
--- REPLACES every existing Country Monkey question: the DELETE below removes the
--- old rows (which point at the old public/countries/*.svg maps), then one row
--- is inserted per new map file per region it belongs to -- 237 rows from
+-- REPLACES Country Monkey's map questions (subcategory 'COUNTRY'): the DELETE
+-- below removes them, then one row is inserted per map file per region it
+-- belongs to. Flags and water live in their own files
+-- (country_monkey_flags.sql, country_monkey_water.sql) and aren't touched -- 237 rows from
 -- 228 map files covering 173 countries/territories.
 --
 -- Safe to re-run: it always deletes and re-inserts the same set. Wrapped in a
 -- transaction, so if anything fails nothing changes (the old questions stay).
--- Touches ONLY game_mode = 'COUNTRY_MONKEY' rows.
+-- Touches ONLY game_mode = 'COUNTRY_MONKEY' rows with subcategory 'COUNTRY'.
 --
 -- Each question carries its own 6 wrong answers (wrong_answers); the game
 -- shows 3 of them at random each time. They're picked to be tough: neighbors,
@@ -38,7 +39,7 @@ BEGIN;
 ALTER TABLE questions ADD COLUMN IF NOT EXISTS wrong_answers TEXT[];
 ALTER TABLE questions ADD COLUMN IF NOT EXISTS accepted_answers TEXT[];
 
-DELETE FROM questions WHERE game_mode = 'COUNTRY_MONKEY';
+DELETE FROM questions WHERE game_mode = 'COUNTRY_MONKEY' AND subcategory = 'COUNTRY';
 
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, accepted_answers, points)
 SELECT (SELECT COALESCE(MAX(question_number), 0) FROM questions) + ROW_NUMBER() OVER (),
@@ -291,4 +292,4 @@ FROM (VALUES
 COMMIT;
 
 -- Check: should return 237.
-SELECT COUNT(*) FROM questions WHERE game_mode = 'COUNTRY_MONKEY';
+SELECT COUNT(*) FROM questions WHERE game_mode = 'COUNTRY_MONKEY' AND subcategory = 'COUNTRY';
