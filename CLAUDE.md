@@ -119,8 +119,9 @@ Mode keys are used in room votes and in `gameEngine.js`:
   Every game closes on a **Final Wager**
   (shared with Thinking Pants): an unseen map, flag or water feature
   (equally likely) from the region played, answered by typing. Maps and
-  water use their hardest level; flags skip both the easiest and the
-  hardest levels (too flat / too obscure to type -- Randy's call). Typos are forgiven, `accepted_answers` holds alternate
+  water use their hardest level; flags use the easier half of the middle
+  levels (Randy's call: the easiest are a flat finale, the hardest too
+  obscure to type, and "I want all to have a chance at glory!"). Typos are forgiven, `accepted_answers` holds alternate
   names (Swaziland, Burma, ...), and a near-miss that is really a different
   country ("Niger" for Nigeria) is never accepted. The same maps power the **Country Monkey** category
   in Thinking Pants (`trivi_yeah_ii_country_monkey.sql`, 80 maps, 20 per tier).
