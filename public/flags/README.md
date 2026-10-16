@@ -1,5 +1,8 @@
 # Flags
 
+These are the **flag-icons** set (v7.6.0) by Panayiotis Lipiridis, MIT
+license -- see `LICENSE` in this folder, which must stay with the files.
+
 Flag art for Country Monkey (mixed in with the maps) and a future
 Flag Me Down category in Thinking Pants.
 

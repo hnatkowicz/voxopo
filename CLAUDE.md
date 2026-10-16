@@ -71,8 +71,8 @@ the emoji as a fallback until a file exists.
 
 Mode keys are used in room votes and in `gameEngine.js`:
 
-- **Game length:** Trivi-yeah! and Country Monkey are 12 questions, matching
-  Profiler's 12 rounds (Randy's call, for consistency across modes).
+- **Game length:** Trivi-yeah! is 12 questions, matching Profiler's 12
+  rounds. Country Monkey is 15 (Randy's call once flags and water joined).
 - **TRIVI_YEAH** (Trivi-yeah!): multiple-choice trivia. Its rows are stored
   under `game_mode = 'TRIVIA'`, a legacy exception that is kept on purpose (see
   the mapping near the top of `gameEngine.js`).
@@ -95,15 +95,30 @@ Mode keys are used in room votes and in `gameEngine.js`:
   .svg), used on the TV and phones, with emoji fallbacks if one's missing.
   Categories are listed in `TRIVI_YEAH_II_CATEGORIES`. Every category needs a
   full pool for every tier (the engine fails fast if one is incomplete).
-- **COUNTRY_MONKEY**: find the highlighted country on the map. Randy's maps
-  are 1200x900 WebP (quality 85) in `public/maps/`, made from one SVG master
-  he keeps on his computer (only the WebPs go in the repo). Content is
-  `country_monkey_new_maps.sql`: one row per map file per region, each with
-  6 hand-picked wrong answers (neighbors, look-alike names); a game never asks
-  the same country twice. 5 regions + World Wide (Africa, Europe, Asia &
-  Pacific, Middle East, Americas). Every game closes on a **Final Wager**
-  (shared with Thinking Pants): a hard, unseen map from the region played,
-  answered by typing. Typos are forgiven, `accepted_answers` holds alternate
+- **COUNTRY_MONKEY**: a geography quiz for the geography nut, built from
+  question *types* (the row's `subcategory`) mixed by `COUNTRY_MONKEY_MIX`
+  in `gameEngine.js`: 10 maps (`COUNTRY`), 3 flags (`FLAG`), 2 water
+  (`WATER`) per 15-question game -- Randy's starting point, "my hunch is more
+  countries". Future types (capitals, landmarks, skylines) are a new
+  subcategory plus a number in the mix. A type a region lacks is topped up
+  with maps; a game never repeats an answer.
+  - Maps: 1200x900 WebP (quality 85) in `public/maps/`, from one SVG master
+    Randy keeps on his computer (only the WebPs go in the repo);
+    `country_monkey_new_maps.sql`, 6 hand-picked wrong answers each
+    (neighbors, look-alike names).
+  - Flags: `public/flags/` is the flag-icons set (MIT -- keep
+    `public/flags/LICENSE`; credited on `/info`); `country_monkey_flags.sql`.
+    All flags are fair game (territories, regional flags, organizations);
+    files that are just a parent country's flag are left out. Wrong answers
+    are look-alike flags, never a near-twin (Chad/Romania, Monaco/Indonesia).
+  - Water: `public/water/` (same recipe as the maps);
+    `country_monkey_water.sql`, wrong answers of the same kind of water.
+  - Each SQL file only replaces its own subcategory, so they run
+    independently. 5 regions + World Wide (Africa, Europe, Asia & Pacific,
+    Middle East, Americas); `WORLD` rows (UN, Antarctica) are World Wide only.
+  Every game closes on a **Final Wager**
+  (shared with Thinking Pants): a hard, unseen map, flag or water feature
+  (equally likely) from the region played, answered by typing. Typos are forgiven, `accepted_answers` holds alternate
   names (Swaziland, Burma, ...), and a near-miss that is really a different
   country ("Niger" for Nigeria) is never accepted. The same maps power the **Country Monkey** category
   in Thinking Pants (`trivi_yeah_ii_country_monkey.sql`, 80 maps, 20 per tier).
@@ -126,9 +141,10 @@ Mode keys are used in room votes and in `gameEngine.js`:
   before Game Over. The pool is 300 questions (`profiler_questions_seed.sql`
   + `profiler_questions_batch_2.sql`), balanced 100/100/100 across
   intensity 1/2/3 because each game cycles light -> medium -> deep.
-- **Flag Me Down** was removed from the lobby (it was never built). The name
-  is saved for a future flags category in Thinking Pants, once Randy makes
-  flag art.
+- **Thinking Pants geography categories:** Country Monkey (maps), **Flag Me
+  Down** (flags, `trivi_yeah_ii_flag_me_down.sql`, 80) and **Wet Pants**
+  (water, `trivi_yeah_ii_wet_pants.sql`, 48) -- the cross-play with Country
+  Monkey is deliberate.
 
 ## Content
 
