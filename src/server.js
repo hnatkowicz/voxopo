@@ -3,7 +3,7 @@ import dotenv from 'dotenv';
 import path from 'path';
 import { WebSocketServer } from 'ws';
 import pool from './config/database.js';
-import { handleIncomingMessage, activeRooms, getCategoriesForMode, resolveRequestedQuestionCount, compareByRank, closeRoom, profilerStatusFor, profilerTvSnapshot, triviYeahIITrapInfo, emptyModeVotes, resolveDisguisedAsset } from './services/gameEngine.js';
+import { handleIncomingMessage, activeRooms, getCategoriesForMode, resolveRequestedQuestionCount, compareByRank, closeRoom, profilerStatusFor, profilerTvSnapshot, triviYeahIITrapInfo, emptyModeVotes, resolveDisguisedAsset, flagMeDownStatusFor } from './services/gameEngine.js';
 import {
     isHostAuthorized, grantHostSession, isAccessCodeActive,
     isAdminAuthorized, grantAdminSession,
@@ -358,6 +358,18 @@ app.post('/api/room-status', (req, res) => {
                 // answering opens, fetched in the background while wagering.
                 visualAsset: fw.phase === 'ANSWER' || fw.phase === 'REVEAL' ? (fw.visualAsset || null) : null,
                 preloadAsset: fw.phase === 'WAGER' ? (fw.visualAsset || null) : null,
+                // Flag Me Down: clues you can open on your own phone while
+                // answering -- only the ones THIS player opened come back.
+                hintsAvailable: !!fw.hints && fw.phase === 'ANSWER',
+                myHints: fw.hints && (fw.phase === 'ANSWER' || fw.phase === 'REVEAL') ? (() => {
+                    const used = (fw.hintsUsed && fw.hintsUsed[playerName]) || [];
+                    return {
+                        used,
+                        region: used.includes('REGION') ? fw.hints.region : null,
+                        capital: used.includes('CAPITAL') ? fw.hints.capital : null,
+                        mapUrl: used.includes('MAP') ? fw.hints.mapUrl : null
+                    };
+                })() : null,
                 gameSecondsLeft: targetRoom.gameSecondsLeft,
                 myWager: fw.wagers && (playerName in fw.wagers) ? fw.wagers[playerName] : null,
                 myAnswer: fw.answers ? (fw.answers[playerName] || null) : null,
@@ -441,6 +453,13 @@ app.post('/api/room-status', (req, res) => {
                 continueVotedCount: ots.phase === 'REVEAL' ? ots.continueVotes.size : 0,
                 continueTotalNeeded: activePlayers.length,
                 iHaveVotedContinue: ots.phase === 'REVEAL' && playerName ? ots.continueVotes.has(playerName) : false,
+                myScore, myCorrectAnswers, myLeft, myEmoji
+            });
+        }
+        if (targetRoom && targetRoom.gameState === 'FLAG_ME_DOWN_ROUND' && targetRoom.flagMeDown) {
+            return res.json({
+                phase: 'FLAG_ME_DOWN_PHASE',
+                ...flagMeDownStatusFor(targetRoom, playerName),
                 myScore, myCorrectAnswers, myLeft, myEmoji
             });
         }

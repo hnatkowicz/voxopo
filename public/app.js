@@ -552,6 +552,36 @@ if (btnSubmitSpectate) {
                 // ---------- Profiler ----------
                 // Lock-in dots: ANSWER_SUBMITTED (shared with every mode, above)
                 // marks answers; PROFILER_GUESS_SUBMITTED marks picks.
+                // ---------- Flag Me Down ----------
+                if (data.type === 'FLAG_ME_DOWN_ROUND') {
+                    currentGamePhase = 'FLAG_ME_DOWN'; // before the standings refresh below, or it re-posts the lobby's "Press Start" line
+                    document.getElementById('room-status-text').innerText = `Flag Me Down — Flag ${data.round}/${data.totalRounds}`;
+                    document.getElementById('lobby-countdown').innerText = '';
+                    setStatusMessage('');
+                    playerAnswerStatus = {};
+                    updateLeaderboardUI(cachedPlayersSnapshot);
+                    flagMeDownTV = { round: data.round, totalRounds: data.totalRounds, flagUrl: data.flagUrl, choices: data.choices, stage: 0, region: null, capital: null, mapUrl: null, locked: 0, reveal: null };
+                    renderFlagMeDownTV();
+                    preloadQuestionImage(data.preloadAsset);
+                }
+                if (data.type === 'FLAG_ME_DOWN_CLUE' && flagMeDownTV) {
+                    flagMeDownTV.stage = data.stage;
+                    if (data.region) flagMeDownTV.region = data.region;
+                    if (data.capital) flagMeDownTV.capital = data.capital;
+                    if (data.mapUrl) flagMeDownTV.mapUrl = data.mapUrl;
+                    renderFlagMeDownTV();
+                    preloadQuestionImage(data.preloadAsset);
+                }
+                if (data.type === 'ANSWER_SUBMITTED' && flagMeDownTV && !flagMeDownTV.reveal && currentGamePhase === 'FLAG_ME_DOWN') {
+                    flagMeDownTV.locked += 1;
+                    const tally = document.getElementById('fmd-tv-tally');
+                    if (tally) tally.innerText = `${flagMeDownTV.locked} locked in`;
+                }
+                if (data.type === 'FLAG_ME_DOWN_REVEAL' && flagMeDownTV) {
+                    Object.assign(flagMeDownTV, { region: data.region, capital: data.capital, mapUrl: data.mapUrl, stage: 3, reveal: data });
+                    renderFlagMeDownTV();
+                }
+
                 if (data.type === 'PROFILER_QUESTION') {
                     document.getElementById('room-status-text').innerText = "Profiler";
                     document.getElementById('lobby-countdown').innerText = '';
@@ -1424,7 +1454,8 @@ function showTriviYeahIIFinalRevealStepUI(data) {
                     <div style="font-size: 0.9rem; color: #94a3b8; margin-top: 2px;">Answered: "${step.answerText ? escapeHtml(step.answerText) : '(no answer)'}"</div>
                 </div>
                 <div style="text-align: right;">
-                    <div style="font-weight: 700; color: ${resultColor};">${step.correct ? 'Correct' : 'Incorrect'} &middot; ${sign}${step.wagerAmount}</div>
+                    <div style="font-weight: 700; color: ${resultColor};">${step.correct ? 'Correct' : 'Incorrect'} &middot; ${sign}${step.correct && step.winAmount != null ? step.winAmount : step.wagerAmount}</div>
+                    ${step.hintsUsed != null ? `<div style="font-size: 0.85rem; color: #94a3b8;">${step.hintsUsed === 0 ? 'no clues!' : `${step.hintsUsed} clue${step.hintsUsed > 1 ? 's' : ''} used`}</div>` : ''}
                     <div style="font-size: 0.9rem; color: #94a3b8; margin-top: 2px;">New score: ${step.newScore}</div>
                 </div>
             </div>
@@ -1656,6 +1687,63 @@ function profilerEmojiFor(name) {
 function profilerHeader(round, totalRounds) {
     setStatusMessage(`<div style="font-weight: 600; color: #64748b;">Round ${round} / ${totalRounds}</div>`);
     return `<div style="font-size: 0.85rem; font-weight: 600; color: #64748b; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 10px;">Profiler · Round ${round} of ${totalRounds}</div>`;
+}
+
+// ---------- Flag Me Down ----------
+// One screen that fills in as clues unlock: the flag on the left; on the
+// right the value ladder (400 -> 100), the clues so far, and the four
+// choices. The reveal lights up the answer and shows who locked in when.
+let flagMeDownTV = null;
+const FMD_COLOR = '#facc15';
+const FMD_STAGES = [['Flag', 400], ['Region', 300], ['Capital', 200], ['Map', 100]];
+
+function renderFlagMeDownTV() {
+    const t = flagMeDownTV;
+    const panel = document.getElementById('active-content-stage');
+    currentGamePhase = 'FLAG_ME_DOWN';
+    const reveal = t.reveal;
+    const ladder = FMD_STAGES.map(([label, pts], i) => {
+        const now = !reveal && i === t.stage, past = i < t.stage || reveal;
+        return `<div style="flex: 1; text-align: center; padding: 8px 4px; border-radius: 8px; background: ${now ? 'rgba(250, 204, 21, 0.15)' : '#14161d'}; border: 1px solid ${now ? FMD_COLOR : '#222630'}; opacity: ${past && !now ? 0.45 : 1};">
+            <div style="font-size: 0.75rem; font-weight: 700; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.06em;">${label}</div>
+            <div style="font-size: 1.15rem; font-weight: 800; color: ${now ? FMD_COLOR : '#f4f5f6'};">${pts}</div>
+        </div>`;
+    }).join('');
+    const clueRow = (label, value) => `
+        <div style="display: flex; gap: 10px; align-items: baseline; padding: 6px 0; border-bottom: 1px solid #222630;">
+            <div style="width: 78px; font-size: 0.8rem; font-weight: 700; color: #64748b; text-transform: uppercase; letter-spacing: 0.06em;">${label}</div>
+            <div style="font-size: 1.15rem; font-weight: 600; color: ${value ? '#ffffff' : '#475569'};">${value ? escapeHtml(value) : '&middot; &middot; &middot;'}</div>
+        </div>`;
+    const choices = t.choices.map((name, i) => {
+        const letter = 'ABCD'[i];
+        const isAnswer = reveal && name === reveal.answer;
+        return `<div style="background: ${isAnswer ? 'rgba(0, 230, 118, 0.15)' : '#1e222b'}; border: 1px solid ${isAnswer ? '#00e676' : '#222630'}; border-radius: 8px; padding: 12px 14px; display: flex; align-items: center; gap: 10px; opacity: ${reveal && !isAnswer ? 0.45 : 1};">
+            <span style="background: rgba(250, 204, 21, 0.12); color: ${FMD_COLOR}; font-weight: 700; padding: 3px 9px; border-radius: 4px; font-size: 0.85rem;">${letter}</span>
+            <span style="font-size: 1.05rem; font-weight: 600; color: #f4f5f6;">${escapeHtml(name)}</span>
+        </div>`;
+    }).join('');
+    const results = reveal ? `<div style="display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px;">${reveal.results.map(r => `
+        <div style="background: #14161d; border: 1px solid ${r.correct ? '#00e676' : '#222630'}; border-radius: 999px; padding: 5px 12px; font-size: 0.95rem; color: ${r.correct ? '#00e676' : '#94a3b8'};">
+            ${escapeHtml(r.name)} ${r.correct ? `+${r.points} <span style="color: #64748b;">(${r.stageLabel})</span>` : (r.choice ? '&#10007;' : '&ndash;')}
+        </div>`).join('')}</div>` : `<div id="fmd-tv-tally" style="font-size: 1rem; font-weight: 600; color: #ffa500; margin-top: 12px;">${t.locked} locked in</div>`;
+    panel.innerHTML = `
+        <div class="panel-box" style="padding: 32px 36px; flex: 1; display: flex; flex-direction: row; align-items: center; gap: 30px; min-height: 400px; box-sizing: border-box;">
+            <div style="flex: 1.1; min-width: 0; display: flex; flex-direction: column; gap: 12px;">
+                <img src="${t.flagUrl}" alt="" style="width: 100%; aspect-ratio: 4 / 3; max-height: 330px; object-fit: contain; border-radius: 8px;">
+                ${t.mapUrl ? `<img src="${t.mapUrl}" alt="" style="width: 60%; aspect-ratio: 4 / 3; object-fit: contain; border-radius: 8px; align-self: center;">` : ''}
+            </div>
+            <div style="flex: 1; min-width: 0; text-align: left;">
+                <div style="font-size: 0.85rem; font-weight: 600; color: #64748b; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 6px;">Flag Me Down &middot; Flag ${t.round} of ${t.totalRounds}</div>
+                <div style="font-size: 1.5rem; font-weight: 700; color: #ffffff; margin-bottom: 12px;">${reveal ? `It's ${escapeHtml(reveal.answer)}!` : 'Whose flag is this?'}</div>
+                <div style="display: flex; gap: 6px; margin-bottom: 12px;">${ladder}</div>
+                ${clueRow('Region', t.region)}
+                ${clueRow('Capital', t.capital)}
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 14px;">${choices}</div>
+                ${results}
+                ${reveal ? '' : `<div style="font-size: 0.9rem; color: #94a3b8; margin-top: 6px;">Lock in on your phone -- the sooner you're sure, the more it's worth.</div>`}
+            </div>
+        </div>
+    `;
 }
 
 function updateProfilerTally() {
