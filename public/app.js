@@ -345,7 +345,7 @@ if (btnSubmitSpectate) {
                     if (data.trap) showTriviYeahIITrapOutcome(data.trap);
                 }
                 if (data.type === 'TRIVI_YEAH_II_COLUMN_BONUS') {
-                    showColumnBonusToast(data.playerName, data.categoryLabel);
+                    showColumnBonusToast(data.playerNames || [data.playerName], data.categoryLabel, data.bonusPoints);
                     playAudioTrack('impostor-correct-sound');
                 }
                 if (data.type === 'TRIVI_YEAH_II_AUTO_PICK') {
@@ -757,12 +757,18 @@ if (btnSubmitSpectate) {
         }
 
         let columnBonusHideTimer = null;
-        function showColumnBonusToast(playerName, categoryLabel) {
+        // Everyone who got the whole column right shares the moment; a lone
+        // sweeper also gets the trap (that screen follows the reveal).
+        function showColumnBonusToast(playerNames, categoryLabel, bonusPoints) {
             const card = document.getElementById('column-bonus-card');
             const text = document.getElementById('column-bonus-text');
             if (!card || !text) return;
 
-            text.innerHTML = `<span class="toast-highlight">${playerName}</span> swept ${categoryLabel} solo -- +200!`;
+            const names = playerNames.map(name => `<span class="toast-highlight">${escapeHtml(name)}</span>`);
+            const who = names.length === 1 ? names[0]
+                : `${names.slice(0, -1).join(', ')} &amp; ${names[names.length - 1]}`;
+            const each = names.length > 1 ? ' each' : '';
+            text.innerHTML = `${who} swept ${escapeHtml(categoryLabel)} -- +${bonusPoints || 400}${each}!`;
             card.classList.add('active');
 
             if (columnBonusHideTimer) clearTimeout(columnBonusHideTimer);

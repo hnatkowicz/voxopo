@@ -670,8 +670,9 @@ const TRIVI_YEAH_II_ANSWER_SECONDS = 10;
 // the board. Randy's call after a family playtest: 30s, then a random tile.
 const TRIVI_YEAH_II_PICK_SECONDS = 30;
 
-// Traps (Randy's design, Oct 2026): sweeping a column in round 2 or 3 earns
-// the sweeper a secret trap to hide on one of the board's remaining tiles.
+// Traps (Randy's design, Oct 2026): sweeping a column ALONE in round 2 or 3
+// earns the sweeper a secret trap to hide on one of the board's remaining
+// tiles (see finalizeTriviYeahIITileClear for what counts as a sweep).
 // Deliberately rare and deliberately secret -- nobody else learns whether a
 // trap was set, or where, until someone picks that tile. No carry-over: if
 // the sweep cleared the board, or it's round 1, there's simply no trap. A
@@ -683,7 +684,13 @@ const TRIVI_YEAH_II_TRAPS = {
     HOT_SEAT: { label: 'Hot Seat', emoji: '🪑', rule: 'The picker answers alone -- no passing. Right or wrong, it counts double.' },
     WEDGIE: { label: 'Wedgie', emoji: '🩲', rule: "Normal question -- but if the picker misses it, the trap setter collects the points." }
 };
-const TRIVI_YEAH_II_COLUMN_SWEEP_BONUS = 200; // one player, fastest-correct on all 4 tiles in a category, solo
+// Column sweep: every tile in a category right -- speed doesn't matter.
+// Paid to EVERY sweeper; only a lone sweeper also earns a trap. Was 200 for
+// a solo fastest-correct sweep; Randy raised it to 400 when sweeps became
+// "all correct" (Oct 2026) -- watch it in play, 300 is the fallback if a
+// single miss on an easy column starts to feel too punishing.
+const TRIVI_YEAH_II_COLUMN_SWEEP_BONUS = 400;
+const TRIVI_YEAH_II_SWEEP_MIN_RIGHT = 3; // a Hot Seat you were locked out of doesn't count, but you still need the other 3
 const TRIVI_YEAH_II_TOTAL_ROUNDS = 3;
 const TRIVI_YEAH_II_ROUND_TRANSITION_MS = 3000; // "Round N complete!" announcement, before the next board appears
 const TRIVI_YEAH_II_DOUBLERS_PER_ROUND = [0, 1, 2]; // indexed by round - 1
@@ -1154,37 +1161,50 @@ function handleTriviYeahIILeave(roomCode, leaverName) {
     // DOUBLER_WAGER and the Final Wager already have backstop timers.
 }
 
-// Shared by both resolution paths below -- cell.cleared/wonBy, clearedCount,
-// and the column-sweep check are identical whether a tile resolved normally
-// or via a Doubler wager. Column sweep: this category's all 4 tiles are now
-// cleared, and the same single player actually earned every one of them
-// (wonBy: null -- a random-fallback pick, or someone else's wager win --
-// breaks the sweep same as a different winner would). Awarded before the
-// caller's own leaderboard broadcast so the bonus is reflected in it.
-function finalizeTriviYeahIITileClear(room, roomCode, cell, wonByName) {
+// Shared by every resolution path below (normal, Hot Seat, Doubler).
+// `results` is who got this tile right and who sat it out through no choice
+// of their own: { right: [names], lockedOut: [names] }.
+//
+// Column sweep (Randy's rule, Oct 2026): you swept a category if you got
+// every tile in it right -- speed doesn't matter. On a Doubler, a winning
+// side bet (For or Against) counts as right; passing or not betting doesn't,
+// same as passing a normal question. A Hot Seat you weren't allowed to answer
+// doesn't count against you, but you still need the other 3 -- otherwise
+// hiding a Hot Seat could block everyone else's sweep. Everyone who sweeps
+// gets the bonus; the trap goes only to a lone sweeper ("owning" the column).
+// Joining or leaving mid-column means missed tiles, so no sweep.
+function finalizeTriviYeahIITileClear(room, roomCode, cell, results) {
     const ty2 = room.triviYeahII;
     cell.cleared = true;
-    cell.wonBy = wonByName || null;
+    cell.rightNames = results.right || [];
+    cell.lockedOutNames = results.lockedOut || [];
     ty2.clearedCount++;
 
     const categoryTiles = ty2.grid.filter(c => c.categoryKey === cell.categoryKey);
-    const sweptBy = cell.wonBy && categoryTiles.every(c => c.cleared && c.wonBy === cell.wonBy) ? cell.wonBy : null;
-    if (sweptBy) {
-        // A sweep in round 2+ with untouched tiles still on the board earns a
-        // secret trap -- set up after this tile's reveal (see
-        // scheduleTriviYeahIINextStep). No tiles left means no trap.
-        if (ty2.round >= 2 && ty2.grid.some(c => !c.cleared)) ty2.pendingTrapSetter = sweptBy;
-        const sweepingPlayer = room.players[sweptBy];
-        if (sweepingPlayer) {
-            sweepingPlayer.score += TRIVI_YEAH_II_COLUMN_SWEEP_BONUS;
-            broadcastToRoom(roomCode, {
-                type: 'TRIVI_YEAH_II_COLUMN_BONUS',
-                playerName: sweptBy,
-                categoryLabel: cell.categoryLabel,
-                bonusPoints: TRIVI_YEAH_II_COLUMN_SWEEP_BONUS
-            });
+    if (!categoryTiles.every(c => c.cleared)) return;
+
+    const sweepers = Object.values(room.players).filter(player => {
+        if (player.left) return false;
+        let right = 0;
+        for (const tile of categoryTiles) {
+            if (tile.rightNames.includes(player.name)) right++;
+            else if (!tile.lockedOutNames.includes(player.name)) return false;
         }
-    }
+        return right >= TRIVI_YEAH_II_SWEEP_MIN_RIGHT;
+    }).map(player => player.name);
+    if (sweepers.length === 0) return;
+
+    sweepers.forEach(name => { room.players[name].score += TRIVI_YEAH_II_COLUMN_SWEEP_BONUS; });
+    // A lone sweep in round 2+ with untouched tiles still on the board earns
+    // a secret trap -- set up after this tile's reveal (see
+    // scheduleTriviYeahIINextStep). No tiles left means no trap.
+    if (sweepers.length === 1 && ty2.round >= 2 && ty2.grid.some(c => !c.cleared)) ty2.pendingTrapSetter = sweepers[0];
+    broadcastToRoom(roomCode, {
+        type: 'TRIVI_YEAH_II_COLUMN_BONUS',
+        playerNames: sweepers,
+        categoryLabel: cell.categoryLabel,
+        bonusPoints: TRIVI_YEAH_II_COLUMN_SWEEP_BONUS
+    });
 }
 
 // Shared by both resolution paths below -- once a tile (normal or Doubler)
@@ -1372,7 +1392,10 @@ function evaluateTriviYeahIIHotSeat(room, roomCode, cell, correctLetter, pickerN
     ty2.lastTrapOutcome = trapOutcome;
 
     ty2.currentPicker = nextPicker;
-    finalizeTriviYeahIITileClear(room, roomCode, cell, pickerCorrect ? pickerName : null);
+    finalizeTriviYeahIITileClear(room, roomCode, cell, {
+        right: pickerCorrect ? [pickerName] : [],
+        lockedOut: Object.keys(room.players).filter(name => name !== pickerName)
+    });
 
     broadcastToRoom(roomCode, {
         type: 'TRIVI_YEAH_II_ROUND_REVEAL',
@@ -1471,7 +1494,9 @@ function evaluateTriviYeahIIAnswers(roomCode) {
     ty2.lastTrapOutcome = trapOutcome;
 
     ty2.currentPicker = nextPicker;
-    finalizeTriviYeahIITileClear(room, roomCode, cell, fastestCorrectName || null);
+    finalizeTriviYeahIITileClear(room, roomCode, cell, {
+        right: Object.keys(ty2.answers).filter(name => ty2.answers[name] === correctLetter)
+    });
 
     broadcastToRoom(roomCode, {
         type: 'TRIVI_YEAH_II_ROUND_REVEAL',
@@ -1512,12 +1537,14 @@ function evaluateTriviYeahIIDoublerAnswer(room, roomCode, cell, correctLetter) {
     // value (bet.amount, set when the bet was placed) -- so this is simpler
     // than the picker's own wager, just a shared stake split by direction.
     const sideBetResults = {};
+    const betWinners = [];
     Object.entries(ty2.doubler.sideBets).forEach(([name, bet]) => {
         const bettor = room.players[name];
         if (!bettor || bet.choice === 'PASS' || !bet.amount) { sideBetResults[name] = 0; return; }
         const won = (bet.choice === 'FOR' && pickerCorrect) || (bet.choice === 'AGAINST' && !pickerCorrect);
         bettor.score += won ? bet.amount : -bet.amount;
         sideBetResults[name] = won ? bet.amount : -bet.amount;
+        if (won) betWinners.push(name);
     });
 
     // ty2.currentPicker is about to move on to whoever picks next -- stash
@@ -1534,7 +1561,10 @@ function evaluateTriviYeahIIDoublerAnswer(room, roomCode, cell, correctLetter) {
     // as nobody answering a normal tile correctly.
     const nextPicker = pickerCorrect ? pickerName : pickRandomActivePlayer(room);
     ty2.currentPicker = nextPicker;
-    finalizeTriviYeahIITileClear(room, roomCode, cell, pickerCorrect ? pickerName : null);
+    // A winning side bet counts toward a column sweep, same as a right answer.
+    finalizeTriviYeahIITileClear(room, roomCode, cell, {
+        right: (pickerCorrect ? [pickerName] : []).concat(betWinners)
+    });
 
     broadcastToRoom(roomCode, {
         type: 'TRIVI_YEAH_II_DOUBLER_RESULT',
