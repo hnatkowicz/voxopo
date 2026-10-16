@@ -532,6 +532,33 @@
         <button class="btn btn-leave" onclick="leaveRoom()">Leave Room</button>
     </div>
 
+    <!-- SCREEN 4.7: FLAG ME DOWN -- the flag, clues unlocking over time,
+         and one lock-in per flag (Randy: "Lock it and no changing back"). -->
+    <div id="flag-me-down-screen" class="card" style="display: none;">
+        <h1>Flag Me Down</h1>
+        <p class="subtitle" id="fmd-status-line" style="margin-bottom: 20px;">...</p>
+
+        <div class="player-badge">
+            <span class="player-badge-identity"><span id="fmd-badge-emoji">-</span> <span id="fmd-badge-name" class="player-badge-name">-</span></span>
+            <span class="player-badge-room">Room <strong id="fmd-badge-room">-</strong> &middot; Score <strong id="fmd-badge-score">0</strong></span>
+        </div>
+
+        <div id="fmd-worth" style="font-size: 1.3rem; font-weight: 800; color: #facc15; text-align: center; margin: 16px 0 10px;"></div>
+        <div id="fmd-flag-container" style="display: none; text-align: center; margin: 0 0 12px;">
+            <img id="fmd-flag-image" src="" alt="" style="width: 100%; aspect-ratio: 4 / 3; max-height: 20vh; object-fit: contain; border-radius: 8px;">
+        </div>
+        <!-- Choices sit right under the flag so all four stay on screen;
+             the clues (also on the TV) go below them. -->
+        <div class="module-list" id="fmd-choices-list"></div>
+        <div id="fmd-feedback" class="feedback" style="margin-top: 12px; font-weight: 600; text-align: left; padding: 14px 20px; display: none;"></div>
+        <div id="fmd-clues" style="text-align: left; font-size: 0.95rem; color: #cbd5e1; line-height: 1.5; margin: 12px 0;"></div>
+        <div id="fmd-map-container" style="display: none; text-align: center; margin: 0 0 12px;">
+            <img id="fmd-map-image" src="" alt="" style="width: 100%; aspect-ratio: 4 / 3; max-height: 18vh; object-fit: contain; border-radius: 8px;">
+        </div>
+
+        <button class="btn btn-leave" onclick="leaveRoom()">Leave Room</button>
+    </div>
+
     <!-- SCREEN 4.6: TRIVI-YEAH II FINAL WAGER (Final-Jeopardy-style closer) -->
     <div id="trivi-yeah-ii-final-wager-screen" class="card" style="display: none;">
         <h1>Final Wager</h1>
@@ -563,6 +590,16 @@
             </div>
             <input type="text" id="fw-answer-input" placeholder="YOUR ANSWER" style="width: 100%; padding: 12px; font-size: 1.1rem; font-weight: 700; text-transform: uppercase; border-radius: 8px; border: 1px solid #222630; background: #14161d; color: #fff; margin-bottom: 10px; box-sizing: border-box;" oninput="this.value = this.value.toUpperCase();" />
             <button class="btn" onclick="submitTriviYeahIIFinalAnswer()">Lock In Final Answer</button>
+            <!-- Flag Me Down only: private clues, each taking 25% off what
+                 you'd win (a wrong answer still loses the whole wager). -->
+            <div id="fw-hints-box" style="display: none; margin-top: 16px;">
+                <div id="fw-hints-worth" style="font-size: 0.85rem; font-weight: 600; color: #94a3b8; text-align: center; margin-bottom: 8px;"></div>
+                <div id="fw-hints-buttons" style="display: flex; gap: 8px;"></div>
+                <div id="fw-hints-opened" style="text-align: left; font-size: 0.95rem; color: #cbd5e1; line-height: 1.5; margin-top: 10px;"></div>
+                <div id="fw-hint-map-container" style="display: none; text-align: center; margin: 10px 0 0;">
+                    <img id="fw-hint-map-image" src="" alt="" style="width: 100%; aspect-ratio: 4 / 3; max-height: 18vh; object-fit: contain; border-radius: 8px;">
+                </div>
+            </div>
             <div id="fw-answer-feedback" class="feedback" style="margin-top: 16px; font-weight: 600; text-align: left; padding: 14px 20px; display: none;"></div>
         </div>
 
@@ -610,7 +647,7 @@
         // both missed a spot). Hiding every known screen and showing only
         // the requested one makes that whole bug class impossible going
         // forward -- a future new screen just needs adding here once.
-        const ALL_PLAY_SCREENS = ['login-screen', 'game-screen', 'category-screen', 'empossdurr-screen', 'on-the-spectrum-screen', 'profiler-screen', 'question-screen', 'trivi-yeah-ii-screen', 'trivi-yeah-ii-final-wager-screen', 'game-over-screen'];
+        const ALL_PLAY_SCREENS = ['login-screen', 'game-screen', 'category-screen', 'empossdurr-screen', 'on-the-spectrum-screen', 'profiler-screen', 'question-screen', 'trivi-yeah-ii-screen', 'trivi-yeah-ii-final-wager-screen', 'flag-me-down-screen', 'game-over-screen'];
         function showOnlyPlayScreen(idToShow) {
             ALL_PLAY_SCREENS.forEach(id => {
                 document.getElementById(id).style.display = (id === idToShow) ? 'block' : 'none';
@@ -825,6 +862,12 @@
                             renderTriviYeahIIFinalWager(data, nickname, roomCode);
                         }
 
+                        // Flag Me Down: the flag, the clues so far, one lock-in.
+                        if (data.phase === 'FLAG_ME_DOWN_PHASE') {
+                            showOnlyPlayScreen('flag-me-down-screen');
+                            renderFlagMeDown(data, nickname, roomCode);
+                        }
+
                         // Loop exhausted its question bank: show this player's own placement
                         // (mirrors the TV's medal styling). Polling keeps running (not
                         // cleared here anymore) so this phone can still detect a
@@ -849,6 +892,7 @@
                             ty2LastRenderKey = null;
                             fwLastRenderKey = null;
                             pfLastPhaseKey = null;
+                            fmdLastRenderKey = null;
                         }
 
                         // Post-game consensus reset the room -- same code, same roster,
@@ -861,6 +905,7 @@
                             otsLastPhaseKey = null; // next On the Spectrum game's first round should render fresh
                             ty2LastRenderKey = null; // next Trivi-Yeah II game's first tile should always render fresh
                             pfLastPhaseKey = null; // next Profiler game's first round should render fresh
+                            fmdLastRenderKey = null; // next Flag Me Down game's first flag should render fresh
 
                             // Highlights whichever mode this player currently has
                             // voted for (their original join-time pick, or a
@@ -1458,6 +1503,90 @@
             }
         }
 
+        // ---------- Flag Me Down ----------
+        let fmdLastRenderKey = null;
+
+        function escapeFmd(text) {
+            return String(text).replace(/[&<>"']/g, ch => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[ch]));
+        }
+
+        function renderFlagMeDown(data, nickname, roomCode) {
+            document.getElementById('fmd-badge-name').innerText = nickname;
+            document.getElementById('fmd-badge-emoji').innerText = chosenAvatar;
+            document.getElementById('fmd-badge-room').innerText = roomCode;
+            document.getElementById('fmd-badge-score').innerText = data.myScore || 0;
+            preloadQuestionPicture(data.preloadAsset);
+            if (data.mapUrl) preloadQuestionPicture(data.mapUrl);
+
+            const revealed = data.fmdPhase === 'REVEAL';
+            const renderKey = `${data.round}|${data.fmdPhase}|${data.stage}|${data.myLock ? data.myLock.choice : ''}|${data.lockedCount}`;
+            if (renderKey === fmdLastRenderKey) return;
+            fmdLastRenderKey = renderKey;
+
+            document.getElementById('fmd-status-line').innerText = `Flag ${data.round} of ${data.totalRounds}`;
+            showQuestionPicture('fmd-flag-container', 'fmd-flag-image', data.flagUrl);
+
+            const worth = document.getElementById('fmd-worth');
+            if (revealed) worth.innerText = '';
+            else if (data.myLock) worth.innerText = `🔒 Locked -- worth ${data.myLock.points} if right`;
+            else worth.innerText = `Worth ${data.stagePoints} now`;
+
+            const clues = [];
+            if (data.region) clues.push(`🧭 Region: <strong>${escapeFmd(data.region)}</strong>`);
+            if (data.capital) clues.push(`🏛️ Capital: <strong>${escapeFmd(data.capital)}</strong>`);
+            document.getElementById('fmd-clues').innerHTML = clues.join('<br>');
+            // The map is the last clue (stage 3) and is always shown on the reveal.
+            showQuestionPicture('fmd-map-container', 'fmd-map-image', (data.stage >= 3 || revealed) ? data.mapUrl : null);
+
+            const myChoice = data.myLock ? data.myLock.choice : null;
+            document.getElementById('fmd-choices-list').innerHTML = (data.choices || []).map((name, i) => {
+                const letter = 'ABCD'[i];
+                let style = '';
+                if (revealed && name === data.answer) style = 'border-color: #00e676; color: #00e676;';
+                else if (revealed && name === myChoice) style = 'border-color: #ff5c5c; color: #ff5c5c;';
+                const selected = !revealed && name === myChoice ? ' selected' : '';
+                // Dim the rest once you've locked; keep your pick (and the answer) bright.
+                const done = revealed || myChoice;
+                const keepBright = name === myChoice || (revealed && name === data.answer);
+                const locked = done && !keepBright ? ' btn-locked' : '';
+                if (done) style += ' pointer-events: none;';
+                const click = done ? '' : ` onclick="submitFlagMeDownLock(this, '${letter}')"`;
+                return `<div class="module-row${selected}${locked}" style="${style}"${click}><span style="background: rgba(250, 204, 21, 0.12); color: #facc15; font-weight: 700; padding: 4px 10px; border-radius: 4px; font-size: 0.85rem; margin-right: 12px;">${letter}</span>${escapeFmd(name)}</div>`;
+            }).join('');
+
+            const feedback = document.getElementById('fmd-feedback');
+            if (revealed) {
+                const r = data.myResult;
+                if (r && r.correct) showFeedback(feedback, `✅ ${data.answer}! +${r.points} (locked at the ${r.stageLabel.toLowerCase()} clue)`, "rgba(0,230,118,0.06)", "#00e676", "rgba(0,230,118,0.15)");
+                else if (r && r.choice) showFeedback(feedback, `❌ It was ${data.answer}. No points, no penalty.`, "rgba(255,71,87,0.06)", "#ff4757", "rgba(255,71,87,0.1)");
+                else showFeedback(feedback, `⏱️ It was ${data.answer}. You didn't lock in.`, "rgba(148,163,184,0.06)", "#94a3b8", "rgba(148,163,184,0.15)");
+            } else if (myChoice) {
+                showFeedback(feedback, `Locked in: ${myChoice}. ${data.lockedCount} of ${data.totalPlayers} locked in.`, "rgba(250,204,21,0.06)", "#facc15", "rgba(250,204,21,0.15)");
+            } else {
+                feedback.style.display = 'none';
+            }
+        }
+
+        async function submitFlagMeDownLock(element, letter) {
+            document.querySelectorAll('#fmd-choices-list .module-row').forEach(el => { if (el !== element) el.classList.add('btn-locked'); el.onclick = null; el.style.pointerEvents = 'none'; });
+            element.classList.add('selected');
+            const registeredName = localStorage.getItem('randomania_nickname') || 'test-handset';
+            const feedback = document.getElementById('fmd-feedback');
+            try {
+                const response = await fetch('/api/message', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ From: registeredName, Body: `FLAGLOCK ${letter}`, roomCode: localStorage.getItem('randomania_roomcode') })
+                });
+                const data = await response.json();
+                if (data.reply && data.reply.startsWith('⚠️')) showFeedback(feedback, data.reply, "rgba(255,71,87,0.06)", "#ff4757", "rgba(255,71,87,0.1)");
+                else showFeedback(feedback, data.reply || 'Locked in!', "rgba(250,204,21,0.06)", "#facc15", "rgba(250,204,21,0.15)");
+            } catch (error) {
+                showFeedback(feedback, "❌ Transmission failure.", "rgba(255,71,87,0.06)", "#ff4757", "rgba(255,71,87,0.1)");
+            }
+            fmdLastRenderKey = null;
+        }
+
         // ---------- Trivi-Yeah II: Final Wager ----------
         // Its own gameState entirely (TRIVI_YEAH_II_FINAL_WAGER, not
         // TRIVI_YEAH_II_ROUND), so this is a standalone screen/render
@@ -1472,6 +1601,8 @@
             document.getElementById('fw-topic-meta').innerText = data.topicLabel || '';
             showQuestionPicture('fw-visual-container', 'fw-visual-image', data.visualAsset);
             preloadQuestionPicture(data.preloadAsset);
+
+            renderFinalWagerHints(data);
 
             const renderKey = `${data.finalWagerPhase}|${data.myWager}|${data.myAnswer || ''}|${data.gameSecondsLeft}`;
             if (renderKey === fwLastRenderKey) return;
@@ -1524,6 +1655,50 @@
             // REVEAL -- the drama happens on the TV, not here.
             document.getElementById('fw-status-line').innerText = 'Time\'s up!';
             revealBox.style.display = 'block';
+        }
+
+        // Flag Me Down's Final Wager clues. Drawn on every poll (cheap) so
+        // an opened clue shows up right away.
+        function renderFinalWagerHints(data) {
+            const box = document.getElementById('fw-hints-box');
+            const mine = data.myHints;
+            if (!data.hintsAvailable && !(mine && mine.used.length)) { box.style.display = 'none'; showQuestionPicture('fw-hint-map-container', 'fw-hint-map-image', null); return; }
+            box.style.display = 'block';
+            const used = (mine && mine.used) || [];
+            const pct = Math.max(0, 100 - 25 * used.length);
+            document.getElementById('fw-hints-worth').innerText = data.hintsAvailable
+                ? `Stuck? Each clue takes 25% off your winnings. You'd win ${pct}% of your wager.`
+                : `You'd win ${pct}% of your wager.`;
+            const buttons = document.getElementById('fw-hints-buttons');
+            const key = `${data.hintsAvailable}|${used.join(',')}`;
+            if (buttons.dataset.key !== key) {
+                buttons.dataset.key = key;
+                buttons.innerHTML = data.hintsAvailable ? [['REGION', 'Region'], ['CAPITAL', 'Capital'], ['MAP', 'Map']].map(([kind, label]) =>
+                    used.includes(kind)
+                        ? `<div class="module-row btn-locked" style="flex: 1; text-align: center; font-weight: 700; padding: 10px 4px; opacity: 0.5;">${label} ✓</div>`
+                        : `<div class="module-row" style="flex: 1; text-align: center; font-weight: 700; padding: 10px 4px;" onclick="openFinalWagerHint(this, '${kind}')">${label}<br><span style="font-size: 0.75rem; color: #ff5c5c;">-25%</span></div>`
+                ).join('') : '';
+            }
+            const lines = [];
+            if (mine && mine.region) lines.push(`🧭 Region: <strong>${escapeFmd(mine.region)}</strong>`);
+            if (mine && mine.capital) lines.push(`🏛️ Capital: <strong>${escapeFmd(mine.capital)}</strong>`);
+            document.getElementById('fw-hints-opened').innerHTML = lines.join('<br>');
+            showQuestionPicture('fw-hint-map-container', 'fw-hint-map-image', mine ? mine.mapUrl : null);
+        }
+
+        async function openFinalWagerHint(element, kind) {
+            element.classList.add('btn-locked');
+            element.onclick = null;
+            const registeredName = localStorage.getItem('randomania_nickname') || 'test-handset';
+            try {
+                await fetch('/api/message', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ From: registeredName, Body: `FHINT ${kind}`, roomCode: localStorage.getItem('randomania_roomcode') })
+                });
+            } catch (error) {
+                console.error('[Final Wager] Clue request failed.', error);
+            }
         }
 
         async function submitTriviYeahIIFinalWager() {

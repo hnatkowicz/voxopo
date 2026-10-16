@@ -5,7 +5,7 @@ export const activeRooms = {};
 
 // Every votable game mode. The display side (names, blurbs, icons) lives in
 // public/modes.js -- keep the keys in step when adding a mode.
-export const GAME_MODE_KEYS = ['TRIVI_YEAH', 'TRIVI_YEAH_II', 'COUNTRY_MONKEY', 'EMPOSSDURR', 'ON_THE_SPECTRUM', 'PROFILER'];
+export const GAME_MODE_KEYS = ['TRIVI_YEAH', 'TRIVI_YEAH_II', 'COUNTRY_MONKEY', 'FLAG_ME_DOWN', 'EMPOSSDURR', 'ON_THE_SPECTRUM', 'PROFILER'];
 export function emptyModeVotes() {
     return Object.fromEntries(GAME_MODE_KEYS.map(key => [key, 0]));
 }
@@ -265,6 +265,15 @@ function startGameForMode(roomCode, winningModule) {
         startProfilerGame(roomCode).catch(error => {
             console.error(`❌ [Profiler] Failed to start Room ${roomCode}:`, error.message);
             broadcastContentUnavailable(roomCode, 'Profiler');
+            resetRoomToLobby(roomCode);
+        });
+        return;
+    }
+
+    if (winningModule === 'FLAG_ME_DOWN') {
+        startFlagMeDownGame(roomCode).catch(error => {
+            console.error(`❌ [Flag Me Down] Failed to start Room ${roomCode}:`, error.message);
+            broadcastContentUnavailable(roomCode, 'Flag Me Down');
             resetRoomToLobby(roomCode);
         });
         return;
@@ -712,6 +721,8 @@ function endGame(roomCode) {
             ? `${room.onTheSpectrum ? room.onTheSpectrum.roundIndex + 1 : 0} rounds`
         : room.winningGameMode === 'PROFILER'
             ? `${room.profiler ? Math.min(room.profiler.round, room.profiler.totalRounds) : 0} rounds`
+        : room.winningGameMode === 'FLAG_ME_DOWN'
+            ? `${room.flagMeDown ? Math.min(room.flagMeDown.roundIndex + 1, room.flagMeDown.totalRounds) : 0} flags`
             : `${room.questionBank.length} questions`;
     console.log(`🏁 [Game Engine] Room ${roomCode} finished ${roundsPlayedDescription}. Broadcasting final leaderboard.`);
 
@@ -1857,7 +1868,7 @@ async function startTriviYeahIIFinalWager(roomCode) {
 // players see comes from modeLabel. visualAsset (optional) is the question's
 // picture, shown once answering opens -- never during the wager, which is
 // placed on the topic alone, same as Thinking Pants.
-function startFinalWager(roomCode, { questionText, correctAnswer, acceptedAnswers, topicLabel, visualAsset = null, rivalAnswers = [], modeLabel }) {
+function startFinalWager(roomCode, { questionText, correctAnswer, acceptedAnswers, topicLabel, visualAsset = null, rivalAnswers = [], modeLabel, hints = null }) {
     const room = activeRooms[roomCode];
     if (!room) return;
 
@@ -1870,6 +1881,8 @@ function startFinalWager(roomCode, { questionText, correctAnswer, acceptedAnswer
         correctAnswer, // server-only -- never broadcast until the reveal step that needs it
         acceptedAnswers, // server-only -- the variants correct is actually checked against
         rivalAnswers, // server-only -- near-misses that are a different answer (see isFinalWagerAnswerCorrect)
+        hints, // Flag Me Down: { region, capital, mapUrl } -- each one a player opens costs a share of their winnings
+        hintsUsed: {}, // name -> ['REGION', 'CAPITAL', 'MAP'] (server-only until the reveal)
         wagers: {},
         answers: {},
         phase: 'CATEGORY_REVEAL',
@@ -1967,7 +1980,11 @@ function closeTriviYeahIIFinalAnswerPhase(roomCode) {
         const wagerAmount = fw.wagers[p.name] || 0;
         const rawAnswer = fw.answers[p.name] || '';
         const correct = rawAnswer.length > 0 && isFinalWagerAnswerCorrect(rawAnswer, fw.acceptedAnswers, fw.rivalAnswers);
-        return { playerName: p.name, wagerAmount, answerText: rawAnswer, correct };
+        // Flag Me Down: each clue opened takes a share off the winnings,
+        // rounded up to a whole point; a wrong answer still loses the wager.
+        const hintsUsed = (fw.hintsUsed[p.name] || []).length;
+        const winAmount = Math.ceil(wagerAmount * Math.max(0, 1 - FLAG_ME_DOWN_HINT_COST * hintsUsed));
+        return { playerName: p.name, wagerAmount, winAmount, hintsUsed, answerText: rawAnswer, correct };
     });
     fw.revealIndex = -1;
 
@@ -1999,7 +2016,7 @@ function advanceTriviYeahIIFinalReveal(roomCode) {
     const step = fw.revealSteps[fw.revealIndex];
     const player = room.players[step.playerName];
     if (player) {
-        player.score += step.correct ? step.wagerAmount : -step.wagerAmount;
+        player.score += step.correct ? step.winAmount : -step.wagerAmount;
         if (step.correct) player.correctAnswers = (player.correctAnswers || 0) + 1;
     }
 
@@ -2007,6 +2024,8 @@ function advanceTriviYeahIIFinalReveal(roomCode) {
         type: 'TRIVI_YEAH_II_FINAL_REVEAL_STEP',
         playerName: step.playerName,
         wagerAmount: step.wagerAmount,
+        winAmount: step.winAmount,
+        hintsUsed: fw.hints ? step.hintsUsed : null,
         answerText: step.answerText,
         correct: step.correct,
         newScore: player ? player.score : null,
@@ -2086,6 +2105,267 @@ async function startCountryMonkeyFinalWager(roomCode) {
         topicLabel: `${room.activeDeckName || 'World Wide!'} · ${COUNTRY_MONKEY_TYPE_LABELS[type]}`,
         visualAsset: disguisedAssetUrl(room, row),
         modeLabel: 'Country Monkey'
+    });
+}
+
+// ==========================================
+// PHASE 3E: FLAG ME DOWN
+// (name the flag before the clues give it away)
+// ==========================================
+// Randy's design (Oct 2026), after the family loved the flags in Country
+// Monkey and asked where "Flag Me Down" went. Each round shows a flag and
+// four countries; clues unlock one at a time -- the local region, then the
+// capital, then the map -- and you can lock in at any moment. Lock in early
+// and right for more points; one lock-in, no changing it, no penalty for a
+// wrong answer. 15 rounds (5 easy, 5 medium, 5 hard, in that order), then a
+// Final Wager where you can buy the same clues privately on your phone.
+// Content: flag_me_down_countries (flag_me_down_countries.sql) -- countries
+// only, each with a flag, a map, a local region and a capital.
+const FLAG_ME_DOWN_ROUNDS_PER_DIFFICULTY = 5; // x3 difficulties = 15, matching Country Monkey
+// How long each stage shows before the next clue: flag only, +region,
+// +capital, +map. First guesses -- tune by feel in play.
+const FLAG_ME_DOWN_STAGE_MS = [7000, 6000, 6000, 6000];
+const FLAG_ME_DOWN_STAGE_POINTS = [400, 300, 200, 100]; // what a right lock-in is worth at each stage
+const FLAG_ME_DOWN_STAGE_LABELS = ['Flag', 'Region', 'Capital', 'Map'];
+const FLAG_ME_DOWN_REVEAL_MS = 6000;
+const FLAG_ME_DOWN_ALL_LOCKED_MS = 1200; // short beat once everyone's locked in, then the reveal
+// Final Wager clues: each one you peek at takes this share off what you can
+// win (rounded up to a whole point). A wrong answer still loses the wager.
+const FLAG_ME_DOWN_HINT_COST = 0.25;
+
+function fmdAsset(room, kind, country) {
+    return disguisedAssetUrl(room, { id: `fmd-${kind}-${country.name}`, visual_asset: kind === 'flag' ? country.flag_asset : country.map_asset });
+}
+
+// Three believable wrong answers: one from the same local region (so the
+// region clue narrows things without settling them), two from elsewhere on
+// the same continent -- then the capital decides, and the map is the
+// safety net. Falls back to anywhere if a continent runs short.
+function fmdChoices(country, pool) {
+    const others = pool.filter(c => c.name !== country.name);
+    const sameLocal = shuffleArray(others.filter(c => c.local_region === country.local_region));
+    const sameContinent = shuffleArray(others.filter(c => c.continent === country.continent && c.local_region !== country.local_region));
+    const picked = [];
+    const take = (list, n) => { for (const c of list) { if (picked.length >= 3 || n <= 0) break; if (!picked.includes(c.name)) { picked.push(c.name); n--; } } };
+    take(sameLocal, 1);
+    take(sameContinent, 3 - picked.length);
+    take(shuffleArray(others), 3 - picked.length);
+    return shuffleArray([country.name, ...picked]);
+}
+
+async function startFlagMeDownGame(roomCode) {
+    const room = activeRooms[roomCode];
+    if (!room) return;
+    const result = await pool.query(
+        `SELECT name, continent, local_region, capital, capital_clue, flag_asset, map_asset, accepted_answers, difficulty
+         FROM flag_me_down_countries`
+    );
+    const countries = result.rows;
+    const rounds = [];
+    for (const difficulty of [1, 2, 3]) {
+        const pick = shuffleArray(countries.filter(c => c.difficulty === difficulty)).slice(0, FLAG_ME_DOWN_ROUNDS_PER_DIFFICULTY);
+        if (pick.length < FLAG_ME_DOWN_ROUNDS_PER_DIFFICULTY) throw new Error(`Flag Me Down needs ${FLAG_ME_DOWN_ROUNDS_PER_DIFFICULTY} countries of difficulty ${difficulty}, found ${pick.length}.`);
+        rounds.push(...pick);
+    }
+    room.gameState = 'FLAG_ME_DOWN_ROUND';
+    room.flagMeDown = {
+        countries,
+        rounds,
+        roundIndex: -1,
+        totalRounds: rounds.length,
+        stage: 0,
+        phase: 'CLUES', // CLUES | REVEAL
+        choices: [],
+        lockIns: {}, // name -> { choice, stage }
+        lastResults: null
+    };
+    console.log(`[Flag Me Down] Room ${roomCode} starting ${rounds.length} rounds.`);
+    startFlagMeDownRound(roomCode);
+}
+
+function startFlagMeDownRound(roomCode) {
+    const room = activeRooms[roomCode];
+    if (!room || !room.flagMeDown) return;
+    const fmd = room.flagMeDown;
+    fmd.roundIndex++;
+    if (fmd.roundIndex >= fmd.totalRounds) {
+        startFlagMeDownFinalWager(roomCode).catch(error => {
+            console.error(`❌ [Flag Me Down] Failed to start Final Wager for Room ${roomCode}:`, error.message);
+            endGame(roomCode);
+        });
+        return;
+    }
+    const country = fmd.rounds[fmd.roundIndex];
+    fmd.current = country;
+    fmd.choices = fmdChoices(country, fmd.countries);
+    fmd.lockIns = {};
+    fmd.lastResults = null;
+    fmd.phase = 'CLUES';
+    fmd.stage = 0;
+    fmd.flagUrl = fmdAsset(room, 'flag', country);
+    fmd.mapUrl = null; // sent only once the map clue unlocks
+    const next = fmd.rounds[fmd.roundIndex + 1];
+    broadcastToRoom(roomCode, {
+        type: 'FLAG_ME_DOWN_ROUND',
+        round: fmd.roundIndex + 1,
+        totalRounds: fmd.totalRounds,
+        flagUrl: fmd.flagUrl,
+        choices: fmd.choices,
+        stage: 0,
+        stagePoints: FLAG_ME_DOWN_STAGE_POINTS[0],
+        // The next round's flag downloads in the background meanwhile.
+        preloadAsset: next ? fmdAsset(room, 'flag', next) : null
+    });
+    scheduleFlagMeDownStage(roomCode);
+}
+
+function scheduleFlagMeDownStage(roomCode) {
+    const room = activeRooms[roomCode];
+    const fmd = room.flagMeDown;
+    if (room.revealTimeout) clearTimeout(room.revealTimeout);
+    const roundAtSchedule = fmd.roundIndex;
+    room.gameSecondsLeft = Math.round(FLAG_ME_DOWN_STAGE_MS[fmd.stage] / 1000);
+    room.revealTimeout = setTimeout(() => {
+        room.revealTimeout = null;
+        if (room.flagMeDown !== fmd || fmd.roundIndex !== roundAtSchedule || fmd.phase !== 'CLUES') return;
+        if (fmd.stage >= FLAG_ME_DOWN_STAGE_MS.length - 1) { revealFlagMeDownRound(roomCode); return; }
+        fmd.stage++;
+        const country = fmd.current;
+        const clue = fmd.stage === 1 ? { region: country.local_region }
+            : fmd.stage === 2 ? { capital: country.capital_clue }
+            : { mapUrl: (fmd.mapUrl = fmdAsset(room, 'map', country)) };
+        broadcastToRoom(roomCode, {
+            type: 'FLAG_ME_DOWN_CLUE',
+            stage: fmd.stage,
+            stageLabel: FLAG_ME_DOWN_STAGE_LABELS[fmd.stage],
+            stagePoints: FLAG_ME_DOWN_STAGE_POINTS[fmd.stage],
+            ...clue,
+            // The map downloads during the capital stage so it's instant.
+            preloadAsset: fmd.stage === 2 ? fmdAsset(room, 'map', country) : null
+        });
+        scheduleFlagMeDownStage(roomCode);
+    }, FLAG_ME_DOWN_STAGE_MS[fmd.stage]);
+}
+
+function revealFlagMeDownRound(roomCode) {
+    const room = activeRooms[roomCode];
+    if (!room || !room.flagMeDown) return;
+    const fmd = room.flagMeDown;
+    if (fmd.phase !== 'CLUES') return;
+    if (room.revealTimeout) { clearTimeout(room.revealTimeout); room.revealTimeout = null; }
+    fmd.phase = 'REVEAL';
+    const country = fmd.current;
+    const results = Object.values(room.players).filter(p => !p.left).map(player => {
+        const lock = fmd.lockIns[player.name];
+        const correct = !!lock && lock.choice === country.name;
+        const points = correct ? FLAG_ME_DOWN_STAGE_POINTS[lock.stage] : 0;
+        if (correct) {
+            player.score += points;
+            player.correctAnswers = (player.correctAnswers || 0) + 1;
+        }
+        return { name: player.name, choice: lock ? lock.choice : null, stage: lock ? lock.stage : null, stageLabel: lock ? FLAG_ME_DOWN_STAGE_LABELS[lock.stage] : null, correct, points };
+    }).sort((a, b) => b.points - a.points);
+    fmd.lastResults = results;
+    broadcastToRoom(roomCode, {
+        type: 'FLAG_ME_DOWN_REVEAL',
+        round: fmd.roundIndex + 1,
+        totalRounds: fmd.totalRounds,
+        answer: country.name,
+        region: country.local_region,
+        capital: country.capital,
+        flagUrl: fmd.flagUrl,
+        mapUrl: fmd.mapUrl || fmdAsset(room, 'map', country),
+        results
+    });
+    broadcastToRoom(roomCode, { type: 'LEADERBOARD_UPDATE', players: Object.values(room.players).filter(p => !p.left) });
+    room.revealTimeout = setTimeout(() => {
+        room.revealTimeout = null;
+        if (room.flagMeDown === fmd) startFlagMeDownRound(roomCode);
+    }, FLAG_ME_DOWN_REVEAL_MS);
+}
+
+function handleFlagMeDownAction(roomCode, room, playerName, cleanText) {
+    const fmd = room.flagMeDown;
+    const match = /^FLAGLOCK\s+([A-D])$/i.exec(cleanText);
+    if (!match) return `⚠️ That action isn't available right now.`;
+    if (fmd.phase !== 'CLUES') return `⚠️ Too late -- this one's already revealed.`;
+    if (playerName in fmd.lockIns) return `⚠️ Already locked in -- no changing it.`;
+    const choice = fmd.choices['ABCD'.indexOf(match[1].toUpperCase())];
+    if (!choice) return `⚠️ That's not one of the choices.`;
+    fmd.lockIns[playerName] = { choice, stage: fmd.stage };
+    broadcastToRoom(roomCode, { type: 'ANSWER_SUBMITTED', playerName });
+    checkFlagMeDownAllLocked(roomCode);
+    return `Locked in: ${choice}. Worth ${FLAG_ME_DOWN_STAGE_POINTS[fmd.stage]} if you're right!`;
+}
+
+// Everyone's locked in (or left) -- no reason to sit through the rest of the clues.
+function checkFlagMeDownAllLocked(roomCode) {
+    const room = activeRooms[roomCode];
+    const fmd = room && room.flagMeDown;
+    if (!fmd || fmd.phase !== 'CLUES') return;
+    const active = Object.values(room.players).filter(p => !p.left);
+    if (active.length && active.every(p => p.name in fmd.lockIns)) {
+        if (room.revealTimeout) clearTimeout(room.revealTimeout);
+        room.revealTimeout = setTimeout(() => { room.revealTimeout = null; revealFlagMeDownRound(roomCode); }, FLAG_ME_DOWN_ALL_LOCKED_MS);
+    }
+}
+
+// Status for one phone: the round so far (never the answer before the reveal).
+export function flagMeDownStatusFor(room, playerName) {
+    const fmd = room.flagMeDown;
+    if (!fmd) return null;
+    const country = fmd.current;
+    const lock = fmd.lockIns[playerName] || null;
+    const mine = fmd.phase === 'REVEAL' && fmd.lastResults ? (fmd.lastResults.find(r => r.name === playerName) || null) : null;
+    return {
+        round: fmd.roundIndex + 1,
+        totalRounds: fmd.totalRounds,
+        fmdPhase: fmd.phase,
+        stage: fmd.stage,
+        stagePoints: FLAG_ME_DOWN_STAGE_POINTS[fmd.stage],
+        flagUrl: fmd.flagUrl,
+        choices: fmd.choices,
+        region: fmd.stage >= 1 || fmd.phase === 'REVEAL' ? country.local_region : null,
+        capital: fmd.phase === 'REVEAL' ? country.capital : (fmd.stage >= 2 ? country.capital_clue : null),
+        mapUrl: fmd.mapUrl,
+        myLock: lock ? { choice: lock.choice, stage: lock.stage, points: FLAG_ME_DOWN_STAGE_POINTS[lock.stage] } : null,
+        answer: fmd.phase === 'REVEAL' ? country.name : null,
+        myResult: mine,
+        lockedCount: Object.keys(fmd.lockIns).length,
+        totalPlayers: Object.values(room.players).filter(p => !p.left).length
+    };
+}
+
+// The closer: a medium flag nobody saw this game, typed in. Each clue
+// (region, capital, map) can be bought privately on your phone while
+// answering, for a share of what you'd win.
+async function startFlagMeDownFinalWager(roomCode) {
+    const room = activeRooms[roomCode];
+    if (!room || !room.flagMeDown) return;
+    const fmd = room.flagMeDown;
+    const used = new Set(fmd.rounds.map(c => c.name));
+    const unused = fmd.countries.filter(c => !used.has(c.name));
+    // Medium, like every Final Wager (Randy: "I want all to have a chance at glory!").
+    const pool = unused.filter(c => c.difficulty === 2).length ? unused.filter(c => c.difficulty === 2) : unused;
+    if (!pool.length) throw new Error('No unused country for the Final Wager.');
+    const country = shuffleArray(pool)[0];
+    const rivals = new Set();
+    fmd.countries.forEach(c => { if (c.name !== country.name) { rivals.add(c.name); (c.accepted_answers || []).forEach(a => rivals.add(a)); } });
+    const accepted = [country.name, ...(country.accepted_answers || [])];
+    accepted.forEach(a => rivals.delete(a));
+    startFinalWager(roomCode, {
+        questionText: 'Whose flag is this? Type the country!',
+        correctAnswer: country.name,
+        acceptedAnswers: accepted,
+        rivalAnswers: [...rivals],
+        topicLabel: 'One last flag',
+        visualAsset: fmdAsset(room, 'flag', country),
+        modeLabel: 'Flag Me Down',
+        hints: {
+            region: country.local_region,
+            capital: country.capital_clue,
+            mapUrl: fmdAsset(room, 'map', country)
+        }
     });
 }
 
@@ -2731,6 +3011,7 @@ function clearRoomForFreshGame(room) {
     room.finalWager = null;
     room.profiler = null;
     room.profilerOnExpire = null;
+    room.flagMeDown = null;
 
     const activePlayers = Object.values(room.players).filter(p => !p.left);
     // Bumping this marks "a fresh game started" -- a player who left before
@@ -4010,6 +4291,8 @@ export function handleIncomingMessage(fromPhone, bodyText, explicitRoomCode, pre
                 }
             } else if (currentRoom.gameState === 'PROFILER_ROUND' && currentRoom.profiler) {
                 handleProfilerLeave(associatedRoomCode);
+            } else if (currentRoom.gameState === 'FLAG_ME_DOWN_ROUND' && currentRoom.flagMeDown) {
+                checkFlagMeDownAllLocked(associatedRoomCode);
             } else if (currentRoom.gameState === 'TRIVI_YEAH_II_ROUND' && currentRoom.triviYeahII) {
                 handleTriviYeahIILeave(associatedRoomCode, actingPlayerName);
             } else if (currentRoom.gameState === 'ON_THE_SPECTRUM_ROUND' && currentRoom.onTheSpectrum) {
@@ -4339,6 +4622,16 @@ export function handleIncomingMessage(fromPhone, bodyText, explicitRoomCode, pre
             broadcastToRoom(associatedRoomCode, { type: 'ANSWER_SUBMITTED', playerName: actingPlayerName });
             return `Final answer locked in, ${player.name}!`;
         }
+        // Flag Me Down: open a clue on your own phone, for a share of your
+        // winnings. Can't be closed again once opened.
+        const hintMatch = /^FHINT\s+(REGION|CAPITAL|MAP)$/i.exec(cleanText);
+        if (hintMatch && currentRoom.finalWager.hints) {
+            const fw = currentRoom.finalWager;
+            const kind = hintMatch[1].toUpperCase();
+            fw.hintsUsed[actingPlayerName] = fw.hintsUsed[actingPlayerName] || [];
+            if (!fw.hintsUsed[actingPlayerName].includes(kind)) fw.hintsUsed[actingPlayerName].push(kind);
+            return `Clue opened -- your winnings drop to ${Math.round(100 * Math.max(0, 1 - FLAG_ME_DOWN_HINT_COST * fw.hintsUsed[actingPlayerName].length))}%.`;
+        }
     }
 
     // 5.5. EmpossDurr round messages
@@ -4480,6 +4773,11 @@ export function handleIncomingMessage(fromPhone, bodyText, explicitRoomCode, pre
     // 5.55. Profiler round messages
     if (currentRoom.gameState === 'PROFILER_ROUND') {
         return handleProfilerAction(associatedRoomCode, currentRoom, actingPlayerName, cleanText);
+    }
+
+    // 5.56. Flag Me Down round messages
+    if (currentRoom.gameState === 'FLAG_ME_DOWN_ROUND' && currentRoom.flagMeDown) {
+        return handleFlagMeDownAction(associatedRoomCode, currentRoom, actingPlayerName, cleanText);
     }
 
     // 5.6. On the Spectrum round messages
