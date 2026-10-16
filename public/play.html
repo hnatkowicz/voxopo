@@ -543,7 +543,9 @@
             <span class="player-badge-room">Room <strong id="fmd-badge-room">-</strong> &middot; Score <strong id="fmd-badge-score">0</strong></span>
         </div>
 
-        <div id="fmd-worth" style="font-size: 1.3rem; font-weight: 800; color: #facc15; text-align: center; margin: 16px 0 10px;"></div>
+        <!-- Fixed one-line height: when this wrapped or emptied, the buttons
+             below jumped mid-tap (Randy's playtest). -->
+        <div id="fmd-worth" style="font-size: 1.2rem; font-weight: 800; color: #facc15; text-align: center; margin: 16px 0 10px; height: 1.5em; line-height: 1.5em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"></div>
         <div id="fmd-flag-container" style="display: none; text-align: center; margin: 0 0 12px;">
             <img id="fmd-flag-image" src="" alt="" style="width: 100%; aspect-ratio: 4 / 3; max-height: 20vh; object-fit: contain; border-radius: 8px;">
         </div>
@@ -823,6 +825,17 @@
                                 activeQuestionId = data.questionId;
                                 renderQuestion(data, nickname, roomCode);
                             }
+                            if (data.revealedLetter) {
+                                paintRevealedChoices('choice-row-', data.revealedLetter, data.myAnswer);
+                                const revealFeedback = document.getElementById('question-feedback');
+                                const rightText = data['choice' + data.revealedLetter];
+                                if (data.myAnswer === data.revealedLetter) showFeedback(revealFeedback, `✅ Correct! ${rightText}`, "rgba(0,230,118,0.06)", "#00e676", "rgba(0,230,118,0.15)");
+                                else if (data.myAnswer) showFeedback(revealFeedback, `❌ It was ${data.revealedLetter}: ${rightText}`, "rgba(255,71,87,0.06)", "#ff4757", "rgba(255,71,87,0.1)");
+                                else showFeedback(revealFeedback, `⏱️ It was ${data.revealedLetter}: ${rightText}`, "rgba(148,163,184,0.06)", "#94a3b8", "rgba(148,163,184,0.15)");
+                                document.querySelectorAll('#question-screen .module-row').forEach(r => r.style.pointerEvents = 'none');
+                            } else {
+                                document.querySelectorAll('#question-screen .module-row').forEach(r => r.style.pointerEvents = '');
+                            }
                         }
 
                         // EmpossDurr's own round loop -- reveal, open discussion, the
@@ -922,6 +935,25 @@
             }, 1000);
         }
 
+        // Once the answer is out: the right choice lights green and a wrong
+        // pick red, the rest dim -- same as Flag Me Down's phone (Randy:
+        // "That should be the same behavior on all screens").
+        function paintRevealedChoices(rowIdPrefix, revealedLetter, myAnswer) {
+            ['A', 'B', 'C', 'D'].forEach(letter => {
+                const row = document.getElementById(`${rowIdPrefix}${letter}`);
+                if (!row) return;
+                if (!revealedLetter) { row.style.borderColor = ''; row.style.background = ''; row.style.color = ''; return; }
+                row.classList.remove('selected');
+                if (letter === revealedLetter) {
+                    row.style.borderColor = '#00e676'; row.style.background = 'rgba(0, 230, 118, 0.12)'; row.style.color = '#00e676'; row.style.opacity = '1';
+                } else if (letter === myAnswer) {
+                    row.style.borderColor = '#ff5c5c'; row.style.background = 'rgba(255, 71, 87, 0.12)'; row.style.color = '#ff5c5c'; row.style.opacity = '1';
+                } else {
+                    row.style.borderColor = ''; row.style.background = ''; row.style.color = ''; row.style.opacity = '0.3';
+                }
+            });
+        }
+
         function renderQuestion(data, nickname, roomCode) {
             document.getElementById('q-badge-name').innerText = nickname;
             document.getElementById('q-badge-emoji').innerText = chosenAvatar;
@@ -948,6 +980,7 @@
                 row.classList.remove('selected');
                 row.style.opacity = "1";
             });
+            paintRevealedChoices('choice-row-', null, null);
 
             const feedback = document.getElementById('question-feedback');
             feedback.style.display = "none";
@@ -1207,6 +1240,7 @@
                 row.classList.remove('selected');
                 row.style.opacity = data.myAnswer ? (data.myAnswer === letter ? '1' : '0.3') : '1';
             });
+            paintRevealedChoices('ty2-choice-row-', data.triviYeahIIPhase === 'ROUND_REVEAL' ? data.revealedLetter : null, data.myAnswer);
             // A Doubler question is A-D only -- PASS doesn't make sense on a
             // question you already committed a wager to.
             const passRow = document.getElementById('ty2-choice-row-PASS');
@@ -1223,6 +1257,11 @@
                     won ? "rgba(0,230,118,0.06)" : "rgba(255,71,87,0.06)", won ? "#00e676" : "#ff4757", won ? "rgba(0,230,118,0.15)" : "rgba(255,71,87,0.1)");
             } else if (data.trapOutcome && data.triviYeahIIPhase === 'ROUND_REVEAL' && trapOutcomeLine(data.trapOutcome, nickname)) {
                 showFeedback(feedback, trapOutcomeLine(data.trapOutcome, nickname), "rgba(255,92,92,0.06)", "#ff5c5c", "rgba(255,92,92,0.15)");
+            } else if (data.triviYeahIIPhase === 'ROUND_REVEAL' && data.revealedLetter && data.myAnswer && data.myAnswer !== 'PASS') {
+                const right = data.myAnswer === data.revealedLetter;
+                const rightText = data.choices ? data.choices[data.revealedLetter] : '';
+                showFeedback(feedback, right ? `✅ Correct! ${rightText}` : `❌ It was ${data.revealedLetter}: ${rightText}`,
+                    right ? "rgba(0,230,118,0.06)" : "rgba(255,71,87,0.06)", right ? "#00e676" : "#ff4757", right ? "rgba(0,230,118,0.15)" : "rgba(255,71,87,0.1)");
             } else if (data.myAnswer === 'PASS') {
                 showFeedback(feedback, `PASSED -- no points, no penalty.`, "rgba(100,116,139,0.08)", "#94a3b8", "rgba(100,116,139,0.2)");
             } else if (data.myAnswer) {
@@ -1527,8 +1566,8 @@
             showQuestionPicture('fmd-flag-container', 'fmd-flag-image', data.flagUrl);
 
             const worth = document.getElementById('fmd-worth');
-            if (revealed) worth.innerText = '';
-            else if (data.myLock) worth.innerText = `🔒 Locked -- worth ${data.myLock.points} if right`;
+            if (revealed) worth.innerText = data.myResult && data.myResult.correct ? `+${data.myResult.points}` : '+0';
+            else if (data.myLock) worth.innerText = `🔒 Locked · ${data.myLock.points} if right`;
             else worth.innerText = `Worth ${data.stagePoints} now`;
 
             const clues = [];

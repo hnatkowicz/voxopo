@@ -268,6 +268,16 @@ app.post('/api/room-status', (req, res) => {
             // activeQuestionData is already answer-safe (correctLetter stripped in gameEngine.js)
             return res.json({ phase: 'GAME_ROUND_PHASE', ...targetRoom.activeQuestionData, myScore, myCorrectAnswers, myLeft, myEmoji });
         }
+        // The few seconds after the clock: same question, now with the
+        // answer, so the phone can light it green (and a wrong pick red).
+        if (targetRoom && targetRoom.gameState === 'ROUND_REVEAL' && targetRoom.activeQuestionData && targetRoom.currentQuestionData) {
+            return res.json({
+                phase: 'GAME_ROUND_PHASE', ...targetRoom.activeQuestionData,
+                revealedLetter: targetRoom.currentQuestionData.correctLetter,
+                myAnswer: (targetRoom.answers && targetRoom.answers[playerName]) || null,
+                myScore, myCorrectAnswers, myLeft, myEmoji
+            });
+        }
         if (targetRoom && targetRoom.gameState === 'TRIVI_YEAH_II_ROUND' && targetRoom.triviYeahII) {
             const ty2 = targetRoom.triviYeahII;
             // activeQuestionData (server-only) carries correctLetter -- strip it
@@ -337,6 +347,8 @@ app.post('/api/room-status', (req, res) => {
                 trap: triviYeahIITrapInfo(ty2),
                 trapOutcome: ty2.phase === 'ROUND_REVEAL' ? (ty2.lastTrapOutcome || null) : null,
                 myAnswer: ty2.answers ? ty2.answers[playerName] : null,
+                // Only once the answer is out -- lights it green on the phone.
+                revealedLetter: ty2.phase === 'ROUND_REVEAL' && ty2.activeQuestionData ? ty2.activeQuestionData.correctLetter : null,
                 myScore, myCorrectAnswers, myLeft, myEmoji
             });
         }
