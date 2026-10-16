@@ -2023,7 +2023,7 @@ function advanceTriviYeahIIFinalReveal(roomCode) {
 // Country Monkey's closer: a map, flag or body of water (Randy: "can be
 // country, flag, or water feature" -- each type equally likely, among those
 // the region has) from the region just played (World Wide: any), one nobody
-// saw this game -- the hardest map or water, a middle-difficulty flag -- typed in,
+// saw this game, from the easier middle difficulty levels -- typed in,
 // with the usual typo net. accepted_answers carries alternate names
 // ("Swaziland", "Burma", "Ivory Coast"/"Côte d'Ivoire"); every other answer
 // and wrong answer in the mode becomes a rival, so a near-miss that's really
@@ -2053,23 +2053,16 @@ async function startCountryMonkeyFinalWager(roomCode) {
     const types = [...new Set(regionRows.map(countryMonkeyType))];
     const type = types[Math.floor(Math.random() * types.length)];
     const typeRows = regionRows.filter(r => countryMonkeyType(r) === type);
-    let finalRows;
-    if (type === 'FLAG') {
-        // Flags: the easier half of the middle levels (Randy, Oct 2026 --
-        // "I don't want someone to fight me over this!", then "I want all to
-        // have a chance at glory!"). The easiest (US, Japan) are a flat
-        // finale; the hardest (East African Community, Ascension Island)
-        // are a coin flip to type -- and typing any flag's name is hard.
-        const levels = [...new Set(typeRows.map(r => r.points))].sort((a, b) => a - b);
-        const middle = levels.length >= 3 ? levels.slice(1, -1) : levels;
-        const easierMiddle = middle.slice(0, Math.ceil(middle.length / 2));
-        finalRows = typeRows.filter(r => easierMiddle.includes(r.points));
-    } else {
-        // Maps and water: the hardest level.
-        const hardest = Math.max(...typeRows.map(r => r.points));
-        finalRows = typeRows.filter(r => r.points === hardest);
-    }
-    const row = shuffleArray(finalRows)[0];
+    // The easier half of the middle difficulty levels, for every type
+    // (Randy, Oct 2026 -- "I don't want someone to fight me over this!",
+    // then "I want all to have a chance at glory!"). The easiest (US flag,
+    // Brazil's map) make a flat finale; the hardest (East African Community,
+    // Eswatini's map, the White Nile) are a coin flip to type -- and typing
+    // any answer from memory is already hard.
+    const levels = [...new Set(typeRows.map(r => r.points))].sort((a, b) => a - b);
+    const middle = levels.length >= 3 ? levels.slice(1, -1) : levels;
+    const easierMiddle = middle.slice(0, Math.ceil(middle.length / 2));
+    const row = shuffleArray(typeRows.filter(r => easierMiddle.includes(r.points)))[0];
 
     const acceptedAnswers = [row.correct_answer, ...(row.accepted_answers || [])];
     const rivalSet = new Set();
