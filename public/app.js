@@ -392,17 +392,20 @@ if (btnSubmitSpectate) {
                 // any player's wager amount until their own reveal step.
                 if (data.type === 'TRIVI_YEAH_II_FINAL_CATEGORY_REVEAL') {
                     document.getElementById('lobby-countdown').innerText = '';
+                    finalWagerModeLabel = data.modeLabel || 'Thinking Pants';
+                    setStatusMessage(''); // e.g. Country Monkey's last "Question 12 / 12"
                     showTriviYeahIIFinalCategoryRevealUI(data.topicLabel);
                     stopCountdownMusic();
                 }
                 if (data.type === 'TRIVI_YEAH_II_FINAL_WAGER_OPEN') {
                     showTriviYeahIIFinalWagerOpenUI();
+                    preloadQuestionImage(data.preloadAsset);
                     playerAnswerStatus = {};
                     updateLeaderboardUI(cachedPlayersSnapshot);
                 }
                 if (data.type === 'TRIVI_YEAH_II_FINAL_ANSWER_OPEN') {
-                    document.getElementById('room-status-text').innerText = "Thinking Pants — Final Wager";
-                    showTriviYeahIIFinalAnswerOpenUI(data.topicLabel, data.questionText);
+                    document.getElementById('room-status-text').innerText = `${finalWagerModeLabel} — Final Wager`;
+                    showTriviYeahIIFinalAnswerOpenUI(data.topicLabel, data.questionText, data.visualAsset);
                     playerAnswerStatus = {};
                     updateLeaderboardUI(cachedPlayersSnapshot);
                     playAudioTrack('final-wager-timer-sound');
@@ -1334,10 +1337,13 @@ function showTriviYeahIIDoublerResultUI(data) {
 // rather than wiping between players -- the climbing suspense depends on
 // being able to see how the room is shaping up, not just the latest name.
 let finalWagerRevealLog = [];
+// Thinking Pants and Country Monkey share the Final Wager; this is which
+// one is playing it (sent with the category reveal).
+let finalWagerModeLabel = 'Thinking Pants';
 
 function showTriviYeahIIFinalCategoryRevealUI(topicLabel) {
     const panel = document.getElementById('active-content-stage');
-    document.getElementById('room-status-text').innerText = "Thinking Pants — Final Wager";
+    document.getElementById('room-status-text').innerText = `${finalWagerModeLabel} — Final Wager`;
     panel.innerHTML = `
         <div class="panel-box" style="padding: 40px; flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; min-height: 400px; box-sizing: border-box;">
             <div style="font-size: 0.85rem; font-weight: 600; color: #64748b; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 14px;">One question left. Everything's on the line.</div>
@@ -1358,8 +1364,24 @@ function showTriviYeahIIFinalWagerOpenUI() {
     `;
 }
 
-function showTriviYeahIIFinalAnswerOpenUI(topicLabel, questionText) {
+function showTriviYeahIIFinalAnswerOpenUI(topicLabel, questionText, visualAsset) {
     const panel = document.getElementById('active-content-stage');
+    if (visualAsset) {
+        // Country Monkey: the map on the left, same layout as its questions.
+        panel.innerHTML = `
+            <div class="panel-box" style="padding: 40px; flex: 1; display: flex; flex-direction: row; align-items: center; gap: 32px; min-height: 400px; box-sizing: border-box;">
+                <div style="flex: 1.2; text-align: center; min-width: 0;">
+                    <img src="${visualAsset}" alt="" style="max-width: 100%; max-height: 420px; border-radius: 8px; display: block; margin: 0 auto;">
+                </div>
+                <div style="flex: 1; text-align: left; min-width: 0;">
+                    <div style="font-size: 0.85rem; font-weight: 600; color: #64748b; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 16px;">Final Wager &middot; ${topicLabel}</div>
+                    <div style="font-size: 1.5rem; font-weight: 600; color: #ffffff; line-height: 1.4; letter-spacing: -0.01em;">${questionText}</div>
+                    <div style="font-size: 1rem; color: #94a3b8; margin-top: 14px;">Type your answer on your phone. Close spellings count.</div>
+                </div>
+            </div>
+        `;
+        return;
+    }
     panel.innerHTML = `
         <div class="panel-box" style="padding: 40px; flex: 1; display: flex; flex-direction: column; justify-content: center; text-align: left; min-height: 400px; box-sizing: border-box;">
             <div style="font-size: 0.85rem; font-weight: 600; color: #64748b; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 16px;">Final Wager &middot; ${topicLabel}</div>

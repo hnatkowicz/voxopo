@@ -101,7 +101,11 @@ Mode keys are used in room votes and in `gameEngine.js`:
   `country_monkey_new_maps.sql`: one row per map file per region, each with
   6 hand-picked wrong answers (neighbors, look-alike names); a game never asks
   the same country twice. 5 regions + World Wide (Africa, Europe, Asia &
-  Pacific, Middle East, Americas). The same maps power the **Country Monkey** category
+  Pacific, Middle East, Americas). Every game closes on a **Final Wager**
+  (shared with Thinking Pants): a hard, unseen map from the region played,
+  answered by typing. Typos are forgiven, `accepted_answers` holds alternate
+  names (Swaziland, Burma, ...), and a near-miss that is really a different
+  country ("Niger" for Nigeria) is never accepted. The same maps power the **Country Monkey** category
   in Thinking Pants (`trivi_yeah_ii_country_monkey.sql`, 80 maps, 20 per tier).
 - **Question pictures** (any mode) are shown on the TV *and* phones, fetched in
   the background before they're needed, and served under a disguised address
@@ -190,8 +194,3 @@ and forth until we both agree the idea is good **and** worth the effort. So:
 - **Mind Field:** a name saved for a future mode built around hidden traps
   on a board.
 
-## Known loose ends
-
-- `src/server.js` has a first `express.static` call with the path `'..public'`
-  (missing a slash). It's harmless because the second static mount serves
-  `public/`, but it's dead code.
