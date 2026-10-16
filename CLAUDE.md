@@ -97,9 +97,10 @@ Mode keys are used in room votes and in `gameEngine.js`:
   full pool for every tier (the engine fails fast if one is incomplete).
 - **COUNTRY_MONKEY**: a geography quiz for the geography nut, built from
   question *types* (the row's `subcategory`) mixed by `COUNTRY_MONKEY_MIX`
-  in `gameEngine.js`: 10 maps (`COUNTRY`), 3 flags (`FLAG`), 2 water
-  (`WATER`) per 15-question game -- Randy's starting point, "my hunch is more
-  countries". Future types (capitals, landmarks, skylines) are a new
+  in `gameEngine.js`: 10 maps (`COUNTRY`), 2 flags (`FLAG`), 1 landmark
+  (`LANDMARK`), 2 water (`WATER`) per 15-question game -- Randy's starting
+  point was 10/3/2 ("my hunch is more countries"); one flag slot became a
+  landmark slot to test landmarks. Future types (capitals, landmarks, skylines) are a new
   subcategory plus a number in the mix. A type a region lacks is topped up
   with maps; a game never repeats an answer.
   - Maps: 1200x900 WebP (quality 85) in `public/maps/`, from one SVG master
@@ -113,11 +114,15 @@ Mode keys are used in room votes and in `gameEngine.js`:
     are look-alike flags, never a near-twin (Chad/Romania, Monaco/Indonesia).
   - Water: `public/water/` (same recipe as the maps);
     `country_monkey_water.sql`, wrong answers of the same kind of water.
+  - Landmarks (a 15-photo test): `public/structures/` (photos, 3:2);
+    `country_monkey_landmarks.sql`. Asks for the landmark, not its country
+    (the country is nearly free points and would block that country's map).
+    Switching to "Which country is this in?" is a content edit.
   - Each SQL file only replaces its own subcategory, so they run
     independently. 5 regions + World Wide (Africa, Europe, Asia & Pacific,
     Middle East, Americas); `WORLD` rows (UN, Antarctica) are World Wide only.
   Every game closes on a **Final Wager**
-  (shared with Thinking Pants): an unseen map, flag or water feature
+  (shared with Thinking Pants): an unseen map, flag, water feature or landmark
   (equally likely) from the region played, answered by typing. Every type draws from the
   easier half of the middle difficulty levels (Randy's call: the easiest
   are a flat finale, the hardest too obscure to type, and "I want all to

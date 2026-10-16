@@ -515,8 +515,10 @@ async function loadQuestionBank(room) {
 // too few questions for the region (no Asia & Pacific water yet) is topped
 // up with maps. Future types (capitals, landmarks, skylines) are a new
 // subcategory plus a number here.
-const COUNTRY_MONKEY_MIX = { FLAG: 3, WATER: 2, COUNTRY: 10 };
-const COUNTRY_MONKEY_TYPE_LABELS = { COUNTRY: 'Maps', FLAG: 'Flags', WATER: 'Water' };
+// Landmarks joined as a 15-photo test (Randy, Oct 2026): one flag slot
+// became a landmark slot to see how it plays.
+const COUNTRY_MONKEY_MIX = { FLAG: 2, LANDMARK: 1, WATER: 2, COUNTRY: 10 };
+const COUNTRY_MONKEY_TYPE_LABELS = { COUNTRY: 'Maps', FLAG: 'Flags', LANDMARK: 'Landmarks', WATER: 'Water' };
 const countryMonkeyType = row => (row.subcategory && COUNTRY_MONKEY_MIX[row.subcategory] !== undefined) ? row.subcategory : 'COUNTRY';
 
 // Fills the mix from already-shuffled rows. Several maps have more than one
