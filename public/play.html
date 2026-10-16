@@ -557,6 +557,10 @@
              the 30s clock runs out. -->
         <div id="fw-answer-box" style="display: none; margin-top: 10px;">
             <div id="fw-question-text" style="text-align: left; font-size: 1.05rem; font-weight: 600; color: #ffffff; line-height: 1.4; margin-bottom: 16px;"></div>
+            <!-- Country Monkey's Final Wager map (hidden for Thinking Pants). -->
+            <div id="fw-visual-container" style="display: none; text-align: center; margin: 0 0 14px;">
+                <img id="fw-visual-image" src="" alt="" style="max-width: 100%; max-height: 26vh; border-radius: 8px;">
+            </div>
             <input type="text" id="fw-answer-input" placeholder="YOUR ANSWER" style="width: 100%; padding: 12px; font-size: 1.1rem; font-weight: 700; text-transform: uppercase; border-radius: 8px; border: 1px solid #222630; background: #14161d; color: #fff; margin-bottom: 10px; box-sizing: border-box;" oninput="this.value = this.value.toUpperCase();" />
             <button class="btn" onclick="submitTriviYeahIIFinalAnswer()">Lock In Final Answer</button>
             <div id="fw-answer-feedback" class="feedback" style="margin-top: 16px; font-weight: 600; text-align: left; padding: 14px 20px; display: none;"></div>
@@ -1466,6 +1470,8 @@
             document.getElementById('fw-badge-room').innerText = roomCode;
             document.getElementById('fw-badge-score').innerText = data.myScore || 0;
             document.getElementById('fw-topic-meta').innerText = data.topicLabel || '';
+            showQuestionPicture('fw-visual-container', 'fw-visual-image', data.visualAsset);
+            preloadQuestionPicture(data.preloadAsset);
 
             const renderKey = `${data.finalWagerPhase}|${data.myWager}|${data.myAnswer || ''}|${data.gameSecondsLeft}`;
             if (renderKey === fwLastRenderKey) return;

@@ -594,6 +594,15 @@ function startNextQuestion(roomCode) {
     room.currentQuestionIndex++;
 
     if (room.currentQuestionIndex >= room.questionBank.length) {
+        // Country Monkey closes every game on a Final Wager (Randy's call,
+        // Oct 2026) -- same closer as Thinking Pants, with a map to name.
+        if (room.winningGameMode === 'COUNTRY_MONKEY') {
+            startCountryMonkeyFinalWager(roomCode).catch(error => {
+                console.error(`❌ [Country Monkey] Failed to start Final Wager for Room ${roomCode}:`, error.message);
+                endGame(roomCode);
+            });
+            return;
+        }
         endGame(roomCode);
         return;
     }
@@ -1672,12 +1681,21 @@ function evaluateTriviYeahIIDoublerAnswer(room, roomCode, cell, correctLetter) {
 // handful of punctuation marks a typed answer might include -- "Mars."
 // and "mars" both need to match 'Mars' without requiring a letter-perfect
 // retype.
+// Also folds accents ("Côte" = "Cote"), hyphens ("Guinea-Bissau" = "Guinea
+// Bissau"), "&" vs "and", "Saint" vs "St", and a leading "The" -- small
+// differences that shouldn't cost anyone a wager.
 function normalizeFinalWagerAnswer(text) {
     return (text || '')
+        .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
         .trim()
         .toUpperCase()
-        .replace(/[.,!?'"]/g, '')
-        .replace(/\s+/g, ' ');
+        .replace(/&/g, ' AND ')
+        .replace(/[-–—/]/g, ' ')
+        .replace(/[.,!?'"’()]/g, '')
+        .replace(/\s+/g, ' ')
+        .trim()
+        .replace(/^THE /, '')
+        .replace(/\bSAINT\b/g, 'ST');
 }
 
 // Standard dynamic-programming edit distance (insert/delete/substitute, all
@@ -1720,14 +1738,27 @@ function finalWagerFuzzyTolerance(normalizedLength) {
 // phrasings; the fuzzy fallback is for misspellings of a phrasing nobody
 // explicitly listed -- two different problems, two different mechanisms
 // (see design chat).
-function isFinalWagerAnswerCorrect(submittedRaw, acceptedAnswers) {
+//
+// rivalAnswers (Country Monkey): other real answers the typo net must never
+// reach. "Niger" is a close spelling of "Nigeria" but it's a different
+// country -- so an answer that IS a rival, or is closer to a rival than to
+// the real answer, is wrong. "Nigerria" still counts; "Niger", "Austria"
+// (for Australia) and "Zambia" (for Gambia) don't. A dead-even typo
+// ("Irak": one letter from Iraq and from Iran) gets the benefit of the
+// doubt -- it's a wager, and the spirit of the answer was right.
+function isFinalWagerAnswerCorrect(submittedRaw, acceptedAnswers, rivalAnswers = []) {
     const submitted = normalizeFinalWagerAnswer(submittedRaw);
     if (!submitted) return false;
-    return acceptedAnswers.some(variant => {
-        const normalizedVariant = normalizeFinalWagerAnswer(variant);
-        if (submitted === normalizedVariant) return true;
-        const tolerance = finalWagerFuzzyTolerance(normalizedVariant.length);
-        return tolerance > 0 && levenshteinDistance(submitted, normalizedVariant) <= tolerance;
+    const accepted = acceptedAnswers.map(normalizeFinalWagerAnswer).filter(Boolean);
+    if (accepted.includes(submitted)) return true;
+    const acceptedSet = new Set(accepted);
+    const rivals = rivalAnswers.map(normalizeFinalWagerAnswer).filter(r => r && !acceptedSet.has(r));
+    if (rivals.includes(submitted)) return false;
+    const closestRival = rivals.reduce((best, r) => Math.min(best, levenshteinDistance(submitted, r)), Infinity);
+    return accepted.some(variant => {
+        const tolerance = finalWagerFuzzyTolerance(variant.length);
+        const distance = levenshteinDistance(submitted, variant);
+        return tolerance > 0 && distance <= tolerance && distance <= closestRival;
     });
 }
 
@@ -1774,17 +1805,28 @@ async function pickFinalWagerQuestion() {
 }
 
 async function startTriviYeahIIFinalWager(roomCode) {
+    const question = await pickFinalWagerQuestion();
+    startFinalWager(roomCode, { ...question, modeLabel: 'Thinking Pants' });
+}
+
+// The Final Wager is shared: Thinking Pants and Country Monkey both close on
+// it. The internal gameState keeps its original Thinking Pants name; what
+// players see comes from modeLabel. visualAsset (optional) is the question's
+// picture, shown once answering opens -- never during the wager, which is
+// placed on the topic alone, same as Thinking Pants.
+function startFinalWager(roomCode, { questionText, correctAnswer, acceptedAnswers, topicLabel, visualAsset = null, rivalAnswers = [], modeLabel }) {
     const room = activeRooms[roomCode];
     if (!room) return;
 
-    const { questionText, correctAnswer, acceptedAnswers, topicLabel } = await pickFinalWagerQuestion();
-
     room.gameState = 'TRIVI_YEAH_II_FINAL_WAGER';
     room.finalWager = {
+        modeLabel,
         topicLabel,
         questionText,
+        visualAsset,
         correctAnswer, // server-only -- never broadcast until the reveal step that needs it
         acceptedAnswers, // server-only -- the variants correct is actually checked against
+        rivalAnswers, // server-only -- near-misses that are a different answer (see isFinalWagerAnswerCorrect)
         wagers: {},
         answers: {},
         phase: 'CATEGORY_REVEAL',
@@ -1792,11 +1834,12 @@ async function startTriviYeahIIFinalWager(roomCode) {
         revealIndex: -1
     };
 
-    console.log(`[Trivi-Yeah II] Room ${roomCode} entering Final Wager. Topic: ${topicLabel}`);
+    console.log(`[Final Wager] Room ${roomCode} (${modeLabel}) entering Final Wager. Topic: ${topicLabel}`);
 
     broadcastToRoom(roomCode, {
         type: 'TRIVI_YEAH_II_FINAL_CATEGORY_REVEAL',
-        topicLabel
+        topicLabel,
+        modeLabel
     });
 
     if (room.revealTimeout) clearTimeout(room.revealTimeout);
@@ -1812,7 +1855,9 @@ function openTriviYeahIIFinalWagerPhase(roomCode) {
 
     room.finalWager.phase = 'WAGER';
 
-    broadcastToRoom(roomCode, { type: 'TRIVI_YEAH_II_FINAL_WAGER_OPEN' });
+    // The picture (if any) downloads in the background while people wager,
+    // so it's on screen the instant answering opens.
+    broadcastToRoom(roomCode, { type: 'TRIVI_YEAH_II_FINAL_WAGER_OPEN', preloadAsset: room.finalWager.visualAsset });
 
     if (room.revealTimeout) clearTimeout(room.revealTimeout);
     room.revealTimeout = setTimeout(() => {
@@ -1838,6 +1883,8 @@ function openTriviYeahIIFinalAnswerPhase(roomCode) {
         type: 'TRIVI_YEAH_II_FINAL_ANSWER_OPEN',
         topicLabel: fw.topicLabel,
         questionText: fw.questionText,
+        visualAsset: fw.visualAsset,
+        modeLabel: fw.modeLabel,
         secondsLeft: TRIVI_YEAH_II_FINAL_ANSWER_SECONDS
     });
 
@@ -1876,7 +1923,7 @@ function closeTriviYeahIIFinalAnswerPhase(roomCode) {
     fw.revealSteps = activePlayers.map(p => {
         const wagerAmount = fw.wagers[p.name] || 0;
         const rawAnswer = fw.answers[p.name] || '';
-        const correct = rawAnswer.length > 0 && isFinalWagerAnswerCorrect(rawAnswer, fw.acceptedAnswers);
+        const correct = rawAnswer.length > 0 && isFinalWagerAnswerCorrect(rawAnswer, fw.acceptedAnswers, fw.rivalAnswers);
         return { playerName: p.name, wagerAmount, answerText: rawAnswer, correct };
     });
     fw.revealIndex = -1;
@@ -1930,6 +1977,58 @@ function advanceTriviYeahIIFinalReveal(roomCode) {
 
     if (room.revealTimeout) clearTimeout(room.revealTimeout);
     room.revealTimeout = setTimeout(() => advanceTriviYeahIIFinalReveal(roomCode), TRIVI_YEAH_II_FINAL_REVEAL_STEP_MS);
+}
+
+// Country Monkey's closer: a map from the region just played (World Wide:
+// any), one nobody saw this game, preferring the hardest ones -- typed in,
+// with the usual typo net. accepted_answers carries alternate names
+// ("Swaziland", "Burma", "Ivory Coast"/"Côte d'Ivoire"); every other answer
+// and wrong answer in the mode becomes a rival, so a near-miss that's really
+// a different country (Niger for Nigeria) is never accepted.
+async function startCountryMonkeyFinalWager(roomCode) {
+    const room = activeRooms[roomCode];
+    if (!room) return;
+
+    const region = isRealCategoryKey(room.activeCategoryKey) ? room.activeCategoryKey : null; // null = World Wide
+    let result;
+    try {
+        result = await pool.query(
+            `SELECT id, category, question_text, correct_answer, wrong_answers, accepted_answers, points, visual_asset
+             FROM questions WHERE game_mode = 'COUNTRY_MONKEY'`, []
+        );
+    } catch (error) {
+        console.error(`⚠️ [Country Monkey] Final Wager query failed (${error.message}) -- retrying without accepted_answers.`);
+        result = await pool.query(
+            `SELECT id, category, question_text, correct_answer, wrong_answers, points, visual_asset
+             FROM questions WHERE game_mode = 'COUNTRY_MONKEY'`, []
+        );
+    }
+    const allRows = result.rows;
+    const asked = new Set(room.questionBank.map(row => row.correct_answer));
+    const regionRows = allRows.filter(row => row.visual_asset && (!region || row.category === region) && !asked.has(row.correct_answer));
+    if (regionRows.length === 0) throw new Error('No Country Monkey Final Wager question available.');
+    const hardest = Math.max(...regionRows.map(row => row.points));
+    const row = shuffleArray(regionRows.filter(r => r.points === hardest))[0];
+
+    const acceptedAnswers = [row.correct_answer, ...(row.accepted_answers || [])];
+    const rivalSet = new Set();
+    allRows.forEach(other => {
+        if (other.correct_answer === row.correct_answer) return;
+        rivalSet.add(other.correct_answer);
+        (other.accepted_answers || []).forEach(name => rivalSet.add(name));
+    });
+    allRows.forEach(other => (other.wrong_answers || []).forEach(name => rivalSet.add(name)));
+    acceptedAnswers.forEach(name => rivalSet.delete(name));
+
+    startFinalWager(roomCode, {
+        questionText: `${row.question_text} Type its name!`,
+        correctAnswer: row.correct_answer,
+        acceptedAnswers,
+        rivalAnswers: [...rivalSet],
+        topicLabel: room.activeDeckName || 'World Wide!',
+        visualAsset: disguisedAssetUrl(room, row),
+        modeLabel: 'Country Monkey'
+    });
 }
 
 // ==========================================

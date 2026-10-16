@@ -26,13 +26,12 @@ const PORT = process.env.PORT || 3000;
 // which would silently disable the Secure cookie flag and admin-login rate limit.
 app.set('trust proxy', 1);
 
-// Tell Express to serve everything inside the 'public' folder as static assets.
-// index: false on both -- express.static auto-serves index.html for a bare
-// "/" request by default, which would silently short-circuit the explicit
-// "/" route below (the landing page) before it ever runs.
-app.use(express.static(path.join(__dirname, '..public'), { index: false }));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
+// Tell Express to serve everything inside the 'public' folder as static assets.
+// index: false -- express.static auto-serves index.html for a bare "/"
+// request by default, which would silently short-circuit the explicit "/"
+// route below (the landing page) before it ever runs.
 // no-cache (not no-store) so browsers still revalidate via ETag/Last-Modified
 // instead of serving a stale cached copy of index.html/app.js/play.html after
 // a deploy -- avoids "I don't see the fix" confusion from a cached old build.
@@ -353,7 +352,12 @@ app.post('/api/room-status', (req, res) => {
                 phase: 'TRIVI_YEAH_II_FINAL_WAGER_PHASE',
                 finalWagerPhase: fw.phase, // CATEGORY_REVEAL | WAGER | ANSWER | REVEAL
                 topicLabel: fw.topicLabel,
+                modeLabel: fw.modeLabel,
                 questionText: fw.phase === 'ANSWER' || fw.phase === 'REVEAL' ? fw.questionText : null,
+                // The question's picture (Country Monkey's map): shown once
+                // answering opens, fetched in the background while wagering.
+                visualAsset: fw.phase === 'ANSWER' || fw.phase === 'REVEAL' ? (fw.visualAsset || null) : null,
+                preloadAsset: fw.phase === 'WAGER' ? (fw.visualAsset || null) : null,
                 gameSecondsLeft: targetRoom.gameSecondsLeft,
                 myWager: fw.wagers && (playerName in fw.wagers) ? fw.wagers[playerName] : null,
                 myAnswer: fw.answers ? (fw.answers[playerName] || null) : null,

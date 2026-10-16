@@ -1,4 +1,9 @@
 // seed.js
+//
+// ⚠️ HISTORICAL -- never run this against the live database: it DROPS the
+// questions table. Its Country Monkey rows also point at the old
+// public/countries/*.svg maps, which were deleted (Oct 2026); Country
+// Monkey's real content is country_monkey_new_maps.sql.
 import pg from 'pg';
 import dotenv from 'dotenv';
 
