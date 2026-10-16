@@ -1932,6 +1932,11 @@ function openTriviYeahIIFinalAnswerPhase(roomCode) {
     const room = activeRooms[roomCode];
     if (!room || !room.finalWager) return;
     const fw = room.finalWager;
+    // Opens once. When everyone wagered early, the 30s wager backstop was
+    // still pending and reopened answering 30s later -- restarting the
+    // timer music and handing out a second 30 seconds.
+    if (fw.phase !== 'WAGER') return;
+    if (room.revealTimeout) { clearTimeout(room.revealTimeout); room.revealTimeout = null; }
 
     fw.phase = 'ANSWER';
 
