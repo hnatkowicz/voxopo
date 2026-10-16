@@ -3,7 +3,7 @@ import dotenv from 'dotenv';
 import path from 'path';
 import { WebSocketServer } from 'ws';
 import pool from './config/database.js';
-import { handleIncomingMessage, activeRooms, getCategoriesForMode, resolveRequestedQuestionCount, compareByRank, closeRoom, profilerStatusFor, profilerTvSnapshot, triviYeahIITrapInfo, emptyModeVotes } from './services/gameEngine.js';
+import { handleIncomingMessage, activeRooms, getCategoriesForMode, resolveRequestedQuestionCount, compareByRank, closeRoom, profilerStatusFor, profilerTvSnapshot, triviYeahIITrapInfo, emptyModeVotes, resolveDisguisedAsset } from './services/gameEngine.js';
 import {
     isHostAuthorized, grantHostSession, isAccessCodeActive,
     isAdminAuthorized, grantAdminSession,
@@ -40,6 +40,20 @@ app.use(express.static('public', {
     index: false,
     setHeaders: (res) => res.setHeader('Cache-Control', 'no-cache')
 }));
+
+// Question pictures under a disguised address (see disguisedAssetUrl in
+// gameEngine.js) so a phone never sees a revealing filename like
+// "nigeria.webp". Only paths the engine itself handed out resolve, and only
+// inside public/.
+const PUBLIC_DIR = path.resolve('public');
+app.get('/q-img/:token', (req, res) => {
+    const assetPath = resolveDisguisedAsset(req.params.token);
+    if (!assetPath) return res.status(404).end();
+    const filePath = path.resolve(PUBLIC_DIR, '.' + path.posix.normalize('/' + assetPath));
+    if (!filePath.startsWith(PUBLIC_DIR + path.sep)) return res.status(404).end();
+    res.setHeader('Cache-Control', 'private, max-age=86400');
+    res.sendFile(filePath, err => { if (err && !res.headersSent) res.status(404).end(); });
+});
 
 // 1. DYNAMIC ROOM LIFECYCLE CREATOR ENDPOINT
 // Gated: only reachable with a valid access code (checked against the
@@ -305,6 +319,13 @@ app.post('/api/room-status', (req, res) => {
                 questionText: ty2.phase === 'QUESTION_REVEAL' || ty2.phase === 'ANSWERING' || ty2.phase === 'ROUND_REVEAL'
                     ? (safeQuestionData ? safeQuestionData.questionText : null)
                     : null,
+                // The question's picture (disguised address), shown with the
+                // question; preloadAsset lets a phone fetch it during the
+                // category/trap beat (never for a Doubler -- see gameEngine).
+                visualAsset: ty2.phase === 'QUESTION_REVEAL' || ty2.phase === 'ANSWERING' || ty2.phase === 'ROUND_REVEAL'
+                    ? (safeQuestionData ? safeQuestionData.visualAsset : null)
+                    : null,
+                preloadAsset: ty2.phase === 'CATEGORY_REVEAL' || ty2.phase === 'TRAP_REVEAL' ? (ty2.preloadAsset || null) : null,
                 choices: ty2.phase === 'ANSWERING' || ty2.phase === 'ROUND_REVEAL'
                     ? (safeQuestionData ? { A: safeQuestionData.choiceA, B: safeQuestionData.choiceB, C: safeQuestionData.choiceC, D: safeQuestionData.choiceD } : null)
                     : null,

@@ -93,8 +93,19 @@ Mode keys are used in room votes and in `gameEngine.js`:
   .svg), used on the TV and phones, with emoji fallbacks if one's missing.
   Categories are listed in `TRIVI_YEAH_II_CATEGORIES`. Every category needs a
   full pool for every tier (the engine fails fast if one is incomplete).
-- **COUNTRY_MONKEY**: find the highlighted country on the map. Country art is
-  in `public/countries/`.
+- **COUNTRY_MONKEY**: find the highlighted country on the map. Randy's maps
+  are 1200x900 WebP (quality 85) in `public/maps/`, made from one SVG master
+  he keeps on his computer (only the WebPs go in the repo). Content is
+  `country_monkey_new_maps.sql`: one row per map file per region, each with
+  6 hand-picked wrong answers (neighbors, look-alike names); a game never asks
+  the same country twice. The same maps power the **Country Monkey** category
+  in Thinking Pants (`trivi_yeah_ii_country_monkey.sql`, 80 maps, 20 per tier).
+  The old SVGs in `public/countries/` go once the new SQL is confirmed live.
+- **Question pictures** (any mode) are shown on the TV *and* phones, fetched in
+  the background before they're needed, and served under a disguised address
+  (`/q-img/<random>`) so a filename like `nigeria.webp` never reaches a phone.
+  A Thinking Pants board only picks categories that have every tier in the
+  database, so a category's code can ship before its SQL is run.
 - **EMPOSSDURR**: impostor social deduction. Impostor selection is
   *intentionally* pure random every round, not a rotation. Don't "fix" it.
 - **ON_THE_SPECTRUM**: guess where a player landed on a slider.
@@ -109,8 +120,9 @@ Mode keys are used in room votes and in `gameEngine.js`:
   before Game Over. The pool is 300 questions (`profiler_questions_seed.sql`
   + `profiler_questions_batch_2.sql`), balanced 100/100/100 across
   intensity 1/2/3 because each game cycles light -> medium -> deep.
-- **Flag Me Down** was removed from the lobby (it was never built). Flags
-  will be folded into Country Monkey instead, to give that mode more depth.
+- **Flag Me Down** was removed from the lobby (it was never built). The name
+  is saved for a future flags category in Thinking Pants, once Randy makes
+  flag art.
 
 ## Content
 
