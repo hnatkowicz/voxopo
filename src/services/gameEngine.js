@@ -2023,7 +2023,7 @@ function advanceTriviYeahIIFinalReveal(roomCode) {
 // Country Monkey's closer: a map, flag or body of water (Randy: "can be
 // country, flag, or water feature" -- each type equally likely, among those
 // the region has) from the region just played (World Wide: any), one nobody
-// saw this game, preferring the hardest of that type -- typed in,
+// saw this game -- the hardest map or water, a middle-difficulty flag -- typed in,
 // with the usual typo net. accepted_answers carries alternate names
 // ("Swaziland", "Burma", "Ivory Coast"/"Côte d'Ivoire"); every other answer
 // and wrong answer in the mode becomes a rival, so a near-miss that's really
@@ -2053,8 +2053,21 @@ async function startCountryMonkeyFinalWager(roomCode) {
     const types = [...new Set(regionRows.map(countryMonkeyType))];
     const type = types[Math.floor(Math.random() * types.length)];
     const typeRows = regionRows.filter(r => countryMonkeyType(r) === type);
-    const hardest = Math.max(...typeRows.map(r => r.points));
-    const row = shuffleArray(typeRows.filter(r => r.points === hardest))[0];
+    let finalRows;
+    if (type === 'FLAG') {
+        // Flags: the middle levels only (Randy, Oct 2026 -- "I don't want
+        // someone to fight me over this!"). The easiest (US, Japan) are a
+        // flat finale; the hardest (East African Community, Ascension
+        // Island) are a coin flip to type.
+        const levels = [...new Set(typeRows.map(r => r.points))].sort((a, b) => a - b);
+        const middle = levels.length >= 3 ? levels.slice(1, -1) : levels;
+        finalRows = typeRows.filter(r => middle.includes(r.points));
+    } else {
+        // Maps and water: the hardest level.
+        const hardest = Math.max(...typeRows.map(r => r.points));
+        finalRows = typeRows.filter(r => r.points === hardest);
+    }
+    const row = shuffleArray(finalRows)[0];
 
     const acceptedAnswers = [row.correct_answer, ...(row.accepted_answers || [])];
     const rivalSet = new Set();
