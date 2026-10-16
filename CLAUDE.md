@@ -232,4 +232,8 @@ and forth until we both agree the idea is good **and** worth the effort. So:
   money, health, or questions about people in the room.
 - **Mind Field:** a name saved for a future mode built around hidden traps
   on a board.
+- **Flag Me Down Final Wager clues (pinned for discussion):** Randy's
+  hunch is the region clue isn't worth 25% when the map gives you
+  everything -- but it may help people who aren't good with maps. Kept
+  as-is for now.
 
