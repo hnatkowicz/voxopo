@@ -1,34 +1,203 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 400" width="800" height="400">
-  <!-- Placeholder logo for the Pickles & Pins test venue (a stand-in until Randy's real art). 2:1, like every venue logo. -->
-  <defs>
-    <clipPath id="pin-shape">
-      <path d="M590,40 C620,40 630,70 628,100 C626,125 615,140 615,160 C615,185 660,215 660,280 C660,330 635,360 620,360 L560,360 C545,360 520,330 520,280 C520,215 565,185 565,160 C565,140 554,125 552,100 C550,70 560,40 590,40 Z"/>
-    </clipPath>
-  </defs>
-  <!-- Bowling pin -->
-  <g>
-    <path d="M590,40 C620,40 630,70 628,100 C626,125 615,140 615,160 C615,185 660,215 660,280 C660,330 635,360 620,360 L560,360 C545,360 520,330 520,280 C520,215 565,185 565,160 C565,140 554,125 552,100 C550,70 560,40 590,40 Z" fill="#f8fafc" stroke="#1f2937" stroke-width="8"/>
-    <g clip-path="url(#pin-shape)">
-      <rect x="500" y="134" width="200" height="14" fill="#e53935"/>
-      <rect x="500" y="158" width="200" height="14" fill="#e53935"/>
-    </g>
-    <path d="M590,40 C620,40 630,70 628,100 C626,125 615,140 615,160 C615,185 660,215 660,280 C660,330 635,360 620,360 L560,360 C545,360 520,330 520,280 C520,215 565,185 565,160 C565,140 554,125 552,100 C550,70 560,40 590,40 Z" fill="none" stroke="#1f2937" stroke-width="8"/>
-    <path d="M575,70 C570,90 572,105 576,118" fill="none" stroke="#ffffff" stroke-width="8" stroke-linecap="round" opacity="0.9"/>
-  </g>
-  <!-- Pickle -->
-  <g transform="rotate(-22 290 210)">
-    <path d="M110,210 C110,130 190,100 290,108 C400,117 470,150 470,214 C470,280 400,308 290,308 C180,308 110,285 110,210 Z" fill="#5f9e2f" stroke="#1f2937" stroke-width="8"/>
-    <path d="M150,175 C190,135 260,128 330,134" fill="none" stroke="#a5d66b" stroke-width="12" stroke-linecap="round" opacity="0.8"/>
-    <g fill="#3f7419">
-      <circle cx="170" cy="250" r="9"/><circle cx="215" cy="275" r="8"/><circle cx="380" cy="270" r="9"/>
-      <circle cx="420" cy="180" r="8"/><circle cx="250" cy="150" r="7"/><circle cx="440" cy="235" r="7"/>
-      <circle cx="140" cy="205" r="7"/><circle cx="330" cy="290" r="7"/>
-    </g>
-    <!-- Face -->
-    <circle cx="255" cy="205" r="22" fill="#ffffff" stroke="#1f2937" stroke-width="6"/>
-    <circle cx="335" cy="205" r="22" fill="#ffffff" stroke="#1f2937" stroke-width="6"/>
-    <circle cx="261" cy="208" r="10" fill="#1f2937"/>
-    <circle cx="341" cy="208" r="10" fill="#1f2937"/>
-    <path d="M265,245 C285,268 315,268 335,245" fill="none" stroke="#1f2937" stroke-width="8" stroke-linecap="round"/>
-  </g>
-</svg>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="351.0105mm"
+   height="172.4547mm"
+   viewBox="0 0 351.01049 172.4547"
+   version="1.1"
+   id="svg1"
+   xml:space="preserve"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg"><defs
+     id="defs1"><clipPath
+       clipPathUnits="userSpaceOnUse"
+       id="clipPath57"><path
+         id="path58"
+         style="fill:#00ffff;stroke:#000000;stroke-width:5.03599"
+         d="m -477.28394,274.89558 c -2.41172,8.77644 -16.12381,9.36092 -24.55062,5.85012 -28.36328,-11.81675 -39.71899,-4.80599 -60.00513,-2.39372 -14.98454,1.78181 -26.79195,-10.05039 -24.38023,-18.82682 2.4117,-8.77647 11.29582,-9.90879 20.30111,-11.61252 22.32222,-4.22321 51.38624,-3.12085 77.04034,6.91157 8.50371,3.32549 14.00626,11.29493 11.59453,20.07137 z" /></clipPath></defs><text
+     xml:space="preserve"
+     style="font-size:20.8366px;line-height:0;font-family:'Bauhaus Olga 1933';-inkscape-font-specification:'Bauhaus Olga 1933, ';writing-mode:lr-tb;direction:ltr;opacity:1;fill:#000000;fill-opacity:1;stroke:none;stroke-width:3.99999"
+     x="117.88658"
+     y="168.33311"
+     id="text250"
+     transform="scale(0.99778861,1.0022163)"><tspan
+       style="font-style:normal;font-variant:normal;font-weight:800;font-stretch:normal;font-size:20.8366px;line-height:1.25;font-family:Lato;-inkscape-font-specification:'Lato Ultra-Bold';fill:#000000;fill-opacity:1;stroke-width:3.99999"
+       x="117.88658"
+       y="168.33311"
+       id="tspan250">Bowling and Pub</tspan></text><text
+     xml:space="preserve"
+     style="font-size:20.8366px;line-height:0;font-family:'Bauhaus Olga 1933';-inkscape-font-specification:'Bauhaus Olga 1933, ';writing-mode:lr-tb;direction:ltr;opacity:1;fill:#fb852b;fill-opacity:1;stroke:#ffffff;stroke-width:1"
+     x="119.41129"
+     y="166.55107"
+     id="text251"
+     transform="scale(0.99778861,1.0022163)"><tspan
+       style="font-style:normal;font-variant:normal;font-weight:800;font-stretch:normal;font-size:20.8366px;line-height:1.25;font-family:Lato;-inkscape-font-specification:'Lato Ultra-Bold';fill:#fb852b;fill-opacity:1;stroke:#ffffff;stroke-width:1"
+       x="119.41129"
+       y="166.55107"
+       id="tspan251">Bowling and Pub</tspan></text><text
+     xml:space="preserve"
+     style="font-size:20.8366px;line-height:0;font-family:'Bauhaus Olga 1933';-inkscape-font-specification:'Bauhaus Olga 1933, ';writing-mode:lr-tb;direction:ltr;opacity:1;fill:#ff0000;fill-opacity:1;stroke:none;stroke-width:3.99999"
+     x="119.41129"
+     y="166.55107"
+     id="text247"
+     transform="scale(0.99778861,1.0022163)"><tspan
+       style="font-style:normal;font-variant:normal;font-weight:800;font-stretch:normal;font-size:20.8366px;line-height:1.25;font-family:Lato;-inkscape-font-specification:'Lato Ultra-Bold';fill:#ff0000;fill-opacity:1;stroke-width:3.99999"
+       x="119.41129"
+       y="166.55107"
+       id="tspan247">Bowling and Pub</tspan></text><text
+     xml:space="preserve"
+     style="font-size:59.2028px;line-height:0;font-family:'Bauhaus Olga 1933';-inkscape-font-specification:'Bauhaus Olga 1933, ';writing-mode:lr-tb;direction:ltr;opacity:1;fill:#146844;fill-opacity:1;stroke:#dbf8eb;stroke-width:4.00001;stroke-opacity:1"
+     x="119.01157"
+     y="86.755913"
+     id="text249"
+     transform="scale(0.99778861,1.0022163)"><tspan
+       style="font-style:normal;font-variant:normal;font-weight:800;font-stretch:normal;line-height:34.8497px;font-family:Lato;-inkscape-font-specification:'Lato Ultra-Bold';fill:#146844;fill-opacity:1;stroke:#dbf8eb;stroke-width:4.00001;stroke-opacity:1"
+       id="tspan248"
+       x="119.01157"
+       y="86.755913">PICKELS</tspan><tspan
+       style="font-style:normal;font-variant:normal;font-weight:800;font-stretch:normal;line-height:1.25;font-family:Lato;-inkscape-font-specification:'Lato Ultra-Bold';fill:#146844;fill-opacity:1;stroke:#dbf8eb;stroke-width:4.00001;stroke-opacity:1"
+       x="119.01157"
+       y="141.18248"
+       id="tspan249">&amp; PINS</tspan></text><path
+     id="path26"
+     style="fill:#ecf3f4;fill-opacity:1;stroke:#000000;stroke-width:4"
+     d="m 37.389283,43.545282 v 8.66355 c -9.16936,1.91942 -16.01452,10.01786 -16.01452,19.77399 v 77.080568 c 0,11.19389 9.01159,20.20549 20.20548,20.20549 h 49.01717 c 11.193887,0 20.205487,-9.0116 20.205487,-20.20549 V 71.982822 c 0,-9.75615 -6.84514,-17.85459 -16.014537,-19.77399 v -8.66355 z" /><path
+     id="path37"
+     style="opacity:0.548238;fill:#bbe972;fill-opacity:1;stroke:#000000;stroke-width:4"
+     d="m 26.916543,82.353762 c -1.86191,-0.0295 -3.71,0.0134 -5.54178,0.13746 v 10.44949 c 13.0287,2.31852 25.81626,-0.54895 38.70306,-4.45916 -11.16251,-3.36117 -22.39122,-5.95713 -33.16128,-6.12779 z" /><path
+     id="path38"
+     style="opacity:1;fill:none;fill-opacity:1;stroke:#000000;stroke-width:4"
+     d="m 26.916543,82.353762 c -1.86191,-0.0295 -3.71,0.0134 -5.54178,0.13746 v 10.44949 c 13.0287,2.31852 25.81626,-0.54895 38.70306,-4.45916 -11.16251,-3.36117 -22.39122,-5.95713 -33.16128,-6.12779 z" /><g
+     id="g56"
+     transform="matrix(-0.7127326,-0.3475676,0.34593861,-0.71646347,-321.17511,175.72172)"
+     style="stroke-width:1.259"><g
+       id="g60"
+       transform="matrix(0.97726122,0.20757351,-0.2089608,0.9788839,164.98508,110.37694)"><path
+         id="path52"
+         style="fill:#2ad091;stroke:#000000;stroke-width:5.03599"
+         d="m -477.28393,274.89559 c -2.41172,8.77644 -16.12382,9.36091 -24.55062,5.85012 -28.36329,-11.81676 -39.719,-4.806 -60.00515,-2.39374 -14.98453,1.78183 -26.79195,-10.05038 -24.38023,-18.82682 2.41172,-8.77645 11.29584,-9.90877 20.30112,-11.61251 22.32221,-4.22322 51.38624,-3.12085 77.04033,6.91156 8.50372,3.3255 14.00627,11.29495 11.59455,20.07139 z" /><path
+         id="path56"
+         style="fill:#23af7b;fill-opacity:1;stroke:none;stroke-width:5.03599"
+         d="m -477.23087,289.24146 c -2.41172,8.77644 -16.12382,9.36091 -24.55062,5.85012 -28.36329,-11.81676 -39.719,-4.806 -60.00515,-2.39374 -14.98453,1.78183 -26.79195,-10.05038 -24.38023,-18.82682 2.41172,-8.77645 11.29584,-9.90877 20.30112,-11.61251 22.32221,-4.22322 51.38624,-3.12085 77.04033,6.91156 8.50372,3.3255 14.00627,11.29495 11.59455,20.07139 z"
+         clip-path="url(#clipPath57)" /><path
+         id="path54"
+         style="fill:none;stroke:#000000;stroke-width:5.03599"
+         d="m -477.28393,274.89559 c -2.41172,8.77644 -16.12382,9.36091 -24.55062,5.85012 -28.36329,-11.81676 -39.719,-4.806 -60.00515,-2.39374 -14.98453,1.78183 -26.79195,-10.05038 -24.38023,-18.82682 2.41172,-8.77645 11.29584,-9.90877 20.30112,-11.61251 22.32221,-4.22322 51.38624,-3.12085 77.04033,6.91156 8.50372,3.3255 14.00627,11.29495 11.59455,20.07139 z" /><circle
+         style="fill:#000000;fill-opacity:1;stroke:none;stroke-width:5.03601"
+         id="circle56"
+         cx="-494.07846"
+         cy="267.82718"
+         r="2.7745445" /><circle
+         style="fill:#000000;fill-opacity:1;stroke:none;stroke-width:5.03601"
+         id="circle58"
+         cx="-519.3197"
+         cy="256.67041"
+         r="2.7745445" /><circle
+         style="fill:#000000;fill-opacity:1;stroke:none;stroke-width:5.03601"
+         id="circle59"
+         cx="-555.7832"
+         cy="262.48096"
+         r="2.7745445" /><circle
+         style="fill:#000000;fill-opacity:1;stroke:none;stroke-width:5.03601"
+         id="circle60"
+         cx="-564.06305"
+         cy="261.50284"
+         r="2.7745445" /></g></g><g
+     id="g40"
+     transform="matrix(1.2113586,-0.05761259,0.06263802,1.2025961,439.34964,-198.78869)"
+     style="stroke-width:0.8275"><g
+       id="g51"
+       transform="matrix(0.91973901,-7.93132e-4,-8.1440132e-4,0.92304815,-165.86326,-18.327518)"
+       style="stroke-width:0.898092"><path
+         id="rect38"
+         style="opacity:1;fill:#ffffff;stroke:#000000;stroke-width:3.59239"
+         d="m -164.70313,184.15 c -27.55611,5.69535 -0.49575,30.12339 -12.21667,50.8 -11.72094,20.67662 -18.10252,81.99525 3.34858,94.19167 h 17.73618 c 21.45111,-12.19642 15.06952,-73.51505 3.34858,-94.19167 -11.72093,-20.67661 15.33945,-45.10465 -12.21667,-50.8 z" /><path
+         id="path47"
+         style="opacity:1;fill:#a5c6d8;fill-opacity:1;stroke:none;stroke-width:3.59239"
+         d="m -164.87758,183.87489 c -2.43821,0.50393 -4.44911,1.15452 -6.09683,1.9362 17.41531,7.95963 -4.37365,30.04063 6.35993,48.97548 11.68563,20.61433 18.06384,81.62607 -3.15566,94.08 l 11.76076,4e-4 c 21.45111,-12.19642 15.06948,-73.51566 3.34854,-94.19228 -11.72093,-20.67661 15.33938,-45.10445 -12.21674,-50.7998 z" /><path
+         id="path40"
+         style="opacity:1;fill:#ff0000;stroke:#000000;stroke-width:3.59239"
+         d="m -174.67978,213.78333 c 1.07066,5.86496 1.53414,12.03337 -0.74259,17.99167 h 21.43849 c -2.27674,-5.9583 -1.81325,-12.12671 -0.74259,-17.99167 z" /><path
+         id="path48"
+         style="opacity:1;fill:none;stroke:#000000;stroke-width:3.59239"
+         d="m -164.70313,184.15 c -27.55611,5.69535 -0.49575,30.12339 -12.21667,50.8 -11.72094,20.67662 -18.10252,81.99525 3.34858,94.19167 h 17.73618 c 21.45111,-12.19642 15.06952,-73.51505 3.34858,-94.19167 -11.72093,-20.67661 15.33945,-45.10465 -12.21667,-50.8 z" /><path
+         id="path50"
+         style="opacity:1;fill:#8e0000;fill-opacity:1;stroke:none;stroke-width:3.59239"
+         d="m -153.63776,213.20668 -19.95362,-4.5e-4 c 0.0152,0.0833 0.0308,0.16689 0.0458,0.25033 l 6.49092,-4e-5 c -1.05569,5.78292 -1.52134,11.86093 0.64838,17.74158 l 13.51098,-2.6e-4 c -2.27674,-5.9583 -1.81308,-12.1262 -0.74242,-17.99116 z" /><path
+         id="path51"
+         style="opacity:1;fill:none;stroke:#000000;stroke-width:3.59239"
+         d="m -174.67978,213.78333 c 1.07066,5.86496 1.53414,12.03337 -0.74259,17.99167 h 21.43849 c -2.27674,-5.9583 -1.81325,-12.12671 -0.74259,-17.99167 z" /></g></g><g
+     id="g36"
+     transform="matrix(-0.65826946,-0.44212253,0.44102115,-0.66218863,-388.96816,47.606432)"
+     style="stroke-width:1.259"><path
+       id="rect28"
+       style="fill:#2ad091;stroke:#000000;stroke-width:5.03599"
+       d="m -536.94446,212.15852 c 9.12094,0 13.20964,13.03965 11.97367,22.07647 -4.16008,30.41652 5.54817,39.48957 13.09621,58.37166 5.57542,13.94741 -2.85273,28.43748 -11.97367,28.43748 -9.12095,0 -12.50006,-8.24916 -16.4638,-16.46381 -9.8253,-20.3624 -16.22384,-48.62015 -13.09621,-75.95799 1.03673,-9.06184 7.34285,-16.46381 16.4638,-16.46381 z" /><path
+       id="path30"
+       style="fill:#23af7b;fill-opacity:1;stroke:none;stroke-width:5.03599"
+       d="m -536.94449,212.15863 c -9.12095,0 -15.42686,7.40175 -16.46359,16.46359 -3.12763,27.33784 3.27054,55.59576 13.09584,75.95816 3.96374,8.21465 7.34316,16.46359 16.46411,16.46359 1.5679,0 3.11506,-0.42819 4.5744,-1.2082 -3.79904,-3.09808 -6.12189,-8.43568 -8.69043,-13.75885 -9.8253,-20.3624 -16.22398,-48.61979 -13.09635,-75.95763 0.79337,-6.93475 4.67263,-12.89769 10.53785,-15.31483 -1.74934,-1.64274 -3.89193,-2.64583 -6.42183,-2.64583 z" /><path
+       id="path33"
+       style="fill:none;stroke:#000000;stroke-width:5.03599"
+       d="m -536.94446,212.15852 c 9.12094,0 13.20964,13.03965 11.97367,22.07647 -4.16008,30.41652 5.54817,39.48957 13.09621,58.37166 5.57542,13.94741 -2.85273,28.43748 -11.97367,28.43748 -9.12095,0 -12.50006,-8.24916 -16.4638,-16.46381 -9.8253,-20.3624 -16.22384,-48.62015 -13.09621,-75.95799 1.03673,-9.06184 7.34285,-16.46381 16.4638,-16.46381 z" /><circle
+       style="fill:#000000;fill-opacity:1;stroke:none;stroke-width:5.03601"
+       id="path28"
+       cx="-523.55579"
+       cy="308.17969"
+       r="2.7745445" /><circle
+       style="fill:#000000;fill-opacity:1;stroke:none;stroke-width:5.03601"
+       id="circle33"
+       cx="-534.33838"
+       cy="292.30539"
+       r="2.7745445" /><circle
+       style="fill:#000000;fill-opacity:1;stroke:none;stroke-width:5.03601"
+       id="circle34"
+       cx="-535.53644"
+       cy="236.59563"
+       r="2.7745445" /></g><path
+     id="path35"
+     style="opacity:0.570453;fill:#e1f4c5;fill-opacity:1;stroke:#000000;stroke-width:4"
+     d="m 110.8029,77.029542 c -31.247737,-0.49208 -59.710637,21.19953 -89.428137,15.91117 v 56.122678 c 0,11.19389 9.01159,20.20549 20.20548,20.20549 h 49.01717 c 11.193887,0 20.205487,-9.0116 20.205487,-20.20549 z" /><path
+     id="path36"
+     style="fill:none;fill-opacity:1;stroke:#000000;stroke-width:4"
+     d="m 110.8029,77.029542 c -31.247737,-0.49208 -59.710637,21.19953 -89.428137,15.91117 v 56.122678 c 0,11.19389 9.01159,20.20549 20.20548,20.20549 h 49.01717 c 11.193887,0 20.205487,-9.0116 20.205487,-20.20549 z" /><path
+     id="path25"
+     style="opacity:0.467668;fill:#cae4e6;fill-opacity:1;stroke:none;stroke-width:4"
+     d="m 37.389283,43.545282 v 8.66355 c -0.43781,0.0917 -0.87035,0.19745 -1.29707,0.31678 h 48.21927 v 8.66355 c 9.16939,1.9194 16.014537,10.01784 16.014537,19.77399 v 77.080578 c 0,3.61764 -0.941207,7.00715 -2.593127,9.93841 7.652197,-2.87186 13.070007,-10.23922 13.070007,-18.91875 V 71.982822 c 0,-9.75615 -6.84514,-17.85459 -16.014537,-19.77399 v -8.66355 z m -10.47688,14.51436 c -1.13671,1.19751 -2.12757,2.53459 -2.94452,3.98425 0.94913,-0.3562 1.93272,-0.64293 2.94452,-0.85473 z" /><path
+     id="rect21"
+     style="fill:none;stroke:#000000;stroke-width:4"
+     d="m 37.389283,43.545282 v 8.66355 c -9.16936,1.91942 -16.01452,10.01786 -16.01452,19.77399 v 77.080568 c 0,11.19389 9.01159,20.20549 20.20548,20.20549 h 49.01717 c 11.193887,0 20.205487,-9.0116 20.205487,-20.20549 V 71.982822 c 0,-9.75615 -6.84514,-17.85459 -16.014537,-19.77399 v -8.66355 z" /><g
+     id="g52"
+     transform="rotate(-58.143956,-259.09695,-129.99217)"><rect
+       style="fill:#fca763;fill-opacity:1;stroke:#000000;stroke-width:4"
+       id="rect27"
+       width="63.235966"
+       height="11.599495"
+       x="-307.57376"
+       y="208.41675" /><rect
+       style="fill:#fb852b;fill-opacity:1;stroke:none;stroke-width:4"
+       id="rect26"
+       width="14.967092"
+       height="11.599495"
+       x="-259.3049"
+       y="208.41675" /><rect
+       style="fill:none;stroke:#000000;stroke-width:4"
+       id="rect23"
+       width="63.235966"
+       height="11.599495"
+       x="-307.57376"
+       y="208.41675" /></g><text
+     xml:space="preserve"
+     style="font-size:59.2028px;line-height:0;font-family:'Bauhaus Olga 1933';-inkscape-font-specification:'Bauhaus Olga 1933, ';writing-mode:lr-tb;direction:ltr;opacity:1;fill:#228a61;fill-opacity:1;stroke:none;stroke-width:4.00001"
+     x="119.01157"
+     y="86.755913"
+     id="text60"
+     transform="scale(0.99778861,1.0022163)"><tspan
+       style="font-style:normal;font-variant:normal;font-weight:800;font-stretch:normal;line-height:34.8497px;font-family:Lato;-inkscape-font-specification:'Lato Ultra-Bold';fill:#228a61;fill-opacity:1;stroke-width:4.00001"
+       id="tspan245"
+       x="119.01157"
+       y="86.755913">PICKELS</tspan><tspan
+       style="font-style:normal;font-variant:normal;font-weight:800;font-stretch:normal;line-height:1.25;font-family:Lato;-inkscape-font-specification:'Lato Ultra-Bold';fill:#228a61;fill-opacity:1;stroke-width:4.00001"
+       x="119.01157"
+       y="141.18248"
+       id="tspan61">&amp; PINS</tspan></text></svg>
