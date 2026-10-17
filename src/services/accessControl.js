@@ -4,7 +4,9 @@ import crypto from 'crypto';
 // keeps all its live state (activeRooms) in plain memory with no persistence
 // promise across restarts, so a Set of valid tokens fits the same pattern
 // instead of pulling in a signing library for two small cookies.
-const hostSessions = new Set();
+// token -> the access code that opened it, so every room a host opens that
+// night gets that code's venue profile (pub name, logo, allowed modes).
+const hostSessions = new Map();
 const adminSessions = new Set();
 
 const HOST_SESSION_MAX_AGE_SECONDS = 12 * 60 * 60; // covers "one night" without asking again
@@ -91,9 +93,15 @@ export function isHostAuthorized(req) {
     return !!(cookies.host_session && hostSessions.has(cookies.host_session));
 }
 
-export function grantHostSession(res, req) {
+// The access code behind this host's session (null if none).
+export function hostSessionCode(req) {
+    const cookies = parseCookies(req);
+    return (cookies.host_session && hostSessions.get(cookies.host_session)) || null;
+}
+
+export function grantHostSession(res, req, code) {
     const token = createSessionToken();
-    hostSessions.add(token);
+    hostSessions.set(token, normalizeCode(code) || null);
     setCookie(res, req, 'host_session', token, HOST_SESSION_MAX_AGE_SECONDS);
 }
 
@@ -139,14 +147,94 @@ export async function isAccessCodeActive(pool, rawCode) {
     return result.rows.length > 0 && result.rows[0].active === true;
 }
 
+// ---------- Venue profiles (access_codes_venue_profiles.sql) ----------
+// Everything here still works before that SQL has been run: a missing column
+// (Postgres error 42703) just means "no venue profiles yet", so every code
+// behaves as HOME with all modes, and /admin says the SQL is needed.
+const UNDEFINED_COLUMN = '42703';
+export const VENUE_PROFILES = ['HOME', 'PUB'];
+const VENUE_LOGO_PATTERN = /^[A-Za-z0-9][A-Za-z0-9._-]*\.(svg|png|webp|jpg|jpeg)$/;
+
+// Cleans what /admin sends (never trusted as-is): a known profile, short
+// text, a plain file name in public/venues/, and only real mode keys.
+export function sanitizeVenue(input, knownModes) {
+    const v = input || {};
+    const profile = VENUE_PROFILES.includes(v.profile) ? v.profile : 'HOME';
+    const text = (value, max) => ((value || '').toString().trim().slice(0, max)) || null;
+    const logo = text(v.logo, 80);
+    const modes = Array.isArray(v.allowedModes) ? v.allowedModes.filter(m => knownModes.includes(m)) : [];
+    return {
+        profile,
+        name: text(v.name, 40),
+        tagline: text(v.tagline, 80),
+        logo: logo && VENUE_LOGO_PATTERN.test(logo) ? logo : null,
+        allowedModes: [...new Set(modes)]
+    };
+}
+
+export async function venueProfilesInstalled(pool) {
+    try {
+        await pool.query('SELECT profile FROM access_codes LIMIT 1');
+        return true;
+    } catch (e) {
+        if (e.code === UNDEFINED_COLUMN) return false;
+        throw e;
+    }
+}
+
+// The venue settings a room opened with this code should carry, or null for
+// a plain home code (the living-room version, every mode).
+export async function getAccessCodeVenue(pool, rawCode) {
+    const code = normalizeCode(rawCode);
+    if (!code) return null;
+    try {
+        const result = await pool.query(
+            'SELECT profile, venue_name, venue_tagline, venue_logo, allowed_modes FROM access_codes WHERE code = $1 AND active = true',
+            [code]
+        );
+        const row = result.rows[0];
+        if (!row) return null;
+        const allowedModes = row.allowed_modes || [];
+        if (row.profile !== 'PUB' && !allowedModes.length) return null;
+        return {
+            profile: row.profile === 'PUB' ? 'PUB' : 'HOME',
+            name: row.venue_name || null,
+            tagline: row.venue_tagline || null,
+            logoUrl: row.venue_logo ? `/venues/${row.venue_logo}` : null,
+            allowedModes
+        };
+    } catch (e) {
+        if (e.code === UNDEFINED_COLUMN) return null;
+        throw e;
+    }
+}
+
 export async function listAccessCodes(pool) {
-    const result = await pool.query('SELECT code, label, active, created_at FROM access_codes ORDER BY created_at DESC');
-    return result.rows;
+    try {
+        const result = await pool.query(
+            'SELECT code, label, active, created_at, profile, venue_name, venue_tagline, venue_logo, allowed_modes FROM access_codes ORDER BY created_at DESC'
+        );
+        return result.rows;
+    } catch (e) {
+        if (e.code !== UNDEFINED_COLUMN) throw e;
+        const result = await pool.query('SELECT code, label, active, created_at FROM access_codes ORDER BY created_at DESC');
+        return result.rows;
+    }
 }
 
 export async function addAccessCode(pool, rawCode, label) {
     const code = normalizeCode(rawCode);
     await pool.query('INSERT INTO access_codes (code, label) VALUES ($1, $2)', [code, label || null]);
+}
+
+// venue is already sanitized (sanitizeVenue). Returns false if no such code.
+export async function updateAccessCodeVenue(pool, rawCode, venue) {
+    const code = normalizeCode(rawCode);
+    const result = await pool.query(
+        'UPDATE access_codes SET profile = $2, venue_name = $3, venue_tagline = $4, venue_logo = $5, allowed_modes = $6 WHERE code = $1',
+        [code, venue.profile, venue.name, venue.tagline, venue.logo, venue.allowedModes.length ? venue.allowedModes : null]
+    );
+    return result.rowCount > 0;
 }
 
 export async function setAccessCodeActive(pool, rawCode, active) {
