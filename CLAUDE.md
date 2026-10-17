@@ -67,7 +67,13 @@ event, for a small fee. That's why hosting is gated behind access codes.
   should mostly be themed trivia anyone can play (the "two audiences"
   rule); insider questions suit one-off events. Each house SQL file ends
   with a commented-out DELETE for cleaning up after the event
-  (`pickles_and_pins_house.sql`, 16 questions, is the example). Pickles & Pins is the test venue
+  (`pickles_and_pins_house.sql`, 16 questions, is the example). **Board
+  rules** (`access_codes_board_rules.sql`): a code's Thinking Pants board is
+  CLASSIC (column sweeps +400 and traps) or PLAIN (no sweep bonus, so no
+  traps; Doublers and the Final Wager stay). Plain came from a one-on-one
+  family game: with two players a lone sweep, and the trap it earns, happens
+  constantly and piles on the only other player (Randy's call: a per-code
+  setting rather than a rule tied to player count). Pickles & Pins is the test venue
   (Randy's logo `pickles-pins.svg`: the pickle-jar-and-pin mark, no
   lettering, since the banner prints the name beside it).
 - **Hosting:** Render, which terminates TLS. That's why `trust proxy` is set.
