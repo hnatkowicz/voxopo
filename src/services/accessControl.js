@@ -156,6 +156,9 @@ export const VENUE_PROFILES = ['HOME', 'PUB'];
 // House column (access_codes_house_column.sql): the code's own questions as
 // the left column of the Thinking Pants board, in rounds 1 & 3 or all 3.
 export const HOUSE_ROUNDS = ['OFF', 'ROUNDS_1_3', 'ALL'];
+// Thinking Pants board rules (access_codes_board_rules.sql): PLAIN turns off
+// column sweeps and the traps they earn.
+export const BOARD_RULES = ['CLASSIC', 'PLAIN'];
 // House sets are named HOUSE_<something> so a code can never point its
 // house column at an ordinary category.
 const HOUSE_CATEGORY_PATTERN = /^HOUSE_[A-Z0-9_]{1,40}$/;
@@ -180,8 +183,19 @@ export function sanitizeVenue(input, knownModes) {
         houseCategory: houseValid ? houseCategory : null,
         houseLabel: text(v.houseLabel, 40),
         // No (valid) house set means nothing to show, whatever was picked.
-        houseRounds: houseValid && HOUSE_ROUNDS.includes(v.houseRounds) ? v.houseRounds : 'OFF'
+        houseRounds: houseValid && HOUSE_ROUNDS.includes(v.houseRounds) ? v.houseRounds : 'OFF',
+        boardRules: BOARD_RULES.includes(v.boardRules) ? v.boardRules : 'CLASSIC'
     };
+}
+
+export async function boardRulesInstalled(pool) {
+    try {
+        await pool.query('SELECT board_rules FROM access_codes LIMIT 1');
+        return true;
+    } catch (e) {
+        if (e.code === UNDEFINED_COLUMN) return false;
+        throw e;
+    }
 }
 
 // Every house set in the database with its questions per tier, so /admin can
@@ -230,7 +244,8 @@ export async function getAccessCodeVenue(pool, rawCode) {
     const base = 'profile, venue_name, venue_tagline, venue_logo, allowed_modes';
     // Newest columns first; fall back step by step for whichever SQL files
     // haven't been run yet.
-    for (const columns of [`${base}, house_category, house_label, house_rounds`, base]) {
+    const houseCols = 'house_category, house_label, house_rounds';
+    for (const columns of [`${base}, ${houseCols}, board_rules`, `${base}, ${houseCols}`, `${base}, board_rules`, base]) {
         try {
             const result = await pool.query(`SELECT ${columns} FROM access_codes WHERE code = $1 AND active = true`, [code]);
             const row = result.rows[0];
@@ -239,14 +254,16 @@ export async function getAccessCodeVenue(pool, rawCode) {
             const house = row.house_category && row.house_rounds && row.house_rounds !== 'OFF'
                 ? { key: row.house_category, label: row.house_label || row.venue_name || 'House Special', rounds: row.house_rounds }
                 : null;
-            if (row.profile !== 'PUB' && !allowedModes.length && !house) return null;
+            const boardRules = row.board_rules === 'PLAIN' ? 'PLAIN' : 'CLASSIC';
+            if (row.profile !== 'PUB' && !allowedModes.length && !house && boardRules === 'CLASSIC') return null;
             return {
                 profile: row.profile === 'PUB' ? 'PUB' : 'HOME',
                 name: row.venue_name || null,
                 tagline: row.venue_tagline || null,
                 logoUrl: row.venue_logo ? `/venues/${row.venue_logo}` : null,
                 allowedModes,
-                house
+                house,
+                boardRules
             };
         } catch (e) {
             if (e.code !== UNDEFINED_COLUMN) throw e;
@@ -258,7 +275,8 @@ export async function getAccessCodeVenue(pool, rawCode) {
 export async function listAccessCodes(pool) {
     const base = 'code, label, active, created_at';
     const venue = 'profile, venue_name, venue_tagline, venue_logo, allowed_modes';
-    for (const columns of [`${base}, ${venue}, house_category, house_label, house_rounds`, `${base}, ${venue}`, base]) {
+    const houseCols = 'house_category, house_label, house_rounds';
+    for (const columns of [`${base}, ${venue}, ${houseCols}, board_rules`, `${base}, ${venue}, ${houseCols}`, `${base}, ${venue}, board_rules`, `${base}, ${venue}`, base]) {
         try {
             const result = await pool.query(`SELECT ${columns} FROM access_codes ORDER BY created_at DESC`);
             return result.rows;
@@ -276,13 +294,17 @@ export async function addAccessCode(pool, rawCode, label) {
 
 // venue is already sanitized (sanitizeVenue). Returns false if no such code.
 // The house settings are only written once their columns exist.
-export async function updateAccessCodeVenue(pool, rawCode, venue, withHouse) {
+export async function updateAccessCodeVenue(pool, rawCode, venue, withHouse, withRules) {
     const code = normalizeCode(rawCode);
     const params = [code, venue.profile, venue.name, venue.tagline, venue.logo, venue.allowedModes.length ? venue.allowedModes : null];
     let sql = 'UPDATE access_codes SET profile = $2, venue_name = $3, venue_tagline = $4, venue_logo = $5, allowed_modes = $6';
     if (withHouse) {
         sql += ', house_category = $7, house_label = $8, house_rounds = $9';
         params.push(venue.houseCategory, venue.houseLabel, venue.houseRounds);
+    }
+    if (withRules) {
+        params.push(venue.boardRules);
+        sql += `, board_rules = $${params.length}`;
     }
     const result = await pool.query(`${sql} WHERE code = $1`, params);
     return result.rowCount > 0;
