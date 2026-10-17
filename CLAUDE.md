@@ -56,7 +56,8 @@ event, for a small fee. That's why hosting is gated behind access codes.
   enforced by the server, not just hidden on screens; one allowed mode
   skips the choice. Pub default list (Randy, Oct 2026): Thinking Pants,
   Flag Me Down, Country Monkey. Pickles & Pins is the test venue
-  (placeholder logo `pickles-and-pins.svg`).
+  (Randy's logo `pickles-pins.svg`: the pickle-jar-and-pin mark, no
+  lettering, since the banner prints the name beside it).
 - **Hosting:** Render, which terminates TLS. That's why `trust proxy` is set.
 - **Env vars:** `DATABASE_URL`, `ADMIN_PASSWORD`, `PORT`.
 
