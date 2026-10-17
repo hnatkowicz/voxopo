@@ -31,14 +31,14 @@ window.renderModeElectionTiles = function () {
                 ${window.RANDOMANIA_MODES.map(m => `
                     <div class="mode-tile">
                         <div class="mode-tile-head">
-                            ${window.modeIconHtml(m, 40)}
-                            <div style="min-width: 0;">
+                            ${window.modeIconHtml(m, 34)}
+                            <div style="min-width: 0; flex: 1;">
                                 <div class="mode-tile-name">${m.name}${m.tag ? ` <span class="mode-tile-tag">${m.tag}</span>` : ''}</div>
                                 <div class="mode-tile-blurb">${m.blurb}</div>
                             </div>
+                            <div id="vcount-${m.key}" class="mode-tile-count">0 votes (0%)</div>
                         </div>
-                        <div class="progress-track" style="height: 8px;"><div id="vbar-${m.key}" class="progress-fill" style="background: ${m.color};"></div></div>
-                        <div id="vcount-${m.key}" class="mode-tile-count">0 votes (0%)</div>
+                        <div class="progress-track" style="height: 6px;"><div id="vbar-${m.key}" class="progress-fill" style="background: ${m.color};"></div></div>
                     </div>
                 `).join('')}
             </div>

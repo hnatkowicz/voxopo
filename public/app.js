@@ -889,10 +889,11 @@ if (btnSubmitSpectate) {
             const displayGameName = GAME_MODE_LABELS[winnerModule] || winnerModule;
 
             currentGamePhase = 'CATEGORY_VOTE';
-            // The category screen has its own vote mechanic (tap a category row) --
-            // no START button to nudge here, so leave the status slot blank
-            // instead of showing a lobby-only instruction that doesn't apply.
-            setStatusMessage('');
+            // Phones have a Start button here too now, same as the lobby.
+            setStatusMessage(`
+                <div style="font-weight: 600; color: #8892b0; margin-bottom: 2px;">PRESS START TO CONFIRM</div>
+                <div style="font-size: 0.8rem; color: #64748b;">Skips the countdown once everyone's in</div>
+            `);
 
             const rows = categoryList.map((c, index) => `
                 <div class="vote-row">

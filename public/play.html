@@ -330,8 +330,14 @@
             <span class="player-badge-room">Room <strong id="sub-badge-room">-</strong> · Score <strong id="sub-badge-score">0</strong></span>
         </div>
         <div class="input-group">
-            <label>Select Category Preference</label>
+            <label>1. Pick a category</label>
             <div class="module-list" id="category-vote-list"></div>
+        </div>
+        <!-- Same as the lobby: once everyone taps Start the vote closes early;
+             otherwise the 30s clock decides (Randy, Oct 2026). -->
+        <div class="input-group">
+            <label>2. Vote to start</label>
+            <button class="btn" id="category-start-btn" onclick="submitCategoryStartVote()">Start</button>
         </div>
         <div id="category-feedback" class="feedback"></div>
         <button class="btn btn-leave" onclick="leaveRoom()">Leave Room</button>
@@ -812,6 +818,8 @@
                                 `<div class="module-row" onclick="submitCategorySubVote(this, '${c.key}')">${c.label}</div>`
                             ).join('');
 
+                            document.getElementById('category-start-btn').classList.remove('btn-locked');
+                            document.getElementById('category-feedback').style.display = 'none';
                             showOnlyPlayScreen('category-screen');
                         }
 
@@ -2461,6 +2469,26 @@
                 const data = await response.json();
                 showFeedback(feedback, data.reply, "rgba(0,230,118,0.06)", "#00e676", "rgba(0,230,118,0.1)");
             } catch (error) {
+                showFeedback(feedback, "❌ Action transmission failed.", "rgba(255,71,87,0.06)", "#ff4757", "rgba(255,71,87,0.1)");
+            }
+        }
+
+        // The category vote's Start -- same START message as the lobby; the
+        // server closes the vote once every active player has sent it.
+        async function submitCategoryStartVote() {
+            const feedback = document.getElementById('category-feedback');
+            document.getElementById('category-start-btn').classList.add('btn-locked');
+            try {
+                const registeredName = localStorage.getItem('randomania_nickname') || 'test-handset';
+                const response = await fetch('/api/message', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ From: registeredName, Body: 'START', roomCode: localStorage.getItem('randomania_roomcode') })
+                });
+                const data = await response.json();
+                showFeedback(feedback, data.reply, "rgba(0,230,118,0.06)", "#00e676", "rgba(0,230,118,0.1)");
+            } catch (error) {
+                document.getElementById('category-start-btn').classList.remove('btn-locked');
                 showFeedback(feedback, "❌ Action transmission failed.", "rgba(255,71,87,0.06)", "#ff4757", "rgba(255,71,87,0.1)");
             }
         }
