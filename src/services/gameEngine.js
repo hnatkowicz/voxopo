@@ -864,7 +864,12 @@ function publicTriviYeahIIGrid(room) {
 // again for round 2/3 without tearing down state first. doublersCount tiles
 // are marked isDoubler at random -- hidden from the public grid view
 // (publicTriviYeahIIGrid never includes it), revealed only once picked.
-async function buildTriviYeahIIBoard(doublersCount) {
+// house (optional): { key, label, usedIds } -- a venue's own questions as
+// the LEFT column (always the same spot, so regulars learn where it lives).
+// House sets aren't in TRIVI_YEAH_II_CATEGORIES, so they never turn up on an
+// ordinary board. usedIds keeps a game's house rounds from repeating a
+// question; an incomplete house set just means a normal board.
+async function buildTriviYeahIIBoard(doublersCount, house = null) {
     // Only categories with a question at every tier in the database are
     // eligible -- so a category can ship in code before its .sql file has been
     // run in Neon (or be missing a tier) without ever breaking a game.
@@ -879,7 +884,11 @@ async function buildTriviYeahIIBoard(doublersCount) {
         .filter(r => Number(r.tiers) === TRIVI_YEAH_II_TIERS.length)
         .map(r => r.category));
     const eligibleCategories = TRIVI_YEAH_II_CATEGORIES.filter(c => completeKeys.has(c.key));
-    const chosenCategories = shuffleArray(eligibleCategories).slice(0, TRIVI_YEAH_II_CATEGORIES_PER_BOARD);
+    const useHouse = !!(house && completeKeys.has(house.key));
+    if (house && !useHouse) console.warn(`[Thinking Pants] House set ${house.key} isn't complete in the database (every tier needed) -- normal board instead.`);
+    const chosenCategories = useHouse
+        ? [{ key: house.key, label: house.label }, ...shuffleArray(eligibleCategories).slice(0, TRIVI_YEAH_II_CATEGORIES_PER_BOARD - 1)]
+        : shuffleArray(eligibleCategories).slice(0, TRIVI_YEAH_II_CATEGORIES_PER_BOARD);
     if (chosenCategories.length < TRIVI_YEAH_II_CATEGORIES_PER_BOARD) {
         throw new Error(`Only ${chosenCategories.length} complete Trivi-Yeah II categories in the database`);
     }
@@ -894,8 +903,13 @@ async function buildTriviYeahIIBoard(doublersCount) {
     const grid = [];
     chosenCategories.forEach(cat => {
         TRIVI_YEAH_II_TIERS.forEach(tier => {
-            const tierRows = result.rows.filter(r => r.category === cat.key && r.points === tier);
+            let tierRows = result.rows.filter(r => r.category === cat.key && r.points === tier);
+            if (useHouse && cat.key === house.key) {
+                const fresh = tierRows.filter(r => !house.usedIds.has(r.id));
+                if (fresh.length) tierRows = fresh;
+            }
             const row = shuffleArray(tierRows)[0];
+            if (useHouse && cat.key === house.key && row) house.usedIds.add(row.id);
             grid.push({
                 categoryKey: cat.key,
                 categoryLabel: cat.label,
@@ -962,7 +976,14 @@ async function startTriviYeahIIRound(roomCode) {
     const ty2 = room.triviYeahII;
 
     const doublersCount = TRIVI_YEAH_II_DOUBLERS_PER_ROUND[ty2.round - 1] || 0;
-    const { grid, chosenCategories } = await buildTriviYeahIIBoard(doublersCount);
+    // House column (set per access code on /admin): rounds 1 & 3 by default
+    // -- the venue opens and closes the night, round 2 is all general -- or
+    // every round for one-off events (weddings, showers, PTA nights).
+    const houseSetting = room.venue && room.venue.house;
+    const houseThisRound = houseSetting && (houseSetting.rounds === 'ALL' || (houseSetting.rounds === 'ROUNDS_1_3' && (ty2.round === 1 || ty2.round === 3)));
+    if (houseSetting && !ty2.usedHouseIds) ty2.usedHouseIds = new Set();
+    const { grid, chosenCategories } = await buildTriviYeahIIBoard(doublersCount,
+        houseThisRound ? { key: houseSetting.key, label: houseSetting.label, usedIds: ty2.usedHouseIds } : null);
 
     ty2.grid = grid;
     ty2.phase = 'PICK_TILE';

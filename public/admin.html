@@ -122,6 +122,7 @@
         // A pub code's suggested starting point (Randy, Oct 2026).
         const PUB_DEFAULT_MODES = ['TRIVI_YEAH_II', 'FLAG_ME_DOWN', 'COUNTRY_MONKEY'];
         let venueProfilesOn = false;
+        let houseColumnOn = false;
         let loadedCodes = [];
         let openVenueEditor = null;
 
@@ -135,6 +136,7 @@
             const parts = [];
             if (c.profile === 'PUB') parts.push(`Pub${c.venue_name ? ': ' + esc(c.venue_name) : ''}`);
             if (c.allowed_modes && c.allowed_modes.length) parts.push(`${c.allowed_modes.length} modes`);
+            if (c.house_rounds && c.house_rounds !== 'OFF') parts.push(`House: ${c.house_rounds === 'ALL' ? 'all rounds' : 'rounds 1 & 3'}`);
             return parts.length ? `<span class="code-venue-tag">${parts.join(' · ')}</span>` : '';
         }
 
@@ -161,6 +163,20 @@
                         <label>Modes shown (none checked = all)</label>
                         <div class="modes" id="venue-modes">${modes}</div>
                     </div>
+                    ${houseColumnOn ? `
+                    <div class="row">
+                        <label>House column (Thinking Pants)</label>
+                        <select id="venue-house-rounds">
+                            <option value="OFF" ${(c.house_rounds || 'OFF') === 'OFF' ? 'selected' : ''}>Off</option>
+                            <option value="ROUNDS_1_3" ${c.house_rounds === 'ROUNDS_1_3' ? 'selected' : ''}>Rounds 1 &amp; 3 (pub nights)</option>
+                            <option value="ALL" ${c.house_rounds === 'ALL' ? 'selected' : ''}>All 3 rounds (weddings, showers, PTA nights)</option>
+                        </select>
+                        <div class="hint">The code's own questions as the left column of the board.</div>
+                    </div>
+                    <div class="row"><label>House questions</label><input type="text" id="venue-house-category" maxlength="46" value="${esc(c.house_category)}" placeholder="e.g. HOUSE_PICKLES_PINS" autocapitalize="characters">
+                        <div class="hint">The category name in that event's .sql file (always starts with HOUSE_). It needs at least one question at each of 100/200/300/400, or the board plays without it.</div></div>
+                    <div class="row"><label>Column title</label><input type="text" id="venue-house-label" maxlength="40" value="${esc(c.house_label)}" placeholder="Blank = the venue name"></div>
+                    ` : `<div class="hint" style="margin-bottom: 12px;">House columns turn on once you run <strong>access_codes_house_column.sql</strong> in Neon.</div>`}
                     <div style="display: flex; gap: 10px;">
                         <button class="btn" style="width: auto; padding: 10px 18px;" onclick="saveVenue('${esc(c.code)}')">Save</button>
                         <button class="btn btn-secondary" style="width: auto; padding: 10px 18px;" onclick="toggleVenueEditor(null)">Cancel</button>
@@ -212,6 +228,11 @@
                 logo: document.getElementById('venue-logo').value,
                 allowedModes: [...document.querySelectorAll('#venue-modes input:checked')].map(b => b.value)
             };
+            if (houseColumnOn) {
+                body.houseRounds = document.getElementById('venue-house-rounds').value;
+                body.houseCategory = document.getElementById('venue-house-category').value;
+                body.houseLabel = document.getElementById('venue-house-label').value;
+            }
             try {
                 const response = await fetch(`/api/admin/codes/${encodeURIComponent(code)}/venue`, {
                     method: 'POST',
@@ -221,6 +242,7 @@
                 const data = await response.json();
                 if (!data.success) return showFeedback(feedback, data.error || 'Could not save.');
                 if (body.logo.trim() && !data.venue.logo) return showFeedback(feedback, 'Saved, but the logo file name was skipped: use a plain name like pickles-pins.svg.');
+                if (houseColumnOn && body.houseRounds !== 'OFF' && !data.venue.houseCategory) return showFeedback(feedback, 'Saved, but the house column is Off: house questions need a name starting with HOUSE_, like HOUSE_PICKLES_PINS.');
                 openVenueEditor = null;
                 loadCodes();
             } catch (err) {
@@ -238,6 +260,7 @@
             const data = await response.json();
             if (data.success) {
                 venueProfilesOn = !!data.venueProfiles;
+                houseColumnOn = !!data.houseColumn;
                 renderCodes(data.codes);
             }
         }
