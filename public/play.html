@@ -219,11 +219,12 @@
         
         <div class="input-group">
             <label>4-Digit Room Code</label>
-            <input type="text" id="room-code" placeholder="e.g., 1234">
+            <!-- inputmode: phones show the digit pad, not the full keyboard. -->
+            <input type="text" id="room-code" placeholder="e.g., 1234" inputmode="numeric" pattern="[0-9]*" maxlength="4" autocomplete="off">
         </div>
         <div class="input-group">
             <label>Your Nickname</label>
-            <input type="text" id="player-name" placeholder="e.g., Randy" maxlength="30">
+            <input type="text" id="player-name" placeholder="e.g., Randy" maxlength="30" autocomplete="off" autocorrect="off" spellcheck="false" autocapitalize="words">
         </div>
 
         <!-- THE CURATED 24-AVATAR SELECTION GRID -->
@@ -484,7 +485,7 @@
             <div id="ty2-wager-box" style="display: none;">
                 <div id="ty2-wager-prompt-text" style="font-weight: 600; margin-bottom: 14px;"></div>
                 <div id="ty2-wager-input-row" style="display: none;">
-                    <input type="number" id="ty2-wager-input" min="0" value="0" style="width: 100%; padding: 12px; font-size: 1.1rem; border-radius: 8px; border: 1px solid #222630; background: #14161d; color: #fff; margin-bottom: 10px; box-sizing: border-box;" />
+                    <input type="number" id="ty2-wager-input" min="0" inputmode="numeric" pattern="[0-9]*" placeholder="0" style="width: 100%; padding: 12px; font-size: 1.1rem; border-radius: 8px; border: 1px solid #222630; background: #14161d; color: #fff; margin-bottom: 10px; box-sizing: border-box;" />
                     <button class="btn" onclick="submitTriviYeahIIWager()">Lock In Wager</button>
                 </div>
             </div>
@@ -583,7 +584,7 @@
         <div id="fw-wager-box" style="display: none; margin-top: 10px;">
             <div id="fw-wager-prompt-text" style="font-weight: 600; margin-bottom: 14px; text-align: center;"></div>
             <div id="fw-wager-input-row" style="display: none;">
-                <input type="number" id="fw-wager-input" min="0" value="0" style="width: 100%; padding: 12px; font-size: 1.1rem; border-radius: 8px; border: 1px solid #222630; background: #14161d; color: #fff; margin-bottom: 10px; box-sizing: border-box;" />
+                <input type="number" id="fw-wager-input" min="0" inputmode="numeric" pattern="[0-9]*" placeholder="0" style="width: 100%; padding: 12px; font-size: 1.1rem; border-radius: 8px; border: 1px solid #222630; background: #14161d; color: #fff; margin-bottom: 10px; box-sizing: border-box;" />
                 <button class="btn" onclick="submitTriviYeahIIFinalWager()">Lock In Wager</button>
             </div>
         </div>
@@ -596,7 +597,7 @@
             <div id="fw-visual-container" style="display: none; text-align: center; margin: 0 0 14px;">
                 <img id="fw-visual-image" src="" alt="" style="width: 100%; aspect-ratio: 4 / 3; max-height: 26vh; object-fit: contain; border-radius: 8px;">
             </div>
-            <input type="text" id="fw-answer-input" placeholder="YOUR ANSWER" style="width: 100%; padding: 12px; font-size: 1.1rem; font-weight: 700; text-transform: uppercase; border-radius: 8px; border: 1px solid #222630; background: #14161d; color: #fff; margin-bottom: 10px; box-sizing: border-box;" oninput="this.value = this.value.toUpperCase();" />
+            <input type="text" id="fw-answer-input" placeholder="YOUR ANSWER" autocomplete="off" autocorrect="off" spellcheck="false" style="width: 100%; padding: 12px; font-size: 1.1rem; font-weight: 700; text-transform: uppercase; border-radius: 8px; border: 1px solid #222630; background: #14161d; color: #fff; margin-bottom: 10px; box-sizing: border-box;" oninput="this.value = this.value.toUpperCase();" />
             <button class="btn" onclick="submitTriviYeahIIFinalAnswer()">Lock In Final Answer</button>
             <!-- Flag Me Down only: private clues, each taking 25% off what
                  you'd win (a wrong answer still loses the whole wager). -->
@@ -671,10 +672,21 @@
         // matters once a join message is sent, which this path skips
         // entirely for an already-active player -- polling and answering
         // both resolve by name alone once you're in, no rejoin required.
+        // The TV's QR code links to /play?room=1234 -- fill the box in (it
+        // stays editable, e.g. for a stale link or a scan of the wrong TV).
+        const qrRoomCode = (() => {
+            const fromLink = new URLSearchParams(window.location.search).get('room');
+            return fromLink && /^\d{4}$/.test(fromLink) ? fromLink : null;
+        })();
+        if (qrRoomCode) document.getElementById('room-code').value = qrRoomCode;
+
         (async function attemptAutoResume() {
             const storedRoom = localStorage.getItem('randomania_roomcode');
             const storedName = localStorage.getItem('randomania_nickname');
             if (!storedRoom || !storedName) return;
+            // Scanned a different room's QR code: that's where they're
+            // headed, not back into the last room this phone was in.
+            if (qrRoomCode && qrRoomCode !== storedRoom) return;
 
             try {
                 const response = await fetch('/api/room-status', {
@@ -1080,6 +1092,9 @@
 
         function renderTriviYeahII(data, nickname, roomCode) {
             ty2LastRenderArgs = [data, nickname, roomCode];
+            // Only the Doubler's wager step uses the box; clear it otherwise so
+            // the next Doubler starts empty.
+            if (data.triviYeahIIPhase !== 'DOUBLER_WAGER') document.getElementById('ty2-wager-input').value = '';
             document.getElementById('ty2-badge-name').innerText = nickname;
             document.getElementById('ty2-badge-emoji').innerText = chosenAvatar;
             document.getElementById('ty2-badge-room').innerText = roomCode;
@@ -1316,9 +1331,7 @@
                     const maxWager = data.doubler.maxWager || 0;
                     document.getElementById('ty2-wager-prompt-text').innerText = `How much do you want to wager? (0 - ${maxWager} points)`;
                     inputRow.style.display = 'block';
-                    const input = document.getElementById('ty2-wager-input');
-                    input.max = maxWager;
-                    input.value = Math.min(parseInt(input.value, 10) || 0, maxWager);
+                    prepareWagerInput(document.getElementById('ty2-wager-input'), maxWager);
                 } else {
                     document.getElementById('ty2-wager-prompt-text').innerText = `Waiting for ${data.currentPicker} to lock in their wager...`;
                     inputRow.style.display = 'none';
@@ -1514,6 +1527,14 @@
             }
         }
 
+        // Wager boxes start empty with a gray "0 - max" hint (an empty box
+        // counts as 0) instead of a real 0 you had to delete first.
+        function prepareWagerInput(input, maxWager) {
+            input.max = maxWager;
+            input.placeholder = `0 - ${maxWager}`;
+            if (input.value !== '' && parseInt(input.value, 10) > maxWager) input.value = maxWager;
+        }
+
         async function submitTriviYeahIIWager() {
             const input = document.getElementById('ty2-wager-input');
             const amount = Math.max(0, parseInt(input.value, 10) || 0);
@@ -1664,6 +1685,9 @@
 
             if (data.finalWagerPhase === 'CATEGORY_REVEAL') {
                 document.getElementById('fw-status-line').innerText = 'Get ready...';
+                // A fresh Final Wager: nothing left over from the last game.
+                document.getElementById('fw-wager-input').value = '';
+                document.getElementById('fw-answer-input').value = '';
                 return;
             }
 
@@ -1678,9 +1702,7 @@
                     document.getElementById('fw-status-line').innerText = 'Place your wager!';
                     const maxWager = Math.max(data.myScore || 0, 0);
                     document.getElementById('fw-wager-prompt-text').innerText = `How much do you want to risk? (0 - ${maxWager} points) Keep it secret!`;
-                    const input = document.getElementById('fw-wager-input');
-                    input.max = maxWager;
-                    input.value = Math.min(parseInt(input.value, 10) || 0, maxWager);
+                    prepareWagerInput(document.getElementById('fw-wager-input'), maxWager);
                     inputRow.style.display = 'block';
                 }
                 return;
