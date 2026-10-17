@@ -123,6 +123,21 @@
         const PUB_DEFAULT_MODES = ['TRIVI_YEAH_II', 'FLAG_ME_DOWN', 'COUNTRY_MONKEY'];
         let venueProfilesOn = false;
         let houseColumnOn = false;
+        let houseSets = []; // [{ key, total, tiers, complete }] from the database
+
+        // "HOUSE_PICKLES_PINS: 16 questions" -- or why the board won't use it.
+        function houseSetStatus(key) {
+            key = (key || '').trim().toUpperCase();
+            if (!key) return '';
+            const set = houseSets.find(h => h.key === key);
+            if (!set) return `<span style="color: #ff5c5c;">&#9888; No house questions named ${esc(key)} in the database. Check the spelling against the list.</span>`;
+            if (!set.complete) return `<span style="color: #ff5c5c;">&#9888; ${esc(key)} is missing a tier (${[100, 200, 300, 400].map(t => `${t}: ${set.tiers[t] || 0}`).join(', ')}); the board skips it until every tier has a question.</span>`;
+            return `<span style="color: #00e676;">&#10003; ${esc(key)}: ${set.total} questions</span>`;
+        }
+        function refreshHouseStatus() {
+            const el = document.getElementById('venue-house-status');
+            if (el) el.innerHTML = houseSetStatus(document.getElementById('venue-house-category').value);
+        }
         let loadedCodes = [];
         let openVenueEditor = null;
 
@@ -136,7 +151,10 @@
             const parts = [];
             if (c.profile === 'PUB') parts.push(`Pub${c.venue_name ? ': ' + esc(c.venue_name) : ''}`);
             if (c.allowed_modes && c.allowed_modes.length) parts.push(`${c.allowed_modes.length} modes`);
-            if (c.house_rounds && c.house_rounds !== 'OFF') parts.push(`House: ${c.house_rounds === 'ALL' ? 'all rounds' : 'rounds 1 & 3'}`);
+            if (c.house_rounds && c.house_rounds !== 'OFF') {
+                const set = houseSets.find(h => h.key === c.house_category);
+                parts.push(`House: ${c.house_rounds === 'ALL' ? 'all rounds' : 'rounds 1 & 3'}${set && set.complete ? '' : ' &#9888; set not found'}`);
+            }
             return parts.length ? `<span class="code-venue-tag">${parts.join(' · ')}</span>` : '';
         }
 
@@ -173,7 +191,10 @@
                         </select>
                         <div class="hint">The code's own questions as the left column of the board.</div>
                     </div>
-                    <div class="row"><label>House questions</label><input type="text" id="venue-house-category" maxlength="46" value="${esc(c.house_category)}" placeholder="e.g. HOUSE_PICKLES_PINS" autocapitalize="characters">
+                    <div class="row"><label>House questions</label><input type="text" id="venue-house-category" maxlength="46" value="${esc(c.house_category)}" placeholder="e.g. HOUSE_PICKLES_PINS" autocapitalize="characters" list="house-set-options" oninput="refreshHouseStatus()">
+                        <datalist id="house-set-options">${houseSets.map(h => `<option value="${esc(h.key)}">`).join('')}</datalist>
+                        <div class="hint" id="venue-house-status">${houseSetStatus(c.house_category)}</div>
+                        <div class="hint">In the database: ${houseSets.length ? houseSets.map(h => esc(h.key)).join(', ') : 'none yet'}</div>
                         <div class="hint">The category name in that event's .sql file (always starts with HOUSE_). It needs at least one question at each of 100/200/300/400, or the board plays without it.</div></div>
                     <div class="row"><label>Column title</label><input type="text" id="venue-house-label" maxlength="40" value="${esc(c.house_label)}" placeholder="Blank = the venue name"></div>
                     ` : `<div class="hint" style="margin-bottom: 12px;">House columns turn on once you run <strong>access_codes_house_column.sql</strong> in Neon.</div>`}
@@ -261,6 +282,7 @@
             if (data.success) {
                 venueProfilesOn = !!data.venueProfiles;
                 houseColumnOn = !!data.houseColumn;
+                houseSets = data.houseSets || [];
                 renderCodes(data.codes);
             }
         }

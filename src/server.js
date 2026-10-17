@@ -10,7 +10,7 @@ import {
     isAdminLoginRateLimited, recordFailedAdminLogin, clearAdminLoginAttempts,
     isRoomCreateRateLimited, recordFailedRoomCreateAttempt, clearRoomCreateAttempts,
     listAccessCodes, addAccessCode, setAccessCodeActive, normalizeCode,
-    hostSessionCode, getAccessCodeVenue, venueProfilesInstalled, sanitizeVenue, updateAccessCodeVenue, houseColumnInstalled
+    hostSessionCode, getAccessCodeVenue, venueProfilesInstalled, sanitizeVenue, updateAccessCodeVenue, houseColumnInstalled, listHouseSets
 } from './services/accessControl.js';
 import { fileURLToPath } from 'url';
 
@@ -172,7 +172,8 @@ app.get('/api/admin/codes', requireAdmin, async (req, res) => {
     try {
         const codes = await listAccessCodes(pool);
         // venueProfiles: false until access_codes_venue_profiles.sql is run.
-        return res.json({ success: true, codes, venueProfiles: await venueProfilesInstalled(pool), houseColumn: await houseColumnInstalled(pool), modes: GAME_MODE_KEYS });
+        const houseColumn = await houseColumnInstalled(pool);
+        return res.json({ success: true, codes, venueProfiles: await venueProfilesInstalled(pool), houseColumn, houseSets: houseColumn ? await listHouseSets(pool) : [], modes: GAME_MODE_KEYS });
     } catch (e) {
         return res.status(500).json({ success: false, error: 'Failed to load codes.' });
     }

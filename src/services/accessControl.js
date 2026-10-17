@@ -184,6 +184,24 @@ export function sanitizeVenue(input, knownModes) {
     };
 }
 
+// Every house set in the database with its questions per tier, so /admin can
+// suggest real names and flag a typo (a misspelled set silently means a
+// normal board -- Randy hit exactly that with HOUSE_PICKELS_PINS).
+export async function listHouseSets(pool) {
+    const result = await pool.query(
+        `SELECT category, points, COUNT(*)::int AS n FROM questions
+         WHERE game_mode = 'TRIVI_YEAH_II' AND category LIKE 'HOUSE\\_%'
+         GROUP BY category, points ORDER BY category, points`
+    );
+    const sets = {};
+    result.rows.forEach(r => {
+        sets[r.category] = sets[r.category] || { key: r.category, total: 0, tiers: {} };
+        sets[r.category].tiers[r.points] = r.n;
+        sets[r.category].total += r.n;
+    });
+    return Object.values(sets).map(set => ({ ...set, complete: [100, 200, 300, 400].every(t => set.tiers[t] > 0) }));
+}
+
 export async function houseColumnInstalled(pool) {
     try {
         await pool.query('SELECT house_rounds FROM access_codes LIMIT 1');
