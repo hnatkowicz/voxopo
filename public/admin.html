@@ -154,7 +154,7 @@
                     <div class="row"><label>Venue name</label><input type="text" id="venue-name" maxlength="40" value="${esc(c.venue_name)}" placeholder="e.g. Pickles &amp; Pins"></div>
                     <div class="row"><label>Tagline</label><input type="text" id="venue-tagline" maxlength="80" value="${esc(c.venue_tagline)}" placeholder="e.g. Strikes, spares &amp; dill"></div>
                     <div class="row">
-                        <label>Logo file</label><input type="text" id="venue-logo" maxlength="80" value="${esc(c.venue_logo)}" placeholder="e.g. pickles-and-pins.svg">
+                        <label>Logo file</label><input type="text" id="venue-logo" maxlength="80" value="${esc(c.venue_logo)}" placeholder="e.g. pickles-pins.svg">
                         <div class="hint">A file in public/venues/ (upload it through GitHub). Wide logos fit best: about 2:1, like 800&times;400.</div>
                     </div>
                     <div class="row">
@@ -220,7 +220,7 @@
                 });
                 const data = await response.json();
                 if (!data.success) return showFeedback(feedback, data.error || 'Could not save.');
-                if (body.logo.trim() && !data.venue.logo) return showFeedback(feedback, 'Saved, but the logo file name was skipped: use a plain name like pickles-and-pins.svg.');
+                if (body.logo.trim() && !data.venue.logo) return showFeedback(feedback, 'Saved, but the logo file name was skipped: use a plain name like pickles-pins.svg.');
                 openVenueEditor = null;
                 loadCodes();
             } catch (err) {

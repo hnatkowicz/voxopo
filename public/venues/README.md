@@ -1,10 +1,12 @@
 # Venue logos
 
 Logos for venue (pub) access codes. Set a code's logo on `/admin` by typing
-the file name, e.g. `pickles-and-pins.svg`.
+the file name, e.g. `pickles-pins.svg`.
 
-- **Shape:** wide, about 2:1 (800×400 is a good size). Square logos still
-  fit; they just sit centered with space on each side.
+- **Shape:** the TV gives a logo a 2:1 space (800×400 is a good size for a
+  wide one). Square or tall logos fit too; they sit centered in that space.
+- **Lettering:** the banner prints the venue name in big letters beside the
+  logo, so a mark without the name in it often looks best.
 - **Format:** SVG is best (sharp at any size). PNG or WebP work too.
 - **Background:** transparent. The TV is dark, so dark-on-transparent art
   needs a light outline or its own light background.
@@ -16,4 +18,4 @@ the file name, e.g. `pickles-and-pins.svg`.
   Resize Page to Selection) so nothing sits outside the page.
 - **File names:** plain lowercase words and dashes, no spaces.
 
-`pickles-and-pins.svg` is Randy's logo for the Pickles & Pins test venue.
+`pickles-pins.svg` is Randy's logo for the Pickles & Pins test venue.

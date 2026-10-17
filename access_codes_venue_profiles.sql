@@ -7,7 +7,7 @@
 --   profile        'HOME' (the living-room version) or 'PUB'
 --   venue_name     shown big on the TV, e.g. 'Pickles & Pins'
 --   venue_tagline  a short line under the name, e.g. 'Strikes, spares & dill'
---   venue_logo     a file name in public/venues/, e.g. 'pickles-and-pins.svg'
+--   venue_logo     a file name in public/venues/, e.g. 'pickles-pins.svg'
 --   allowed_modes  which modes the lobby shows, e.g.
 --                  '{TRIVI_YEAH_II,FLAG_ME_DOWN,COUNTRY_MONKEY}'
 --                  (empty = every mode)
