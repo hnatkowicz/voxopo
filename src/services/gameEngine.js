@@ -323,6 +323,10 @@ function startGameForMode(roomCode, winningModule) {
     room.categoryVotes = {};
     categories.forEach(c => { room.categoryVotes[c.key] = 0; });
 
+    // A Start left over from the lobby (the clock started the game before
+    // everyone pressed it) mustn't count toward closing this vote.
+    Object.values(room.players).forEach(p => { p.requestedStart = false; });
+
     console.log(`[Room Engine] Room ${roomCode} starting ${winningModule} -- opening its category vote.`);
 
     broadcastToRoom(roomCode, {
