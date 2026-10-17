@@ -23,12 +23,20 @@ window.modeIconHtml = function (mode, sizePx) {
 
 // TV lobby: a 2-column grid of tiles, each with its own live vote bar
 // (ids vcount-<KEY> / vbar-<KEY>, filled in by app.js's updateModuleElectionUI).
-window.renderModeElectionTiles = function () {
+// A venue's access code can limit which modes its rooms show (a pub shows
+// only a few); null/empty means all of them.
+window.modesShown = function (allowedKeys) {
+    return allowedKeys && allowedKeys.length
+        ? window.RANDOMANIA_MODES.filter(m => allowedKeys.includes(m.key))
+        : window.RANDOMANIA_MODES;
+};
+
+window.renderModeElectionTiles = function (allowedKeys) {
     return `
         <div class="panel-box">
             <h2 class="panel-title">Active Module Election</h2>
             <div class="mode-grid">
-                ${window.RANDOMANIA_MODES.map(m => `
+                ${window.modesShown(allowedKeys).map(m => `
                     <div class="mode-tile">
                         <div class="mode-tile-head">
                             ${window.modeIconHtml(m, 34)}
@@ -48,8 +56,8 @@ window.renderModeElectionTiles = function () {
 
 // Phone: a 2-column grid of tappable tiles. onTap is the name of the page's
 // handler, called as onTap(this, '<KEY>').
-window.renderModePickerTiles = function (onTap) {
-    return window.RANDOMANIA_MODES.map(m => `
+window.renderModePickerTiles = function (onTap, allowedKeys) {
+    return window.modesShown(allowedKeys).map(m => `
         <div class="module-row mode-pick" data-mode-key="${m.key}" onclick="${onTap}(this, '${m.key}')">
             ${window.modeIconHtml(m, 34)}
             <div class="mode-pick-name">${m.name}</div>

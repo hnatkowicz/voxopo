@@ -469,3 +469,26 @@ body[data-view="game"] #game-screen {
     border-color: #64748b;
     background: #1c1f29;
 }
+
+/* ---------- Pub rooms (a venue access code with the PUB profile) ----------
+   Lobby: the venue banner up top and a big QR code people can scan from
+   their tables (a QR code scans from about 10x its own width). During play:
+   the venue's name in the top bar and a medium QR code for latecomers. */
+.venue-banner, .venue-hud { display: none; }
+body.pub-profile.tv-lobby .venue-banner {
+    display: flex; align-items: center; gap: 24px;
+    background: #14161d; border: 1px solid #222630; border-radius: 12px;
+    padding: 16px 24px; margin-bottom: 20px; flex-shrink: 0;
+}
+/* Logos are 2:1 (see public/venues/README.md); anything else fits inside. */
+#venue-banner-logo { width: 180px; height: 90px; object-fit: contain; flex-shrink: 0; }
+.venue-banner-name { font-size: 2.2rem; font-weight: 800; color: #ffffff; letter-spacing: -0.02em; line-height: 1.1; }
+.venue-banner-tagline { font-size: 1.05rem; color: #94a3b8; font-weight: 500; margin-top: 4px; }
+body.pub-profile:not(.tv-lobby) .venue-hud { display: flex; align-items: center; gap: 10px; }
+#venue-hud-logo { height: 32px; width: 64px; object-fit: contain; }
+#venue-hud-name { font-size: 1rem; font-weight: 700; color: #f4f5f6; white-space: nowrap; }
+body.pub-profile.tv-lobby #room-qr-box { width: 230px !important; height: 230px !important; padding: 6px !important; }
+body.pub-profile:not(.tv-lobby) #room-qr-box { width: 130px !important; height: 130px !important; }
+body.pub-profile.tv-lobby #onboarding-text-slot > div:first-child { font-size: 1.6rem !important; }
+body.pub-profile.tv-lobby #onboarding-text-slot > div:last-child { font-size: 1.05rem !important; }
+body.pub-profile.tv-lobby #onboarding-text-slot { flex: 2 !important; }
