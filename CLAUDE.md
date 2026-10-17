@@ -59,7 +59,11 @@ event, for a small fee. That's why hosting is gated behind access codes.
 | `/admin` | `public/admin.html` | Manage access codes, reset rooms |
 
 The flow: access code → host's phone → room code → typed into the TV → players
-join on their phones via the TV's QR code or `/play`.
+join on their phones via the TV's QR code or `/play`. The in-room QR code is
+drawn on the TV for that room (`/play?room=1234`), which fills the room code
+in on the phone (still editable). It's drawn by `public/vendor/qrcode.js`
+(qrcode-generator 1.4.4, MIT -- keep `public/vendor/qrcode-LICENSE.txt`;
+credited on `/info`), copied into the repo so nothing is fetched from outside.
 
 ## Game modes
 

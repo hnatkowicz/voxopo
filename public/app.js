@@ -105,7 +105,25 @@ if (btnSubmitSpectate) {
             if (slot) slot.innerHTML = html;
         }
 
+        // The in-room QR code carries the room code (play?room=1234), so a
+        // scan fills it in on the phone. Drawn locally by public/vendor/qrcode.js
+        // (MIT, credited on /info); falls back to the plain /play qr.png.
+        function showRoomQrCode(roomCode) {
+            const image = document.getElementById('room-qr-image');
+            if (!image || typeof window.qrcode !== 'function') return;
+            try {
+                const qr = window.qrcode(0, 'M');
+                qr.addData(`${window.location.origin}/play?room=${encodeURIComponent(roomCode)}`);
+                qr.make();
+                const svg = qr.createSvgTag({ cellSize: 4, margin: 2, scalable: true });
+                image.src = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svg);
+            } catch (error) {
+                console.warn('[QR] Could not draw the room QR code; keeping the plain one.', error);
+            }
+        }
+
         function connectWebSocketEngine(roomCode) {
+            showRoomQrCode(roomCode);
             socket = new WebSocket(`wss://${window.location.host}`);
             
             socket.onopen = () => {
