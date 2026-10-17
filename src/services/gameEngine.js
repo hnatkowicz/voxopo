@@ -106,6 +106,20 @@ export function resolveRequestedQuestionCount(rawValue) {
     return Math.max(MIN_QUESTIONS_PER_GAME, Math.min(parsed, MAX_QUESTIONS_PER_GAME));
 }
 
+// Picks k items, each draw weighted by weightOf(item) among what's left.
+function weightedSampleWithoutReplacement(items, weightOf, k) {
+    const remaining = items.map(item => ({ item, weight: Math.max(0, weightOf(item)) }));
+    const picked = [];
+    while (picked.length < k && remaining.length) {
+        const total = remaining.reduce((sum, entry) => sum + entry.weight, 0);
+        let roll = Math.random() * total;
+        let index = remaining.findIndex(entry => (roll -= entry.weight) < 0);
+        if (index < 0) index = remaining.length - 1;
+        picked.push(remaining.splice(index, 1)[0].item);
+    }
+    return picked;
+}
+
 function shuffleArray(items) {
     const copy = [...items];
     for (let i = copy.length - 1; i > 0; i--) {
@@ -869,26 +883,43 @@ function publicTriviYeahIIGrid(room) {
 // House sets aren't in TRIVI_YEAH_II_CATEGORIES, so they never turn up on an
 // ordinary board. usedIds keeps a game's house rounds from repeating a
 // question; an incomplete house set just means a normal board.
-async function buildTriviYeahIIBoard(doublersCount, house = null) {
+async function buildTriviYeahIIBoard(doublersCount, house = null, usedCategoryKeys = new Set()) {
     // Only categories with a question at every tier in the database are
     // eligible -- so a category can ship in code before its .sql file has been
     // run in Neon (or be missing a tier) without ever breaking a game.
     const tierCounts = await pool.query(
-        `SELECT category, COUNT(DISTINCT points) AS tiers
+        `SELECT category, points, COUNT(*) AS n
          FROM questions
          WHERE game_mode = 'TRIVI_YEAH_II' AND points = ANY($1::int[])
-         GROUP BY category`,
+         GROUP BY category, points`,
         [TRIVI_YEAH_II_TIERS]
     );
-    const completeKeys = new Set(tierCounts.rows
-        .filter(r => Number(r.tiers) === TRIVI_YEAH_II_TIERS.length)
-        .map(r => r.category));
+    // A category's depth = questions at its THINNEST tier (40 easy ones don't
+    // help if there are only 5 at 400 -- those 400s are what repeat).
+    const tiersByCategory = {};
+    tierCounts.rows.forEach(r => {
+        tiersByCategory[r.category] = tiersByCategory[r.category] || {};
+        tiersByCategory[r.category][Number(r.points)] = Number(r.n);
+    });
+    const depthOf = key => Math.min(...TRIVI_YEAH_II_TIERS.map(t => (tiersByCategory[key] || {})[t] || 0));
+    const completeKeys = new Set(Object.keys(tiersByCategory).filter(key => depthOf(key) > 0));
     const eligibleCategories = TRIVI_YEAH_II_CATEGORIES.filter(c => completeKeys.has(c.key));
     const useHouse = !!(house && completeKeys.has(house.key));
     if (house && !useHouse) console.warn(`[Thinking Pants] House set ${house.key} isn't complete in the database (every tier needed) -- normal board instead.`);
-    const chosenCategories = useHouse
-        ? [{ key: house.key, label: house.label }, ...shuffleArray(eligibleCategories).slice(0, TRIVI_YEAH_II_CATEGORIES_PER_BOARD - 1)]
-        : shuffleArray(eligibleCategories).slice(0, TRIVI_YEAH_II_CATEGORIES_PER_BOARD);
+    // Deeper categories come up more often (Randy, Oct 2026: thin ones should
+    // be rarer so their questions don't repeat). Weight = square root of the
+    // depth, so a category 4x as deep shows up about 2x as often -- a nudge,
+    // not a takeover (proportional would put the 80-question geography
+    // categories on most boards). A category already used earlier in this
+    // game sits out, unless there aren't enough others to fill the board.
+    const needed = TRIVI_YEAH_II_CATEGORIES_PER_BOARD - (useHouse ? 1 : 0);
+    const fresh = eligibleCategories.filter(c => !usedCategoryKeys.has(c.key));
+    let picked = weightedSampleWithoutReplacement(fresh, c => Math.sqrt(depthOf(c.key)), needed);
+    if (picked.length < needed) {
+        const repeats = eligibleCategories.filter(c => !picked.includes(c));
+        picked = picked.concat(weightedSampleWithoutReplacement(repeats, c => Math.sqrt(depthOf(c.key)), needed - picked.length));
+    }
+    const chosenCategories = useHouse ? [{ key: house.key, label: house.label }, ...picked] : picked;
     if (chosenCategories.length < TRIVI_YEAH_II_CATEGORIES_PER_BOARD) {
         throw new Error(`Only ${chosenCategories.length} complete Trivi-Yeah II categories in the database`);
     }
@@ -982,8 +1013,11 @@ async function startTriviYeahIIRound(roomCode) {
     const houseSetting = room.venue && room.venue.house;
     const houseThisRound = houseSetting && (houseSetting.rounds === 'ALL' || (houseSetting.rounds === 'ROUNDS_1_3' && (ty2.round === 1 || ty2.round === 3)));
     if (houseSetting && !ty2.usedHouseIds) ty2.usedHouseIds = new Set();
+    ty2.usedCategoryKeys = ty2.usedCategoryKeys || new Set(); // no general category twice in one game
     const { grid, chosenCategories } = await buildTriviYeahIIBoard(doublersCount,
-        houseThisRound ? { key: houseSetting.key, label: houseSetting.label, usedIds: ty2.usedHouseIds } : null);
+        houseThisRound ? { key: houseSetting.key, label: houseSetting.label, usedIds: ty2.usedHouseIds } : null,
+        ty2.usedCategoryKeys);
+    chosenCategories.forEach(c => ty2.usedCategoryKeys.add(c.key));
 
     ty2.grid = grid;
     ty2.phase = 'PICK_TILE';
