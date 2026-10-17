@@ -3,13 +3,14 @@ import dotenv from 'dotenv';
 import path from 'path';
 import { WebSocketServer } from 'ws';
 import pool from './config/database.js';
-import { handleIncomingMessage, activeRooms, getCategoriesForMode, resolveRequestedQuestionCount, compareByRank, closeRoom, profilerStatusFor, profilerTvSnapshot, triviYeahIITrapInfo, emptyModeVotes, resolveDisguisedAsset, flagMeDownStatusFor } from './services/gameEngine.js';
+import { handleIncomingMessage, activeRooms, getCategoriesForMode, resolveRequestedQuestionCount, compareByRank, closeRoom, profilerStatusFor, profilerTvSnapshot, triviYeahIITrapInfo, emptyModeVotes, resolveDisguisedAsset, flagMeDownStatusFor, GAME_MODE_KEYS, allowedModesFor } from './services/gameEngine.js';
 import {
     isHostAuthorized, grantHostSession, isAccessCodeActive,
     isAdminAuthorized, grantAdminSession,
     isAdminLoginRateLimited, recordFailedAdminLogin, clearAdminLoginAttempts,
     isRoomCreateRateLimited, recordFailedRoomCreateAttempt, clearRoomCreateAttempts,
-    listAccessCodes, addAccessCode, setAccessCodeActive, normalizeCode
+    listAccessCodes, addAccessCode, setAccessCodeActive, normalizeCode,
+    hostSessionCode, getAccessCodeVenue, venueProfilesInstalled, sanitizeVenue, updateAccessCodeVenue
 } from './services/accessControl.js';
 import { fileURLToPath } from 'url';
 
@@ -61,7 +62,10 @@ app.get('/q-img/:token', (req, res) => {
 // no longer calls this at all; only /host does.
 app.post('/api/create-room', async (req, res) => {
     try {
-        let authorized = isHostAuthorized(req);
+        // A typed code always wins (and is checked), even with a session --
+        // that's how a host switches between, say, a home code and a pub code.
+        const typedCode = normalizeCode(req.body && req.body.code);
+        let authorized = isHostAuthorized(req) && !typedCode;
         if (!authorized) {
             const ip = req.ip;
             // A short access code (a bare 4-digit number, say) is otherwise
@@ -82,6 +86,11 @@ app.post('/api/create-room', async (req, res) => {
             }
             clearRoomCreateAttempts(ip);
         }
+
+        // The venue profile (pub name/logo, allowed modes) of whichever code
+        // opened this room -- null for a plain home code.
+        const openingCode = typedCode || hostSessionCode(req);
+        const venue = openingCode ? await getAccessCodeVenue(pool, openingCode) : null;
 
         let code;
         let checks = 0;
@@ -116,7 +125,8 @@ app.post('/api/create-room', async (req, res) => {
             currentQuestionIndex: -1,
             askedQuestionIds: new Set(),
             requestedQuestionCount: resolveRequestedQuestionCount(req.body && req.body.questionCount),
-            votes: emptyModeVotes(),
+            venue,
+            votes: emptyModeVotes({ venue }),
             // Populated with real keys once the category vote phase actually starts.
             categoryVotes: {},
             // Bumped by every "fresh game" reset (Main Menu or Play Again
@@ -128,7 +138,7 @@ app.post('/api/create-room', async (req, res) => {
             lastActivity: Date.now() // Time the room was "born"
         };
 
-        if (!isHostAuthorized(req)) grantHostSession(res, req);
+        if (!isHostAuthorized(req) || typedCode) grantHostSession(res, req, openingCode);
 
         console.log(`[Room Organizer] Created dynamic session bubble: ${code}`);
         return res.json({ success: true, roomCode: code });
@@ -161,7 +171,8 @@ function requireAdmin(req, res, next) {
 app.get('/api/admin/codes', requireAdmin, async (req, res) => {
     try {
         const codes = await listAccessCodes(pool);
-        return res.json({ success: true, codes });
+        // venueProfiles: false until access_codes_venue_profiles.sql is run.
+        return res.json({ success: true, codes, venueProfiles: await venueProfilesInstalled(pool), modes: GAME_MODE_KEYS });
     } catch (e) {
         return res.status(500).json({ success: false, error: 'Failed to load codes.' });
     }
@@ -186,6 +197,22 @@ app.post('/api/admin/codes/:code/toggle', requireAdmin, async (req, res) => {
         return res.json({ success: true });
     } catch (e) {
         return res.status(500).json({ success: false, error: 'Failed to update code.' });
+    }
+});
+
+// Venue profile for a code: home or pub, name, tagline, logo file, and which
+// modes its rooms offer. Applies to rooms opened after the change.
+app.post('/api/admin/codes/:code/venue', requireAdmin, async (req, res) => {
+    try {
+        if (!(await venueProfilesInstalled(pool))) {
+            return res.status(409).json({ success: false, error: 'Run access_codes_venue_profiles.sql in Neon first.' });
+        }
+        const venue = sanitizeVenue(req.body, GAME_MODE_KEYS);
+        const found = await updateAccessCodeVenue(pool, req.params.code, venue);
+        if (!found) return res.status(404).json({ success: false, error: 'No such code.' });
+        return res.json({ success: true, venue });
+    } catch (e) {
+        return res.status(500).json({ success: false, error: 'Failed to save the venue profile.' });
     }
 });
 
@@ -219,6 +246,14 @@ app.post('/api/message', async (req, res) => {
     } catch (error) {
         return res.status(500).json({ success: false, reply: 'Engine error.' });
     }
+});
+
+// What a phone needs before joining: the room's venue (name, logo) and which
+// modes it offers, so the join screen only shows those. Nothing about players.
+app.get('/api/room-info/:roomCode', (req, res) => {
+    const room = activeRooms[req.params.roomCode];
+    if (!room) return res.status(404).json({ success: false });
+    return res.json({ success: true, venue: room.venue || null, allowedModes: allowedModesFor(room) });
 });
 
 app.post('/api/room-status', (req, res) => {
@@ -256,7 +291,7 @@ app.post('/api/room-status', (req, res) => {
             // their standing vote instead of it being a silent, unchangeable
             // choice locked in back at join time.
             const myVote = myPlayer ? myPlayer.vote : null;
-            return res.json({ phase: 'LOBBY_PHASE', myScore, myCorrectAnswers, myLeft, myEmoji, myVote });
+            return res.json({ phase: 'LOBBY_PHASE', myScore, myCorrectAnswers, myLeft, myEmoji, myVote, allowedModes: allowedModesFor(targetRoom), venue: targetRoom.venue || null });
         }
         if (targetRoom && targetRoom.gameState === 'CATEGORY_VOTE') {
             const categories = getCategoriesForMode(targetRoom.winningGameMode);
@@ -562,6 +597,14 @@ async function startServer() {
 
                         activeRooms[roomCode].screens.push(socket);
                         console.log(`✅ [WebSocket] Room ${roomCode} TV layout screen explicitly locked live.`);
+
+                        // Pub look and which mode tiles to show -- sent first so the
+                        // TV draws the right lobby.
+                        socket.send(JSON.stringify({
+                            type: 'ROOM_VENUE',
+                            venue: activeRooms[roomCode].venue || null,
+                            allowedModes: allowedModesFor(activeRooms[roomCode])
+                        }));
 
                         socket.send(JSON.stringify({
                             type: 'LEADERBOARD_UPDATE',

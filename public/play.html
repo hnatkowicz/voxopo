@@ -220,7 +220,9 @@
         <div class="input-group">
             <label>4-Digit Room Code</label>
             <!-- inputmode: phones show the digit pad, not the full keyboard. -->
-            <input type="text" id="room-code" placeholder="e.g., 1234" inputmode="numeric" pattern="[0-9]*" maxlength="4" autocomplete="off">
+            <input type="text" id="room-code" placeholder="e.g., 1234" inputmode="numeric" pattern="[0-9]*" maxlength="4" autocomplete="off" oninput="refreshJoinModes()">
+            <!-- A pub room says where you are once the code is in. -->
+            <div id="join-venue-line" style="display: none; margin-top: 10px; font-weight: 700; color: #facc15;"></div>
         </div>
         <div class="input-group">
             <label>Your Nickname</label>
@@ -259,7 +261,7 @@
         </div>
 
         <!-- MODULE CHOICE ROWS (CLEAN - NO DECORATIVE EMOJIS!) -->
-        <div class="input-group">
+        <div class="input-group" id="mode-join-group">
             <label>Select Module Preference</label>
             <div class="module-list mode-pick-grid" id="mode-join-list"></div>
         </div>
@@ -292,7 +294,7 @@
              real phase keeps right on changing for everyone else and this
              screen only makes sense while genuinely sitting in LOBBY_PHASE. -->
         <div id="game-lobby-content">
-            <div class="input-group">
+            <div class="input-group" id="mode-revote-group">
                 <label>1. Playing again? Confirm or change the mode</label>
                 <div class="module-list mode-pick-grid" id="mode-revote-list"></div>
             </div>
@@ -640,10 +642,58 @@
     <script src="/modes.js"></script>
     <script>
         // Mode tiles come from public/modes.js -- the same list the TV uses.
+        // A venue's rooms can offer only some modes (a pub shows a few), so
+        // both lists follow the room's allowed list once it's known.
+        let joinAllowedModes = null;
+        let revoteAllowedKey = null;
         document.addEventListener('DOMContentLoaded', () => {
-            document.getElementById('mode-join-list').innerHTML = window.renderModePickerTiles('selectModule');
+            renderJoinModeList();
             document.getElementById('mode-revote-list').innerHTML = window.renderModePickerTiles('submitModeRevote');
         });
+
+        // One mode on offer = nothing to choose: it's picked for you and the
+        // list is hidden.
+        function renderJoinModeList() {
+            document.getElementById('mode-join-list').innerHTML = window.renderModePickerTiles('selectModule', joinAllowedModes);
+            const only = joinAllowedModes && joinAllowedModes.length === 1 ? joinAllowedModes[0] : null;
+            document.getElementById('mode-join-group').style.display = only ? 'none' : '';
+            if (only) chosenModule = only;
+            else if (joinAllowedModes && !joinAllowedModes.includes(chosenModule)) chosenModule = '';
+            document.querySelectorAll('#mode-join-list .module-row').forEach(r => r.classList.toggle('selected', r.dataset.modeKey === chosenModule));
+        }
+
+        let joinInfoRequestedFor = null;
+        async function refreshJoinModes() {
+            const code = document.getElementById('room-code').value.trim();
+            const venueLine = document.getElementById('join-venue-line');
+            if (!/^\d{4}$/.test(code)) {
+                if (joinInfoRequestedFor !== null) { joinInfoRequestedFor = null; joinAllowedModes = null; venueLine.style.display = 'none'; renderJoinModeList(); }
+                return;
+            }
+            if (code === joinInfoRequestedFor) return;
+            joinInfoRequestedFor = code;
+            try {
+                const response = await fetch(`/api/room-info/${code}`);
+                if (code !== joinInfoRequestedFor) return; // they've typed another code since
+                const data = response.ok ? await response.json() : null;
+                joinAllowedModes = data && data.success ? data.allowedModes : null;
+                const venueName = data && data.venue && data.venue.name;
+                venueLine.innerText = venueName ? `📍 ${venueName}` : '';
+                venueLine.style.display = venueName ? 'block' : 'none';
+            } catch (error) {
+                joinAllowedModes = null;
+            }
+            renderJoinModeList();
+        }
+
+        // Lobby re-vote list: same filter, redrawn only when the list changes.
+        function syncRevoteModes(allowedModes) {
+            const key = (allowedModes || []).join(',');
+            if (key === revoteAllowedKey) return;
+            revoteAllowedKey = key;
+            document.getElementById('mode-revote-list').innerHTML = window.renderModePickerTiles('submitModeRevote', allowedModes);
+            document.getElementById('mode-revote-group').style.display = allowedModes && allowedModes.length === 1 ? 'none' : '';
+        }
         let chosenAvatar = '👤';
         let chosenModule = '';
         let roomStateTrackerInterval = null;
@@ -678,7 +728,7 @@
             const fromLink = new URLSearchParams(window.location.search).get('room');
             return fromLink && /^\d{4}$/.test(fromLink) ? fromLink : null;
         })();
-        if (qrRoomCode) document.getElementById('room-code').value = qrRoomCode;
+        if (qrRoomCode) { document.getElementById('room-code').value = qrRoomCode; refreshJoinModes(); }
 
         (async function attemptAutoResume() {
             const storedRoom = localStorage.getItem('randomania_roomcode');
@@ -944,6 +994,7 @@
                             // voted for (their original join-time pick, or a
                             // later change via submitModeRevote) -- idempotent,
                             // so re-syncing every poll tick is harmless.
+                            syncRevoteModes(data.allowedModes);
                             document.querySelectorAll('#mode-revote-list .module-row').forEach(r => {
                                 r.classList.toggle('selected', data.myVote && r.dataset.modeKey === data.myVote);
                             });

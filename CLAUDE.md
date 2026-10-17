@@ -40,10 +40,23 @@ event, for a small fee. That's why hosting is gated behind access codes.
   about players or games is persisted. That's deliberate and is promised on the
   Privacy section of `/info`, so don't add persistence of player data.
 - **Database:** Neon Postgres via `DATABASE_URL`. It holds only game content
-  (the `questions` table, polymorphic on `game_mode`) and `access_codes`.
+  (the `questions` table, polymorphic on `game_mode`) and `access_codes`
+  (with each code's venue profile).
 - **Access control:** `src/services/accessControl.js` provides host access
   codes, an admin password (`ADMIN_PASSWORD`), cookie sessions, and per-IP rate
   limits.
+- **Venue profiles:** an access code can be HOME (the living-room version)
+  or PUB, with a venue name, tagline, logo (`public/venues/`, 2:1, see its
+  README) and a list of allowed modes, all set on `/admin`
+  (`access_codes_venue_profiles.sql` adds the columns; until it's run every
+  code acts as HOME). A room copies its code's profile when it opens, and
+  the host's session remembers which code it used. PUB rooms get the venue
+  banner and a big QR code in the lobby (scannable from a table), the venue
+  in the top bar and a medium QR code during play. Allowed modes are
+  enforced by the server, not just hidden on screens; one allowed mode
+  skips the choice. Pub default list (Randy, Oct 2026): Thinking Pants,
+  Flag Me Down, Country Monkey. Pickles & Pins is the test venue
+  (placeholder logo `pickles-and-pins.svg`).
 - **Hosting:** Render, which terminates TLS. That's why `trust proxy` is set.
 - **Env vars:** `DATABASE_URL`, `ADMIN_PASSWORD`, `PORT`.
 

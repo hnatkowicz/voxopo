@@ -6,8 +6,15 @@ export const activeRooms = {};
 // Every votable game mode. The display side (names, blurbs, icons) lives in
 // public/modes.js -- keep the keys in step when adding a mode.
 export const GAME_MODE_KEYS = ['TRIVI_YEAH', 'TRIVI_YEAH_II', 'COUNTRY_MONKEY', 'FLAG_ME_DOWN', 'EMPOSSDURR', 'ON_THE_SPECTRUM', 'PROFILER'];
-export function emptyModeVotes() {
-    return Object.fromEntries(GAME_MODE_KEYS.map(key => [key, 0]));
+// A venue's access code can limit which modes its rooms offer (a pub shows
+// only a few) -- the vote tally only ever has those keys, so a vote for any
+// other mode simply never counts.
+export function allowedModesFor(room) {
+    const allowed = room && room.venue && room.venue.allowedModes;
+    return allowed && allowed.length ? allowed : GAME_MODE_KEYS;
+}
+export function emptyModeVotes(room) {
+    return Object.fromEntries(allowedModesFor(room).map(key => [key, 0]));
 }
 
 // Recognized subcategory values for TRIVI_YEAH specifically; the per-group
@@ -3047,7 +3054,7 @@ function resetRoomToLobby(roomCode) {
     room.gameState = 'LOBBY';
     room.winningGameMode = null;
 
-    room.votes = emptyModeVotes();
+    room.votes = emptyModeVotes(room);
     activePlayers.forEach(player => {
         if (room.votes[player.vote] !== undefined) room.votes[player.vote]++;
     });
@@ -4049,7 +4056,12 @@ export function handleIncomingMessage(fromPhone, bodyText, explicitRoomCode, pre
             }
 
             parts.shift(); // Evacuate code segment
-            const votedModule = parts.pop();
+            let votedModule = parts.pop();
+            // A phone showing a stale (unfiltered) mode list can't vote for a
+            // mode this venue's rooms don't offer -- it lands on the first one
+            // that is offered instead.
+            const allowedModes = allowedModesFor(currentRoom);
+            if (!allowedModes.includes(votedModule)) votedModule = allowedModes[0];
             const playerEmoji = parts.pop() || '👤';
             const playerNickname = parts.join(' ').trim();
 
@@ -4142,7 +4154,7 @@ export function handleIncomingMessage(fromPhone, bodyText, explicitRoomCode, pre
             // already in progress (executeLobbyPhaseExpiration would fire again
             // in 60s and stomp on whatever real phase is live by then).
             if (currentRoom.gameState === 'LOBBY') {
-                currentRoom.votes = emptyModeVotes();
+                currentRoom.votes = emptyModeVotes(currentRoom);
                 playersArray.forEach(p => {
                     if (currentRoom.votes[p.vote] !== undefined) currentRoom.votes[p.vote]++;
                 });
@@ -4365,7 +4377,7 @@ export function handleIncomingMessage(fromPhone, bodyText, explicitRoomCode, pre
             player.vote = modeChoice;
 
             const activePlayers = Object.values(currentRoom.players).filter(p => !p.left);
-            currentRoom.votes = emptyModeVotes();
+            currentRoom.votes = emptyModeVotes(currentRoom);
             activePlayers.forEach(p => { if (currentRoom.votes[p.vote] !== undefined) currentRoom.votes[p.vote]++; });
 
             broadcastToRoom(associatedRoomCode, { type: 'VOTE_UPDATE', votes: currentRoom.votes, totalVotes: activePlayers.length });

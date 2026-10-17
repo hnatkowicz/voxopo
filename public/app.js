@@ -41,6 +41,14 @@ if (btnSubmitSpectate) {
         let contentWarningHideTimer = null; // set while a notice is showing in the status slot
         let contentWarningHtml = '';
         let currentGamePhase = 'LOBBY'; // LOBBY / CATEGORY_VOTE / GAME_ROUND / GAME_OVER -- gates the "PRESS START" nudge to lobby only
+        // Venue profile from the access code that opened this room (ROOM_VENUE):
+        // a pub gets its name/logo on screen and a bigger QR code, and only
+        // the modes it offers appear in the lobby. null = home, every mode.
+        let roomVenue = null;
+        let roomAllowedModes = null;
+        // body.tv-lobby drives the pub lobby look (banner + big QR code); every
+        // screen switch sets currentGamePhase, so one cheap check covers them all.
+        setInterval(() => document.body.classList.toggle('tv-lobby', currentGamePhase === 'LOBBY'), 300);
         let currentEmpossDurrRound = null; // cached so EMPOSSDURR_RESUME_DISCUSSION can redraw the same round header
         let currentEmpossDurrTotalRounds = null;
         let currentEmpossDurrStarterName = null; // same reason -- resuming discussion keeps the same starter, no new broadcast for it
@@ -194,6 +202,9 @@ if (btnSubmitSpectate) {
                         // redraws exactly what everyone else is looking at.
                         restoreProfilerTV(data.profiler);
                     }
+                }
+                if (data.type === 'ROOM_VENUE') {
+                    applyRoomVenue(data.venue, data.allowedModes);
                 }
                 if (data.type === 'LEADERBOARD_UPDATE') {
                     detectNewPlayerArrival(data.players);
@@ -758,9 +769,11 @@ if (btnSubmitSpectate) {
             if (!totalVotes || totalVotes === 0) return;
             const keys = window.RANDOMANIA_MODES.map(m => m.key);
             keys.forEach(key => {
+                const bar = document.getElementById(`vbar-${key}`);
+                if (!bar) return; // a mode this venue doesn't show
                 const count = votes[key] || 0;
                 const percentage = Math.round((count / totalVotes) * 100);
-                document.getElementById(`vbar-${key}`).style.width = `${percentage}%`;
+                bar.style.width = `${percentage}%`;
                 document.getElementById(`vcount-${key}`).innerText = `${count} ${count === 1 ? 'vote' : 'votes'} (${percentage}%)`;
             });
         }
@@ -1933,8 +1946,25 @@ function restoreProfilerTV(snap) {
 // switchToQuestionUI/switchToGameOverUI all overwrite this same #active-content-stage,
 // so returning to the lobby (post-game consensus) needs to reconstruct the exact
 // markup index.html originally shipped with, not just toggle visibility.
+function applyRoomVenue(venue, allowedModes) {
+    roomVenue = venue || null;
+    roomAllowedModes = allowedModes || null;
+    const isPub = !!(roomVenue && roomVenue.profile === 'PUB');
+    document.body.classList.toggle('pub-profile', isPub);
+    const name = (roomVenue && roomVenue.name) || '';
+    ['venue-banner-name', 'venue-hud-name'].forEach(id => { document.getElementById(id).innerText = name; });
+    document.getElementById('venue-banner-tagline').innerText = (roomVenue && roomVenue.tagline) || '';
+    ['venue-banner-logo', 'venue-hud-logo'].forEach(id => {
+        const img = document.getElementById(id);
+        const url = roomVenue && roomVenue.logoUrl;
+        img.style.display = url ? '' : 'none';
+        if (url) { img.onerror = () => { img.style.display = 'none'; }; img.src = url; }
+    });
+    if (currentGamePhase === 'LOBBY') switchToLobbyVoteUI();
+}
+
 function switchToLobbyVoteUI() {
-    document.getElementById('active-content-stage').innerHTML = window.renderModeElectionTiles();
+    document.getElementById('active-content-stage').innerHTML = window.renderModeElectionTiles(roomAllowedModes);
     currentGamePhase = 'LOBBY';
 }
 

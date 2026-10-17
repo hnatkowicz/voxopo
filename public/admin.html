@@ -56,6 +56,14 @@
         .add-code-form button { flex-shrink: 0; }
         #codes-list { margin-top: 20px; }
         .empty-state { color: #64748b; text-align: center; padding: 20px; font-size: 0.9rem; }
+        .code-venue-tag { font-size: 0.7rem; font-weight: 700; color: #facc15; border: 1px solid rgba(250, 204, 21, 0.35); border-radius: 4px; padding: 1px 6px; margin-left: 6px; text-transform: uppercase; letter-spacing: 0.04em; }
+        .venue-editor { background: #14161d; border: 1px solid #222630; border-radius: 8px; padding: 16px; margin: -4px 0 12px 0; text-align: left; }
+        .venue-editor .row { margin-bottom: 12px; }
+        .venue-editor select, .venue-editor input[type="text"] { width: 100%; padding: 10px; background: #1e222b; border: 1px solid #222630; border-radius: 8px; color: #fff; font-size: 0.95rem; box-sizing: border-box; }
+        .venue-editor .hint { color: #64748b; font-size: 0.8rem; margin-top: 4px; }
+        .venue-editor .modes { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+        .venue-editor .modes label { text-transform: none; letter-spacing: 0; font-size: 0.9rem; color: #f4f5f6; font-weight: 500; margin: 0; display: flex; gap: 8px; align-items: center; }
+        .venue-notice { background: rgba(250, 204, 21, 0.08); border: 1px solid rgba(250, 204, 21, 0.3); color: #facc15; border-radius: 8px; padding: 12px; font-size: 0.85rem; margin-top: 16px; text-align: left; }
     </style>
 </head>
 <body>
@@ -81,6 +89,7 @@
         </div>
         <div class="feedback" id="manage-feedback"></div>
 
+        <div id="venue-notice" class="venue-notice" style="display: none;">Venue profiles (pub name, logo, which modes show) turn on once you run <strong>access_codes_venue_profiles.sql</strong> in Neon.</div>
         <div id="codes-list"></div>
 
         <div style="border-top: 1px solid #222630; margin: 28px 0 20px 0;"></div>
@@ -93,6 +102,7 @@
         <div class="feedback" id="reset-room-feedback"></div>
     </div>
 
+    <script src="/modes.js"></script>
     <script>
         const loginScreen = document.getElementById('login-screen');
         const manageScreen = document.getElementById('manage-screen');
@@ -109,20 +119,113 @@
             el.style.display = 'none';
         }
 
+        // A pub code's suggested starting point (Randy, Oct 2026).
+        const PUB_DEFAULT_MODES = ['TRIVI_YEAH_II', 'FLAG_ME_DOWN', 'COUNTRY_MONKEY'];
+        let venueProfilesOn = false;
+        let loadedCodes = [];
+        let openVenueEditor = null;
+
+        function esc(text) {
+            return String(text == null ? '' : text).replace(/[&<>"']/g, ch => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[ch]));
+        }
+        const modeName = key => ((window.RANDOMANIA_MODES || []).find(m => m.key === key) || { name: key }).name;
+
+        function venueSummary(c) {
+            if (!venueProfilesOn) return '';
+            const parts = [];
+            if (c.profile === 'PUB') parts.push(`Pub${c.venue_name ? ': ' + esc(c.venue_name) : ''}`);
+            if (c.allowed_modes && c.allowed_modes.length) parts.push(`${c.allowed_modes.length} modes`);
+            return parts.length ? `<span class="code-venue-tag">${parts.join(' · ')}</span>` : '';
+        }
+
+        function venueEditorHtml(c) {
+            const allowed = c.allowed_modes || [];
+            const modes = (window.RANDOMANIA_MODES || []).map(m => `
+                <label><input type="checkbox" value="${m.key}" ${allowed.includes(m.key) ? 'checked' : ''}> ${esc(m.name)}</label>`).join('');
+            return `
+                <div class="venue-editor" id="venue-editor">
+                    <div class="row">
+                        <label>Profile</label>
+                        <select id="venue-profile" onchange="onVenueProfileChange()">
+                            <option value="HOME" ${c.profile !== 'PUB' ? 'selected' : ''}>Home (the living-room version)</option>
+                            <option value="PUB" ${c.profile === 'PUB' ? 'selected' : ''}>Pub (venue name, logo, big QR code)</option>
+                        </select>
+                    </div>
+                    <div class="row"><label>Venue name</label><input type="text" id="venue-name" maxlength="40" value="${esc(c.venue_name)}" placeholder="e.g. Pickles &amp; Pins"></div>
+                    <div class="row"><label>Tagline</label><input type="text" id="venue-tagline" maxlength="80" value="${esc(c.venue_tagline)}" placeholder="e.g. Strikes, spares &amp; dill"></div>
+                    <div class="row">
+                        <label>Logo file</label><input type="text" id="venue-logo" maxlength="80" value="${esc(c.venue_logo)}" placeholder="e.g. pickles-and-pins.svg">
+                        <div class="hint">A file in public/venues/ (upload it through GitHub). Wide logos fit best: about 2:1, like 800&times;400.</div>
+                    </div>
+                    <div class="row">
+                        <label>Modes shown (none checked = all)</label>
+                        <div class="modes" id="venue-modes">${modes}</div>
+                    </div>
+                    <div style="display: flex; gap: 10px;">
+                        <button class="btn" style="width: auto; padding: 10px 18px;" onclick="saveVenue('${esc(c.code)}')">Save</button>
+                        <button class="btn btn-secondary" style="width: auto; padding: 10px 18px;" onclick="toggleVenueEditor(null)">Cancel</button>
+                    </div>
+                    <div class="hint">Applies to rooms opened after you save.</div>
+                    <div class="feedback" id="venue-feedback"></div>
+                </div>`;
+        }
+
         function renderCodes(codes) {
+            loadedCodes = codes;
             const list = document.getElementById('codes-list');
+            document.getElementById('venue-notice').style.display = venueProfilesOn ? 'none' : 'block';
             if (!codes.length) {
                 list.innerHTML = '<div class="empty-state">No access codes yet. Add one above.</div>';
                 return;
             }
             list.innerHTML = codes.map(c => `
                 <div class="code-row">
-                    <span class="code-text">${c.code}</span>
-                    <span class="code-label">${c.label || ''}</span>
+                    <span class="code-text">${esc(c.code)}</span>
+                    <span class="code-label">${esc(c.label)}${venueSummary(c)}</span>
                     <span class="code-status ${c.active ? 'active' : 'inactive'}">${c.active ? 'Active' : 'Revoked'}</span>
-                    <button onclick="toggleCode('${c.code}', ${!c.active})">${c.active ? 'Revoke' : 'Reactivate'}</button>
+                    ${venueProfilesOn ? `<button onclick="toggleVenueEditor('${esc(c.code)}')">Venue</button>` : ''}
+                    <button onclick="toggleCode('${esc(c.code)}', ${!c.active})">${c.active ? 'Revoke' : 'Reactivate'}</button>
                 </div>
+                ${openVenueEditor === c.code ? venueEditorHtml(c) : ''}
             `).join('');
+        }
+
+        function toggleVenueEditor(code) {
+            openVenueEditor = openVenueEditor === code ? null : code;
+            renderCodes(loadedCodes);
+        }
+
+        // Switching to Pub with nothing checked fills in the pub starting list.
+        function onVenueProfileChange() {
+            if (document.getElementById('venue-profile').value !== 'PUB') return;
+            const boxes = [...document.querySelectorAll('#venue-modes input')];
+            if (boxes.some(b => b.checked)) return;
+            boxes.forEach(b => { b.checked = PUB_DEFAULT_MODES.includes(b.value); });
+        }
+
+        async function saveVenue(code) {
+            const feedback = document.getElementById('venue-feedback');
+            const body = {
+                profile: document.getElementById('venue-profile').value,
+                name: document.getElementById('venue-name').value,
+                tagline: document.getElementById('venue-tagline').value,
+                logo: document.getElementById('venue-logo').value,
+                allowedModes: [...document.querySelectorAll('#venue-modes input:checked')].map(b => b.value)
+            };
+            try {
+                const response = await fetch(`/api/admin/codes/${encodeURIComponent(code)}/venue`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(body)
+                });
+                const data = await response.json();
+                if (!data.success) return showFeedback(feedback, data.error || 'Could not save.');
+                if (body.logo.trim() && !data.venue.logo) return showFeedback(feedback, 'Saved, but the logo file name was skipped: use a plain name like pickles-and-pins.svg.');
+                openVenueEditor = null;
+                loadCodes();
+            } catch (err) {
+                showFeedback(feedback, 'Could not reach the server.');
+            }
         }
 
         async function loadCodes() {
@@ -133,7 +236,10 @@
                 return;
             }
             const data = await response.json();
-            if (data.success) renderCodes(data.codes);
+            if (data.success) {
+                venueProfilesOn = !!data.venueProfiles;
+                renderCodes(data.codes);
+            }
         }
 
         async function login() {
