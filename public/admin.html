@@ -123,6 +123,7 @@
         const PUB_DEFAULT_MODES = ['TRIVI_YEAH_II', 'FLAG_ME_DOWN', 'COUNTRY_MONKEY'];
         let venueProfilesOn = false;
         let houseColumnOn = false;
+        let boardRulesOn = false;
         let houseSets = []; // [{ key, total, tiers, complete }] from the database
 
         // "HOUSE_PICKLES_PINS: 16 questions" -- or why the board won't use it.
@@ -151,6 +152,7 @@
             const parts = [];
             if (c.profile === 'PUB') parts.push(`Pub${c.venue_name ? ': ' + esc(c.venue_name) : ''}`);
             if (c.allowed_modes && c.allowed_modes.length) parts.push(`${c.allowed_modes.length} modes`);
+            if (c.board_rules === 'PLAIN') parts.push('Plain rules');
             if (c.house_rounds && c.house_rounds !== 'OFF') {
                 const set = houseSets.find(h => h.key === c.house_category);
                 parts.push(`House: ${c.house_rounds === 'ALL' ? 'all rounds' : 'rounds 1 & 3'}${set && set.complete ? '' : ' &#9888; set not found'}`);
@@ -181,6 +183,16 @@
                         <label>Modes shown (none checked = all)</label>
                         <div class="modes" id="venue-modes">${modes}</div>
                     </div>
+                    ${boardRulesOn ? `
+                    <div class="row">
+                        <label>Thinking Pants rules</label>
+                        <select id="venue-board-rules">
+                            <option value="CLASSIC" ${c.board_rules !== 'PLAIN' ? 'selected' : ''}>Classic (column sweeps +400 and traps)</option>
+                            <option value="PLAIN" ${c.board_rules === 'PLAIN' ? 'selected' : ''}>Plain (no sweeps, no traps; good for one-on-one)</option>
+                        </select>
+                        <div class="hint">Doublers and the Final Wager are in both.</div>
+                    </div>
+                    ` : `<div class="hint" style="margin-bottom: 12px;">Plain rules (no sweeps or traps) turn on once you run <strong>access_codes_board_rules.sql</strong> in Neon.</div>`}
                     ${houseColumnOn ? `
                     <div class="row">
                         <label>House column (Thinking Pants)</label>
@@ -249,6 +261,7 @@
                 logo: document.getElementById('venue-logo').value,
                 allowedModes: [...document.querySelectorAll('#venue-modes input:checked')].map(b => b.value)
             };
+            if (boardRulesOn) body.boardRules = document.getElementById('venue-board-rules').value;
             if (houseColumnOn) {
                 body.houseRounds = document.getElementById('venue-house-rounds').value;
                 body.houseCategory = document.getElementById('venue-house-category').value;
@@ -283,6 +296,7 @@
                 venueProfilesOn = !!data.venueProfiles;
                 houseColumnOn = !!data.houseColumn;
                 houseSets = data.houseSets || [];
+                boardRulesOn = !!data.boardRules;
                 renderCodes(data.codes);
             }
         }

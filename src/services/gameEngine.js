@@ -1351,6 +1351,12 @@ function finalizeTriviYeahIITileClear(room, roomCode, cell, results) {
     cell.lockedOutNames = results.lockedOut || [];
     ty2.clearedCount++;
 
+    // Plain rules (set per access code on /admin): no sweep bonus, and so no
+    // traps. Asked for after a one-on-one family game, where a lone sweep
+    // (and the trap it earns) happens all the time and piles on the only
+    // other player.
+    if (room.venue && room.venue.boardRules === 'PLAIN') return;
+
     const categoryTiles = ty2.grid.filter(c => c.categoryKey === cell.categoryKey);
     if (!categoryTiles.every(c => c.cleared)) return;
 
