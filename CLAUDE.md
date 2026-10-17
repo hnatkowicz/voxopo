@@ -55,7 +55,19 @@ event, for a small fee. That's why hosting is gated behind access codes.
   in the top bar and a medium QR code during play. Allowed modes are
   enforced by the server, not just hidden on screens; one allowed mode
   skips the choice. Pub default list (Randy, Oct 2026): Thinking Pants,
-  Flag Me Down, Country Monkey. Pickles & Pins is the test venue
+  Flag Me Down, Country Monkey. **House column** (`access_codes_house_column.sql`):
+  a code (HOME or PUB) can put its own question set, a `HOUSE_<NAME>`
+  category in `questions` (game_mode `TRIVI_YEAH_II`, all 4 tiers), as the
+  left column of the Thinking Pants board in rounds 1 & 3 (pub nights: the
+  venue opens and closes the night, round 2 stays general) or all 3 rounds
+  (one-off events: weddings, showers, PTA nights), titled with the venue
+  name unless set otherwise. House sets aren't in `TRIVI_YEAH_II_CATEGORIES`,
+  so they never appear on ordinary boards; a game never repeats a house
+  question; an incomplete set means a normal board. Pub house questions
+  should mostly be themed trivia anyone can play (the "two audiences"
+  rule); insider questions suit one-off events. Each house SQL file ends
+  with a commented-out DELETE for cleaning up after the event
+  (`pickles_and_pins_house.sql`, 16 questions, is the example). Pickles & Pins is the test venue
   (Randy's logo `pickles-pins.svg`: the pickle-jar-and-pin mark, no
   lettering, since the banner prints the name beside it).
 - **Hosting:** Render, which terminates TLS. That's why `trust proxy` is set.
