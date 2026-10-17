@@ -131,6 +131,14 @@ Mode keys are used in room votes and in `gameEngine.js`:
   .svg), used on the TV and phones, with emoji fallbacks if one's missing.
   Categories are listed in `TRIVI_YEAH_II_CATEGORIES`. Every category needs a
   full pool for every tier (the engine fails fast if one is incomplete).
+  **Board draw:** deeper categories come up more often (Randy, Oct 2026).
+  Depth = questions at a category's thinnest tier; weight = its square root,
+  so 4x the depth shows up about 2x as often (a nudge, not a takeover). No
+  general category appears twice in one game. Growing a category raises its
+  share on its own, with no setting to touch.
+  **Direction (Randy, Oct 2026):** new general trivia goes into Thinking
+  Pants categories. Trivi-yeah! is to become the house-questions-only mode
+  for one-off events (baby showers, etc.), so its general decks won't grow.
 - **COUNTRY_MONKEY**: a geography quiz for the geography nut, built from
   question *types* (the row's `subcategory`) mixed by `COUNTRY_MONKEY_MIX`
   in `gameEngine.js`: 10 maps (`COUNTRY`), 2 flags (`FLAG`), 1 landmark
