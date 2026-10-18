@@ -4,8 +4,8 @@
 -- Thinking Pants category MOVIES_TV. To change a question, change the
 -- spreadsheet and rebuild.
 --
--- Replaces the WHOLE category with the spreadsheet's 119 live questions
--- (100: 30, 200: 29, 300: 30, 400: 30), inside a transaction. Safe to re-run.
+-- Replaces the WHOLE category with the spreadsheet's 111 live questions
+-- (100: 29, 200: 25, 300: 30, 400: 27), inside a transaction. Safe to re-run.
 -- ============================================================================
 
 BEGIN;
@@ -26,10 +26,6 @@ INSERT INTO questions (question_number, game_mode, category, subcategory, factio
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MOVIES_TV', 'ORIGINAL', NULL,
         'Which superhero is also known as the "Man of Steel"?', NULL,
         'Superman', ARRAY['Batman', 'Thor', 'Iron Man', 'The Flash', 'Green Lantern', 'Aquaman'], 100);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MOVIES_TV', 'ORIGINAL', NULL,
-        'What is the name of the coffee shop the friends hang out at in "Friends"?', NULL,
-        'Central Perk', ARRAY['The Grind', 'Common Grounds', 'Java Joe''s', 'The Daily Grind', 'Perk Place', 'Bean There'], 100);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MOVIES_TV', 'ORIGINAL', NULL,
         'In "Star Wars," what is the name of Luke Skywalker''s home planet?', NULL,
@@ -138,10 +134,6 @@ VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YE
 -- 200 points
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MOVIES_TV', 'ORIGINAL', NULL,
-        'What is the name of the fictional African nation in "Black Panther"?', NULL,
-        'Wakanda', ARRAY['Zamunda', 'Genosha', 'Latveria', 'Sokovia', 'Madripoor', 'Attilan'], 200);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MOVIES_TV', 'ORIGINAL', NULL,
         'In "Breaking Bad," what is Walter White''s criminal alias?', NULL,
         'Heisenberg', ARRAY['Saul', 'Jesse', 'Gus', 'Hank', 'Skyler', 'Mike'], 200);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
@@ -168,10 +160,6 @@ INSERT INTO questions (question_number, game_mode, category, subcategory, factio
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MOVIES_TV', 'ORIGINAL', NULL,
         'Who played the title role in "Forrest Gump"?', NULL,
         'Tom Hanks', ARRAY['Tom Cruise', 'Kevin Costner', 'Robin Williams', 'Bill Murray', 'Dustin Hoffman', 'Michael Keaton'], 200);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MOVIES_TV', 'ORIGINAL', NULL,
-        'What is the name of the fictional kingdom in "Frozen"?', NULL,
-        'Arendelle', ARRAY['Corona', 'Agrabah', 'DunBroch', 'Motunui', 'San Fransokyo', 'Genovia'], 200);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MOVIES_TV', 'POP_CULTURE_FOLD_1', NULL,
         'Which actor played Rick Blaine in "Casablanca"?', NULL,
@@ -230,10 +218,6 @@ VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YE
         'Gremlins', ARRAY['The Goonies', 'Labyrinth', 'Critters'], 200);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MOVIES_TV', 'POP_CULTURE_FOLD_1', NULL,
-        'What is the name of Harry Potter''s snowy owl?', NULL,
-        'Hedwig', ARRAY['Errol', 'Pigwidgeon', 'Fawkes'], 200);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MOVIES_TV', 'POP_CULTURE_FOLD_1', NULL,
         'Which Pixar film follows a rat who dreams of becoming a chef in Paris?', NULL,
         'Ratatouille', ARRAY['Flushed Away', 'The Tale of Despereaux', 'Stuart Little'], 200);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
@@ -248,10 +232,6 @@ INSERT INTO questions (question_number, game_mode, category, subcategory, factio
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MOVIES_TV', 'POP_CULTURE_FOLD_1', NULL,
         'In "Stranger Things," what is the dark alternate dimension called?', NULL,
         'The Upside Down', ARRAY['The Nether', 'The Shadow Realm', 'The Other Side'], 200);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MOVIES_TV', 'POP_CULTURE_FOLD_1', NULL,
-        'Which sitcom is set in a Boston bar "where everybody knows your name"?', NULL,
-        'Cheers', ARRAY['Frasier', 'Wings', 'Taxi'], 200);
 
 -- 300 points
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
@@ -378,14 +358,6 @@ VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YE
 -- 400 points
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MOVIES_TV', 'ORIGINAL', NULL,
-        'What was the first full-length cel-animated feature film ever released?', NULL,
-        'Snow White and the Seven Dwarfs', ARRAY['Pinocchio', 'Fantasia', 'Bambi', 'Cinderella', 'Dumbo', 'Steamboat Willie'], 400);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MOVIES_TV', 'ORIGINAL', NULL,
-        'Which film is considered the first "talkie" to bring sound to Hollywood?', NULL,
-        'The Jazz Singer', ARRAY['Metropolis', 'The Birth of a Nation', 'Sunrise', 'Wings', 'City Lights', 'Nosferatu'], 400);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MOVIES_TV', 'ORIGINAL', NULL,
         'Who directed "Citizen Kane"?', NULL,
         'Orson Welles', ARRAY['Alfred Hitchcock', 'Billy Wilder', 'John Ford', 'Frank Capra', 'Howard Hawks', 'William Wyler'], 400);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
@@ -470,10 +442,6 @@ VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YE
         'Sideways', ARRAY['Bottle Shock', 'A Good Year', 'French Kiss'], 400);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MOVIES_TV', 'POP_CULTURE_FOLD_1', NULL,
-        'Which show has broadcast live from Studio 8H at 30 Rockefeller Plaza since 1975?', NULL,
-        'Saturday Night Live', ARRAY['The Tonight Show', 'Late Night', 'The Today Show'], 400);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MOVIES_TV', 'POP_CULTURE_FOLD_1', NULL,
         'Which actress played Blanche Devereaux on "The Golden Girls"?', NULL,
         'Rue McClanahan', ARRAY['Betty White', 'Bea Arthur', 'Estelle Getty'], 400);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
@@ -499,5 +467,5 @@ VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YE
 
 COMMIT;
 
--- Check: should return 119.
+-- Check: should return 111.
 SELECT COUNT(*) FROM questions WHERE game_mode = 'TRIVI_YEAH_II' AND category = 'MOVIES_TV';

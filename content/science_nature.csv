@@ -1,0 +1,88 @@
+﻿points,question,answer,wrong_1,wrong_2,wrong_3,wrong_4,wrong_5,wrong_6,image,source,added,retired,notes
+100,What planet is known as the Red Planet?,Mars,Venus,Jupiter,Mercury,Saturn,Neptune,Pluto,,ORIGINAL,,yes,Retired Oct 2026: astronomy now has its own category (Astronomy & Space asks this).
+100,What gas do plants absorb from the air to make food?,Carbon dioxide,Oxygen,Nitrogen,Hydrogen,Helium,Methane,Argon,,ORIGINAL,,,
+100,How many legs does a spider have?,Eight,Six,Ten,Four,Twelve,Two,Five,,ORIGINAL,,,
+100,What is the largest organ in the human body?,Skin,Liver,Heart,Brain,Lungs,Kidney,Stomach,,ORIGINAL,,,
+100,What force pulls objects toward the Earth?,Gravity,Magnetism,Friction,Inertia,Velocity,Momentum,Pressure,,ORIGINAL,,,
+100,What is the center of an atom called?,Nucleus,Electron,Proton,Neutron,Isotope,Orbital,Ion,,ORIGINAL,,,
+100,How many bones are in the adult human body?,206,186,246,166,226,196,300,,ORIGINAL,,,
+100,What is the tallest species of land animal?,Giraffe,Elephant,Moose,Camel,Ostrich,Rhino,Horse,,ORIGINAL,,,
+100,What do caterpillars turn into?,Butterflies or moths,Beetles,Dragonflies,Grasshoppers,Bees,Ants,Ladybugs,,ORIGINAL,,,
+200,"What is the main gas found in the air we breathe, by volume?",Nitrogen,Oxygen,Carbon dioxide,Hydrogen,Helium,Argon,Methane,,ORIGINAL,,,"Re-tiered Oct 2026: 100 -> 200. Many people guess oxygen, so it plays as a 200."
+200,What is the chemical symbol for gold?,Au,Ag,Gd,Go,Gl,Fe,Pb,,ORIGINAL,,,
+200,What part of a plant primarily conducts photosynthesis?,Leaves,Roots,Stem,Flower,Seeds,Bark,Thorns,,ORIGINAL,,yes,Retired Oct 2026: school-level; the new chlorophyll question covers photosynthesis better.
+200,What is the hardest natural substance on Earth?,Diamond,Quartz,Granite,Steel,Obsidian,Titanium,Emerald,,ORIGINAL,,,
+200,"What is the closest star to Earth, other than the Sun?",Proxima Centauri,Alpha Centauri,Sirius,Betelgeuse,Polaris,Vega,Rigel,,ORIGINAL,,yes,Retired Oct 2026: moved to Astronomy & Space.
+200,What type of animal is a Komodo dragon?,A lizard,A snake,A crocodile,A dinosaur,A turtle,An amphibian,A salamander,,ORIGINAL,,,"Wrong answers fixed Oct 2026: ""An iguana"" was also a lizard, so it was a second right answer."
+200,What is the process by which water turns into vapor called?,Evaporation,Condensation,Precipitation,Sublimation,Filtration,Dissolution,Erosion,,ORIGINAL,,,
+200,Which planet has the most moons in our solar system?,Saturn,Jupiter,Neptune,Uranus,Mars,Earth,Venus,,ORIGINAL,,yes,Retired Oct 2026: moon counts keep changing as new moons are found (Saturn and Jupiter have swapped the lead more than once).
+100,What is the name for an animal that eats both plants and meat?,Omnivore,Herbivore,Carnivore,Scavenger,Predator,Decomposer,Parasite,,ORIGINAL,,,Re-tiered Oct 2026: 200 -> 100.
+100,What organ pumps blood throughout the human body?,Heart,Liver,Lungs,Kidney,Brain,Stomach,Spleen,,ORIGINAL,,,Re-tiered Oct 2026: 200 -> 100.
+200,What is the freezing point of water in degrees Celsius?,0,32,100,-32,10,-10,4,,ORIGINAL,,,
+200,"What is commonly called the ""powerhouse of the cell""?",Mitochondria,Nucleus,Ribosome,Golgi apparatus,Chloroplast,Cytoplasm,Vacuole,,ORIGINAL,,,Re-tiered Oct 2026: 300 -> 200.
+300,Approximately how fast does light travel in a vacuum?,"300,000 km per second","150,000 km per second","3,000 km per second","1,000,000 km per second","500,000 km per second","30,000 km per second","100,000 km per second",,ORIGINAL,,,
+300,Which blood type is known as the universal donor?,O negative,AB positive,A positive,B negative,O positive,AB negative,A negative,,ORIGINAL,,,
+300,What is the scientific study of fungi called?,Mycology,Botany,Zoology,Entomology,Virology,Ecology,Geology,,ORIGINAL,,,
+200,Which element has the atomic number 1?,Hydrogen,Helium,Oxygen,Carbon,Nitrogen,Lithium,Boron,,ORIGINAL,,,Re-tiered Oct 2026: 300 -> 200.
+200,What is the study of weather and atmospheric conditions called?,Meteorology,Geology,Astronomy,Oceanography,Seismology,Climatology,Hydrology,,ORIGINAL,,,Re-tiered Oct 2026: 300 -> 200.
+200,Which blood cells are primarily responsible for fighting infection?,White blood cells,Red blood cells,Platelets,Plasma cells,Stem cells,Nerve cells,Muscle cells,,ORIGINAL,,,Re-tiered Oct 2026: 300 -> 200.
+300,What is the name of the galaxy that contains our solar system?,The Milky Way,Andromeda,The Whirlpool Galaxy,The Sombrero Galaxy,Triangulum,Centaurus A,The Pinwheel Galaxy,,ORIGINAL,,yes,Retired Oct 2026: moved to Astronomy & Space.
+300,What type of rock is formed from cooled magma or lava?,Igneous,Sedimentary,Metamorphic,Mineral,Organic,Composite,Crystalline,,ORIGINAL,,,
+200,Which vitamin is primarily produced by the body through sun exposure?,Vitamin D,Vitamin C,Vitamin A,Vitamin B12,Vitamin E,Vitamin K,Vitamin B6,,ORIGINAL,,,Re-tiered Oct 2026: 300 -> 200.
+300,What is the only metal that is liquid at standard room temperature?,Mercury,Lead,Tin,Gallium,Bismuth,Zinc,Sodium,,ORIGINAL,,,Re-tiered Oct 2026: 400 -> 300.
+200,What is the term for an animal that is active mainly at night?,Nocturnal,Diurnal,Crepuscular,Hibernal,Migratory,Dormant,Arboreal,,ORIGINAL,,,Re-tiered Oct 2026: 400 -> 200.
+400,Which gas makes up about 78% of Earth's atmosphere?,Nitrogen,Oxygen,Carbon dioxide,Argon,Hydrogen,Helium,Methane,,ORIGINAL,,yes,"Retired Oct 2026: same fact as the ""main gas in the air"" question (Nitrogen)."
+200,What pH value represents a perfectly neutral substance?,7,0,14,1,10,5,12,,ORIGINAL,,,Re-tiered Oct 2026: 400 -> 200.
+300,Which organ produces insulin in the human body?,Pancreas,Liver,Kidney,Spleen,Gallbladder,Thyroid,Adrenal gland,,ORIGINAL,,,Re-tiered Oct 2026: 400 -> 300.
+400,What is the term for the distance light travels in one year?,A light-year,A parsec,An astronomical unit,A light-second,A solar year,A galactic unit,A radian,,ORIGINAL,,yes,Retired Oct 2026: moved to Astronomy & Space.
+100,Which scientist formulated the three laws of motion?,Isaac Newton,Albert Einstein,Galileo Galilei,Nikola Tesla,Johannes Kepler,James Clerk Maxwell,Michael Faraday,,ORIGINAL,,,Re-tiered Oct 2026: 400 -> 100.
+400,What is the name of the process plants use to lose water vapor through their leaves?,Transpiration,Respiration,Photosynthesis,Germination,Pollination,Osmosis,Fermentation,,ORIGINAL,,,
+200,Which subatomic particle carries a negative electric charge?,Electron,Proton,Neutron,Positron,Photon,Quark,Neutrino,,ORIGINAL,,,Re-tiered Oct 2026: 400 -> 200.
+100,What is the term for a baby kangaroo?,Joey,Cub,Kid,Pup,Fawn,Kit,Calf,,ORIGINAL,,,Re-tiered Oct 2026: 400 -> 100.
+100,What is the fastest land animal?,Cheetah,Pronghorn,Lion,Greyhound,Horse,Gazelle,Ostrich,,PRIMARY_SCHOOL_FOLD_1,2026-10-18,,
+100,What is the largest animal on Earth?,Blue whale,African elephant,Whale shark,Sperm whale,Giant squid,Fin whale,Humpback whale,,PRIMARY_SCHOOL_FOLD_1,2026-10-18,,"The largest animal known to have ever lived, too."
+100,What is the deep winter sleep of animals like bears and hedgehogs called?,Hibernation,Estivation,Migration,Molting,Metamorphosis,Incubation,Gestation,,PRIMARY_SCHOOL_FOLD_1,2026-10-18,,Estivation is the summer version.
+100,What is the chemical formula for water?,H2O,H2O2,CO2,HO,H2O3,NaCl,O2,,PRIMARY_SCHOOL_FOLD_1,2026-10-18,,H2O2 is hydrogen peroxide.
+100,"Frogs, toads and salamanders belong to which class of animals?",Amphibians,Reptiles,Mammals,Fish,Insects,Crustaceans,Mollusks,,PRIMARY_SCHOOL_FOLD_1,2026-10-18,,
+100,Which organs filter waste from the blood and make urine?,Kidneys,Liver,Bladder,Spleen,Pancreas,Lungs,Gallbladder,,PRIMARY_SCHOOL_FOLD_1,2026-10-18,,
+100,What is the largest living bird?,Ostrich,Emu,Albatross,Condor,Cassowary,Rhea,Pelican,,SCIENCE_NATURE_BATCH_1,2026-10-18,,
+100,"Which naturalist wrote ""On the Origin of Species"" (1859)?",Charles Darwin,Alfred Russel Wallace,Gregor Mendel,Carl Linnaeus,Thomas Huxley,Jean-Baptiste Lamarck,Isaac Newton,,SCIENCE_NATURE_BATCH_1,2026-10-18,,"Wallace came up with natural selection independently, the real mix-up."
+200,"Besides solid, liquid and gas, which state of matter is found in lightning and the Sun?",Plasma,Vapor,Ether,Foam,Gel,Crystal,Aerosol,,PRIMARY_SCHOOL_FOLD_1,2026-10-18,,
+200,A straw looks bent in a glass of water. What bending of light causes that?,Refraction,Reflection,Diffraction,Dispersion,Absorption,Polarization,Interference,,PRIMARY_SCHOOL_FOLD_1,2026-10-18,,
+200,What green pigment lets plants capture sunlight?,Chlorophyll,Carotene,Melanin,Hemoglobin,Xanthophyll,Chlorine,Keratin,,PRIMARY_SCHOOL_FOLD_1,2026-10-18,,
+200,A ramp is which of the six classic simple machines?,The inclined plane,The lever,The wedge,The pulley,The screw,The wheel and axle,,,PRIMARY_SCHOOL_FOLD_1,2026-10-18,,Only five wrong answers exist: the other five simple machines.
+200,"What is the only mammal capable of true, flapping flight?",The bat,The flying squirrel,The sugar glider,The colugo,The pterodactyl,The platypus,The lemur,,SCIENCE_NATURE_BATCH_1,2026-10-18,,"Flying squirrels, sugar gliders and colugos glide; pterodactyls were reptiles."
+200,Which Russian scientist trained dogs to drool at a signal that meant food was coming?,Ivan Pavlov,Sigmund Freud,B.F. Skinner,Carl Jung,Dmitri Mendeleev,Louis Pasteur,Wilhelm Wundt,,SCIENCE_NATURE_BATCH_1,2026-10-18,,"Avoids the ""bell"": he used several signals (metronomes, buzzers), and the bell is partly legend."
+300,Dry ice turns straight from a solid into a gas. What is that change called?,Sublimation,Evaporation,Condensation,Deposition,Melting,Vaporization,Ionization,,PRIMARY_SCHOOL_FOLD_1,2026-10-18,,
+300,What is an object's resistance to any change in its motion called?,Inertia,Momentum,Friction,Gravity,Torque,Velocity,Acceleration,,PRIMARY_SCHOOL_FOLD_1,2026-10-18,,
+300,A houseplant bending toward a sunny window is an example of what?,Phototropism,Photosynthesis,Gravitropism,Thigmotropism,Transpiration,Photoperiodism,Osmosis,,PRIMARY_SCHOOL_FOLD_1,2026-10-18,,
+300,"Which organ makes bile, which helps digest fat?",Liver,Gallbladder,Pancreas,Spleen,Stomach,Kidney,Appendix,,PRIMARY_SCHOOL_FOLD_1,2026-10-18,,The gallbladder only stores bile; the liver makes it.
+300,Who discovered penicillin in 1928?,Alexander Fleming,Louis Pasteur,Joseph Lister,Edward Jenner,Robert Koch,Howard Florey,Jonas Salk,,SCIENCE_NATURE_BATCH_1,2026-10-18,,"Florey (with Chain) later turned it into a usable drug, so he is the real mix-up; the 1928 discovery is Fleming's."
+300,"Who is the only person to win Nobel Prizes in two different sciences, physics and chemistry?",Marie Curie,Linus Pauling,Lise Meitner,Rosalind Franklin,Dorothy Hodgkin,Niels Bohr,Ernest Rutherford,,SCIENCE_NATURE_BATCH_1,2026-10-18,,"Curie: physics 1903, chemistry 1911. Pauling also won two, but chemistry and peace."
+300,Which element has the chemical symbol Na?,Sodium,Nitrogen,Nickel,Neon,Potassium,Magnesium,Nobelium,,SCIENCE_NATURE_BATCH_1,2026-10-18,,"Na is from the Latin ""natrium."""
+300,"In Einstein's E = mc², what does the ""c"" stand for?",The speed of light,The charge of an electron,A constant of 1,Calories,Electric current,Degrees Celsius,The mass of the core,,SCIENCE_NATURE_BATCH_1,2026-10-18,,
+300,Which monk is called the father of genetics for his experiments with pea plants?,Gregor Mendel,Charles Darwin,Louis Pasteur,Carl Linnaeus,Alfred Russel Wallace,Francis Crick,Jean-Baptiste Lamarck,,SCIENCE_NATURE_BATCH_1,2026-10-18,,
+300,"Which ancient Greek supposedly leapt from his bath shouting ""Eureka!""?",Archimedes,Pythagoras,Euclid,Aristotle,Plato,Hippocrates,Ptolemy,,SCIENCE_NATURE_BATCH_1,2026-10-18,,"""Supposedly"": the story comes from the Roman writer Vitruvius, long after."
+300,How many hearts does an octopus have?,Three,One,Two,Four,Five,Eight,Nine,,SCIENCE_NATURE_BATCH_1,2026-10-18,,
+300,"The killer whale, or orca, is actually the largest member of which family?",The dolphins,The sharks,The porpoises,The seals,The baleen whales,The sea lions,The sperm whales,,SCIENCE_NATURE_BATCH_1,2026-10-18,,
+300,What kind of animal is a seahorse?,A fish,A crustacean,A mollusk,A reptile,An amphibian,A coral,A jellyfish,,SCIENCE_NATURE_BATCH_1,2026-10-18,,
+300,Whose famous thought experiment imagines a cat in a box that is both alive and dead?,Erwin Schrödinger,Werner Heisenberg,Albert Einstein,Niels Bohr,Max Planck,Richard Feynman,Stephen Hawking,,SCIENCE_NATURE_BATCH_1,2026-10-18,,
+400,"Animals most active at dawn and dusk, like deer and rabbits, are described as what?",Crepuscular,Nocturnal,Diurnal,Cathemeral,Arboreal,Fossorial,Migratory,,SCIENCE_NATURE_BATCH_1,2026-10-18,,Cathemeral = active at any hour.
+400,Which element has the chemical symbol W?,Tungsten,Tin,Titanium,Vanadium,Zinc,Xenon,Cobalt,,SCIENCE_NATURE_BATCH_1,2026-10-18,,"W is from its other name, wolfram, so ""Wolfram"" is deliberately not a wrong answer."
+400,"What is the smallest bone in the human body, found in the middle ear?",The stapes,The incus,The malleus,The hyoid,The coccyx,The lunate,The vomer,,SCIENCE_NATURE_BATCH_1,2026-10-18,,Also called the stirrup. Incus and malleus are the other two ear bones.
+400,"Who devised the two-part Latin naming of species, as in Homo sapiens?",Carl Linnaeus,Charles Darwin,Gregor Mendel,Aristotle,Georges Cuvier,Alexander von Humboldt,Jean-Baptiste Lamarck,,SCIENCE_NATURE_BATCH_1,2026-10-18,,
+400,"Which Russian chemist published the first widely recognized periodic table, in 1869?",Dmitri Mendeleev,Antoine Lavoisier,John Dalton,Ivan Pavlov,Mikhail Lomonosov,Niels Bohr,Robert Boyle,,SCIENCE_NATURE_BATCH_1,2026-10-18,,
+400,"What is the most abundant element in Earth's crust, by mass?",Oxygen,Silicon,Iron,Aluminum,Carbon,Calcium,Nitrogen,,SCIENCE_NATURE_BATCH_1,2026-10-18,,"About 46% oxygen, then silicon at about 28%."
+400,"Whose gold foil experiment showed that atoms have a tiny, dense center?",Ernest Rutherford,J.J. Thomson,Niels Bohr,Max Planck,James Chadwick,Enrico Fermi,Marie Curie,,SCIENCE_NATURE_BATCH_1,2026-10-18,,"Run by Geiger and Marsden in Rutherford's lab (1909); Rutherford explained it (1911). Avoids the word ""nucleus,"" another answer here."
+400,"""Photo 51,"" an X-ray image made in Rosalind Franklin's lab, was key to working out the structure of what?",DNA,Insulin,Hemoglobin,Penicillin,Cholesterol,Glucose,Vitamin B12,,SCIENCE_NATURE_BATCH_1,2026-10-18,,Taken by Raymond Gosling under Franklin in 1952; Watson and Crick saw it before their 1953 double helix.
+400,At what temperature do the Celsius and Fahrenheit scales show the same number?,-40,0,-32,32,100,-100,40,,SCIENCE_NATURE_BATCH_1,2026-10-18,,
+400,The Venus flytrap grows wild only in a small area of which two U.S. states?,North and South Carolina,Florida and Georgia,Louisiana and Mississippi,Oregon and Washington,Arizona and New Mexico,Virginia and Maryland,Alabama and Tennessee,,SCIENCE_NATURE_BATCH_1,2026-10-18,,"Native within about 100 miles of Wilmington, NC."
+400,The spice saffron comes from which flower?,Crocus,Marigold,Tulip,Lily,Dandelion,Sunflower,Poppy,,SCIENCE_NATURE_BATCH_1,2026-10-18,,The stigmas of Crocus sativus.
+400,What are the tiny pores on a leaf that let gases in and out called?,Stomata,Xylem,Phloem,Chloroplasts,Cuticles,Lenticels,Root hairs,,SCIENCE_NATURE_BATCH_1,2026-10-18,,
+400,"Tiny, nearly indestructible tardigrades are better known by what nickname?",Water bears,Sea monkeys,Sea butterflies,Water boatmen,Space fleas,Glass shrimp,Sand puppies,,SCIENCE_NATURE_BATCH_1,2026-10-18,,"""Moss piglets"" is also a real nickname, so it is deliberately not a wrong answer."
+400,Whose uncertainty principle says you can't know a particle's exact position and momentum at once?,Werner Heisenberg,Erwin Schrödinger,Max Planck,Niels Bohr,Wolfgang Pauli,Max Born,Paul Dirac,,SCIENCE_NATURE_BATCH_1,2026-10-18,,
+400,"What is the one temperature and pressure at which a substance can exist as solid, liquid and gas at once?",The triple point,The critical point,The boiling point,The dew point,The melting point,The saturation point,The flash point,,SCIENCE_NATURE_BATCH_1,2026-10-18,,
+400,Which part of the brain mainly controls balance and coordination?,The cerebellum,The cerebrum,The hippocampus,The medulla oblongata,The hypothalamus,The frontal lobe,The amygdala,,SCIENCE_NATURE_BATCH_1,2026-10-18,,
+400,"Who made the first vaccine, against smallpox, using material from cowpox?",Edward Jenner,Louis Pasteur,Jonas Salk,Joseph Lister,Robert Koch,Alexander Fleming,William Harvey,,SCIENCE_NATURE_BATCH_1,2026-10-18,,"Jenner, 1796. ""Vaccine"" comes from the Latin for cow, vacca."
+400,What does a herpetologist study?,Reptiles and amphibians,Insects,Birds,Skin diseases,Fungi,Spiders,Fish,,SCIENCE_NATURE_BATCH_1,2026-10-18,,"""Skin diseases"" is the herpes mix-up."
+400,"Bamboo, which can grow almost a meter in a day, is a giant type of what?",Grass,Tree,Shrub,Fern,Palm,Vine,Moss,,SCIENCE_NATURE_BATCH_1,2026-10-18,,"Some species have been measured growing about 90 cm in a day; ""almost a meter"" is the safe wording."

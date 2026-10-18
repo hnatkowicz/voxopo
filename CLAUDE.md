@@ -215,9 +215,10 @@ Mode keys are used in room votes and in `gameEngine.js`:
 
 ## Content
 
-- New or changed game content ships as standalone `.sql` files at the repo
-  root (e.g. `trivi_yeah_ii_new_categories.sql`), named for what they add.
-- **Thinking Pants categories are moving to spreadsheets** (Randy, Oct
+- New or changed game content ships as `.sql` files Randy runs in Neon:
+  standalone files at the repo root named for what they add (e.g.
+  `country_monkey_water.sql`), or generated ones in `content/sql/`.
+- **Thinking Pants text categories live in spreadsheets** (Randy, Oct
   2026): `content/<category>.csv` is the master copy of a category, and
   `node content/build.mjs` checks every sheet (give-aways, duplicate
   choices, missing tiers) and generates `content/sql/<category>.sql`, which
@@ -228,12 +229,15 @@ Mode keys are used in room votes and in `gameEngine.js`:
   Claude still commits rebuilt SQL with its own sheet changes. Rows are
   retired, not deleted. See
   `content/README.md` for the columns and which old SQL files a moved
-  category supersedes. Moved so far: Movies & TV, Music, Literature (each folded in Pop Culture's
-  questions on that subject; Pop Culture itself is left alone), plus the
-  new **Word Nerd** (grown-up word trivia from Primary School's word
-  questions plus origins, odd words and spelling traps; Primary School is
-  left alone). Categories
-  not moved yet still live in the root `.sql` files.
+  category supersedes. Every text category lives there now (Oct 2026);
+  the old SQL that built them is in `retired_sql/`, never to be re-run
+  (`trivi_yeah_ii_prototype.sql` deletes every Thinking Pants question).
+  Picture categories, the Final Wager and house sets still have their own
+  root `.sql` files. Movies & TV, Music and Literature folded in Pop
+  Culture's questions on their subject, Word Nerd grew from Primary
+  School's word questions, Science/Space/Geography from its science ones
+  (those Trivi-yeah! decks are left alone). **College Athletics** (Randy's
+  idea): Heismans, coaches, mascots, rivalry trophies, athlete arcs.
 - **Randy applies these by hand** in the Neon console. Content is the part of
   the codebase Randy works on directly, so keep it that way: Claude writes and
   reviews `.sql` files but never runs anything against the live database.

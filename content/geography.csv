@@ -1,0 +1,77 @@
+﻿points,question,answer,wrong_1,wrong_2,wrong_3,wrong_4,wrong_5,wrong_6,image,source,added,retired,notes
+100,What is the largest continent by both area and population?,Asia,Africa,Europe,North America,South America,Antarctica,Australia,,ORIGINAL,,,
+100,What is the smallest country in the world by area?,Vatican City,Monaco,San Marino,Liechtenstein,Malta,Andorra,Luxembourg,,ORIGINAL,,,
+100,Which U.S. state is the largest by area?,Alaska,Texas,California,Montana,Nevada,Colorado,Arizona,,ORIGINAL,,,
+100,What is the longest river in Africa?,The Nile,The Congo,The Niger,The Zambezi,The Orange,The Limpopo,The Senegal,,ORIGINAL,,,"Reworded Oct 2026: ""longest in the world"" is disputed (some measurements give it to the Amazon); longest in Africa is not."
+100,Which desert is the largest hot desert in the world?,The Sahara,The Gobi,The Kalahari,The Mojave,The Arabian Desert,The Atacama,The Sonoran,,ORIGINAL,,,
+200,Which mountain range in Russia is traditionally taken as the dividing line between European and Asian territory?,The Ural Mountains,The Alps,The Himalayas,The Carpathians,The Altai Mountains,The Pyrenees,The Atlas Mountains,,ORIGINAL,,,"Reworded Oct 2026: named Asia, another answer here. Swapped out the Caucasus as a wrong answer, since it is also often used as part of the Europe-Asia line."
+200,What is the capital of Australia?,Canberra,Sydney,Melbourne,Perth,Brisbane,Adelaide,Darwin,,ORIGINAL,,,
+300,Which African country was formerly known as Abyssinia?,Ethiopia,Eritrea,Sudan,Somalia,Kenya,Egypt,Tanzania,,ORIGINAL,,,Re-tiered Oct 2026: 200 -> 300.
+200,What is the smallest U.S. state by area?,Rhode Island,Delaware,Connecticut,Hawaii,Vermont,New Hampshire,New Jersey,,ORIGINAL,,,
+200,Which strait separates Europe and Africa at its narrowest point?,The Strait of Gibraltar,The Bosphorus,The Strait of Hormuz,The Strait of Dover,The Strait of Messina,The Danish Straits,The Suez Canal,,ORIGINAL,,,
+300,Which mountain kingdom in southern Africa is completely surrounded by a single neighboring country?,Lesotho,Swaziland (Eswatini),Botswana,Zimbabwe,Namibia,Malawi,Mozambique,,ORIGINAL,,,"Reworded Oct 2026: named South Africa, the answer to another question here."
+200,"What is the name of the line of 0 degrees longitude that passes through Greenwich, England?",The Prime Meridian,The Equator,The Tropic of Cancer,The International Date Line,The Arctic Circle,The Tropic of Capricorn,The Antimeridian,,ORIGINAL,,,Re-tiered Oct 2026: 300 -> 200.
+400,"Which country has the most time zones of any country in the world, due to its overseas territories?",France,Russia,United States,United Kingdom,China,Australia,Canada,,ORIGINAL,,,Re-tiered Oct 2026: 300 -> 400. 12 time zones (13 counting its Antarctic claim).
+100,Which sea is so salty that swimmers can easily float on its surface?,The Dead Sea,The Red Sea,The Caspian Sea,The Black Sea,The Aral Sea,The Mediterranean Sea,The Baltic Sea,,ORIGINAL,,,Re-tiered Oct 2026: 300 -> 100.
+300,What is the capital of Kazakhstan?,Astana,Almaty,Bishkek,Tashkent,Ashgabat,Dushanbe,Baku,,ORIGINAL,,,"Astana was called Nur-Sultan from 2019 to 2022, then renamed back."
+200,"Which African country has three capital cities: Pretoria, Cape Town, and Bloemfontein?",South Africa,Namibia,Zimbabwe,Botswana,Kenya,Nigeria,Egypt,,ORIGINAL,,,Re-tiered Oct 2026: 400 -> 200. Naming the three cities makes it easy for a 400.
+400,"What is the only country that lies in all four hemispheres -- north, south, east, and west?",Kiribati,Indonesia,Brazil,Ecuador,Maldives,Fiji,Seychelles,,ORIGINAL,,,
+300,Which country has the longest coastline in the world?,Canada,Russia,Indonesia,Australia,United States,Norway,Chile,,ORIGINAL,,,Re-tiered Oct 2026: 400 -> 300.
+300,What is the name of the imaginary line at 180 degrees longitude that roughly marks a change in calendar day?,The International Date Line,The Prime Meridian,The Equator,The Tropic of Cancer,The Antarctic Circle,The Arctic Circle,The Tropic of Capricorn,,ORIGINAL,,,Re-tiered Oct 2026: 400 -> 300.
+300,Which European microstate lies high in the Pyrenees mountains?,Andorra,Monaco,San Marino,Liechtenstein,Luxembourg,Malta,Vatican City,,ORIGINAL,,,"Re-tiered Oct 2026: 400 -> 300. Reworded Oct 2026: named France, the answer to another question here."
+100,What is the capital of Japan?,Tokyo,Kyoto,Osaka,Yokohama,Hiroshima,Nagoya,Sapporo,,GEOGRAPHY_BATCH_1,2026-10-18,,"Kyoto was the capital for over a thousand years, the real mix-up."
+100,What is the capital of Scotland?,Edinburgh,Glasgow,Aberdeen,Dundee,Inverness,Stirling,Perth,,GEOGRAPHY_BATCH_1,2026-10-18,,
+100,Which river flows through Paris?,The Seine,The Loire,The Rhône,The Thames,The Rhine,The Danube,The Garonne,,GEOGRAPHY_BATCH_1,2026-10-18,,
+100,Which river flows through London?,The Thames,The Seine,The Severn,The Trent,The Mersey,The Avon,The Tyne,,GEOGRAPHY_BATCH_1,2026-10-18,,
+100,What is the highest mountain in the world above sea level?,Mount Everest,K2,Kangchenjunga,Mont Blanc,Kilimanjaro,Denali,Aconcagua,,GEOGRAPHY_BATCH_1,2026-10-18,,
+100,What is the highest mountain in Africa?,Kilimanjaro,Mount Kenya,Mount Stanley,Ras Dashen,Mount Meru,Mount Elgon,Mount Cameroon,,GEOGRAPHY_BATCH_1,2026-10-18,,
+100,"Not counting Australia, what is the largest island in the world?",Greenland,New Guinea,Borneo,Madagascar,Baffin Island,Iceland,Great Britain,,GEOGRAPHY_BATCH_1,2026-10-18,,Australia counts as a continent; New Guinea is second.
+100,Which is the only U.S. state made up entirely of islands?,Hawaii,Alaska,Florida,Maine,Washington,Delaware,Michigan,,GEOGRAPHY_BATCH_1,2026-10-18,,
+100,In which country is the Inca citadel of Machu Picchu?,Peru,Bolivia,Ecuador,Chile,Colombia,Mexico,Argentina,,GEOGRAPHY_BATCH_1,2026-10-18,,
+100,What is the name of the world's largest coral reef system?,The Great Barrier Reef,The Belize Barrier Reef,The Red Sea Coral Reef,The New Caledonia Barrier Reef,The Florida Reef,Ningaloo Reef,Raja Ampat,,GEOGRAPHY_BATCH_1,2026-10-18,,
+100,Which mountain range runs down the western side of South America?,The Andes,The Rockies,The Sierra Madre,The Appalachians,The Alps,The Himalayas,The Atlas Mountains,,GEOGRAPHY_BATCH_1,2026-10-18,,
+100,What is the official language of Brazil?,Portuguese,Spanish,English,French,Italian,Dutch,Latin,,GEOGRAPHY_BATCH_1,2026-10-18,,
+200,What is the capital of Brazil?,Brasília,Rio de Janeiro,São Paulo,Salvador,Buenos Aires,Recife,Belo Horizonte,,GEOGRAPHY_BATCH_1,2026-10-18,,
+200,What is the capital of Turkey?,Ankara,Istanbul,Izmir,Antalya,Bursa,Konya,Adana,,GEOGRAPHY_BATCH_1,2026-10-18,,
+200,What is the capital of New Zealand?,Wellington,Auckland,Christchurch,Queenstown,Dunedin,Hamilton,Napier,,GEOGRAPHY_BATCH_1,2026-10-18,,
+200,What is the capital of the U.S. state of New York?,Albany,New York City,Buffalo,Rochester,Syracuse,Ithaca,Yonkers,,GEOGRAPHY_BATCH_1,2026-10-18,,
+200,Which river flows through both Vienna and Budapest?,The Danube,The Rhine,The Elbe,The Vltava,The Volga,The Oder,The Drava,,GEOGRAPHY_BATCH_1,2026-10-18,,
+200,Which river forms much of the border between the U.S. and Mexico?,The Rio Grande,The Colorado,The Pecos,The Gila,The Red River,The Brazos,The Arkansas,,GEOGRAPHY_BATCH_1,2026-10-18,,
+200,Which river carries far more water than any other in the world?,The Amazon,The Nile,The Congo,The Mississippi,The Yangtze,The Ganges,The Orinoco,,GEOGRAPHY_BATCH_1,2026-10-18,,By discharge it is not close: about a fifth of all river water reaching the oceans. The Congo is second.
+200,The Gobi Desert lies in China and which other country?,Mongolia,Kazakhstan,Russia,Afghanistan,Nepal,Uzbekistan,Kyrgyzstan,,GEOGRAPHY_BATCH_1,2026-10-18,,
+200,Which South American desert is one of the driest places on Earth?,The Atacama,The Gobi,The Sahara,The Kalahari,The Namib,The Mojave,The Patagonian Desert,,GEOGRAPHY_BATCH_1,2026-10-18,,
+200,Which two countries share the longest international border in the world?,The United States and Canada,Russia and China,Russia and Kazakhstan,Chile and Argentina,China and Mongolia,India and Bangladesh,Brazil and Argentina,,GEOGRAPHY_BATCH_1,2026-10-18,,"Russia-Kazakhstan is second, Chile-Argentina third."
+200,What is the narrow strip of land joining North and South America called?,The Isthmus of Panama,The Isthmus of Suez,The Darién Gap,The Isthmus of Tehuantepec,The Panama Canal,The Bering Land Bridge,The Yucatán Peninsula,,PRIMARY_SCHOOL_FOLD_1,2026-10-18,,
+200,"What is a large group of islands, like Indonesia or the Philippines, called?",An archipelago,An atoll,A peninsula,An isthmus,A lagoon,A reef,A cay,,GEOGRAPHY_BATCH_1,2026-10-18,,
+200,In which country is the ancient rock-carved city of Petra?,Jordan,Egypt,Israel,Syria,Lebanon,Saudi Arabia,Iraq,,GEOGRAPHY_BATCH_1,2026-10-18,,
+200,"What is a long, narrow sea inlet between steep cliffs, carved by a glacier, called?",A fjord,An estuary,A lagoon,A strait,An atoll,A cove,A delta,,GEOGRAPHY_BATCH_1,2026-10-18,,
+300,Which city is the seat of Switzerland's federal government?,Bern,Zurich,Geneva,Basel,Lausanne,Lucerne,Lugano,,GEOGRAPHY_BATCH_1,2026-10-18,,"Worded as ""seat of government"": Swiss law names no official capital, and Bern is the ""federal city."""
+300,What is the capital of Pakistan?,Islamabad,Karachi,Lahore,Rawalpindi,Peshawar,Kabul,Quetta,,GEOGRAPHY_BATCH_1,2026-10-18,,
+300,Victoria Falls lies on which river?,The Zambezi,The Nile,The Congo,The Limpopo,The Orange,The Niger,The Okavango,,GEOGRAPHY_BATCH_1,2026-10-18,,
+300,What is the longest river in Europe?,The Volga,The Danube,The Rhine,The Dnieper,The Don,The Loire,The Elbe,,GEOGRAPHY_BATCH_1,2026-10-18,,
+300,What is the second-highest mountain in the world?,K2,Kangchenjunga,Lhotse,Makalu,Annapurna,Nanga Parbat,Mont Blanc,,GEOGRAPHY_BATCH_1,2026-10-18,,
+300,The Matterhorn sits on the border between Switzerland and which country?,Italy,France,Austria,Germany,Liechtenstein,Slovenia,Monaco,,GEOGRAPHY_BATCH_1,2026-10-18,,
+300,"Counting cold deserts, what is the largest desert on Earth?",Antarctica,The Sahara,The Arabian Desert,The Gobi,The Kalahari,The Great Victoria Desert,The Atacama,,GEOGRAPHY_BATCH_1,2026-10-18,,"A desert is defined by low precipitation, not heat. The Arctic is a close second, so it is left out of the wrong answers."
+300,What is the deepest lake in the world?,Lake Baikal,Lake Tanganyika,Crater Lake,Lake Superior,Loch Ness,Lake Malawi,Lake Titicaca,,GEOGRAPHY_BATCH_1,2026-10-18,,
+300,"Which lake, home to the Uros people's floating reed islands, lies about 3,800 meters above sea level?",Lake Titicaca,Lake Baikal,Lake Maracaibo,Lake Nicaragua,Lake Poopó,Lake Atitlán,Lake Junín,,GEOGRAPHY_BATCH_1,2026-10-18,,
+300,"Easter Island, famous for its giant stone heads, belongs to which country?",Chile,Peru,Argentina,France,New Zealand,Ecuador,Spain,,GEOGRAPHY_BATCH_1,2026-10-18,,
+300,"Which Himalayan kingdom measures its progress by ""Gross National Happiness""?",Bhutan,Nepal,Tibet,Sikkim,Mongolia,Laos,Myanmar,,GEOGRAPHY_BATCH_1,2026-10-18,,
+300,In which country is the temple complex of Angkor Wat?,Cambodia,Thailand,Laos,Vietnam,Myanmar,Indonesia,Malaysia,,GEOGRAPHY_BATCH_1,2026-10-18,,
+300,"Which is the world's largest lake by area, despite having ""sea"" in its name?",The Caspian Sea,Lake Superior,Lake Victoria,Lake Baikal,The Aral Sea,Lake Huron,Lake Tanganyika,,GEOGRAPHY_BATCH_1,2026-10-18,,"Lake Superior is the largest freshwater lake by area, the real mix-up."
+300,What is the deepest known part of the world's oceans?,The Mariana Trench,The Puerto Rico Trench,The Tonga Trench,The Java Trench,The Kuril Trench,The Kermadec Trench,The Philippine Trench,,GEOGRAPHY_BATCH_1,2026-10-18,,Its deepest point is the Challenger Deep.
+400,What is the capital of Morocco?,Rabat,Casablanca,Marrakesh,Fez,Tangier,Agadir,Meknes,,GEOGRAPHY_BATCH_1,2026-10-18,,
+400,What is the capital of Nigeria?,Abuja,Lagos,Kano,Ibadan,Port Harcourt,Accra,Benin City,,GEOGRAPHY_BATCH_1,2026-10-18,,Lagos was the capital until 1991.
+400,Which river flows through Baghdad?,The Tigris,The Euphrates,The Jordan,The Nile,The Indus,The Karun,The Orontes,,GEOGRAPHY_BATCH_1,2026-10-18,,
+400,What is the highest mountain in the Americas?,Aconcagua,Chimborazo,Huascarán,Ojos del Salado,Cotopaxi,Illimani,Mount Logan,,GEOGRAPHY_BATCH_1,2026-10-18,,
+400,What is the largest peninsula in the world?,The Arabian Peninsula,The Iberian Peninsula,The Scandinavian Peninsula,The Labrador Peninsula,The Kamchatka Peninsula,The Balkan Peninsula,The Malay Peninsula,,PRIMARY_SCHOOL_FOLD_1,2026-10-18,,
+400,Which country has more ancient pyramids than any other?,Sudan,Egypt,Mexico,Peru,Guatemala,Libya,Iraq,,GEOGRAPHY_BATCH_1,2026-10-18,,"Sudan has roughly 200-250 Nubian pyramids (Meroë and others), about twice Egypt's count. Counts vary but every source puts Sudan ahead of Egypt."
+400,"Which European country is one of only two in the world that are ""doubly landlocked""?",Liechtenstein,Switzerland,Andorra,Luxembourg,Austria,San Marino,Hungary,,GEOGRAPHY_BATCH_1,2026-10-18,,Surrounded only by landlocked countries (Switzerland and Austria). The other is Uzbekistan.
+400,What is the largest country lying entirely within Europe?,Ukraine,France,Spain,Germany,Sweden,Poland,Norway,,GEOGRAPHY_BATCH_1,2026-10-18,,Russia and Kazakhstan span two continents; metropolitan France is second.
+400,What is the smallest country in South America by area?,Suriname,Uruguay,Guyana,Ecuador,Paraguay,French Guiana,Belize,,GEOGRAPHY_BATCH_1,2026-10-18,,"French Guiana is part of France, not a country; Belize is in Central America."
+400,Which is the only Central American country without a Caribbean coastline?,El Salvador,Honduras,Guatemala,Nicaragua,Costa Rica,Panama,Belize,,GEOGRAPHY_BATCH_1,2026-10-18,,
+400,"Switzerland's four national languages are German, French, Italian and which other?",Romansh,Ladin,Latin,Flemish,Swiss German,Occitan,Walloon,,GEOGRAPHY_BATCH_1,2026-10-18,,
+400,"Ushuaia, often called the southernmost city in the world, is in which country?",Argentina,Chile,New Zealand,South Africa,Australia,Uruguay,The Falkland Islands,,GEOGRAPHY_BATCH_1,2026-10-18,,"""Often called"": Chile's Puerto Williams is farther south but much smaller."
+400,What is the tallest uninterrupted waterfall in the world?,Angel Falls,Victoria Falls,Niagara Falls,Iguazu Falls,Yosemite Falls,Kaieteur Falls,Sutherland Falls,,GEOGRAPHY_BATCH_1,2026-10-18,,"In Venezuela, about 979 m. Tugela Falls is sometimes claimed to be taller, so it is left out."
+400,What is the largest country in Africa by area?,Algeria,Sudan,Democratic Republic of the Congo,Libya,Egypt,Nigeria,Chad,,GEOGRAPHY_BATCH_1,2026-10-18,,Since South Sudan split off from Sudan in 2011.
+400,What is the world's largest and highest plateau?,The Tibetan Plateau,The Deccan Plateau,The Colorado Plateau,The Altiplano,The Ethiopian Highlands,The Iranian Plateau,The Mongolian Plateau,,PRIMARY_SCHOOL_FOLD_1,2026-10-18,,"Not called ""the Roof of the World"" here because the Pamirs share that nickname."
+400,The fabled desert city of Timbuktu is in which country?,Mali,Niger,Mauritania,Burkina Faso,Senegal,Chad,Morocco,,GEOGRAPHY_BATCH_1,2026-10-18,,

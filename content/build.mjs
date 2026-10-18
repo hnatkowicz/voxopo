@@ -143,5 +143,18 @@ if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.me
         fs.writeFileSync(path.join(DIR, 'sql', path.basename(file, '.csv') + '.sql'), categorySql(category, file, questions));
         console.log(`${file}: ${questions.length} live questions (${TIERS.map(t => `${t}: ${questions.filter(q => q.points === t).length}`).join(', ')}) -> content/sql/${path.basename(file, '.csv')}.sql`);
     }
+    // One file with every category, so a big batch of changes is one paste in
+    // Neon instead of one per sheet. Each category is still its own
+    // transaction, so a run cut short can simply be run again.
+    if (!failed) {
+        const parts = files.map(f => fs.readFileSync(path.join(DIR, 'sql', path.basename(f, '.csv') + '.sql'), 'utf8'));
+        fs.writeFileSync(path.join(DIR, 'sql', 'ALL_CATEGORIES.sql'), `-- ============================================================================
+-- content/sql/ALL_CATEGORIES.sql -- GENERATED, don't edit by hand.
+-- Every Thinking Pants category in content/, one after another (${files.length} files).
+-- Same as running each content/sql/<category>.sql. Safe to re-run.
+-- ============================================================================
+\n` + parts.join('\n'));
+        console.log(`all ${files.length} categories -> content/sql/ALL_CATEGORIES.sql`);
+    }
     process.exit(failed ? 1 : 0);
 }
