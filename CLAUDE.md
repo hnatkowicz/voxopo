@@ -224,7 +224,10 @@ Mode keys are used in room votes and in `gameEngine.js`:
   replaces the whole category. Rows are retired, not deleted. See
   `content/README.md` for the columns and which old SQL files a moved
   category supersedes. Moved so far: Movies & TV, Music, Literature (each folded in Pop Culture's
-  questions on that subject; Pop Culture itself is left alone). Categories
+  questions on that subject; Pop Culture itself is left alone), plus the
+  new **Word Nerd** (grown-up word trivia from Primary School's word
+  questions plus origins, odd words and spelling traps; Primary School is
+  left alone). Categories
   not moved yet still live in the root `.sql` files.
 - **Randy applies these by hand** in the Neon console. Content is the part of
   the codebase Randy works on directly, so keep it that way: Claude writes and

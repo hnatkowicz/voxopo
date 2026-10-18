@@ -786,6 +786,9 @@ const TRIVI_YEAH_II_CATEGORIES = [
     { key: 'JUST_IN_TIME', label: 'Just in Time' },
     { key: 'FICTIONAL_LOCATIONS', label: 'Fictional Locations' },
     { key: 'LYRICS', label: 'Lyrics' },
+    // Grown-up word trivia, folded from Trivi-yeah!'s Primary School word
+    // questions (Randy: pub-safe, not a laughing stock). content/word_nerd.csv.
+    { key: 'WORD_NERD', label: 'Word Nerd' },
     // Picture category: Randy's maps (public/maps/), shared with the Country
     // Monkey mode. 80 maps, 20 per tier (trivi_yeah_ii_country_monkey.sql).
     { key: 'COUNTRY_MONKEY', label: 'Country Monkey' },
