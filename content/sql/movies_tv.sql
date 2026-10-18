@@ -4,8 +4,8 @@
 -- Thinking Pants category MOVIES_TV. To change a question, change the
 -- spreadsheet and rebuild.
 --
--- Replaces the WHOLE category with the spreadsheet's 120 live questions
--- (100: 30, 200: 30, 300: 30, 400: 30), inside a transaction. Safe to re-run.
+-- Replaces the WHOLE category with the spreadsheet's 119 live questions
+-- (100: 30, 200: 29, 300: 30, 400: 30), inside a transaction. Safe to re-run.
 -- ============================================================================
 
 BEGIN;
@@ -136,10 +136,6 @@ VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YE
         'Steve Carell', ARRAY['Rainn Wilson', 'John Krasinski', 'Ed Helms'], 100);
 
 -- 200 points
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MOVIES_TV', 'ORIGINAL', NULL,
-        'Who directed the movie "Jaws"?', NULL,
-        'Steven Spielberg', ARRAY['George Lucas', 'Martin Scorsese', 'James Cameron', 'Ridley Scott', 'Francis Ford Coppola', 'Tim Burton'], 200);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MOVIES_TV', 'ORIGINAL', NULL,
         'What is the name of the fictional African nation in "Black Panther"?', NULL,
@@ -503,5 +499,5 @@ VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YE
 
 COMMIT;
 
--- Check: should return 120.
+-- Check: should return 119.
 SELECT COUNT(*) FROM questions WHERE game_mode = 'TRIVI_YEAH_II' AND category = 'MOVIES_TV';
