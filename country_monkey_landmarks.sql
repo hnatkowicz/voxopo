@@ -1,9 +1,9 @@
 -- ============================================================================
 -- Country Monkey: LANDMARK questions ("What is this landmark?") -- GENERATED
--- by content/landmarks_source.py from Randy's 91 photos in public/structures/.
+-- by content/landmarks_source.py from Randy's 100 photos in public/structures/.
 -- To change a landmark, edit that file and re-run it; don't edit this by hand.
 --
--- 96 rows: a landmark in a country that sits in two regions (Egypt,
+-- 106 rows: a landmark in a country that sits in two regions (Egypt,
 -- Turkiye, Pakistan) is in both, like that country's map. Points 100-250 by
 -- difficulty (100 = Eiffel Tower ... 250 = Turning Torso); the Final Wager
 -- draws from the 150s.
@@ -30,6 +30,7 @@ SELECT (SELECT COALESCE(MAX(question_number), 0) FROM questions) + ROW_NUMBER() 
 FROM (VALUES
 ('AFRICA',             '/structures/great-pyramids.webp',             'Great Pyramids of Giza',            ARRAY['Pyramid of Djoser', 'Chichen Itza', 'Pyramids of Meroë', 'Pyramid of the Sun', 'Temple of Karnak', 'Valley of the Kings'], ARRAY['Pyramids of Giza', 'Giza Pyramids', 'Great Pyramid of Giza', 'Great Pyramids', 'Pyramids'], 100),
 ('AFRICA',             '/structures/great-sphinx.webp',               'Great Sphinx of Giza',              ARRAY['Abu Simbel', 'Colossi of Memnon', 'Temple of Karnak', 'Avenue of Sphinxes', 'Mask of Tutankhamun', 'Temple of Luxor'], ARRAY['Sphinx', 'Great Sphinx', 'Sphinx of Giza'], 100),
+('AFRICA',             '/structures/victoria-falls.webp',             'Victoria Falls',                    ARRAY['Iguazu Falls', 'Niagara Falls', 'Angel Falls', 'Murchison Falls', 'Tugela Falls', 'Blue Nile Falls'], ARRAY['Mosi-oa-Tunya', 'Victoria Falls Zambezi'], 100),
 ('AMERICAS',           '/structures/christ-redeemer.webp',            'Christ the Redeemer',               ARRAY['Cristo Rei', 'Christ of the Abyss', 'Christ of the Ozarks', 'Cristo de la Concordia', 'Statue of Liberty', 'Christ the King'], ARRAY['Cristo Redentor', 'Christ the Redeemer statue'], 100),
 ('AMERICAS',           '/structures/golden-gate.webp',                'Golden Gate Bridge',                ARRAY['Brooklyn Bridge', 'Bay Bridge', '25 de Abril Bridge', 'Verrazzano-Narrows Bridge', 'Mackinac Bridge', 'Tower Bridge'], ARRAY['Golden Gate'], 100),
 ('AMERICAS',           '/structures/grand-canyon.webp',               'Grand Canyon',                      ARRAY['Bryce Canyon', 'Zion Canyon', 'Antelope Canyon', 'Copper Canyon', 'Fish River Canyon', 'Canyonlands'], NULL::text[], 100),
@@ -54,7 +55,9 @@ FROM (VALUES
 ('MIDDLE_EAST_ASIA',   '/structures/burj-khalifa.webp',               'Burj Khalifa',                      ARRAY['Kingdom Centre', 'Shanghai Tower', 'Taipei 101', 'Lotte World Tower', 'One World Trade Center', 'Burj Al Arab'], NULL::text[], 100),
 ('MIDDLE_EAST_ASIA',   '/structures/great-pyramids.webp',             'Great Pyramids of Giza',            ARRAY['Pyramid of Djoser', 'Chichen Itza', 'Pyramids of Meroë', 'Pyramid of the Sun', 'Temple of Karnak', 'Valley of the Kings'], ARRAY['Pyramids of Giza', 'Giza Pyramids', 'Great Pyramid of Giza', 'Great Pyramids', 'Pyramids'], 100),
 ('MIDDLE_EAST_ASIA',   '/structures/great-sphinx.webp',               'Great Sphinx of Giza',              ARRAY['Abu Simbel', 'Colossi of Memnon', 'Temple of Karnak', 'Avenue of Sphinxes', 'Mask of Tutankhamun', 'Temple of Luxor'], ARRAY['Sphinx', 'Great Sphinx', 'Sphinx of Giza'], 100),
+('AFRICA',             '/structures/abu-simbel.webp',                 'Abu Simbel',                        ARRAY['Temple of Karnak', 'Valley of the Kings', 'Great Sphinx of Giza', 'Temple of Hatshepsut', 'Petra', 'Colossi of Memnon'], ARRAY['Abu Simbel temples', 'Temple of Ramesses II'], 150),
 ('AFRICA',             '/structures/mt-kilimanjaro.webp',             'Mount Kilimanjaro',                 ARRAY['Mount Kenya', 'Mount Fuji', 'Mount Meru', 'Mount Stanley', 'Mount Elgon', 'Mount Cameroon'], ARRAY['Kilimanjaro', 'Mt Kilimanjaro'], 150),
+('AFRICA',             '/structures/table-mountain.webp',             'Table Mountain',                    ARRAY['Sugarloaf Mountain', 'Uluru', 'Mount Roraima', 'Kilimanjaro', 'Drakensberg', 'Lion''s Head'], ARRAY['Table Mountain Cape Town'], 150),
 ('AMERICAS',           '/structures/brooklyn-bridge.webp',            'Brooklyn Bridge',                   ARRAY['Manhattan Bridge', 'Williamsburg Bridge', 'Golden Gate Bridge', 'Tower Bridge', 'Clifton Suspension Bridge', 'Queensboro Bridge'], NULL::text[], 150),
 ('AMERICAS',           '/structures/chichen-itza.webp',               'Chichen Itza',                      ARRAY['Teotihuacan', 'Tikal', 'Palenque', 'Uxmal', 'Great Pyramid of Giza', 'Coba'], ARRAY['Chichén Itzá', 'El Castillo', 'Temple of Kukulcan'], 150),
 ('AMERICAS',           '/structures/easter-island.webp',              'Easter Island (Moai)',              ARRAY['Stonehenge', 'Mount Rushmore', 'Nan Madol', 'Göbekli Tepe', 'Carnac Stones', 'Tiwanaku'], ARRAY['Easter Island', 'Moai', 'Rapa Nui'], 150),
@@ -76,10 +79,15 @@ FROM (VALUES
 ('EUROPE',             '/structures/neuschwanstein-castle.webp',      'Neuschwanstein Castle',             ARRAY['Hohenzollern Castle', 'Bran Castle', 'Château de Chambord', 'Lichtenstein Castle', 'Eltz Castle', 'Pena Palace'], ARRAY['Neuschwanstein'], 150),
 ('EUROPE',             '/structures/notre-dame.webp',                 'Notre-Dame de Paris',               ARRAY['Reims Cathedral', 'Chartres Cathedral', 'Cologne Cathedral', 'Westminster Abbey', 'Sacré-Cœur', 'Milan Cathedral'], ARRAY['Notre Dame', 'Notre-Dame', 'Notre Dame Cathedral'], 150),
 ('EUROPE',             '/structures/parthenon.webp',                  'Parthenon',                         ARRAY['Pantheon', 'Temple of Hephaestus', 'Temple of Olympian Zeus', 'Erechtheion', 'Lincoln Memorial', 'Maison Carrée'], ARRAY['Acropolis'], 150),
+('MIDDLE_EAST_ASIA',   '/structures/abu-simbel.webp',                 'Abu Simbel',                        ARRAY['Temple of Karnak', 'Valley of the Kings', 'Great Sphinx of Giza', 'Temple of Hatshepsut', 'Petra', 'Colossi of Memnon'], ARRAY['Abu Simbel temples', 'Temple of Ramesses II'], 150),
 ('MIDDLE_EAST_ASIA',   '/structures/blue-mosque.webp',                'Blue Mosque',                       ARRAY['Hagia Sophia', 'Süleymaniye Mosque', 'Sheikh Zayed Grand Mosque', 'Badshahi Mosque', 'Faisal Mosque', 'Hassan II Mosque'], ARRAY['Sultan Ahmed Mosque', 'Sultanahmet Mosque'], 150),
 ('MIDDLE_EAST_ASIA',   '/structures/burj-alarab.webp',                'Burj Al Arab',                      ARRAY['Burj Khalifa', 'Atlantis The Palm', 'Kingdom Centre', 'Emirates Palace', 'Museum of the Future', 'Marina Bay Sands'], ARRAY['Burj al-Arab'], 150),
+('MIDDLE_EAST_ASIA',   '/structures/dome-rock.webp',                  'Dome of the Rock',                  ARRAY['Al-Aqsa Mosque', 'Hagia Sophia', 'Blue Mosque', 'Sheikh Zayed Grand Mosque', 'Imam Reza Shrine', 'Church of the Holy Sepulchre'], ARRAY['Qubbat as-Sakhra', 'Dome of the Rock Jerusalem'], 150),
 ('MIDDLE_EAST_ASIA',   '/structures/hagia-sophia.webp',               'Hagia Sophia',                      ARRAY['Blue Mosque', 'Süleymaniye Mosque', 'Pantheon', 'St. Basil''s Cathedral', 'Dome of the Rock', 'Florence Cathedral'], ARRAY['Aya Sofya', 'Ayasofya', 'Hagia Sofia'], 150),
 ('MIDDLE_EAST_ASIA',   '/structures/petra-landmark.webp',             'Petra',                             ARRAY['Persepolis', 'Palmyra', 'Abu Simbel', 'Mada’in Salih', 'Baalbek', 'Jerash'], ARRAY['Al-Deir', 'The Monastery, Petra'], 150),
+('MIDDLE_EAST_ASIA',   '/structures/sayed-mosque.webp',               'Sheikh Zayed Grand Mosque',         ARRAY['Taj Mahal', 'Blue Mosque', 'Hassan II Mosque', 'Faisal Mosque', 'Grand Mosque of Muscat', 'Al-Masjid an-Nabawi'], ARRAY['Sheikh Zayed Mosque', 'Grand Mosque Abu Dhabi', 'Abu Dhabi Grand Mosque'], 150),
+('AFRICA',             '/structures/dejennes-mosque.webp',            'Great Mosque of Djenné',            ARRAY['Djinguereber Mosque', 'Great Mosque of Kairouan', 'Larabanga Mosque', 'Sankore Mosque', 'Grand Mosque of Bobo-Dioulasso', 'Kasbah of Aït Benhaddou'], ARRAY['Djenne Mosque', 'Great Mosque of Djenne', 'Djenné Mosque'], 200),
+('AFRICA',             '/structures/hassan-ii-mosque.webp',           'Hassan II Mosque',                  ARRAY['Koutoubia Mosque', 'Sheikh Zayed Grand Mosque', 'Great Mosque of Kairouan', 'Blue Mosque', 'Faisal Mosque', 'Muhammad Ali Mosque'], ARRAY['Hassan 2 Mosque', 'Grande Mosquée Hassan II'], 200),
 ('AMERICAS',           '/structures/angel-falls.webp',                'Angel Falls',                       ARRAY['Iguazu Falls', 'Victoria Falls', 'Kaieteur Falls', 'Yosemite Falls', 'Niagara Falls', 'Tugela Falls'], ARRAY['Kerepakupai Merú', 'Salto Ángel'], 200),
 ('AMERICAS',           '/structures/cn-tower.webp',                   'CN Tower',                          ARRAY['Space Needle', 'Stratosphere Tower', 'Sky Tower', 'Ostankino Tower', 'Calgary Tower', 'Tower of the Americas'], ARRAY['CN Tower Toronto'], 200),
 ('AMERICAS',           '/structures/falling-water.webp',              'Fallingwater',                      ARRAY['Taliesin West', 'Robie House', 'Glass House', 'Farnsworth House', 'Villa Savoye', 'Gamble House'], ARRAY['Falling Water'], 200),
@@ -104,6 +112,8 @@ FROM (VALUES
 ('EUROPE',             '/structures/rialto-bridge.webp',              'Rialto Bridge',                     ARRAY['Ponte Vecchio', 'Bridge of Sighs', 'Charles Bridge', 'Pont Neuf', 'Stari Most', 'Accademia Bridge'], ARRAY['Ponte di Rialto', 'Rialto'], 200),
 ('EUROPE',             '/structures/the-shard.webp',                  'The Shard',                         ARRAY['The Gherkin', 'One Canada Square', 'Walkie-Talkie', 'Heron Tower', 'Commerzbank Tower', 'Torre Glòries'], ARRAY['Shard', 'Shard London Bridge'], 200),
 ('MIDDLE_EAST_ASIA',   '/structures/museum-future.webp',              'Museum of the Future',              ARRAY['Louvre Abu Dhabi', 'Burj Al Arab', 'Atlantis The Palm', 'Dubai Frame', 'Jewel Changi', 'Heydar Aliyev Center'], NULL::text[], 200),
+('MIDDLE_EAST_ASIA',   '/structures/persepolis.webp',                 'Persepolis',                        ARRAY['Pasargadae', 'Palmyra', 'Babylon', 'Petra', 'Baalbek', 'Nineveh'], ARRAY['Takht-e Jamshid', 'Gate of All Nations'], 200),
+('AFRICA',             '/structures/lalibela-church.webp',            'Rock Churches of Lalibela',         ARRAY['Petra', 'Aksum Obelisks', 'Abu Simbel', 'Göreme Open Air Museum', 'Ellora Caves', 'Debre Damo'], ARRAY['Lalibela', 'Church of St. George Lalibela', 'Bete Giyorgis'], 250),
 ('AMERICAS',           '/structures/flatiron-building.webp',          'Flatiron Building',                 ARRAY['Chrysler Building', 'Woolworth Building', 'Empire State Building', 'Wrigley Building', 'Gooderham Building', 'Singer Building'], ARRAY['Flatiron', 'Fuller Building'], 250),
 ('AMERICAS',           '/structures/fort-knox.webp',                  'Fort Knox',                         ARRAY['Federal Reserve Bank of New York', 'Pentagon', 'West Point', 'Fort Sumter', 'Area 51', 'US Mint, Philadelphia'], ARRAY['United States Bullion Depository', 'US Bullion Depository', 'Bullion Depository'], 250),
 ('AMERICAS',           '/structures/fort-mchenry.webp',               'Fort McHenry',                      ARRAY['Fort Sumter', 'Fort Ticonderoga', 'Fort Bourtange', 'Fort Monroe', 'Castillo de San Marcos', 'Fort Jefferson'], ARRAY['Fort McHenry National Monument'], 250),
@@ -128,5 +138,5 @@ FROM (VALUES
 
 COMMIT;
 
--- Check: should return 96.
+-- Check: should return 106.
 SELECT COUNT(*) FROM questions WHERE game_mode = 'COUNTRY_MONKEY' AND subcategory = 'LANDMARK';
