@@ -54,7 +54,8 @@ const sq = s => `'${String(s).replace(/'/g, "''")}'`;
 const isRetired = v => /^(y|yes|true|x|1)$/i.test((v || '').trim());
 // "The Lion King" vs "lion king": ignore case, a leading "The/A/An" and punctuation.
 // A minus sign before a number is kept, so -32 and 32 stay different answers.
-const core = s => s.toLowerCase().replace(/^(the|a|an)\s+/, '').replace(/-(?=\d)/g, 'minus ').replace(/[^a-z0-9 ]/g, '').trim();
+// "Homer's" counts as "Homer", so a possessive can't hide a give-away.
+const core = s => s.toLowerCase().replace(/['’]s\b/g, '').replace(/^(the|a|an)\s+/, '').replace(/-(?=\d)/g, 'minus ').replace(/[^a-z0-9 ]/g, '').trim();
 
 export function checkCategory(file, rows) {
     const problems = [], warnings = [];
