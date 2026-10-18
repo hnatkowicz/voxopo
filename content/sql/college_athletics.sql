@@ -394,7 +394,7 @@ VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YE
         'The Statue of Liberty', ARRAY['The Eiffel Tower', 'The Golden Gate Bridge', 'Mount Rushmore', 'The Lincoln Memorial', 'The Washington Monument', 'Lady Justice'], 400);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'COLLEGE_ATHLETICS', 'COLLEGE_ATHLETICS_BATCH_1', NULL,
-        'After a 49-0 blowout in the first Tournament of Roses football game in 1902, what replaced football there until 1916?', NULL,
+        'After a 49-0 blowout in the first Tournament of Roses football game in 1902, what became the big event there until football returned in 1916?', NULL,
         'Chariot races', ARRAY['Bicycle races', 'Rodeos', 'Baseball games', 'Track meets', 'Boxing matches', 'Soccer matches'], 400);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'COLLEGE_ATHLETICS', 'COLLEGE_ATHLETICS_BATCH_1', NULL,
