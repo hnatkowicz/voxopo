@@ -1,0 +1,84 @@
+# Rebuilds content/sql/ from the spreadsheets in content/ whenever one
+# changes, so Randy can upload an edited .csv through the GitHub web UI and
+# get the SQL to run in Neon without anyone running Node by hand.
+#
+# - Push to main: check the sheets, rebuild the SQL, commit it back.
+# - Pull request: check only (the PR should carry its own rebuilt SQL).
+# - Problems (a give-away, a missing tier, ...) fail the run with a red X,
+#   listed in plain words on the run's summary page, and nothing is saved.
+#
+# This never touches the database: running the SQL in Neon stays a person's job.
+name: Build content SQL
+
+on:
+  push:
+    branches: [main]
+    paths: ['content/*.csv', 'content/build.mjs']
+  pull_request:
+    paths: ['content/*.csv', 'content/build.mjs']
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+# Two quick uploads in a row: build them one after the other, not at once.
+concurrency:
+  group: build-content-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.ref }}
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Check the spreadsheets and build the SQL
+        run: node content/build.mjs | tee "$RUNNER_TEMP/build-output.txt"
+
+      - name: Explain the problems
+        if: failure()
+        run: |
+          {
+            echo '## A spreadsheet has problems, so no SQL was saved'
+            echo
+            echo 'Fix the rows named below (row numbers match the spreadsheet) and upload it again.'
+            echo
+            echo '```'
+            cat "$RUNNER_TEMP/build-output.txt"
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Save the rebuilt SQL
+        if: github.event_name != 'pull_request'
+        run: |
+          {
+            echo '## Spreadsheets checked'
+            echo
+            echo '```'
+            cat "$RUNNER_TEMP/build-output.txt"
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
+          git add content/sql
+          if git diff --cached --quiet; then
+            echo 'The SQL files were already up to date: nothing new to run in Neon.' >> "$GITHUB_STEP_SUMMARY"
+            exit 0
+          fi
+          changed=$(git diff --cached --name-only | sed 's/^/- /')
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git commit -q -m 'Rebuild content SQL from the spreadsheets' \
+            -m 'Automatic, by .github/workflows/build-content.yml.' \
+            -m "Changed:"$'\n'"$changed"
+          git pull -q --rebase origin "${GITHUB_REF_NAME}"
+          git push -q origin "HEAD:${GITHUB_REF_NAME}"
+          {
+            echo
+            echo '### New SQL to run in Neon'
+            echo "$changed"
+          } >> "$GITHUB_STEP_SUMMARY"

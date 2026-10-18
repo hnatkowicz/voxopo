@@ -221,7 +221,12 @@ Mode keys are used in room votes and in `gameEngine.js`:
   2026): `content/<category>.csv` is the master copy of a category, and
   `node content/build.mjs` checks every sheet (give-aways, duplicate
   choices, missing tiers) and generates `content/sql/<category>.sql`, which
-  replaces the whole category. Rows are retired, not deleted. See
+  replaces the whole category. A GitHub Action
+  (`.github/workflows/build-content.yml`) runs the build on every push to
+  `main` that touches a sheet and commits the SQL back, so Randy can upload
+  an edited `.csv` and get SQL without Claude; a red X lists the problems.
+  Claude still commits rebuilt SQL with its own sheet changes. Rows are
+  retired, not deleted. See
   `content/README.md` for the columns and which old SQL files a moved
   category supersedes. Moved so far: Movies & TV, Music, Literature (each folded in Pop Culture's
   questions on that subject; Pop Culture itself is left alone), plus the
