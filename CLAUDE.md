@@ -108,7 +108,8 @@ the emoji as a fallback until a file exists.
 Mode keys are used in room votes and in `gameEngine.js`:
 
 - **Game length:** Trivi-yeah! is 12 questions, matching Profiler's 12
-  rounds. Country Monkey is 15 (Randy's call once flags and water joined).
+  rounds. Country Monkey is 20 (15 once flags and water joined, 20 once it
+  grew into a standalone mode with 91 landmarks -- Randy, Oct 2026).
 - **TRIVI_YEAH** (Trivi-yeah!): multiple-choice trivia. Its rows are stored
   under `game_mode = 'TRIVIA'`, a legacy exception that is kept on purpose (see
   the mapping near the top of `gameEngine.js`).
@@ -141,12 +142,13 @@ Mode keys are used in room votes and in `gameEngine.js`:
   for one-off events (baby showers, etc.), so its general decks won't grow.
 - **COUNTRY_MONKEY**: a geography quiz for the geography nut, built from
   question *types* (the row's `subcategory`) mixed by `COUNTRY_MONKEY_MIX`
-  in `gameEngine.js`: 10 maps (`COUNTRY`), 2 flags (`FLAG`), 1 landmark
-  (`LANDMARK`), 2 water (`WATER`) per 15-question game -- Randy's starting
-  point was 10/3/2 ("my hunch is more countries"); one flag slot became a
-  landmark slot to test landmarks. Future types (capitals, landmarks, skylines) are a new
-  subcategory plus a number in the mix. A type a region lacks is topped up
-  with maps; a game never repeats an answer.
+  in `gameEngine.js`: 12 maps (`COUNTRY`), 3 flags (`FLAG`), 2 landmarks
+  (`LANDMARK`), 3 water (`WATER`) per 20-question game (the game's length
+  is the sum of the mix). History: Randy's 15-question start was 10/3/2
+  ("my hunch is more countries"), then a flag slot became a landmark test.
+  Future types (capitals, skylines) are a new subcategory plus a number in
+  the mix. A type a region lacks is topped up with maps; a game never
+  repeats an answer.
   - Maps: 1200x900 WebP (quality 85) in `public/maps/`, from one SVG master
     Randy keeps on his computer (only the WebPs go in the repo);
     `country_monkey_new_maps.sql`, 6 hand-picked wrong answers each
@@ -158,10 +160,13 @@ Mode keys are used in room votes and in `gameEngine.js`:
     are look-alike flags, never a near-twin (Chad/Romania, Monaco/Indonesia).
   - Water: `public/water/` (same recipe as the maps);
     `country_monkey_water.sql`, wrong answers of the same kind of water.
-  - Landmarks (a 15-photo test): `public/structures/` (photos, 3:2);
-    `country_monkey_landmarks.sql`. Asks for the landmark, not its country
-    (the country is nearly free points and would block that country's map).
-    Switching to "Which country is this in?" is a content edit.
+  - Landmarks: `public/structures/`, Randy's 91 photos of buildings and
+    natural wonders, 1500x1000 WebP (quality 85). `content/landmarks_source.py`
+    is the master list (answer, regions, difficulty 1-4, 6 look-alike wrong
+    answers, alternate names) and writes both `country_monkey_landmarks.sql`
+    and the Thinking Pants sheet `content/landmarks.csv`. Asks for the
+    landmark, not its country (the country is nearly free points and would
+    block that country's map). Africa (3) and the Middle East (9) are thin.
   - Each SQL file only replaces its own subcategory, so they run
     independently. 5 regions + World Wide (Africa, Europe, Asia & Pacific,
     Middle East, Americas); `WORLD` rows (UN, Antarctica) are World Wide only.
@@ -194,9 +199,10 @@ Mode keys are used in room votes and in `gameEngine.js`:
   + `profiler_questions_batch_2.sql`), balanced 100/100/100 across
   intensity 1/2/3 because each game cycles light -> medium -> deep.
 - **Thinking Pants geography categories:** Country Monkey (maps), **Flag Me
-  Down** (flags, `trivi_yeah_ii_flag_me_down.sql`, 80) and **Wet Pants**
-  (water, `trivi_yeah_ii_wet_pants.sql`, 48) -- the cross-play with Country
-  Monkey is deliberate.
+  Down** (flags, `trivi_yeah_ii_flag_me_down.sql`, 80), **Wet Pants**
+  (water, `trivi_yeah_ii_wet_pants.sql`, 48) and **Wish You Were Here**
+  (landmarks, `content/landmarks.csv`, 91; a postcard name because it has
+  natural wonders too) -- the cross-play with Country Monkey is deliberate.
 - **FLAG_ME_DOWN** (also a standalone mode, after the family asked where it
   went): 15 flags, 5 easy -> 5 medium -> 5 hard, each with 4 country choices
   (1 wrong answer from the same local region, 2 from the same continent).
