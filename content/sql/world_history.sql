@@ -4,8 +4,8 @@
 -- Thinking Pants category WORLD_HISTORY. To change a question, change the
 -- spreadsheet and rebuild.
 --
--- Replaces the WHOLE category with the spreadsheet's 80 live questions
--- (100: 20, 200: 20, 300: 20, 400: 20), inside a transaction. Safe to re-run.
+-- Replaces the WHOLE category with the spreadsheet's 75 live questions
+-- (100: 17, 200: 20, 300: 20, 400: 18), inside a transaction. Safe to re-run.
 -- ============================================================================
 
 BEGIN;
@@ -38,14 +38,6 @@ INSERT INTO questions (question_number, game_mode, category, subcategory, factio
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORLD_HISTORY', 'ORIGINAL', NULL,
         'Which ship famously sank in the North Atlantic after hitting an iceberg in 1912?', NULL,
         'The Titanic', ARRAY['The Lusitania', 'The Britannic', 'The Queen Mary', 'The Olympic', 'The Carpathia', 'The Andrea Doria'], 100);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORLD_HISTORY', 'ORIGINAL', NULL,
-        'Who was the first man to walk on the Moon?', NULL,
-        'Neil Armstrong', ARRAY['Buzz Aldrin', 'Yuri Gagarin', 'John Glenn', 'Michael Collins', 'Alan Shepard', 'Jim Lovell'], 100);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORLD_HISTORY', 'ORIGINAL', NULL,
-        'Which country gifted the Statue of Liberty to the United States?', NULL,
-        'France', ARRAY['England', 'Spain', 'Italy', 'Netherlands', 'Belgium', 'Portugal'], 100);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORLD_HISTORY', 'ORIGINAL', NULL,
         'In which city would you find the ancient Colosseum?', NULL,
@@ -90,10 +82,6 @@ INSERT INTO questions (question_number, game_mode, category, subcategory, factio
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORLD_HISTORY', 'WORLD_HISTORY_BATCH_1', NULL,
         'The Vikings set out from which part of Europe?', NULL,
         'Scandinavia', ARRAY['The British Isles', 'The Iberian Peninsula', 'The Balkans', 'The Low Countries', 'Central Europe', 'The Baltic states'], 100);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORLD_HISTORY', 'WORLD_HISTORY_BATCH_1', NULL,
-        'Which British nurse, "the Lady with the Lamp," cared for soldiers in the Crimean War?', NULL,
-        'Florence Nightingale', ARRAY['Mary Seacole', 'Clara Barton', 'Edith Cavell', 'Elizabeth Fry', 'Dorothea Dix', 'Elsie Inglis'], 100);
 
 -- 200 points
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
@@ -294,10 +282,6 @@ VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YE
         'Operation Dynamo', ARRAY['Operation Overlord', 'Operation Sea Lion', 'Operation Torch', 'Operation Market Garden', 'Operation Cobra', 'Operation Husky'], 400);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORLD_HISTORY', 'WORLD_HISTORY_BATCH_1', NULL,
-        'Which Chinese emperor was buried with the Terracotta Army?', NULL,
-        'Qin Shi Huang', ARRAY['Kublai Khan', 'Emperor Wu of Han', 'Emperor Taizong of Tang', 'The Yongle Emperor', 'The Hongwu Emperor', 'Puyi'], 400);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORLD_HISTORY', 'WORLD_HISTORY_BATCH_1', NULL,
         'Which 1868 event returned power from the shogun to Japan''s emperor?', NULL,
         'The Meiji Restoration', ARRAY['The Taika Reform', 'The Kenmu Restoration', 'The Tokugawa Shogunate', 'The Sengoku Period', 'The Taisho Democracy', 'The Edo Period'], 400);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
@@ -334,14 +318,10 @@ VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YE
         'Tunisia', ARRAY['Libya', 'Algeria', 'Morocco', 'Egypt', 'Lebanon', 'Malta'], 400);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORLD_HISTORY', 'WORLD_HISTORY_BATCH_1', NULL,
-        'Which ancient city, carved into rose-red rock in Jordan, was the capital of the Nabataeans?', NULL,
-        'Petra', ARRAY['Palmyra', 'Jerash', 'Byblos', 'Persepolis', 'Baalbek', 'Ctesiphon'], 400);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORLD_HISTORY', 'WORLD_HISTORY_BATCH_1', NULL,
         'Whose 1768-71 voyage on HMS Endeavour charted the east coast of Australia?', NULL,
         'James Cook', ARRAY['Abel Tasman', 'Matthew Flinders', 'William Bligh', 'William Dampier', 'George Vancouver', 'Joseph Banks'], 400);
 
 COMMIT;
 
--- Check: should return 80.
+-- Check: should return 75.
 SELECT COUNT(*) FROM questions WHERE game_mode = 'TRIVI_YEAH_II' AND category = 'WORLD_HISTORY';

@@ -4,8 +4,8 @@
 -- Thinking Pants category TECHNOLOGY. To change a question, change the
 -- spreadsheet and rebuild.
 --
--- Replaces the WHOLE category with the spreadsheet's 70 live questions
--- (100: 19, 200: 17, 300: 16, 400: 18), inside a transaction. Safe to re-run.
+-- Replaces the WHOLE category with the spreadsheet's 66 live questions
+-- (100: 19, 200: 15, 300: 15, 400: 17), inside a transaction. Safe to re-run.
 -- ============================================================================
 
 BEGIN;
@@ -142,16 +142,8 @@ VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YE
         'Enigma', ARRAY['Colossus', 'Bombe', 'Purple', 'Sigaba', 'Typex', 'Hagelin'], 200);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'TECHNOLOGY', 'TECHNOLOGY_BATCH_1', NULL,
-        'Which 1972 Atari arcade hit was a simple version of table tennis?', NULL,
-        'Pong', ARRAY['Breakout', 'Asteroids', 'Space Invaders', 'Computer Space', 'Tennis for Two', 'Paddle Ball'], 200);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'TECHNOLOGY', 'TECHNOLOGY_BATCH_1', NULL,
         'Which code of dots and dashes was used to send telegraph messages?', NULL,
         'Morse code', ARRAY['Binary code', 'Braille', 'Semaphore', 'Bar code', 'Navajo code', 'Q code'], 200);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'TECHNOLOGY', 'TECHNOLOGY_BATCH_1', NULL,
-        'Which chess computer beat world champion Garry Kasparov in a six-game match in 1997?', NULL,
-        'Deep Blue', ARRAY['Watson', 'AlphaGo', 'HAL 9000', 'Deep Thought', 'Big Blue', 'Stockfish'], 200);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'TECHNOLOGY', 'TECHNOLOGY_BATCH_1', NULL,
         'Which social network had a little blue bird as its logo before it was renamed X in 2023?', NULL,
@@ -190,10 +182,6 @@ INSERT INTO questions (question_number, game_mode, category, subcategory, factio
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'TECHNOLOGY', 'TECHNOLOGY_BATCH_1', NULL,
         'What does the Turing test check?', NULL,
         'Whether a machine can pass for a human', ARRAY['How fast a computer can calculate', 'Whether a code can be cracked', 'How long a battery lasts', 'Whether a program has bugs', 'How much data a chip can store', 'Whether a network is secure'], 300);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'TECHNOLOGY', 'TECHNOLOGY_BATCH_1', NULL,
-        'Who is often called the first computer programmer, for her 1843 notes on a planned mechanical computer?', NULL,
-        'Ada Lovelace', ARRAY['Grace Hopper', 'Margaret Hamilton', 'Mary Somerville', 'Mary Shelley', 'Katherine Johnson', 'Marie Curie'], 300);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'TECHNOLOGY', 'TECHNOLOGY_BATCH_1', NULL,
         'Gordon Moore and Robert Noyce co-founded which chipmaker in 1968?', NULL,
@@ -294,14 +282,10 @@ VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YE
         'Smartphone', ARRAY['Laptop', 'Tablet', 'Smartwatch', 'Pager', 'E-reader', 'Flip phone'], 400);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'TECHNOLOGY', 'TECHNOLOGY_BATCH_1', NULL,
-        'Which engineer sent the first email between computers in 1971 and picked the @ sign for addresses?', NULL,
-        'Ray Tomlinson', ARRAY['Tim Berners-Lee', 'Vint Cerf', 'Bob Kahn', 'Douglas Engelbart', 'Marc Andreessen', 'Larry Roberts'], 400);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'TECHNOLOGY', 'TECHNOLOGY_BATCH_1', NULL,
         'Amazon was first incorporated in 1994 under which name, dropped because it sounded like ''cadaver''?', NULL,
         'Cadabra', ARRAY['Relentless', 'Bookshelf', 'BookStack', 'Bookworld', 'Zon', 'Bezos Books'], 400);
 
 COMMIT;
 
--- Check: should return 70.
+-- Check: should return 66.
 SELECT COUNT(*) FROM questions WHERE game_mode = 'TRIVI_YEAH_II' AND category = 'TECHNOLOGY';

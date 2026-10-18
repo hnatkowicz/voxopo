@@ -60,6 +60,11 @@ twice in a category).
 Each generated SQL file **replaces the whole category**, inside a
 transaction, so it's safe to re-run. It ends with a count to check.
 
+`content/sql/ALL_CATEGORIES.sql` is every category in one file: handy
+after a big batch of changes. It shows one count per category at the end.
+If the Neon console balks at its size, run the single files instead;
+anything already run is fine to run again.
+
 ## Which categories live here
 
 Every Thinking Pants **text** category: Art & Architecture, Astronomy &

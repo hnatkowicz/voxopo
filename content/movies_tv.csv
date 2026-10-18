@@ -2,7 +2,7 @@
 100,"In ""The Wizard of Oz,"" what color are the shoes Dorothy wears?",Ruby red,Emerald green,Golden yellow,Silver,Sapphire blue,Bronze,Pearl white,,ORIGINAL,,,
 100,"In ""Finding Nemo,"" what kind of fish are Nemo and his dad, Marlin?",Clownfish,Blue tang,Pufferfish,Angelfish,Goldfish,Seahorse,Swordfish,,ORIGINAL,,,"Rewritten Oct 2026: the old version (""name of the clownfish in Finding Nemo"") gave away its answer."
 100,"Which superhero is also known as the ""Man of Steel""?",Superman,Batman,Thor,Iron Man,The Flash,Green Lantern,Aquaman,,ORIGINAL,,,
-100,"What is the name of the coffee shop the friends hang out at in ""Friends""?",Central Perk,The Grind,Common Grounds,Java Joe's,The Daily Grind,Perk Place,Bean There,,ORIGINAL,,,
+100,"What is the name of the coffee shop the friends hang out at in ""Friends""?",Central Perk,The Grind,Common Grounds,Java Joe's,The Daily Grind,Perk Place,Bean There,,ORIGINAL,,yes,Retired Oct 2026: same fact as a Fictional Locations question.
 100,"In ""Star Wars,"" what is the name of Luke Skywalker's home planet?",Tatooine,Naboo,Alderaan,Hoth,Coruscant,Endor,Dagobah,,ORIGINAL,,,
 100,"What is the name of the toy cowboy in the ""Toy Story"" movies?",Woody,Buzz,Rex,Hamm,Slinky,Jessie,Lenny,,ORIGINAL,,,
 100,"In ""The Lion King,"" what is the name of Simba's father?",Mufasa,Scar,Zazu,Pumbaa,Rafiki,Timon,Sarabi,,ORIGINAL,,,
@@ -30,7 +30,7 @@
 100,"Which actor played Ross Geller in ""Friends""?",David Schwimmer,Matthew Perry,Matt LeBlanc,Paul Rudd,,,,,POP_CULTURE_FOLD_1,2026-10-18,,
 100,"Which actor played Michael Scott in the American version of ""The Office""?",Steve Carell,Rainn Wilson,John Krasinski,Ed Helms,,,,,POP_CULTURE_FOLD_1,2026-10-18,,
 200,"Who directed the movie ""Jaws""?",Steven Spielberg,George Lucas,Martin Scorsese,James Cameron,Ridley Scott,Francis Ford Coppola,Tim Burton,,ORIGINAL,,yes,"Retired Oct 2026: same answer as the 300 Spielberg question, which also mentions Jaws."
-200,"What is the name of the fictional African nation in ""Black Panther""?",Wakanda,Zamunda,Genosha,Latveria,Sokovia,Madripoor,Attilan,,ORIGINAL,,,
+200,"What is the name of the fictional African nation in ""Black Panther""?",Wakanda,Zamunda,Genosha,Latveria,Sokovia,Madripoor,Attilan,,ORIGINAL,,yes,Retired Oct 2026: same fact as a Fictional Locations question.
 200,"In ""Breaking Bad,"" what is Walter White's criminal alias?",Heisenberg,Saul,Jesse,Gus,Hank,Skyler,Mike,,ORIGINAL,,,
 200,"Which actor played Jack Dawson in ""Titanic""?",Leonardo DiCaprio,Brad Pitt,Matt Damon,Tom Cruise,Johnny Depp,Matthew McConaughey,Ben Affleck,,ORIGINAL,,,
 200,What is the name of the wizarding school in the Harry Potter series?,Hogwarts,Durmstrang,Beauxbatons,Ilvermorny,Hogsmeade,Azkaban,Diagon,,ORIGINAL,,,
@@ -38,7 +38,7 @@
 200,"In ""The Office"" (US), what company does the Scranton branch work for?",Dunder Mifflin,Vance Refrigeration,Prince Family Paper,Staples,Michael Scott Paper Company,Sabre,Athlead,,ORIGINAL,,,
 200,Which movie features a shark terrorizing the fictional town of Amity Island?,Jaws,Deep Blue Sea,The Meg,Open Water,Sharknado,47 Meters Down,Piranha,,ORIGINAL,,,
 200,"Who played the title role in ""Forrest Gump""?",Tom Hanks,Tom Cruise,Kevin Costner,Robin Williams,Bill Murray,Dustin Hoffman,Michael Keaton,,ORIGINAL,,,
-200,"What is the name of the fictional kingdom in ""Frozen""?",Arendelle,Corona,Agrabah,DunBroch,Motunui,San Fransokyo,Genovia,,ORIGINAL,,,
+200,"What is the name of the fictional kingdom in ""Frozen""?",Arendelle,Corona,Agrabah,DunBroch,Motunui,San Fransokyo,Genovia,,ORIGINAL,,yes,Retired Oct 2026: same fact as a Fictional Locations question.
 200,"Which actor played Rick Blaine in ""Casablanca""?",Humphrey Bogart,Cary Grant,Clark Gable,James Stewart,,,,,POP_CULTURE_FOLD_1,2026-10-18,,
 200,"Which actor was the first to play James Bond in a film, starting in 1962?",Sean Connery,Roger Moore,David Niven,George Lazenby,,,,,POP_CULTURE_FOLD_1,2026-10-18,,
 200,"Which director made ""2001: A Space Odyssey"" and ""The Shining""?",Stanley Kubrick,Ridley Scott,Francis Ford Coppola,Brian De Palma,,,,,POP_CULTURE_FOLD_1,2026-10-18,,
@@ -53,12 +53,12 @@
 200,"Which actor played Severus Snape in the ""Harry Potter"" films?",Alan Rickman,Gary Oldman,Ralph Fiennes,Michael Gambon,,,,,POP_CULTURE_FOLD_1,2026-10-18,,
 200,"In ""Back to the Future,"" how fast must the DeLorean go to travel through time?",88 miles per hour,55 miles per hour,100 miles per hour,121 miles per hour,,,,,POP_CULTURE_FOLD_1,2026-10-18,,
 200,Which 1984 film features a mischievous creature named Gizmo?,Gremlins,The Goonies,Labyrinth,Critters,,,,,POP_CULTURE_FOLD_1,2026-10-18,,
-200,What is the name of Harry Potter's snowy owl?,Hedwig,Errol,Pigwidgeon,Fawkes,,,,,POP_CULTURE_FOLD_1,2026-10-18,,
+200,What is the name of Harry Potter's snowy owl?,Hedwig,Errol,Pigwidgeon,Fawkes,,,,,POP_CULTURE_FOLD_1,2026-10-18,yes,Retired Oct 2026: same fact as a Literature question.
 200,Which Pixar film follows a rat who dreams of becoming a chef in Paris?,Ratatouille,Flushed Away,The Tale of Despereaux,Stuart Little,,,,,POP_CULTURE_FOLD_1,2026-10-18,,
 200,"Which actor played Captain Kirk in the original ""Star Trek"" series?",William Shatner,Leonard Nimoy,Patrick Stewart,DeForest Kelley,,,,,POP_CULTURE_FOLD_1,2026-10-18,,
 200,"Which game show asked contestants, ""Is that your final answer?""",Who Wants to Be a Millionaire,Jeopardy!,The Weakest Link,Deal or No Deal,,,,,POP_CULTURE_FOLD_1,2026-10-18,,
 200,"In ""Stranger Things,"" what is the dark alternate dimension called?",The Upside Down,The Nether,The Shadow Realm,The Other Side,,,,,POP_CULTURE_FOLD_1,2026-10-18,,
-200,"Which sitcom is set in a Boston bar ""where everybody knows your name""?",Cheers,Frasier,Wings,Taxi,,,,,POP_CULTURE_FOLD_1,2026-10-18,,
+200,"Which sitcom is set in a Boston bar ""where everybody knows your name""?",Cheers,Frasier,Wings,Taxi,,,,,POP_CULTURE_FOLD_1,2026-10-18,yes,Retired Oct 2026: same fact as a Fictional Locations question.
 300,Which movie won the Academy Award for Best Picture for 1994?,Forrest Gump,Pulp Fiction,The Shawshank Redemption,Speed,The Lion King,Dumb and Dumber,True Lies,,ORIGINAL,,,
 300,"Who composed the musical score for the original ""Star Wars"" trilogy?",John Williams,Hans Zimmer,John Barry,Alan Silvestri,Danny Elfman,Howard Shore,James Horner,,ORIGINAL,,,
 300,"What is the name of the AI antagonist in ""2001: A Space Odyssey""?",HAL 9000,Skynet,GLaDOS,Ultron,VIKI,Ava,Samantha,,ORIGINAL,,,
@@ -89,8 +89,8 @@
 300,"Which actor played Jack Bauer in ""24""?",Kiefer Sutherland,Dennis Haysbert,Gary Sinise,Michael Chiklis,,,,,POP_CULTURE_FOLD_1,2026-10-18,,
 300,"Which actor played Archie Bunker in ""All in the Family""?",Carroll O'Connor,Jackie Gleason,Ed Asner,Norman Lear,,,,,POP_CULTURE_FOLD_1,2026-10-18,,
 300,"Which actor played J.R. Ewing in ""Dallas""?",Larry Hagman,Patrick Duffy,Tom Selleck,Burt Reynolds,,,,,POP_CULTURE_FOLD_1,2026-10-18,,
-400,What was the first full-length cel-animated feature film ever released?,Snow White and the Seven Dwarfs,Pinocchio,Fantasia,Bambi,Cinderella,Dumbo,Steamboat Willie,,ORIGINAL,,,
-400,"Which film is considered the first ""talkie"" to bring sound to Hollywood?",The Jazz Singer,Metropolis,The Birth of a Nation,Sunrise,Wings,City Lights,Nosferatu,,ORIGINAL,,,
+400,What was the first full-length cel-animated feature film ever released?,Snow White and the Seven Dwarfs,Pinocchio,Fantasia,Bambi,Cinderella,Dumbo,Steamboat Willie,,ORIGINAL,,yes,Retired Oct 2026: same fact as a Famous Firsts question.
+400,"Which film is considered the first ""talkie"" to bring sound to Hollywood?",The Jazz Singer,Metropolis,The Birth of a Nation,Sunrise,Wings,City Lights,Nosferatu,,ORIGINAL,,yes,Retired Oct 2026: same fact as a Famous Firsts question.
 400,"Who directed ""Citizen Kane""?",Orson Welles,Alfred Hitchcock,Billy Wilder,John Ford,Frank Capra,Howard Hawks,William Wyler,,ORIGINAL,,,
 400,"What 1988 film extensively blended live action with animated characters, including Roger Rabbit?",Who Framed Roger Rabbit,Mary Poppins,Space Jam,Cool World,Pete's Dragon,Bedknobs and Broomsticks,Enchanted,,ORIGINAL,,,
 400,Which actress holds the record for the most competitive (non-honorary) acting Academy Awards?,Katharine Hepburn,Meryl Streep,Bette Davis,Ingrid Bergman,Frances McDormand,Jane Fonda,Elizabeth Taylor,,ORIGINAL,,,
@@ -112,7 +112,7 @@
 400,"What is the name of the spaceship in the 1979 film ""Alien""?",The Nostromo,The Sulaco,The Prometheus,Discovery One,,,,,POP_CULTURE_FOLD_1,2026-10-18,,
 400,"Which company employs Ripley and her crew in the ""Alien"" films?",Weyland-Yutani,Tyrell Corporation,Cyberdyne Systems,Omni Consumer Products,,,,,POP_CULTURE_FOLD_1,2026-10-18,,
 400,Which 2004 film follows two friends on a wine-tasting road trip through California?,Sideways,Bottle Shock,A Good Year,French Kiss,,,,,POP_CULTURE_FOLD_1,2026-10-18,,
-400,Which show has broadcast live from Studio 8H at 30 Rockefeller Plaza since 1975?,Saturday Night Live,The Tonight Show,Late Night,The Today Show,,,,,POP_CULTURE_FOLD_1,2026-10-18,,
+400,Which show has broadcast live from Studio 8H at 30 Rockefeller Plaza since 1975?,Saturday Night Live,The Tonight Show,Late Night,The Today Show,,,,,POP_CULTURE_FOLD_1,2026-10-18,yes,Retired Oct 2026: same fact as a Famous (K)nights question.
 400,"Which actress played Blanche Devereaux on ""The Golden Girls""?",Rue McClanahan,Betty White,Bea Arthur,Estelle Getty,,,,,POP_CULTURE_FOLD_1,2026-10-18,,
 400,"Which actor played Batman in the 1960s ""Batman"" TV series?",Adam West,Burt Ward,George Reeves,Lyle Waggoner,,,,,POP_CULTURE_FOLD_1,2026-10-18,,
 400,Which actor played MacGyver?,Richard Dean Anderson,Tom Selleck,Lee Majors,David Hasselhoff,,,,,POP_CULTURE_FOLD_1,2026-10-18,,

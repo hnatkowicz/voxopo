@@ -4,8 +4,8 @@
 -- Thinking Pants category ASTRONOMY_SPACE. To change a question, change the
 -- spreadsheet and rebuild.
 --
--- Replaces the WHOLE category with the spreadsheet's 69 live questions
--- (100: 16, 200: 18, 300: 18, 400: 17), inside a transaction. Safe to re-run.
+-- Replaces the WHOLE category with the spreadsheet's 64 live questions
+-- (100: 15, 200: 18, 300: 16, 400: 15), inside a transaction. Safe to re-run.
 -- ============================================================================
 
 BEGIN;
@@ -58,10 +58,6 @@ INSERT INTO questions (question_number, game_mode, category, subcategory, factio
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'ASTRONOMY_SPACE', 'ASTRONOMY_SPACE_BATCH_1', NULL,
         'Who was the second person to walk on the Moon?', NULL,
         'Buzz Aldrin', ARRAY['Michael Collins', 'Pete Conrad', 'John Glenn', 'Alan Bean', 'Jim Lovell', 'Alan Shepard'], 100);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'ASTRONOMY_SPACE', 'ASTRONOMY_SPACE_BATCH_1', NULL,
-        'Who was the first human in space, in 1961?', NULL,
-        'Yuri Gagarin', ARRAY['Alan Shepard', 'John Glenn', 'Neil Armstrong', 'Alexei Leonov', 'Valentina Tereshkova', 'Gherman Titov'], 100);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'ASTRONOMY_SPACE', 'ASTRONOMY_SPACE_BATCH_1', NULL,
         'Which orbiting laboratory, first crewed in 2000, is run by the U.S., Russia, Europe, Japan and Canada?', NULL,
@@ -168,10 +164,6 @@ VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YE
         'Cosmic microwave background radiation', ARRAY['Dark matter', 'Gamma-ray bursts', 'Solar wind', 'Cosmic rays', 'Hawking radiation', 'Gravitational waves'], 300);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'ASTRONOMY_SPACE', 'ASTRONOMY_SPACE_BATCH_1', NULL,
-        'Who was the first woman in space, in 1963?', NULL,
-        'Valentina Tereshkova', ARRAY['Svetlana Savitskaya', 'Sally Ride', 'Yelena Serova', 'Mae Jemison', 'Eileen Collins', 'Helen Sharman'], 300);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'ASTRONOMY_SPACE', 'ASTRONOMY_SPACE_BATCH_1', NULL,
         'Which planet rolls around the Sun on its side, its axis tipped about 98 degrees?', NULL,
         'Uranus', ARRAY['Neptune', 'Saturn', 'Jupiter', 'Venus', 'Mars', 'Mercury'], 300);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
@@ -186,10 +178,6 @@ INSERT INTO questions (question_number, game_mode, category, subcategory, factio
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'ASTRONOMY_SPACE', 'ASTRONOMY_SPACE_BATCH_1', NULL,
         'What is the largest moon in the solar system?', NULL,
         'Ganymede', ARRAY['Titan', 'Callisto', 'Io', 'Europa', 'Triton', 'The Moon'], 300);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'ASTRONOMY_SPACE', 'ASTRONOMY_SPACE_BATCH_1', NULL,
-        'What was the name of the dog who became the first animal to orbit Earth, in 1957?', NULL,
-        'Laika', ARRAY['Belka', 'Strelka', 'Ham', 'Albert', 'Félicette', 'Zvezdochka'], 300);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'ASTRONOMY_SPACE', 'ASTRONOMY_SPACE_BATCH_1', NULL,
         'What was the name of the first crewed lunar module to land on the Moon, in July 1969?', NULL,
@@ -234,10 +222,6 @@ VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YE
         'Perihelion', ARRAY['Aphelion', 'Apogee', 'Perigee', 'Zenith', 'Equinox', 'Solstice'], 400);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'ASTRONOMY_SPACE', 'ORIGINAL', NULL,
-        'Which 1977 NASA probe became the first human-made object to leave the solar system''s heliosphere and enter interstellar space?', NULL,
-        'Voyager 1', ARRAY['Voyager 2', 'Pioneer 10', 'New Horizons', 'Cassini', 'Galileo', 'Juno'], 400);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'ASTRONOMY_SPACE', 'ORIGINAL', NULL,
         'Which NASA mathematician, played by Taraji P. Henson in "Hidden Figures," checked the orbital math for the first American to orbit Earth?', NULL,
         'Katherine Johnson', ARRAY['Sally Ride', 'Mae Jemison', 'Margaret Hamilton', 'Valentina Tereshkova', 'Nancy Grace Roman', 'Dorothy Vaughan'], 400);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
@@ -274,10 +258,6 @@ VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YE
         'Skylab', ARRAY['Mir', 'Salyut 7', 'Tiangong-1', 'Spacelab', 'Columbia', 'Space Station Freedom'], 400);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'ASTRONOMY_SPACE', 'ASTRONOMY_SPACE_BATCH_1', NULL,
-        'Who made the first spacewalk, in 1965?', NULL,
-        'Alexei Leonov', ARRAY['Ed White', 'Yuri Gagarin', 'Gherman Titov', 'Valentina Tereshkova', 'Buzz Aldrin', 'Vladimir Komarov'], 400);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'ASTRONOMY_SPACE', 'ASTRONOMY_SPACE_BATCH_1', NULL,
         'Which moon is the most volcanically active body in the solar system?', NULL,
         'Io', ARRAY['Europa', 'Ganymede', 'Callisto', 'Titan', 'Enceladus', 'Triton'], 400);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
@@ -299,5 +279,5 @@ VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YE
 
 COMMIT;
 
--- Check: should return 69.
+-- Check: should return 64.
 SELECT COUNT(*) FROM questions WHERE game_mode = 'TRIVI_YEAH_II' AND category = 'ASTRONOMY_SPACE';

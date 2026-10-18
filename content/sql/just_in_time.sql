@@ -4,8 +4,8 @@
 -- Thinking Pants category JUST_IN_TIME. To change a question, change the
 -- spreadsheet and rebuild.
 --
--- Replaces the WHOLE category with the spreadsheet's 68 live questions
--- (100: 17, 200: 19, 300: 16, 400: 16), inside a transaction. Safe to re-run.
+-- Replaces the WHOLE category with the spreadsheet's 66 live questions
+-- (100: 17, 200: 18, 300: 15, 400: 16), inside a transaction. Safe to re-run.
 -- ============================================================================
 
 BEGIN;
@@ -118,10 +118,6 @@ VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YE
         'A Time-Turner', ARRAY['A Remembrall', 'A Portkey', 'A Pensieve', 'A Sneakoscope', 'A Deluminator', 'A Horcrux'], 200);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'JUST_IN_TIME', 'JUST_IN_TIME_BATCH_1', NULL,
-        'Which imaginary line in the Pacific, roughly following 180 degrees longitude, is where the calendar day changes?', NULL,
-        'The International Date Line', ARRAY['The Prime Meridian', 'The Equator', 'The Tropic of Cancer', 'The Tropic of Capricorn', 'The Arctic Circle', 'The Mason-Dixon Line'], 200);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'JUST_IN_TIME', 'JUST_IN_TIME_BATCH_1', NULL,
         'According to the "Rent" song "Seasons of Love," how many minutes are in a year?', NULL,
         '525,600', ARRAY['525,000', '365,000', '8,760', '52,560', '5,256,000', '31,536,000'], 200);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
@@ -198,10 +194,6 @@ INSERT INTO questions (question_number, game_mode, category, subcategory, factio
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'JUST_IN_TIME', 'JUST_IN_TIME_BATCH_1', NULL,
         'Which crystal keeps time in most modern battery-powered watches?', NULL,
         'Quartz', ARRAY['Ruby', 'Sapphire', 'Diamond', 'Topaz', 'Amethyst', 'Garnet'], 300);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'JUST_IN_TIME', 'JUST_IN_TIME_BATCH_1', NULL,
-        'Roughly how long does sunlight take to reach Earth?', NULL,
-        'About 8 minutes', ARRAY['About 8 seconds', 'About 30 seconds', 'About 1 minute', 'About 3 minutes', 'About 1 hour', 'About 8 hours'], 300);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'JUST_IN_TIME', 'JUST_IN_TIME_BATCH_1', NULL,
         'At the Mad Hatter''s tea party in "Alice''s Adventures in Wonderland," what time is it always?', NULL,
@@ -295,5 +287,5 @@ VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YE
 
 COMMIT;
 
--- Check: should return 68.
+-- Check: should return 66.
 SELECT COUNT(*) FROM questions WHERE game_mode = 'TRIVI_YEAH_II' AND category = 'JUST_IN_TIME';

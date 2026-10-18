@@ -4,8 +4,8 @@
 -- Thinking Pants category FAMOUS_FIRSTS. To change a question, change the
 -- spreadsheet and rebuild.
 --
--- Replaces the WHOLE category with the spreadsheet's 70 live questions
--- (100: 16, 200: 17, 300: 18, 400: 19), inside a transaction. Safe to re-run.
+-- Replaces the WHOLE category with the spreadsheet's 64 live questions
+-- (100: 14, 200: 14, 300: 17, 400: 19), inside a transaction. Safe to re-run.
 -- ============================================================================
 
 BEGIN;
@@ -60,20 +60,12 @@ VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YE
         'Toy Story', ARRAY['A Bug''s Life', 'Antz', 'Shrek', 'Finding Nemo', 'Monsters, Inc.', 'The Lion King'], 100);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'FAMOUS_FIRSTS', 'FAMOUS_FIRSTS_BATCH_1', NULL,
-        'Who made the first telephone call, in 1876, saying "Mr. Watson, come here"?', NULL,
-        'Alexander Graham Bell', ARRAY['Thomas Edison', 'Samuel Morse', 'Guglielmo Marconi', 'Nikola Tesla', 'Elisha Gray', 'George Westinghouse'], 100);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'FAMOUS_FIRSTS', 'FAMOUS_FIRSTS_BATCH_1', NULL,
         'Alexander Fleming''s 1928 discovery of which mold product opened the age of antibiotics?', NULL,
         'Penicillin', ARRAY['Streptomycin', 'Insulin', 'Aspirin', 'Tetracycline', 'Morphine', 'Quinine'], 100);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'FAMOUS_FIRSTS', 'FAMOUS_FIRSTS_BATCH_1', NULL,
         'What was the title of the first Harry Potter book (UK title)?', NULL,
         'The Philosopher''s Stone', ARRAY['The Chamber of Secrets', 'The Prisoner of Azkaban', 'The Goblet of Fire', 'The Order of the Phoenix', 'The Half-Blood Prince', 'The Deathly Hallows'], 100);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'FAMOUS_FIRSTS', 'FAMOUS_FIRSTS_BATCH_1', NULL,
-        'Which mission first landed people on the Moon, in 1969?', NULL,
-        'Apollo 11', ARRAY['Apollo 8', 'Apollo 12', 'Apollo 13', 'Apollo 1', 'Gemini 4', 'Vostok 1'], 100);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'FAMOUS_FIRSTS', 'FAMOUS_FIRSTS_BATCH_1', NULL,
         'Which Disney character made his official debut in the 1928 cartoon "Steamboat Willie"?', NULL,
@@ -110,14 +102,6 @@ VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YE
         'Roger Bannister', ARRAY['John Landy', 'Jesse Owens', 'Sebastian Coe', 'Steve Ovett', 'Paavo Nurmi', 'Jim Ryun'], 200);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'FAMOUS_FIRSTS', 'FAMOUS_FIRSTS_BATCH_1', NULL,
-        'Who was the first American to orbit the Earth, in 1962?', NULL,
-        'John Glenn', ARRAY['Alan Shepard', 'Gus Grissom', 'Scott Carpenter', 'Gordon Cooper', 'Wally Schirra', 'Neil Armstrong'], 200);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'FAMOUS_FIRSTS', 'FAMOUS_FIRSTS_BATCH_1', NULL,
-        'Who became the first American woman in space, in 1983?', NULL,
-        'Sally Ride', ARRAY['Mae Jemison', 'Eileen Collins', 'Judith Resnik', 'Christa McAuliffe', 'Kathryn Sullivan', 'Shannon Lucid'], 200);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'FAMOUS_FIRSTS', 'FAMOUS_FIRSTS_BATCH_1', NULL,
         'Who broke baseball''s color line in 1947 as the first Black player in the modern major leagues?', NULL,
         'Jackie Robinson', ARRAY['Larry Doby', 'Satchel Paige', 'Hank Aaron', 'Willie Mays', 'Roy Campanella', 'Josh Gibson'], 200);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
@@ -144,10 +128,6 @@ INSERT INTO questions (question_number, game_mode, category, subcategory, factio
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'FAMOUS_FIRSTS', 'FAMOUS_FIRSTS_BATCH_1', NULL,
         'Who was the first woman to serve on the U.S. Supreme Court, appointed in 1981?', NULL,
         'Sandra Day O''Connor', ARRAY['Ruth Bader Ginsburg', 'Sonia Sotomayor', 'Elena Kagan', 'Harriet Miers', 'Amy Coney Barrett', 'Janet Reno'], 200);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'FAMOUS_FIRSTS', 'FAMOUS_FIRSTS_BATCH_1', NULL,
-        'In what year was the first iPhone released?', NULL,
-        '2007', ARRAY['2004', '2005', '2006', '2008', '2009', '2010'], 200);
 
 -- 300 points
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
@@ -182,10 +162,6 @@ INSERT INTO questions (question_number, game_mode, category, subcategory, factio
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'FAMOUS_FIRSTS', 'FAMOUS_FIRSTS_BATCH_1', NULL,
         'What was the first major book printed in Europe with movable metal type, around 1455?', NULL,
         'The Gutenberg Bible', ARRAY['The King James Bible', 'The Book of Kells', 'The Domesday Book', 'The Canterbury Tales', 'The Lindisfarne Gospels', 'The Diamond Sutra'], 300);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'FAMOUS_FIRSTS', 'FAMOUS_FIRSTS_BATCH_1', NULL,
-        'Who built the world''s first website, at CERN?', NULL,
-        'Tim Berners-Lee', ARRAY['Vint Cerf', 'Marc Andreessen', 'Bill Gates', 'Steve Jobs', 'Bob Kahn', 'Larry Page'], 300);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'FAMOUS_FIRSTS', 'FAMOUS_FIRSTS_BATCH_1', NULL,
         'Which Beatles song was the band''s first single, in 1962?', NULL,
@@ -303,5 +279,5 @@ VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YE
 
 COMMIT;
 
--- Check: should return 70.
+-- Check: should return 64.
 SELECT COUNT(*) FROM questions WHERE game_mode = 'TRIVI_YEAH_II' AND category = 'FAMOUS_FIRSTS';
