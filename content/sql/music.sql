@@ -262,7 +262,7 @@ VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YE
         'Nashville', ARRAY['Memphis', 'Austin', 'Atlanta', 'Branson', 'Dallas', 'Louisville'], 200);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MUSIC', 'MUSIC_BATCH_1', NULL,
-        'What was the name of Elvis Presley''s mansion in Memphis?', NULL,
+        'What is the name of the Memphis mansion where the "King of Rock and Roll" lived?', NULL,
         'Graceland', ARRAY['Neverland', 'Paisley Park', 'Dollywood', 'Sun Studio', 'Shady Acres', 'Heartbreak Hotel'], 200);
 
 -- 300 points
