@@ -551,7 +551,11 @@ async function loadQuestionBank(room) {
 // subcategory plus a number here.
 // Landmarks joined as a 15-photo test (Randy, Oct 2026): one flag slot
 // became a landmark slot to see how it plays.
-const COUNTRY_MONKEY_MIX = { FLAG: 2, LANDMARK: 1, WATER: 2, COUNTRY: 10 };
+// 20 questions once Country Monkey grew into a standalone mode with 91
+// landmark photos (Randy, Oct 2026: "20 questions with a similar ratio"):
+// maps stay the backbone, a second landmark slot, a third flag and water.
+// The game's length is simply the sum of this mix.
+const COUNTRY_MONKEY_MIX = { FLAG: 3, LANDMARK: 2, WATER: 3, COUNTRY: 12 };
 const COUNTRY_MONKEY_TYPE_LABELS = { COUNTRY: 'Maps', FLAG: 'Flags', LANDMARK: 'Landmarks', WATER: 'Water' };
 const countryMonkeyType = row => (row.subcategory && COUNTRY_MONKEY_MIX[row.subcategory] !== undefined) ? row.subcategory : 'COUNTRY';
 
@@ -799,7 +803,11 @@ const TRIVI_YEAH_II_CATEGORIES = [
     // Randy's flags (public/flags/, trivi_yeah_ii_flag_me_down.sql, 80) and
     // water maps (public/water/, trivi_yeah_ii_wet_pants.sql, 48).
     { key: 'FLAG_ME_DOWN', label: 'Flag Me Down' },
-    { key: 'WET_PANTS', label: 'Wet Pants' }
+    { key: 'WET_PANTS', label: 'Wet Pants' },
+    // Randy's landmark photos (public/structures/), shared with Country
+    // Monkey. Buildings and natural wonders, so a postcard name rather than
+    // "Built Different". content/landmarks.csv, from content/landmarks_source.py.
+    { key: 'LANDMARKS', label: 'Wish You Were Here' }
 ];
 const TRIVI_YEAH_II_CATEGORIES_PER_BOARD = 3;
 const TRIVI_YEAH_II_TIERS = [100, 200, 300, 400];

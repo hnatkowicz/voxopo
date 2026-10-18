@@ -73,8 +73,15 @@ Locations, Food & Drink, Geography, Just in Time, Literature, Lyrics,
 Movies & TV, Music, Mythology, Science & Nature, Sports, Technology, Word
 Nerd and World History.
 
-Not here (yet): the picture categories (Country Monkey, Flag Me Down, Wet
-Pants), the Final Wager and the venues' house sets. They still come from
+Plus one picture category, **Wish You Were Here** (`landmarks.csv`, Randy's
+landmark photos). Its rows start from `content/landmarks_source.py`, which
+also writes Country Monkey's landmark questions; new photos go there (run
+`python3 content/landmarks_source.py`), and it only *adds* rows for new
+photos, so edits made in `landmarks.csv` stay. An edit to a wrong answer in
+the sheet doesn't reach Country Monkey; change `landmarks_source.py` for that.
+
+Not here (yet): the other picture categories (Country Monkey, Flag Me Down,
+Wet Pants), the Final Wager and the venues' house sets. They still come from
 their own SQL files at the repo root.
 
 The SQL files that used to build the text categories are in
