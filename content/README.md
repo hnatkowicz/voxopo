@@ -48,6 +48,7 @@ transaction, so it's safe to re-run. It ends with a count to check.
 | `movies_tv.csv` | `MOVIES_TV` | the MOVIES_TV parts of `trivi_yeah_ii_prototype.sql` and `trivi_yeah_ii_more_questions.sql`; `trivi_yeah_ii_movies_tv_pop_culture_1.sql` |
 | `music.csv` | `MUSIC` | the MUSIC parts of `trivi_yeah_ii_prototype.sql` and `trivi_yeah_ii_more_questions.sql` |
 | `literature.csv` | `LITERATURE` | the LITERATURE part of `trivi_yeah_ii_new_categories.sql` |
+| `word_nerd.csv` | `WORD_NERD` | (new category; no older file) |
 
 Once a category moves in here, **don't re-run the older SQL files for it**:
 they'd add back the old versions of the questions. Every other category
