@@ -3006,8 +3006,8 @@ SELECT COUNT(*) FROM questions WHERE game_mode = 'TRIVI_YEAH_II' AND category = 
 -- Thinking Pants category LANDMARKS. To change a question, change the
 -- spreadsheet and rebuild.
 --
--- Replaces the WHOLE category with the spreadsheet's 91 live questions
--- (100: 24, 200: 24, 300: 24, 400: 19), inside a transaction. Safe to re-run.
+-- Replaces the WHOLE category with the spreadsheet's 100 live questions
+-- (100: 25, 200: 28, 300: 27, 400: 20), inside a transaction. Safe to re-run.
 -- ============================================================================
 
 BEGIN;
@@ -3110,10 +3110,18 @@ VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YE
         'Tower Bridge', ARRAY['London Bridge', 'Big Ben', 'Brooklyn Bridge', 'Charles Bridge', 'Westminster Bridge', 'Forth Bridge'], 100);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'LANDMARKS', 'LANDMARKS_BATCH_1', NULL,
+        'What is this landmark?', '/structures/victoria-falls.webp',
+        'Victoria Falls', ARRAY['Iguazu Falls', 'Niagara Falls', 'Angel Falls', 'Murchison Falls', 'Tugela Falls', 'Blue Nile Falls'], 100);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'LANDMARKS', 'LANDMARKS_BATCH_1', NULL,
         'What is this landmark?', '/structures/white-house.webp',
         'White House', ARRAY['US Capitol', 'Lincoln Memorial', 'Monticello', 'Mount Vernon', 'Jefferson Memorial', 'Blair House'], 100);
 
 -- 200 points
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'LANDMARKS', 'LANDMARKS_BATCH_1', NULL,
+        'What is this landmark?', '/structures/abu-simbel.webp',
+        'Abu Simbel', ARRAY['Temple of Karnak', 'Valley of the Kings', 'Great Sphinx of Giza', 'Temple of Hatshepsut', 'Petra', 'Colossi of Memnon'], 200);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'LANDMARKS', 'LANDMARKS_BATCH_1', NULL,
         'What is this landmark?', '/structures/arc-triomphe.webp',
@@ -3134,6 +3142,10 @@ INSERT INTO questions (question_number, game_mode, category, subcategory, factio
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'LANDMARKS', 'LANDMARKS_BATCH_1', NULL,
         'What is this landmark?', '/structures/chichen-itza.webp',
         'Chichen Itza', ARRAY['Teotihuacan', 'Tikal', 'Palenque', 'Uxmal', 'Great Pyramid of Giza', 'Coba'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'LANDMARKS', 'LANDMARKS_BATCH_1', NULL,
+        'What is this landmark?', '/structures/dome-rock.webp',
+        'Dome of the Rock', ARRAY['Al-Aqsa Mosque', 'Hagia Sophia', 'Blue Mosque', 'Sheikh Zayed Grand Mosque', 'Imam Reza Shrine', 'Church of the Holy Sepulchre'], 200);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'LANDMARKS', 'LANDMARKS_BATCH_1', NULL,
         'What is this landmark?', '/structures/easter-island.webp',
@@ -3196,6 +3208,14 @@ VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YE
         'Petronas Towers', ARRAY['Taipei 101', 'Shanghai Tower', 'Burj Khalifa', 'Marina Bay Sands', 'Jin Mao Tower', 'Canton Tower'], 200);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'LANDMARKS', 'LANDMARKS_BATCH_1', NULL,
+        'What is this landmark?', '/structures/sayed-mosque.webp',
+        'Sheikh Zayed Grand Mosque', ARRAY['Taj Mahal', 'Blue Mosque', 'Hassan II Mosque', 'Faisal Mosque', 'Grand Mosque of Muscat', 'Al-Masjid an-Nabawi'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'LANDMARKS', 'LANDMARKS_BATCH_1', NULL,
+        'What is this landmark?', '/structures/table-mountain.webp',
+        'Table Mountain', ARRAY['Sugarloaf Mountain', 'Uluru', 'Mount Roraima', 'Kilimanjaro', 'Drakensberg', 'Lion''s Head'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'LANDMARKS', 'LANDMARKS_BATCH_1', NULL,
         'What is this landmark?', '/structures/taipei-101.webp',
         'Taipei 101', ARRAY['Petronas Towers', 'Shanghai Tower', 'Jin Mao Tower', 'Canton Tower', 'Lotte World Tower', 'Burj Khalifa'], 200);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
@@ -3242,6 +3262,10 @@ VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YE
         'Golden Pavilion', ARRAY['Silver Pavilion', 'Himeji Castle', 'Byōdō-in', 'Kiyomizu-dera', 'Tōdai-ji', 'Sensō-ji'], 300);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'LANDMARKS', 'LANDMARKS_BATCH_1', NULL,
+        'What is this landmark?', '/structures/dejennes-mosque.webp',
+        'Great Mosque of Djenné', ARRAY['Djinguereber Mosque', 'Great Mosque of Kairouan', 'Larabanga Mosque', 'Sankore Mosque', 'Grand Mosque of Bobo-Dioulasso', 'Kasbah of Aït Benhaddou'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'LANDMARKS', 'LANDMARKS_BATCH_1', NULL,
         'What is this landmark?', '/structures/guggenheim-bilbao.webp',
         'Guggenheim Museum Bilbao', ARRAY['Walt Disney Concert Hall', 'Dancing House', 'Louvre Abu Dhabi', 'Elbphilharmonie', 'City of Arts and Sciences', 'Centre Pompidou'], 300);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
@@ -3252,6 +3276,10 @@ INSERT INTO questions (question_number, game_mode, category, subcategory, factio
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'LANDMARKS', 'LANDMARKS_BATCH_1', NULL,
         'What is this landmark?', '/structures/halong-bay.webp',
         'Ha Long Bay', ARRAY['Phang Nga Bay', 'Guilin', 'El Nido', 'Raja Ampat', 'Rock Islands of Palau', 'Krabi'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'LANDMARKS', 'LANDMARKS_BATCH_1', NULL,
+        'What is this landmark?', '/structures/hassan-ii-mosque.webp',
+        'Hassan II Mosque', ARRAY['Koutoubia Mosque', 'Sheikh Zayed Grand Mosque', 'Great Mosque of Kairouan', 'Blue Mosque', 'Faisal Mosque', 'Muhammad Ali Mosque'], 300);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'LANDMARKS', 'LANDMARKS_BATCH_1', NULL,
         'What is this landmark?', '/structures/horseshoe-bend.webp',
@@ -3280,6 +3308,10 @@ INSERT INTO questions (question_number, game_mode, category, subcategory, factio
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'LANDMARKS', 'LANDMARKS_BATCH_1', NULL,
         'What is this landmark?', '/structures/versailles.webp',
         'Palace of Versailles', ARRAY['Louvre', 'Schönbrunn Palace', 'Buckingham Palace', 'Château de Chambord', 'Palace of Fontainebleau', 'Winter Palace'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'LANDMARKS', 'LANDMARKS_BATCH_1', NULL,
+        'What is this landmark?', '/structures/persepolis.webp',
+        'Persepolis', ARRAY['Pasargadae', 'Palmyra', 'Babylon', 'Petra', 'Baalbek', 'Nineveh'], 300);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'LANDMARKS', 'LANDMARKS_BATCH_1', NULL,
         'What is this landmark?', '/structures/pont-dugard.webp',
@@ -3368,6 +3400,10 @@ VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YE
         'Pantheon', ARRAY['Parthenon', 'Hagia Sophia', 'St. Peter''s Basilica', 'Florence Cathedral', 'Temple of Hephaestus', 'Jefferson Memorial'], 400);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'LANDMARKS', 'LANDMARKS_BATCH_1', NULL,
+        'What is this landmark?', '/structures/lalibela-church.webp',
+        'Rock Churches of Lalibela', ARRAY['Petra', 'Aksum Obelisks', 'Abu Simbel', 'Göreme Open Air Museum', 'Ellora Caves', 'Debre Damo'], 400);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'LANDMARKS', 'LANDMARKS_BATCH_1', NULL,
         'What is this landmark?', '/structures/sigiriya-fortress.webp',
         'Sigiriya', ARRAY['Ajanta Caves', 'Mount Popa', 'Meteora', 'Ellora Caves', 'Masada', 'Mount Kailash'], 400);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
@@ -3389,7 +3425,7 @@ VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YE
 
 COMMIT;
 
--- Check: should return 91.
+-- Check: should return 100.
 SELECT COUNT(*) FROM questions WHERE game_mode = 'TRIVI_YEAH_II' AND category = 'LANDMARKS';
 
 -- ============================================================================

@@ -124,6 +124,16 @@ L = [
 ('todai-ji', 'Tōdai-ji', [AS], 3, ['Golden Pavilion', 'Kiyomizu-dera', 'Sensō-ji', 'Byōdō-in', 'Himeji Castle', 'Heian Shrine'], ['Todai-ji', 'Todaiji', 'Great Buddha Hall']),
 ('three-gorges', 'Three Gorges Dam', [AS], 4, ['Hoover Dam', 'Itaipu Dam', 'Aswan High Dam', 'Grand Coulee Dam', 'Xiluodu Dam', 'Tarbela Dam'], ['Three Gorges']),
 ('sigiriya-fortress', 'Sigiriya', [AS], 4, ['Ajanta Caves', 'Mount Popa', 'Meteora', 'Ellora Caves', 'Masada', 'Mount Kailash'], ['Lion Rock', 'Sigiriya Rock']),
+# --- added with Randy's third batch: Africa and the Middle East -------------
+('victoria-falls', 'Victoria Falls', [AF], 1, ['Iguazu Falls', 'Niagara Falls', 'Angel Falls', 'Murchison Falls', 'Tugela Falls', 'Blue Nile Falls'], ['Mosi-oa-Tunya', 'Victoria Falls Zambezi']),
+('abu-simbel', 'Abu Simbel', [AF, ME], 2, ['Temple of Karnak', 'Valley of the Kings', 'Great Sphinx of Giza', 'Temple of Hatshepsut', 'Petra', 'Colossi of Memnon'], ['Abu Simbel temples', 'Temple of Ramesses II']),
+('dome-rock', 'Dome of the Rock', [ME], 2, ['Al-Aqsa Mosque', 'Hagia Sophia', 'Blue Mosque', 'Sheikh Zayed Grand Mosque', 'Imam Reza Shrine', 'Church of the Holy Sepulchre'], ['Qubbat as-Sakhra', 'Dome of the Rock Jerusalem']),
+('sayed-mosque', 'Sheikh Zayed Grand Mosque', [ME], 2, ['Taj Mahal', 'Blue Mosque', 'Hassan II Mosque', 'Faisal Mosque', 'Grand Mosque of Muscat', 'Al-Masjid an-Nabawi'], ['Sheikh Zayed Mosque', 'Grand Mosque Abu Dhabi', 'Abu Dhabi Grand Mosque']),
+('table-mountain', 'Table Mountain', [AF], 2, ['Sugarloaf Mountain', 'Uluru', 'Mount Roraima', 'Kilimanjaro', 'Drakensberg', "Lion's Head"], ['Table Mountain Cape Town']),
+('dejennes-mosque', 'Great Mosque of Djenné', [AF], 3, ['Djinguereber Mosque', 'Great Mosque of Kairouan', 'Larabanga Mosque', 'Sankore Mosque', 'Grand Mosque of Bobo-Dioulasso', 'Kasbah of Aït Benhaddou'], ['Djenne Mosque', 'Great Mosque of Djenne', 'Djenné Mosque']),
+('hassan-ii-mosque', 'Hassan II Mosque', [AF], 3, ['Koutoubia Mosque', 'Sheikh Zayed Grand Mosque', 'Great Mosque of Kairouan', 'Blue Mosque', 'Faisal Mosque', 'Muhammad Ali Mosque'], ['Hassan 2 Mosque', 'Grande Mosquée Hassan II']),
+('persepolis', 'Persepolis', [ME], 3, ['Pasargadae', 'Palmyra', 'Babylon', 'Petra', 'Baalbek', 'Nineveh'], ['Takht-e Jamshid', 'Gate of All Nations']),
+('lalibela-church', 'Rock Churches of Lalibela', [AF], 4, ['Petra', 'Aksum Obelisks', 'Abu Simbel', 'Göreme Open Air Museum', 'Ellora Caves', 'Debre Damo'], ['Lalibela', 'Church of St. George Lalibela', 'Bete Giyorgis']),
 ]
 
 CM_POINTS = {1: 100, 2: 150, 3: 200, 4: 250}
