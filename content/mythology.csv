@@ -1,0 +1,72 @@
+﻿points,question,answer,wrong_1,wrong_2,wrong_3,wrong_4,wrong_5,wrong_6,image,source,added,retired,notes
+100,"In Greek mythology, who is the god of the sea?",Poseidon,Zeus,Hades,Apollo,Ares,Hermes,Hephaestus,,ORIGINAL,,,
+100,"In Roman mythology, who is the king of the gods?",Jupiter,Mars,Neptune,Mercury,Vulcan,Pluto,Apollo,,ORIGINAL,,,
+100,"In Egyptian mythology, which jackal-headed god watched over embalming and the dead?",Anubis,Osiris,Horus,Set,Thoth,Sobek,Khnum,,ORIGINAL,,,"Reworded Oct 2026: Osiris, a wrong answer, is THE god of the afterlife; Anubis is the god of embalming."
+100,"In Greek mythology, who is the goddess of love and beauty?",Aphrodite,Athena,Artemis,Hera,Demeter,Hestia,Persephone,,ORIGINAL,,,
+100,"In Norse mythology, who is the god of thunder?",Thor,Odin,Loki,Baldur,Tyr,Heimdall,Freyr,,ORIGINAL,,,
+200,"In Greek mythology, what creature has the body of a lion and the head of a human, famous for asking riddles?",The Sphinx,The Minotaur,The Chimera,The Hydra,Cerberus,The Gorgon,The Cyclops,,ORIGINAL,,,
+200,"In Greek mythology, who was condemned to push a boulder up a hill for eternity as punishment?",Sisyphus,Tantalus,Prometheus,Atlas,Icarus,Orpheus,Midas,,ORIGINAL,,,
+200,"In Norse mythology, what is the name of the realm of the Aesir gods?",Asgard,Valhalla,Midgard,Jotunheim,Alfheim,Niflheim,Vanaheim,,ORIGINAL,,,"Reworded Oct 2026: named Odin and Thor, answers to other questions here."
+200,"In Greek mythology, who is the messenger god known for his winged sandals?",Hermes,Apollo,Dionysus,Hephaestus,Ares,Pan,Helios,,ORIGINAL,,,
+200,"In Egyptian mythology, which sun god sailed across the sky in a boat each day?",Ra,Osiris,Anubis,Thoth,Geb,Ptah,Sobek,,ORIGINAL,,,"Reworded Oct 2026: Horus, a wrong answer, is the falcon god, so the clue was arguable; new wrong answers."
+200,"In Greek mythology, which hero was famous for twelve labors, including slaying the Nemean Lion?",Hercules,Achilles,Perseus,Theseus,Jason,Odysseus,Orpheus,,ORIGINAL,,,Moved 300->200 Oct 2026. (Heracles to the Greeks; Hercules is how most people know him.)
+200,"In Norse mythology, who is the trickster god, father of the wolf Fenrir?",Loki,Odin,Thor,Baldur,Heimdall,Tyr,Freyr,,ORIGINAL,,,Moved 300->200 Oct 2026.
+100,"In Greek mythology, who flew too close to the sun with wings made of feathers and wax?",Icarus,Daedalus,Phaethon,Bellerophon,Prometheus,Perseus,Orpheus,,ORIGINAL,,,Moved 300->100 Oct 2026.
+300,"In Hindu mythology, who is the god of destruction, part of the Trimurti alongside Brahma and Vishnu?",Shiva,Ganesha,Indra,Krishna,Hanuman,Agni,Rama,,ORIGINAL,,,Fixed Oct 2026: Vishnu and Brahma were wrong answers while also named in the question.
+300,"In Greek mythology, what was the name of the winged horse tamed by the hero Bellerophon?",Pegasus,Arion,Chiron,Bucephalus,Sleipnir,Xanthus,Balius,,ORIGINAL,,,"Reworded Oct 2026: named Medusa, another question's answer; replaced the weak wrong answers ""Unicorn"" and ""Centaur""."
+300,"In Greek mythology, which of the three Gorgon sisters was the only mortal one?",Medusa,Stheno,Euryale,Echidna,Lamia,Scylla,Circe,,ORIGINAL,,,"Reworded Oct 2026: ""snake hair"" gave it away; moved 400->300."
+400,"In Norse mythology, what is the name of the World Tree that connects the nine realms?",Yggdrasil,Valhalla,Bifrost,Asgard,Ginnungagap,Niflheim,Muspelheim,,ORIGINAL,,,
+300,"In Greek mythology, who wove a shroud to delay her suitors while waiting for her husband Odysseus to return?",Penelope,Clytemnestra,Helen,Andromache,Circe,Calypso,Nausicaa,,ORIGINAL,,,Moved 400->300 Oct 2026.
+400,"In Aztec mythology, who is the feathered serpent god associated with wind and learning?",Quetzalcoatl,Huitzilopochtli,Tezcatlipoca,Tlaloc,Xolotl,Tonatiuh,Mictlantecuhtli,,ORIGINAL,,,
+300,"In Arthurian legend, to which island is the wounded King Arthur carried after his last battle?",Avalon,Lyonesse,Camelot,Tintagel,Atlantis,Iona,Tír na nÓg,,ORIGINAL,,,"Reworded Oct 2026: Tír na nÓg, Mag Mell and Hy-Brasil (wrong answers) also fit the old clue; now the Arthurian version; moved 400->300."
+100,"In Greek mythology, who is the god of the underworld?",Hades,Zeus,Ares,Hermes,Thanatos,Cronus,Hephaestus,,MYTHOLOGY_BATCH_1,2026-10-18,,
+100,Which Greek goddess of wisdom sprang fully grown from Zeus's head?,Athena,Hera,Artemis,Aphrodite,Demeter,Hestia,Nike,,MYTHOLOGY_BATCH_1,2026-10-18,,
+100,Who is the Roman god of war?,Mars,Jupiter,Neptune,Mercury,Vulcan,Saturn,Apollo,,MYTHOLOGY_BATCH_1,2026-10-18,,
+100,"In Homer's ""Odyssey,"" what kind of one-eyed giant does Odysseus blind?",A Cyclops,A Titan,A Minotaur,A centaur,A satyr,A Gorgon,A harpy,,MYTHOLOGY_BATCH_1,2026-10-18,,The Cyclops is Polyphemus.
+100,"Which creature, half man and half bull, lived in the Labyrinth on Crete?",The Minotaur,The Centaur,The Chimera,The Hydra,The Satyr,The Griffin,The Manticore,,MYTHOLOGY_BATCH_1,2026-10-18,,
+100,"In Greek myth, who opened a jar (often called a box) that let evils loose into the world?",Pandora,Persephone,Psyche,Echo,Helen,Ariadne,Eurydice,,MYTHOLOGY_BATCH_1,2026-10-18,,
+100,Which Greek hero's only weak spot was his heel?,Achilles,Hector,Ajax,Odysseus,Perseus,Patroclus,Theseus,,MYTHOLOGY_BATCH_1,2026-10-18,,
+100,What is the name of the three-headed dog that guards the gates of the Greek underworld?,Cerberus,Orthrus,Fenrir,Garmr,Argos,Laelaps,Typhon,,MYTHOLOGY_BATCH_1,2026-10-18,,"Orthrus, Cerberus's two-headed brother, is the real mix-up. Three heads is the standard version."
+100,Which Roman goddess of love gave her name to the second planet from the Sun?,Venus,Juno,Minerva,Diana,Vesta,Ceres,Aurora,,MYTHOLOGY_BATCH_1,2026-10-18,,
+100,Which king of Greek myth turned everything he touched into gold?,Midas,Croesus,Minos,Priam,Agamemnon,Oedipus,Tantalus,,MYTHOLOGY_BATCH_1,2026-10-18,,Croesus was a real (very rich) king: the classic mix-up.
+100,Which twins were raised by a she-wolf and went on to found Rome?,Romulus and Remus,Castor and Pollux,Apollo and Artemis,Amphion and Zethus,Hypnos and Thanatos,Jacob and Esau,Cain and Abel,,MYTHOLOGY_BATCH_1,2026-10-18,,
+100,"In Norse mythology, what is the great hall where warriors slain in battle feast until the end of the world?",Valhalla,Folkvangr,Bilskirnir,Helheim,Gladsheim,Breidablik,Vingolf,,MYTHOLOGY_BATCH_1,2026-10-18,,"Folkvangr is Freyja's field, which takes the other half of the slain."
+200,What is the name of the Norse thunder god's hammer?,Mjölnir,Gungnir,Gram,Draupnir,Tyrfing,Skofnung,Excalibur,,MYTHOLOGY_BATCH_1,2026-10-18,,Gungnir is Odin's spear.
+200,Which Greek goddess of the hunt was the twin sister of Apollo?,Artemis,Athena,Hera,Demeter,Hestia,Nike,Persephone,,MYTHOLOGY_BATCH_1,2026-10-18,,
+200,Which Titan stole fire from the gods and gave it to humanity?,Prometheus,Epimetheus,Atlas,Hyperion,Cronus,Oceanus,Iapetus,,MYTHOLOGY_BATCH_1,2026-10-18,,
+200,Which Athenian hero found his way out of the Labyrinth using Ariadne's thread?,Theseus,Perseus,Jason,Bellerophon,Odysseus,Ajax,Meleager,,MYTHOLOGY_BATCH_1,2026-10-18,,
+200,Which Greek hero used a polished shield as a mirror to slay a Gorgon?,Perseus,Theseus,Jason,Bellerophon,Odysseus,Cadmus,Meleager,,MYTHOLOGY_BATCH_1,2026-10-18,,
+200,"In Egyptian mythology, which god was killed by his brother Set and became ruler of the dead?",Osiris,Horus,Ra,Thoth,Ptah,Amun,Khnum,,MYTHOLOGY_BATCH_1,2026-10-18,,
+200,Which musician of Greek myth went down to the underworld to bring back his wife Eurydice?,Orpheus,Apollo,Pan,Arion,Linus,Marsyas,Amphion,,MYTHOLOGY_BATCH_1,2026-10-18,,
+200,Which Hindu god has the head of an elephant?,Ganesha,Hanuman,Indra,Krishna,Vishnu,Kartikeya,Agni,,MYTHOLOGY_BATCH_1,2026-10-18,,
+200,Which Greek goddess of the harvest searched the world for her daughter Persephone?,Demeter,Hera,Hestia,Gaia,Rhea,Hecate,Eos,,MYTHOLOGY_BATCH_1,2026-10-18,,
+200,Who is the Greek god of wine and revelry?,Dionysus,Apollo,Pan,Hermes,Ares,Hephaestus,Eros,,MYTHOLOGY_BATCH_1,2026-10-18,,
+300,"In Norse mythology, what is the name of the burning rainbow bridge between Midgard and the realm of the gods?",Bifröst,Gjallarbrú,Ginnungagap,Vígríðr,Niflheim,Muspelheim,Alfheim,,MYTHOLOGY_BATCH_1,2026-10-18,,Gjallarbrú is the bridge to Hel.
+300,Which monkey god is a hero of the Hindu epic the Ramayana?,Hanuman,Sun Wukong,Garuda,Jambavan,Sugriva,Nandi,Kartikeya,,MYTHOLOGY_BATCH_1,2026-10-18,,Sugriva is the monkey king Hanuman serves; Sun Wukong is the Chinese Monkey King.
+300,Which Titan was condemned to hold up the sky forever?,Atlas,Cronus,Hyperion,Oceanus,Iapetus,Coeus,Epimetheus,,MYTHOLOGY_BATCH_1,2026-10-18,,"The sky, not the Earth: the standard version."
+300,"In Norse mythology, what is the name of the final battle in which many of the gods die?",Ragnarök,Fimbulwinter,Ginnungagap,Muspelheim,Vígríðr,Helheim,Midgard,,MYTHOLOGY_BATCH_1,2026-10-18,,Fimbulwinter is the great winter before it; Vígríðr is the field where it is fought.
+300,Which Egyptian god of writing and wisdom had the head of an ibis?,Thoth,Horus,Ptah,Amun,Sobek,Khnum,Set,,MYTHOLOGY_BATCH_1,2026-10-18,,
+300,Which falcon-headed Egyptian sky god lost an eye fighting Set?,Horus,Ra,Thoth,Sobek,Khonsu,Ptah,Amun,,MYTHOLOGY_BATCH_1,2026-10-18,,
+300,"In Greek myth, which fruit did Persephone eat in the underworld, binding her to return there each year?",A pomegranate,A fig,An apple,A grape,An olive,A date,A cherry,,MYTHOLOGY_BATCH_1,2026-10-18,,
+300,What was the name of the ship Jason sailed in search of the Golden Fleece?,The Argo,The Aegis,The Arcadia,The Calypso,The Olympia,The Thalassa,The Nautilus,,MYTHOLOGY_BATCH_1,2026-10-18,,
+300,"In Greek myth, which beautiful youth fell in love with his own reflection?",Narcissus,Adonis,Hyacinthus,Ganymede,Endymion,Paris,Orion,,MYTHOLOGY_BATCH_1,2026-10-18,,
+300,Which trickster spider is a hero of West African and Caribbean folktales?,Anansi,Br'er Rabbit,Coyote,Raven,Kokopelli,Eshu,Maui,,MYTHOLOGY_BATCH_1,2026-10-18,,
+300,Which Polynesian demigod pulled islands up from the sea with his magic fishhook?,Maui,Tangaroa,Pele,Tāne,Lono,Kū,Kamapua'a,,MYTHOLOGY_BATCH_1,2026-10-18,,
+300,Which king of Thebes unknowingly killed his father and married his mother?,Oedipus,Creon,Laius,Cadmus,Agamemnon,Pentheus,Menelaus,,MYTHOLOGY_BATCH_1,2026-10-18,,
+300,"Janus, the two-faced Roman god of beginnings, gives his name to which month?",January,June,March,February,May,July,August,,MYTHOLOGY_BATCH_1,2026-10-18,,June is named for Juno: the real mix-up.
+300,Who was the ferryman who carried the dead across the River Styx?,Charon,Thanatos,Hypnos,Minos,Aeacus,Erebus,Hermes,,MYTHOLOGY_BATCH_1,2026-10-18,,Some ancient sources put him on the Acheron; the Styx is the standard popular version.
+300,"In Egyptian myth, a dead person's heart was weighed against what?",A feather,A stone,A gold coin,A scarab,An ankh,A lotus flower,A grain of sand,,MYTHOLOGY_BATCH_1,2026-10-18,,The feather of Ma'at (truth).
+400,"Which Japanese sun goddess hid in a cave, plunging the world into darkness?",Amaterasu,Izanami,Tsukuyomi,Susanoo,Inari,Benzaiten,Izanagi,,MYTHOLOGY_BATCH_1,2026-10-18,,
+400,Which Norse god gave up an eye to drink from the well of wisdom?,Odin,Tyr,Heimdall,Baldur,Freyr,Njord,Vidar,,MYTHOLOGY_BATCH_1,2026-10-18,,Tyr is the one who lost a hand (to Fenrir).
+400,Which Norse goddess of love rides in a chariot pulled by cats?,Freyja,Frigg,Sif,Idun,Hel,Skadi,Sigyn,,MYTHOLOGY_BATCH_1,2026-10-18,,Frigg (Odin's wife) is the classic mix-up.
+400,What is the name of the eight-legged horse of Norse myth?,Sleipnir,Gullfaxi,Hrímfaxi,Skinfaxi,Grani,Svaðilfari,Árvakr,,MYTHOLOGY_BATCH_1,2026-10-18,,Svaðilfari is Sleipnir's father.
+400,"Who was the Greek goddess of the rainbow, a messenger of the gods?",Iris,Eos,Nike,Hebe,Selene,Hecate,Nyx,,MYTHOLOGY_BATCH_1,2026-10-18,,
+400,"Which Trojan prince carried off Helen, sparking the Trojan War?",Paris,Hector,Aeneas,Troilus,Priam,Deiphobus,Memnon,,MYTHOLOGY_BATCH_1,2026-10-18,,
+400,Which of the nine Muses inspired epic poetry?,Calliope,Clio,Erato,Thalia,Terpsichore,Urania,Melpomene,,MYTHOLOGY_BATCH_1,2026-10-18,,
+400,"In Greek myth, what was the name of the food of the gods that made them immortal?",Ambrosia,Manna,Amrita,Soma,Ichor,Mead,Elixir,,MYTHOLOGY_BATCH_1,2026-10-18,,"Nectar is kept out of the wrong answers: it is the gods' drink, and some ancient sources swap the two."
+400,"In Hindu mythology, which giant eagle-like bird carries the god Vishnu?",Garuda,Jatayu,Hamsa,Simurgh,Nandi,Airavata,Mayura,,MYTHOLOGY_BATCH_1,2026-10-18,,
+400,"Which Irish hero, the ""Hound of Ulster,"" defended Ulster single-handed as a teenager?",Cú Chulainn,Fionn mac Cumhaill,Lugh,Oisín,Diarmuid,Conchobar mac Nessa,Fergus mac Róich,,MYTHOLOGY_BATCH_1,2026-10-18,,
+400,Which Irish hero gained great wisdom by tasting the Salmon of Knowledge?,Fionn mac Cumhaill,Cú Chulainn,Oisín,Lugh,Diarmuid,Conán,Oscar,,MYTHOLOGY_BATCH_1,2026-10-18,,Better known in English as Finn McCool.
+400,"In Japanese folklore, what is a kitsune?",A fox spirit,A raccoon-dog spirit,A cat spirit,A water imp,A crow demon,A snake spirit,A badger spirit,,MYTHOLOGY_BATCH_1,2026-10-18,,"Raccoon dog = tanuki, cat = bakeneko, water imp = kappa, crow = tengu."
+400,Which king of Uruk is the hero of the oldest surviving great epic?,Gilgamesh,Hammurabi,Sargon of Akkad,Enkidu,Nebuchadnezzar,Ashurbanipal,Utnapishtim,,MYTHOLOGY_BATCH_1,2026-10-18,,Enkidu is his companion; Utnapishtim the flood survivor he visits.
+400,"Which Monkey King is the hero of the Chinese classic ""Journey to the West""?",Sun Wukong,Zhu Bajie,Sha Wujing,Erlang Shen,Nezha,Hanuman,Tang Sanzang,,MYTHOLOGY_BATCH_1,2026-10-18,,Zhu Bajie (Pigsy) and Sha Wujing (Sandy) are his fellow pilgrims; Tang Sanzang the monk they escort.
