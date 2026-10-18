@@ -26,13 +26,32 @@ Open the `.csv` in Excel, Numbers or Google Sheets. One row is one question.
 - **Watch Excel's autoformat.** It turns `1-2` into a date and drops
   leading zeros. If a cell looks wrong after opening, set the column to Text.
 
-## Building
+## Changing questions (Randy's steps)
+
+1. Download the `.csv` from GitHub (open it, then the download button), or
+   use your own copy.
+2. Edit it in Excel or Google Sheets and save as CSV (see above).
+3. Upload it back: in the `content` folder on GitHub, **Add file > Upload
+   files**, drop it in with the **same file name**, and commit to `main`.
+4. Wait about a minute. GitHub checks the sheet and rebuilds its SQL by
+   itself (the **Actions** tab shows the run):
+   - **Green check:** the new SQL is saved in `content/sql/`. The run's
+     summary page lists which files changed. Run those in Neon.
+   - **Red X:** something in the sheet needs fixing. The run's summary
+     page lists each problem with its spreadsheet row number. Nothing was
+     saved, so the old SQL is still there. Fix the row and upload again.
+5. Run the new SQL file in Neon and check the count at the end.
+
+Nothing here ever touches the database by itself; step 5 is always a person.
+
+## Building by hand
 
 ```
 node content/build.mjs
 ```
 
-This checks every spreadsheet and writes `content/sql/<category>.sql`. It
+This is what GitHub runs (`.github/workflows/build-content.yml`). It
+checks every spreadsheet and writes `content/sql/<category>.sql`. It
 stops on real problems (a missing tier, fewer than 3 wrong answers, two
 choices that are the same, a question that gives away its answer, a
 duplicate question) and gives a note on softer ones (the same answer used
