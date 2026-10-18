@@ -217,6 +217,14 @@ Mode keys are used in room votes and in `gameEngine.js`:
 
 - New or changed game content ships as standalone `.sql` files at the repo
   root (e.g. `trivi_yeah_ii_new_categories.sql`), named for what they add.
+- **Thinking Pants categories are moving to spreadsheets** (Randy, Oct
+  2026): `content/<category>.csv` is the master copy of a category, and
+  `node content/build.mjs` checks every sheet (give-aways, duplicate
+  choices, missing tiers) and generates `content/sql/<category>.sql`, which
+  replaces the whole category. Rows are retired, not deleted. See
+  `content/README.md` for the columns and which old SQL files a moved
+  category supersedes. Movies & TV is the first; Music is next. Categories
+  not moved yet still live in the root `.sql` files.
 - **Randy applies these by hand** in the Neon console. Content is the part of
   the codebase Randy works on directly, so keep it that way: Claude writes and
   reviews `.sql` files but never runs anything against the live database.
