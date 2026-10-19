@@ -212,7 +212,7 @@ Mode keys are used in room votes and in `gameEngine.js`:
   intensity 1/2/3 because each game cycles light -> medium -> deep.
 - **Thinking Pants geography categories:** Country Monkey (maps), **Flag Me
   Down** (flags, `trivi_yeah_ii_flag_me_down.sql`, 80), **Wet Pants**
-  (water, `trivi_yeah_ii_wet_pants.sql`, 48) and **Wish You Were Here**
+  (water, `trivi_yeah_ii_wet_pants.sql`, 71) and **Wish You Were Here**
   (landmarks, `content/landmarks.csv`, 132; a postcard name because it has
   natural wonders too) -- the cross-play with Country Monkey is deliberate.
 - **FLAG_ME_DOWN** (also a standalone mode, after the family asked where it

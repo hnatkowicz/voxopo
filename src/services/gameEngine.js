@@ -806,7 +806,7 @@ const TRIVI_YEAH_II_CATEGORIES = [
     // Monkey mode. 80 maps, 20 per tier (trivi_yeah_ii_country_monkey.sql).
     { key: 'COUNTRY_MONKEY', label: 'Country Monkey' },
     // Randy's flags (public/flags/, trivi_yeah_ii_flag_me_down.sql, 80) and
-    // water maps (public/water/, trivi_yeah_ii_wet_pants.sql, 48).
+    // water maps (public/water/, trivi_yeah_ii_wet_pants.sql, 71).
     { key: 'FLAG_ME_DOWN', label: 'Flag Me Down' },
     { key: 'WET_PANTS', label: 'Wet Pants' },
     // Randy's landmark photos (public/structures/), shared with Country
