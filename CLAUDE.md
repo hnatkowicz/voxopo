@@ -97,6 +97,17 @@ in on the phone (still editable). It's drawn by `public/vendor/qrcode.js`
 (qrcode-generator 1.4.4, MIT -- keep `public/vendor/qrcode-LICENSE.txt`;
 credited on `/info`), copied into the repo so nothing is fetched from outside.
 
+**Phone scoreboard** (Randy, Oct 2026): kids on a school trip played with no
+TV at all, so a phone can swipe left (or tap the 🏆 Scores tab) for the
+standings and swipe right to return. It shows the standings the TV was last
+sent (`room.phoneStandings`, captured in `broadcastToRoom`), never live
+scores, so it can't give away who's right before a reveal. Swipes starting
+within 30px of either edge are ignored (iPhone Safari's Back/Forward), and
+the page closes itself whenever the player has something to do
+(`scoresActionKeyFor` in `play.html`; a new phone-input moment needs a line
+there). A full phone-only room (reveals on phones, no TV page) is a possible
+next step, not built.
+
 ## Game modes
 
 **Adding a mode to the lobby:** one entry in `public/modes.js` (name, short
