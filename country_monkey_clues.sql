@@ -11,7 +11,7 @@
 -- Down's country table. Landmarks get theirs from country_monkey_landmarks.sql.
 --
 -- Safe to re-run. Run it AGAIN after re-running country_monkey_water.sql
--- (that file replaces the water rows, clues and all). 49 bodies of water;
+-- (that file replaces the water rows, clues and all). 72 bodies of water;
 -- a few appear in more than one region, so more rows than that update.
 -- ============================================================================
 
@@ -68,6 +68,29 @@ UPDATE questions SET hint = 'Pennsylvania'                       WHERE game_mode
 UPDATE questions SET hint = 'Alabama'                            WHERE game_mode = 'COUNTRY_MONKEY' AND subcategory = 'WATER' AND correct_answer = 'Tennessee River';
 UPDATE questions SET hint = 'South Sudan'                        WHERE game_mode = 'COUNTRY_MONKEY' AND subcategory = 'WATER' AND correct_answer = 'White Nile';
 UPDATE questions SET hint = 'Mozambique'                         WHERE game_mode = 'COUNTRY_MONKEY' AND subcategory = 'WATER' AND correct_answer = 'Zambezi River';
+UPDATE questions SET hint = 'Peru'                               WHERE game_mode = 'COUNTRY_MONKEY' AND subcategory = 'WATER' AND correct_answer = 'Amazon River';
+UPDATE questions SET hint = 'Buenos Aires Province'              WHERE game_mode = 'COUNTRY_MONKEY' AND subcategory = 'WATER' AND correct_answer = 'Bahía Blanca';
+UPDATE questions SET hint = 'Arizona'                            WHERE game_mode = 'COUNTRY_MONKEY' AND subcategory = 'WATER' AND correct_answer = 'Colorado River';
+UPDATE questions SET hint = 'Zaragoza'                           WHERE game_mode = 'COUNTRY_MONKEY' AND subcategory = 'WATER' AND correct_answer = 'Ebro River';
+UPDATE questions SET hint = 'Czechia'                            WHERE game_mode = 'COUNTRY_MONKEY' AND subcategory = 'WATER' AND correct_answer = 'Elbe River';
+UPDATE questions SET hint = 'Bordeaux'                           WHERE game_mode = 'COUNTRY_MONKEY' AND subcategory = 'WATER' AND correct_answer = 'Garonne River';
+UPDATE questions SET hint = 'Pearl Islands'                      WHERE game_mode = 'COUNTRY_MONKEY' AND subcategory = 'WATER' AND correct_answer = 'Gulf of Panama';
+UPDATE questions SET hint = 'Trinidad'                           WHERE game_mode = 'COUNTRY_MONKEY' AND subcategory = 'WATER' AND correct_answer = 'Gulf of Paria';
+UPDATE questions SET hint = 'Comodoro Rivadavia'                 WHERE game_mode = 'COUNTRY_MONKEY' AND subcategory = 'WATER' AND correct_answer = 'Gulf of San Jorge';
+UPDATE questions SET hint = 'Valdés Peninsula'                   WHERE game_mode = 'COUNTRY_MONKEY' AND subcategory = 'WATER' AND correct_answer = 'Gulf of San Matías';
+UPDATE questions SET hint = 'Venezuela'                          WHERE game_mode = 'COUNTRY_MONKEY' AND subcategory = 'WATER' AND correct_answer = 'Lake Maracaibo';
+UPDATE questions SET hint = 'Bolivia'                            WHERE game_mode = 'COUNTRY_MONKEY' AND subcategory = 'WATER' AND correct_answer = 'Lake Titicaca';
+UPDATE questions SET hint = 'Nantes'                             WHERE game_mode = 'COUNTRY_MONKEY' AND subcategory = 'WATER' AND correct_answer = 'Loire River';
+UPDATE questions SET hint = 'Montana'                            WHERE game_mode = 'COUNTRY_MONKEY' AND subcategory = 'WATER' AND correct_answer = 'Missouri River';
+UPDATE questions SET hint = 'Colombia'                           WHERE game_mode = 'COUNTRY_MONKEY' AND subcategory = 'WATER' AND correct_answer = 'Orinoco River';
+UPDATE questions SET hint = 'Chile'                              WHERE game_mode = 'COUNTRY_MONKEY' AND subcategory = 'WATER' AND correct_answer = 'Pacific Ocean';
+UPDATE questions SET hint = 'Pantanal'                           WHERE game_mode = 'COUNTRY_MONKEY' AND subcategory = 'WATER' AND correct_answer = 'Paraguay River';
+UPDATE questions SET hint = 'Itaipu Dam'                         WHERE game_mode = 'COUNTRY_MONKEY' AND subcategory = 'WATER' AND correct_answer = 'Paraná River';
+UPDATE questions SET hint = 'Montevideo'                         WHERE game_mode = 'COUNTRY_MONKEY' AND subcategory = 'WATER' AND correct_answer = 'Río de la Plata';
+UPDATE questions SET hint = 'Manaus'                             WHERE game_mode = 'COUNTRY_MONKEY' AND subcategory = 'WATER' AND correct_answer = 'Rio Negro';
+UPDATE questions SET hint = 'Uruguay'                            WHERE game_mode = 'COUNTRY_MONKEY' AND subcategory = 'WATER' AND correct_answer = 'South Atlantic Ocean';
+UPDATE questions SET hint = 'Tierra del Fuego'                   WHERE game_mode = 'COUNTRY_MONKEY' AND subcategory = 'WATER' AND correct_answer = 'Strait of Magellan';
+UPDATE questions SET hint = 'Toledo'                             WHERE game_mode = 'COUNTRY_MONKEY' AND subcategory = 'WATER' AND correct_answer = 'Tagus River';
 
 COMMIT;
 
