@@ -261,6 +261,13 @@ app.post('/api/room-status', (req, res) => {
     try {
         const { roomCode, playerName } = req.body;
         const targetRoom = activeRooms[roomCode];
+        // Every answer below also carries the scoreboard for the phone's
+        // swipe-left page: the standings the TV last showed (see
+        // broadcastToRoom), so a phone never learns a score early.
+        if (targetRoom) {
+            const sendJson = res.json.bind(res);
+            res.json = body => sendJson(body && body.phase ? { ...body, standings: targetRoom.phoneStandings || [] } : body);
+        }
         if (targetRoom) {
             // A player just interacted with this room! Bump the clock to keep it alive
             targetRoom.lastActivity = Date.now();

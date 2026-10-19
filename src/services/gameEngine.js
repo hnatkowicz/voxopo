@@ -200,6 +200,15 @@ export function getCategoriesForMode(winningGameMode) {
 
 function broadcastToRoom(roomCode, payload) {
     const room = activeRooms[roomCode];
+    // The phones' swipe-left scoreboard (play.html) shows the standings the
+    // TV was last sent, never the live scores: those move the moment
+    // someone answers, before the reveal, and would give away who got it
+    // right. Captured even with no TV connected -- phone-only play (a
+    // school trip with no TV, Oct 2026) is exactly who it's for.
+    if (room && Array.isArray(payload.players) && (payload.type === 'LEADERBOARD_UPDATE' || payload.type === 'GAME_OVER')) {
+        room.phoneStandings = payload.players.filter(p => !p.left).slice().sort(compareByRank)
+            .map(p => ({ name: p.name, emoji: p.emoji || null, score: p.score || 0 }));
+    }
     if (room && room.screens) {
         room.screens.forEach(socket => {
             if (socket.readyState === 1) {
