@@ -134,7 +134,79 @@ L = [
 ('hassan-ii-mosque', 'Hassan II Mosque', [AF], 3, ['Koutoubia Mosque', 'Sheikh Zayed Grand Mosque', 'Great Mosque of Kairouan', 'Blue Mosque', 'Faisal Mosque', 'Muhammad Ali Mosque'], ['Hassan 2 Mosque', 'Grande Mosquée Hassan II']),
 ('persepolis', 'Persepolis', [ME], 3, ['Pasargadae', 'Palmyra', 'Babylon', 'Petra', 'Baalbek', 'Nineveh'], ['Takht-e Jamshid', 'Gate of All Nations']),
 ('lalibela-church', 'Rock Churches of Lalibela', [AF], 4, ['Petra', 'Aksum Obelisks', 'Abu Simbel', 'Göreme Open Air Museum', 'Ellora Caves', 'Debre Damo'], ['Lalibela', 'Church of St. George Lalibela', 'Bete Giyorgis']),
+# --- added with Randy's fourth batch (his picks from the suggestion list) ----
+('brandenburg-gate', 'Brandenburg Gate', [E], 1, ['Arc de Triomphe', 'Victory Column', 'Siegestor', 'Propylaea', 'Wellington Arch', 'Holstentor'], ['Brandenburger Tor']),
+('trevi-fountain', 'Trevi Fountain', [E], 1, ['Fountain of the Four Rivers', 'Fountain of Neptune', 'Spanish Steps', 'Bellagio Fountains', 'Buckingham Fountain', 'Pantheon'], ['Fontana di Trevi', 'Trevi']),
+('the-matterhorn', 'Matterhorn', [E], 1, ['Mont Blanc', 'Eiger', 'Jungfrau', 'Mount Fuji', 'Mount Everest', 'K2'], ['The Matterhorn', 'Monte Cervino', 'Cervin']),
+('sugarloaf-mountain', 'Sugarloaf Mountain', [AM], 2, ['Table Mountain', 'Corcovado', 'Mount Roraima', 'Diamond Head', 'Rock of Gibraltar', 'Uluru'], ['Pão de Açúcar', 'Sugar Loaf', 'Sugarloaf']),
+('santorini-domes', 'Santorini', [E], 2, ['Mykonos', 'Capri', 'Positano', 'Crete', 'Rhodes', 'Amalfi'], ['Oia', 'Thira', 'Santorini Greece']),
+('potala-palace', 'Potala Palace', [AS], 2, ['Forbidden City', 'Punakha Dzong', "Paro Taktsang (Tiger's Nest)", 'Jokhang Temple', 'Summer Palace', 'Leh Palace'], ['Potala']),
+('panama-canal', 'Panama Canal', [AM], 2, ['Suez Canal', 'Erie Canal', 'Corinth Canal', 'Kiel Canal', 'Welland Canal', 'St. Lawrence Seaway'], ['Panama Canal locks', 'Miraflores Locks']),
+('sky-tree', 'Tokyo Skytree', [AS], 2, ['Tokyo Tower', 'Canton Tower', 'Kyoto Tower', 'Oriental Pearl Tower', 'N Seoul Tower', 'CN Tower'], ['Skytree', 'Sky Tree']),
+('cliffs-moher', 'Cliffs of Moher', [E], 2, ['White Cliffs of Dover', 'Slieve League', "Giant's Causeway", 'Étretat', 'Preikestolen', 'Old Man of Hoy'], ['Moher']),
+('fairy-chimneys', 'Cappadocia', [E, ME], 2, ['Bryce Canyon', 'Meteora', 'Petra', 'Pamukkale', 'Zhangjiajie', 'Bandiagara Escarpment'], ['Fairy Chimneys', 'Goreme', 'Göreme']),
+('salar-uyuni', 'Salar de Uyuni', [AM], 2, ['Bonneville Salt Flats', 'Atacama Desert', 'Lake Titicaca', 'Etosha Pan', 'Badwater Basin', 'Salinas Grandes'], ['Uyuni', 'Uyuni Salt Flat', 'Salt Flats of Uyuni']),
+('golden-temple', 'Golden Temple', [AS], 2, ['Golden Pavilion', 'Lotus Temple', 'Akshardham', 'Taj Mahal', 'Shwedagon Pagoda', 'Meenakshi Temple'], ['Harmandir Sahib', 'Sri Harmandir Sahib', 'Darbar Sahib']),
+('blue-city', 'Chefchaouen', [AF], 3, ['Jodhpur', 'Sidi Bou Said', 'Essaouira', 'Fez', 'Marrakesh', 'Mykonos'], ['Chaouen', 'Blue City']),
+('pamukkale-terraces', 'Pamukkale', [E, ME], 3, ['Mammoth Hot Springs', 'Huanglong', 'Badab-e Surt', 'Hierve el Agua', 'Cappadocia', 'Plitvice Lakes'], ['Pamukkale terraces', 'Hierapolis']),
+('hallgrimskirkja-church', 'Hallgrímskirkja', [E], 3, ['Harpa', "Grundtvig's Church", 'Akureyri Church', 'Oslo City Hall', 'Arctic Cathedral', 'Helsinki Cathedral'], ['Hallgrimskirkja', 'Hallgrims Church']),
+('chateau-frontenac', 'Château Frontenac', [AM], 3, ['Fairmont Banff Springs', 'Parliament Hill', 'Neuschwanstein Castle', 'Casa Loma', 'Empress Hotel', 'Château Laurier'], ['Chateau Frontenac', 'Fairmont Le Chateau Frontenac', 'Frontenac']),
+('karnak-temple', 'Karnak Temple', [AF, ME], 3, ['Abu Simbel', 'Luxor Temple', 'Temple of Hatshepsut', 'Valley of the Kings', 'Philae', 'Edfu Temple'], ['Karnak', 'Temple of Karnak', 'Karnak Temple Complex']),
+('torres-paine', 'Torres del Paine', [AM], 3, ['Mount Fitz Roy', 'Yosemite Valley', 'Perito Moreno Glacier', 'Cerro Torre', 'Dolomites', 'Aconcagua'], ['Torres del Paine National Park', 'Towers of Paine']),
+('avenue-baobabs', 'Avenue of the Baobabs', [AF], 3, ['Tsingy de Bemaraha', 'Masai Mara', 'Etosha National Park', 'Serengeti', 'Okavango Delta', 'Kruger National Park'], ['Baobab Avenue', 'Alley of the Baobabs']),
+('masada-fortress', 'Masada', [ME], 3, ['Petra', 'Sigiriya', 'Herodium', 'Qumran', 'Mount Sinai', 'Wadi Rum'], ['Masada fortress']),
+('mount-bromo', 'Mount Bromo', [AS], 3, ['Mount Fuji', 'Mount Mayon', 'Mount Rinjani', 'Mount Merapi', 'Krakatoa', 'Mount Pinatubo'], ['Bromo', 'Mt Bromo']),
+('registan-square', 'Registan', [ME], 3, ['Naqsh-e Jahan Square', 'Bibi-Khanym Mosque', 'Kalyan Minaret', 'Shah-i-Zinda', 'Imam Mosque', 'Itchan Kala'], ['Registan Square', 'Samarkand Registan']),
+('robben-island', 'Robben Island', [AF], 3, ['Alcatraz', "Devil's Island", "Château d'If", 'Constitution Hill', 'Gorée Island', 'Rottnest Island'], []),
+('red-dunes', 'Sossusvlei', [AF], 3, ['Sahara Desert', 'Wadi Rum', 'Erg Chebbi', "Rub' al Khali", 'Simpson Desert', 'Kalahari Desert'], ['Sossusvlei dunes', 'Namib Desert', 'Dune 45', 'Deadvlei']),
+('baalbek-temple', 'Baalbek', [ME], 4, ['Palmyra', 'Jerash', 'Persepolis', 'Temple of Olympian Zeus', 'Parthenon', 'Ephesus'], ['Temple of Bacchus', 'Baalbek temples']),
+('fish-river-canyon', 'Fish River Canyon', [AF], 4, ['Blyde River Canyon', 'Grand Canyon', 'Copper Canyon', 'Colca Canyon', 'Tara River Canyon', 'Kings Canyon'], []),
+('yamoussoukro-basilica', 'Basilica of Our Lady of Peace', [AF], 4, ["St. Peter's Basilica", 'US Capitol', 'Hassan II Mosque', 'Basilica of the Sacred Heart, Brussels', 'Les Invalides', 'Cathedral of Brasília'], ['Our Lady of Peace', 'Yamoussoukro Basilica', 'Basilique Notre-Dame de la Paix']),
+('flame-towers', 'Flame Towers', [E, ME], 4, ['Burj Khalifa', 'Absolute World', 'Evolution Tower', 'Cayan Tower', 'Lakhta Center', 'Doha Tower'], ['Baku Flame Towers']),
+('el-morro', 'El Morro', [AM], 4, ['Castillo de San Marcos', 'Fort Sumter', 'Morro Castle, Havana', 'Fort McHenry', 'Castillo San Felipe de Barajas', 'Fortaleza Ozama'], ['Castillo San Felipe del Morro', 'El Morro San Juan']),
+('banue-terraces', 'Banaue Rice Terraces', [AS], 4, ['Longji Rice Terraces', 'Tegallalang Rice Terraces', 'Sa Pa terraces', 'Jatiluwih', 'Mu Cang Chai', 'Yuanyang Rice Terraces'], ['Banaue', 'Banaue Terraces', 'Rice Terraces of the Philippine Cordilleras']),
+('kingdon-centre', 'Kingdom Centre', [ME], 4, ['Dubai Frame', 'Al Faisaliah Tower', 'Burj Khalifa', 'Burj Al Arab', 'Capital Gate', 'Doha Tower'], ['Kingdom Center', 'Kingdom Centre Tower']),
+('azadi-tower', 'Azadi Tower', [ME], 4, ['Milad Tower', 'Gateway of India', 'Arc de Triomphe', 'Al Shaheed Monument', 'Kingdom Centre', 'Baghdad Gate'], ['Azadi Monument', 'Shahyad Tower', 'Freedom Tower Tehran']),
 ]
+
+
+# Country for the Country Monkey Final Wager clue ("Country: Peru"), one per
+# photo. Two countries where a landmark straddles a border.
+COUNTRY = {
+    'eiffel-tower': 'France', 'great-pyramids': 'Egypt', 'taj-mahal': 'India', 'big-ben': 'United Kingdom',
+    'colosseum': 'Italy', 'leaning-tower-pisa': 'Italy', 'burj-khalifa': 'United Arab Emirates', 'space-needle': 'United States',
+    'sydney-opera': 'Australia', 'white-house': 'United States', 'christ-redeemer': 'Brazil', 'golden-gate': 'United States',
+    'grand-canyon': 'United States', 'great-sphinx': 'Egypt', 'great-wall': 'China', 'machu-picchu': 'Peru',
+    'mount-rushmore': 'United States', 'mt-fuji': 'Japan', 'arc-triomphe': 'France', 'forbidden-city': 'China',
+    'parthenon': 'Greece', 'us-capitol': 'United States', 'brooklyn-bridge': 'United States', 'burj-alarab': 'United Arab Emirates',
+    'gateway-arch': 'United States', 'marina-bay': 'Singapore', 'neuschwanstein-castle': 'Germany', 'one-wtc': 'United States',
+    'petronas-towers': 'Malaysia', 'taipei-101': 'Taiwan', 'ayers-rock-uluru': 'Australia', 'blue-mosque': 'Turkiye',
+    'chichen-itza': 'Mexico', 'easter-island': 'Chile', 'grand-canal': 'Italy', 'hagia-sophia': 'Turkiye',
+    'hoover-dam': 'United States', 'mont-stmichel': 'France', 'mt-kilimanjaro': 'Tanzania', 'angkor-wat': 'Cambodia',
+    'golden-pavilion': 'Japan', 'versailles': 'France', 'atomium-brussels': 'Belgium', 'birds-nest': 'China',
+    'cn-tower': 'Canada', 'falling-water': 'United States', 'guggenheim-bilbao': 'Spain', 'guggenheim-ny': 'United States',
+    'the-shard': 'United Kingdom', 'flatiron-building': 'United States', 'angel-falls': 'Venezuela', 'canton-tower': 'China',
+    'fort-knox': 'United States', 'halong-bay': 'Vietnam', 'horseshoe-bend': 'United States', 'iguacu-falls': 'Argentina and Brazil',
+    'lotus-temple': 'India', 'mesa-verde': 'United States', 'monument-valley': 'United States', 'mt-everest': 'Nepal and China',
+    'museum-future': 'United Arab Emirates', 'winter-palace': 'Russia', 'pantheon': 'Italy', 'bosco-verticale': 'Italy',
+    'evolution-tower': 'Russia', 'habitat-67': 'Canada', 'turning-torso': 'Sweden', 'villa-savoye': 'France',
+    'amber-palace': 'India', 'chand-baori': 'India', 'derawar-fort': 'Pakistan', 'fort-mchenry': 'United States',
+    'kyoto-tower': 'Japan', 'las-lajas': 'Colombia', 'statue-liberty': 'United States', 'tower-bridge': 'United Kingdom',
+    'stonehenge-stones': 'United Kingdom', 'niagarafalls': 'Canada and the United States', 'st-basils': 'Russia', 'the-louvre': 'France',
+    'notre-dame': 'France', 'petra-landmark': 'Jordan', 'the-alamo': 'United States', 'tikal-temple': 'Guatemala',
+    'temple-sun': 'Mexico', 'pont-dugard': 'France', 'rialto-bridge': 'Italy', 'the-vessel': 'United States',
+    'todai-ji': 'Japan', 'three-gorges': 'China', 'sigiriya-fortress': 'Sri Lanka', 'victoria-falls': 'Zambia and Zimbabwe',
+    'abu-simbel': 'Egypt', 'dome-rock': 'Jerusalem', 'sayed-mosque': 'United Arab Emirates', 'table-mountain': 'South Africa',
+    'dejennes-mosque': 'Mali', 'hassan-ii-mosque': 'Morocco', 'persepolis': 'Iran', 'lalibela-church': 'Ethiopia',
+    'brandenburg-gate': 'Germany', 'trevi-fountain': 'Italy', 'the-matterhorn': 'Switzerland and Italy', 'sugarloaf-mountain': 'Brazil',
+    'santorini-domes': 'Greece', 'potala-palace': 'China (Tibet)', 'panama-canal': 'Panama', 'sky-tree': 'Japan',
+    'cliffs-moher': 'Ireland', 'fairy-chimneys': 'Turkiye', 'salar-uyuni': 'Bolivia', 'golden-temple': 'India',
+    'blue-city': 'Morocco', 'pamukkale-terraces': 'Turkiye', 'hallgrimskirkja-church': 'Iceland', 'chateau-frontenac': 'Canada',
+    'karnak-temple': 'Egypt', 'torres-paine': 'Chile', 'avenue-baobabs': 'Madagascar', 'masada-fortress': 'Israel',
+    'mount-bromo': 'Indonesia', 'registan-square': 'Uzbekistan', 'robben-island': 'South Africa', 'red-dunes': 'Namibia',
+    'baalbek-temple': 'Lebanon', 'fish-river-canyon': 'Namibia', 'yamoussoukro-basilica': 'Ivory Coast', 'flame-towers': 'Azerbaijan',
+    'el-morro': 'Puerto Rico', 'banue-terraces': 'Philippines', 'kingdon-centre': 'Saudi Arabia', 'azadi-tower': 'Iran',
+}
 
 CM_POINTS = {1: 100, 2: 150, 3: 200, 4: 250}
 
@@ -151,7 +223,7 @@ def country_monkey_sql():
     rows = [(region, r) for r in L for region in r[2]]
     rows.sort(key=lambda x: (x[1][3], x[0], x[1][1]))
     body = ',\n'.join(
-        f"({sq(region) + ',':<21} {sq('/structures/' + f + '.webp') + ',':<46} {sq(ans) + ',':<36} {arr(wrong)}, {arr(acc)}, {CM_POINTS[d]})"
+        f"({sq(region) + ',':<21} {sq('/structures/' + f + '.webp') + ',':<46} {sq(ans) + ',':<36} {arr(wrong)}, {arr(acc)}, {sq(COUNTRY[f])}, {CM_POINTS[d]})"
         for region, (f, ans, regions, d, wrong, acc) in rows)
     return f"""-- ============================================================================
 -- Country Monkey: LANDMARK questions ("What is this landmark?") -- GENERATED
@@ -167,6 +239,8 @@ def country_monkey_sql():
 -- (Eiffel Tower -> France) and would block that country's map and flag from
 -- the same game. Wrong answers are real places of the same kind and look.
 -- accepted_answers: other names a typed Final Wager answer may use.
+-- hint: where it is -- the one clue a player can buy in the Final Wager
+-- (for half their winnings).
 --
 -- Safe to re-run: deletes and re-inserts the landmark questions only
 -- (subcategory 'LANDMARK'), in a transaction.
@@ -176,15 +250,16 @@ BEGIN;
 
 ALTER TABLE questions ADD COLUMN IF NOT EXISTS wrong_answers TEXT[];
 ALTER TABLE questions ADD COLUMN IF NOT EXISTS accepted_answers TEXT[];
+ALTER TABLE questions ADD COLUMN IF NOT EXISTS hint TEXT;
 
 DELETE FROM questions WHERE game_mode = 'COUNTRY_MONKEY' AND subcategory = 'LANDMARK';
 
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, accepted_answers, points)
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, accepted_answers, hint, points)
 SELECT (SELECT COALESCE(MAX(question_number), 0) FROM questions) + ROW_NUMBER() OVER (),
-       'COUNTRY_MONKEY', v.region, 'LANDMARK', v.region, 'What is this landmark?', v.visual_asset, v.correct_answer, v.wrong_answers, v.accepted_answers, v.points
+       'COUNTRY_MONKEY', v.region, 'LANDMARK', v.region, 'What is this landmark?', v.visual_asset, v.correct_answer, v.wrong_answers, v.accepted_answers, v.hint, v.points
 FROM (VALUES
 {body}
-) AS v(region, visual_asset, correct_answer, wrong_answers, accepted_answers, points);
+) AS v(region, visual_asset, correct_answer, wrong_answers, accepted_answers, hint, points);
 
 COMMIT;
 

@@ -109,7 +109,7 @@ Mode keys are used in room votes and in `gameEngine.js`:
 
 - **Game length:** Trivi-yeah! is 12 questions, matching Profiler's 12
   rounds. Country Monkey is 20 (15 once flags and water joined, 20 once it
-  grew into a standalone mode with ~100 landmarks -- Randy, Oct 2026).
+  grew into a standalone mode with 132 landmarks -- Randy, Oct 2026).
 - **TRIVI_YEAH** (Trivi-yeah!): multiple-choice trivia. Its rows are stored
   under `game_mode = 'TRIVIA'`, a legacy exception that is kept on purpose (see
   the mapping near the top of `gameEngine.js`). It's the **event mode**
@@ -165,13 +165,13 @@ Mode keys are used in room votes and in `gameEngine.js`:
     are look-alike flags, never a near-twin (Chad/Romania, Monaco/Indonesia).
   - Water: `public/water/` (same recipe as the maps);
     `country_monkey_water.sql`, wrong answers of the same kind of water.
-  - Landmarks: `public/structures/`, Randy's 100 photos of buildings and
+  - Landmarks: `public/structures/`, Randy's 132 photos of buildings and
     natural wonders, 1500x1000 WebP (quality 85). `content/landmarks_source.py`
     is the master list (answer, regions, difficulty 1-4, 6 look-alike wrong
     answers, alternate names) and writes both `country_monkey_landmarks.sql`
     and the Thinking Pants sheet `content/landmarks.csv`. Asks for the
     landmark, not its country (the country is nearly free points and would
-    block that country's map). Africa (9) and the Middle East (13) are the thin regions.
+    block that country's map). Africa (16) and the Middle East (22) are the thinnest regions.
   - Each SQL file only replaces its own subcategory, so they run
     independently. 5 regions + World Wide (Africa, Europe, Asia & Pacific,
     Middle East, Americas); `WORLD` rows (UN, Antarctica) are World Wide only.
@@ -182,7 +182,14 @@ Mode keys are used in room votes and in `gameEngine.js`:
   are a flat finale, the hardest too obscure to type, and "I want all to
   have a chance at glory!"). Typos are forgiven, `accepted_answers` holds alternate
   names (Swaziland, Burma, ...), and a near-miss that is really a different
-  country ("Niger" for Nigeria) is never accepted. The same maps power the **Country Monkey** category
+  country ("Niger" for Nigeria) is never accepted. **One clue** can be
+  bought on your phone for half the winnings (`COUNTRY_MONKEY_CLUE_COST`):
+  map or flag -> the capital (from `flag_me_down_countries`), landmark ->
+  where it is (`hint` column, written by `landmarks_source.py`), water -> a
+  place it touches (`country_monkey_clues.sql`, re-run after the water
+  SQL). No clue on file (a territory's flag) -> no button. Clues are data
+  (`hints: [{ kind, label, cost, text | imageUrl }]`), shared with Flag Me
+  Down's Final Wager. The same maps power the **Country Monkey** category
   in Thinking Pants (`trivi_yeah_ii_country_monkey.sql`, 80 maps, 20 per tier).
 - **Question pictures** (any mode) are shown on the TV *and* phones, fetched in
   the background before they're needed, and served under a disguised address
@@ -206,7 +213,7 @@ Mode keys are used in room votes and in `gameEngine.js`:
 - **Thinking Pants geography categories:** Country Monkey (maps), **Flag Me
   Down** (flags, `trivi_yeah_ii_flag_me_down.sql`, 80), **Wet Pants**
   (water, `trivi_yeah_ii_wet_pants.sql`, 48) and **Wish You Were Here**
-  (landmarks, `content/landmarks.csv`, 100; a postcard name because it has
+  (landmarks, `content/landmarks.csv`, 132; a postcard name because it has
   natural wonders too) -- the cross-play with Country Monkey is deliberate.
 - **FLAG_ME_DOWN** (also a standalone mode, after the family asked where it
   went): 15 flags, 5 easy -> 5 medium -> 5 hard, each with 4 country choices
@@ -219,9 +226,11 @@ Mode keys are used in room votes and in `gameEngine.js`:
   `flag_me_down_countries` (`flag_me_down_countries.sql`, 170 countries
   that have both a flag and a map; countries only for now -- US states and
   Canadian/Mexican provinces maybe later). Final Wager: a medium unused
-  flag, typed; region/capital/map clues open privately on your phone, each
-  taking 25% off the winnings, rounded up to a whole point (Randy's call);
-  a wrong answer loses the full wager. The stage timings
+  flag, typed; region/capital/map clues open privately on your phone,
+  costing 10% / 25% / 50% of the winnings (`FLAG_ME_DOWN_HINT_COSTS`; was
+  a flat 25% each until Randy: "I use map almost exclusively, and it should
+  cost me more"), rounded up to a whole point; a wrong answer loses the
+  full wager. The stage timings
   (`FLAG_ME_DOWN_STAGE_MS`) are first guesses, to be tuned in play.
 
 ## Content
@@ -308,8 +317,8 @@ and forth until we both agree the idea is good **and** worth the effort. So:
   money, health, or questions about people in the room.
 - **Mind Field:** a name saved for a future mode built around hidden traps
   on a board.
-- **Flag Me Down Final Wager clues (pinned for discussion):** Randy's
-  hunch is the region clue isn't worth 25% when the map gives you
-  everything -- but it may help people who aren't good with maps. Kept
-  as-is for now.
+- **Final Wager clues elsewhere:** the bought-clue mechanic now runs in
+  Flag Me Down (3 clues) and Country Monkey (1). Thinking Pants' Final
+  Wager could get one too, but each of its questions would need a
+  hand-written hint; see how Country Monkey's plays first.
 
