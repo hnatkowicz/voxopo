@@ -9,9 +9,14 @@ export const GAME_MODE_KEYS = ['TRIVI_YEAH', 'TRIVI_YEAH_II', 'COUNTRY_MONKEY', 
 // A venue's access code can limit which modes its rooms offer (a pub shows
 // only a few) -- the vote tally only ever has those keys, so a vote for any
 // other mode simply never counts.
+// Trivi-yeah! is for venue and event codes -- baby showers, receptions,
+// libraries, company functions -- not the living room (Randy, Oct 2026). A
+// code with no modes ticked in /admin gets everything else; a code that
+// wants Trivi-yeah! ticks it.
+const DEFAULT_MODE_KEYS = GAME_MODE_KEYS.filter(key => key !== 'TRIVI_YEAH');
 export function allowedModesFor(room) {
     const allowed = room && room.venue && room.venue.allowedModes;
-    return allowed && allowed.length ? allowed : GAME_MODE_KEYS;
+    return allowed && allowed.length ? allowed : DEFAULT_MODE_KEYS;
 }
 export function emptyModeVotes(room) {
     return Object.fromEntries(allowedModesFor(room).map(key => [key, 0]));

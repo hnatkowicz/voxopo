@@ -6,6 +6,10 @@ document.addEventListener("DOMContentLoaded", () => {
         const audio = document.getElementById(id);
         if (audio) audio.volume = 0.5;
     });
+    // The category-vote music is the first thing a room hears, and the file is
+    // mastered louder than the rest -- half again (Randy, Oct 2026).
+    const categoryMusic = document.getElementById('category-music');
+    if (categoryMusic) categoryMusic.volume = 0.25;
 
     const btnSubmitSpectate = document.getElementById('btn-submit-spectate');
     const inputRoomCode = document.getElementById('input-room-code');

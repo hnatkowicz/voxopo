@@ -112,7 +112,12 @@ Mode keys are used in room votes and in `gameEngine.js`:
   grew into a standalone mode with ~100 landmarks -- Randy, Oct 2026).
 - **TRIVI_YEAH** (Trivi-yeah!): multiple-choice trivia. Its rows are stored
   under `game_mode = 'TRIVIA'`, a legacy exception that is kept on purpose (see
-  the mapping near the top of `gameEngine.js`).
+  the mapping near the top of `gameEngine.js`). It's the **event mode**
+  (Randy, Oct 2026: showers, receptions, libraries, company functions), not
+  a living-room one: a code with no modes ticked in /admin gets every mode
+  *except* Trivi-yeah! (`DEFAULT_MODE_KEYS`); an event/venue code ticks it.
+  Planned: a well-branded version showing the venue's logo on its tile and
+  on the TV.
 - **TRIVI_YEAH_II** (shown to players as **Thinking Pants**, renamed from
   "Trivi-Yeah II"; the internal key and `game_mode` value kept the old name):
   a Jeopardy-style board with 3 rounds, the Doubler
