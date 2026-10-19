@@ -1777,33 +1777,37 @@
             revealBox.style.display = 'block';
         }
 
-        // Flag Me Down's Final Wager clues. Drawn on every poll (cheap) so
-        // an opened clue shows up right away.
+        // Final Wager clues (Flag Me Down: region/capital/map; Country
+        // Monkey: one). The server sends each clue's name and cost, and the
+        // content only of the ones you opened. Drawn on every poll (cheap)
+        // so an opened clue shows up right away.
         function renderFinalWagerHints(data) {
             const box = document.getElementById('fw-hints-box');
             const mine = data.myHints;
-            if (!data.hintsAvailable && !(mine && mine.used.length)) { box.style.display = 'none'; showQuestionPicture('fw-hint-map-container', 'fw-hint-map-image', null); return; }
+            if (!mine || (!data.hintsAvailable && !mine.used.length)) { box.style.display = 'none'; showQuestionPicture('fw-hint-map-container', 'fw-hint-map-image', null); return; }
             box.style.display = 'block';
-            const used = (mine && mine.used) || [];
-            const pct = Math.max(0, 100 - 25 * used.length);
+            const used = mine.used;
+            const pct = Math.round(100 * mine.share);
+            const single = mine.menu.length === 1;
             document.getElementById('fw-hints-worth').innerText = data.hintsAvailable
-                ? `Stuck? Each clue takes 25% off your winnings. You'd win ${pct}% of your wager.`
+                ? (single
+                    ? `Stuck? A clue takes ${Math.round(100 * mine.menu[0].cost)}% off your winnings. You'd win ${pct}% of your wager.`
+                    : `Stuck? Each clue takes a share off your winnings. You'd win ${pct}% of your wager.`)
                 : `You'd win ${pct}% of your wager.`;
             const buttons = document.getElementById('fw-hints-buttons');
-            const key = `${data.hintsAvailable}|${used.join(',')}`;
+            const key = `${data.hintsAvailable}|${used.join(',')}|${mine.menu.map(h => h.kind).join(',')}`;
             if (buttons.dataset.key !== key) {
                 buttons.dataset.key = key;
-                buttons.innerHTML = data.hintsAvailable ? [['REGION', 'Region'], ['CAPITAL', 'Capital'], ['MAP', 'Map']].map(([kind, label]) =>
-                    used.includes(kind)
-                        ? `<div class="module-row btn-locked" style="flex: 1; text-align: center; font-weight: 700; padding: 10px 4px; opacity: 0.5;">${label} ✓</div>`
-                        : `<div class="module-row" style="flex: 1; text-align: center; font-weight: 700; padding: 10px 4px;" onclick="openFinalWagerHint(this, '${kind}')">${label}<br><span style="font-size: 0.75rem; color: #ff5c5c;">-25%</span></div>`
+                buttons.innerHTML = data.hintsAvailable ? mine.menu.map(h =>
+                    used.includes(h.kind)
+                        ? `<div class="module-row btn-locked" style="flex: 1; text-align: center; font-weight: 700; padding: 10px 4px; opacity: 0.5;">${escapeFmd(h.label)} ✓</div>`
+                        : `<div class="module-row" style="flex: 1; text-align: center; font-weight: 700; padding: 10px 4px;" onclick="openFinalWagerHint(this, '${h.kind}')">${single ? 'Get a clue: ' : ''}${escapeFmd(h.label)}<br><span style="font-size: 0.75rem; color: #ff5c5c;">-${Math.round(100 * h.cost)}%</span></div>`
                 ).join('') : '';
             }
-            const lines = [];
-            if (mine && mine.region) lines.push(`🧭 Region: <strong>${escapeFmd(mine.region)}</strong>`);
-            if (mine && mine.capital) lines.push(`🏛️ Capital: <strong>${escapeFmd(mine.capital)}</strong>`);
+            const lines = mine.opened.filter(h => h.text).map(h => `${h.icon || '💡'} ${escapeFmd(h.label)}: <strong>${escapeFmd(h.text)}</strong>`);
             document.getElementById('fw-hints-opened').innerHTML = lines.join('<br>');
-            showQuestionPicture('fw-hint-map-container', 'fw-hint-map-image', mine ? mine.mapUrl : null);
+            const picture = mine.opened.find(h => h.imageUrl);
+            showQuestionPicture('fw-hint-map-container', 'fw-hint-map-image', picture ? picture.imageUrl : null);
         }
 
         async function openFinalWagerHint(element, kind) {

@@ -1960,6 +1960,13 @@ async function startTriviYeahIIFinalWager(roomCode) {
 // players see comes from modeLabel. visualAsset (optional) is the question's
 // picture, shown once answering opens -- never during the wager, which is
 // placed on the topic alone, same as Thinking Pants.
+// Share of a correct wager a player still wins after the clues they opened.
+export function finalWagerWinShare(fw, playerName) {
+    const used = (fw && fw.hintsUsed && fw.hintsUsed[playerName]) || [];
+    const cost = ((fw && fw.hints) || []).filter(h => used.includes(h.kind)).reduce((sum, h) => sum + h.cost, 0);
+    return Math.max(0, 1 - cost);
+}
+
 function startFinalWager(roomCode, { questionText, correctAnswer, acceptedAnswers, topicLabel, visualAsset = null, rivalAnswers = [], modeLabel, hints = null }) {
     const room = activeRooms[roomCode];
     if (!room) return;
@@ -1973,8 +1980,8 @@ function startFinalWager(roomCode, { questionText, correctAnswer, acceptedAnswer
         correctAnswer, // server-only -- never broadcast until the reveal step that needs it
         acceptedAnswers, // server-only -- the variants correct is actually checked against
         rivalAnswers, // server-only -- near-misses that are a different answer (see isFinalWagerAnswerCorrect)
-        hints, // Flag Me Down: { region, capital, mapUrl } -- each one a player opens costs a share of their winnings
-        hintsUsed: {}, // name -> ['REGION', 'CAPITAL', 'MAP'] (server-only until the reveal)
+        hints, // [{ kind, label, icon, cost, text | imageUrl }] -- each one a player opens takes its cost (a share) off their winnings
+        hintsUsed: {}, // name -> kinds opened, e.g. ['REGION', 'MAP'] (server-only until the reveal)
         wagers: {},
         answers: {},
         phase: 'CATEGORY_REVEAL',
@@ -2077,10 +2084,10 @@ function closeTriviYeahIIFinalAnswerPhase(roomCode) {
         const wagerAmount = fw.wagers[p.name] || 0;
         const rawAnswer = fw.answers[p.name] || '';
         const correct = rawAnswer.length > 0 && isFinalWagerAnswerCorrect(rawAnswer, fw.acceptedAnswers, fw.rivalAnswers);
-        // Flag Me Down: each clue opened takes a share off the winnings,
-        // rounded up to a whole point; a wrong answer still loses the wager.
+        // Each clue opened takes its share off the winnings, rounded up to a
+        // whole point; a wrong answer still loses the full wager.
         const hintsUsed = (fw.hintsUsed[p.name] || []).length;
-        const winAmount = Math.ceil(wagerAmount * Math.max(0, 1 - FLAG_ME_DOWN_HINT_COST * hintsUsed));
+        const winAmount = Math.ceil(wagerAmount * finalWagerWinShare(fw, p.name));
         return { playerName: p.name, wagerAmount, winAmount, hintsUsed, answerText: rawAnswer, correct };
     });
     fw.revealIndex = -1;
@@ -2151,18 +2158,21 @@ async function startCountryMonkeyFinalWager(roomCode) {
     if (!room) return;
 
     const region = isRealCategoryKey(room.activeCategoryKey) ? room.activeCategoryKey : null; // null = World Wide
+    // Newest columns first; each fallback drops one that may not exist yet
+    // (hint: country_monkey_clues.sql; accepted_answers: the maps SQL).
     let result;
-    try {
-        result = await pool.query(
-            `SELECT id, category, subcategory, question_text, correct_answer, wrong_answers, accepted_answers, points, visual_asset
-             FROM questions WHERE game_mode = 'COUNTRY_MONKEY'`, []
-        );
-    } catch (error) {
-        console.error(`⚠️ [Country Monkey] Final Wager query failed (${error.message}) -- retrying without accepted_answers.`);
-        result = await pool.query(
-            `SELECT id, category, subcategory, question_text, correct_answer, wrong_answers, points, visual_asset
-             FROM questions WHERE game_mode = 'COUNTRY_MONKEY'`, []
-        );
+    const columnSets = ['accepted_answers, hint', 'accepted_answers', ''];
+    for (const extra of columnSets) {
+        try {
+            result = await pool.query(
+                `SELECT id, category, subcategory, question_text, correct_answer, wrong_answers, points, visual_asset${extra ? ', ' + extra : ''}
+                 FROM questions WHERE game_mode = 'COUNTRY_MONKEY'`, []
+            );
+            break;
+        } catch (error) {
+            if (extra === '') throw error;
+            console.error(`⚠️ [Country Monkey] Final Wager query failed (${error.message}) -- retrying with fewer columns.`);
+        }
     }
     const allRows = result.rows;
     const asked = new Set(room.questionBank.map(row => row.correct_answer));
@@ -2201,8 +2211,37 @@ async function startCountryMonkeyFinalWager(roomCode) {
         // kind of question, never the picture itself.
         topicLabel: `${room.activeDeckName || 'World Wide!'} · ${COUNTRY_MONKEY_TYPE_LABELS[type]}`,
         visualAsset: disguisedAssetUrl(room, row),
-        modeLabel: 'Country Monkey'
+        modeLabel: 'Country Monkey',
+        hints: await countryMonkeyFinalWagerClue(type, row)
     });
+}
+
+// Country Monkey's Final Wager clue: ONE clue, opened privately on your
+// phone for half your winnings (Randy, Oct 2026 -- the Flag Me Down clue
+// mechanic "used elsewhere for handwritten answers", one clue only).
+// Landmark -> its country; map or flag -> the capital (from Flag Me Down's
+// country table); water -> a country it touches. No clue on file (a
+// territory's flag, a row without a hint yet) -> no clue button.
+const COUNTRY_MONKEY_CLUE_COST = 0.5;
+let countryCapitalsCache = null;
+async function countryCapitals() {
+    if (countryCapitalsCache) return countryCapitalsCache;
+    try {
+        const { rows } = await pool.query('SELECT name, capital_clue FROM flag_me_down_countries', []);
+        countryCapitalsCache = new Map(rows.map(r => [r.name, r.capital_clue]));
+    } catch (error) {
+        console.error(`⚠️ [Country Monkey] No capitals for the Final Wager clue (${error.message}).`);
+        return new Map(); // not cached: try again next game
+    }
+    return countryCapitalsCache;
+}
+async function countryMonkeyFinalWagerClue(type, row) {
+    let label = null, text = null;
+    if (type === 'LANDMARK') { label = 'Where'; text = row.hint; } // "Where" not "Country": Jerusalem, "Zambia and Zimbabwe"
+    else if (type === 'WATER') { label = 'Touches'; text = row.hint; }
+    else { label = 'Capital'; text = (await countryCapitals()).get(row.correct_answer); }
+    if (!text) return null;
+    return [{ kind: 'CLUE', label, icon: { Where: '📍', Touches: '🧭', Capital: '🏛️' }[label], cost: COUNTRY_MONKEY_CLUE_COST, text }];
 }
 
 // ==========================================
@@ -2226,9 +2265,12 @@ const FLAG_ME_DOWN_STAGE_POINTS = [400, 300, 200, 100]; // what a right lock-in 
 const FLAG_ME_DOWN_STAGE_LABELS = ['Flag', 'Region', 'Capital', 'Map'];
 const FLAG_ME_DOWN_REVEAL_MS = 6000;
 const FLAG_ME_DOWN_ALL_LOCKED_MS = 1200; // short beat once everyone's locked in, then the reveal
-// Final Wager clues: each one you peek at takes this share off what you can
-// win (rounded up to a whole point). A wrong answer still loses the wager.
-const FLAG_ME_DOWN_HINT_COST = 0.25;
+// Final Wager clues: each one you peek at takes its share off what you can
+// win (rounded up to a whole point); a wrong answer still loses the wager.
+// Was a flat 25% each; re-weighted by how much a clue gives away (Randy,
+// Oct 2026: "I use map almost exclusively, and it should cost me more").
+// All three together still leave 15% to win.
+const FLAG_ME_DOWN_HINT_COSTS = { REGION: 0.10, CAPITAL: 0.25, MAP: 0.50 };
 
 function fmdAsset(room, kind, country) {
     return disguisedAssetUrl(room, { id: `fmd-${kind}-${country.name}`, visual_asset: kind === 'flag' ? country.flag_asset : country.map_asset });
@@ -2458,11 +2500,11 @@ async function startFlagMeDownFinalWager(roomCode) {
         topicLabel: 'One last flag',
         visualAsset: fmdAsset(room, 'flag', country),
         modeLabel: 'Flag Me Down',
-        hints: {
-            region: country.local_region,
-            capital: country.capital_clue,
-            mapUrl: fmdAsset(room, 'map', country)
-        }
+        hints: [
+            { kind: 'REGION', label: 'Region', icon: '🧭', cost: FLAG_ME_DOWN_HINT_COSTS.REGION, text: country.local_region },
+            { kind: 'CAPITAL', label: 'Capital', icon: '🏛️', cost: FLAG_ME_DOWN_HINT_COSTS.CAPITAL, text: country.capital_clue },
+            { kind: 'MAP', label: 'Map', icon: '🗺️', cost: FLAG_ME_DOWN_HINT_COSTS.MAP, imageUrl: fmdAsset(room, 'map', country) }
+        ]
     });
 }
 
@@ -4726,13 +4768,14 @@ export function handleIncomingMessage(fromPhone, bodyText, explicitRoomCode, pre
         }
         // Flag Me Down: open a clue on your own phone, for a share of your
         // winnings. Can't be closed again once opened.
-        const hintMatch = /^FHINT\s+(REGION|CAPITAL|MAP)$/i.exec(cleanText);
-        if (hintMatch && currentRoom.finalWager.hints) {
+        const hintMatch = /^FHINT\s+([A-Z]+)$/i.exec(cleanText);
+        const fwHints = currentRoom.finalWager.hints;
+        if (hintMatch && fwHints && fwHints.some(h => h.kind === hintMatch[1].toUpperCase())) {
             const fw = currentRoom.finalWager;
             const kind = hintMatch[1].toUpperCase();
             fw.hintsUsed[actingPlayerName] = fw.hintsUsed[actingPlayerName] || [];
             if (!fw.hintsUsed[actingPlayerName].includes(kind)) fw.hintsUsed[actingPlayerName].push(kind);
-            return `Clue opened -- your winnings drop to ${Math.round(100 * Math.max(0, 1 - FLAG_ME_DOWN_HINT_COST * fw.hintsUsed[actingPlayerName].length))}%.`;
+            return `Clue opened -- your winnings drop to ${Math.round(100 * finalWagerWinShare(fw, actingPlayerName))}%.`;
         }
     }
 
