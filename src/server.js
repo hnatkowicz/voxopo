@@ -3,7 +3,7 @@ import dotenv from 'dotenv';
 import path from 'path';
 import { WebSocketServer } from 'ws';
 import pool from './config/database.js';
-import { handleIncomingMessage, activeRooms, getCategoriesForMode, resolveRequestedQuestionCount, compareByRank, closeRoom, profilerStatusFor, profilerTvSnapshot, triviYeahIITrapInfo, emptyModeVotes, resolveDisguisedAsset, flagMeDownStatusFor, GAME_MODE_KEYS, allowedModesFor } from './services/gameEngine.js';
+import { handleIncomingMessage, activeRooms, getCategoriesForMode, resolveRequestedQuestionCount, compareByRank, closeRoom, profilerStatusFor, profilerTvSnapshot, triviYeahIITrapInfo, emptyModeVotes, finalWagerWinShare, resolveDisguisedAsset, flagMeDownStatusFor, GAME_MODE_KEYS, allowedModesFor } from './services/gameEngine.js';
 import {
     isHostAuthorized, grantHostSession, isAccessCodeActive,
     isAdminAuthorized, grantAdminSession,
@@ -406,16 +406,18 @@ app.post('/api/room-status', (req, res) => {
                 // answering opens, fetched in the background while wagering.
                 visualAsset: fw.phase === 'ANSWER' || fw.phase === 'REVEAL' ? (fw.visualAsset || null) : null,
                 preloadAsset: fw.phase === 'WAGER' ? (fw.visualAsset || null) : null,
-                // Flag Me Down: clues you can open on your own phone while
-                // answering -- only the ones THIS player opened come back.
+                // Clues you can open on your own phone while answering (Flag
+                // Me Down: three; Country Monkey: one). The menu carries only
+                // names and costs; the content comes back only for the clues
+                // THIS player opened.
                 hintsAvailable: !!fw.hints && fw.phase === 'ANSWER',
                 myHints: fw.hints && (fw.phase === 'ANSWER' || fw.phase === 'REVEAL') ? (() => {
                     const used = (fw.hintsUsed && fw.hintsUsed[playerName]) || [];
                     return {
                         used,
-                        region: used.includes('REGION') ? fw.hints.region : null,
-                        capital: used.includes('CAPITAL') ? fw.hints.capital : null,
-                        mapUrl: used.includes('MAP') ? fw.hints.mapUrl : null
+                        menu: fw.hints.map(h => ({ kind: h.kind, label: h.label, cost: h.cost })),
+                        opened: fw.hints.filter(h => used.includes(h.kind)).map(h => ({ kind: h.kind, label: h.label, icon: h.icon, text: h.text || null, imageUrl: h.imageUrl || null })),
+                        share: finalWagerWinShare(fw, playerName)
                     };
                 })() : null,
                 gameSecondsLeft: targetRoom.gameSecondsLeft,
