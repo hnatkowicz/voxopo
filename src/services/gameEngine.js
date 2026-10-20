@@ -890,7 +890,13 @@ const TRIVI_YEAH_II_SIDE_BET_SECONDS = 20; // was 10 -- too tight in practice: a
 // deliberately doesn't have.
 const TRIVI_YEAH_II_FINAL_CATEGORY_REVEAL_MS = 3000; // "FINAL WAGER" + topic, before wagering opens
 const TRIVI_YEAH_II_FINAL_WAGER_TIMEOUT_MS = 30000; // backstop if a player never wagers -- defaults to 0
-const TRIVI_YEAH_II_FINAL_ANSWER_SECONDS = 30; // fixed, matches thirty-second-timer.mp3 -- never fast-forwarded, even if everyone's answered early
+// Fixed, never fast-forwarded, even if everyone's answered early. 40s
+// since Randy's Oct 2026 playtest ("needs 10 more seconds" -- typing an
+// answer, maybe after a clue, was tight in 30). thirty-second-timer.mp3 is
+// still 30s, so the TV starts it at 30 left and it still ends on zero; the
+// first 10 seconds are quiet reading/typing time.
+const TRIVI_YEAH_II_FINAL_ANSWER_SECONDS = 40;
+const TRIVI_YEAH_II_FINAL_MUSIC_AT_SECONDS = 30;
 const TRIVI_YEAH_II_FINAL_REVEAL_STEP_MS = 4500; // pause between each player's one-by-one reveal
 const TRIVI_YEAH_II_FINAL_GAME_OVER_DELAY_MS = 2500; // beat after the last reveal before GAME_OVER takes over
 
@@ -2097,15 +2103,17 @@ function openTriviYeahIIFinalAnswerPhase(roomCode) {
     });
 
     // Deliberately no fast-forward-on-everyone-answered here, unlike every
-    // other timed phase in this mode -- the full 30 seconds plays out no
-    // matter what (see design chat), both for suspense and because it's
-    // timed to match thirty-second-timer.mp3 exactly.
+    // other timed phase in this mode -- the full clock plays out no matter
+    // what (see design chat), both for suspense and because its last 30
+    // seconds are timed to match thirty-second-timer.mp3 exactly.
     let count = TRIVI_YEAH_II_FINAL_ANSWER_SECONDS;
     room.gameSecondsLeft = count;
+    if (count <= TRIVI_YEAH_II_FINAL_MUSIC_AT_SECONDS) broadcastToRoom(roomCode, { type: 'TRIVI_YEAH_II_FINAL_MUSIC_START' });
     if (room.timerInterval) clearInterval(room.timerInterval);
     room.timerInterval = setInterval(() => {
         count--;
         room.gameSecondsLeft = count;
+        if (count === TRIVI_YEAH_II_FINAL_MUSIC_AT_SECONDS) broadcastToRoom(roomCode, { type: 'TRIVI_YEAH_II_FINAL_MUSIC_START' });
         if (count > 0) {
             broadcastToRoom(roomCode, { type: 'GAME_TIMER_TICK', secondsLeft: count + " s" });
         } else {
