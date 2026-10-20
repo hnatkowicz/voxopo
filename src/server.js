@@ -367,7 +367,7 @@ app.post('/api/room-status', (req, res) => {
                     categoryLabel: ty2.grid[ty2.activeCellIndex] ? ty2.grid[ty2.activeCellIndex].categoryLabel : null,
                     tileValue: ty2.grid[ty2.activeCellIndex] ? ty2.grid[ty2.activeCellIndex].points : null,
                     wagerAmount: ty2.doubler.wagerAmount,
-                    multiplier: ty2.doubler.multiplier || 1, // last-round Doublers pay double
+                    multiplier: ty2.doubler.multiplier || 1, // last-round side bets stake 2x the tile
                     maxWager: (ty2.phase === 'DOUBLER_WAGER' && playerName === ty2.currentPicker)
                         ? Math.max(myScore || 0, ty2.grid[ty2.activeCellIndex].points)
                         : null,

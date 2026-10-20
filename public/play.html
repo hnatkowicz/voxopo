@@ -1829,7 +1829,7 @@
             }
             if (data.doubler && data.triviYeahIIPhase === 'ROUND_REVEAL' && data.doubler.resolved) {
                 const won = data.doubler.pickerCorrect;
-                const payout = data.doubler.wagerAmount * (data.doubler.multiplier || 1);
+                const payout = data.doubler.wagerAmount;
                 showFeedback(feedback, won ? `Correct! You won ${payout} points.` : `Missed it -- you lost ${payout} points.`,
                     won ? "rgba(0,230,118,0.06)" : "rgba(255,71,87,0.06)", won ? "#00e676" : "#ff4757", won ? "rgba(0,230,118,0.15)" : "rgba(255,71,87,0.1)");
             } else if (data.trapOutcome && data.triviYeahIIPhase === 'ROUND_REVEAL' && trapOutcomeLine(data.trapOutcome, nickname)) {
@@ -1880,13 +1880,12 @@
                 if (data.isMyPick) {
                     const maxWager = data.doubler.maxWager || 0;
                     document.getElementById('ty2-wager-prompt-text').innerText = data.doubler.multiplier > 1
-                        ? `Final round: this Doubler pays DOUBLE, win or lose! How much do you want to wager? (0 - ${maxWager} points)`
+                        ? `Final round: the side bets on you are doubled! How much do you want to wager? (0 - ${maxWager} points)`
                         : `How much do you want to wager? (0 - ${maxWager} points)`;
                     inputRow.style.display = 'block';
                     prepareWagerInput(document.getElementById('ty2-wager-input'), maxWager);
                     maxBetState.max = maxWager;
                     maxBetState.score = data.myScore || 0;
-                    maxBetState.multiplier = data.doubler.multiplier || 1;
                     updateMaxBet();
                 } else {
                     document.getElementById('ty2-wager-prompt-text').innerText = `Waiting for ${data.currentPicker} to lock in their wager...`;
@@ -1898,7 +1897,9 @@
             // DOUBLER_SIDE_BET -- always stakes the tile's own value, same
             // for every bettor. No amount to enter, just a direction (or Pass).
             sidebetBox.style.display = 'block';
-            document.getElementById('ty2-sidebet-wager-text').innerText = `${data.currentPicker} wagered ${data.doubler.wagerAmount} points. Side bets are ${tileValue} points.`;
+            // The last round's side bets stake 2x the tile (the server's bet.amount).
+            const sideStake = tileValue * (data.doubler.multiplier || 1);
+            document.getElementById('ty2-sidebet-wager-text').innerText = `${data.currentPicker} wagered ${data.doubler.wagerAmount} points. Side bets are ${sideStake} points${sideStake > tileValue ? ' (doubled!)' : ''}.`;
             const buttons = document.getElementById('ty2-sidebet-buttons');
             const waitingText = document.getElementById('ty2-sidebet-waiting-text');
 
@@ -1919,7 +1920,7 @@
                 const { choice } = data.doubler.mySideBet;
                 waitingText.innerText = choice === 'PASS'
                     ? "You're sitting this one out. Waiting on the room..."
-                    : `You bet ${tileValue} points ${choice}. Waiting on the room...`;
+                    : `You bet ${sideStake} points ${choice}. Waiting on the room...`;
                 return;
             }
 
@@ -2374,7 +2375,7 @@
         // ---- Max Bet on a Doubler (Randy, Oct 2026) ----
         // Same deal as Risk It All: fills in the most you can wager (your
         // score, or the tile's value if that's more) and never submits.
-        const maxBetState = { max: 0, score: 0, multiplier: 1, tapped: false };
+        const maxBetState = { max: 0, score: 0, tapped: false };
         function maxBet() {
             if (maxBetState.max <= 0) return;
             document.getElementById('ty2-wager-input').value = maxBetState.max;
@@ -2382,15 +2383,14 @@
             updateMaxBet();
         }
         function updateMaxBet() {
-            const { max, score, multiplier } = maxBetState;
+            const { max, score } = maxBetState;
             const input = document.getElementById('ty2-wager-input');
             const raw = input.value.trim();
             const wager = Math.min(Math.max(0, parseInt(raw, 10) || 0), max);
             const maxed = raw !== '' && max > 0 && wager === max;
             input.classList.toggle('all-in', maxed);
             document.getElementById('ty2-max-quip').innerText = maxed ? `${max} on the line. Pants: on fire or on top?` : (maxBetState.tapped ? 'Playing it cool. Respect.' : '');
-            // The last round's Doublers pay double, win or lose.
-            document.getElementById('ty2-stakes').innerText = raw === '' ? '' : `Right: ${score + wager * multiplier} · Wrong: ${score - wager * multiplier}${multiplier > 1 ? ' (doubled!)' : ''}`;
+            document.getElementById('ty2-stakes').innerText = raw === '' ? '' : `Right: ${score + wager} · Wrong: ${score - wager}`;
         }
 
         // ---- Risk It All (Randy's son's idea, Oct 2026) ----
