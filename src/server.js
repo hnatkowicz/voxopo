@@ -10,7 +10,7 @@ import {
     isAdminLoginRateLimited, recordFailedAdminLogin, clearAdminLoginAttempts,
     isRoomCreateRateLimited, recordFailedRoomCreateAttempt, clearRoomCreateAttempts,
     listAccessCodes, addAccessCode, setAccessCodeActive, normalizeCode,
-    hostSessionCode, getAccessCodeVenue, venueProfilesInstalled, sanitizeVenue, updateAccessCodeVenue, houseColumnInstalled, listHouseSets, boardRulesInstalled
+    hostSessionCode, getAccessCodeVenue, venueProfilesInstalled, sanitizeVenue, updateAccessCodeVenue, houseColumnInstalled, listHouseSets, boardRulesInstalled, breaksInstalled
 } from './services/accessControl.js';
 import { fileURLToPath } from 'url';
 
@@ -173,7 +173,7 @@ app.get('/api/admin/codes', requireAdmin, async (req, res) => {
         const codes = await listAccessCodes(pool);
         // venueProfiles: false until access_codes_venue_profiles.sql is run.
         const houseColumn = await houseColumnInstalled(pool);
-        return res.json({ success: true, codes, venueProfiles: await venueProfilesInstalled(pool), houseColumn, houseSets: houseColumn ? await listHouseSets(pool) : [], boardRules: await boardRulesInstalled(pool), modes: GAME_MODE_KEYS });
+        return res.json({ success: true, codes, venueProfiles: await venueProfilesInstalled(pool), houseColumn, houseSets: houseColumn ? await listHouseSets(pool) : [], boardRules: await boardRulesInstalled(pool), breaks: await breaksInstalled(pool), modes: GAME_MODE_KEYS });
     } catch (e) {
         return res.status(500).json({ success: false, error: 'Failed to load codes.' });
     }
@@ -209,7 +209,7 @@ app.post('/api/admin/codes/:code/venue', requireAdmin, async (req, res) => {
             return res.status(409).json({ success: false, error: 'Run access_codes_venue_profiles.sql in Neon first.' });
         }
         const venue = sanitizeVenue(req.body, GAME_MODE_KEYS);
-        const found = await updateAccessCodeVenue(pool, req.params.code, venue, await houseColumnInstalled(pool), await boardRulesInstalled(pool));
+        const found = await updateAccessCodeVenue(pool, req.params.code, venue, await houseColumnInstalled(pool), await boardRulesInstalled(pool), await breaksInstalled(pool));
         if (!found) return res.status(404).json({ success: false, error: 'No such code.' });
         return res.json({ success: true, venue });
     } catch (e) {
@@ -543,6 +543,22 @@ app.post('/api/room-status', (req, res) => {
             return res.json({
                 phase: 'PROFILER_ROUND_PHASE',
                 ...profilerStatusFor(targetRoom, playerName),
+                myScore, myCorrectAnswers, myLeft, myEmoji
+            });
+        }
+        // A venue break (between Thinking Pants rounds, after a Trivi-yeah!
+        // game): the countdown and who's back; the TV has the rest.
+        if (targetRoom && targetRoom.gameState === 'VENUE_BREAK' && targetRoom.venueBreak) {
+            const vb = targetRoom.venueBreak;
+            const active = Object.values(targetRoom.players).filter(p => !p.left);
+            return res.json({
+                phase: 'VENUE_BREAK_PHASE',
+                secondsLeft: vb.secondsLeft,
+                backCount: active.filter(p => vb.back.has(p.name)).length,
+                totalPlayers: active.length,
+                iAmBack: !!(playerName && vb.back.has(playerName)),
+                venueName: (targetRoom.venue && (targetRoom.venue.name || (targetRoom.venue.houseSet && targetRoom.venue.houseSet.label))) || null,
+                logoUrl: (targetRoom.venue && targetRoom.venue.logoUrl) || null,
                 myScore, myCorrectAnswers, myLeft, myEmoji
             });
         }

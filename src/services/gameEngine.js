@@ -1548,20 +1548,24 @@ function scheduleTriviYeahIINextStep(roomCode) {
             // the new round too.
             const completedRound = ty2.round;
             ty2.round += 1;
-            broadcastToRoom(roomCode, {
-                type: 'TRIVI_YEAH_II_ROUND_TRANSITION',
-                completedRound,
-                nextRound: ty2.round,
-                totalRounds: ty2.totalRounds
-            });
-            room.revealTimeout = setTimeout(() => {
-                room.revealTimeout = null;
-                startTriviYeahIIRound(roomCode).catch(error => {
-                    console.error(`❌ [Trivi-Yeah II] Failed to start round ${ty2.round} for Room ${roomCode}:`, error.message);
-                    broadcastContentUnavailable(roomCode, 'Thinking Pants');
-                    resetRoomToLobby(roomCode);
+            // Between rounds is the venue's break, if the code has one.
+            runVenueBreak(roomCode, () => {
+                if (room.triviYeahII !== ty2) return;
+                broadcastToRoom(roomCode, {
+                    type: 'TRIVI_YEAH_II_ROUND_TRANSITION',
+                    completedRound,
+                    nextRound: ty2.round,
+                    totalRounds: ty2.totalRounds
                 });
-            }, TRIVI_YEAH_II_ROUND_TRANSITION_MS);
+                room.revealTimeout = setTimeout(() => {
+                    room.revealTimeout = null;
+                    startTriviYeahIIRound(roomCode).catch(error => {
+                        console.error(`❌ [Trivi-Yeah II] Failed to start round ${ty2.round} for Room ${roomCode}:`, error.message);
+                        broadcastContentUnavailable(roomCode, 'Thinking Pants');
+                        resetRoomToLobby(roomCode);
+                    });
+                }, TRIVI_YEAH_II_ROUND_TRANSITION_MS);
+            });
             return;
         }
         ty2.activeCellIndex = null;
@@ -3197,6 +3201,68 @@ function resetRoomForReplay(roomCode) {
 // over out loud by the time they're tapping -- with a backstop timer
 // (started on the FIRST vote, not at game-over) so one player who wandered
 // off can't strand the room.
+// ---- Venue breaks (Randy, Oct 2026; access_codes_breaks.sql) ----
+// A venue code can ask for a break between Thinking Pants rounds and after
+// a Trivi-yeah! game: the TV shows the venue's big logo, the join QR code
+// and the venue's notes (deals, event news, facts about the bride), never
+// mid-game. No game leader: it ends on its own clock, or early once
+// everyone taps "I'm back". Off unless a code turns it on.
+function runVenueBreak(roomCode, then) {
+    const room = activeRooms[roomCode];
+    const minutes = room && room.venue && room.venue.breakMinutes;
+    if (!minutes) { then(); return; }
+    if (room.timerInterval) { clearInterval(room.timerInterval); room.timerInterval = null; }
+    let secondsLeft = minutes * 60;
+    room.venueBreak = { resumeState: room.gameState, then, back: new Set(), secondsLeft };
+    room.gameState = 'VENUE_BREAK';
+    room.gameSecondsLeft = secondsLeft;
+    const venue = room.venue;
+    broadcastToRoom(roomCode, {
+        type: 'VENUE_BREAK_START',
+        secondsLeft,
+        notes: venue.breakNotes || [],
+        venue: { name: venue.name || (venue.houseSet && venue.houseSet.label) || null, logoUrl: venue.logoUrl || null, tagline: venue.tagline || null },
+        ...venueBreakTally(room)
+    });
+    console.log(`[Venue Break] Room ${roomCode}: ${minutes}-minute break.`);
+    room.timerInterval = setInterval(() => {
+        secondsLeft--;
+        room.gameSecondsLeft = secondsLeft;
+        if (room.venueBreak) room.venueBreak.secondsLeft = secondsLeft;
+        if (secondsLeft > 0) broadcastToRoom(roomCode, { type: 'GAME_TIMER_TICK', secondsLeft: `${Math.floor(secondsLeft / 60)}:${String(secondsLeft % 60).padStart(2, '0')}` });
+        else endVenueBreak(roomCode);
+    }, 1000);
+}
+
+function venueBreakTally(room) {
+    const active = Object.values(room.players).filter(p => !p.left);
+    return { backCount: active.filter(p => room.venueBreak.back.has(p.name)).length, totalPlayers: active.length };
+}
+
+function endVenueBreak(roomCode) {
+    const room = activeRooms[roomCode];
+    if (!room || !room.venueBreak) return;
+    if (room.timerInterval) { clearInterval(room.timerInterval); room.timerInterval = null; }
+    const { resumeState, then } = room.venueBreak;
+    room.venueBreak = null;
+    room.gameState = resumeState;
+    broadcastToRoom(roomCode, { type: 'VENUE_BREAK_END' });
+    then();
+}
+
+function markBackFromBreak(roomCode, playerName) {
+    const room = activeRooms[roomCode];
+    if (!room || !room.venueBreak) return `⚠️ There's no break on right now.`;
+    room.venueBreak.back.add(playerName);
+    const tally = venueBreakTally(room);
+    broadcastToRoom(roomCode, { type: 'VENUE_BREAK_UPDATE', ...tally });
+    if (tally.backCount >= tally.totalPlayers) {
+        endVenueBreak(roomCode);
+        return `Everyone's back -- let's go!`;
+    }
+    return `Welcome back! (${tally.backCount}/${tally.totalPlayers} back)`;
+}
+
 function castReturnToLobbyVote(roomCode, playerName, action) {
     const room = activeRooms[roomCode];
     if (!room) return null;
@@ -3235,11 +3301,14 @@ function resolveReturnToLobbyVote(roomCode) {
     room.returnVotes.forEach(action => { if (action in counts) counts[action]++; });
     room.returnVotes = new Map();
 
-    if (counts.PLAY_AGAIN > counts.START) {
-        resetRoomForReplay(roomCode);
-    } else {
-        resetRoomToLobby(roomCode);
-    }
+    const next = () => {
+        if (counts.PLAY_AGAIN > counts.START) resetRoomForReplay(roomCode);
+        else resetRoomToLobby(roomCode);
+    };
+    // After the venue's Trivi-yeah!, the room has decided what's next; a
+    // venue break (if the code has one) comes first.
+    if (room.winningGameMode === 'TRIVI_YEAH') runVenueBreak(roomCode, next);
+    else next();
 }
 
 // Releases a room entirely -- broadcasts the TV back to its gateway/lobby-code
@@ -3272,6 +3341,7 @@ function clearRoomForFreshGame(room) {
     if (room.revealTimeout) { clearTimeout(room.revealTimeout); room.revealTimeout = null; }
     if (room.returnVoteTimeout) { clearTimeout(room.returnVoteTimeout); room.returnVoteTimeout = null; }
     room.returnVotes = new Map();
+    room.venueBreak = null;
     clearOnTheSpectrumTimers(room);
     clearEmpossDurrTimers(room);
 
@@ -4697,6 +4767,11 @@ export function handleIncomingMessage(fromPhone, bodyText, explicitRoomCode, pre
     // 3.5. "Play Again" -- same mode, same roster, fresh stats. Shares the
     // Game Over vote with Main Menu (START above); resolveReturnToLobbyVote
     // decides between them once everyone's voted or the backstop runs out.
+    // Venue break: "I'm back" (see runVenueBreak).
+    if (cleanText.toUpperCase() === 'BACK' && currentRoom.gameState === 'VENUE_BREAK') {
+        return markBackFromBreak(associatedRoomCode, actingPlayerName);
+    }
+
     if (cleanText.toUpperCase() === 'PLAY_AGAIN' && currentRoom.gameState === 'GAME_OVER') {
         return castReturnToLobbyVote(associatedRoomCode, actingPlayerName, 'PLAY_AGAIN');
     }

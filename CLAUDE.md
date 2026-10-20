@@ -168,8 +168,16 @@ Mode keys are used in room votes and in `gameEngine.js`:
   the TV's Game Over, and the thanks on the phones. No venue banner during
   play (Randy). /admin shows how a set plays ("plays all 16 in one game")
   and warns under 8. The old general decks (`game_mode = 'TRIVIA'`, kept as
-  a legacy name) stay in the database but are no longer played. Next idea
-  in discussion: timed venue breaks (big logo, QR, venue notes).
+  a legacy name) stay in the database but are no longer played.
+  **Venue breaks** (`access_codes_breaks.sql`; Randy, Oct 2026): a code can
+  set breaks of 2 or 5 minutes (Off by default) with up to 10 one-line
+  notes (deals, event news, facts about the bride). A break comes between
+  Thinking Pants rounds and after a Trivi-yeah! game (once the room has
+  voted what's next) -- never mid-game, and no venue banner during play.
+  TV: the venue's big logo, the notes rotating every 10s, a big QR code and
+  room code, who's back; phones: the clock and an "I'm back" button. No game
+  leader: it ends on its own clock, or as soon as everyone taps I'm back
+  (`runVenueBreak` / `endVenueBreak`, game state `VENUE_BREAK`).
 - **TRIVI_YEAH_II** (shown to players as **Thinking Pants**, renamed from
   "Trivi-Yeah II"; the internal key and `game_mode` value kept the old name):
   a Jeopardy-style board with 3 rounds, the Doubler

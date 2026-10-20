@@ -124,6 +124,7 @@
         let venueProfilesOn = false;
         let houseColumnOn = false;
         let boardRulesOn = false;
+        let breaksOn = false;
         let houseSets = []; // [{ key, total, tiers, complete }] from the database
 
         // "HOUSE_PICKLES_PINS: 16 questions" -- or why the board won't use it.
@@ -159,6 +160,7 @@
             if (c.profile === 'PUB') parts.push(`Pub${c.venue_name ? ': ' + esc(c.venue_name) : ''}`);
             if (c.allowed_modes && c.allowed_modes.length) parts.push(`${c.allowed_modes.length} modes`);
             if (c.board_rules === 'PLAIN') parts.push('Plain rules');
+            if (c.break_minutes) parts.push(`Breaks: ${c.break_minutes} min`);
             if (c.house_category) {
                 const set = houseSets.find(h => h.key === c.house_category);
                 parts.push(set ? `Trivi-yeah! (${set.total})` : 'Trivi-yeah! &#9888; set not found');
@@ -222,6 +224,19 @@
                         <div class="hint">The category name in that event's .sql file (always starts with HOUSE_). It needs at least one question at each of 100/200/300/400, or the board plays without it. These questions are also <strong>Trivi-yeah!</strong>, the venue's own game, with the venue's logo and name: it shows up in the lobby whenever this is filled in, even with the house column Off.</div></div>
                     <div class="row"><label>Column title</label><input type="text" id="venue-house-label" maxlength="40" value="${esc(c.house_label)}" placeholder="Blank = the venue name"></div>
                     ` : `<div class="hint" style="margin-bottom: 12px;">House columns turn on once you run <strong>access_codes_house_column.sql</strong> in Neon.</div>`}
+                    ${breaksOn ? `
+                    <div class="row">
+                        <label>Breaks</label>
+                        <select id="venue-break-minutes">
+                            ${[[0, 'Off'], [2, '2 minutes'], [5, '5 minutes']].map(([m, label]) => `<option value="${m}" ${(c.break_minutes || 0) === m ? 'selected' : ''}>${label}</option>`).join('')}
+                        </select>
+                        <div class="hint">Between Thinking Pants rounds and after a Trivi-yeah! game: the TV shows the venue's big logo, the join QR code and the notes below. It ends on its own, or early once everyone taps "I'm back".</div>
+                    </div>
+                    <div class="row"><label>Break notes (one per line, up to 10)</label>
+                        <textarea id="venue-break-notes" rows="5" maxlength="1300" placeholder="Half-price wings until 9!&#10;Ben proposed at lane 7.&#10;Next trivia night: Thursday the 30th" style="width: 100%; box-sizing: border-box; background: #14161d; border: 1px solid #222630; border-radius: 8px; color: #fff; padding: 10px; font-family: inherit;">${esc((c.break_notes || []).join('\n'))}</textarea>
+                        <div class="hint">Deals, event news, fun facts about the guest of honor. Each line shows for 10 seconds.</div>
+                    </div>
+                    ` : `<div class="hint" style="margin-bottom: 12px;">Venue breaks turn on once you run <strong>access_codes_breaks.sql</strong> in Neon.</div>`}
                     <div style="display: flex; gap: 10px;">
                         <button class="btn" style="width: auto; padding: 10px 18px;" onclick="saveVenue('${esc(c.code)}')">Save</button>
                         <button class="btn btn-secondary" style="width: auto; padding: 10px 18px;" onclick="toggleVenueEditor(null)">Cancel</button>
@@ -274,6 +289,10 @@
                 allowedModes: [...document.querySelectorAll('#venue-modes input:checked')].map(b => b.value)
             };
             if (boardRulesOn) body.boardRules = document.getElementById('venue-board-rules').value;
+            if (breaksOn) {
+                body.breakMinutes = Number(document.getElementById('venue-break-minutes').value);
+                body.breakNotes = document.getElementById('venue-break-notes').value;
+            }
             if (houseColumnOn) {
                 body.houseRounds = document.getElementById('venue-house-rounds').value;
                 body.houseCategory = document.getElementById('venue-house-category').value;
@@ -309,6 +328,7 @@
                 houseColumnOn = !!data.houseColumn;
                 houseSets = data.houseSets || [];
                 boardRulesOn = !!data.boardRules;
+                breaksOn = !!data.breaks;
                 renderCodes(data.codes);
             }
         }

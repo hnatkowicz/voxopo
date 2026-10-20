@@ -159,6 +159,9 @@ export const HOUSE_ROUNDS = ['OFF', 'ROUNDS_1_3', 'ALL'];
 // Thinking Pants board rules (access_codes_board_rules.sql): PLAIN turns off
 // column sweeps and the traps they earn.
 export const BOARD_RULES = ['CLASSIC', 'PLAIN'];
+// Venue breaks (access_codes_breaks.sql): minutes per break, 0 = Off.
+export const BREAK_MINUTES = [0, 2, 5];
+const MAX_BREAK_NOTES = 10;
 // House sets are named HOUSE_<something> so a code can never point its
 // house column at an ordinary category.
 const HOUSE_CATEGORY_PATTERN = /^HOUSE_[A-Z0-9_]{1,40}$/;
@@ -184,8 +187,34 @@ export function sanitizeVenue(input, knownModes) {
         houseLabel: text(v.houseLabel, 40),
         // No (valid) house set means nothing to show, whatever was picked.
         houseRounds: houseValid && HOUSE_ROUNDS.includes(v.houseRounds) ? v.houseRounds : 'OFF',
-        boardRules: BOARD_RULES.includes(v.boardRules) ? v.boardRules : 'CLASSIC'
+        boardRules: BOARD_RULES.includes(v.boardRules) ? v.boardRules : 'CLASSIC',
+        breakMinutes: BREAK_MINUTES.includes(Number(v.breakMinutes)) ? Number(v.breakMinutes) : 0,
+        // One note per line in /admin; short, and only a handful.
+        breakNotes: (Array.isArray(v.breakNotes) ? v.breakNotes : String(v.breakNotes || '').split('\n'))
+            .map(line => String(line).trim().slice(0, 120)).filter(Boolean).slice(0, MAX_BREAK_NOTES)
     };
+}
+
+export async function breaksInstalled(pool) {
+    try {
+        await pool.query('SELECT break_minutes FROM access_codes LIMIT 1');
+        return true;
+    } catch (e) {
+        if (e.code === UNDEFINED_COLUMN) return false;
+        throw e;
+    }
+}
+
+// A code's break settings, or none before access_codes_breaks.sql is run.
+async function readBreakSettings(pool, code) {
+    try {
+        const result = await pool.query('SELECT break_minutes, break_notes FROM access_codes WHERE code = $1', [code]);
+        const row = result.rows[0];
+        return row ? { minutes: row.break_minutes || 0, notes: row.break_notes || [] } : null;
+    } catch (e) {
+        if (e.code === UNDEFINED_COLUMN) return null;
+        throw e;
+    }
 }
 
 export async function boardRulesInstalled(pool) {
@@ -261,7 +290,9 @@ export async function getAccessCodeVenue(pool, rawCode) {
                 ? { key: row.house_category, label: row.house_label || row.venue_name || 'House Special' }
                 : null;
             const boardRules = row.board_rules === 'PLAIN' ? 'PLAIN' : 'CLASSIC';
-            if (row.profile !== 'PUB' && !allowedModes.length && !house && !houseSet && boardRules === 'CLASSIC') return null;
+            const breaks = await readBreakSettings(pool, code);
+            const breakMinutes = breaks ? breaks.minutes : 0;
+            if (row.profile !== 'PUB' && !allowedModes.length && !house && !houseSet && boardRules === 'CLASSIC' && !breakMinutes) return null;
             return {
                 profile: row.profile === 'PUB' ? 'PUB' : 'HOME',
                 name: row.venue_name || null,
@@ -270,7 +301,9 @@ export async function getAccessCodeVenue(pool, rawCode) {
                 allowedModes,
                 house,
                 houseSet,
-                boardRules
+                boardRules,
+                breakMinutes,
+                breakNotes: breaks ? breaks.notes : []
             };
         } catch (e) {
             if (e.code !== UNDEFINED_COLUMN) throw e;
@@ -286,6 +319,14 @@ export async function listAccessCodes(pool) {
     for (const columns of [`${base}, ${venue}, ${houseCols}, board_rules`, `${base}, ${venue}, ${houseCols}`, `${base}, ${venue}, board_rules`, `${base}, ${venue}`, base]) {
         try {
             const result = await pool.query(`SELECT ${columns} FROM access_codes ORDER BY created_at DESC`);
+            // Break settings ride along once access_codes_breaks.sql is run.
+            try {
+                const breaks = await pool.query('SELECT code, break_minutes, break_notes FROM access_codes');
+                const byCode = Object.fromEntries(breaks.rows.map(r => [r.code, r]));
+                result.rows.forEach(r => { r.break_minutes = byCode[r.code] ? byCode[r.code].break_minutes : 0; r.break_notes = byCode[r.code] ? byCode[r.code].break_notes : null; });
+            } catch (e) {
+                if (e.code !== UNDEFINED_COLUMN) throw e;
+            }
             return result.rows;
         } catch (e) {
             if (e.code !== UNDEFINED_COLUMN) throw e;
@@ -301,7 +342,7 @@ export async function addAccessCode(pool, rawCode, label) {
 
 // venue is already sanitized (sanitizeVenue). Returns false if no such code.
 // The house settings are only written once their columns exist.
-export async function updateAccessCodeVenue(pool, rawCode, venue, withHouse, withRules) {
+export async function updateAccessCodeVenue(pool, rawCode, venue, withHouse, withRules, withBreaks) {
     const code = normalizeCode(rawCode);
     const params = [code, venue.profile, venue.name, venue.tagline, venue.logo, venue.allowedModes.length ? venue.allowedModes : null];
     let sql = 'UPDATE access_codes SET profile = $2, venue_name = $3, venue_tagline = $4, venue_logo = $5, allowed_modes = $6';
@@ -312,6 +353,12 @@ export async function updateAccessCodeVenue(pool, rawCode, venue, withHouse, wit
     if (withRules) {
         params.push(venue.boardRules);
         sql += `, board_rules = $${params.length}`;
+    }
+    if (withBreaks) {
+        params.push(venue.breakMinutes);
+        sql += `, break_minutes = $${params.length}`;
+        params.push(venue.breakNotes.length ? venue.breakNotes : null);
+        sql += `, break_notes = $${params.length}`;
     }
     const result = await pool.query(`${sql} WHERE code = $1`, params);
     return result.rowCount > 0;
