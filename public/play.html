@@ -208,14 +208,34 @@
         .leaderboard-btn.rank-silver .leaderboard-btn-score { color: #b8bcc4; }
         .leaderboard-btn.rank-bronze { border-color: #cd7f32; background: rgba(205, 127, 50, 0.08); }
         .leaderboard-btn.rank-bronze .leaderboard-btn-score { color: #cd7f32; }
-        /* Swipe-left scoreboard (Randy, Oct 2026): kids on a school trip
-           played with no TV at all, so the phone needs a way to see the
-           standings. A page that slides over the game from the right. */
-        .scores-tab { display: none; position: absolute; top: 8px; right: 10px; z-index: 40; background: #1e222b; border: 1px solid #222630; color: #e2e5e9; border-radius: 999px; padding: 5px 12px; font-size: 0.8rem; font-weight: 600; cursor: pointer; }
-        body.in-room .scores-tab { display: block; }
-        .scores-panel { position: fixed; inset: 0; z-index: 50; background: #0d0e11; overflow-y: auto; padding: 30px 20px; box-sizing: border-box; transform: translateX(100%); transition: transform 0.25s ease; visibility: hidden; }
-        .scores-panel.open { transform: translateX(0); visibility: visible; }
-        .scores-panel.closing { visibility: visible; }
+        /* Side pages (Randy, Oct 2026). Kids on a school trip played with
+           no TV, so the phone grew a page on each side of the game: swipe
+           left for Info (the scores), swipe right for Room (QR code, Leave
+           Room). The game stays in the middle and keeps only what you tap;
+           a thin strip on top keeps your name and score in view. */
+        .top-strip { display: none; position: fixed; top: 0; left: 0; right: 0; z-index: 60; height: 44px; padding: 0 12px 0 16px; box-sizing: border-box; align-items: center; justify-content: space-between; background: #0d0e11; border-bottom: 1px solid #1a1d25; }
+        body.in-room .top-strip { display: flex; }
+        body.in-room { padding-top: 44px; }
+        .top-strip-me { display: flex; align-items: center; gap: 8px; min-width: 0; font-weight: 600; font-size: 0.95rem; }
+        .top-strip-name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: #ffffff; }
+        .top-strip-score { color: #00e676; font-weight: 700; white-space: nowrap; }
+        .page-dots { display: flex; flex-shrink: 0; }
+        .page-dot { width: 28px; height: 36px; border: none; background: none; padding: 0; display: flex; align-items: center; justify-content: center; cursor: pointer; }
+        .page-dot::after { content: ''; width: 8px; height: 8px; border-radius: 50%; background: #334155; transition: background 0.2s; }
+        .page-dot.active::after { background: #00e676; }
+        /* Each game screen used to carry its own name/room/score badge and
+           its own Leave Room button, right under the answers where an
+           excited thumb could bump it. The strip and the Room page have
+           them now. (Still shown on the "you left" screen.) */
+        body.in-room .player-badge, body.in-room .leave-room-btn { display: none !important; }
+        .side-page { position: fixed; top: 44px; left: 0; right: 0; bottom: 0; z-index: 50; background: #0d0e11; overflow-y: auto; padding: 0 20px 30px; box-sizing: border-box; transition: transform 0.25s ease; visibility: hidden; }
+        .side-page.from-right { transform: translateX(100%); }
+        .side-page.from-left { transform: translateX(-100%); }
+        .side-page.open { transform: translateX(0); visibility: visible; }
+        .side-page.closing { visibility: visible; }
+        .page-hint { display: none; position: fixed; top: 52px; left: 50%; transform: translateX(-50%); z-index: 55; background: #1e222b; border: 1px solid #00e676; border-radius: 999px; padding: 8px 14px; font-size: 0.8rem; color: #e2e5e9; white-space: nowrap; box-shadow: 0 4px 20px rgba(0,0,0,0.4); }
+        .room-qr img { display: block; width: 100%; max-width: 240px; margin: 0 auto; background: #ffffff; border-radius: 12px; padding: 10px; box-sizing: border-box; }
+        .room-code-big { font-size: 2.4rem; font-weight: 800; letter-spacing: 0.15em; color: #ffffff; margin-bottom: 8px; }
         .scores-list { display: flex; flex-direction: column; gap: 8px; margin-top: 8px; }
         .scores-row { display: flex; align-items: center; gap: 12px; background: #1e222b; border: 1px solid #222630; border-radius: 8px; padding: 12px 16px; text-align: left; }
         .scores-row.me { border-color: #00e676; background: rgba(0, 230, 118, 0.06); }
@@ -230,15 +250,41 @@
 </head>
 <body>
 
-    <!-- Swipe left (or tap the tab) for the scoreboard; swipe right or tap
-         Back to return. See the scores-panel code below. -->
-    <button type="button" class="scores-tab" id="scores-tab" onclick="openScoresPanel()">🏆 Scores ›</button>
-    <div id="scores-panel" class="scores-panel" aria-hidden="true">
-        <div class="card" style="margin-top: 0;">
+    <!-- Three pages, the game in the middle: swipe left for Info (scores),
+         swipe right for Room (QR code, Leave Room), or tap the dots. See
+         the side-pages code below. -->
+    <div class="top-strip" id="top-strip">
+        <div class="top-strip-me">
+            <span id="strip-emoji">👤</span>
+            <span id="strip-name" class="top-strip-name"></span>
+            <span class="top-strip-score">· <span id="strip-score">0</span></span>
+        </div>
+        <div class="page-dots">
+            <button type="button" class="page-dot" data-page="room" aria-label="Room: QR code and Leave Room" onclick="showSidePage('room')"></button>
+            <button type="button" class="page-dot active" data-page="game" aria-label="The game" onclick="showSidePage('game')"></button>
+            <button type="button" class="page-dot" data-page="info" aria-label="Scores" onclick="showSidePage('info')"></button>
+        </div>
+    </div>
+    <div id="page-hint" class="page-hint">Swipe left for scores, right for the room's QR code</div>
+
+    <div id="room-page" class="side-page from-left" aria-hidden="true">
+        <div class="card">
+            <h1>Invite a friend</h1>
+            <p class="subtitle" style="margin-bottom: 16px;">Scan to join this room</p>
+            <div class="room-qr"><img id="room-qr-img" alt="QR code to join this room"></div>
+            <p class="subtitle" style="margin: 16px 0 4px 0;">or go to <strong id="room-site" style="color: #cbd5e1;"></strong> and enter</p>
+            <div class="room-code-big" id="room-code-big">----</div>
+            <div id="room-leave-area"></div>
+            <button type="button" class="btn" style="margin-top: 12px;" onclick="showSidePage('game')">Back to the game ›</button>
+        </div>
+    </div>
+
+    <div id="info-page" class="side-page from-right" aria-hidden="true">
+        <div class="card">
             <h1>🏆 Scores</h1>
             <div id="scores-list" class="scores-list"></div>
-            <button type="button" class="btn" style="margin-top: 20px;" onclick="closeScoresPanel()">‹ Back to the game</button>
-            <p class="scores-hint">Swipe left any time to see the scores, right to go back.</p>
+            <button type="button" class="btn" style="margin-top: 20px;" onclick="showSidePage('game')">‹ Back to the game</button>
+            <p class="scores-hint">The scores update after each answer is revealed.</p>
         </div>
     </div>
 
@@ -351,7 +397,7 @@
              room (see attemptAutoResume) has no way back to the login form to
              join a different one -- Leave Room used to exist only on the
              question screen, which this phase never reaches. -->
-        <button class="btn btn-leave" id="btn-leave-game-screen" onclick="leaveRoom()">Leave Room</button>
+        <button class="btn btn-leave leave-room-btn" id="btn-leave-game-screen" onclick="leaveRoom()">Leave Room</button>
     </div>
 
     <!-- SCREEN 3: CATEGORY VOTING GAMEPAD (CLEAN - NO DECORATIVE EMOJIS!) -->
@@ -373,7 +419,7 @@
             <button class="btn" id="category-start-btn" onclick="submitCategoryStartVote()">Start</button>
         </div>
         <div id="category-feedback" class="feedback"></div>
-        <button class="btn btn-leave" onclick="leaveRoom()">Leave Room</button>
+        <button class="btn btn-leave leave-room-btn" onclick="leaveRoom()">Leave Room</button>
     </div>
 
     <!-- SCREEN 3.5: EMPOSSDURR ROUND CONTROLLER -->
@@ -397,7 +443,7 @@
         <div id="ed-phase-content"></div>
 
         <div id="ed-feedback" class="feedback"></div>
-        <button class="btn btn-leave" onclick="leaveRoom()">Leave Room</button>
+        <button class="btn btn-leave leave-room-btn" onclick="leaveRoom()">Leave Room</button>
     </div>
 
     <!-- Impostor's "I Declare!" moment -- fires on every phone at once. -->
@@ -423,7 +469,7 @@
         <div id="ots-phase-content"></div>
 
         <div id="ots-feedback" class="feedback"></div>
-        <button class="btn btn-leave" onclick="leaveRoom()">Leave Room</button>
+        <button class="btn btn-leave leave-room-btn" onclick="leaveRoom()">Leave Room</button>
     </div>
 
     <div id="profiler-screen" class="card">
@@ -439,7 +485,7 @@
         <div id="pf-phase-content"></div>
 
         <div id="pf-feedback" class="feedback"></div>
-        <button class="btn btn-leave" onclick="leaveRoom()">Leave Room</button>
+        <button class="btn btn-leave leave-room-btn" onclick="leaveRoom()">Leave Room</button>
     </div>
 
     <!-- SCREEN 4: ULTRA-CLEAN FULL-WIDTH QUESTION ANSWER CONTROLLER -->
@@ -482,7 +528,7 @@
 
         <!-- Stepping away mid-question would otherwise leave the room stuck waiting
              on this player's answer forever -- this lets them bow out cleanly. -->
-        <button class="btn btn-leave" onclick="leaveRoom()">Leave Room</button>
+        <button class="btn btn-leave leave-room-btn" onclick="leaveRoom()">Leave Room</button>
     </div>
 
     <!-- SCREEN 4.5: TRIVI-YEAH II (Jeopardy-style grid, prototype) -->
@@ -568,7 +614,7 @@
             <div id="ty2-feedback" class="feedback" style="margin-top: 24px; font-weight: 600; text-align: left; padding: 14px 20px; display: none;"></div>
         </div>
 
-        <button class="btn btn-leave" onclick="leaveRoom()">Leave Room</button>
+        <button class="btn btn-leave leave-room-btn" onclick="leaveRoom()">Leave Room</button>
     </div>
 
     <!-- SCREEN 4.7: FLAG ME DOWN -- the flag, clues unlocking over time,
@@ -597,7 +643,7 @@
             <img id="fmd-map-image" src="" alt="" style="width: 100%; aspect-ratio: 4 / 3; max-height: 18vh; object-fit: contain; border-radius: 8px;">
         </div>
 
-        <button class="btn btn-leave" onclick="leaveRoom()">Leave Room</button>
+        <button class="btn btn-leave leave-room-btn" onclick="leaveRoom()">Leave Room</button>
     </div>
 
     <!-- SCREEN 4.6: TRIVI-YEAH II FINAL WAGER (Final-Jeopardy-style closer) -->
@@ -649,7 +695,7 @@
             👀 Watch the TV for the results!
         </div>
 
-        <button class="btn btn-leave" onclick="leaveRoom()">Leave Room</button>
+        <button class="btn btn-leave leave-room-btn" onclick="leaveRoom()">Leave Room</button>
     </div>
 
     <!-- SCREEN 5: GAME OVER -->
@@ -665,7 +711,7 @@
         <button class="btn btn-play-again" id="btn-play-again" onclick="castGameOverVote('PLAY_AGAIN')">Play Again</button>
         <button class="btn" onclick="castGameOverVote('START')">Main Menu</button>
         <div id="playagain-feedback" class="feedback"></div>
-        <button class="btn btn-leave" onclick="leaveRoom()">Leave Room</button>
+        <button class="btn btn-leave leave-room-btn" onclick="leaveRoom()">Leave Room</button>
         <audio id="horn-sound" src="/audio/horn.wav" preload="auto"></audio>
     </div>
 
@@ -743,37 +789,84 @@
             });
         }
 
-        // ---- Swipe-left scoreboard (Randy, Oct 2026) ----
-        // Kids on a school trip played with no TV, so they never saw the
-        // standings. Swipe left (or tap the Scores tab) to see them, swipe
-        // right (or tap Back) to return. The standings are the ones the TV
-        // last showed (see broadcastToRoom), so they never give away who's
-        // right before the reveal.
-        let scoresPanelOpen = false;
+        // ---- Side pages (Randy, Oct 2026) ----
+        // Kids on a school trip played with no TV, so the phone grew a page
+        // on each side of the game: Info on the right (swipe left; the
+        // scores), Room on the left (swipe right; QR code, Leave Room). The
+        // scores are the ones the TV last showed (see broadcastToRoom), so
+        // they never give away who's right before the reveal.
+        const SIDE_PAGE_ORDER = ['room', 'game', 'info'];
+        let sidePage = 'game';
         let scoresActionKey = null;
+        let roomPageCode = null;
 
-        function openScoresPanel() {
-            if (!document.body.classList.contains('in-room')) return;
-            const panel = document.getElementById('scores-panel');
-            panel.classList.add('open');
-            panel.setAttribute('aria-hidden', 'false');
-            scoresPanelOpen = true;
+        function showSidePage(page) {
+            if (page !== 'game' && !document.body.classList.contains('in-room')) return;
+            if (page === sidePage) return;
+            ['room', 'info'].forEach(name => {
+                const el = document.getElementById(`${name}-page`);
+                if (name === page) {
+                    el.classList.remove('closing');
+                    el.classList.add('open');
+                    el.scrollTop = 0;
+                } else if (el.classList.contains('open')) {
+                    // Stays visible while it slides out, then hides for good.
+                    el.classList.add('closing');
+                    el.classList.remove('open');
+                    setTimeout(() => el.classList.remove('closing'), 260);
+                }
+                el.setAttribute('aria-hidden', String(name !== page));
+            });
+            document.querySelectorAll('.page-dot').forEach(dot => dot.classList.toggle('active', dot.dataset.page === page));
+            if (sidePage === 'room') renderLeaveArea(false);
+            sidePage = page;
         }
 
-        function closeScoresPanel() {
-            if (!scoresPanelOpen) return;
-            const panel = document.getElementById('scores-panel');
-            // Stays visible while it slides out, then hides for good.
-            panel.classList.add('closing');
-            panel.classList.remove('open');
-            panel.setAttribute('aria-hidden', 'true');
-            setTimeout(() => panel.classList.remove('closing'), 260);
-            scoresPanelOpen = false;
+        function setInRoom(inRoom) {
+            const wasInRoom = document.body.classList.contains('in-room');
+            document.body.classList.toggle('in-room', inRoom);
+            if (!inRoom) showSidePage('game');
+            if (inRoom && !wasInRoom) showSwipeHintOnce();
         }
 
-        function setScoresAvailable(available) {
-            document.body.classList.toggle('in-room', available);
-            if (!available) closeScoresPanel();
+        // Shown once per phone, the first time it's in a room.
+        function showSwipeHintOnce() {
+            try {
+                if (localStorage.getItem('randomania_swipe_hint_seen')) return;
+                localStorage.setItem('randomania_swipe_hint_seen', '1');
+            } catch (e) { return; }
+            const hint = document.getElementById('page-hint');
+            hint.style.display = 'block';
+            setTimeout(() => { hint.style.display = 'none'; }, 6000);
+        }
+
+        // Leave Room asks first: it's a deliberate trip to this page now,
+        // but a stray tap shouldn't drop anyone out of a game.
+        function renderLeaveArea(confirming) {
+            document.getElementById('room-leave-area').innerHTML = confirming
+                ? `<p class="subtitle" style="margin: 20px 0 0 0; color: #e2e5e9;">Leave the room? You can rejoin with the same name.</p>
+                   <button type="button" class="btn" style="margin-top: 12px;" onclick="renderLeaveArea(false)">Stay</button>
+                   <button type="button" class="btn btn-leave" style="margin-top: 10px;" onclick="leaveRoom()">Leave</button>`
+                : `<button type="button" class="btn btn-leave" style="margin-top: 20px;" onclick="renderLeaveArea(true)">Leave Room</button>`;
+        }
+
+        function renderRoomPage(roomCode) {
+            if (roomCode === roomPageCode) return;
+            roomPageCode = roomCode;
+            document.getElementById('room-code-big').innerText = roomCode;
+            document.getElementById('room-site').innerText = `${window.location.host}/play`;
+            renderLeaveArea(false);
+            // Same QR code the TV shows (public/vendor/qrcode.js).
+            const img = document.getElementById('room-qr-img');
+            try {
+                const qr = window.qrcode(0, 'M');
+                qr.addData(`${window.location.origin}/play?room=${encodeURIComponent(roomCode)}`);
+                qr.make();
+                img.src = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(qr.createSvgTag({ cellSize: 4, margin: 2, scalable: true }));
+                img.style.display = 'block';
+            } catch (error) {
+                img.style.display = 'none'; // the room code below still works
+            }
         }
 
         function renderScoresPanel(standings, myName) {
@@ -788,7 +881,7 @@
                 : '<p class="subtitle" style="margin: 0;">No scores yet.</p>';
         }
 
-        // Moments a player has to act. When one starts, the scores page gets
+        // Moments a player has to act. When one starts, a side page gets
         // out of the way so nobody misses a question while looking at it.
         // Waiting moments (someone else picking, a reveal, Game Over) return
         // null and leave it open.
@@ -820,19 +913,24 @@
             }
         }
 
-        function updateScoresPanel(data, myName) {
-            // Only an active player gets the tab (not the "you left" screen).
-            setScoresAvailable(data.myLeft === false);
+        function updateSidePages(data, myName, roomCode) {
+            // Only an active player gets the side pages (not the "you left" screen).
+            setInRoom(data.myLeft === false);
+            document.getElementById('strip-name').innerText = myName;
+            if (data.myEmoji) document.getElementById('strip-emoji').innerText = data.myEmoji;
+            if (data.myScore !== null && data.myScore !== undefined) document.getElementById('strip-score').innerText = data.myScore;
+            renderRoomPage(roomCode);
             if (Array.isArray(data.standings)) renderScoresPanel(data.standings, myName);
             const key = scoresActionKeyFor(data);
-            if (key && key !== scoresActionKey) closeScoresPanel();
+            if (key && key !== scoresActionKey) showSidePage('game');
             scoresActionKey = key;
         }
 
         // A sideways swipe anywhere but the screen's edges: iPhone Safari
         // uses an edge swipe for Back/Forward, which would pull a player
         // out of the room. Sliders and text boxes keep their own drags.
-        (function wireScoresSwipe() {
+        // Swipe left = the page to the right comes in, and back again.
+        (function wireSidePageSwipe() {
             const EDGE = 30, MIN_DISTANCE = 60;
             let start = null;
             document.addEventListener('touchstart', e => {
@@ -850,7 +948,8 @@
                 const quick = Date.now() - start.time < 800;
                 start = null;
                 if (!quick || Math.abs(dx) < MIN_DISTANCE || Math.abs(dx) < Math.abs(dy) * 1.5) return;
-                if (dx < 0) openScoresPanel(); else closeScoresPanel();
+                const next = SIDE_PAGE_ORDER[SIDE_PAGE_ORDER.indexOf(sidePage) + (dx < 0 ? 1 : -1)];
+                if (next) showSidePage(next);
             }, { passive: true });
         })();
 
@@ -1001,7 +1100,7 @@
                     const data = await response.json();
 
                     if (data && data.phase) {
-                        updateScoresPanel(data, nickname);
+                        updateSidePages(data, nickname, roomCode);
                         // All three badges stay in the DOM (just hidden/shown), so it's
                         // harmless to refresh every score span on every tick regardless
                         // of which screen is currently visible.
@@ -2812,7 +2911,7 @@
             // over. Polling stops too; there's nothing left to react to on a
             // static "you left" screen, and rejoinRoom() restarts it.
             clearInterval(roomStateTrackerInterval);
-            setScoresAvailable(false);
+            setInRoom(false);
 
             document.getElementById('badge-name').innerText = registeredName;
             document.getElementById('badge-room').innerText = roomCode || '';
@@ -2873,7 +2972,7 @@
         // next load has nothing to auto-resume into.
         function switchToDifferentRoom() {
             clearInterval(roomStateTrackerInterval);
-            setScoresAvailable(false);
+            setInRoom(false);
             localStorage.removeItem('randomania_roomcode');
             localStorage.removeItem('randomania_nickname');
             localStorage.removeItem('randomania_sessiontoken');
@@ -2896,5 +2995,6 @@
             element.innerText = text;
         }
     </script>
+    <script src="/vendor/qrcode.js"></script>
 </body>
 </html>
