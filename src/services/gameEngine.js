@@ -894,7 +894,11 @@ const TRIVI_YEAH_II_QUESTION_REVEAL_MS = { 100: 4000, 200: 5000, 300: 6000, 400:
 function triviYeahIIPauseFor(pauses, points) {
     return pauses[points] || pauses[400];
 }
-const TRIVI_YEAH_II_ANSWER_SECONDS = 10;
+// The answer clock grows with the tile too (Randy, Oct 2026: his wife likes
+// to deliberate, and was 10s flat). It ends the moment everyone has
+// answered, so a room of fast readers doesn't feel the extra time, and
+// points don't depend on speed -- only the "fastest right" badge does.
+const TRIVI_YEAH_II_ANSWER_SECONDS = { 100: 12, 200: 14, 300: 16, 400: 18 };
 // Picking a tile used to have no clock, so a picker who wandered off froze
 // the board. Randy's call after a family playtest: 30s, then a random tile.
 const TRIVI_YEAH_II_PICK_SECONDS = 30;
@@ -1390,9 +1394,13 @@ function openTriviYeahIIAnswering(roomCode) {
     startTriviYeahIIAnswerCountdown(roomCode);
 }
 
-function startTriviYeahIIAnswerCountdown(roomCode, startCount = TRIVI_YEAH_II_ANSWER_SECONDS) {
+function startTriviYeahIIAnswerCountdown(roomCode, startCount = null) {
     const room = activeRooms[roomCode];
     if (!room) return;
+    if (startCount === null) {
+        const cell = room.triviYeahII && room.triviYeahII.grid[room.triviYeahII.activeCellIndex];
+        startCount = triviYeahIIPauseFor(TRIVI_YEAH_II_ANSWER_SECONDS, cell && cell.points);
+    }
 
     let count = startCount;
     room.gameSecondsLeft = count;
