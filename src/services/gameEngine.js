@@ -198,6 +198,20 @@ export function getCategoriesForMode(winningGameMode) {
     return TRIVIA_CATEGORIES;
 }
 
+// The phones' Info page "last question" recap (play.html). Set at the same
+// moment the TV reveals the answer, never before, so it can't spoil
+// anything; tagged with the game it belongs to so a new game starts clean.
+// Lists who answered and who was right -- the TV shows that already.
+function setPhoneRecap(room, recap) {
+    room.phoneRecapSeq = (room.phoneRecapSeq || 0) + 1;
+    room.phoneRecap = {
+        id: room.phoneRecapSeq,
+        epoch: room.gameEpoch || 0,
+        playerCount: Object.values(room.players).filter(p => !p.left).length,
+        ...recap
+    };
+}
+
 function broadcastToRoom(roomCode, payload) {
     const room = activeRooms[roomCode];
     // The phones' swipe-left scoreboard (play.html) shows the standings the
@@ -1632,6 +1646,15 @@ function evaluateTriviYeahIIHotSeat(room, roomCode, cell, correctLetter, pickerN
     ty2.lastTrapOutcome = trapOutcome;
 
     ty2.currentPicker = nextPicker;
+    setPhoneRecap(room, {
+        kind: 'HOT_SEAT',
+        label: `${cell.categoryLabel} · ${cell.points}`,
+        answer: ty2.activeQuestionData[`choice${correctLetter}`],
+        picker: pickerName,
+        pickerCorrect,
+        answered: pickerName in ty2.answers ? [pickerName] : [],
+        right: pickerCorrect ? [pickerName] : []
+    });
     finalizeTriviYeahIITileClear(room, roomCode, cell, {
         right: pickerCorrect ? [pickerName] : [],
         lockedOut: Object.keys(room.players).filter(name => name !== pickerName)
@@ -1734,6 +1757,13 @@ function evaluateTriviYeahIIAnswers(roomCode) {
     ty2.lastTrapOutcome = trapOutcome;
 
     ty2.currentPicker = nextPicker;
+    setPhoneRecap(room, {
+        label: `${cell.categoryLabel} · ${cell.points}`,
+        answer: ty2.activeQuestionData[`choice${correctLetter}`],
+        answered: Object.keys(ty2.answers).filter(name => ty2.answers[name] !== 'PASS'),
+        right: Object.keys(ty2.answers).filter(name => ty2.answers[name] === correctLetter),
+        fastest: fastestCorrectName || null
+    });
     finalizeTriviYeahIITileClear(room, roomCode, cell, {
         right: Object.keys(ty2.answers).filter(name => ty2.answers[name] === correctLetter)
     });
@@ -1801,6 +1831,15 @@ function evaluateTriviYeahIIDoublerAnswer(room, roomCode, cell, correctLetter) {
     // as nobody answering a normal tile correctly.
     const nextPicker = pickerCorrect ? pickerName : pickRandomActivePlayer(room);
     ty2.currentPicker = nextPicker;
+    setPhoneRecap(room, {
+        kind: 'DOUBLER',
+        label: `${cell.categoryLabel} · Doubler`,
+        answer: ty2.activeQuestionData[`choice${correctLetter}`],
+        picker: pickerName,
+        pickerCorrect,
+        answered: pickerName in ty2.answers ? [pickerName] : [],
+        right: pickerCorrect ? [pickerName] : []
+    });
     // A winning side bet counts toward a column sweep, same as a right answer.
     finalizeTriviYeahIITileClear(room, roomCode, cell, {
         right: (pickerCorrect ? [pickerName] : []).concat(betWinners)
@@ -2414,6 +2453,16 @@ function revealFlagMeDownRound(roomCode) {
         return { name: player.name, choice: lock ? lock.choice : null, stage: lock ? lock.stage : null, stageLabel: lock ? FLAG_ME_DOWN_STAGE_LABELS[lock.stage] : null, correct, points };
     }).sort((a, b) => b.points - a.points);
     fmd.lastResults = results;
+    const topPoints = results.length && results[0].correct ? results[0].points : 0;
+    const topScorers = results.filter(r => r.correct && r.points === topPoints);
+    setPhoneRecap(room, {
+        label: `Flag ${fmd.roundIndex + 1}`,
+        answer: country.name,
+        answered: results.filter(r => r.choice).map(r => r.name),
+        right: results.filter(r => r.correct).map(r => r.name),
+        // Earliest clue stage wins here, not raw speed; only a clear winner is named.
+        best: topScorers.length === 1 ? { name: topScorers[0].name, points: topPoints } : null
+    });
     broadcastToRoom(roomCode, {
         type: 'FLAG_ME_DOWN_REVEAL',
         round: fmd.roundIndex + 1,
@@ -4132,6 +4181,16 @@ function evaluateRoundAndRevealAnswer(roomCode) {
         });
     }
 
+    if (correctLetter) {
+        const answers = room.answers || {};
+        setPhoneRecap(room, {
+            label: `Question ${room.currentQuestionIndex + 1}`,
+            answer: room.currentQuestionData[`choice${correctLetter}`],
+            answered: Object.keys(answers),
+            right: Object.keys(answers).filter(name => answers[name] === correctLetter),
+            fastest: (room.answerOrder || []).find(name => answers[name] === correctLetter) || null
+        });
+    }
     broadcastToRoom(roomCode, {
         type: 'REVEAL_CORRECT_ANSWER',
         correctLetter,
