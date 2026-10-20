@@ -687,6 +687,20 @@
         <button class="btn btn-leave leave-room-btn" onclick="leaveRoom()">Leave Room</button>
     </div>
 
+    <!-- VENUE BREAK (Randy, Oct 2026): between Thinking Pants rounds and after
+         a Trivi-yeah! game, if the venue's code has breaks. The TV shows the
+         venue's logo, QR code and notes; the phone shows the clock and an
+         "I'm back" button -- everyone back ends the break early. -->
+    <div id="break-screen" class="card" style="display: none;">
+        <img id="break-logo" alt="" style="display: none; max-width: 70%; max-height: 90px; margin: 0 auto 14px;">
+        <h1>☕ Break time</h1>
+        <p class="subtitle" id="break-venue" style="margin-bottom: 18px;"></p>
+        <div id="break-clock" style="font-size: 3rem; font-weight: 800; color: #ffffff; letter-spacing: 0.04em;">0:00</div>
+        <p class="subtitle" style="margin: 4px 0 20px 0;">until the game picks up again</p>
+        <button class="btn" id="break-back-btn" onclick="sendImBack()">I'm back!</button>
+        <div id="break-tally" style="color: #94a3b8; font-size: 0.9rem; margin-top: 12px;"></div>
+    </div>
+
     <!-- SCREEN 5: GAME OVER -->
     <div id="game-over-screen" class="card" style="display: none;">
         <h1>Game Over</h1>
@@ -772,7 +786,7 @@
         // both missed a spot). Hiding every known screen and showing only
         // the requested one makes that whole bug class impossible going
         // forward -- a future new screen just needs adding here once.
-        const ALL_PLAY_SCREENS = ['login-screen', 'game-screen', 'category-screen', 'empossdurr-screen', 'on-the-spectrum-screen', 'profiler-screen', 'question-screen', 'trivi-yeah-ii-screen', 'trivi-yeah-ii-final-wager-screen', 'flag-me-down-screen', 'game-over-screen'];
+        const ALL_PLAY_SCREENS = ['login-screen', 'game-screen', 'category-screen', 'empossdurr-screen', 'on-the-spectrum-screen', 'profiler-screen', 'question-screen', 'trivi-yeah-ii-screen', 'trivi-yeah-ii-final-wager-screen', 'flag-me-down-screen', 'break-screen', 'game-over-screen'];
         function showOnlyPlayScreen(idToShow) {
             ALL_PLAY_SCREENS.forEach(id => {
                 document.getElementById(id).style.display = (id === idToShow) ? 'block' : 'none';
@@ -880,6 +894,7 @@
                 case 'PROFILER_ROUND_PHASE':
                     return data.profilerPhase === 'AWARDS' ? 'Final results' : `Round ${Math.min(data.round, data.totalRounds)} of ${data.totalRounds}`;
                 case 'GAME_OVER_PHASE': return 'Game over';
+                case 'VENUE_BREAK_PHASE': return 'Break time';
                 default: return '';
             }
         }
@@ -1379,6 +1394,11 @@
                         if (data.phase === 'FLAG_ME_DOWN_PHASE') {
                             showOnlyPlayScreen('flag-me-down-screen');
                             renderFlagMeDown(data, nickname, roomCode);
+                        }
+
+                        if (data.phase === 'VENUE_BREAK_PHASE') {
+                            showOnlyPlayScreen('break-screen');
+                            renderVenueBreak(data);
                         }
 
                         // Loop exhausted its question bank: show this player's own placement
@@ -2249,6 +2269,34 @@
                 });
             } catch (error) {
                 console.error('[Final Wager] Clue request failed.', error);
+            }
+        }
+
+        // ---- Venue break ----
+        function renderVenueBreak(data) {
+            const s = Math.max(0, data.secondsLeft || 0);
+            document.getElementById('break-clock').innerText = `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`;
+            document.getElementById('break-venue').innerText = data.venueName ? `Brought to you by ${data.venueName}` : '';
+            const logo = document.getElementById('break-logo');
+            if (data.logoUrl && logo.dataset.src !== data.logoUrl) { logo.dataset.src = data.logoUrl; logo.src = data.logoUrl; logo.onerror = () => { logo.style.display = 'none'; }; }
+            logo.style.display = data.logoUrl ? 'block' : 'none';
+            const button = document.getElementById('break-back-btn');
+            button.style.display = data.iAmBack ? 'none' : '';
+            document.getElementById('break-tally').innerText = data.iAmBack
+                ? `You're back! ${data.backCount} of ${data.totalPlayers} ready -- it starts when everyone is, or when the clock runs out.`
+                : `${data.backCount} of ${data.totalPlayers} back`;
+        }
+
+        async function sendImBack() {
+            document.getElementById('break-back-btn').style.display = 'none';
+            try {
+                await fetch('/api/message', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ From: localStorage.getItem('randomania_nickname') || 'test-handset', Body: 'BACK', roomCode: localStorage.getItem('randomania_roomcode') })
+                });
+            } catch (error) {
+                document.getElementById('break-back-btn').style.display = '';
             }
         }
 

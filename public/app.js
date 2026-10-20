@@ -134,6 +134,48 @@ if (btnSubmitSpectate) {
             }
         }
 
+        let venueBreakNotesTimer = null;
+        function showVenueBreakUI(data) {
+            if (venueBreakNotesTimer) { clearInterval(venueBreakNotesTimer); venueBreakNotesTimer = null; }
+            const roomCode = document.getElementById('display-room-code-badge').innerText.trim();
+            let qrSrc = '';
+            try {
+                const qr = window.qrcode(0, 'M');
+                qr.addData(`${window.location.origin}/play?room=${encodeURIComponent(roomCode)}`);
+                qr.make();
+                qrSrc = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(qr.createSvgTag({ cellSize: 4, margin: 2, scalable: true }));
+            } catch (error) { qrSrc = ''; }
+            const venue = data.venue || {};
+            const notes = data.notes || [];
+            document.getElementById('active-content-stage').innerHTML = `
+                <div class="panel-box" style="padding: 40px; flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; min-height: 400px; box-sizing: border-box; gap: 18px;">
+                    ${venue.logoUrl ? `<img src="${venue.logoUrl}" alt="" style="height: 140px; width: auto; max-width: 80%; object-fit: contain;" onerror="this.remove()">` : ''}
+                    <div style="font-size: 2.2rem; font-weight: 800; color: #ffffff;">☕ Break time${venue.name ? ` <span style="color: #94a3b8; font-weight: 600;">at ${escapeHtml(venue.name)}</span>` : ''}</div>
+                    <div id="venue-break-note" style="font-size: 1.5rem; font-weight: 600; color: #facc15; min-height: 2.2em; max-width: 90%; transition: opacity 0.4s;"></div>
+                    <div style="display: flex; align-items: center; gap: 28px; margin-top: 8px;">
+                        ${qrSrc ? `<img src="${qrSrc}" alt="" style="width: 180px; height: 180px; background: #ffffff; border-radius: 12px; padding: 10px;">` : ''}
+                        <div style="text-align: left;">
+                            <div style="color: #94a3b8; font-size: 1rem;">Join the fun: scan, or go to</div>
+                            <div style="color: #ffffff; font-size: 1.3rem; font-weight: 700;">${window.location.host}/play</div>
+                            <div style="color: #00e676; font-size: 2.4rem; font-weight: 800; letter-spacing: 0.15em;">${escapeHtml(roomCode)}</div>
+                        </div>
+                    </div>
+                    <div id="venue-break-tally" style="color: #94a3b8; font-size: 1rem;">${data.backCount || 0} of ${data.totalPlayers || 0} are back</div>
+                    <div style="color: #64748b; font-size: 0.9rem;">Tap "I'm back" on your phone -- we pick up when everyone has, or when the clock runs out.</div>
+                </div>
+            `;
+            // The venue's notes, one at a time, every 10 seconds.
+            const noteEl = document.getElementById('venue-break-note');
+            let index = 0;
+            const showNote = () => {
+                if (!notes.length || !noteEl.isConnected) return;
+                noteEl.style.opacity = 0;
+                setTimeout(() => { noteEl.innerText = notes[index % notes.length]; noteEl.style.opacity = 1; index++; }, 400);
+            };
+            showNote();
+            if (notes.length > 1) venueBreakNotesTimer = setInterval(showNote, 10000);
+        }
+
         function connectWebSocketEngine(roomCode) {
             showRoomQrCode(roomCode);
             socket = new WebSocket(`wss://${window.location.host}`);
@@ -290,6 +332,20 @@ if (btnSubmitSpectate) {
                     playCountdownMusic();
                 }
                 // Fired once the question loop runs out of questions for this game.
+                // Venue break (Randy, Oct 2026): the venue's big logo, the
+                // join QR code, a countdown and the venue's notes in rotation.
+                if (data.type === 'VENUE_BREAK_START') {
+                    document.getElementById('room-status-text').innerText = "Break Time";
+                    stopCountdownMusic();
+                    showVenueBreakUI(data);
+                }
+                if (data.type === 'VENUE_BREAK_UPDATE') {
+                    const tally = document.getElementById('venue-break-tally');
+                    if (tally) tally.innerText = `${data.backCount} of ${data.totalPlayers} are back`;
+                }
+                if (data.type === 'VENUE_BREAK_END') {
+                    if (venueBreakNotesTimer) { clearInterval(venueBreakNotesTimer); venueBreakNotesTimer = null; }
+                }
                 if (data.type === 'GAME_OVER') {
                     profilerCountdownActive = false;
                     document.getElementById('room-status-text').innerText = "Game Over";
