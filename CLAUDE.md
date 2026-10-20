@@ -101,7 +101,11 @@ credited on `/info`), copied into the repo so nothing is fetched from outside.
 no TV at all, so the phone grew a page on each side of the game, in the
 order Room | Game | Info. Swipe left (or tap the dots in the top strip)
 for **Info**: where we are (mode, question/round/flag x of y, tiles left),
-your own stats (right x/y and hit rate, answered first / fastest right,
+a **last question** card in the quiz modes (the answer, "2 of 5 got it",
+who was fastest -- Flag Me Down names the earliest-clue scorer -- and how
+you did; Doubler/Hot Seat tiles say how the picker did), set by
+`setPhoneRecap` at the same moment the TV reveals, tagged with
+`room.gameEpoch` so a new game starts clean; your own stats (right x/y and hit rate, answered first / fastest right,
 people found, bullseyes -- they only change when an answer is scored), and
 the scores, showing the standings the TV was last sent
 (`room.phoneStandings`, captured in `broadcastToRoom`), never live scores,
@@ -117,8 +121,8 @@ Back/Forward), and a side page closes itself whenever the player has
 something to do (`scoresActionKeyFor` in `play.html`; a new phone-input
 moment needs a line there). Rule of thumb: **the phone tells you about
 you; the TV tells everyone about everyone** (the scores page is the one
-tucked-away exception). Planned next, in order: a last-question recap on
-Info; a how-to-play card per mode on Room; your own
+tucked-away exception). Planned next, in order: a how-to-play card per
+mode on Room; your own
 Final Wager result on the phone after the TV's reveal ends. A full
 phone-only room (reveals on phones, no TV page) is not planned.
 

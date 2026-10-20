@@ -251,6 +251,14 @@
         .info-stat-num { font-size: 1.3rem; font-weight: 700; color: #ffffff; }
         .info-stat-label { font-size: 0.7rem; color: #64748b; text-transform: uppercase; letter-spacing: 0.06em; font-weight: 600; margin-top: 2px; }
         .info-heading { text-align: left; margin-bottom: 4px; }
+        .recap { background: #1e222b; border: 1px solid #222630; border-radius: 8px; padding: 12px 16px; text-align: left; margin: 8px 0 24px 0; }
+        .recap-label { color: #64748b; font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; }
+        .recap-answer { color: #ffffff; font-size: 1.15rem; font-weight: 700; margin: 4px 0; }
+        .recap-line { color: #94a3b8; font-size: 0.85rem; }
+        .recap-you { font-size: 0.85rem; font-weight: 600; margin-top: 6px; }
+        .recap-you.right { color: #00e676; }
+        .recap-you.wrong { color: #ff4757; }
+        .recap-you.none { color: #64748b; }
     </style>
 </head>
 <body>
@@ -287,6 +295,7 @@
     <div id="info-page" class="side-page from-right" aria-hidden="true">
         <div class="card">
             <div id="info-where" class="info-where"></div>
+            <div id="info-recap"></div>
             <div id="info-stats" class="info-stats" style="display: none;"></div>
             <label class="info-heading">🏆 Scores</label>
             <div id="scores-list" class="scores-list"></div>
@@ -881,17 +890,46 @@
             }
         }
 
+        // The last question's answer, how many got it, and how you did --
+        // set when the TV reveals it, so it never gets there first.
+        function recapHtml(data, myName) {
+            const r = data.recap;
+            if (!r || data.phase === 'LOBBY_PHASE' || data.phase === 'CATEGORY_VOTE_PHASE') return '';
+            let summary, you = null;
+            if (r.kind === 'DOUBLER' || r.kind === 'HOT_SEAT') {
+                // Only the picker answered these.
+                summary = `${r.kind === 'DOUBLER' ? 'Doubler' : 'Hot Seat'}: ${r.picker} ${r.pickerCorrect ? 'got it' : 'missed it'}`;
+                if (r.picker === myName) you = r.pickerCorrect ? ['right', '✓ You got it'] : ['wrong', '✗ You missed it'];
+            } else {
+                summary = `${r.right.length} of ${r.playerCount} got it`;
+                if (r.fastest) summary += ` · ⚡ fastest: ${r.fastest}`;
+                else if (r.best) summary += ` · 🏅 ${r.best.name}, ${r.best.points} points`;
+                you = r.right.includes(myName) ? ['right', '✓ You got it']
+                    : r.answered.includes(myName) ? ['wrong', '✗ You missed it']
+                    : ['none', '– You sat this one out'];
+            }
+            return `<label class="info-heading">Last question</label>
+                <div class="recap">
+                    <div class="recap-label">${escSidePage(r.label)}</div>
+                    <div class="recap-answer">${escSidePage(r.answer)}</div>
+                    <div class="recap-line">${escSidePage(summary)}</div>
+                    ${you ? `<div class="recap-you ${you[0]}">${escSidePage(you[1])}</div>` : ''}
+                </div>`;
+        }
+
         let lastInfoHtml = null;
-        function renderInfoPage(data) {
+        function renderInfoPage(data, myName) {
             const mode = data.mode && (window.RANDOMANIA_MODES || []).find(m => m.key === data.mode);
             const title = mode ? `${window.modeIconHtml(mode, 28)}<span>${escSidePage(mode.name)}</span>` : '<span>Lobby</span>';
             const stats = infoStats(data);
             const html = `<div class="info-mode">${title}</div><div class="info-line">${escSidePage(infoWhereLine(data))}</div>`
+                + '\u0000' + recapHtml(data, myName)
                 + '\u0000' + stats.map(st => `<div class="info-stat"><div class="info-stat-num">${escSidePage(st.num)}</div><div class="info-stat-label">${st.label}</div></div>`).join('');
             if (html === lastInfoHtml) return; // polled every second; don't redraw the icon each time
             lastInfoHtml = html;
-            const [where, statsHtml] = html.split('\u0000');
+            const [where, recap, statsHtml] = html.split('\u0000');
             document.getElementById('info-where').innerHTML = where;
+            document.getElementById('info-recap').innerHTML = recap;
             const box = document.getElementById('info-stats');
             box.style.display = stats.length ? 'grid' : 'none';
             box.innerHTML = statsHtml;
@@ -949,7 +987,7 @@
             if (data.myScore !== null && data.myScore !== undefined) document.getElementById('strip-score').innerText = data.myScore;
             renderRoomPage(roomCode);
             if (Array.isArray(data.standings)) renderScoresPanel(data.standings, myName);
-            renderInfoPage(data);
+            renderInfoPage(data, myName);
             const key = scoresActionKeyFor(data);
             if (key && key !== scoresActionKey) showSidePage('game');
             scoresActionKey = key;

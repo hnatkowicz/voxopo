@@ -273,7 +273,9 @@ app.post('/api/room-status', (req, res) => {
                 ...body,
                 standings: targetRoom.phoneStandings || [],
                 mode: targetRoom.gameState === 'LOBBY' ? null : (targetRoom.winningGameMode || null),
-                myStats: me ? { fastest: me.timesFastest || 0, bullseyes: me.bullseyeCount || 0 } : null
+                myStats: me ? { fastest: me.timesFastest || 0, bullseyes: me.bullseyeCount || 0 } : null,
+                // The last question's answer and who got it, set at the TV's reveal.
+                recap: targetRoom.phoneRecap && targetRoom.phoneRecap.epoch === (targetRoom.gameEpoch || 0) ? targetRoom.phoneRecap : null
             } : body);
         }
         if (targetRoom) {
