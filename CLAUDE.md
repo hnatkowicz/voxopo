@@ -105,7 +105,9 @@ a **last question** card in the quiz modes (the answer, "2 of 5 got it",
 who was fastest -- Flag Me Down names the earliest-clue scorer -- and how
 you did; Doubler/Hot Seat tiles say how the picker did), set by
 `setPhoneRecap` at the same moment the TV reveals, tagged with
-`room.gameEpoch` so a new game starts clean; your own stats (right x/y and hit rate, answered first / fastest right,
+`room.gameEpoch` so a new game starts clean; your own stats (right x/y and hit rate in every quiz mode -- "out of" is
+the server's `questionsFaced`, a Doubler/Hot Seat counting only for its
+picker -- answered first / fastest right,
 people found, bullseyes -- they only change when an answer is scored), and
 the scores, showing the standings the TV was last sent
 (`room.phoneStandings`, captured in `broadcastToRoom`), never live scores,
@@ -113,8 +115,11 @@ so they can't give away who's right before a reveal. Those counters and the
 mode titles used to sit atop each game screen ("Active Match Question" was
 dropped outright). Swipe right for
 **Room**: the room's QR code and code (a friend scans in from your phone)
-and Leave Room, which asks first (it used to sit under the answers on every
-screen and got bumped in fast play). The game page keeps only what changes
+the Sound setting, **Vote to end this game** and Leave Room, which asks first (it used to sit under the answers on every
+screen and got bumped in fast play). Vote to end (Randy, Oct 2026): no
+game leader, so ending early is a room vote -- more than half the players
+(`endGameVoteFor`), votes can be taken back, and it goes straight to the
+lobby; the TV shows a small "x of n needed" pill while votes are in. The game page keeps only what changes
 what you'd tap; a thin strip on top keeps your emoji, name and score.
 Swipes starting within 30px of either edge are ignored (iPhone Safari's
 Back/Forward), and a side page closes itself whenever the player has
@@ -128,12 +133,15 @@ Game Over card (the leader is revealed last, just before Game Over) and the
 Info card gets the Final Wager once every result is out. Parked: a
 how-to-play card per mode on Room (Randy, Oct 2026). A full phone-only room
 (reveals on phones, no TV page) is not planned. Answer picks show white
-until the reveal paints them green/red (`.picked`; votes keep green). **Phone
-sounds only when no TV is connected** (Randy, Oct 2026: phone-only play
-"feels too quiet"; with a TV, a room of phones dinging out of step is
-noise): your right/wrong sting at the reveal, a warning in the last 3
-seconds if you still owe an answer, a ping for your turn (pick, Doubler
-wager, trap, On the Spectrum target). The server sends `tvConnected` and
+until the reveal paints them green/red, with no right/wrong text under
+them (`.picked`; votes keep green; Doubler and trap lines stay). **Phone
+sounds** (Randy, Oct 2026: phone-only play "feels too quiet"; then "should
+always be on" with a way to turn them down): your right/wrong sting at the
+reveal and a ping for your turn (pick, Doubler wager, trap, On the Spectrum
+target) always play; the last-3-seconds warning and the break's return
+chime play only with no TV (the TV already plays them for the room). Each
+phone picks Off / Low / High on the Room page (localStorage
+`randomania_sound`). The server sends `tvConnected` and
 `clock`. The sting/ping are short tones made in the page (no downloads on
 mobile data); uploading `public/audio/phone-right.mp3`, `phone-wrong.mp3`
 or `phone-turn.mp3` replaces them, no code change. The warning is the TV's
@@ -170,12 +178,15 @@ Mode keys are used in room votes and in `gameEngine.js`:
   and warns under 8. The old general decks (`game_mode = 'TRIVIA'`, kept as
   a legacy name) stay in the database but are no longer played.
   **Venue breaks** (`access_codes_breaks.sql`; Randy, Oct 2026): a code can
-  set breaks of 2 or 5 minutes (Off by default) with up to 10 one-line
+  set breaks of 2, 5 or 10 minutes (Off by default; 10 for pubs) with up to 10 one-line
   notes (deals, event news, facts about the bride). A break comes between
   Thinking Pants rounds and after a Trivi-yeah! game (once the room has
   voted what's next) -- never mid-game, and no venue banner during play.
-  TV: the venue's big logo, the notes rotating every 10s, a big QR code and
-  room code, who's back; phones: the clock and an "I'm back" button. No game
+  TV: the venue's big logo and the notes, big, rotating every 10s (no QR
+  block -- Randy: the messages get the space), who's back; phones: the
+  clock and an "I'm back" button. At 30s left the TV and phones say "Back
+  in 30 seconds" with a chime (`break-return.mp3`, cut from
+  `cat-select.wav`, Randy's pick). No game
   leader: it ends on its own clock, or as soon as everyone taps I'm back
   (`runVenueBreak` / `endVenueBreak`, game state `VENUE_BREAK`).
 - **TRIVI_YEAH_II** (shown to players as **Thinking Pants**, renamed from
@@ -200,7 +211,10 @@ Mode keys are used in room votes and in `gameEngine.js`:
   Flags Flying!") that only *fills in* your whole score -- you still press
   Lock In and can type over it -- with campy quips and a "Right: x · Wrong:
   y" line; an all-in wager gets an "ALL IN!" stamp on the TV reveal and
-  its own result line on the phone. Final Wager only; the Doubler is parked.
+  its own result line on the phone. **Max Bet** on a Doubler (Randy, Oct
+  2026): "Pants on the Line!" fills in the most you can wager, same rules.
+  **Round 3 Doublers pay double, win or lose** (Randy, Oct 2026; wager x2,
+  `multiplier` on `ty2.doubler`); side bets don't double.
   The answer clock is 40s (Randy: "needs 10 more seconds"), music over the
   last 30.
   Categories are listed in `TRIVI_YEAH_II_CATEGORIES`. Every category needs a

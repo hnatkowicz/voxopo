@@ -160,7 +160,7 @@ export const HOUSE_ROUNDS = ['OFF', 'ROUNDS_1_3', 'ALL'];
 // column sweeps and the traps they earn.
 export const BOARD_RULES = ['CLASSIC', 'PLAIN'];
 // Venue breaks (access_codes_breaks.sql): minutes per break, 0 = Off.
-export const BREAK_MINUTES = [0, 2, 5];
+export const BREAK_MINUTES = [0, 2, 5, 10]; // 10 for pubs, where people wander to the bar (Randy, Oct 2026)
 const MAX_BREAK_NOTES = 10;
 // House sets are named HOUSE_<something> so a code can never point its
 // house column at an ordinary category.

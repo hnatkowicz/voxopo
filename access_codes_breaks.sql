@@ -5,7 +5,7 @@
 -- 9!", fun facts about the bride). Set them on /admin under a code's Venue
 -- settings. Every existing code starts with breaks Off.
 --
---   break_minutes  0 (Off), 2 or 5
+--   break_minutes  0 (Off), 2, 5 or 10
 --   break_notes    the lines the TV rotates through during a break
 --
 -- Safe to re-run: each column is only added if it isn't there yet.

@@ -3,7 +3,7 @@ import dotenv from 'dotenv';
 import path from 'path';
 import { WebSocketServer } from 'ws';
 import pool from './config/database.js';
-import { handleIncomingMessage, activeRooms, getCategoriesForMode, resolveRequestedQuestionCount, compareByRank, closeRoom, profilerStatusFor, profilerTvSnapshot, triviYeahIITrapInfo, emptyModeVotes, finalWagerWinShare, resolveDisguisedAsset, flagMeDownStatusFor, GAME_MODE_KEYS, allowedModesFor, finalWagerRevealFor, venueBrand } from './services/gameEngine.js';
+import { handleIncomingMessage, activeRooms, getCategoriesForMode, resolveRequestedQuestionCount, compareByRank, closeRoom, profilerStatusFor, profilerTvSnapshot, triviYeahIITrapInfo, emptyModeVotes, finalWagerWinShare, resolveDisguisedAsset, flagMeDownStatusFor, GAME_MODE_KEYS, allowedModesFor, finalWagerRevealFor, venueBrand, endGameVoteFor } from './services/gameEngine.js';
 import {
     isHostAuthorized, grantHostSession, isAccessCodeActive,
     isAdminAuthorized, grantAdminSession,
@@ -273,11 +273,13 @@ app.post('/api/room-status', (req, res) => {
                 ...body,
                 standings: targetRoom.phoneStandings || [],
                 mode: targetRoom.gameState === 'LOBBY' ? null : (targetRoom.winningGameMode || null),
-                myStats: me ? { fastest: me.timesFastest || 0, bullseyes: me.bullseyeCount || 0 } : null,
+                myStats: me ? { fastest: me.timesFastest || 0, bullseyes: me.bullseyeCount || 0, faced: me.questionsFaced || 0 } : null,
                 // Phones make their own sounds only when no TV is connected
                 // (Randy, Oct 2026: phone-only play "feels too quiet"), and
                 // use the clock for the last-seconds warning.
                 tvConnected: targetRoom.screens.some(socket => socket.readyState === 1),
+                // The Room page's "vote to end this game" (null outside a game).
+                endVote: endGameVoteFor(targetRoom, playerName),
                 clock: targetRoom.gameSecondsLeft ?? null,
                 // The last question's answer and who got it, set at the TV's reveal.
                 recap: targetRoom.phoneRecap && targetRoom.phoneRecap.epoch === (targetRoom.gameEpoch || 0) ? targetRoom.phoneRecap : null
@@ -365,6 +367,7 @@ app.post('/api/room-status', (req, res) => {
                     categoryLabel: ty2.grid[ty2.activeCellIndex] ? ty2.grid[ty2.activeCellIndex].categoryLabel : null,
                     tileValue: ty2.grid[ty2.activeCellIndex] ? ty2.grid[ty2.activeCellIndex].points : null,
                     wagerAmount: ty2.doubler.wagerAmount,
+                    multiplier: ty2.doubler.multiplier || 1, // last-round Doublers pay double
                     maxWager: (ty2.phase === 'DOUBLER_WAGER' && playerName === ty2.currentPicker)
                         ? Math.max(myScore || 0, ty2.grid[ty2.activeCellIndex].points)
                         : null,

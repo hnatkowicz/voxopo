@@ -1228,14 +1228,19 @@ function revealTriviYeahIIDoubler(roomCode) {
     const cell = ty2.grid[ty2.activeCellIndex];
 
     ty2.phase = 'DOUBLER_REVEAL';
-    ty2.doubler = { wagerAmount: null, sideBets: {} };
+    // Last-round Doublers pay double, win or lose (Randy, Oct 2026: a late
+    // swing so a trailing player -- his youngest -- can still get back in
+    // it, and "the stakes on these are always fun"). Side bets are unchanged.
+    const multiplier = ty2.round >= ty2.totalRounds ? 2 : 1;
+    ty2.doubler = { wagerAmount: null, sideBets: {}, multiplier };
 
     broadcastToRoom(roomCode, {
         type: 'TRIVI_YEAH_II_DOUBLER_REVEAL',
         index: ty2.activeCellIndex,
         picker: ty2.currentPicker,
         points: cell.points,
-        categoryLabel: cell.categoryLabel
+        categoryLabel: cell.categoryLabel,
+        multiplier
     });
 
     if (room.revealTimeout) clearTimeout(room.revealTimeout);
@@ -1260,7 +1265,8 @@ function openTriviYeahIIWager(roomCode) {
         picker: ty2.currentPicker,
         maxWager,
         tileValue: cell.points,
-        categoryLabel: cell.categoryLabel
+        categoryLabel: cell.categoryLabel,
+        multiplier: ty2.doubler.multiplier || 1
     });
 
     if (room.revealTimeout) clearTimeout(room.revealTimeout);
@@ -1298,7 +1304,8 @@ function openTriviYeahIISideBets(roomCode, startCount = TRIVI_YEAH_II_SIDE_BET_S
             picker: ty2.currentPicker,
             wagerAmount: ty2.doubler.wagerAmount,
             tileValue: cell.points,
-            categoryLabel: cell.categoryLabel
+            categoryLabel: cell.categoryLabel,
+            multiplier: ty2.doubler.multiplier || 1
         });
     }
 
@@ -1694,6 +1701,7 @@ function evaluateTriviYeahIIHotSeat(room, roomCode, cell, correctLetter, pickerN
     const picker = room.players[pickerName];
     if (picker) {
         picker.score += delta;
+        picker.questionsFaced = (picker.questionsFaced || 0) + 1; // only the picker could answer a Hot Seat
         if (pickerCorrect) picker.correctAnswers = (picker.correctAnswers || 0) + 1;
     }
     const nextPicker = pickerCorrect && picker && !picker.left ? pickerName : pickRandomActivePlayer(room);
@@ -1767,6 +1775,7 @@ function evaluateTriviYeahIIAnswers(roomCode) {
 
     Object.values(room.players).forEach(player => {
         if (player.left) return;
+        player.questionsFaced = (player.questionsFaced || 0) + 1;
         const submitted = ty2.answers[player.name];
         if (submitted === correctLetter) {
             player.score += points;
@@ -1851,10 +1860,12 @@ function evaluateTriviYeahIIDoublerAnswer(room, roomCode, cell, correctLetter) {
     const pickerName = ty2.currentPicker;
     const pickerCorrect = ty2.answers[pickerName] === correctLetter;
     const wagerAmount = ty2.doubler.wagerAmount;
+    const payout = wagerAmount * (ty2.doubler.multiplier || 1); // x2 in the last round
 
     const picker = room.players[pickerName];
     if (picker) {
-        picker.score += pickerCorrect ? wagerAmount : -wagerAmount;
+        picker.score += pickerCorrect ? payout : -payout;
+        picker.questionsFaced = (picker.questionsFaced || 0) + 1; // only the picker answers a Doubler
         if (pickerCorrect) picker.correctAnswers = (picker.correctAnswers || 0) + 1;
     }
 
@@ -1907,6 +1918,8 @@ function evaluateTriviYeahIIDoublerAnswer(room, roomCode, cell, correctLetter) {
         picker: pickerName,
         pickerCorrect,
         wagerAmount,
+        payout,
+        multiplier: ty2.doubler.multiplier || 1,
         sideBetResults,
         nextPicker,
         grid: publicTriviYeahIIGrid(room)
@@ -2256,6 +2269,7 @@ function advanceTriviYeahIIFinalReveal(roomCode) {
     const player = room.players[step.playerName];
     if (player) {
         player.score += step.correct ? step.winAmount : -step.wagerAmount;
+        player.questionsFaced = (player.questionsFaced || 0) + 1;
         if (step.correct) player.correctAnswers = (player.correctAnswers || 0) + 1;
     }
 
@@ -2534,6 +2548,7 @@ function revealFlagMeDownRound(roomCode) {
         const lock = fmd.lockIns[player.name];
         const correct = !!lock && lock.choice === country.name;
         const points = correct ? FLAG_ME_DOWN_STAGE_POINTS[lock.stage] : 0;
+        player.questionsFaced = (player.questionsFaced || 0) + 1;
         if (correct) {
             player.score += points;
             player.correctAnswers = (player.correctAnswers || 0) + 1;
@@ -3163,6 +3178,7 @@ function resetPlayerStatsForFreshGame(player) {
     player.categoryVote = null;
     player.score = 0;
     player.correctAnswers = 0;
+    player.questionsFaced = 0;
     player.currentStreak = 0;
     player.timesFastest = 0;
     player.awards = {};
@@ -3207,6 +3223,7 @@ function resetRoomForReplay(roomCode) {
 // and the venue's notes (deals, event news, facts about the bride), never
 // mid-game. No game leader: it ends on its own clock, or early once
 // everyone taps "I'm back". Off unless a code turns it on.
+const VENUE_BREAK_HEADSUP_SECONDS = 30;
 function runVenueBreak(roomCode, then) {
     const room = activeRooms[roomCode];
     const minutes = room && room.venue && room.venue.breakMinutes;
@@ -3229,6 +3246,9 @@ function runVenueBreak(roomCode, then) {
         secondsLeft--;
         room.gameSecondsLeft = secondsLeft;
         if (room.venueBreak) room.venueBreak.secondsLeft = secondsLeft;
+        // A heads-up so people at the bar have time to sit down: the TV
+        // chimes (the opening of cat-select.wav) and says so (Randy, Oct 2026).
+        if (secondsLeft === VENUE_BREAK_HEADSUP_SECONDS) broadcastToRoom(roomCode, { type: 'VENUE_BREAK_HEADSUP', secondsLeft });
         if (secondsLeft > 0) broadcastToRoom(roomCode, { type: 'GAME_TIMER_TICK', secondsLeft: `${Math.floor(secondsLeft / 60)}:${String(secondsLeft % 60).padStart(2, '0')}` });
         else endVenueBreak(roomCode);
     }, 1000);
@@ -3261,6 +3281,36 @@ function markBackFromBreak(roomCode, playerName) {
         return `Everyone's back -- let's go!`;
     }
     return `Welcome back! (${tally.backCount}/${tally.totalPlayers} back)`;
+}
+
+// ---- Vote to end the game (Randy, Oct 2026) ----
+// An escape hatch the room decides, not the host ("no game leader"): wrong
+// mode picked, a game dragging, half the table gone. Anyone can vote from
+// their phone's Room page (and take it back); once MORE than half the
+// players still in the room have, it's straight back to the lobby -- Randy:
+// "if people are ending a game there was some sort of discussion", so no
+// standings screen. With two players that means both.
+const NO_GAME_STATES = ['LOBBY', 'GAME_OVER'];
+export function endGameVoteFor(room, playerName) {
+    if (!room || NO_GAME_STATES.includes(room.gameState)) return null;
+    const active = Object.values(room.players).filter(p => !p.left);
+    const votes = room.endVotes ? active.filter(p => room.endVotes.has(p.name)).length : 0;
+    return { votes, total: active.length, needed: Math.floor(active.length / 2) + 1, mine: !!(room.endVotes && room.endVotes.has(playerName)) };
+}
+
+function castEndGameVote(roomCode, playerName, wantsEnd) {
+    const room = activeRooms[roomCode];
+    if (!room || NO_GAME_STATES.includes(room.gameState)) return `⚠️ There's no game to end right now.`;
+    room.endVotes = room.endVotes || new Set();
+    if (wantsEnd) room.endVotes.add(playerName); else room.endVotes.delete(playerName);
+    const tally = endGameVoteFor(room, playerName);
+    broadcastToRoom(roomCode, { type: 'END_VOTE_UPDATE', votes: tally.votes, total: tally.total, needed: tally.needed });
+    if (tally.votes >= tally.needed) {
+        console.log(`[Room Engine] Room ${roomCode}: ${tally.votes} of ${tally.total} voted to end the game -- back to the lobby.`);
+        resetRoomToLobby(roomCode);
+        return `The room voted to end the game -- back to the lobby!`;
+    }
+    return wantsEnd ? `Vote counted (${tally.votes} of ${tally.needed} needed).` : `Vote taken back.`;
 }
 
 function castReturnToLobbyVote(roomCode, playerName, action) {
@@ -3342,6 +3392,7 @@ function clearRoomForFreshGame(room) {
     if (room.returnVoteTimeout) { clearTimeout(room.returnVoteTimeout); room.returnVoteTimeout = null; }
     room.returnVotes = new Map();
     room.venueBreak = null;
+    room.endVotes = new Set();
     clearOnTheSpectrumTimers(room);
     clearEmpossDurrTimers(room);
 
@@ -4297,6 +4348,8 @@ function evaluateRoundAndRevealAnswer(roomCode) {
 
         Object.values(room.players).forEach(player => {
             const submittedLetter = room.answers[player.name];
+            // Every player in the room could have answered this one.
+            if (!player.left) player.questionsFaced = (player.questionsFaced || 0) + 1;
             if (submittedLetter === correctLetter) {
                 player.score += points;
                 player.correctAnswers = (player.correctAnswers || 0) + 1; // tiebreak for the final leaderboard
@@ -4478,6 +4531,7 @@ export function handleIncomingMessage(fromPhone, bodyText, explicitRoomCode, pre
                     requestedStart: false,
                     score: 0,
                     correctAnswers: 0,
+                    questionsFaced: 0, // questions you had a chance to answer -- the Info page's "right x/y"
                     currentStreak: 0,
                     timesFastest: 0, // lifetime count, purely for tie-breaking -- independent of the bolt badge's live per-round status
                     bullseyeCount: 0, // On the Spectrum exact matches -- also a tiebreak field
@@ -4588,6 +4642,15 @@ export function handleIncomingMessage(fromPhone, bodyText, explicitRoomCode, pre
 
         const remainingActivePlayers = Object.values(currentRoom.players).filter(p => !p.left);
         broadcastToRoom(associatedRoomCode, { type: 'LEADERBOARD_UPDATE', players: remainingActivePlayers });
+
+        // The leaver's end-the-game vote goes with them, and the bar drops
+        // with the room's size -- the votes already in may now be enough.
+        if (currentRoom.endVotes && currentRoom.endVotes.size && remainingActivePlayers.length > 0) {
+            currentRoom.endVotes.delete(actingPlayerName);
+            const tally = endGameVoteFor(currentRoom, null);
+            if (tally && tally.votes > 0 && tally.votes >= tally.needed) resetRoomToLobby(associatedRoomCode);
+            else if (tally) broadcastToRoom(associatedRoomCode, { type: 'END_VOTE_UPDATE', votes: tally.votes, total: tally.total, needed: tally.needed });
+        }
 
         // Re-check whichever gate the current phase is waiting on -- leaving
         // shouldn't leave everyone else stuck if they'd already cleared it.
@@ -4767,6 +4830,11 @@ export function handleIncomingMessage(fromPhone, bodyText, explicitRoomCode, pre
     // 3.5. "Play Again" -- same mode, same roster, fresh stats. Shares the
     // Game Over vote with Main Menu (START above); resolveReturnToLobbyVote
     // decides between them once everyone's voted or the backstop runs out.
+    // Vote to end the game (see castEndGameVote).
+    if (/^ENDVOTE( CANCEL)?$/i.test(cleanText)) {
+        return castEndGameVote(associatedRoomCode, actingPlayerName, !/CANCEL/i.test(cleanText));
+    }
+
     // Venue break: "I'm back" (see runVenueBreak).
     if (cleanText.toUpperCase() === 'BACK' && currentRoom.gameState === 'VENUE_BREAK') {
         return markBackFromBreak(associatedRoomCode, actingPlayerName);

@@ -2,7 +2,7 @@ document.addEventListener("DOMContentLoaded", () => {
     document.body.setAttribute('data-view', 'gateway');
     document.getElementById('active-content-stage').innerHTML = window.renderModeElectionTiles();
 
-    ['countdown-music', 'category-music', 'win-music', 'declare-music', 'final-wager-timer-sound', 'answer-warning-sound', 'doubler-reveal-sound', 'doubler-correct-sound', 'doubler-wrong-sound'].forEach(id => {
+    ['countdown-music', 'category-music', 'win-music', 'declare-music', 'final-wager-timer-sound', 'answer-warning-sound', 'doubler-reveal-sound', 'doubler-correct-sound', 'doubler-wrong-sound', 'break-return-sound'].forEach(id => {
         const audio = document.getElementById(id);
         if (audio) audio.volume = 0.5;
     });
@@ -79,7 +79,7 @@ if (btnSubmitSpectate) {
         // sound at once when the TV joined the lobby (family playtest).
         // A muted play still counts as the user-gesture unlock.
         function unlockAllAudio() {
-            ['countdown-music', 'category-music', 'win-music', 'declare-music', 'final-wager-timer-sound', 'answer-warning-sound', 'doubler-reveal-sound', 'doubler-correct-sound', 'doubler-wrong-sound', 'vote-sound', 'impostor-correct-sound'].forEach(id => {
+            ['countdown-music', 'category-music', 'win-music', 'declare-music', 'final-wager-timer-sound', 'answer-warning-sound', 'doubler-reveal-sound', 'doubler-correct-sound', 'doubler-wrong-sound', 'vote-sound', 'impostor-correct-sound', 'break-return-sound'].forEach(id => {
                 const audio = document.getElementById(id);
                 if (!audio) return;
                 audio.muted = true;
@@ -134,17 +134,23 @@ if (btnSubmitSpectate) {
             }
         }
 
+        function showEndVoteBanner(votes, needed) {
+            let banner = document.getElementById('end-vote-banner');
+            if (!votes) { if (banner) banner.remove(); return; }
+            if (!banner) {
+                banner = document.createElement('div');
+                banner.id = 'end-vote-banner';
+                banner.style.cssText = 'position: fixed; top: 14px; left: 50%; transform: translateX(-50%); z-index: 50; background: #1e222b; border: 1px solid #334155; border-radius: 999px; padding: 8px 18px; color: #cbd5e1; font-size: 0.95rem; font-weight: 600;';
+                document.body.appendChild(banner);
+            }
+            banner.innerText = `🚪 ${votes} of ${needed} needed to end this game`;
+        }
+
         let venueBreakNotesTimer = null;
         function showVenueBreakUI(data) {
             if (venueBreakNotesTimer) { clearInterval(venueBreakNotesTimer); venueBreakNotesTimer = null; }
-            const roomCode = document.getElementById('display-room-code-badge').innerText.trim();
-            let qrSrc = '';
-            try {
-                const qr = window.qrcode(0, 'M');
-                qr.addData(`${window.location.origin}/play?room=${encodeURIComponent(roomCode)}`);
-                qr.make();
-                qrSrc = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(qr.createSvgTag({ cellSize: 4, margin: 2, scalable: true }));
-            } catch (error) { qrSrc = ''; }
+            // No QR block here: the TV's regular "Scan to join" strip stays on
+            // screen, and the room's messages get the space (Randy, Oct 2026).
             const venue = data.venue || {};
             // No notes set in /admin? The venue's tagline fills the slot, and
             // with neither the slot closes up (Randy's first test: a big gap).
@@ -153,15 +159,8 @@ if (btnSubmitSpectate) {
                 <div class="panel-box" style="padding: 32px 40px; flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; min-height: 400px; box-sizing: border-box; gap: 12px;">
                     ${venue.logoUrl ? `<img src="${venue.logoUrl}" alt="" style="height: 140px; width: auto; max-width: 80%; object-fit: contain;" onerror="this.remove()">` : ''}
                     <div style="font-size: 2.2rem; font-weight: 800; color: #ffffff;">☕ Break time${venue.name ? ` <span style="color: #94a3b8; font-weight: 600;">at ${escapeHtml(venue.name)}</span>` : ''}</div>
-                    ${notes.length ? `<div id="venue-break-note" style="font-size: 1.5rem; font-weight: 600; color: #facc15; min-height: 1.4em; max-width: 90%; transition: opacity 0.4s;"></div>` : ''}
-                    <div style="display: flex; align-items: center; gap: 28px; margin-top: 8px;">
-                        ${qrSrc ? `<img src="${qrSrc}" alt="" style="width: 180px; height: 180px; background: #ffffff; border-radius: 12px; padding: 10px;">` : ''}
-                        <div style="text-align: left;">
-                            <div style="color: #94a3b8; font-size: 1rem;">Join the fun: scan, or go to</div>
-                            <div style="color: #ffffff; font-size: 1.3rem; font-weight: 700;">${window.location.host}/play</div>
-                            <div style="color: #00e676; font-size: 2.4rem; font-weight: 800; letter-spacing: 0.15em;">${escapeHtml(roomCode)}</div>
-                        </div>
-                    </div>
+                    ${notes.length ? `<div id="venue-break-note" style="font-size: 2.8rem; font-weight: 700; line-height: 1.25; color: #facc15; min-height: 2.5em; max-width: 92%; display: flex; align-items: center; justify-content: center; transition: opacity 0.4s;"></div>` : ''}
+                    <div id="venue-break-headsup" style="display: none; font-size: 1.6rem; font-weight: 800; color: #00e676;">⏰ Back in 30 seconds!</div>
                     <div id="venue-break-tally" style="color: #94a3b8; font-size: 1rem;">${data.backCount || 0} of ${data.totalPlayers || 0} are back</div>
                     <div style="color: #64748b; font-size: 0.9rem;">Tap "I'm back" on your phone -- we pick up when everyone has, or when the clock runs out.</div>
                 </div>
@@ -345,6 +344,14 @@ if (btnSubmitSpectate) {
                     const tally = document.getElementById('venue-break-tally');
                     if (tally) tally.innerText = `${data.backCount} of ${data.totalPlayers} are back`;
                 }
+                // Vote to end the game: a quiet line on the TV once anyone has voted.
+                if (data.type === 'END_VOTE_UPDATE') showEndVoteBanner(data.votes, data.needed);
+                if (data.type === 'RETURN_TO_LOBBY' || data.type === 'GAME_OVER') showEndVoteBanner(0);
+                if (data.type === 'VENUE_BREAK_HEADSUP') {
+                    playAudioTrack('break-return-sound');
+                    const headsUp = document.getElementById('venue-break-headsup');
+                    if (headsUp) headsUp.style.display = 'block';
+                }
                 if (data.type === 'VENUE_BREAK_END') {
                     if (venueBreakNotesTimer) { clearInterval(venueBreakNotesTimer); venueBreakNotesTimer = null; }
                 }
@@ -457,7 +464,7 @@ if (btnSubmitSpectate) {
                 // visible), then back into the shared question/answers staging.
                 if (data.type === 'TRIVI_YEAH_II_DOUBLER_REVEAL') {
                     document.getElementById('lobby-countdown').innerText = '';
-                    showTriviYeahIIDoublerRevealUI(data.picker, data.points, data.categoryLabel);
+                    showTriviYeahIIDoublerRevealUI(data.picker, data.points, data.categoryLabel, data.multiplier);
                     stopCountdownMusic();
                     playAudioTrack('doubler-reveal-sound');
                 }
@@ -1394,7 +1401,10 @@ function showTriviYeahIITrapOutcome(trap) {
     setStatusMessage(`<div style="font-weight: 700; color: #ff5c5c;">${line}</div>`);
 }
 
-function showTriviYeahIIDoublerRevealUI(picker, points, categoryLabel) {
+// Last-round Doublers pay double (Randy, Oct 2026); set by the reveal.
+let doublerMultiplier = 1;
+function showTriviYeahIIDoublerRevealUI(picker, points, categoryLabel, multiplier) {
+    doublerMultiplier = multiplier || 1;
     const panel = document.getElementById('active-content-stage');
     document.getElementById('room-status-text').innerText = "Thinking Pants — Doubler!";
     panel.innerHTML = `
@@ -1404,6 +1414,7 @@ function showTriviYeahIIDoublerRevealUI(picker, points, categoryLabel) {
             <div style="font-size: 2.4rem; font-weight: 800; color: #ffa500; margin-bottom: 10px; text-shadow: 0 0 20px rgba(255, 165, 0, 0.4);">DOUBLER!</div>
             <div style="font-size: 1.2rem; font-weight: 700; color: #ffffff;">${picker} is on the hook for this one.</div>
             <div style="font-size: 1rem; color: #94a3b8; margin-top: 6px;">Tile value: ${points} points</div>
+            ${doublerMultiplier > 1 ? `<div style="font-size: 1.4rem; font-weight: 800; color: #ff7a1a; margin-top: 14px;">🔥 Final round: this Doubler pays DOUBLE, win or lose!</div>` : ''}
         </div>
     `;
 }
@@ -1417,7 +1428,7 @@ function showTriviYeahIIWagerPromptUI(picker, maxWager, tileValue, categoryLabel
             ${doublerCategoryBadge(categoryLabel)}
             <div style="font-size: 0.85rem; font-weight: 600; color: #64748b; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 14px;">Waiting on the wager</div>
             <div style="font-size: 1.6rem; font-weight: 700; color: #ffffff; margin-bottom: 10px;">${picker} is deciding how much to risk&hellip;</div>
-            <div style="font-size: 1rem; color: #94a3b8;">Anywhere from 0 to ${maxWager} points (tile is worth ${tileValue})</div>
+            <div style="font-size: 1rem; color: #94a3b8;">Anywhere from 0 to ${maxWager} points (tile is worth ${tileValue})${doublerMultiplier > 1 ? ` -- <strong style="color: #ff7a1a;">paid double!</strong>` : ''}</div>
         </div>
     `;
 }
@@ -1433,7 +1444,7 @@ function showTriviYeahIISideBetsOpenUI(picker, wagerAmount, tileValue, categoryL
         <div class="panel-box" style="padding: 40px; flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; min-height: 400px; box-sizing: border-box;">
             ${doublerCategoryBadge(categoryLabel)}
             <div style="font-size: 0.85rem; font-weight: 600; color: #64748b; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 14px;">${picker}'s wager</div>
-            <div style="font-size: 2.2rem; font-weight: 800; color: #ffa500; margin-bottom: 18px;">${wagerAmount} points</div>
+            <div style="font-size: 2.2rem; font-weight: 800; color: #ffa500; margin-bottom: 18px;">${wagerAmount} points${doublerMultiplier > 1 ? ` <span style="color: #ff7a1a;">&times;2</span>` : ''}</div>
             <div style="font-size: 1.1rem; font-weight: 600; color: #ffffff;">Will ${picker} get it right?</div>
             <div style="font-size: 1rem; color: #94a3b8; margin-top: 6px;">Place your side bet -- For, Against, or Pass -- at ${tileValue} points</div>
         </div>
@@ -1447,8 +1458,8 @@ function showTriviYeahIIDoublerResultUI(data) {
     const panel = document.getElementById('active-content-stage');
 
     const pickerLine = data.pickerCorrect
-        ? `<span style="color: #00e676;">${data.picker} got it right -- +${data.wagerAmount} points!</span>`
-        : `<span style="color: #ff5c5c;">${data.picker} missed it -- &minus;${data.wagerAmount} points.</span>`;
+        ? `<span style="color: #00e676;">${data.picker} got it right -- +${data.payout ?? data.wagerAmount} points!${data.multiplier > 1 ? ' (doubled!)' : ''}</span>`
+        : `<span style="color: #ff5c5c;">${data.picker} missed it -- &minus;${data.payout ?? data.wagerAmount} points.${data.multiplier > 1 ? ' (doubled!)' : ''}</span>`;
 
     const sideBetRows = Object.entries(data.sideBetResults || {}).map(([name, delta]) => {
         if (delta === 0) return `<div style="font-size: 0.95rem; color: #64748b;">${name} passed.</div>`;

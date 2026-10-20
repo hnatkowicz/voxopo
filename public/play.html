@@ -66,7 +66,7 @@
         .btn.btn-risk { background: linear-gradient(135deg, #ff7a1a, #ff3d3d); color: #ffffff; margin-top: 4px; font-weight: 800; letter-spacing: 0.04em; }
         .btn.btn-risk:hover { background: linear-gradient(135deg, #ff7a1a, #ff3d3d); }
         .btn.btn-risk.nothing { background: #1e222b; color: #94a3b8; border: 1px dashed #334155; font-weight: 600; }
-        #fw-wager-input.all-in { border-color: #ff7a1a !important; box-shadow: 0 0 14px rgba(255, 122, 26, 0.55); }
+        #fw-wager-input.all-in, #ty2-wager-input.all-in { border-color: #ff7a1a !important; box-shadow: 0 0 14px rgba(255, 122, 26, 0.55); }
         .module-row.picked {
             border-color: #e2e5e9;
             background: rgba(255, 255, 255, 0.08);
@@ -246,6 +246,9 @@
         .side-page.closing { visibility: visible; }
         .page-hint { display: none; position: fixed; top: 52px; left: 50%; transform: translateX(-50%); z-index: 55; background: #1e222b; border: 1px solid #00e676; border-radius: 999px; padding: 8px 14px; font-size: 0.8rem; color: #e2e5e9; white-space: nowrap; box-shadow: 0 4px 20px rgba(0,0,0,0.4); }
         .room-qr img { display: block; width: 100%; max-width: 240px; margin: 0 auto; background: #ffffff; border-radius: 12px; padding: 10px; box-sizing: border-box; }
+        .sound-options { display: flex; gap: 8px; }
+        .sound-options button { flex: 1; background: #1e222b; border: 1px solid #222630; color: #94a3b8; border-radius: 8px; padding: 10px 4px; font-size: 0.9rem; font-weight: 600; cursor: pointer; }
+        .sound-options button.active { border-color: #e2e5e9; color: #ffffff; background: rgba(255, 255, 255, 0.08); }
         .room-code-big { font-size: 2.4rem; font-weight: 800; letter-spacing: 0.15em; color: #ffffff; margin-bottom: 8px; }
         .scores-list { display: flex; flex-direction: column; gap: 8px; margin-top: 8px; }
         .scores-row { display: flex; align-items: center; gap: 12px; background: #1e222b; border: 1px solid #222630; border-radius: 8px; padding: 12px 16px; text-align: left; }
@@ -301,6 +304,15 @@
             <div class="room-qr"><img id="room-qr-img" alt="QR code to join this room"></div>
             <p class="subtitle" style="margin: 16px 0 4px 0;">or go to <strong id="room-site" style="color: #cbd5e1;"></strong> and enter</p>
             <div class="room-code-big" id="room-code-big">----</div>
+            <div class="sound-setting">
+                <label style="margin: 22px 0 8px;">Sound on this phone</label>
+                <div class="sound-options" id="sound-options">
+                    <button type="button" data-level="off" onclick="setSoundLevel('off')">🔇 Off</button>
+                    <button type="button" data-level="low" onclick="setSoundLevel('low')">🔉 Low</button>
+                    <button type="button" data-level="high" onclick="setSoundLevel('high')">🔊 High</button>
+                </div>
+            </div>
+            <div id="end-vote-area" style="display: none;"></div>
             <div id="room-leave-area"></div>
             <button type="button" class="btn" style="margin-top: 12px;" onclick="showSidePage('game')">Back to the game ›</button>
         </div>
@@ -557,8 +569,13 @@
             <div id="ty2-wager-box" style="display: none;">
                 <div id="ty2-wager-prompt-text" style="font-weight: 600; margin-bottom: 14px;"></div>
                 <div id="ty2-wager-input-row" style="display: none;">
-                    <input type="number" id="ty2-wager-input" min="0" inputmode="numeric" pattern="[0-9]*" placeholder="0" style="width: 100%; padding: 12px; font-size: 1.1rem; border-radius: 8px; border: 1px solid #222630; background: #14161d; color: #fff; margin-bottom: 10px; box-sizing: border-box;" />
-                    <button class="btn" onclick="submitTriviYeahIIWager()">Lock In Wager</button>
+                    <input type="number" id="ty2-wager-input" min="0" inputmode="numeric" pattern="[0-9]*" placeholder="0" oninput="updateMaxBet()" style="width: 100%; padding: 12px; font-size: 1.1rem; border-radius: 8px; border: 1px solid #222630; background: #14161d; color: #fff; margin-bottom: 10px; box-sizing: border-box; transition: box-shadow 0.2s, border-color 0.2s;" />
+                    <!-- Max Bet (Randy, Oct 2026): fills in the most you can wager;
+                         you still press Lock In, and can type over it. -->
+                    <button type="button" class="btn btn-risk" id="ty2-max-btn" onclick="maxBet()">🔥 👖 Pants on the Line! 🔥</button>
+                    <div id="ty2-max-quip" style="min-height: 1.2em; margin-top: 8px; font-size: 0.85rem; font-weight: 600; color: #ff9a4d; text-align: center;"></div>
+                    <div id="ty2-stakes" style="margin-top: 4px; font-size: 0.85rem; color: #94a3b8; text-align: center;"></div>
+                    <button class="btn" style="margin-top: 14px;" onclick="submitTriviYeahIIWager()">Lock In Wager</button>
                 </div>
             </div>
             <div id="ty2-sidebet-box" style="display: none;">
@@ -696,7 +713,7 @@
         <h1>☕ Break time</h1>
         <p class="subtitle" id="break-venue" style="margin-bottom: 18px;"></p>
         <div id="break-clock" style="font-size: 3rem; font-weight: 800; color: #ffffff; letter-spacing: 0.04em;">0:00</div>
-        <p class="subtitle" style="margin: 4px 0 20px 0;">until the game picks up again</p>
+        <p class="subtitle" id="break-clock-label" style="margin: 4px 0 20px 0;">until the game picks up again</p>
         <button class="btn" id="break-back-btn" onclick="sendImBack()">I'm back!</button>
         <div id="break-tally" style="color: #94a3b8; font-size: 0.9rem; margin-top: 12px;"></div>
     </div>
@@ -907,18 +924,17 @@
                 ? [{ num: `${right}/${done}`, label: 'right' }, { num: `${Math.round(100 * right / done)}%`, label: 'hit rate' }]
                 : [{ num: right, label: 'right' }];
             if (data.phase === 'LOBBY_PHASE' || data.phase === 'CATEGORY_VOTE_PHASE') return [];
+            // "Out of" is counted by the server: questions you had a chance to
+            // answer (a Doubler or Hot Seat only for its picker), so the hit
+            // rate is fair in every mode and still there at breaks and Game Over.
+            const faced = stats.faced || 0;
             switch (data.mode) {
                 case 'TRIVI_YEAH':
-                case 'COUNTRY_MONKEY': {
-                    const done = data.phase === 'GAME_ROUND_PHASE' ? (data.revealedLetter ? data.questionNumber : data.questionNumber - 1) : 0;
+                case 'COUNTRY_MONKEY':
                     // Here "fastest" is first to answer, right or wrong (the TV's bolt).
-                    return [...ofSoFar(done), { num: stats.fastest || 0, label: 'answered first' }];
-                }
-                case 'FLAG_ME_DOWN': {
-                    const done = data.phase === 'FLAG_ME_DOWN_PHASE' ? (data.fmdPhase === 'REVEAL' ? data.round : data.round - 1) : 0;
-                    return ofSoFar(done);
-                }
-                case 'TRIVI_YEAH_II': return [{ num: right, label: 'right' }, { num: stats.fastest || 0, label: 'fastest right' }];
+                    return [...ofSoFar(faced), { num: stats.fastest || 0, label: 'answered first' }];
+                case 'FLAG_ME_DOWN': return ofSoFar(faced);
+                case 'TRIVI_YEAH_II': return [...ofSoFar(faced), { num: stats.fastest || 0, label: 'fastest right' }];
                 case 'PROFILER': return [{ num: right, label: 'people found' }];
                 case 'ON_THE_SPECTRUM': return [{ num: stats.bullseyes || 0, label: 'bullseyes' }];
                 default: return [];
@@ -1014,17 +1030,29 @@
             }
         }
 
-        // ---- Phone sounds, only when no TV is connected (Randy, Oct 2026:
-        // phone-only play "feels too quiet"). With a TV in the room the TV
-        // does the sound, and a room of phones dinging out of step would just
-        // be noise. Three cues, each about you: your right/wrong sting at the
-        // reveal, a warning in the last seconds if you haven't answered, and
-        // a ping when it's your turn (your pick, wager or trap). The stings
-        // and ping are short tones made right here, so nothing heavy downloads
-        // on mobile data; to use real sound files instead, upload
-        // public/audio/phone-right.mp3, phone-wrong.mp3 or phone-turn.mp3 and
-        // the phone picks them up. The warning is the TV's own answer-warning.wav.
-        const phoneSound = { ctx: null, files: {}, warning: null, unlocked: false, lastRecapId: undefined, fwShown: false, warnedKey: null };
+        // ---- Phone sounds (Randy, Oct 2026) ----
+        // Started as phone-only-play sounds ("feels too quiet"); after real
+        // play Randy wanted them always on: "It's so much better with them."
+        // Each cue is about you: your right/wrong sting at the reveal and a
+        // ping when it's your turn (pick, wager, trap). Two cues the TV
+        // already plays come from the phone only when there's no TV: the
+        // last-seconds warning and the break's "back in 30 seconds" chime.
+        // Each phone has its own Off / Low / High (Room page), kept on the
+        // phone. The stings and ping are short tones made right here, so
+        // nothing heavy downloads on mobile data; to use real sound files
+        // instead, upload public/audio/phone-right.mp3, phone-wrong.mp3 or
+        // phone-turn.mp3 and the phone picks them up.
+        const phoneSound = { ctx: null, files: {}, warning: null, returnChime: null, unlocked: false, lastRecapId: undefined, fwShown: false, warnedKey: null, chimedBreak: false };
+        const SOUND_LEVELS = { off: 0, low: 0.35, high: 1 };
+        let soundLevel = 'high';
+        try { if (SOUND_LEVELS[localStorage.getItem('randomania_sound')] !== undefined) soundLevel = localStorage.getItem('randomania_sound'); } catch (e) {}
+        function setSoundLevel(level) {
+            soundLevel = level;
+            try { localStorage.setItem('randomania_sound', level); } catch (e) {}
+            document.querySelectorAll('#sound-options button').forEach(b => b.classList.toggle('active', b.dataset.level === level));
+            if (level !== 'off') { unlockPhoneSound(); playPhoneSound('turn'); } // a sample at the new level
+        }
+        document.querySelectorAll('#sound-options button').forEach(b => b.classList.toggle('active', b.dataset.level === soundLevel));
 
         // Phones only allow sound after a tap, so the first tap anywhere unlocks it.
         function unlockPhoneSound() {
@@ -1036,6 +1064,8 @@
             } catch (e) { phoneSound.ctx = null; }
             phoneSound.warning = new Audio('/audio/answer-warning.wav');
             phoneSound.warning.preload = 'none';
+            phoneSound.returnChime = new Audio('/audio/break-return.mp3');
+            phoneSound.returnChime.preload = 'none';
             ['right', 'wrong', 'turn'].forEach(name => {
                 fetch(`/audio/phone-${name}.mp3`, { method: 'HEAD' })
                     .then(res => { if (res.ok) { const a = new Audio(`/audio/phone-${name}.mp3`); a.preload = 'auto'; phoneSound.files[name] = a; } })
@@ -1053,7 +1083,7 @@
                 osc.type = type;
                 osc.frequency.setValueAtTime(freq, t);
                 gain.gain.setValueAtTime(0.0001, t);
-                gain.gain.exponentialRampToValueAtTime(0.25, t + 0.01);
+                gain.gain.exponentialRampToValueAtTime(Math.max(0.0002, 0.25 * SOUND_LEVELS[soundLevel]), t + 0.01);
                 gain.gain.exponentialRampToValueAtTime(0.0001, t + length);
                 osc.connect(gain).connect(ctx.destination);
                 osc.start(t); osc.stop(t + length + 0.02);
@@ -1062,9 +1092,9 @@
         }
 
         function playPhoneSound(name) {
-            if (!phoneSound.unlocked) return;
-            const file = name === 'warning' ? phoneSound.warning : phoneSound.files[name];
-            if (file) { try { file.currentTime = 0; file.play().catch(() => {}); } catch (e) {} return; }
+            if (!phoneSound.unlocked || !SOUND_LEVELS[soundLevel]) return;
+            const file = name === 'warning' ? phoneSound.warning : name === 'return' ? phoneSound.returnChime : phoneSound.files[name];
+            if (file) { try { file.volume = SOUND_LEVELS[soundLevel]; file.currentTime = 0; file.play().catch(() => {}); } catch (e) {} return; }
             if (name === 'right') playTone([[784, 0.12], [1047, 0.12], [1319, 0.25]], 'triangle');
             if (name === 'wrong') playTone([[220, 0.18], [165, 0.35]], 'sawtooth');
             if (name === 'turn') playTone([[880, 0.1], [1175, 0.18]], 'sine');
@@ -1092,7 +1122,7 @@
         function phoneSounds(data, myName, actionKey) {
             const recap = data.recap;
             const recapId = recap ? recap.id : null;
-            const quiet = data.tvConnected !== false; // a TV does the sound
+            const tv = data.tvConnected !== false; // a TV plays the warning and the break chime
             // First poll after (re)loading: note where things stand, play nothing.
             if (phoneSound.lastRecapId === undefined) {
                 phoneSound.lastRecapId = recapId;
@@ -1100,7 +1130,7 @@
                 return;
             }
             // Your sting at the reveal.
-            if (recapId !== null && recapId !== phoneSound.lastRecapId && recap.label !== 'Final Wager' && !quiet) {
+            if (recapId !== null && recapId !== phoneSound.lastRecapId && recap.label !== 'Final Wager') {
                 const solo = recap.kind === 'DOUBLER' || recap.kind === 'HOT_SEAT';
                 if (recap.right.includes(myName)) playPhoneSound('right');
                 else if (recap.answered.includes(myName) && (!solo || recap.picker === myName)) playPhoneSound('wrong');
@@ -1108,19 +1138,57 @@
             phoneSound.lastRecapId = recapId;
             // The Final Wager: when the TV gets to you.
             const shown = !!(data.myReveal && data.myReveal.shown);
-            if (shown && !phoneSound.fwShown && data.myReveal.played && !quiet) playPhoneSound(data.myReveal.correct ? 'right' : 'wrong');
+            if (shown && !phoneSound.fwShown && data.myReveal.played) playPhoneSound(data.myReveal.correct ? 'right' : 'wrong');
             phoneSound.fwShown = shown;
-            if (quiet) return;
+            // A venue break's "back in 30 seconds" chime, when there's no TV to play it.
+            if (data.phase === 'VENUE_BREAK_PHASE') {
+                if (!tv && !phoneSound.chimedBreak && data.secondsLeft <= 30) playPhoneSound('return');
+                if (data.secondsLeft <= 30) phoneSound.chimedBreak = true;
+            } else phoneSound.chimedBreak = false;
             // Your turn.
             if (actionKey && actionKey !== scoresActionKey && YOUR_TURN_KEYS.some(k => actionKey.startsWith(k))) playPhoneSound('turn');
-            // Last seconds, only if you still haven't answered.
-            if (actionKey && phoneSound.warnedKey !== actionKey && data.clock >= 1 && data.clock <= 3 && stillNeedToAnswer(data, myName)) {
+            // Last seconds, only if you still haven't answered (the TV's own chime covers it when there's a TV).
+            if (!tv && actionKey && phoneSound.warnedKey !== actionKey && data.clock >= 1 && data.clock <= 3 && stillNeedToAnswer(data, myName)) {
                 phoneSound.warnedKey = actionKey;
                 playPhoneSound('warning');
             }
         }
 
+        // Vote to end this game (Randy, Oct 2026): more than half the room
+        // ends it, straight back to the lobby. Asks first, like Leave Room.
+        let endVoteConfirming = false, endVoteKey = null, lastEndVote = null;
+        function renderEndVote(endVote) {
+            lastEndVote = endVote;
+            const area = document.getElementById('end-vote-area');
+            if (!endVote) { area.style.display = 'none'; endVoteConfirming = false; endVoteKey = null; return; }
+            const key = `${endVote.votes}|${endVote.total}|${endVote.mine}|${endVoteConfirming}`;
+            if (key === endVoteKey) return;
+            endVoteKey = key;
+            area.style.display = 'block';
+            const tally = endVote.votes ? `${endVote.votes} of ${endVote.needed} needed so far.` : '';
+            area.innerHTML = endVote.mine
+                ? `<p class="subtitle" style="margin: 20px 0 0 0; color: #e2e5e9;">🚪 You voted to end this game. ${tally}</p>
+                   <button type="button" class="btn btn-leave" style="margin-top: 10px;" onclick="sendEndVote(false)">Take my vote back</button>`
+                : endVoteConfirming
+                    ? `<p class="subtitle" style="margin: 20px 0 0 0; color: #e2e5e9;">End this game for everyone? It ends once more than half the room agrees (${endVote.needed} of ${endVote.total}), and everyone goes back to the lobby. ${tally}</p>
+                       <button type="button" class="btn btn-leave" style="margin-top: 10px;" onclick="sendEndVote(true)">Yes, vote to end it</button>
+                       <button type="button" class="btn" style="margin-top: 10px;" onclick="endVoteConfirming = false; renderEndVote(lastEndVote)">Never mind</button>`
+                    : `<button type="button" class="btn btn-leave" style="margin-top: 20px;" onclick="endVoteConfirming = true; renderEndVote(lastEndVote)">🚪 Vote to end this game</button>
+                       ${tally ? `<p class="subtitle" style="margin: 8px 0 0 0;">${tally}</p>` : ''}`;
+        }
+        async function sendEndVote(wantsEnd) {
+            endVoteConfirming = false;
+            try {
+                await fetch('/api/message', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ From: localStorage.getItem('randomania_nickname') || 'test-handset', Body: wantsEnd ? 'ENDVOTE' : 'ENDVOTE CANCEL', roomCode: localStorage.getItem('randomania_roomcode') })
+                });
+            } catch (error) {}
+        }
+
         function updateSidePages(data, myName, roomCode) {
+            renderEndVote(data.endVote || null);
             // The venue dresses its own Trivi-yeah! tile (modes.js).
             if (data.venue !== undefined) window.RANDOMANIA_VENUE = data.venue;
             // Only an active player gets the side pages (not the "you left" screen).
@@ -1342,11 +1410,9 @@
                             }
                             if (data.revealedLetter) {
                                 paintRevealedChoices('choice-row-', data.revealedLetter, data.myAnswer);
-                                const revealFeedback = document.getElementById('question-feedback');
-                                const rightText = data['choice' + data.revealedLetter];
-                                if (data.myAnswer === data.revealedLetter) showFeedback(revealFeedback, `✅ Correct! ${rightText}`, "rgba(0,230,118,0.06)", "#00e676", "rgba(0,230,118,0.15)");
-                                else if (data.myAnswer) showFeedback(revealFeedback, `❌ It was ${data.revealedLetter}: ${rightText}`, "rgba(255,71,87,0.06)", "#ff4757", "rgba(255,71,87,0.1)");
-                                else showFeedback(revealFeedback, `⏱️ It was ${data.revealedLetter}: ${rightText}`, "rgba(148,163,184,0.06)", "#94a3b8", "rgba(148,163,184,0.15)");
+                                // The buttons say it all now (green answer, red wrong pick), so
+                                // no "Correct! / It was D" line under them (Randy, Oct 2026).
+                                document.getElementById('question-feedback').style.display = 'none';
                                 document.querySelectorAll('#question-screen .module-row').forEach(r => r.style.pointerEvents = 'none');
                             } else {
                                 document.querySelectorAll('#question-screen .module-row').forEach(r => r.style.pointerEvents = '');
@@ -1585,7 +1651,7 @@
             ty2LastRenderArgs = [data, nickname, roomCode];
             // Only the Doubler's wager step uses the box; clear it otherwise so
             // the next Doubler starts empty.
-            if (data.triviYeahIIPhase !== 'DOUBLER_WAGER') document.getElementById('ty2-wager-input').value = '';
+            if (data.triviYeahIIPhase !== 'DOUBLER_WAGER') { document.getElementById('ty2-wager-input').value = ''; maxBetState.tapped = false; }
 
             const doublerKey = data.doubler ? `${data.doubler.wagerAmount}|${data.doubler.maxWager}|${JSON.stringify(data.doubler.mySideBet)}|${data.doubler.resolved}` : '';
             const renderKey = `${data.round}|${data.triviYeahIIPhase}|${data.activeCellIndex}|${data.currentPicker}|${data.myAnswer || ''}|${doublerKey}|${data.trapSetter || ''}|${data.trap ? data.trap.type : ''}|${ty2TrapStep}`;
@@ -1763,16 +1829,14 @@
             }
             if (data.doubler && data.triviYeahIIPhase === 'ROUND_REVEAL' && data.doubler.resolved) {
                 const won = data.doubler.pickerCorrect;
-                showFeedback(feedback, won ? `Correct! You won ${data.doubler.wagerAmount} points.` : `Missed it -- you lost ${data.doubler.wagerAmount} points.`,
+                const payout = data.doubler.wagerAmount * (data.doubler.multiplier || 1);
+                showFeedback(feedback, won ? `Correct! You won ${payout} points.` : `Missed it -- you lost ${payout} points.`,
                     won ? "rgba(0,230,118,0.06)" : "rgba(255,71,87,0.06)", won ? "#00e676" : "#ff4757", won ? "rgba(0,230,118,0.15)" : "rgba(255,71,87,0.1)");
             } else if (data.trapOutcome && data.triviYeahIIPhase === 'ROUND_REVEAL' && trapOutcomeLine(data.trapOutcome, nickname)) {
                 showFeedback(feedback, trapOutcomeLine(data.trapOutcome, nickname), "rgba(255,92,92,0.06)", "#ff5c5c", "rgba(255,92,92,0.15)");
-            } else if (data.triviYeahIIPhase === 'ROUND_REVEAL' && data.revealedLetter && data.myAnswer && data.myAnswer !== 'PASS') {
-                const right = data.myAnswer === data.revealedLetter;
-                const rightText = data.choices ? data.choices[data.revealedLetter] : '';
-                showFeedback(feedback, right ? `✅ Correct! ${rightText}` : `❌ It was ${data.revealedLetter}: ${rightText}`,
-                    right ? "rgba(0,230,118,0.06)" : "rgba(255,71,87,0.06)", right ? "#00e676" : "#ff4757", right ? "rgba(0,230,118,0.15)" : "rgba(255,71,87,0.1)");
-            } else if (data.myAnswer) {
+            } else {
+                // A plain reveal needs no line: the buttons show it. Doubler and
+                // trap lines above stay -- they explain a jump in your score.
                 // Your pick (or Pass) shows white on its own; no "Locked in" line.
                 feedback.style.display = 'none';
             }
@@ -1815,9 +1879,15 @@
                 const inputRow = document.getElementById('ty2-wager-input-row');
                 if (data.isMyPick) {
                     const maxWager = data.doubler.maxWager || 0;
-                    document.getElementById('ty2-wager-prompt-text').innerText = `How much do you want to wager? (0 - ${maxWager} points)`;
+                    document.getElementById('ty2-wager-prompt-text').innerText = data.doubler.multiplier > 1
+                        ? `Final round: this Doubler pays DOUBLE, win or lose! How much do you want to wager? (0 - ${maxWager} points)`
+                        : `How much do you want to wager? (0 - ${maxWager} points)`;
                     inputRow.style.display = 'block';
                     prepareWagerInput(document.getElementById('ty2-wager-input'), maxWager);
+                    maxBetState.max = maxWager;
+                    maxBetState.score = data.myScore || 0;
+                    maxBetState.multiplier = data.doubler.multiplier || 1;
+                    updateMaxBet();
                 } else {
                     document.getElementById('ty2-wager-prompt-text').innerText = `Waiting for ${data.currentPicker} to lock in their wager...`;
                     inputRow.style.display = 'none';
@@ -2101,10 +2171,9 @@
 
             const feedback = document.getElementById('fmd-feedback');
             if (revealed) {
-                const r = data.myResult;
-                if (r && r.correct) showFeedback(feedback, `✅ ${data.answer}! +${r.points} (locked at the ${r.stageLabel.toLowerCase()} clue)`, "rgba(0,230,118,0.06)", "#00e676", "rgba(0,230,118,0.15)");
-                else if (r && r.choice) showFeedback(feedback, `❌ It was ${data.answer}. No points, no penalty.`, "rgba(255,71,87,0.06)", "#ff4757", "rgba(255,71,87,0.1)");
-                else showFeedback(feedback, `⏱️ It was ${data.answer}. You didn't lock in.`, "rgba(148,163,184,0.06)", "#94a3b8", "rgba(148,163,184,0.15)");
+                // The buttons (green answer, red miss) and the top line (+300)
+                // already say it; no line under them (Randy, Oct 2026).
+                feedback.style.display = 'none';
             } else {
                 // Your lock shows white, and the line above it already says
                 // "Locked · 300 if right" -- no extra "Locked in" line.
@@ -2280,6 +2349,8 @@
             const logo = document.getElementById('break-logo');
             if (data.logoUrl && logo.dataset.src !== data.logoUrl) { logo.dataset.src = data.logoUrl; logo.src = data.logoUrl; logo.onerror = () => { logo.style.display = 'none'; }; }
             logo.style.display = data.logoUrl ? 'block' : 'none';
+            document.getElementById('break-clock').style.color = s <= 30 ? '#00e676' : '#ffffff';
+            document.getElementById('break-clock-label').innerText = s <= 30 ? '⏰ Back in 30 seconds -- find your seat!' : 'until the game picks up again';
             const button = document.getElementById('break-back-btn');
             button.style.display = data.iAmBack ? 'none' : '';
             document.getElementById('break-tally').innerText = data.iAmBack
@@ -2298,6 +2369,28 @@
             } catch (error) {
                 document.getElementById('break-back-btn').style.display = '';
             }
+        }
+
+        // ---- Max Bet on a Doubler (Randy, Oct 2026) ----
+        // Same deal as Risk It All: fills in the most you can wager (your
+        // score, or the tile's value if that's more) and never submits.
+        const maxBetState = { max: 0, score: 0, multiplier: 1, tapped: false };
+        function maxBet() {
+            if (maxBetState.max <= 0) return;
+            document.getElementById('ty2-wager-input').value = maxBetState.max;
+            maxBetState.tapped = true;
+            updateMaxBet();
+        }
+        function updateMaxBet() {
+            const { max, score, multiplier } = maxBetState;
+            const input = document.getElementById('ty2-wager-input');
+            const raw = input.value.trim();
+            const wager = Math.min(Math.max(0, parseInt(raw, 10) || 0), max);
+            const maxed = raw !== '' && max > 0 && wager === max;
+            input.classList.toggle('all-in', maxed);
+            document.getElementById('ty2-max-quip').innerText = maxed ? `${max} on the line. Pants: on fire or on top?` : (maxBetState.tapped ? 'Playing it cool. Respect.' : '');
+            // The last round's Doublers pay double, win or lose.
+            document.getElementById('ty2-stakes').innerText = raw === '' ? '' : `Right: ${score + wager * multiplier} · Wrong: ${score - wager * multiplier}${multiplier > 1 ? ' (doubled!)' : ''}`;
         }
 
         // ---- Risk It All (Randy's son's idea, Oct 2026) ----
