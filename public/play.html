@@ -59,6 +59,15 @@
             color: #00e676; 
             font-weight: 600;
         }
+        /* Your answer before the reveal: white, not green, so it doesn't look
+           "right" before anyone knows (Randy, Oct 2026). The reveal paints
+           the real answer green and a wrong pick red. Votes keep .selected. */
+        .module-row.picked {
+            border-color: #e2e5e9;
+            background: rgba(255, 255, 255, 0.08);
+            color: #ffffff;
+            font-weight: 600;
+        }
 
         .btn { background: #00e676; color: #0d0e11; border: none; padding: 16px; border-radius: 8px; font-size: 1.05rem; font-weight: 600; width: 100%; cursor: pointer; margin-top: 24px; letter-spacing: 0.02em; }
         .btn:hover { background: #00c862; }
@@ -1315,7 +1324,7 @@
                 const row = document.getElementById(`${rowIdPrefix}${letter}`);
                 if (!row) return;
                 if (!revealedLetter) { row.style.borderColor = ''; row.style.background = ''; row.style.color = ''; return; }
-                row.classList.remove('selected');
+                row.classList.remove('selected', 'picked');
                 if (letter === revealedLetter) {
                     row.style.borderColor = '#00e676'; row.style.background = 'rgba(0, 230, 118, 0.12)'; row.style.color = '#00e676'; row.style.opacity = '1';
                 } else if (letter === myAnswer) {
@@ -1340,7 +1349,7 @@
             // Fresh question: unlock every row and clear the previous "locked in" feedback
             ['A', 'B', 'C', 'D'].forEach(letter => {
                 const row = document.getElementById(`choice-row-${letter}`);
-                row.classList.remove('selected');
+                row.classList.remove('selected', 'picked');
                 row.style.opacity = "1";
             });
             paintRevealedChoices('choice-row-', null, null);
@@ -1354,17 +1363,16 @@
             // 1. Instantly dim all options and highlight ONLY the tapped selection row row
             const rows = document.getElementById('question-screen').getElementsByClassName("module-row");
             for (let i = 0; i < rows.length; i++) { 
-                rows[i].classList.remove("selected");
+                rows[i].classList.remove("selected", "picked");
                 rows[i].style.opacity = "0.3"; // Mute non-chosen elements visually
             }
-            element.classList.add("selected");
+            // Your pick shows white -- no "Locked in" line under it any more
+            // (Randy, Oct 2026); the reveal turns it green or red.
+            element.classList.add("picked");
             element.style.opacity = "1"; // Max out contrast on the chosen row block
 
             const feedback = document.getElementById('question-feedback');
             const registeredName = localStorage.getItem('randomania_nickname') || 'test-handset';
-            
-            // 2. Write a persistent, rock-solid lock statement statement onto the screen box frame
-            showFeedback(feedback, `LOCKED IN: You selected Option ${selectedLetter}`, "rgba(0,230,118,0.06)", "#00e676", "rgba(0,230,118,0.15)");
 
             try {
                 // 3. Fire the response parameter text string straight up the HTTP POST channel to the server
@@ -1598,6 +1606,7 @@
                 if (data.choices) textEl.innerText = data.choices[letter] || '-';
                 const row = document.getElementById(`ty2-choice-row-${letter}`);
                 row.classList.remove('selected');
+                row.classList.toggle('picked', data.myAnswer === letter);
                 row.style.opacity = data.myAnswer ? (data.myAnswer === letter ? '1' : '0.3') : '1';
             });
             paintRevealedChoices('ty2-choice-row-', data.triviYeahIIPhase === 'ROUND_REVEAL' ? data.revealedLetter : null, data.myAnswer);
@@ -1609,6 +1618,7 @@
             } else {
                 passRow.style.display = '';
                 passRow.classList.remove('selected');
+                passRow.classList.toggle('picked', data.myAnswer === 'PASS');
                 passRow.style.opacity = data.myAnswer ? (data.myAnswer === 'PASS' ? '1' : '0.3') : '1';
             }
             if (data.doubler && data.triviYeahIIPhase === 'ROUND_REVEAL' && data.doubler.resolved) {
@@ -1622,10 +1632,9 @@
                 const rightText = data.choices ? data.choices[data.revealedLetter] : '';
                 showFeedback(feedback, right ? `✅ Correct! ${rightText}` : `❌ It was ${data.revealedLetter}: ${rightText}`,
                     right ? "rgba(0,230,118,0.06)" : "rgba(255,71,87,0.06)", right ? "#00e676" : "#ff4757", right ? "rgba(0,230,118,0.15)" : "rgba(255,71,87,0.1)");
-            } else if (data.myAnswer === 'PASS') {
-                showFeedback(feedback, `PASSED -- no points, no penalty.`, "rgba(100,116,139,0.08)", "#94a3b8", "rgba(100,116,139,0.2)");
             } else if (data.myAnswer) {
-                showFeedback(feedback, `LOCKED IN: You selected Option ${data.myAnswer}`, "rgba(0,230,118,0.06)", "#00e676", "rgba(0,230,118,0.15)");
+                // Your pick (or Pass) shows white on its own; no "Locked in" line.
+                feedback.style.display = 'none';
             }
         }
 
@@ -1839,19 +1848,15 @@
         async function submitTriviYeahIIAnswer(element, selectedLetter) {
             const rows = document.getElementById('ty2-choices-list').getElementsByClassName('module-row');
             for (let i = 0; i < rows.length; i++) {
-                rows[i].classList.remove('selected');
+                rows[i].classList.remove('selected', 'picked');
                 rows[i].style.opacity = '0.3';
             }
-            element.classList.add('selected');
+            element.classList.add('picked');
             element.style.opacity = '1';
 
             const feedback = document.getElementById('ty2-feedback');
             const registeredName = localStorage.getItem('randomania_nickname') || 'test-handset';
-            if (selectedLetter === 'PASS') {
-                showFeedback(feedback, 'PASSED -- no points, no penalty.', "rgba(100,116,139,0.08)", "#94a3b8", "rgba(100,116,139,0.2)");
-            } else {
-                showFeedback(feedback, `LOCKED IN: You selected Option ${selectedLetter}`, "rgba(0,230,118,0.06)", "#00e676", "rgba(0,230,118,0.15)");
-            }
+            feedback.style.display = 'none';
 
             try {
                 await fetch('/api/message', {
@@ -1944,7 +1949,7 @@
                 let style = '';
                 if (revealed && name === data.answer) style = 'border-color: #00e676; color: #00e676;';
                 else if (revealed && name === myChoice) style = 'border-color: #ff5c5c; color: #ff5c5c;';
-                const selected = !revealed && name === myChoice ? ' selected' : '';
+                const selected = !revealed && name === myChoice ? ' picked' : '';
                 // Dim the rest once you've locked; keep your pick (and the answer) bright.
                 const done = revealed || myChoice;
                 const keepBright = name === myChoice || (revealed && name === data.answer);
@@ -1960,16 +1965,16 @@
                 if (r && r.correct) showFeedback(feedback, `✅ ${data.answer}! +${r.points} (locked at the ${r.stageLabel.toLowerCase()} clue)`, "rgba(0,230,118,0.06)", "#00e676", "rgba(0,230,118,0.15)");
                 else if (r && r.choice) showFeedback(feedback, `❌ It was ${data.answer}. No points, no penalty.`, "rgba(255,71,87,0.06)", "#ff4757", "rgba(255,71,87,0.1)");
                 else showFeedback(feedback, `⏱️ It was ${data.answer}. You didn't lock in.`, "rgba(148,163,184,0.06)", "#94a3b8", "rgba(148,163,184,0.15)");
-            } else if (myChoice) {
-                showFeedback(feedback, `Locked in: ${myChoice}. ${data.lockedCount} of ${data.totalPlayers} locked in.`, "rgba(250,204,21,0.06)", "#facc15", "rgba(250,204,21,0.15)");
             } else {
+                // Your lock shows white, and the line above it already says
+                // "Locked · 300 if right" -- no extra "Locked in" line.
                 feedback.style.display = 'none';
             }
         }
 
         async function submitFlagMeDownLock(element, letter) {
             document.querySelectorAll('#fmd-choices-list .module-row').forEach(el => { if (el !== element) el.classList.add('btn-locked'); el.onclick = null; el.style.pointerEvents = 'none'; });
-            element.classList.add('selected');
+            element.classList.add('picked');
             const registeredName = localStorage.getItem('randomania_nickname') || 'test-handset';
             const feedback = document.getElementById('fmd-feedback');
             try {
@@ -1980,7 +1985,6 @@
                 });
                 const data = await response.json();
                 if (data.reply && data.reply.startsWith('⚠️')) showFeedback(feedback, data.reply, "rgba(255,71,87,0.06)", "#ff4757", "rgba(255,71,87,0.1)");
-                else showFeedback(feedback, data.reply || 'Locked in!', "rgba(250,204,21,0.06)", "#facc15", "rgba(250,204,21,0.15)");
             } catch (error) {
                 showFeedback(feedback, "❌ Transmission failure.", "rgba(255,71,87,0.06)", "#ff4757", "rgba(255,71,87,0.1)");
             }
@@ -2042,7 +2046,7 @@
                 document.getElementById('fw-question-text').innerText = data.questionText || '';
                 const feedback = document.getElementById('fw-answer-feedback');
                 if (data.myAnswer) {
-                    showFeedback(feedback, `LOCKED IN: "${data.myAnswer}" -- you can still change it before time's up.`, "rgba(0,230,118,0.06)", "#00e676", "rgba(0,230,118,0.15)");
+                    showFeedback(feedback, `LOCKED IN: "${data.myAnswer}" -- you can still change it before time's up.`, "rgba(255,255,255,0.06)", "#e2e5e9", "rgba(255,255,255,0.15)");
                 } else {
                     feedback.style.display = 'none';
                 }
@@ -2132,7 +2136,7 @@
                     body: JSON.stringify({ From: registeredName, Body: `FANSWER ${answerText}`, roomCode: localStorage.getItem('randomania_roomcode') })
                 });
                 fwLastRenderKey = null;
-                showFeedback(feedback, `LOCKED IN: "${answerText}" -- you can still change it before time's up.`, "rgba(0,230,118,0.06)", "#00e676", "rgba(0,230,118,0.15)");
+                showFeedback(feedback, `LOCKED IN: "${answerText}" -- you can still change it before time's up.`, "rgba(255,255,255,0.06)", "#e2e5e9", "rgba(255,255,255,0.15)");
             } catch (error) {
                 showFeedback(feedback, "❌ Transmission failure.", "rgba(255,71,87,0.06)", "#ff4757", "rgba(255,71,87,0.1)");
             }
