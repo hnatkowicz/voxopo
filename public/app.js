@@ -173,7 +173,7 @@ if (btnSubmitSpectate) {
                         document.getElementById('room-status-text').innerText = "Gameplay Phase";
                         document.getElementById('lobby-countdown').innerText = data.gameSecondsLeft + " s";
                         const q = data.activeQuestionData;
-                        switchToQuestionUI(q.categoryLabel, q.questionText, q.choiceA, q.choiceB, q.choiceC, q.choiceD, q.questionNumber, q.totalQuestions, q.visualAsset);
+                        switchToQuestionUI(q.categoryLabel, q.questionText, q.choiceA, q.choiceB, q.choiceC, q.choiceD, q.questionNumber, q.totalQuestions, q.visualAsset, q.brand);
                         stopCategoryMusic();
                         playCountdownMusic();
                     } else if (data.gameState === 'ROUND_REVEAL') {
@@ -281,7 +281,7 @@ if (btnSubmitSpectate) {
                 if (data.type === 'TRANSITION_TO_QUESTION') {
                     document.getElementById('room-status-text').innerText = "Gameplay Phase";
                     document.getElementById('lobby-countdown').innerText = "30 s"; // Reset banner clock visually
-                    switchToQuestionUI(data.categoryLabel, data.questionText, data.choiceA, data.choiceB, data.choiceC, data.choiceD, data.questionNumber, data.totalQuestions, data.visualAsset);
+                    switchToQuestionUI(data.categoryLabel, data.questionText, data.choiceA, data.choiceB, data.choiceC, data.choiceD, data.questionNumber, data.totalQuestions, data.visualAsset, data.brand);
                     preloadQuestionImage(data.preloadAsset); // the next question's picture
                     // Fresh question: every player's status-indicator goes back to invisible.
                     playerAnswerStatus = {};
@@ -297,7 +297,7 @@ if (btnSubmitSpectate) {
                     stopCategoryMusic();
                     stopCountdownMusic();
                     stopAudioTrack('final-wager-timer-sound');
-                    switchToGameOverUI(data.players);
+                    switchToGameOverUI(data.players, data.brand);
                     playAudioTrack('win-music');
                 }
                 // Post-game consensus (everyone voting START from the game-over
@@ -974,8 +974,12 @@ if (btnSubmitSpectate) {
             });
         }
 
-        function switchToQuestionUI(categoryLabel, questionText, choiceA, choiceB, choiceC, choiceD, questionNumber, totalQuestions, visualAsset) {
+        function switchToQuestionUI(categoryLabel, questionText, choiceA, choiceB, choiceC, choiceD, questionNumber, totalQuestions, visualAsset, brand) {
             const panel = document.getElementById('active-content-stage');
+            // The venue's Trivi-yeah! carries its logo and name instead of a deck name.
+            const deckLine = brand
+                ? `<span style="display: inline-flex; align-items: center; gap: 12px;">${brand.logoUrl ? `<img src="${brand.logoUrl}" alt="" style="height: 34px; width: auto; max-width: 90px; object-fit: contain;" onerror="this.remove()">` : ''}<span>Trivi-yeah! <span style="color: #94a3b8;">at ${escapeHtml(brand.name)}</span></span></span>`
+                : `Active Deck: ${categoryLabel}`;
 
             currentGamePhase = 'GAME_ROUND';
             // QR + join instructions stay put -- only the muted status slot changes. The
@@ -1024,7 +1028,7 @@ if (btnSubmitSpectate) {
                         </div>
                         <div style="flex: 1; text-align: left; display: flex; flex-direction: column; gap: 16px;">
                             <div style="font-size: 0.85rem; font-weight: 600; color: #64748b; text-transform: uppercase; letter-spacing: 0.08em;">
-                                Active Deck: ${categoryLabel}
+                                ${deckLine}
                             </div>
                             <div style="font-size: 1.2rem; font-weight: 600; color: #ffffff; line-height: 1.3; letter-spacing: -0.01em;">
                                 ${questionText}
@@ -1040,7 +1044,7 @@ if (btnSubmitSpectate) {
                 <div class="panel-box" style="padding: 40px; flex: 1; display: flex; flex-direction: column; justify-content: space-between; text-align: left; min-height: 400px; box-sizing: border-box;">
 
                     <div style="font-size: 0.85rem; font-weight: 600; color: #64748b; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 16px;">
-                        Active Deck: ${categoryLabel}
+                        ${deckLine}
                     </div>
 
                     <div style="font-size: 1.4rem; font-weight: 600; color: #ffffff; line-height: 1.4; flex: 1; display: flex; align-items: center; margin-bottom: 24px; letter-spacing: -0.01em;">
@@ -1956,6 +1960,7 @@ function restoreProfilerTV(snap) {
 // markup index.html originally shipped with, not just toggle visibility.
 function applyRoomVenue(venue, allowedModes) {
     roomVenue = venue || null;
+    window.RANDOMANIA_VENUE = roomVenue;
     roomAllowedModes = allowedModes || null;
     const isPub = !!(roomVenue && roomVenue.profile === 'PUB');
     document.body.classList.toggle('pub-profile', isPub);
@@ -1976,7 +1981,7 @@ function switchToLobbyVoteUI() {
     currentGamePhase = 'LOBBY';
 }
 
-function switchToGameOverUI(players) {
+function switchToGameOverUI(players, brand) {
     const panel = document.getElementById('active-content-stage');
     const topThree = [...(players || [])].sort(compareByRank).slice(0, 3);
     const rankClasses = ['rank-gold', 'rank-silver', 'rank-bronze'];
@@ -1990,8 +1995,9 @@ function switchToGameOverUI(players) {
 
     panel.innerHTML = `
         <div class="panel-box" style="padding: 40px; flex: 1; display: flex; flex-direction: column; justify-content: center;">
+            ${brand && brand.logoUrl ? `<img src="${brand.logoUrl}" alt="" style="display: block; height: 120px; width: auto; max-width: 70%; object-fit: contain; margin: 0 auto 20px;" onerror="this.remove()">` : ''}
             <h2 class="panel-title" style="margin-bottom: 8px;">Final Leaderboard</h2>
-            <p style="color: #64748b; font-size: 0.95rem; margin: 0 0 32px 0; font-weight: 500;">Thanks for playing!</p>
+            <p style="color: #64748b; font-size: 0.95rem; margin: 0 0 32px 0; font-weight: 500;">${brand ? `Thanks for playing at ${escapeHtml(brand.name)}!${brand.tagline ? ` <span style="color: #94a3b8;">${escapeHtml(brand.tagline)}</span>` : ''}` : 'Thanks for playing!'}</p>
             <div style="display: flex; flex-direction: column; gap: 36px;">${rows}</div>
             <div id="return-vote-tally" style="color: #64748b; font-size: 0.85rem; text-align: center; margin-top: 28px;"></div>
         </div>

@@ -132,8 +132,14 @@
             if (!key) return '';
             const set = houseSets.find(h => h.key === key);
             if (!set) return `<span style="color: #ff5c5c;">&#9888; No house questions named ${esc(key)} in the database. Check the spelling against the list.</span>`;
-            if (!set.complete) return `<span style="color: #ff5c5c;">&#9888; ${esc(key)} is missing a tier (${[100, 200, 300, 400].map(t => `${t}: ${set.tiers[t] || 0}`).join(', ')}); the board skips it until every tier has a question.</span>`;
-            return `<span style="color: #00e676;">&#10003; ${esc(key)}: ${set.total} questions</span>`;
+            // These questions are also Trivi-yeah!, the venue's own game: the
+            // whole set easy to hard, up to 20 a game (the rest carry over).
+            const game = set.total > 20
+                ? `Trivi-yeah! plays 20 a game; Play Again picks up the other ${set.total - 20}.`
+                : `Trivi-yeah! plays all ${set.total} in one game.`;
+            const short = set.total < 8 ? ` <span style="color: #ffa500;">&#9888; That's a very short game; 12 to 20 questions plays best.</span>` : '';
+            if (!set.complete) return `<span style="color: #ff5c5c;">&#9888; ${esc(key)} is missing a tier (${[100, 200, 300, 400].map(t => `${t}: ${set.tiers[t] || 0}`).join(', ')}); the board skips it until every tier has a question.</span> ${game}${short}`;
+            return `<span style="color: #00e676;">&#10003; ${esc(key)}: ${set.total} questions.</span> ${game}${short}`;
         }
         function refreshHouseStatus() {
             const el = document.getElementById('venue-house-status');
@@ -153,6 +159,10 @@
             if (c.profile === 'PUB') parts.push(`Pub${c.venue_name ? ': ' + esc(c.venue_name) : ''}`);
             if (c.allowed_modes && c.allowed_modes.length) parts.push(`${c.allowed_modes.length} modes`);
             if (c.board_rules === 'PLAIN') parts.push('Plain rules');
+            if (c.house_category) {
+                const set = houseSets.find(h => h.key === c.house_category);
+                parts.push(set ? `Trivi-yeah! (${set.total})` : 'Trivi-yeah! &#9888; set not found');
+            }
             if (c.house_rounds && c.house_rounds !== 'OFF') {
                 const set = houseSets.find(h => h.key === c.house_category);
                 parts.push(`House: ${c.house_rounds === 'ALL' ? 'all rounds' : 'rounds 1 & 3'}${set && set.complete ? '' : ' &#9888; set not found'}`);
@@ -162,7 +172,8 @@
 
         function venueEditorHtml(c) {
             const allowed = c.allowed_modes || [];
-            const modes = (window.RANDOMANIA_MODES || []).map(m => `
+            // Trivi-yeah! isn't ticked: it appears on its own when the code has house questions.
+            const modes = (window.RANDOMANIA_MODES || []).filter(m => m.key !== 'TRIVI_YEAH').map(m => `
                 <label><input type="checkbox" value="${m.key}" ${allowed.includes(m.key) ? 'checked' : ''}> ${esc(m.name)}</label>`).join('');
             return `
                 <div class="venue-editor" id="venue-editor">
@@ -180,7 +191,8 @@
                         <div class="hint">A file in public/venues/ (upload it through GitHub). Wide logos fit best: about 2:1, like 800&times;400.</div>
                     </div>
                     <div class="row">
-                        <label>Modes shown (none checked = all but Trivi-yeah!, which is for events)</label>
+                        <label>Modes shown (none checked = all of them)</label>
+                        <div class="hint">Trivi-yeah! isn't in this list: it's the venue's own game, and it appears on its own when the code has house questions (below).</div>
                         <div class="modes" id="venue-modes">${modes}</div>
                     </div>
                     ${boardRulesOn ? `
@@ -207,7 +219,7 @@
                         <datalist id="house-set-options">${houseSets.map(h => `<option value="${esc(h.key)}">`).join('')}</datalist>
                         <div class="hint" id="venue-house-status">${houseSetStatus(c.house_category)}</div>
                         <div class="hint">In the database: ${houseSets.length ? houseSets.map(h => esc(h.key)).join(', ') : 'none yet'}</div>
-                        <div class="hint">The category name in that event's .sql file (always starts with HOUSE_). It needs at least one question at each of 100/200/300/400, or the board plays without it.</div></div>
+                        <div class="hint">The category name in that event's .sql file (always starts with HOUSE_). It needs at least one question at each of 100/200/300/400, or the board plays without it. These questions are also <strong>Trivi-yeah!</strong>, the venue's own game, with the venue's logo and name: it shows up in the lobby whenever this is filled in, even with the house column Off.</div></div>
                     <div class="row"><label>Column title</label><input type="text" id="venue-house-label" maxlength="40" value="${esc(c.house_label)}" placeholder="Blank = the venue name"></div>
                     ` : `<div class="hint" style="margin-bottom: 12px;">House columns turn on once you run <strong>access_codes_house_column.sql</strong> in Neon.</div>`}
                     <div style="display: flex; gap: 10px;">

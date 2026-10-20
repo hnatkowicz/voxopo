@@ -3,7 +3,7 @@ import dotenv from 'dotenv';
 import path from 'path';
 import { WebSocketServer } from 'ws';
 import pool from './config/database.js';
-import { handleIncomingMessage, activeRooms, getCategoriesForMode, resolveRequestedQuestionCount, compareByRank, closeRoom, profilerStatusFor, profilerTvSnapshot, triviYeahIITrapInfo, emptyModeVotes, finalWagerWinShare, resolveDisguisedAsset, flagMeDownStatusFor, GAME_MODE_KEYS, allowedModesFor, finalWagerRevealFor } from './services/gameEngine.js';
+import { handleIncomingMessage, activeRooms, getCategoriesForMode, resolveRequestedQuestionCount, compareByRank, closeRoom, profilerStatusFor, profilerTvSnapshot, triviYeahIITrapInfo, emptyModeVotes, finalWagerWinShare, resolveDisguisedAsset, flagMeDownStatusFor, GAME_MODE_KEYS, allowedModesFor, finalWagerRevealFor, venueBrand } from './services/gameEngine.js';
 import {
     isHostAuthorized, grantHostSession, isAccessCodeActive,
     isAdminAuthorized, grantAdminSession,
@@ -565,6 +565,8 @@ app.post('/api/room-status', (req, res) => {
                 // (EmpossDurr, On the Spectrum) only when that's actually the
                 // mode that just finished.
                 winningGameMode: targetRoom.winningGameMode,
+                // "Thanks for playing at <venue>!" after the venue's Trivi-yeah!.
+                brand: targetRoom.winningGameMode === 'TRIVI_YEAH' ? venueBrand(targetRoom) : null,
                 // Your Final Wager result, so the leader (revealed last, just
                 // before Game Over) still gets to read theirs.
                 myFinalWager: targetRoom.finalWager && targetRoom.finalWager.revealSteps

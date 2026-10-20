@@ -742,6 +742,7 @@
                 if (code !== joinInfoRequestedFor) return; // they've typed another code since
                 const data = response.ok ? await response.json() : null;
                 joinAllowedModes = data && data.success ? data.allowedModes : null;
+                window.RANDOMANIA_VENUE = data && data.success ? data.venue : null;
                 const venueName = data && data.venue && data.venue.name;
                 venueLine.innerText = venueName ? `📍 ${venueName}` : '';
                 venueLine.style.display = venueName ? 'block' : 'none';
@@ -1105,6 +1106,8 @@
         }
 
         function updateSidePages(data, myName, roomCode) {
+            // The venue dresses its own Trivi-yeah! tile (modes.js).
+            if (data.venue !== undefined) window.RANDOMANIA_VENUE = data.venue;
             // Only an active player gets the side pages (not the "you left" screen).
             setInRoom(data.myLeft === false);
             document.getElementById('strip-name').innerText = myName;
@@ -3055,8 +3058,9 @@
             const modeName = MODE_DISPLAY_NAMES[data.winningGameMode];
             document.getElementById('btn-play-again').innerText = modeName ? `Play ${modeName} Again` : 'Play Again';
 
+            const thanks = data.brand ? `Thanks for playing at ${escapeFmd(data.brand.name)}!` : 'Thanks for playing!';
             if (!rank) {
-                container.innerHTML = `<p class="subtitle" style="margin-bottom: 0;">Thanks for playing! Swipe left for the final scores.</p>`;
+                container.innerHTML = `<p class="subtitle" style="margin-bottom: 0;">${thanks} Swipe left for the final scores.</p>`;
                 return;
             }
 
@@ -3084,6 +3088,7 @@
                     <span class="leaderboard-btn-score">${score} pts</span>
                 </div>
                 <p class="subtitle" style="margin: 14px 0 0 0;">${headline}</p>
+                ${data.brand ? `<p style="color: #94a3b8; font-size: 0.9rem; margin: 6px 0 0 0;">${thanks}</p>` : ''}
                 <p style="color: #64748b; font-size: 0.85rem; margin: 4px 0 0 0;">${subline}</p>
                 ${data.profilerPersonal ? profilerPersonalHtml(data.profilerPersonal) : ''}
                 ${data.myFinalWager && data.myFinalWager.played ? `<p style="font-size: 0.9rem; margin: 10px 0 0 0;">Final Wager: ${finalWagerResultLine(data.myFinalWager)}</p>` : ''}
