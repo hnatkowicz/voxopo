@@ -274,6 +274,11 @@ app.post('/api/room-status', (req, res) => {
                 standings: targetRoom.phoneStandings || [],
                 mode: targetRoom.gameState === 'LOBBY' ? null : (targetRoom.winningGameMode || null),
                 myStats: me ? { fastest: me.timesFastest || 0, bullseyes: me.bullseyeCount || 0 } : null,
+                // Phones make their own sounds only when no TV is connected
+                // (Randy, Oct 2026: phone-only play "feels too quiet"), and
+                // use the clock for the last-seconds warning.
+                tvConnected: targetRoom.screens.some(socket => socket.readyState === 1),
+                clock: targetRoom.gameSecondsLeft ?? null,
                 // The last question's answer and who got it, set at the TV's reveal.
                 recap: targetRoom.phoneRecap && targetRoom.phoneRecap.epoch === (targetRoom.gameEpoch || 0) ? targetRoom.phoneRecap : null
             } : body);

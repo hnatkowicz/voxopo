@@ -128,7 +128,16 @@ Game Over card (the leader is revealed last, just before Game Over) and the
 Info card gets the Final Wager once every result is out. Parked: a
 how-to-play card per mode on Room (Randy, Oct 2026). A full phone-only room
 (reveals on phones, no TV page) is not planned. Answer picks show white
-until the reveal paints them green/red (`.picked`; votes keep green).
+until the reveal paints them green/red (`.picked`; votes keep green). **Phone
+sounds only when no TV is connected** (Randy, Oct 2026: phone-only play
+"feels too quiet"; with a TV, a room of phones dinging out of step is
+noise): your right/wrong sting at the reveal, a warning in the last 3
+seconds if you still owe an answer, a ping for your turn (pick, Doubler
+wager, trap, On the Spectrum target). The server sends `tvConnected` and
+`clock`. The sting/ping are short tones made in the page (no downloads on
+mobile data); uploading `public/audio/phone-right.mp3`, `phone-wrong.mp3`
+or `phone-turn.mp3` replaces them, no code change. The warning is the TV's
+`answer-warning.wav`. iPhones in silent mode stay silent.
 
 ## Game modes
 

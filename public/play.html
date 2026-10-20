@@ -988,6 +988,112 @@
             }
         }
 
+        // ---- Phone sounds, only when no TV is connected (Randy, Oct 2026:
+        // phone-only play "feels too quiet"). With a TV in the room the TV
+        // does the sound, and a room of phones dinging out of step would just
+        // be noise. Three cues, each about you: your right/wrong sting at the
+        // reveal, a warning in the last seconds if you haven't answered, and
+        // a ping when it's your turn (your pick, wager or trap). The stings
+        // and ping are short tones made right here, so nothing heavy downloads
+        // on mobile data; to use real sound files instead, upload
+        // public/audio/phone-right.mp3, phone-wrong.mp3 or phone-turn.mp3 and
+        // the phone picks them up. The warning is the TV's own answer-warning.wav.
+        const phoneSound = { ctx: null, files: {}, warning: null, unlocked: false, lastRecapId: undefined, fwShown: false, warnedKey: null };
+
+        // Phones only allow sound after a tap, so the first tap anywhere unlocks it.
+        function unlockPhoneSound() {
+            if (phoneSound.unlocked) return;
+            phoneSound.unlocked = true;
+            try {
+                const Ctx = window.AudioContext || window.webkitAudioContext;
+                if (Ctx) { phoneSound.ctx = new Ctx(); phoneSound.ctx.resume(); }
+            } catch (e) { phoneSound.ctx = null; }
+            phoneSound.warning = new Audio('/audio/answer-warning.wav');
+            phoneSound.warning.preload = 'none';
+            ['right', 'wrong', 'turn'].forEach(name => {
+                fetch(`/audio/phone-${name}.mp3`, { method: 'HEAD' })
+                    .then(res => { if (res.ok) { const a = new Audio(`/audio/phone-${name}.mp3`); a.preload = 'auto'; phoneSound.files[name] = a; } })
+                    .catch(() => {});
+            });
+        }
+        ['touchend', 'click'].forEach(type => document.addEventListener(type, unlockPhoneSound, { passive: true }));
+
+        function playTone(notes, type) {
+            const ctx = phoneSound.ctx;
+            if (!ctx) return;
+            let t = ctx.currentTime;
+            notes.forEach(([freq, length]) => {
+                const osc = ctx.createOscillator(), gain = ctx.createGain();
+                osc.type = type;
+                osc.frequency.setValueAtTime(freq, t);
+                gain.gain.setValueAtTime(0.0001, t);
+                gain.gain.exponentialRampToValueAtTime(0.25, t + 0.01);
+                gain.gain.exponentialRampToValueAtTime(0.0001, t + length);
+                osc.connect(gain).connect(ctx.destination);
+                osc.start(t); osc.stop(t + length + 0.02);
+                t += length * 0.9;
+            });
+        }
+
+        function playPhoneSound(name) {
+            if (!phoneSound.unlocked) return;
+            const file = name === 'warning' ? phoneSound.warning : phoneSound.files[name];
+            if (file) { try { file.currentTime = 0; file.play().catch(() => {}); } catch (e) {} return; }
+            if (name === 'right') playTone([[784, 0.12], [1047, 0.12], [1319, 0.25]], 'triangle');
+            if (name === 'wrong') playTone([[220, 0.18], [165, 0.35]], 'sawtooth');
+            if (name === 'turn') playTone([[880, 0.1], [1175, 0.18]], 'sine');
+        }
+
+        // Do you still owe an answer right now? (The warning is only for you.)
+        function stillNeedToAnswer(data, myName) {
+            switch (data.phase) {
+                case 'GAME_ROUND_PHASE': return !data.revealedLetter && !document.querySelector('#question-screen .module-row.picked');
+                case 'TRIVI_YEAH_II_ROUND_PHASE':
+                    if (data.triviYeahIIPhase === 'PICK_TILE') return data.isMyPick;
+                    if (data.triviYeahIIPhase !== 'ANSWERING' || data.myAnswer) return false;
+                    // A Doubler or Hot Seat is the picker's alone.
+                    return (!data.doubler && !(data.trap && data.trap.type === 'HOT_SEAT')) || data.currentPicker === myName;
+                case 'TRIVI_YEAH_II_FINAL_WAGER_PHASE': return data.finalWagerPhase === 'ANSWER' && !data.myAnswer;
+                case 'PROFILER_ROUND_PHASE':
+                    return (data.profilerPhase === 'ANSWER' && !data.myAnswer) || (data.profilerPhase === 'GUESS' && data.picksNeeded > 0 && !data.myPicks);
+                case 'ON_THE_SPECTRUM_ROUND_PHASE': return data.otsPhase === 'GUESSING' && !data.isNamedPlayer && !data.iHaveGuessed;
+                default: return false;
+            }
+        }
+
+        const YOUR_TURN_KEYS = ['ty2-pick', 'ty2-wager', 'ty2-trap', 'ots-target'];
+
+        function phoneSounds(data, myName, actionKey) {
+            const recap = data.recap;
+            const recapId = recap ? recap.id : null;
+            const quiet = data.tvConnected !== false; // a TV does the sound
+            // First poll after (re)loading: note where things stand, play nothing.
+            if (phoneSound.lastRecapId === undefined) {
+                phoneSound.lastRecapId = recapId;
+                phoneSound.fwShown = !!(data.myReveal && data.myReveal.shown);
+                return;
+            }
+            // Your sting at the reveal.
+            if (recapId !== null && recapId !== phoneSound.lastRecapId && recap.label !== 'Final Wager' && !quiet) {
+                const solo = recap.kind === 'DOUBLER' || recap.kind === 'HOT_SEAT';
+                if (recap.right.includes(myName)) playPhoneSound('right');
+                else if (recap.answered.includes(myName) && (!solo || recap.picker === myName)) playPhoneSound('wrong');
+            }
+            phoneSound.lastRecapId = recapId;
+            // The Final Wager: when the TV gets to you.
+            const shown = !!(data.myReveal && data.myReveal.shown);
+            if (shown && !phoneSound.fwShown && data.myReveal.played && !quiet) playPhoneSound(data.myReveal.correct ? 'right' : 'wrong');
+            phoneSound.fwShown = shown;
+            if (quiet) return;
+            // Your turn.
+            if (actionKey && actionKey !== scoresActionKey && YOUR_TURN_KEYS.some(k => actionKey.startsWith(k))) playPhoneSound('turn');
+            // Last seconds, only if you still haven't answered.
+            if (actionKey && phoneSound.warnedKey !== actionKey && data.clock >= 1 && data.clock <= 3 && stillNeedToAnswer(data, myName)) {
+                phoneSound.warnedKey = actionKey;
+                playPhoneSound('warning');
+            }
+        }
+
         function updateSidePages(data, myName, roomCode) {
             // Only an active player gets the side pages (not the "you left" screen).
             setInRoom(data.myLeft === false);
@@ -998,6 +1104,7 @@
             if (Array.isArray(data.standings)) renderScoresPanel(data.standings, myName);
             renderInfoPage(data, myName);
             const key = scoresActionKeyFor(data);
+            phoneSounds(data, myName, key);
             if (key && key !== scoresActionKey) showSidePage('game');
             scoresActionKey = key;
         }
