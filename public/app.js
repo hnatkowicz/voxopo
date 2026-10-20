@@ -146,12 +146,14 @@ if (btnSubmitSpectate) {
                 qrSrc = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(qr.createSvgTag({ cellSize: 4, margin: 2, scalable: true }));
             } catch (error) { qrSrc = ''; }
             const venue = data.venue || {};
-            const notes = data.notes || [];
+            // No notes set in /admin? The venue's tagline fills the slot, and
+            // with neither the slot closes up (Randy's first test: a big gap).
+            const notes = (data.notes && data.notes.length) ? data.notes : (venue.tagline ? [venue.tagline] : []);
             document.getElementById('active-content-stage').innerHTML = `
-                <div class="panel-box" style="padding: 40px; flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; min-height: 400px; box-sizing: border-box; gap: 18px;">
+                <div class="panel-box" style="padding: 32px 40px; flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; min-height: 400px; box-sizing: border-box; gap: 12px;">
                     ${venue.logoUrl ? `<img src="${venue.logoUrl}" alt="" style="height: 140px; width: auto; max-width: 80%; object-fit: contain;" onerror="this.remove()">` : ''}
                     <div style="font-size: 2.2rem; font-weight: 800; color: #ffffff;">☕ Break time${venue.name ? ` <span style="color: #94a3b8; font-weight: 600;">at ${escapeHtml(venue.name)}</span>` : ''}</div>
-                    <div id="venue-break-note" style="font-size: 1.5rem; font-weight: 600; color: #facc15; min-height: 2.2em; max-width: 90%; transition: opacity 0.4s;"></div>
+                    ${notes.length ? `<div id="venue-break-note" style="font-size: 1.5rem; font-weight: 600; color: #facc15; min-height: 1.4em; max-width: 90%; transition: opacity 0.4s;"></div>` : ''}
                     <div style="display: flex; align-items: center; gap: 28px; margin-top: 8px;">
                         ${qrSrc ? `<img src="${qrSrc}" alt="" style="width: 180px; height: 180px; background: #ffffff; border-radius: 12px; padding: 10px;">` : ''}
                         <div style="text-align: left;">
@@ -168,12 +170,12 @@ if (btnSubmitSpectate) {
             const noteEl = document.getElementById('venue-break-note');
             let index = 0;
             const showNote = () => {
-                if (!notes.length || !noteEl.isConnected) return;
+                if (!noteEl || !noteEl.isConnected) return;
                 noteEl.style.opacity = 0;
                 setTimeout(() => { noteEl.innerText = notes[index % notes.length]; noteEl.style.opacity = 1; index++; }, 400);
             };
-            showNote();
-            if (notes.length > 1) venueBreakNotesTimer = setInterval(showNote, 10000);
+            if (noteEl) showNote();
+            if (noteEl && notes.length > 1) venueBreakNotesTimer = setInterval(showNote, 10000);
         }
 
         function connectWebSocketEngine(roomCode) {
