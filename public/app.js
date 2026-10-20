@@ -441,6 +441,10 @@ if (btnSubmitSpectate) {
                     showTriviYeahIIFinalAnswerOpenUI(data.topicLabel, data.questionText, data.visualAsset);
                     playerAnswerStatus = {};
                     updateLeaderboardUI(cachedPlayersSnapshot);
+                }
+                // The answer clock is 40s but the timer music is 30s: the
+                // server says when to start it, so it still ends on zero.
+                if (data.type === 'TRIVI_YEAH_II_FINAL_MUSIC_START') {
                     playAudioTrack('final-wager-timer-sound');
                 }
                 if (data.type === 'TRIVI_YEAH_II_FINAL_REVEAL_START') {
