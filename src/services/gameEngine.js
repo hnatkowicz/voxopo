@@ -9,14 +9,24 @@ export const GAME_MODE_KEYS = ['TRIVI_YEAH', 'TRIVI_YEAH_II', 'COUNTRY_MONKEY', 
 // A venue's access code can limit which modes its rooms offer (a pub shows
 // only a few) -- the vote tally only ever has those keys, so a vote for any
 // other mode simply never counts.
-// Trivi-yeah! is for venue and event codes -- baby showers, receptions,
-// libraries, company functions -- not the living room (Randy, Oct 2026). A
-// code with no modes ticked in /admin gets everything else; a code that
-// wants Trivi-yeah! ticks it.
+// Trivi-yeah! is the venue's own game (Randy, Oct 2026): it plays the access
+// code's house question set -- a pub night, a baby shower, a library quiz --
+// so it appears exactly when the room's code has a house set, whatever modes
+// are ticked in /admin, and never otherwise. A code with no modes ticked gets
+// every other mode.
 const DEFAULT_MODE_KEYS = GAME_MODE_KEYS.filter(key => key !== 'TRIVI_YEAH');
 export function allowedModesFor(room) {
-    const allowed = room && room.venue && room.venue.allowedModes;
-    return allowed && allowed.length ? allowed : DEFAULT_MODE_KEYS;
+    const venue = room && room.venue;
+    const ticked = venue && venue.allowedModes && venue.allowedModes.length ? venue.allowedModes : DEFAULT_MODE_KEYS;
+    const others = ticked.filter(key => key !== 'TRIVI_YEAH');
+    return venue && venue.houseSet ? ['TRIVI_YEAH', ...others] : others;
+}
+
+// How the venue's Trivi-yeah! is dressed: its logo and name (the byline).
+export function venueBrand(room) {
+    const venue = room && room.venue;
+    if (!venue || !venue.houseSet) return null;
+    return { name: venue.name || venue.houseSet.label, logoUrl: venue.logoUrl || null, tagline: venue.tagline || null };
 }
 export function emptyModeVotes(room) {
     return Object.fromEntries(allowedModesFor(room).map(key => [key, 0]));
@@ -356,8 +366,11 @@ function startGameForMode(roomCode, winningModule) {
     // just picked automatically now instead of through a player vote, so the
     // group lands straight on a question instead of a click-through screen.
     if (winningModule === 'TRIVI_YEAH') {
+        // The venue's own questions (see allowedModesFor); the general decks
+        // below only if a room somehow got here without a house set.
+        const houseSet = room.venue && room.venue.houseSet;
         const categories = getCategoriesForMode('TRIVI_YEAH');
-        const picked = categories[Math.floor(Math.random() * categories.length)];
+        const picked = houseSet || categories[Math.floor(Math.random() * categories.length)];
         room.activeCategoryKey = picked.key;
         room.activeDeckName = picked.label;
         console.log(`[Room Engine] Room ${roomCode} starting TRIVI_YEAH. Auto-picked deck: ${picked.label}`);
@@ -508,7 +521,10 @@ async function startQuestionBankGame(roomCode) {
 // if that group has enough peers to supply 3. Shuffled once per room so
 // question order (and which questions get asked at all) varies game to game.
 async function loadQuestionBank(room) {
-    const dbGameMode = gameModeToDbValue(room.winningGameMode);
+    // A venue's Trivi-yeah! plays its house set, which is stored as a
+    // Thinking Pants category (HOUSE_<NAME>, all four tiers).
+    const houseSet = room.winningGameMode === 'TRIVI_YEAH' && room.venue && room.venue.houseSet;
+    const dbGameMode = houseSet ? 'TRIVI_YEAH_II' : gameModeToDbValue(room.winningGameMode);
     const params = [dbGameMode];
     let filters = '';
 
@@ -565,10 +581,34 @@ async function loadQuestionBank(room) {
         room.askedQuestionIds = new Set();
         return;
     }
+    if (houseSet) {
+        room.questionBank = buildHouseTriviaBank(room, candidates);
+        room.currentQuestionIndex = -1;
+        room.askedQuestionIds = new Set();
+        return;
+    }
     const targetCount = Math.min(room.requestedQuestionCount || MAX_QUESTIONS_PER_GAME, candidates.length);
     room.questionBank = candidates.slice(0, targetCount);
     room.currentQuestionIndex = -1;
     room.askedQuestionIds = new Set();
+}
+
+// The venue's Trivi-yeah! (Randy, Oct 2026): the whole house set, easy to
+// hard (its 100-400 tiers, shuffled within each), up to 20 a game -- about
+// 8-10 minutes. A bigger set carries over: Play Again picks up the questions
+// this room hasn't played yet, and starts over once it has played them all.
+// (The Thinking Pants house column keeps its own count, so a question can
+// turn up in both -- Randy: fun to watch someone miss it twice.)
+const HOUSE_TRIVIA_MAX_QUESTIONS = 20;
+function buildHouseTriviaBank(room, shuffledRows) {
+    room.houseTriviaPlayed = room.houseTriviaPlayed || new Set();
+    let unplayed = shuffledRows.filter(row => !room.houseTriviaPlayed.has(row.id));
+    if (!unplayed.length) {
+        room.houseTriviaPlayed.clear();
+        unplayed = shuffledRows;
+    }
+    // Random picks first (so a big set mixes all four tiers), then easy to hard.
+    return unplayed.slice(0, HOUSE_TRIVIA_MAX_QUESTIONS).sort((a, b) => (a.points || 0) - (b.points || 0));
 }
 
 // Country Monkey's question mix, by type (the row's subcategory). Randy's
@@ -714,6 +754,7 @@ function startNextQuestion(roomCode) {
 
     const row = room.questionBank[room.currentQuestionIndex];
     room.askedQuestionIds.add(row.id);
+    if (room.houseTriviaPlayed && room.venue && room.venue.houseSet && room.winningGameMode === 'TRIVI_YEAH') room.houseTriviaPlayed.add(row.id);
     room.answers = {};
     room.answerOrder = [];
     room.gameState = 'GAME_ROUND';
@@ -730,6 +771,8 @@ function startNextQuestion(roomCode) {
         ...publicQuestionData,
         questionNumber: room.currentQuestionIndex + 1,
         totalQuestions: room.questionBank.length,
+        // The venue's Trivi-yeah! wears its logo and name on the TV.
+        brand: room.winningGameMode === 'TRIVI_YEAH' ? venueBrand(room) : null,
         // This mode starts the clock the moment a question appears, so the
         // NEXT question's picture is fetched in the background now -- nobody
         // should lose seconds to a slow download.
@@ -785,7 +828,9 @@ function endGame(roomCode) {
 
     broadcastToRoom(roomCode, {
         type: 'GAME_OVER',
-        players: finalStandings
+        players: finalStandings,
+        // "Thanks for playing at <venue>!" after the venue's Trivi-yeah!.
+        brand: room.winningGameMode === 'TRIVI_YEAH' ? venueBrand(room) : null
     });
 }
 

@@ -152,14 +152,24 @@ Mode keys are used in room votes and in `gameEngine.js`:
 - **Game length:** Trivi-yeah! is 12 questions, matching Profiler's 12
   rounds. Country Monkey is 20 (15 once flags and water joined, 20 once it
   grew into a standalone mode with 132 landmarks -- Randy, Oct 2026).
-- **TRIVI_YEAH** (Trivi-yeah!): multiple-choice trivia. Its rows are stored
-  under `game_mode = 'TRIVIA'`, a legacy exception that is kept on purpose (see
-  the mapping near the top of `gameEngine.js`). It's the **event mode**
-  (Randy, Oct 2026: showers, receptions, libraries, company functions), not
-  a living-room one: a code with no modes ticked in /admin gets every mode
-  *except* Trivi-yeah! (`DEFAULT_MODE_KEYS`); an event/venue code ticks it.
-  Planned: a well-branded version showing the venue's logo on its tile and
-  on the TV.
+- **TRIVI_YEAH** (Trivi-yeah!): **the venue's own game** (Randy, Oct 2026,
+  the "1.0" pub-test build). It plays the access code's **house set** (the
+  `HOUSE_<NAME>` category, the same questions as the Thinking Pants house
+  column) and appears in the lobby exactly when the code has one, whatever
+  is ticked in /admin (`allowedModesFor`; the admin checkbox is gone), even
+  with the house column Off. Easy to hard by tier, up to 20 a game
+  (`HOUSE_TRIVIA_MAX_QUESTIONS`, about 8-10 minutes); Play Again picks up
+  the questions this room hasn't played (`room.houseTriviaPlayed`, room
+  memory only), then starts over. The Thinking Pants house column keeps its
+  own count, so a question can come up in both (Randy: fun to watch someone
+  miss it twice). Branding (`venueBrand`): the venue's logo on its tile with
+  "at <venue>" as the byline, logo + "Trivi-yeah! at <venue>" atop each TV
+  question, a big logo and "Thanks for playing at <venue>!" (+ tagline) on
+  the TV's Game Over, and the thanks on the phones. No venue banner during
+  play (Randy). /admin shows how a set plays ("plays all 16 in one game")
+  and warns under 8. The old general decks (`game_mode = 'TRIVIA'`, kept as
+  a legacy name) stay in the database but are no longer played. Next idea
+  in discussion: timed venue breaks (big logo, QR, venue notes).
 - **TRIVI_YEAH_II** (shown to players as **Thinking Pants**, renamed from
   "Trivi-Yeah II"; the internal key and `game_mode` value kept the old name):
   a Jeopardy-style board with 3 rounds, the Doubler

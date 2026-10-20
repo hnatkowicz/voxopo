@@ -254,8 +254,14 @@ export async function getAccessCodeVenue(pool, rawCode) {
             const house = row.house_category && row.house_rounds && row.house_rounds !== 'OFF'
                 ? { key: row.house_category, label: row.house_label || row.venue_name || 'House Special', rounds: row.house_rounds }
                 : null;
+            // The code's house questions, whether or not they're also a
+            // Thinking Pants column: they ARE Trivi-yeah!, the venue's own
+            // game (Randy, Oct 2026). No set, no Trivi-yeah!.
+            const houseSet = row.house_category && HOUSE_CATEGORY_PATTERN.test(row.house_category)
+                ? { key: row.house_category, label: row.house_label || row.venue_name || 'House Special' }
+                : null;
             const boardRules = row.board_rules === 'PLAIN' ? 'PLAIN' : 'CLASSIC';
-            if (row.profile !== 'PUB' && !allowedModes.length && !house && boardRules === 'CLASSIC') return null;
+            if (row.profile !== 'PUB' && !allowedModes.length && !house && !houseSet && boardRules === 'CLASSIC') return null;
             return {
                 profile: row.profile === 'PUB' ? 'PUB' : 'HOME',
                 name: row.venue_name || null,
@@ -263,6 +269,7 @@ export async function getAccessCodeVenue(pool, rawCode) {
                 logoUrl: row.venue_logo ? `/venues/${row.venue_logo}` : null,
                 allowedModes,
                 house,
+                houseSet,
                 boardRules
             };
         } catch (e) {

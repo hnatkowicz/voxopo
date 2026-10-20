@@ -18,6 +18,9 @@ window.RANDOMANIA_MODES = [
 window.RANDOMANIA_MODE_NAMES = Object.fromEntries(window.RANDOMANIA_MODES.map(m => [m.key, m.name]));
 
 window.modeIconHtml = function (mode, sizePx) {
+    if (mode.logoUrl) {
+        return `<img src="${mode.logoUrl}" alt="" style="height: ${sizePx}px; max-width: ${sizePx * 2.4}px; width: auto; object-fit: contain; flex-shrink: 0;" onerror="this.outerHTML='<span style=&quot;font-size: ${Math.round(sizePx * 0.75)}px; line-height: 1; flex-shrink: 0;&quot;>${mode.emoji}</span>'">`;
+    }
     return `<img src="/modes/${mode.icon}.svg" alt="" style="height: ${sizePx}px; width: auto; flex-shrink: 0;" onerror="this.outerHTML='<span style=&quot;font-size: ${Math.round(sizePx * 0.75)}px; line-height: 1; flex-shrink: 0;&quot;>${mode.emoji}</span>'">`;
 };
 
@@ -26,9 +29,21 @@ window.modeIconHtml = function (mode, sizePx) {
 // A venue's access code can limit which modes its rooms show (a pub shows
 // only a few); null/empty means all of them.
 window.modesShown = function (allowedKeys) {
-    return allowedKeys && allowedKeys.length
+    const modes = allowedKeys && allowedKeys.length
         ? window.RANDOMANIA_MODES.filter(m => allowedKeys.includes(m.key))
         : window.RANDOMANIA_MODES;
+    return modes.map(window.modeForVenue);
+};
+
+// The venue's own Trivi-yeah! (Randy, Oct 2026) wears the venue's logo and
+// says where it is: "at Pickles & Pins". The page sets RANDOMANIA_VENUE once
+// it knows the room's venue.
+window.RANDOMANIA_VENUE = null;
+window.modeForVenue = function (mode) {
+    const venue = window.RANDOMANIA_VENUE;
+    if (mode.key !== 'TRIVI_YEAH' || !venue || !venue.houseSet) return mode;
+    const name = venue.name || venue.houseSet.label;
+    return { ...mode, blurb: name ? `at ${name}` : mode.blurb, tag: null, logoUrl: venue.logoUrl || null };
 };
 
 window.renderModeElectionTiles = function (allowedKeys) {
