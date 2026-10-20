@@ -3,7 +3,7 @@ import dotenv from 'dotenv';
 import path from 'path';
 import { WebSocketServer } from 'ws';
 import pool from './config/database.js';
-import { handleIncomingMessage, activeRooms, getCategoriesForMode, resolveRequestedQuestionCount, compareByRank, closeRoom, profilerStatusFor, profilerTvSnapshot, triviYeahIITrapInfo, emptyModeVotes, finalWagerWinShare, resolveDisguisedAsset, flagMeDownStatusFor, GAME_MODE_KEYS, allowedModesFor } from './services/gameEngine.js';
+import { handleIncomingMessage, activeRooms, getCategoriesForMode, resolveRequestedQuestionCount, compareByRank, closeRoom, profilerStatusFor, profilerTvSnapshot, triviYeahIITrapInfo, emptyModeVotes, finalWagerWinShare, resolveDisguisedAsset, flagMeDownStatusFor, GAME_MODE_KEYS, allowedModesFor, finalWagerRevealFor } from './services/gameEngine.js';
 import {
     isHostAuthorized, grantHostSession, isAccessCodeActive,
     isAdminAuthorized, grantAdminSession,
@@ -439,6 +439,10 @@ app.post('/api/room-status', (req, res) => {
                 })() : null,
                 gameSecondsLeft: targetRoom.gameSecondsLeft,
                 myWager: fw.wagers && (playerName in fw.wagers) ? fw.wagers[playerName] : null,
+                // Your own result, in step with the TV's reveal (lowest score
+                // first): the answer once the TV shows it, your result once
+                // the TV reaches you. Never anyone else's (Randy, Oct 2026).
+                myReveal: fw.phase === 'REVEAL' && fw.revealSteps ? finalWagerRevealFor(fw, playerName) : null,
                 myAnswer: fw.answers ? (fw.answers[playerName] || null) : null,
                 myScore, myCorrectAnswers, myLeft, myEmoji
             });
@@ -556,6 +560,11 @@ app.post('/api/room-status', (req, res) => {
                 // (EmpossDurr, On the Spectrum) only when that's actually the
                 // mode that just finished.
                 winningGameMode: targetRoom.winningGameMode,
+                // Your Final Wager result, so the leader (revealed last, just
+                // before Game Over) still gets to read theirs.
+                myFinalWager: targetRoom.finalWager && targetRoom.finalWager.revealSteps
+                    ? finalWagerRevealFor(targetRoom.finalWager, playerName)
+                    : null,
                 // Profiler's "you know X best / X knows you best" lines,
                 // kept on the Game Over card so they don't vanish with the
                 // awards screen.

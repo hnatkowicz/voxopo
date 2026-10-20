@@ -121,10 +121,14 @@ Back/Forward), and a side page closes itself whenever the player has
 something to do (`scoresActionKeyFor` in `play.html`; a new phone-input
 moment needs a line there). Rule of thumb: **the phone tells you about
 you; the TV tells everyone about everyone** (the scores page is the one
-tucked-away exception). Planned next, in order: a how-to-play card per
-mode on Room; your own
-Final Wager result on the phone after the TV's reveal ends. A full
-phone-only room (reveals on phones, no TV page) is not planned.
+tucked-away exception). **Final Wager on the phone** follows the TV's
+reveal: the answer when the TV shows it, your answer, and your own result
+once the TV reaches you (`finalWagerRevealFor`); the same line sits on the
+Game Over card (the leader is revealed last, just before Game Over) and the
+Info card gets the Final Wager once every result is out. Parked: a
+how-to-play card per mode on Room (Randy, Oct 2026). A full phone-only room
+(reveals on phones, no TV page) is not planned. Answer picks show white
+until the reveal paints them green/red (`.picked`; votes keep green).
 
 ## Game modes
 

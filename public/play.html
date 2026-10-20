@@ -647,7 +647,7 @@
         </div>
 
         <!-- ANSWER: free text, toUppercase as typed, resubmittable until
-             the 30s clock runs out. -->
+             the 40s clock runs out. -->
         <div id="fw-answer-box" style="display: none; margin-top: 10px;">
             <div id="fw-question-text" style="text-align: left; font-size: 1.05rem; font-weight: 600; color: #ffffff; line-height: 1.4; margin-bottom: 16px;"></div>
             <!-- Country Monkey's Final Wager map (hidden for Thinking Pants). -->
@@ -2004,7 +2004,7 @@
 
             renderFinalWagerHints(data);
 
-            const renderKey = `${data.finalWagerPhase}|${data.myWager}|${data.myAnswer || ''}|${data.gameSecondsLeft}`;
+            const renderKey = `${data.finalWagerPhase}|${data.myWager}|${data.myAnswer || ''}|${data.gameSecondsLeft}|${JSON.stringify(data.myReveal || null)}`;
             if (renderKey === fwLastRenderKey) return;
             fwLastRenderKey = renderKey;
 
@@ -2053,9 +2053,29 @@
                 return;
             }
 
-            // REVEAL -- the drama happens on the TV, not here.
+            // REVEAL -- the drama happens on the TV. The phone follows it with
+            // your own result only (Randy, Oct 2026): the answer once the TV
+            // shows it, your result once the TV gets to you.
             document.getElementById('fw-status-line').innerText = 'Time\'s up!';
             revealBox.style.display = 'block';
+            const r = data.myReveal;
+            revealBox.innerHTML = r
+                ? `<div style="color: #94a3b8;">The answer</div>
+                   <div style="color: #ffffff; font-size: 1.4rem; font-weight: 800; margin: 4px 0 16px;">${escapeFmd(r.correctAnswer)}</div>
+                   ${r.played ? `<div style="color: #94a3b8;">Your answer: <strong style="color: #e2e5e9;">${r.answerText ? escapeFmd(r.answerText) : '(none)'}</strong></div>` : ''}
+                   <div style="margin-top: 10px;">${finalWagerResultLine(r)}</div>`
+                : '👀 Watch the TV for the results!';
+        }
+
+        function finalWagerResultLine(r) {
+            if (!r || !r.played) return '';
+            if (!r.shown) return '<span style="color: #94a3b8;">Your result is coming up on the TV…</span>';
+            if (r.correct) {
+                const won = r.delta > 0 ? `+${r.delta}${r.clueUsed ? ' (after your clue)' : ''}` : '(you wagered 0)';
+                return `<span style="color: #00e676; font-weight: 700;">✓ It counted! ${won}</span>`;
+            }
+            const lost = r.wager > 0 ? `−${r.wager}` : '(you wagered 0, nothing lost)';
+            return `<span style="color: #ff4757; font-weight: 700;">✗ Not this time. ${lost}</span>`;
         }
 
         // Final Wager clues (Flag Me Down: region/capital/map; Country
@@ -2903,6 +2923,7 @@
                 <p class="subtitle" style="margin: 14px 0 0 0;">${headline}</p>
                 <p style="color: #64748b; font-size: 0.85rem; margin: 4px 0 0 0;">${subline}</p>
                 ${data.profilerPersonal ? profilerPersonalHtml(data.profilerPersonal) : ''}
+                ${data.myFinalWager && data.myFinalWager.played ? `<p style="font-size: 0.9rem; margin: 10px 0 0 0;">Final Wager: ${finalWagerResultLine(data.myFinalWager)}</p>` : ''}
                 ${hornButton}
             `;
         }
