@@ -233,8 +233,8 @@
                         <div class="hint">Between Thinking Pants rounds and after a Trivi-yeah! game: the TV shows the venue's big logo, the join QR code and the notes below. It ends on its own, or early once everyone taps "I'm back".</div>
                     </div>
                     <div class="row"><label>Break notes (one per line, up to 10)</label>
-                        <textarea id="venue-break-notes" rows="5" maxlength="1300" placeholder="Half-price wings until 9!&#10;Ben proposed at lane 7.&#10;Next trivia night: Thursday the 30th" style="width: 100%; box-sizing: border-box; background: #14161d; border: 1px solid #222630; border-radius: 8px; color: #fff; padding: 10px; font-family: inherit;">${esc((c.break_notes || []).join('\n'))}</textarea>
-                        <div class="hint">Deals, event news, fun facts about the guest of honor. Each line shows for 10 seconds.</div>
+                        <textarea id="venue-break-notes" rows="5" maxlength="1300" placeholder="Type your own lines here, for example:&#10;Half-price wings until 9!&#10;Next trivia night: Thursday the 30th" style="width: 100%; box-sizing: border-box; background: #14161d; border: 1px solid #222630; border-radius: 8px; color: #fff; padding: 10px; font-family: inherit;">${esc((c.break_notes || []).join('\n'))}</textarea>
+                        <div class="hint">Deals, event news, fun facts about the guest of honor. Each line shows for 10 seconds. Gray text is only an example; with no notes, the TV shows the venue's tagline.</div>
                     </div>
                     ` : `<div class="hint" style="margin-bottom: 12px;">Venue breaks turn on once you run <strong>access_codes_breaks.sql</strong> in Neon.</div>`}
                     <div style="display: flex; gap: 10px;">
