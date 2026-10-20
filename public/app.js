@@ -1414,7 +1414,7 @@ function showTriviYeahIIDoublerRevealUI(picker, points, categoryLabel, multiplie
             <div style="font-size: 2.4rem; font-weight: 800; color: #ffa500; margin-bottom: 10px; text-shadow: 0 0 20px rgba(255, 165, 0, 0.4);">DOUBLER!</div>
             <div style="font-size: 1.2rem; font-weight: 700; color: #ffffff;">${picker} is on the hook for this one.</div>
             <div style="font-size: 1rem; color: #94a3b8; margin-top: 6px;">Tile value: ${points} points</div>
-            ${doublerMultiplier > 1 ? `<div style="font-size: 1.4rem; font-weight: 800; color: #ff7a1a; margin-top: 14px;">🔥 Final round: this Doubler pays DOUBLE, win or lose!</div>` : ''}
+            ${doublerMultiplier > 1 ? `<div style="font-size: 1.4rem; font-weight: 800; color: #ff7a1a; margin-top: 14px;">🔥 Final round: side bets are DOUBLED, win or lose!</div>` : ''}
         </div>
     `;
 }
@@ -1428,7 +1428,7 @@ function showTriviYeahIIWagerPromptUI(picker, maxWager, tileValue, categoryLabel
             ${doublerCategoryBadge(categoryLabel)}
             <div style="font-size: 0.85rem; font-weight: 600; color: #64748b; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 14px;">Waiting on the wager</div>
             <div style="font-size: 1.6rem; font-weight: 700; color: #ffffff; margin-bottom: 10px;">${picker} is deciding how much to risk&hellip;</div>
-            <div style="font-size: 1rem; color: #94a3b8;">Anywhere from 0 to ${maxWager} points (tile is worth ${tileValue})${doublerMultiplier > 1 ? ` -- <strong style="color: #ff7a1a;">paid double!</strong>` : ''}</div>
+            <div style="font-size: 1rem; color: #94a3b8;">Anywhere from 0 to ${maxWager} points (tile is worth ${tileValue})</div>
         </div>
     `;
 }
@@ -1444,9 +1444,9 @@ function showTriviYeahIISideBetsOpenUI(picker, wagerAmount, tileValue, categoryL
         <div class="panel-box" style="padding: 40px; flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; min-height: 400px; box-sizing: border-box;">
             ${doublerCategoryBadge(categoryLabel)}
             <div style="font-size: 0.85rem; font-weight: 600; color: #64748b; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 14px;">${picker}'s wager</div>
-            <div style="font-size: 2.2rem; font-weight: 800; color: #ffa500; margin-bottom: 18px;">${wagerAmount} points${doublerMultiplier > 1 ? ` <span style="color: #ff7a1a;">&times;2</span>` : ''}</div>
+            <div style="font-size: 2.2rem; font-weight: 800; color: #ffa500; margin-bottom: 18px;">${wagerAmount} points</div>
             <div style="font-size: 1.1rem; font-weight: 600; color: #ffffff;">Will ${picker} get it right?</div>
-            <div style="font-size: 1rem; color: #94a3b8; margin-top: 6px;">Place your side bet -- For, Against, or Pass -- at ${tileValue} points</div>
+            <div style="font-size: 1rem; color: #94a3b8; margin-top: 6px;">Place your side bet -- For, Against, or Pass -- at ${tileValue * doublerMultiplier} points${doublerMultiplier > 1 ? ` <strong style="color: #ff7a1a;">(doubled!)</strong>` : ''}</div>
         </div>
     `;
 }
@@ -1458,8 +1458,8 @@ function showTriviYeahIIDoublerResultUI(data) {
     const panel = document.getElementById('active-content-stage');
 
     const pickerLine = data.pickerCorrect
-        ? `<span style="color: #00e676;">${data.picker} got it right -- +${data.payout ?? data.wagerAmount} points!${data.multiplier > 1 ? ' (doubled!)' : ''}</span>`
-        : `<span style="color: #ff5c5c;">${data.picker} missed it -- &minus;${data.payout ?? data.wagerAmount} points.${data.multiplier > 1 ? ' (doubled!)' : ''}</span>`;
+        ? `<span style="color: #00e676;">${data.picker} got it right -- +${data.wagerAmount} points!</span>`
+        : `<span style="color: #ff5c5c;">${data.picker} missed it -- &minus;${data.wagerAmount} points.</span>`;
 
     const sideBetRows = Object.entries(data.sideBetResults || {}).map(([name, delta]) => {
         if (delta === 0) return `<div style="font-size: 0.95rem; color: #64748b;">${name} passed.</div>`;

@@ -1228,9 +1228,10 @@ function revealTriviYeahIIDoubler(roomCode) {
     const cell = ty2.grid[ty2.activeCellIndex];
 
     ty2.phase = 'DOUBLER_REVEAL';
-    // Last-round Doublers pay double, win or lose (Randy, Oct 2026: a late
-    // swing so a trailing player -- his youngest -- can still get back in
-    // it, and "the stakes on these are always fun"). Side bets are unchanged.
+    // Last-round Doublers double the SIDE BETS, win or lose: each bettor
+    // stakes 2x the tile (Randy, Oct 2026 -- a leveler, so the rest of the
+    // room can catch up on someone else's Doubler). The picker's own wager
+    // is unchanged; doubling it first was a misunderstanding.
     const multiplier = ty2.round >= ty2.totalRounds ? 2 : 1;
     ty2.doubler = { wagerAmount: null, sideBets: {}, multiplier };
 
@@ -1860,7 +1861,7 @@ function evaluateTriviYeahIIDoublerAnswer(room, roomCode, cell, correctLetter) {
     const pickerName = ty2.currentPicker;
     const pickerCorrect = ty2.answers[pickerName] === correctLetter;
     const wagerAmount = ty2.doubler.wagerAmount;
-    const payout = wagerAmount * (ty2.doubler.multiplier || 1); // x2 in the last round
+    const payout = wagerAmount; // the picker's wager is never doubled (side bets are, in the last round)
 
     const picker = room.players[pickerName];
     if (picker) {
@@ -5014,7 +5015,8 @@ export function handleIncomingMessage(fromPhone, bodyText, explicitRoomCode, pre
                 return `⚠️ You're the one on the hook this time -- no side bet for you.`;
             }
             const choice = betChoice.replace('BET_', '');
-            const amount = choice === 'PASS' ? 0 : ty2.grid[ty2.activeCellIndex].points;
+            // The last round's side bets stake 2x the tile (see revealTriviYeahIIDoubler).
+            const amount = choice === 'PASS' ? 0 : ty2.grid[ty2.activeCellIndex].points * (ty2.doubler.multiplier || 1);
             ty2.doubler.sideBets[actingPlayerName] = { choice, amount };
             broadcastToRoom(associatedRoomCode, { type: 'ANSWER_SUBMITTED', playerName: actingPlayerName });
 

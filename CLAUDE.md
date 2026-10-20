@@ -213,8 +213,11 @@ Mode keys are used in room votes and in `gameEngine.js`:
   y" line; an all-in wager gets an "ALL IN!" stamp on the TV reveal and
   its own result line on the phone. **Max Bet** on a Doubler (Randy, Oct
   2026): "Pants on the Line!" fills in the most you can wager, same rules.
-  **Round 3 Doublers pay double, win or lose** (Randy, Oct 2026; wager x2,
-  `multiplier` on `ty2.doubler`); side bets don't double.
+  **Round 3 Doublers double the side bets**, win or lose: each bettor
+  stakes 2x the tile (`multiplier` on `ty2.doubler`). A leveler, so the
+  rest of the room can catch up on someone else's Doubler; the picker's
+  own wager is never doubled (Randy, Oct 2026 -- the first build doubled
+  the picker's wager, a misunderstanding).
   The answer clock is 40s (Randy: "needs 10 more seconds"), music over the
   last 30.
   Categories are listed in `TRIVI_YEAH_II_CATEGORIES`. Every category needs a
