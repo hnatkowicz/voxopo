@@ -2158,6 +2158,26 @@ function closeTriviYeahIIFinalAnswerPhase(roomCode) {
     room.revealTimeout = setTimeout(() => advanceTriviYeahIIFinalReveal(roomCode), TRIVI_YEAH_II_FINAL_REVEAL_STEP_MS);
 }
 
+// One player's own Final Wager result for their phone, in step with the
+// TV's reveal: the right answer from the start (the TV opens with it), the
+// result only once the TV has reached this player's step. Never anyone
+// else's -- the phone tells you about you (Randy, Oct 2026).
+export function finalWagerRevealFor(fw, playerName) {
+    const index = fw.revealSteps.findIndex(step => step.playerName === playerName);
+    const step = index >= 0 ? fw.revealSteps[index] : null;
+    const shown = !!step && fw.revealIndex >= index;
+    return {
+        correctAnswer: fw.correctAnswer,
+        played: !!step,
+        answerText: step ? step.answerText : null,
+        wager: step ? step.wagerAmount : null,
+        clueUsed: !!(step && fw.hints && step.hintsUsed),
+        shown,
+        correct: shown ? step.correct : null,
+        delta: shown ? (step.correct ? step.winAmount : -step.wagerAmount) : null
+    };
+}
+
 // Score deltas are applied one at a time, right as each player's own step
 // reveals -- not all at once up front -- so the TV leaderboard visibly
 // shifts player by player instead of jumping straight to the final order.
@@ -2168,6 +2188,14 @@ function advanceTriviYeahIIFinalReveal(roomCode) {
 
     fw.revealIndex++;
     if (fw.revealIndex >= fw.revealSteps.length) {
+        // Only now, with every result out on the TV, does the Info page's
+        // "last question" card get the Final Wager (it lists who was right).
+        setPhoneRecap(room, {
+            label: 'Final Wager',
+            answer: fw.correctAnswer,
+            answered: fw.revealSteps.filter(step => step.answerText).map(step => step.playerName),
+            right: fw.revealSteps.filter(step => step.correct).map(step => step.playerName)
+        });
         if (room.revealTimeout) clearTimeout(room.revealTimeout);
         room.revealTimeout = setTimeout(() => endGame(roomCode), TRIVI_YEAH_II_FINAL_GAME_OVER_DELAY_MS);
         return;
