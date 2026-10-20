@@ -194,7 +194,9 @@ Mode keys are used in room votes and in `gameEngine.js`:
   a Jeopardy-style board with 3 rounds, the Doubler
   (wagering + side bets), column-sweep bonuses, and a Final Wager closer.
   The picker gets 30s to choose a tile, then a random one is picked; a
-  picker who leaves hands the pick to someone still in the room.
+  picker who leaves hands the pick to someone still in the room. The answer
+  clock grows with the tile, 12/14/16/18s (Randy, Oct 2026: room to
+  deliberate), and ends as soon as everyone has answered.
   **Column sweep:** every tile in a category right, speed doesn't matter;
   a winning Doubler side bet counts as right, passing or not betting
   doesn't, and a Hot Seat you were locked out of is skipped (still need the
