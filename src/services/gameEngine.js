@@ -2144,7 +2144,8 @@ function closeTriviYeahIIFinalAnswerPhase(roomCode) {
         // whole point; a wrong answer still loses the full wager.
         const hintsUsed = (fw.hintsUsed[p.name] || []).length;
         const winAmount = Math.ceil(wagerAmount * finalWagerWinShare(fw, p.name));
-        return { playerName: p.name, wagerAmount, winAmount, hintsUsed, answerText: rawAnswer, correct };
+        const allIn = !!(fw.allIn && fw.allIn[p.name]);
+        return { playerName: p.name, wagerAmount, winAmount, hintsUsed, answerText: rawAnswer, correct, allIn };
     });
     fw.revealIndex = -1;
 
@@ -2172,6 +2173,7 @@ export function finalWagerRevealFor(fw, playerName) {
         answerText: step ? step.answerText : null,
         wager: step ? step.wagerAmount : null,
         clueUsed: !!(step && fw.hints && step.hintsUsed),
+        allIn: !!(step && step.allIn),
         shown,
         correct: shown ? step.correct : null,
         delta: shown ? (step.correct ? step.winAmount : -step.wagerAmount) : null
@@ -2216,6 +2218,7 @@ function advanceTriviYeahIIFinalReveal(roomCode) {
         hintsUsed: fw.hints ? step.hintsUsed : null,
         answerText: step.answerText,
         correct: step.correct,
+        allIn: step.allIn,
         newScore: player ? player.score : null,
         stepIndex: fw.revealIndex,
         totalSteps: fw.revealSteps.length
@@ -4848,6 +4851,12 @@ export function handleIncomingMessage(fromPhone, bodyText, explicitRoomCode, pre
             }
             const amount = Math.min(Math.max(0, parseInt(wagerMatch[1], 10)), Math.max(player.score, 0));
             fw.wagers[actingPlayerName] = amount;
+            // Everything you had on the line -- the TV stamps it "ALL IN!" at
+            // the reveal (the phone's Risk It All button; Randy's son's idea).
+            if (amount > 0 && amount === player.score) {
+                fw.allIn = fw.allIn || {};
+                fw.allIn[actingPlayerName] = true;
+            }
             broadcastToRoom(associatedRoomCode, { type: 'ANSWER_SUBMITTED', playerName: actingPlayerName });
 
             const activePlayers = Object.values(currentRoom.players).filter(p => !p.left);

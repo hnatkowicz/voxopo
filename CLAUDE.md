@@ -177,6 +177,14 @@ Mode keys are used in room votes and in `gameEngine.js`:
   Doubler fizzles silently. Trap icons are Randy's art in `public/traps/`
   (`trap-setting`, `trap-pants-on-fire`, `trap-hot-seat`, `trap-wedgie`
   .svg), used on the TV and phones, with emoji fallbacks if one's missing.
+  **Risk It All** (Randy's son's idea, Oct 2026): the Final Wager's wager
+  box has a pun button per mode ("Bet Your Pants!", "Go Bananas!", "All
+  Flags Flying!") that only *fills in* your whole score -- you still press
+  Lock In and can type over it -- with campy quips and a "Right: x · Wrong:
+  y" line; an all-in wager gets an "ALL IN!" stamp on the TV reveal and
+  its own result line on the phone. Final Wager only; the Doubler is parked.
+  The answer clock is 40s (Randy: "needs 10 more seconds"), music over the
+  last 30.
   Categories are listed in `TRIVI_YEAH_II_CATEGORIES`. Every category needs a
   full pool for every tier (the engine fails fast if one is incomplete).
   **Board draw:** deeper categories come up more often (Randy, Oct 2026).
