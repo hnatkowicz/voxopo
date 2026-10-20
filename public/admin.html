@@ -228,7 +228,7 @@
                     <div class="row">
                         <label>Breaks</label>
                         <select id="venue-break-minutes">
-                            ${[[0, 'Off'], [2, '2 minutes'], [5, '5 minutes']].map(([m, label]) => `<option value="${m}" ${(c.break_minutes || 0) === m ? 'selected' : ''}>${label}</option>`).join('')}
+                            ${[[0, 'Off'], [2, '2 minutes'], [5, '5 minutes'], [10, '10 minutes']].map(([m, label]) => `<option value="${m}" ${(c.break_minutes || 0) === m ? 'selected' : ''}>${label}</option>`).join('')}
                         </select>
                         <div class="hint">Between Thinking Pants rounds and after a Trivi-yeah! game: the TV shows the venue's big logo, the join QR code and the notes below. It ends on its own, or early once everyone taps "I'm back".</div>
                     </div>
