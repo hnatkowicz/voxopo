@@ -261,12 +261,20 @@ app.post('/api/room-status', (req, res) => {
     try {
         const { roomCode, playerName } = req.body;
         const targetRoom = activeRooms[roomCode];
-        // Every answer below also carries the scoreboard for the phone's
-        // swipe-left page: the standings the TV last showed (see
-        // broadcastToRoom), so a phone never learns a score early.
+        // Every answer below also carries what the phone's swipe-left Info
+        // page needs: the standings the TV last showed (see broadcastToRoom,
+        // so a phone never learns a score early), which mode is on, and this
+        // player's own stats. Those stats only change when an answer is
+        // scored, at the reveal, so they can't give anything away either.
         if (targetRoom) {
             const sendJson = res.json.bind(res);
-            res.json = body => sendJson(body && body.phase ? { ...body, standings: targetRoom.phoneStandings || [] } : body);
+            const me = playerName ? targetRoom.players[playerName] : null;
+            res.json = body => sendJson(body && body.phase ? {
+                ...body,
+                standings: targetRoom.phoneStandings || [],
+                mode: targetRoom.gameState === 'LOBBY' ? null : (targetRoom.winningGameMode || null),
+                myStats: me ? { fastest: me.timesFastest || 0, bullseyes: me.bullseyeCount || 0 } : null
+            } : body);
         }
         if (targetRoom) {
             // A player just interacted with this room! Bump the clock to keep it alive

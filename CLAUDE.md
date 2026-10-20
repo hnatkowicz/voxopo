@@ -100,9 +100,14 @@ credited on `/info`), copied into the repo so nothing is fetched from outside.
 **Phone side pages** (Randy, Oct 2026): kids on a school trip played with
 no TV at all, so the phone grew a page on each side of the game, in the
 order Room | Game | Info. Swipe left (or tap the dots in the top strip)
-for **Info**: the scores, showing the standings the TV was last sent
+for **Info**: where we are (mode, question/round/flag x of y, tiles left),
+your own stats (right x/y and hit rate, answered first / fastest right,
+people found, bullseyes -- they only change when an answer is scored), and
+the scores, showing the standings the TV was last sent
 (`room.phoneStandings`, captured in `broadcastToRoom`), never live scores,
-so they can't give away who's right before a reveal. Swipe right for
+so they can't give away who's right before a reveal. Those counters and the
+mode titles used to sit atop each game screen ("Active Match Question" was
+dropped outright). Swipe right for
 **Room**: the room's QR code and code (a friend scans in from your phone)
 and Leave Room, which asks first (it used to sit under the answers on every
 screen and got bumped in fast play). The game page keeps only what changes
@@ -112,9 +117,8 @@ Back/Forward), and a side page closes itself whenever the player has
 something to do (`scoresActionKeyFor` in `play.html`; a new phone-input
 moment needs a line there). Rule of thumb: **the phone tells you about
 you; the TV tells everyone about everyone** (the scores page is the one
-tucked-away exception). Planned next, in order: Info gets "where we are"
-(mode, question x/y) and your stats, which then leave the game page; a
-last-question recap on Info; a how-to-play card per mode on Room; your own
+tucked-away exception). Planned next, in order: a last-question recap on
+Info; a how-to-play card per mode on Room; your own
 Final Wager result on the phone after the TV's reveal ends. A full
 phone-only room (reveals on phones, no TV page) is not planned.
 

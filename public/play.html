@@ -108,7 +108,6 @@
         .ed-role-word .ed-role-label, .ed-role-impostor .ed-role-label { color: #00e676; }
         .ed-role-value { font-size: 1.4rem; font-weight: 700; color: #ffffff; letter-spacing: -0.01em; }
 
-        .ed-round-indicator { font-size: 0.8rem; color: #64748b; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 16px; }
         .ed-status-line { font-size: 0.85rem; color: #64748b; text-align: center; margin: 12px 0; }
         .ed-timer { font-size: 2rem; font-weight: 700; color: #ffffff; text-align: center; margin: 12px 0; }
 
@@ -194,8 +193,6 @@
            competes with the name itself for attention. */
         .module-descriptor { color: #64748b; font-weight: 400; font-size: 0.78rem; }
 
-        /* Small, non-dominant "X/Y correct" stat under the question badge. */
-        .correct-stat { color: #64748b; font-size: 0.8rem; font-weight: 500; text-align: right; margin: -16px 0 20px 0; }
 
         /* Mirrors the TV's final-leaderboard medal styling (public/styles.css) so a
            player's own placement card reads as "the same result," not a re-skin. */
@@ -246,6 +243,14 @@
         .scores-name { flex: 1; color: #ffffff; font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
         .scores-points { font-weight: 700; color: #e2e5e9; }
         .scores-hint { color: #64748b; font-size: 0.8rem; margin: 18px 0 0 0; }
+        .info-where { text-align: left; margin-bottom: 20px; }
+        .info-mode { display: flex; align-items: center; gap: 10px; font-size: 1.3rem; font-weight: 700; color: #ffffff; }
+        .info-line { color: #94a3b8; font-size: 0.9rem; font-weight: 500; margin-top: 6px; }
+        .info-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(90px, 1fr)); gap: 8px; margin-bottom: 24px; }
+        .info-stat { background: #1e222b; border: 1px solid #222630; border-radius: 8px; padding: 10px 8px; }
+        .info-stat-num { font-size: 1.3rem; font-weight: 700; color: #ffffff; }
+        .info-stat-label { font-size: 0.7rem; color: #64748b; text-transform: uppercase; letter-spacing: 0.06em; font-weight: 600; margin-top: 2px; }
+        .info-heading { text-align: left; margin-bottom: 4px; }
     </style>
 </head>
 <body>
@@ -281,7 +286,9 @@
 
     <div id="info-page" class="side-page from-right" aria-hidden="true">
         <div class="card">
-            <h1>🏆 Scores</h1>
+            <div id="info-where" class="info-where"></div>
+            <div id="info-stats" class="info-stats" style="display: none;"></div>
+            <label class="info-heading">🏆 Scores</label>
             <div id="scores-list" class="scores-list"></div>
             <button type="button" class="btn" style="margin-top: 20px;" onclick="showSidePage('game')">‹ Back to the game</button>
             <p class="scores-hint">The scores update after each answer is revealed.</p>
@@ -349,7 +356,6 @@
     <!-- SCREEN 2: GAMEPLAY INPUT CONTROLLER -->
     <div id="game-screen" class="card">
         <h1>RandoMania Controller</h1>
-        <p class="subtitle" style="margin-bottom: 20px;">Connection active with TV stream dashboard</p>
         <div class="player-badge">
             <span class="player-badge-identity">🟢 <span id="badge-emoji">-</span> <span id="badge-name" class="player-badge-name">-</span></span>
             <span class="player-badge-room">Room <strong id="badge-room">-</strong> · Score <strong id="badge-score">0</strong></span>
@@ -404,10 +410,6 @@
     <div id="category-screen" class="card">
         <h1>Category Selection</h1>
         <p class="subtitle" style="margin-bottom: 24px;">Cast your family sub-deck preference now</p>
-        <div class="player-badge">
-            <span class="player-badge-identity"><span id="sub-badge-emoji">-</span> <span id="sub-badge-name" class="player-badge-name">-</span></span>
-            <span class="player-badge-room">Room <strong id="sub-badge-room">-</strong> · Score <strong id="sub-badge-score">0</strong></span>
-        </div>
         <div class="input-group">
             <label>1. Pick a category</label>
             <div class="module-list" id="category-vote-list"></div>
@@ -424,12 +426,6 @@
 
     <!-- SCREEN 3.5: EMPOSSDURR ROUND CONTROLLER -->
     <div id="empossdurr-screen" class="card">
-        <h1>EmpossDurr</h1>
-        <div class="ed-round-indicator" id="ed-round-indicator">Round - / -</div>
-        <div class="player-badge">
-            <span class="player-badge-identity"><span id="ed-badge-emoji">-</span> <span id="ed-badge-name" class="player-badge-name">-</span></span>
-            <span class="player-badge-room">Room <strong id="ed-badge-room">-</strong> · Score <strong id="ed-badge-score">0</strong></span>
-        </div>
 
         <div id="ed-role-banner" class="ed-role-banner">
             <div class="ed-role-label" id="ed-role-label">-</div>
@@ -455,12 +451,6 @@
     <audio id="declare-sound" src="/audio/impostor-declares.wav" preload="auto"></audio>
 
     <div id="on-the-spectrum-screen" class="card">
-        <h1>On the Spectrum</h1>
-        <div class="ed-round-indicator" id="ots-round-indicator">Round - / -</div>
-        <div class="player-badge">
-            <span class="player-badge-identity"><span id="ots-badge-emoji">-</span> <span id="ots-badge-name" class="player-badge-name">-</span></span>
-            <span class="player-badge-room">Room <strong id="ots-badge-room">-</strong> · Score <strong id="ots-badge-score">0</strong></span>
-        </div>
 
         <!-- Rebuilt only when the phase (or this player's role in it) actually
              changes -- same reasoning as EmpossDurr's #ed-phase-content, so a
@@ -473,12 +463,6 @@
     </div>
 
     <div id="profiler-screen" class="card">
-        <h1>Profiler</h1>
-        <div class="ed-round-indicator" id="pf-round-indicator">Round - / -</div>
-        <div class="player-badge">
-            <span class="player-badge-identity"><span id="pf-badge-emoji">-</span> <span id="pf-badge-name" class="player-badge-name">-</span></span>
-            <span class="player-badge-room">Room <strong id="pf-badge-room">-</strong> · Score <strong id="pf-badge-score">0</strong></span>
-        </div>
 
         <!-- Rebuilt only when the phase (or this player's part in it) changes,
              so a half-made selection never gets wiped by a poll tick. -->
@@ -490,14 +474,7 @@
 
     <!-- SCREEN 4: ULTRA-CLEAN FULL-WIDTH QUESTION ANSWER CONTROLLER -->
     <div id="question-screen" class="card" style="display: none;">
-        <h1>Active Match Question</h1>
-        <p class="subtitle" id="question-meta" style="margin-bottom: 20px;">Tap your final answer selection now</p>
 
-        <div class="player-badge">
-            <span class="player-badge-identity"><span id="q-badge-emoji">-</span> <span id="q-badge-name" class="player-badge-name">-</span></span>
-            <span class="player-badge-room">Room <strong id="q-badge-room">-</strong> · Score <strong id="q-badge-score">0</strong></span>
-        </div>
-        <div id="q-correct-stat" class="correct-stat">0/0 correct</div>
 
         <!-- Visual questions (Country Monkey's highlighted-map SVGs, etc.) -- hidden
              whenever a question has no visualAsset. -->
@@ -533,14 +510,8 @@
 
     <!-- SCREEN 4.5: TRIVI-YEAH II (Jeopardy-style grid, prototype) -->
     <div id="trivi-yeah-ii-screen" class="card" style="display: none;">
-        <h1>Thinking Pants <span style="font-size: 0.5em; color: #64748b; font-weight: 700; vertical-align: middle;">BETA</span></h1>
-        <p class="subtitle" style="margin-bottom: 2px;">Round <span id="ty2-round-badge">1</span> of <span id="ty2-total-rounds-badge">3</span></p>
         <p class="subtitle" id="ty2-status-line" style="margin-bottom: 20px;">...</p>
 
-        <div class="player-badge">
-            <span class="player-badge-identity"><span id="ty2-badge-emoji">-</span> <span id="ty2-badge-name" class="player-badge-name">-</span></span>
-            <span class="player-badge-room">Room <strong id="ty2-badge-room">-</strong> &middot; Score <strong id="ty2-badge-score">0</strong></span>
-        </div>
 
         <!-- PICK_TILE phase: open board. Tiles are only clickable when isMyPick --
              everyone else sees the same grid, dimmed and inert. -->
@@ -620,13 +591,7 @@
     <!-- SCREEN 4.7: FLAG ME DOWN -- the flag, clues unlocking over time,
          and one lock-in per flag (Randy: "Lock it and no changing back"). -->
     <div id="flag-me-down-screen" class="card" style="display: none;">
-        <h1>Flag Me Down</h1>
-        <p class="subtitle" id="fmd-status-line" style="margin-bottom: 20px;">...</p>
 
-        <div class="player-badge">
-            <span class="player-badge-identity"><span id="fmd-badge-emoji">-</span> <span id="fmd-badge-name" class="player-badge-name">-</span></span>
-            <span class="player-badge-room">Room <strong id="fmd-badge-room">-</strong> &middot; Score <strong id="fmd-badge-score">0</strong></span>
-        </div>
 
         <!-- Fixed one-line height: when this wrapped or emptied, the buttons
              below jumped mid-tap (Randy's playtest). -->
@@ -651,10 +616,6 @@
         <h1>Final Wager</h1>
         <p class="subtitle" id="fw-status-line" style="margin-bottom: 20px;">...</p>
 
-        <div class="player-badge">
-            <span class="player-badge-identity"><span id="fw-badge-emoji">-</span> <span id="fw-badge-name" class="player-badge-name">-</span></span>
-            <span class="player-badge-room">Room <strong id="fw-badge-room">-</strong> &middot; Score <strong id="fw-badge-score">0</strong></span>
-        </div>
 
         <div id="fw-topic-meta" style="font-size: 0.85rem; font-weight: 600; color: #64748b; text-transform: uppercase; letter-spacing: 0.06em; margin-top: 16px; margin-bottom: 10px; text-align: center;"></div>
 
@@ -869,8 +830,75 @@
             }
         }
 
+        const escSidePage = s => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+
+        // "Where we are" -- moved here from the top of each game screen, so
+        // the game page keeps only what you tap (Randy, Oct 2026).
+        function infoWhereLine(data) {
+            switch (data.phase) {
+                case 'LOBBY_PHASE': return `${(data.standings || []).length} in the room`;
+                case 'CATEGORY_VOTE_PHASE': return 'Voting on what to play';
+                case 'GAME_ROUND_PHASE':
+                    return [`Question ${data.questionNumber} of ${data.totalQuestions}`, data.categoryLabel, data.points ? `${data.points} points` : null].filter(Boolean).join(' · ');
+                case 'TRIVI_YEAH_II_ROUND_PHASE': {
+                    const left = (data.grid || []).filter(c => !c.cleared).length;
+                    return `Round ${data.round} of ${data.totalRounds} · ${left} ${left === 1 ? 'tile' : 'tiles'} left`;
+                }
+                case 'TRIVI_YEAH_II_FINAL_WAGER_PHASE': return ['Final Wager', data.topicLabel].filter(Boolean).join(' · ');
+                case 'FLAG_ME_DOWN_PHASE': return `Flag ${data.round} of ${data.totalRounds}`;
+                case 'EMPOSSDURR_ROUND_PHASE': return `Round ${data.round} of ${data.totalRounds}`;
+                case 'ON_THE_SPECTRUM_ROUND_PHASE': return `Round ${data.roundNumber} of ${data.totalRounds}`;
+                case 'PROFILER_ROUND_PHASE':
+                    return data.profilerPhase === 'AWARDS' ? 'Final results' : `Round ${Math.min(data.round, data.totalRounds)} of ${data.totalRounds}`;
+                case 'GAME_OVER_PHASE': return 'Game over';
+                default: return '';
+            }
+        }
+
+        // Your own numbers. They only change when an answer is scored, at
+        // the reveal, so they never give anything away early.
+        function infoStats(data) {
+            const right = data.myCorrectAnswers || 0, stats = data.myStats || {};
+            const ofSoFar = done => done > 0
+                ? [{ num: `${right}/${done}`, label: 'right' }, { num: `${Math.round(100 * right / done)}%`, label: 'hit rate' }]
+                : [{ num: right, label: 'right' }];
+            if (data.phase === 'LOBBY_PHASE' || data.phase === 'CATEGORY_VOTE_PHASE') return [];
+            switch (data.mode) {
+                case 'TRIVI_YEAH':
+                case 'COUNTRY_MONKEY': {
+                    const done = data.phase === 'GAME_ROUND_PHASE' ? (data.revealedLetter ? data.questionNumber : data.questionNumber - 1) : 0;
+                    // Here "fastest" is first to answer, right or wrong (the TV's bolt).
+                    return [...ofSoFar(done), { num: stats.fastest || 0, label: 'answered first' }];
+                }
+                case 'FLAG_ME_DOWN': {
+                    const done = data.phase === 'FLAG_ME_DOWN_PHASE' ? (data.fmdPhase === 'REVEAL' ? data.round : data.round - 1) : 0;
+                    return ofSoFar(done);
+                }
+                case 'TRIVI_YEAH_II': return [{ num: right, label: 'right' }, { num: stats.fastest || 0, label: 'fastest right' }];
+                case 'PROFILER': return [{ num: right, label: 'people found' }];
+                case 'ON_THE_SPECTRUM': return [{ num: stats.bullseyes || 0, label: 'bullseyes' }];
+                default: return [];
+            }
+        }
+
+        let lastInfoHtml = null;
+        function renderInfoPage(data) {
+            const mode = data.mode && (window.RANDOMANIA_MODES || []).find(m => m.key === data.mode);
+            const title = mode ? `${window.modeIconHtml(mode, 28)}<span>${escSidePage(mode.name)}</span>` : '<span>Lobby</span>';
+            const stats = infoStats(data);
+            const html = `<div class="info-mode">${title}</div><div class="info-line">${escSidePage(infoWhereLine(data))}</div>`
+                + '\u0000' + stats.map(st => `<div class="info-stat"><div class="info-stat-num">${escSidePage(st.num)}</div><div class="info-stat-label">${st.label}</div></div>`).join('');
+            if (html === lastInfoHtml) return; // polled every second; don't redraw the icon each time
+            lastInfoHtml = html;
+            const [where, statsHtml] = html.split('\u0000');
+            document.getElementById('info-where').innerHTML = where;
+            const box = document.getElementById('info-stats');
+            box.style.display = stats.length ? 'grid' : 'none';
+            box.innerHTML = statsHtml;
+        }
+
         function renderScoresPanel(standings, myName) {
-            const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+            const esc = escSidePage;
             document.getElementById('scores-list').innerHTML = standings.length
                 ? standings.map((p, i) => `<div class="scores-row rank-${i + 1}${p.name === myName ? ' me' : ''}">
                         <span class="scores-rank">${i + 1}</span>
@@ -921,6 +949,7 @@
             if (data.myScore !== null && data.myScore !== undefined) document.getElementById('strip-score').innerText = data.myScore;
             renderRoomPage(roomCode);
             if (Array.isArray(data.standings)) renderScoresPanel(data.standings, myName);
+            renderInfoPage(data);
             const key = scoresActionKeyFor(data);
             if (key && key !== scoresActionKey) showSidePage('game');
             scoresActionKey = key;
@@ -1101,20 +1130,13 @@
 
                     if (data && data.phase) {
                         updateSidePages(data, nickname, roomCode);
-                        // All three badges stay in the DOM (just hidden/shown), so it's
-                        // harmless to refresh every score span on every tick regardless
-                        // of which screen is currently visible.
+                        // The lobby badge (shown again on the "you left" screen); the
+                        // top strip shows the score everywhere else.
                         if (data.myScore !== null && data.myScore !== undefined) {
-                            ['badge-score', 'sub-badge-score', 'q-badge-score'].forEach(id => {
-                                const el = document.getElementById(id);
-                                if (el) el.innerText = data.myScore;
-                            });
+                            document.getElementById('badge-score').innerText = data.myScore;
                         }
                         // PHASE 2 TRANSITION: Open category election cards
                         if (data.phase === 'CATEGORY_VOTE_PHASE' && document.getElementById('category-screen').style.display !== "block") {
-                            document.getElementById('sub-badge-name').innerText = nickname;
-                            document.getElementById('sub-badge-emoji').innerText = chosenAvatar;
-                            document.getElementById('sub-badge-room').innerText = roomCode;
 
                             const listEl = document.getElementById('category-vote-list');
                             listEl.innerHTML = (data.categories || []).map(c =>
@@ -1267,15 +1289,6 @@
         }
 
         function renderQuestion(data, nickname, roomCode) {
-            document.getElementById('q-badge-name').innerText = nickname;
-            document.getElementById('q-badge-emoji').innerText = chosenAvatar;
-            document.getElementById('q-badge-room').innerText = roomCode;
-            document.getElementById('question-meta').innerText = `${data.categoryLabel || ''} · Q${data.questionNumber || '?'}/${data.totalQuestions || '?'} · ${data.points || 0} pts`;
-            // Denominator is questions actually COMPLETED so far -- this one is still
-            // active/unanswered, so questionNumber itself would overcount by one
-            // (showing "2/3" while only 2 rounds have actually been revealed yet).
-            const questionsCompleted = Math.max(0, (data.questionNumber || 1) - 1);
-            document.getElementById('q-correct-stat').innerText = `${data.myCorrectAnswers || 0}/${questionsCompleted} correct`;
             document.getElementById('question-text-display').innerText = data.questionText || '';
 
             showQuestionPicture('q-visual-container', 'q-visual-image', data.visualAsset);
@@ -1387,12 +1400,6 @@
             // Only the Doubler's wager step uses the box; clear it otherwise so
             // the next Doubler starts empty.
             if (data.triviYeahIIPhase !== 'DOUBLER_WAGER') document.getElementById('ty2-wager-input').value = '';
-            document.getElementById('ty2-badge-name').innerText = nickname;
-            document.getElementById('ty2-badge-emoji').innerText = chosenAvatar;
-            document.getElementById('ty2-badge-room').innerText = roomCode;
-            document.getElementById('ty2-badge-score').innerText = data.myScore || 0;
-            document.getElementById('ty2-round-badge').innerText = data.round || 1;
-            document.getElementById('ty2-total-rounds-badge').innerText = data.totalRounds || 3;
 
             const doublerKey = data.doubler ? `${data.doubler.wagerAmount}|${data.doubler.maxWager}|${JSON.stringify(data.doubler.mySideBet)}|${data.doubler.resolved}` : '';
             const renderKey = `${data.round}|${data.triviYeahIIPhase}|${data.activeCellIndex}|${data.currentPicker}|${data.myAnswer || ''}|${doublerKey}|${data.trapSetter || ''}|${data.trap ? data.trap.type : ''}|${ty2TrapStep}`;
@@ -1871,10 +1878,6 @@
         }
 
         function renderFlagMeDown(data, nickname, roomCode) {
-            document.getElementById('fmd-badge-name').innerText = nickname;
-            document.getElementById('fmd-badge-emoji').innerText = chosenAvatar;
-            document.getElementById('fmd-badge-room').innerText = roomCode;
-            document.getElementById('fmd-badge-score').innerText = data.myScore || 0;
             preloadQuestionPicture(data.preloadAsset);
             if (data.mapUrl) preloadQuestionPicture(data.mapUrl);
 
@@ -1883,7 +1886,6 @@
             if (renderKey === fmdLastRenderKey) return;
             fmdLastRenderKey = renderKey;
 
-            document.getElementById('fmd-status-line').innerText = `Flag ${data.round} of ${data.totalRounds}`;
             showQuestionPicture('fmd-flag-container', 'fmd-flag-image', data.flagUrl);
 
             const worth = document.getElementById('fmd-worth');
@@ -1954,10 +1956,6 @@
         let fwLastRenderKey = null;
 
         function renderTriviYeahIIFinalWager(data, nickname, roomCode) {
-            document.getElementById('fw-badge-name').innerText = nickname;
-            document.getElementById('fw-badge-emoji').innerText = chosenAvatar;
-            document.getElementById('fw-badge-room').innerText = roomCode;
-            document.getElementById('fw-badge-score').innerText = data.myScore || 0;
             document.getElementById('fw-topic-meta').innerText = data.topicLabel || '';
             showQuestionPicture('fw-visual-container', 'fw-visual-image', data.visualAsset);
             preloadQuestionPicture(data.preloadAsset);
@@ -2164,10 +2162,6 @@
         }
 
         function renderEmpossDurr(data, nickname, roomCode) {
-            document.getElementById('ed-badge-name').innerText = nickname;
-            document.getElementById('ed-badge-emoji').innerText = chosenAvatar;
-            document.getElementById('ed-badge-room').innerText = roomCode;
-            document.getElementById('ed-round-indicator').innerText = `Round ${data.round} of ${data.totalRounds}`;
 
             const roleBanner = document.getElementById('ed-role-banner');
             if (data.isImpostor) {
@@ -2369,13 +2363,6 @@
         }
 
         function renderProfiler(data, nickname, roomCode) {
-            document.getElementById('pf-badge-name').innerText = nickname;
-            document.getElementById('pf-badge-emoji').innerText = chosenAvatar;
-            document.getElementById('pf-badge-room').innerText = roomCode;
-            document.getElementById('pf-badge-score').innerText = data.myScore || 0;
-            document.getElementById('pf-round-indicator').innerText = data.profilerPhase === 'AWARDS'
-                ? 'Final results'
-                : `Round ${Math.min(data.round, data.totalRounds)} of ${data.totalRounds}`;
 
             const phaseKey = `${data.profilerPhase}|${data.round}|${data.replacement}|${data.inRoster}|${data.myAnswer || ''}|${data.myPicks ? 'picked' : ''}|${data.iHaveVotedContinue ? 'continued' : ''}`;
             if (phaseKey !== pfLastPhaseKey) {
@@ -2552,10 +2539,6 @@
         let otsLastPhaseKey = null; // "<otsPhase>|<round>|<isNamedPlayer>|<iHaveGuessed>" -- rebuild only when this changes
 
         function renderOnTheSpectrum(data, nickname, roomCode) {
-            document.getElementById('ots-badge-name').innerText = nickname;
-            document.getElementById('ots-badge-emoji').innerText = chosenAvatar;
-            document.getElementById('ots-badge-room').innerText = roomCode;
-            document.getElementById('ots-round-indicator').innerText = `Round ${data.roundNumber} of ${data.totalRounds}`;
 
             const phaseKey = `${data.otsPhase}|${data.roundNumber}|${data.isNamedPlayer}|${data.iHaveGuessed}`;
             if (phaseKey !== otsLastPhaseKey) {
