@@ -1490,7 +1490,7 @@ function showTriviYeahIIFinalRevealStepUI(data) {
         return `
             <div style="background: ${isLatest ? 'rgba(255, 215, 0, 0.08)' : '#1e222b'}; border: 1px solid ${isLatest ? '#ffd700' : '#222630'}; border-radius: 8px; padding: 14px 18px; display: flex; justify-content: space-between; align-items: center; gap: 16px;">
                 <div style="text-align: left;">
-                    <div style="font-weight: 700; font-size: 1.05rem; color: #ffffff;">${step.playerName}</div>
+                    <div style="font-weight: 700; font-size: 1.05rem; color: #ffffff;">${step.playerName}${step.allIn ? ` <span class="all-in-stamp${isLatest ? ' slam' : ''}">ALL IN!</span>` : ''}</div>
                     <div style="font-size: 0.9rem; color: #94a3b8; margin-top: 2px;">Answered: "${step.answerText ? escapeHtml(step.answerText) : '(no answer)'}"</div>
                 </div>
                 <div style="text-align: right;">

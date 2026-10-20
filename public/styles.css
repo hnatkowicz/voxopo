@@ -492,3 +492,24 @@ body.pub-profile:not(.tv-lobby) #room-qr-box { width: 130px !important; height: 
 body.pub-profile.tv-lobby #onboarding-text-slot > div:first-child { font-size: 1.6rem !important; }
 body.pub-profile.tv-lobby #onboarding-text-slot > div:last-child { font-size: 1.05rem !important; }
 body.pub-profile.tv-lobby #onboarding-text-slot { flex: 2 !important; }
+
+/* Final Wager reveal: a player who bet their whole score (the phone's
+   "Risk It All" button -- Randy's son's idea, Oct 2026) gets a rubber stamp. */
+.all-in-stamp {
+    display: inline-block;
+    margin-left: 10px;
+    padding: 1px 8px;
+    border: 2px solid #ff7a1a;
+    border-radius: 4px;
+    color: #ff7a1a;
+    font-size: 0.8rem;
+    font-weight: 900;
+    letter-spacing: 0.08em;
+    transform: rotate(-8deg);
+}
+/* Only the row being revealed slams in; earlier rows are redrawn each step. */
+.all-in-stamp.slam { animation: all-in-slam 0.35s ease-out; }
+@keyframes all-in-slam {
+    from { transform: rotate(-8deg) scale(2.2); opacity: 0; }
+    to { transform: rotate(-8deg) scale(1); opacity: 1; }
+}

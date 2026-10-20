@@ -62,6 +62,11 @@
         /* Your answer before the reveal: white, not green, so it doesn't look
            "right" before anyone knows (Randy, Oct 2026). The reveal paints
            the real answer green and a wrong pick red. Votes keep .selected. */
+        /* .btn.btn-risk: .btn is declared further down, so it needs the extra weight. */
+        .btn.btn-risk { background: linear-gradient(135deg, #ff7a1a, #ff3d3d); color: #ffffff; margin-top: 4px; font-weight: 800; letter-spacing: 0.04em; }
+        .btn.btn-risk:hover { background: linear-gradient(135deg, #ff7a1a, #ff3d3d); }
+        .btn.btn-risk.nothing { background: #1e222b; color: #94a3b8; border: 1px dashed #334155; font-weight: 600; }
+        #fw-wager-input.all-in { border-color: #ff7a1a !important; box-shadow: 0 0 14px rgba(255, 122, 26, 0.55); }
         .module-row.picked {
             border-color: #e2e5e9;
             background: rgba(255, 255, 255, 0.08);
@@ -641,8 +646,13 @@
         <div id="fw-wager-box" style="display: none; margin-top: 10px;">
             <div id="fw-wager-prompt-text" style="font-weight: 600; margin-bottom: 14px; text-align: center;"></div>
             <div id="fw-wager-input-row" style="display: none;">
-                <input type="number" id="fw-wager-input" min="0" inputmode="numeric" pattern="[0-9]*" placeholder="0" style="width: 100%; padding: 12px; font-size: 1.1rem; border-radius: 8px; border: 1px solid #222630; background: #14161d; color: #fff; margin-bottom: 10px; box-sizing: border-box;" />
-                <button class="btn" onclick="submitTriviYeahIIFinalWager()">Lock In Wager</button>
+                <input type="number" id="fw-wager-input" min="0" inputmode="numeric" pattern="[0-9]*" placeholder="0" oninput="updateRiskItAll()" style="width: 100%; padding: 12px; font-size: 1.1rem; border-radius: 8px; border: 1px solid #222630; background: #14161d; color: #fff; margin-bottom: 10px; box-sizing: border-box; transition: box-shadow 0.2s, border-color 0.2s;" />
+                <!-- Risk It All (Randy's son's idea, Oct 2026): fills in your
+                     whole score; you still press Lock In, and can type over it. -->
+                <button type="button" class="btn btn-risk" id="fw-risk-btn" onclick="riskItAll()"></button>
+                <div id="fw-risk-quip" style="min-height: 1.2em; margin-top: 8px; font-size: 0.85rem; font-weight: 600; color: #ff9a4d; text-align: center;"></div>
+                <div id="fw-stakes" style="margin-top: 4px; font-size: 0.85rem; color: #94a3b8; text-align: center;"></div>
+                <button class="btn" style="margin-top: 14px;" onclick="submitTriviYeahIIFinalWager()">Lock In Wager</button>
             </div>
         </div>
 
@@ -2127,6 +2137,7 @@
                 // A fresh Final Wager: nothing left over from the last game.
                 document.getElementById('fw-wager-input').value = '';
                 document.getElementById('fw-answer-input').value = '';
+                riskItAllState.tapped = false;
                 return;
             }
 
@@ -2142,6 +2153,10 @@
                     const maxWager = Math.max(data.myScore || 0, 0);
                     document.getElementById('fw-wager-prompt-text').innerText = `How much do you want to risk? (0 - ${maxWager} points) Keep it secret!`;
                     prepareWagerInput(document.getElementById('fw-wager-input'), maxWager);
+                    riskItAllState.max = maxWager;
+                    riskItAllState.score = data.myScore || 0;
+                    riskItAllState.mode = data.mode;
+                    updateRiskItAll();
                     inputRow.style.display = 'block';
                 }
                 return;
@@ -2179,8 +2194,9 @@
             if (!r.shown) return '<span style="color: #94a3b8;">Your result is coming up on the TV…</span>';
             if (r.correct) {
                 const won = r.delta > 0 ? `+${r.delta}${r.clueUsed ? ' (after your clue)' : ''}` : '(you wagered 0)';
-                return `<span style="color: #00e676; font-weight: 700;">✓ It counted! ${won}</span>`;
+                return `<span style="color: #00e676; font-weight: 700;">${r.allIn ? '🔥 ALL IN and it paid off!' : '✓ It counted!'} ${won}</span>`;
             }
+            if (r.allIn) return `<span style="color: #ff4757; font-weight: 700;">✗ All in… and all gone. −${r.wager}</span>`;
             const lost = r.wager > 0 ? `−${r.wager}` : '(you wagered 0, nothing lost)';
             return `<span style="color: #ff4757; font-weight: 700;">✗ Not this time. ${lost}</span>`;
         }
@@ -2233,11 +2249,51 @@
             }
         }
 
+        // ---- Risk It All (Randy's son's idea, Oct 2026) ----
+        // Fills the wager box with your whole score -- it never submits, so
+        // you can still type over it before Lock In. A pun per mode.
+        const RISK_IT_ALL_LABELS = { TRIVI_YEAH_II: '👖 Bet Your Pants!', COUNTRY_MONKEY: '🍌 Go Bananas!', FLAG_ME_DOWN: '🚩 All Flags Flying!' };
+        const riskItAllState = { max: 0, score: 0, mode: null, tapped: false };
+
+        function riskItAll() {
+            if (riskItAllState.max <= 0) return;
+            document.getElementById('fw-wager-input').value = riskItAllState.max;
+            riskItAllState.tapped = true;
+            updateRiskItAll();
+        }
+
+        function updateRiskItAll() {
+            const { max, score, mode } = riskItAllState;
+            const input = document.getElementById('fw-wager-input');
+            const button = document.getElementById('fw-risk-btn');
+            const quip = document.getElementById('fw-risk-quip');
+            const stakes = document.getElementById('fw-stakes');
+            if (max <= 0) {
+                button.innerText = '🪙 Nothing to risk! (Bold of you to ask.)';
+                button.classList.add('nothing');
+                quip.innerText = ''; stakes.innerText = '';
+                input.classList.remove('all-in');
+                return;
+            }
+            button.classList.remove('nothing');
+            button.innerText = `🔥 ${RISK_IT_ALL_LABELS[mode] || 'Risk It All!!'} 🔥`;
+            const raw = input.value.trim();
+            const wager = Math.min(Math.max(0, parseInt(raw, 10) || 0), max);
+            const allIn = raw !== '' && wager === max;
+            input.classList.toggle('all-in', allIn);
+            quip.innerText = allIn ? `All ${max} points. Gulp.` : (riskItAllState.tapped ? 'Chickened out? …Smart.' : '');
+            // The math people actually want before they commit.
+            stakes.innerText = raw === '' ? '' : `Right: ${score + wager} · Wrong: ${score - wager}`;
+        }
+
         async function submitTriviYeahIIFinalWager() {
             const input = document.getElementById('fw-wager-input');
             const amount = Math.max(0, parseInt(input.value, 10) || 0);
             const registeredName = localStorage.getItem('randomania_nickname') || 'test-handset';
-            document.getElementById('fw-wager-prompt-text').innerText = `Wager locked in at ${amount} points. Waiting on the room...`;
+            const allIn = riskItAllState.max > 0 && amount >= riskItAllState.max;
+            document.getElementById('fw-wager-prompt-text').innerText = allIn
+                ? `ALL IN: ${riskItAllState.max} points. No take-backs. Godspeed.`
+                : `Wager locked in at ${amount} points. Waiting on the room...`;
             document.getElementById('fw-wager-input-row').style.display = 'none';
             try {
                 await fetch('/api/message', {
