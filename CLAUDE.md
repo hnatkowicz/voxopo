@@ -396,6 +396,19 @@ and forth until we both agree the idea is good **and** worth the effort. So:
 
 ## Ideas in the works
 
+- **Up next, in order (Randy, Oct 2026):** an **Art** category in Thinking
+  Pants, then a **Logos** category -- Randy's youngest's idea, so
+  don't let it slip; he wants to make her happy. Art: public-domain
+  paintings and some sculpture, images only from open-access museums
+  (Met, Art Institute of Chicago, National Gallery of Art, Rijksmuseum,
+  Cleveland, Smithsonian, Getty), each image's source page kept on file;
+  no Italian-held works (Italy lets museums charge for images even of old
+  art). One image can carry an artist question and, when the title can't
+  be read off the canvas, a title question; the board builder needs a rule
+  so the same image is never on one board twice. Randy is gathering the
+  images in a spreadsheet. Logos: simple wordmarks and shapes, plus
+  text-only logo trivia ("What animal is on the Ferrari logo?"); no Disney,
+  sports leagues or Olympic rings, and never altered logos.
 - **Thinking Pants art:** a jeans mascot, "pants on fire" for a missed
   Doubler, a leg kick for a correct one, and gold pants spinning for the
   winner. "Answers in Your Pants" is a candidate name for the speed badge.
