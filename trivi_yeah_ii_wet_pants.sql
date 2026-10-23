@@ -1,6 +1,6 @@
 -- ============================================================================
--- Thinking Pants: the "Wet Pants" category -- 71 of Randy's water maps
--- (100: 15, 200: 17, 300: 19, 400: 20; 100 = Gulf of Mexico, Pacific ...
+-- Thinking Pants: the "Wet Pants" category -- 85 of Randy's water maps
+-- (100: 20, 200: 21, 300: 23, 400: 21; 100 = Gulf of Mexico, Pacific ...
 -- 400 = Davis Strait, Salish Sea, Gulf of San Jorge), each with 6 same-kind
 -- wrong answers (3 shown).
 --
@@ -36,6 +36,11 @@ FROM (VALUES
 ('/water/amazon-river.webp',            'Amazon River',          ARRAY['Orinoco River', 'Paraná River', 'Rio Negro', 'Madeira River', 'Paraguay River', 'São Francisco River'], 100),
 ('/water/pacific-ocean.webp',           'Pacific Ocean',         ARRAY['South Atlantic Ocean', 'North Atlantic Ocean', 'Indian Ocean', 'Southern Ocean', 'Arctic Ocean', 'Caribbean Sea'], 100),
 ('/water/south-atlantic.webp',          'South Atlantic Ocean',  ARRAY['North Atlantic Ocean', 'Pacific Ocean', 'Indian Ocean', 'Southern Ocean', 'Arctic Ocean', 'Caribbean Sea'], 100),
+('/water/indian-ocean.webp',             'Indian Ocean',        ARRAY['Pacific Ocean', 'South Atlantic Ocean', 'North Atlantic Ocean', 'Southern Ocean', 'Arctic Ocean', 'South China Sea'], 100),
+('/water/persian-gulf.webp',             'Persian Gulf',        ARRAY['Gulf of Oman', 'Red Sea', 'Arabian Sea', 'Gulf of Aden', 'Caspian Sea', 'Gulf of Aqaba'], 100),
+('/water/south-china-sea.webp',          'South China Sea',     ARRAY['East China Sea', 'Philippine Sea', 'Java Sea', 'Yellow Sea', 'Celebes Sea', 'Gulf of Thailand'], 100),
+('/water/japan-sea.webp',                'Sea of Japan',        ARRAY['Yellow Sea', 'East China Sea', 'Sea of Okhotsk', 'Bering Sea', 'Philippine Sea', 'Bohai Sea'], 100),
+('/water/bay-bengal.webp',               'Bay of Bengal',       ARRAY['Arabian Sea', 'Andaman Sea', 'Laccadive Sea', 'Gulf of Mannar', 'Gulf of Thailand', 'South China Sea'], 100),
 -- 200 points
 ('/water/adriatic.webp',                'Adriatic Sea',          ARRAY['Aegean Sea', 'Ionian Sea', 'Tyrrhenian Sea', 'Black Sea', 'Ligurian Sea', 'Sea of Marmara'], 200),
 ('/water/aegean.webp',                  'Aegean Sea',            ARRAY['Adriatic Sea', 'Ionian Sea', 'Sea of Marmara', 'Black Sea', 'Tyrrhenian Sea', 'Levantine Sea'], 200),
@@ -54,6 +59,10 @@ FROM (VALUES
 ('/water/missouri-river.webp',          'Missouri River',        ARRAY['Mississippi River', 'Ohio River', 'Arkansas River', 'Platte River', 'Yellowstone River', 'Colorado River'], 200),
 ('/water/rio-de-la-plata.webp',         'Río de la Plata',       ARRAY['Bahía Blanca', 'Paraná River', 'Gulf of San Matías', 'Uruguay River', 'Lagoa dos Patos', 'Gulf of San Jorge'], 200),
 ('/water/strait-magellan.webp',         'Strait of Magellan',    ARRAY['Drake Passage', 'Beagle Channel', 'Bering Strait', 'Strait of Gibraltar', 'Davis Strait', 'Strait of Hormuz'], 200),
+('/water/lake-baikal.webp',              'Lake Baikal',         ARRAY['Lake Balkhash', 'Lake Ladoga', 'Aral Sea', 'Issyk-Kul', 'Lake Khövsgöl', 'Lake Onega'], 200),
+('/water/coral-sea.webp',                'Coral Sea',           ARRAY['Tasman Sea', 'Arafura Sea', 'Timor Sea', 'Solomon Sea', 'Bismarck Sea', 'Philippine Sea'], 200),
+('/water/east-china-sea.webp',           'East China Sea',      ARRAY['South China Sea', 'Yellow Sea', 'Sea of Japan', 'Philippine Sea', 'Bohai Sea', 'Taiwan Strait'], 200),
+('/water/yellow-sea.webp',               'Yellow Sea',          ARRAY['East China Sea', 'Sea of Japan', 'South China Sea', 'Korea Strait', 'Sea of Okhotsk', 'Philippine Sea'], 200),
 -- 300 points
 ('/water/baffin-bay.webp',              'Baffin Bay',            ARRAY['Hudson Bay', 'Davis Strait', 'Labrador Sea', 'Beaufort Sea', 'Greenland Sea', 'James Bay'], 300),
 ('/water/bay-of-fundy.webp',            'Bay of Fundy',          ARRAY['Gulf of Maine', 'Gulf of St. Lawrence', 'Chesapeake Bay', 'Cape Cod Bay', 'James Bay', 'Delaware Bay'], 300),
@@ -74,6 +83,10 @@ FROM (VALUES
 ('/water/orinoco-river.webp',           'Orinoco River',         ARRAY['Amazon River', 'Magdalena River', 'Rio Negro', 'Paraná River', 'Essequibo River', 'Madeira River'], 300),
 ('/water/parana-river.webp',            'Paraná River',          ARRAY['Paraguay River', 'Uruguay River', 'Amazon River', 'Orinoco River', 'São Francisco River', 'Rio Negro'], 300),
 ('/water/tagus-river.webp',             'Tagus River',           ARRAY['Ebro River', 'Douro River', 'Guadalquivir River', 'Guadiana River', 'Garonne River', 'Loire River'], 300),
+('/water/gulf-thailand.webp',            'Gulf of Thailand',    ARRAY['Gulf of Tonkin', 'Andaman Sea', 'Java Sea', 'Strait of Malacca', 'Bay of Bengal', 'Celebes Sea'], 300),
+('/water/malacca-strait.webp',           'Strait of Malacca',   ARRAY['Sunda Strait', 'Lombok Strait', 'Makassar Strait', 'Taiwan Strait', 'Palk Strait', 'Strait of Hormuz'], 300),
+('/water/andaman-sea.webp',              'Andaman Sea',         ARRAY['Bay of Bengal', 'Gulf of Thailand', 'Java Sea', 'Laccadive Sea', 'Celebes Sea', 'Sulu Sea'], 300),
+('/water/gulf-tonkin.webp',              'Gulf of Tonkin',      ARRAY['Gulf of Thailand', 'Bohai Sea', 'Gulf of Carpentaria', 'Gulf of Mannar', 'Taiwan Strait', 'Celebes Sea'], 300),
 -- 400 points
 ('/water/davis-strait.webp',            'Davis Strait',          ARRAY['Hudson Strait', 'Baffin Bay', 'Labrador Sea', 'Denmark Strait', 'Bering Strait', 'Northwest Passage'], 400),
 ('/water/dnieper-river.webp',           'Dnieper River',         ARRAY['Danube River', 'Volga River', 'Dniester River', 'Don River', 'Vistula River', 'Rhine River'], 400),
@@ -94,10 +107,11 @@ FROM (VALUES
 ('/water/gulf-san-jorge.webp',          'Gulf of San Jorge',     ARRAY['Gulf of San Matías', 'Bahía Blanca', 'Golfo Nuevo', 'Gulf of Penas', 'Strait of Magellan', 'Río de la Plata'], 400),
 ('/water/gulf-san-matias.webp',         'Gulf of San Matías',    ARRAY['Gulf of San Jorge', 'Bahía Blanca', 'Golfo Nuevo', 'Gulf of Penas', 'Río de la Plata', 'Strait of Magellan'], 400),
 ('/water/paraguay-river.webp',          'Paraguay River',        ARRAY['Paraná River', 'Uruguay River', 'Pilcomayo River', 'Madeira River', 'Rio Negro', 'São Francisco River'], 400),
-('/water/rio-negro.webp',               'Rio Negro',             ARRAY['Madeira River', 'Xingu River', 'Tapajós River', 'Orinoco River', 'Japurá River', 'Purus River'], 400)
+('/water/rio-negro.webp',               'Rio Negro',             ARRAY['Madeira River', 'Xingu River', 'Tapajós River', 'Orinoco River', 'Japurá River', 'Purus River'], 400),
+('/water/lake-balkhash.webp',            'Lake Balkhash',       ARRAY['Lake Baikal', 'Aral Sea', 'Issyk-Kul', 'Lake Zaysan', 'Caspian Sea', 'Lake Alakol'], 400)
 ) AS v(visual_asset, correct_answer, wrong_answers, points);
 
 COMMIT;
 
--- Check: should return 71.
+-- Check: should return 85.
 SELECT COUNT(*) FROM questions WHERE game_mode = 'TRIVI_YEAH_II' AND category = 'WET_PANTS';

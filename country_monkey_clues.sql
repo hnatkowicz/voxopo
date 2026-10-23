@@ -11,7 +11,7 @@
 -- Down's country table. Landmarks get theirs from country_monkey_landmarks.sql.
 --
 -- Safe to re-run. Run it AGAIN after re-running country_monkey_water.sql
--- (that file replaces the water rows, clues and all). 72 bodies of water;
+-- (that file replaces the water rows, clues and all). 86 bodies of water;
 -- a few appear in more than one region, so more rows than that update.
 -- ============================================================================
 
@@ -91,6 +91,22 @@ UPDATE questions SET hint = 'Manaus'                             WHERE game_mode
 UPDATE questions SET hint = 'Uruguay'                            WHERE game_mode = 'COUNTRY_MONKEY' AND subcategory = 'WATER' AND correct_answer = 'South Atlantic Ocean';
 UPDATE questions SET hint = 'Tierra del Fuego'                   WHERE game_mode = 'COUNTRY_MONKEY' AND subcategory = 'WATER' AND correct_answer = 'Strait of Magellan';
 UPDATE questions SET hint = 'Toledo'                             WHERE game_mode = 'COUNTRY_MONKEY' AND subcategory = 'WATER' AND correct_answer = 'Tagus River';
+
+-- Added Oct 2026 with Randy's Asia & Pacific water batch.
+UPDATE questions SET hint = 'Thailand'                           WHERE game_mode = 'COUNTRY_MONKEY' AND subcategory = 'WATER' AND correct_answer = 'Andaman Sea';
+UPDATE questions SET hint = 'Myanmar'                            WHERE game_mode = 'COUNTRY_MONKEY' AND subcategory = 'WATER' AND correct_answer = 'Bay of Bengal';
+UPDATE questions SET hint = 'Queensland (Australia)'             WHERE game_mode = 'COUNTRY_MONKEY' AND subcategory = 'WATER' AND correct_answer = 'Coral Sea';
+UPDATE questions SET hint = 'Taiwan'                             WHERE game_mode = 'COUNTRY_MONKEY' AND subcategory = 'WATER' AND correct_answer = 'East China Sea';
+UPDATE questions SET hint = 'Cambodia'                           WHERE game_mode = 'COUNTRY_MONKEY' AND subcategory = 'WATER' AND correct_answer = 'Gulf of Thailand';
+UPDATE questions SET hint = 'Vietnam'                            WHERE game_mode = 'COUNTRY_MONKEY' AND subcategory = 'WATER' AND correct_answer = 'Gulf of Tonkin';
+UPDATE questions SET hint = 'Madagascar'                         WHERE game_mode = 'COUNTRY_MONKEY' AND subcategory = 'WATER' AND correct_answer = 'Indian Ocean';
+UPDATE questions SET hint = 'Siberia (Russia)'                   WHERE game_mode = 'COUNTRY_MONKEY' AND subcategory = 'WATER' AND correct_answer = 'Lake Baikal';
+UPDATE questions SET hint = 'Kazakhstan'                         WHERE game_mode = 'COUNTRY_MONKEY' AND subcategory = 'WATER' AND correct_answer = 'Lake Balkhash';
+UPDATE questions SET hint = 'Kuwait'                             WHERE game_mode = 'COUNTRY_MONKEY' AND subcategory = 'WATER' AND correct_answer = 'Persian Gulf';
+UPDATE questions SET hint = 'South Korea'                        WHERE game_mode = 'COUNTRY_MONKEY' AND subcategory = 'WATER' AND correct_answer = 'Sea of Japan';
+UPDATE questions SET hint = 'The Philippines'                    WHERE game_mode = 'COUNTRY_MONKEY' AND subcategory = 'WATER' AND correct_answer = 'South China Sea';
+UPDATE questions SET hint = 'Sumatra (Indonesia)'                WHERE game_mode = 'COUNTRY_MONKEY' AND subcategory = 'WATER' AND correct_answer = 'Strait of Malacca';
+UPDATE questions SET hint = 'North Korea'                        WHERE game_mode = 'COUNTRY_MONKEY' AND subcategory = 'WATER' AND correct_answer = 'Yellow Sea';
 
 COMMIT;
 

@@ -299,7 +299,7 @@ Mode keys are used in room votes and in `gameEngine.js`:
   intensity 1/2/3 because each game cycles light -> medium -> deep.
 - **Thinking Pants geography categories:** Country Monkey (maps), **Flag Me
   Down** (flags, `trivi_yeah_ii_flag_me_down.sql`, 80), **Wet Pants**
-  (water, `trivi_yeah_ii_wet_pants.sql`, 71) and **Wish You Were Here**
+  (water, `trivi_yeah_ii_wet_pants.sql`, 85) and **Wish You Were Here**
   (landmarks, `content/landmarks.csv`, 132; a postcard name because it has
   natural wonders too) -- the cross-play with Country Monkey is deliberate.
 - **FLAG_ME_DOWN** (also a standalone mode, after the family asked where it
@@ -416,9 +416,10 @@ and forth until we both agree the idea is good **and** worth the effort. So:
   Pieces: **Biology**, then separate pop-culture categories (**Video
   Games**, **Cartoons & Kids' TV**, **Pop Culture**: celebrities, viral
   moments, slogans, toys).
-- **Wet Pants needs more water images** (15/17/19/20 per tier; 5 more
-  at 100, 3 at 200, 1 at 300). Randy is uploading them in batches and
-  especially wants more **rivers** (hard to plot) -- remind him. The
+- **Water images:** Wet Pants reached 20+ per tier with Randy's Asia &
+  Pacific batch (Oct 2026; 85 in all), which also gave Country Monkey's
+  Asia & Pacific games their first water. Randy still wants more
+  **rivers** (hard to plot) -- remind him; Asia has none yet. The
   `-2` files in `public/water/` are second drawings of water already in
   Wet Pants (Country Monkey uses them for other regions).
 - **Thinking Pants art:** a jeans mascot, "pants on fire" for a missed
