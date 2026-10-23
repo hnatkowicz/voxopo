@@ -884,7 +884,12 @@ const TRIVI_YEAH_II_CATEGORIES = [
     // Randy's landmark photos (public/structures/), shared with Country
     // Monkey. Buildings and natural wonders, so a postcard name rather than
     // "Built Different". content/landmarks.csv, from content/landmarks_source.py.
-    { key: 'LANDMARKS', label: 'Wish You Were Here' }
+    { key: 'LANDMARKS', label: 'Wish You Were Here' },
+    // Randy's youngest's idea (Oct 2026). Logo pictures (public/iconic-logos/,
+    // names stripped off; logos that spell out the brand are left out) plus
+    // text-only logo trivia. content/logos.csv. The title's a working one --
+    // she gets the final say.
+    { key: 'LOGOS', label: 'Logo My Eggo' }
 ];
 const TRIVI_YEAH_II_CATEGORIES_PER_BOARD = 3;
 const TRIVI_YEAH_II_TIERS = [100, 200, 300, 400];
@@ -1034,6 +1039,12 @@ async function buildTriviYeahIIBoard(doublersCount, house = null, usedCategoryKe
     );
 
     const grid = [];
+    // No two tiles on one board share an answer or a picture: the Logos
+    // category has two Apple and two Adidas logos, and an Art picture can
+    // carry both an artist and a title question -- seeing one would hand
+    // over the other. Falls back to any row if a tier has nothing else.
+    const boardAnswers = new Set(), boardImages = new Set();
+    const clashes = r => boardAnswers.has(String(r.correct_answer).trim().toLowerCase()) || (r.visual_asset && boardImages.has(r.visual_asset));
     chosenCategories.forEach(cat => {
         TRIVI_YEAH_II_TIERS.forEach(tier => {
             let tierRows = result.rows.filter(r => r.category === cat.key && r.points === tier);
@@ -1041,7 +1052,12 @@ async function buildTriviYeahIIBoard(doublersCount, house = null, usedCategoryKe
                 const fresh = tierRows.filter(r => !house.usedIds.has(r.id));
                 if (fresh.length) tierRows = fresh;
             }
-            const row = shuffleArray(tierRows)[0];
+            const shuffled = shuffleArray(tierRows);
+            const row = shuffled.find(r => !clashes(r)) || shuffled[0];
+            if (row) {
+                boardAnswers.add(String(row.correct_answer).trim().toLowerCase());
+                if (row.visual_asset) boardImages.add(row.visual_asset);
+            }
             if (useHouse && cat.key === house.key && row) house.usedIds.add(row.id);
             grid.push({
                 categoryKey: cat.key,
