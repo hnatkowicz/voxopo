@@ -4,8 +4,8 @@
 -- Thinking Pants category FAMOUS_FIRSTS. To change a question, change the
 -- spreadsheet and rebuild.
 --
--- Replaces the WHOLE category with the spreadsheet's 64 live questions
--- (100: 14, 200: 14, 300: 17, 400: 19), inside a transaction. Safe to re-run.
+-- Replaces the WHOLE category with the spreadsheet's 80 live questions
+-- (100: 20, 200: 20, 300: 20, 400: 20), inside a transaction. Safe to re-run.
 -- ============================================================================
 
 BEGIN;
@@ -70,6 +70,30 @@ INSERT INTO questions (question_number, game_mode, category, subcategory, factio
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'FAMOUS_FIRSTS', 'FAMOUS_FIRSTS_BATCH_1', NULL,
         'Which Disney character made his official debut in the 1928 cartoon "Steamboat Willie"?', NULL,
         'Mickey Mouse', ARRAY['Donald Duck', 'Goofy', 'Pluto', 'Oswald the Lucky Rabbit', 'Felix the Cat', 'Daisy Duck'], 100);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'FAMOUS_FIRSTS', 'ORIGINAL', NULL,
+        'Which superhero first appeared in Action Comics #1, in 1938?', NULL,
+        'Superman', ARRAY['Batman', 'Wonder Woman', 'Captain America', 'The Flash', 'Green Lantern', 'Captain Marvel'], 100);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'FAMOUS_FIRSTS', 'ORIGINAL', NULL,
+        'What was the first Disney theme park, opened in 1955?', NULL,
+        'Disneyland', ARRAY['Magic Kingdom', 'Epcot', 'Tokyo Disneyland', 'Disneyland Paris', 'Disney California Adventure', 'Disney''s Hollywood Studios'], 100);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'FAMOUS_FIRSTS', 'ORIGINAL', NULL,
+        'In 2021, who became the first woman to serve as Vice President of the United States?', NULL,
+        'Kamala Harris', ARRAY['Hillary Clinton', 'Nancy Pelosi', 'Geraldine Ferraro', 'Sarah Palin', 'Condoleezza Rice', 'Michelle Obama'], 100);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'FAMOUS_FIRSTS', 'ORIGINAL', NULL,
+        'What subtitle was later given to the first Star Wars film, released in 1977?', NULL,
+        'A New Hope', ARRAY['The Empire Strikes Back', 'Return of the Jedi', 'Revenge of the Sith', 'Attack of the Clones', 'The Force Awakens', 'Rogue One'], 100);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'FAMOUS_FIRSTS', 'ORIGINAL', NULL,
+        'Who became the first U.S. President to resign from office, in 1974?', NULL,
+        'Richard Nixon', ARRAY['Gerald Ford', 'Lyndon B. Johnson', 'Andrew Johnson', 'Jimmy Carter', 'Bill Clinton', 'Ronald Reagan'], 100);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'FAMOUS_FIRSTS', 'ORIGINAL', NULL,
+        'What is the first book of the Bible?', NULL,
+        'Genesis', ARRAY['Exodus', 'Leviticus', 'Numbers', 'Deuteronomy', 'Psalms', 'Matthew'], 100);
 
 -- 200 points
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
@@ -128,6 +152,30 @@ INSERT INTO questions (question_number, game_mode, category, subcategory, factio
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'FAMOUS_FIRSTS', 'FAMOUS_FIRSTS_BATCH_1', NULL,
         'Who was the first woman to serve on the U.S. Supreme Court, appointed in 1981?', NULL,
         'Sandra Day O''Connor', ARRAY['Ruth Bader Ginsburg', 'Sonia Sotomayor', 'Elena Kagan', 'Harriet Miers', 'Amy Coney Barrett', 'Janet Reno'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'FAMOUS_FIRSTS', 'ORIGINAL', NULL,
+        'Which team won the first Super Bowl, in January 1967?', NULL,
+        'The Green Bay Packers', ARRAY['The Kansas City Chiefs', 'The Dallas Cowboys', 'The New York Jets', 'The Baltimore Colts', 'The Oakland Raiders', 'The Cleveland Browns'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'FAMOUS_FIRSTS', 'ORIGINAL', NULL,
+        'Which country issued the world''s first adhesive postage stamp, the Penny Black, in 1840?', NULL,
+        'The United Kingdom', ARRAY['France', 'The United States', 'Switzerland', 'Brazil', 'Germany', 'Austria'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'FAMOUS_FIRSTS', 'ORIGINAL', NULL,
+        'Which Ford car, starting in 1913, was the first to be built on a moving assembly line?', NULL,
+        'The Model T', ARRAY['The Model A', 'The Mustang', 'The Thunderbird', 'The Model N', 'The Model K', 'The Edsel'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'FAMOUS_FIRSTS', 'ORIGINAL', NULL,
+        'In 2007, who became the first woman to serve as Speaker of the U.S. House of Representatives?', NULL,
+        'Nancy Pelosi', ARRAY['Hillary Clinton', 'Madeleine Albright', 'Dianne Feinstein', 'Condoleezza Rice', 'Geraldine Ferraro', 'Barbara Boxer'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'FAMOUS_FIRSTS', 'ORIGINAL', NULL,
+        'In 1800, who became the first President to live in the White House?', NULL,
+        'John Adams', ARRAY['George Washington', 'Thomas Jefferson', 'James Madison', 'James Monroe', 'John Quincy Adams', 'Andrew Jackson'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'FAMOUS_FIRSTS', 'ORIGINAL', NULL,
+        'Which Pokémon is number one in the National Pokédex?', NULL,
+        'Bulbasaur', ARRAY['Pikachu', 'Charmander', 'Squirtle', 'Ivysaur', 'Mew', 'Jigglypuff'], 200);
 
 -- 300 points
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
@@ -198,6 +246,18 @@ INSERT INTO questions (question_number, game_mode, category, subcategory, factio
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'FAMOUS_FIRSTS', 'FAMOUS_FIRSTS_BATCH_1', NULL,
         'Which American test pilot was the first officially credited with flying faster than sound, in 1947?', NULL,
         'Chuck Yeager', ARRAY['Scott Crossfield', 'Howard Hughes', 'John Glenn', 'Bob Hoover', 'Jacqueline Cochran', 'Wiley Post'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'FAMOUS_FIRSTS', 'ORIGINAL', NULL,
+        'In 1962, NASA''s Mariner 2 made the first successful flyby of another planet. Which one?', NULL,
+        'Venus', ARRAY['Mars', 'Mercury', 'Jupiter', 'Saturn', 'Uranus', 'Neptune'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'FAMOUS_FIRSTS', 'ORIGINAL', NULL,
+        'In 1968, who became the first Black woman elected to the U.S. Congress?', NULL,
+        'Shirley Chisholm', ARRAY['Barbara Jordan', 'Yvonne Brathwaite Burke', 'Carol Moseley Braun', 'Fannie Lou Hamer', 'Coretta Scott King', 'Maxine Waters'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'FAMOUS_FIRSTS', 'ORIGINAL', NULL,
+        'Which city opened the world''s first underground railway, in 1863?', NULL,
+        'London', ARRAY['Paris', 'New York', 'Boston', 'Budapest', 'Glasgow', 'Berlin'], 300);
 
 -- 400 points
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
@@ -276,8 +336,12 @@ INSERT INTO questions (question_number, game_mode, category, subcategory, factio
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'FAMOUS_FIRSTS', 'FAMOUS_FIRSTS_BATCH_1', NULL,
         'In 2012, which spacecraft became the first human-made object to enter interstellar space?', NULL,
         'Voyager 1', ARRAY['Voyager 2', 'Pioneer 10', 'Pioneer 11', 'New Horizons', 'Cassini', 'Galileo'], 400);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'FAMOUS_FIRSTS', 'ORIGINAL', NULL,
+        'In 1975, who became the first woman to reach the summit of Mount Everest?', NULL,
+        'Junko Tabei', ARRAY['Wanda Rutkiewicz', 'Stacy Allison', 'Bachendri Pal', 'Alison Hargreaves', 'Lydia Bradey', 'Arlene Blum'], 400);
 
 COMMIT;
 
--- Check: should return 64.
+-- Check: should return 80.
 SELECT COUNT(*) FROM questions WHERE game_mode = 'TRIVI_YEAH_II' AND category = 'FAMOUS_FIRSTS';

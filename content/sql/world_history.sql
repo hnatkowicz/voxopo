@@ -4,8 +4,8 @@
 -- Thinking Pants category WORLD_HISTORY. To change a question, change the
 -- spreadsheet and rebuild.
 --
--- Replaces the WHOLE category with the spreadsheet's 75 live questions
--- (100: 17, 200: 20, 300: 20, 400: 18), inside a transaction. Safe to re-run.
+-- Replaces the WHOLE category with the spreadsheet's 80 live questions
+-- (100: 20, 200: 20, 300: 20, 400: 20), inside a transaction. Safe to re-run.
 -- ============================================================================
 
 BEGIN;
@@ -82,6 +82,18 @@ INSERT INTO questions (question_number, game_mode, category, subcategory, factio
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORLD_HISTORY', 'WORLD_HISTORY_BATCH_1', NULL,
         'The Vikings set out from which part of Europe?', NULL,
         'Scandinavia', ARRAY['The British Isles', 'The Iberian Peninsula', 'The Balkans', 'The Low Countries', 'Central Europe', 'The Baltic states'], 100);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORLD_HISTORY', 'ORIGINAL', NULL,
+        'Which English king married six times and broke with the Roman Catholic Church?', NULL,
+        'Henry VIII', ARRAY['Henry VII', 'Henry V', 'Edward VI', 'Richard III', 'James I', 'Charles I'], 100);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORLD_HISTORY', 'ORIGINAL', NULL,
+        'Which French queen, wife of Louis XVI, was executed by guillotine in 1793?', NULL,
+        'Marie Antoinette', ARRAY['Catherine de'' Medici', 'Marie de'' Medici', 'Anne of Austria', 'Eleanor of Aquitaine', 'Empress Joséphine', 'Marie Louise'], 100);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORLD_HISTORY', 'ORIGINAL', NULL,
+        'Which young pharaoh''s nearly intact tomb did Howard Carter discover in the Valley of the Kings in 1922?', NULL,
+        'Tutankhamun', ARRAY['Ramesses II', 'Akhenaten', 'Khufu', 'Thutmose III', 'Seti I', 'Amenhotep III'], 100);
 
 -- 200 points
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
@@ -320,8 +332,16 @@ INSERT INTO questions (question_number, game_mode, category, subcategory, factio
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORLD_HISTORY', 'WORLD_HISTORY_BATCH_1', NULL,
         'Whose 1768-71 voyage on HMS Endeavour charted the east coast of Australia?', NULL,
         'James Cook', ARRAY['Abel Tasman', 'Matthew Flinders', 'William Bligh', 'William Dampier', 'George Vancouver', 'Joseph Banks'], 400);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORLD_HISTORY', 'ORIGINAL', NULL,
+        'Which Mauryan emperor of India embraced Buddhism after the bloody Kalinga War?', NULL,
+        'Ashoka', ARRAY['Chandragupta Maurya', 'Bindusara', 'Akbar', 'Samudragupta', 'Harsha', 'Kanishka'], 400);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORLD_HISTORY', 'ORIGINAL', NULL,
+        'In which 1905 naval battle did Japan''s fleet destroy Russia''s Baltic Fleet?', NULL,
+        'The Battle of Tsushima', ARRAY['The Battle of Port Arthur', 'The Battle of the Yellow Sea', 'The Battle of Mukden', 'The Battle of Jutland', 'The Battle of Manila Bay', 'The Battle of Navarino'], 400);
 
 COMMIT;
 
--- Check: should return 75.
+-- Check: should return 80.
 SELECT COUNT(*) FROM questions WHERE game_mode = 'TRIVI_YEAH_II' AND category = 'WORLD_HISTORY';

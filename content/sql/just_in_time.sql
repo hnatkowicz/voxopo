@@ -4,8 +4,8 @@
 -- Thinking Pants category JUST_IN_TIME. To change a question, change the
 -- spreadsheet and rebuild.
 --
--- Replaces the WHOLE category with the spreadsheet's 66 live questions
--- (100: 17, 200: 18, 300: 15, 400: 16), inside a transaction. Safe to re-run.
+-- Replaces the WHOLE category with the spreadsheet's 80 live questions
+-- (100: 20, 200: 20, 300: 20, 400: 20), inside a transaction. Safe to re-run.
 -- ============================================================================
 
 BEGIN;
@@ -82,6 +82,18 @@ INSERT INTO questions (question_number, game_mode, category, subcategory, factio
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'JUST_IN_TIME', 'JUST_IN_TIME_BATCH_1', NULL,
         'The Black Forest, home of the cuckoo clock, is in which country?', NULL,
         'Germany', ARRAY['Switzerland', 'Austria', 'France', 'Czech Republic', 'Poland', 'Belgium'], 100);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'JUST_IN_TIME', 'ORIGINAL', NULL,
+        'In Disney''s "Beauty and the Beast," what has the Beast''s fussy head servant Cogsworth been turned into?', NULL,
+        'A clock', ARRAY['A candlestick', 'A teapot', 'A feather duster', 'A wardrobe', 'A teacup', 'A footstool'], 100);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'JUST_IN_TIME', 'ORIGINAL', NULL,
+        'What is a period of ten years called?', NULL,
+        'A decade', ARRAY['A century', 'A millennium', 'A score', 'A generation', 'A jubilee', 'A quarter-century'], 100);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'JUST_IN_TIME', 'ORIGINAL', NULL,
+        'How many full weeks are in a year?', NULL,
+        '52', ARRAY['48', '50', '51', '53', '54', '56'], 100);
 
 -- 200 points
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
@@ -156,6 +168,14 @@ INSERT INTO questions (question_number, game_mode, category, subcategory, factio
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'JUST_IN_TIME', 'JUST_IN_TIME_BATCH_1', NULL,
         'Who wrote the 1895 novel "The Time Machine"?', NULL,
         'H.G. Wells', ARRAY['Jules Verne', 'Mark Twain', 'Arthur Conan Doyle', 'Robert Louis Stevenson', 'Aldous Huxley', 'Edgar Rice Burroughs'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'JUST_IN_TIME', 'ORIGINAL', NULL,
+        'Which singer had a 1989 hit with "If I Could Turn Back Time"?', NULL,
+        'Cher', ARRAY['Tina Turner', 'Pat Benatar', 'Bonnie Tyler', 'Belinda Carlisle', 'Cyndi Lauper', 'Madonna'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'JUST_IN_TIME', 'ORIGINAL', NULL,
+        'A golden wedding anniversary celebrates how many years of marriage?', NULL,
+        '50', ARRAY['25', '30', '40', '60', '70', '75'], 200);
 
 -- 300 points
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
@@ -218,6 +238,26 @@ INSERT INTO questions (question_number, game_mode, category, subcategory, factio
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'JUST_IN_TIME', 'JUST_IN_TIME_BATCH_1', NULL,
         'How many official time zones does China use?', NULL,
         '1', ARRAY['2', '3', '4', '5', '6', '7'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'JUST_IN_TIME', 'ORIGINAL', NULL,
+        'Which day of the week is named after Odin, the chief Norse god?', NULL,
+        'Wednesday', ARRAY['Tuesday', 'Thursday', 'Friday', 'Monday', 'Saturday', 'Sunday'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'JUST_IN_TIME', 'ORIGINAL', NULL,
+        'Roughly how long is it from one new moon to the next?', NULL,
+        'About 29½ days', ARRAY['About 25 days', 'About 27 days', 'About 28 days', 'About 30½ days', 'About 31 days', 'About 32 days'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'JUST_IN_TIME', 'ORIGINAL', NULL,
+        'A sesquicentennial marks how many years?', NULL,
+        '150', ARRAY['75', '125', '175', '200', '250', '300'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'JUST_IN_TIME', 'ORIGINAL', NULL,
+        'Which band asked "Does Anybody Really Know What Time It Is?" on its 1969 debut album?', NULL,
+        'Chicago', ARRAY['Blood, Sweat & Tears', 'Three Dog Night', 'The Guess Who', 'Steely Dan', 'The Doobie Brothers', 'Earth, Wind & Fire'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'JUST_IN_TIME', 'ORIGINAL', NULL,
+        'In 1883, which industry got the United States and Canada to adopt standard time zones?', NULL,
+        'The railroads', ARRAY['The telegraph companies', 'The shipping lines', 'The banks', 'The newspapers', 'The postal service', 'The stock exchanges'], 300);
 
 -- 400 points
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
@@ -284,8 +324,24 @@ INSERT INTO questions (question_number, game_mode, category, subcategory, factio
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'JUST_IN_TIME', 'JUST_IN_TIME_BATCH_1', NULL,
         'What does the Latin phrase "tempus fugit" mean?', NULL,
         'Time flies', ARRAY['Time heals', 'Time is money', 'Seize the day', 'Time will tell', 'Remember death', 'Time stands still'], 400);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'JUST_IN_TIME', 'ORIGINAL', NULL,
+        'Which composer wrote the "Clock" Symphony, nicknamed for the tick-tock rhythm of its slow movement?', NULL,
+        'Joseph Haydn', ARRAY['Wolfgang Amadeus Mozart', 'Ludwig van Beethoven', 'Franz Schubert', 'Felix Mendelssohn', 'Johannes Brahms', 'Antonín Dvořák'], 400);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'JUST_IN_TIME', 'ORIGINAL', NULL,
+        'Before it was renamed for an emperor, which month did the Romans call Sextilis?', NULL,
+        'August', ARRAY['June', 'July', 'September', 'October', 'March', 'December'], 400);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'JUST_IN_TIME', 'ORIGINAL', NULL,
+        'Under the Gregorian calendar''s rules, which of these years was NOT a leap year?', NULL,
+        '1900', ARRAY['2000', '1600', '1904', '1896', '1960', '2024'], 400);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'JUST_IN_TIME', 'ORIGINAL', NULL,
+        'Which French author wrote the seven-volume novel "In Search of Lost Time"?', NULL,
+        'Marcel Proust', ARRAY['Gustave Flaubert', 'Victor Hugo', 'Émile Zola', 'Honoré de Balzac', 'André Gide', 'Albert Camus'], 400);
 
 COMMIT;
 
--- Check: should return 66.
+-- Check: should return 80.
 SELECT COUNT(*) FROM questions WHERE game_mode = 'TRIVI_YEAH_II' AND category = 'JUST_IN_TIME';

@@ -4,8 +4,8 @@
 -- Thinking Pants category ART_AND_ARCHITECTURE. To change a question, change the
 -- spreadsheet and rebuild.
 --
--- Replaces the WHOLE category with the spreadsheet's 76 live questions
--- (100: 19, 200: 19, 300: 20, 400: 18), inside a transaction. Safe to re-run.
+-- Replaces the WHOLE category with the spreadsheet's 80 live questions
+-- (100: 20, 200: 20, 300: 20, 400: 20), inside a transaction. Safe to re-run.
 -- ============================================================================
 
 BEGIN;
@@ -90,6 +90,10 @@ INSERT INTO questions (question_number, game_mode, category, subcategory, factio
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'ART_AND_ARCHITECTURE', 'ART_AND_ARCHITECTURE_BATCH_1', NULL,
         'Which prehistoric stone circle stands on Salisbury Plain in England?', NULL,
         'Stonehenge', ARRAY['Avebury', 'Hadrian''s Wall', 'The Callanish Stones', 'The Carnac Stones', 'Skara Brae', 'Newgrange'], 100);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'ART_AND_ARCHITECTURE', 'ORIGINAL', NULL,
+        'Which young biblical hero, shown about to face Goliath, is the subject of Florence''s most famous marble statue?', NULL,
+        'David', ARRAY['Moses', 'Samson', 'Joshua', 'Solomon', 'Saul', 'Gideon'], 100);
 
 -- 200 points
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
@@ -168,6 +172,10 @@ INSERT INTO questions (question_number, game_mode, category, subcategory, factio
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'ART_AND_ARCHITECTURE', 'ART_AND_ARCHITECTURE_BATCH_1', NULL,
         'Which great temple to Athena, finished in the 430s BC, crowns the Acropolis of Athens?', NULL,
         'The Parthenon', ARRAY['The Pantheon', 'The Temple of Olympian Zeus', 'The Temple of Hephaestus', 'The Temple of Apollo', 'The Temple of Poseidon', 'The Temple of Artemis'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'ART_AND_ARCHITECTURE', 'ORIGINAL', NULL,
+        'Which Renaissance painter created "The School of Athens," with Plato and Aristotle at its center, in the Vatican?', NULL,
+        'Raphael', ARRAY['Michelangelo', 'Leonardo da Vinci', 'Titian', 'Sandro Botticelli', 'Caravaggio', 'Giotto'], 200);
 
 -- 300 points
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
@@ -324,8 +332,16 @@ INSERT INTO questions (question_number, game_mode, category, subcategory, factio
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'ART_AND_ARCHITECTURE', 'ART_AND_ARCHITECTURE_BATCH_1', NULL,
         'China''s Terracotta Army, thousands of life-size clay soldiers, was buried to guard the tomb of which ruler?', NULL,
         'Qin Shi Huang', ARRAY['Kublai Khan', 'Genghis Khan', 'Emperor Wu of Han', 'Emperor Taizong of Tang', 'The Yongle Emperor', 'Puyi'], 400);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'ART_AND_ARCHITECTURE', 'ORIGINAL', NULL,
+        'Which Flemish painter created "The Arnolfini Portrait" of 1434, with its tiny reflection in a convex mirror?', NULL,
+        'Jan van Eyck', ARRAY['Rogier van der Weyden', 'Hans Memling', 'Pieter Bruegel the Elder', 'Robert Campin', 'Peter Paul Rubens', 'Petrus Christus'], 400);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'ART_AND_ARCHITECTURE', 'ORIGINAL', NULL,
+        'Which British sculptor created the "Angel of the North," the giant steel winged figure that has stood beside the A1 at Gateshead since 1998?', NULL,
+        'Antony Gormley', ARRAY['Henry Moore', 'Anish Kapoor', 'Damien Hirst', 'Barbara Hepworth', 'Rachel Whiteread', 'Andy Goldsworthy'], 400);
 
 COMMIT;
 
--- Check: should return 76.
+-- Check: should return 80.
 SELECT COUNT(*) FROM questions WHERE game_mode = 'TRIVI_YEAH_II' AND category = 'ART_AND_ARCHITECTURE';

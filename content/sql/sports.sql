@@ -4,8 +4,8 @@
 -- Thinking Pants category SPORTS. To change a question, change the
 -- spreadsheet and rebuild.
 --
--- Replaces the WHOLE category with the spreadsheet's 76 live questions
--- (100: 20, 200: 20, 300: 18, 400: 18), inside a transaction. Safe to re-run.
+-- Replaces the WHOLE category with the spreadsheet's 80 live questions
+-- (100: 20, 200: 20, 300: 20, 400: 20), inside a transaction. Safe to re-run.
 -- ============================================================================
 
 BEGIN;
@@ -250,6 +250,14 @@ INSERT INTO questions (question_number, game_mode, category, subcategory, factio
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPORTS', 'SPORTS_BATCH_1', NULL,
         'How many minutes long is a regulation NBA game?', NULL,
         '48', ARRAY['40', '60', '44', '36', '50', '52'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPORTS', 'ORIGINAL', NULL,
+        'Which golfer was nicknamed "the Golden Bear"?', NULL,
+        'Jack Nicklaus', ARRAY['Arnold Palmer', 'Gary Player', 'Tom Watson', 'Greg Norman', 'Lee Trevino', 'Ben Hogan'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPORTS', 'ORIGINAL', NULL,
+        'In which athletics event did Dick Fosbury win Olympic gold in 1968 with his backward "Flop"?', NULL,
+        'High jump', ARRAY['Pole vault', 'Long jump', 'Triple jump', 'Hurdles', 'Steeplechase', 'Javelin'], 300);
 
 -- 400 points
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
@@ -324,8 +332,16 @@ INSERT INTO questions (question_number, game_mode, category, subcategory, factio
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPORTS', 'SPORTS_BATCH_1', NULL,
         'Which American swimmer won seven gold medals at the 1972 Munich Olympics?', NULL,
         'Mark Spitz', ARRAY['Matt Biondi', 'Johnny Weissmuller', 'Don Schollander', 'Gary Hall', 'John Naber', 'Ryan Lochte'], 400);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPORTS', 'ORIGINAL', NULL,
+        'Which Atlanta Braves slugger hit his record-breaking 715th career home run in April 1974?', NULL,
+        'Hank Aaron', ARRAY['Willie Mays', 'Mickey Mantle', 'Roberto Clemente', 'Frank Robinson', 'Harmon Killebrew', 'Reggie Jackson'], 400);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPORTS', 'ORIGINAL', NULL,
+        'Which tennis star won nine Wimbledon singles titles between 1978 and 1990?', NULL,
+        'Martina Navratilova', ARRAY['Chris Evert', 'Billie Jean King', 'Serena Williams', 'Margaret Court', 'Evonne Goolagong', 'Venus Williams'], 400);
 
 COMMIT;
 
--- Check: should return 76.
+-- Check: should return 80.
 SELECT COUNT(*) FROM questions WHERE game_mode = 'TRIVI_YEAH_II' AND category = 'SPORTS';

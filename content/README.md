@@ -54,6 +54,7 @@ This is what GitHub runs (`.github/workflows/build-content.yml`). It
 checks every spreadsheet and writes `content/sql/<category>.sql`. It
 stops on real problems (a missing tier, fewer than 3 wrong answers, two
 choices that are the same, a question that gives away its answer, a
+row whose cells slipped a column (text in the image column), a
 duplicate question) and gives a note on softer ones (the same answer used
 twice in a category).
 

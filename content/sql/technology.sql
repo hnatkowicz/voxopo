@@ -4,8 +4,8 @@
 -- Thinking Pants category TECHNOLOGY. To change a question, change the
 -- spreadsheet and rebuild.
 --
--- Replaces the WHOLE category with the spreadsheet's 66 live questions
--- (100: 19, 200: 15, 300: 15, 400: 17), inside a transaction. Safe to re-run.
+-- Replaces the WHOLE category with the spreadsheet's 80 live questions
+-- (100: 20, 200: 20, 300: 20, 400: 20), inside a transaction. Safe to re-run.
 -- ============================================================================
 
 BEGIN;
@@ -90,6 +90,10 @@ INSERT INTO questions (question_number, game_mode, category, subcategory, factio
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'TECHNOLOGY', 'TECHNOLOGY_BATCH_1', NULL,
         'Which 1980 arcade game stars a yellow circle that eats dots while dodging ghosts?', NULL,
         'Pac-Man', ARRAY['Space Invaders', 'Donkey Kong', 'Frogger', 'Galaga', 'Asteroids', 'Centipede'], 100);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'TECHNOLOGY', 'ORIGINAL', NULL,
+        'In the word "email," what does the "e" stand for?', NULL,
+        'Electronic', ARRAY['Easy', 'Express', 'External', 'Ethernet', 'Exchange', 'Encrypted'], 100);
 
 -- 200 points
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
@@ -152,6 +156,26 @@ INSERT INTO questions (question_number, game_mode, category, subcategory, factio
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'TECHNOLOGY', 'TECHNOLOGY_BATCH_1', NULL,
         'What is "phishing"?', NULL,
         'Tricking people into handing over passwords or personal details', ARRAY['Downloading music illegally', 'Secretly turning on a webcam', 'Flooding a website with traffic', 'Copying software without paying', 'Tracking people with cookies', 'Mining cryptocurrency on your computer'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'TECHNOLOGY', 'ORIGINAL', NULL,
+        'What does "CPU" stand for?', NULL,
+        'Central Processing Unit', ARRAY['Computer Processing Unit', 'Central Program Utility', 'Core Processing Unit', 'Central Power Unit', 'Computer Power Unit', 'Control Processing Unit'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'TECHNOLOGY', 'ORIGINAL', NULL,
+        'Which Scottish inventor gave the first public demonstration of a working television, in London in 1926?', NULL,
+        'John Logie Baird', ARRAY['Philo Farnsworth', 'Vladimir Zworykin', 'Alexander Graham Bell', 'Guglielmo Marconi', 'Thomas Edison', 'Robert Watson-Watt'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'TECHNOLOGY', 'ORIGINAL', NULL,
+        'Which word, from the Japanese for "picture" plus "character," names the little pictures like smiley faces that we send in texts?', NULL,
+        'Emoji', ARRAY['Emoticon', 'Sticker', 'GIF', 'Meme', 'Avatar', 'Icon'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'TECHNOLOGY', 'ORIGINAL', NULL,
+        'Which falling-block puzzle game did Soviet programmer Alexey Pajitnov create in 1984?', NULL,
+        'Tetris', ARRAY['Columns', 'Dr. Mario', 'Puyo Puyo', 'Lumines', 'Bejeweled', 'Klax'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'TECHNOLOGY', 'ORIGINAL', NULL,
+        'Which 2009 mobile game from Finland has players slingshot cartoon birds at egg-stealing pigs?', NULL,
+        'Angry Birds', ARRAY['Flappy Bird', 'Cut the Rope', 'Fruit Ninja', 'Candy Crush Saga', 'Doodle Jump', 'Temple Run'], 200);
 
 -- 300 points
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
@@ -214,6 +238,26 @@ INSERT INTO questions (question_number, game_mode, category, subcategory, factio
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'TECHNOLOGY', 'TECHNOLOGY_BATCH_1', NULL,
         'Which tech company is nicknamed "Big Blue"?', NULL,
         'IBM', ARRAY['Intel', 'Microsoft', 'HP', 'Dell', 'Cisco', 'Oracle'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'TECHNOLOGY', 'ORIGINAL', NULL,
+        'Which American founded Kodak and sold its first camera in 1888 with the slogan "You press the button, we do the rest"?', NULL,
+        'George Eastman', ARRAY['Edwin Land', 'Louis Daguerre', 'Thomas Edison', 'William Henry Fox Talbot', 'Joseph Nicephore Niepce', 'George Westinghouse'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'TECHNOLOGY', 'ORIGINAL', NULL,
+        'Which Scottish engineer greatly improved the steam engine and gave his name to a unit of power?', NULL,
+        'James Watt', ARRAY['Thomas Newcomen', 'George Stephenson', 'Richard Trevithick', 'Matthew Boulton', 'Robert Fulton', 'Isambard Kingdom Brunel'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'TECHNOLOGY', 'ORIGINAL', NULL,
+        'Which Japanese game company''s mascot is Sonic the Hedgehog?', NULL,
+        'Sega', ARRAY['Nintendo', 'Sony', 'Capcom', 'Namco', 'Konami', 'Taito'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'TECHNOLOGY', 'ORIGINAL', NULL,
+        'In a web address that starts with "https," what does the final "s" stand for?', NULL,
+        'Secure', ARRAY['Server', 'Standard', 'System', 'Site', 'Signed', 'Speed'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'TECHNOLOGY', 'ORIGINAL', NULL,
+        'Which Italian inventor shared the 1909 Nobel Prize in Physics for his work on wireless telegraphy, the forerunner of radio?', NULL,
+        'Guglielmo Marconi', ARRAY['Nikola Tesla', 'Heinrich Hertz', 'Alessandro Volta', 'Enrico Fermi', 'Antonio Meucci', 'Galileo Ferraris'], 300);
 
 -- 400 points
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
@@ -284,8 +328,20 @@ INSERT INTO questions (question_number, game_mode, category, subcategory, factio
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'TECHNOLOGY', 'TECHNOLOGY_BATCH_1', NULL,
         'Amazon was first incorporated in 1994 under which name, dropped because it sounded like ''cadaver''?', NULL,
         'Cadabra', ARRAY['Relentless', 'Bookshelf', 'BookStack', 'Bookworld', 'Zon', 'Bezos Books'], 400);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'TECHNOLOGY', 'ORIGINAL', NULL,
+        'In 1991, Cambridge University computer scientists pointed a camera at what, so they could check on it from their desks? It became famous as the first webcam.', NULL,
+        'A coffee pot', ARRAY['A fish tank', 'A parking lot', 'A printer', 'A vending machine', 'A pet rabbit', 'A bird feeder'], 400);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'TECHNOLOGY', 'ORIGINAL', NULL,
+        'Which programming language did Brendan Eich create in about 10 days at Netscape in 1995?', NULL,
+        'JavaScript', ARRAY['TypeScript', 'PHP', 'Perl', 'Ruby', 'ActionScript', 'CoffeeScript'], 400);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'TECHNOLOGY', 'ORIGINAL', NULL,
+        'In 1976, Steve Jobs''s new company sold its first computer, a bare circuit board, for what famously odd price?', NULL,
+        '$666.66', ARRAY['$999.99', '$500.00', '$1,000.00', '$777.77', '$1,234.56', '$299.99'], 400);
 
 COMMIT;
 
--- Check: should return 66.
+-- Check: should return 80.
 SELECT COUNT(*) FROM questions WHERE game_mode = 'TRIVI_YEAH_II' AND category = 'TECHNOLOGY';

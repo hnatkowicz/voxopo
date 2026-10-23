@@ -4,8 +4,8 @@
 -- Thinking Pants category FAMOUS_KNIGHTS. To change a question, change the
 -- spreadsheet and rebuild.
 --
--- Replaces the WHOLE category with the spreadsheet's 75 live questions
--- (100: 19, 200: 18, 300: 20, 400: 18), inside a transaction. Safe to re-run.
+-- Replaces the WHOLE category with the spreadsheet's 80 live questions
+-- (100: 20, 200: 20, 300: 20, 400: 20), inside a transaction. Safe to re-run.
 -- ============================================================================
 
 BEGIN;
@@ -90,6 +90,10 @@ INSERT INTO questions (question_number, game_mode, category, subcategory, factio
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'FAMOUS_KNIGHTS', 'FAMOUS_KNIGHTS_BATCH_1', NULL,
         'Which actor, later of "Baywatch," played crime-fighter Michael Knight alongside a talking car?', NULL,
         'David Hasselhoff', ARRAY['Tom Selleck', 'Lee Majors', 'Erik Estrada', 'Richard Dean Anderson', 'Don Johnson', 'Mr. T'], 100);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'FAMOUS_KNIGHTS', 'ORIGINAL', NULL,
+        'Which 1993 stop-motion film follows Jack Skellington, the Pumpkin King of Halloween Town?', NULL,
+        'The Nightmare Before Christmas', ARRAY['Corpse Bride', 'Coraline', 'Frankenweenie', 'James and the Giant Peach', 'Beetlejuice', 'ParaNorman'], 100);
 
 -- 200 points
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
@@ -164,6 +168,14 @@ INSERT INTO questions (question_number, game_mode, category, subcategory, factio
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'FAMOUS_KNIGHTS', 'FAMOUS_KNIGHTS_BATCH_1', NULL,
         'Which New Zealand beekeeper was knighted in 1953, weeks after he and Tenzing Norgay reached the top of Everest?', NULL,
         'Sir Edmund Hillary', ARRAY['Sir Ernest Shackleton', 'Sir Chris Bonington', 'Sir Ranulph Fiennes', 'Sir Francis Chichester', 'Sir Vivian Fuchs', 'Sir John Hunt'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'FAMOUS_KNIGHTS', 'ORIGINAL', NULL,
+        'Which director made "The Sixth Sense" (1999) and "Signs" (2002)?', NULL,
+        'M. Night Shyamalan', ARRAY['Christopher Nolan', 'Sam Raimi', 'Guillermo del Toro', 'Robert Zemeckis', 'Ron Howard', 'Darren Aronofsky'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'FAMOUS_KNIGHTS', 'ORIGINAL', NULL,
+        'Which 1980s NBC sitcom starred Harry Anderson as a judge working the late shift in a Manhattan courtroom?', NULL,
+        'Night Court', ARRAY['Barney Miller', 'Cheers', 'Taxi', 'Wings', 'Murphy Brown', 'Head of the Class'], 200);
 
 -- 300 points
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
@@ -320,8 +332,16 @@ INSERT INTO questions (question_number, game_mode, category, subcategory, factio
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'FAMOUS_KNIGHTS', 'FAMOUS_KNIGHTS_BATCH_1', NULL,
         'Who hosted NBC''s "Late Night" from 1982 to 1993 before moving to CBS?', NULL,
         'David Letterman', ARRAY['Conan O''Brien', 'Jay Leno', 'Johnny Carson', 'Arsenio Hall', 'Craig Kilborn', 'Jimmy Fallon'], 400);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'FAMOUS_KNIGHTS', 'ORIGINAL', NULL,
+        'In Malory''s "Le Morte d''Arthur," which knight, the purest of all, achieves the Holy Grail?', NULL,
+        'Sir Galahad', ARRAY['Sir Gawain', 'Sir Kay', 'Sir Gareth', 'Sir Tristan', 'Sir Lamorak', 'Sir Ywain'], 400);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'FAMOUS_KNIGHTS', 'ORIGINAL', NULL,
+        'Which 1934 F. Scott Fitzgerald novel takes its title from a line in Keats''s "Ode to a Nightingale"?', NULL,
+        'Tender Is the Night', ARRAY['The Great Gatsby', 'This Side of Paradise', 'The Beautiful and Damned', 'The Last Tycoon', 'The Sun Also Rises', 'A Farewell to Arms'], 400);
 
 COMMIT;
 
--- Check: should return 75.
+-- Check: should return 80.
 SELECT COUNT(*) FROM questions WHERE game_mode = 'TRIVI_YEAH_II' AND category = 'FAMOUS_KNIGHTS';
