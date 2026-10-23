@@ -71,8 +71,9 @@ anything already run is fine to run again.
 Every Thinking Pants **text** category: Art & Architecture, Astronomy &
 Space, College Athletics, Famous Firsts, Famous (K)nights, Fictional
 Locations, Food & Drink, Geography, Just in Time, Literature, Lyrics,
-Movies & TV, Music, Mythology, Science & Nature, Sports, Technology, Word
-Nerd and World History.
+Movies & TV, Music, Mythology, Science & Nature, Sports, Technology, Red,
+White & Who? (US history), War & Pieces (the World Wars), Word Nerd and
+World History.
 
 Plus one picture category, **Wish You Were Here** (`landmarks.csv`, Randy's
 landmark photos). Its rows start from `content/landmarks_source.py`, which

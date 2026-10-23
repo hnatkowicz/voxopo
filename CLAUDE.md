@@ -409,6 +409,18 @@ and forth until we both agree the idea is good **and** worth the effort. So:
   images in a spreadsheet. Logos: simple wordmarks and shapes, plus
   text-only logo trivia ("What animal is on the Ferrari logo?"); no Disney,
   sports leagues or Olympic rings, and never altered logos.
+- **Category depth (Randy, Oct 2026):** every text category has at least
+  20 questions per tier. The family's favorites are school subjects
+  (biology, astronomy, the World Wars, US history) and pop culture; new
+  categories get pun names. Queued after Red, White & Who? and War &
+  Pieces: **Biology**, then separate pop-culture categories (**Video
+  Games**, **Cartoons & Kids' TV**, **Pop Culture**: celebrities, viral
+  moments, slogans, toys).
+- **Wet Pants needs more water images** (15/17/19/20 per tier; 5 more
+  at 100, 3 at 200, 1 at 300). Randy is uploading them in batches and
+  especially wants more **rivers** (hard to plot) -- remind him. The
+  `-2` files in `public/water/` are second drawings of water already in
+  Wet Pants (Country Monkey uses them for other regions).
 - **Thinking Pants art:** a jeans mascot, "pants on fire" for a missed
   Doubler, a leg kick for a correct one, and gold pants spinning for the
   winner. "Answers in Your Pants" is a candidate name for the speed badge.
