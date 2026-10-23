@@ -10,8 +10,8 @@
 -- Thinking Pants category ART_AND_ARCHITECTURE. To change a question, change the
 -- spreadsheet and rebuild.
 --
--- Replaces the WHOLE category with the spreadsheet's 76 live questions
--- (100: 19, 200: 19, 300: 20, 400: 18), inside a transaction. Safe to re-run.
+-- Replaces the WHOLE category with the spreadsheet's 80 live questions
+-- (100: 20, 200: 20, 300: 20, 400: 20), inside a transaction. Safe to re-run.
 -- ============================================================================
 
 BEGIN;
@@ -96,6 +96,10 @@ INSERT INTO questions (question_number, game_mode, category, subcategory, factio
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'ART_AND_ARCHITECTURE', 'ART_AND_ARCHITECTURE_BATCH_1', NULL,
         'Which prehistoric stone circle stands on Salisbury Plain in England?', NULL,
         'Stonehenge', ARRAY['Avebury', 'Hadrian''s Wall', 'The Callanish Stones', 'The Carnac Stones', 'Skara Brae', 'Newgrange'], 100);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'ART_AND_ARCHITECTURE', 'ORIGINAL', NULL,
+        'Which young biblical hero, shown about to face Goliath, is the subject of Florence''s most famous marble statue?', NULL,
+        'David', ARRAY['Moses', 'Samson', 'Joshua', 'Solomon', 'Saul', 'Gideon'], 100);
 
 -- 200 points
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
@@ -174,6 +178,10 @@ INSERT INTO questions (question_number, game_mode, category, subcategory, factio
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'ART_AND_ARCHITECTURE', 'ART_AND_ARCHITECTURE_BATCH_1', NULL,
         'Which great temple to Athena, finished in the 430s BC, crowns the Acropolis of Athens?', NULL,
         'The Parthenon', ARRAY['The Pantheon', 'The Temple of Olympian Zeus', 'The Temple of Hephaestus', 'The Temple of Apollo', 'The Temple of Poseidon', 'The Temple of Artemis'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'ART_AND_ARCHITECTURE', 'ORIGINAL', NULL,
+        'Which Renaissance painter created "The School of Athens," with Plato and Aristotle at its center, in the Vatican?', NULL,
+        'Raphael', ARRAY['Michelangelo', 'Leonardo da Vinci', 'Titian', 'Sandro Botticelli', 'Caravaggio', 'Giotto'], 200);
 
 -- 300 points
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
@@ -330,10 +338,18 @@ INSERT INTO questions (question_number, game_mode, category, subcategory, factio
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'ART_AND_ARCHITECTURE', 'ART_AND_ARCHITECTURE_BATCH_1', NULL,
         'China''s Terracotta Army, thousands of life-size clay soldiers, was buried to guard the tomb of which ruler?', NULL,
         'Qin Shi Huang', ARRAY['Kublai Khan', 'Genghis Khan', 'Emperor Wu of Han', 'Emperor Taizong of Tang', 'The Yongle Emperor', 'Puyi'], 400);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'ART_AND_ARCHITECTURE', 'ORIGINAL', NULL,
+        'Which Flemish painter created "The Arnolfini Portrait" of 1434, with its tiny reflection in a convex mirror?', NULL,
+        'Jan van Eyck', ARRAY['Rogier van der Weyden', 'Hans Memling', 'Pieter Bruegel the Elder', 'Robert Campin', 'Peter Paul Rubens', 'Petrus Christus'], 400);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'ART_AND_ARCHITECTURE', 'ORIGINAL', NULL,
+        'Which British sculptor created the "Angel of the North," the giant steel winged figure that has stood beside the A1 at Gateshead since 1998?', NULL,
+        'Antony Gormley', ARRAY['Henry Moore', 'Anish Kapoor', 'Damien Hirst', 'Barbara Hepworth', 'Rachel Whiteread', 'Andy Goldsworthy'], 400);
 
 COMMIT;
 
--- Check: should return 76.
+-- Check: should return 80.
 SELECT COUNT(*) FROM questions WHERE game_mode = 'TRIVI_YEAH_II' AND category = 'ART_AND_ARCHITECTURE';
 
 -- ============================================================================
@@ -342,8 +358,8 @@ SELECT COUNT(*) FROM questions WHERE game_mode = 'TRIVI_YEAH_II' AND category = 
 -- Thinking Pants category ASTRONOMY_SPACE. To change a question, change the
 -- spreadsheet and rebuild.
 --
--- Replaces the WHOLE category with the spreadsheet's 64 live questions
--- (100: 15, 200: 18, 300: 16, 400: 15), inside a transaction. Safe to re-run.
+-- Replaces the WHOLE category with the spreadsheet's 80 live questions
+-- (100: 20, 200: 20, 300: 20, 400: 20), inside a transaction. Safe to re-run.
 -- ============================================================================
 
 BEGIN;
@@ -412,6 +428,26 @@ INSERT INTO questions (question_number, game_mode, category, subcategory, factio
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'ASTRONOMY_SPACE', 'ASTRONOMY_SPACE_BATCH_1', NULL,
         'What name is given to the theory that the universe began expanding from a hot, dense state about 13.8 billion years ago?', NULL,
         'The Big Bang', ARRAY['The Steady State theory', 'The Big Crunch', 'The Nebular hypothesis', 'The Big Freeze', 'String theory', 'The Oscillating universe'], 100);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'ASTRONOMY_SPACE', 'ORIGINAL', NULL,
+        'What kind of object is the Sun?', NULL,
+        'A star', ARRAY['A planet', 'A comet', 'A moon', 'A nebula', 'A galaxy', 'An asteroid'], 100);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'ASTRONOMY_SPACE', 'ORIGINAL', NULL,
+        'What do we call it when the Moon passes between the Sun and Earth and blocks out the Sun''s light?', NULL,
+        'A solar eclipse', ARRAY['A lunar eclipse', 'An equinox', 'A solstice', 'A meteor shower', 'A supermoon', 'A blue moon'], 100);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'ASTRONOMY_SPACE', 'ORIGINAL', NULL,
+        'About how long does Earth take to travel once around the Sun?', NULL,
+        'About 365 days', ARRAY['About 24 hours', 'About 7 days', 'About 28 days', 'About 100 days', 'About 500 days', 'About 1,000 days'], 100);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'ASTRONOMY_SPACE', 'ORIGINAL', NULL,
+        'When the whole face of the Moon that we see is lit up by the Sun, what phase is it?', NULL,
+        'A full moon', ARRAY['A new moon', 'A waxing crescent', 'A first quarter moon', 'A waxing gibbous', 'A last quarter moon', 'A waning crescent'], 100);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'ASTRONOMY_SPACE', 'ORIGINAL', NULL,
+        'What are the bowl-shaped dents on the Moon''s surface, made by space rocks crashing into it, called?', NULL,
+        'Craters', ARRAY['Volcanoes', 'Canyons', 'Sinkholes', 'Geysers', 'Trenches', 'Dunes'], 100);
 
 -- 200 points
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
@@ -486,6 +522,14 @@ INSERT INTO questions (question_number, game_mode, category, subcategory, factio
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'ASTRONOMY_SPACE', 'ASTRONOMY_SPACE_BATCH_1', NULL,
         'What is the distance light travels in one year called?', NULL,
         'A light-year', ARRAY['A parsec', 'An astronomical unit', 'A light-second', 'A solar year', 'A galactic unit', 'A radian'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'ASTRONOMY_SPACE', 'ORIGINAL', NULL,
+        'Which star sits almost directly above Earth''s North Pole, so it barely seems to move and has guided navigators for centuries?', NULL,
+        'Polaris', ARRAY['Sirius', 'Vega', 'Betelgeuse', 'Arcturus', 'Rigel', 'Aldebaran'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'ASTRONOMY_SPACE', 'ORIGINAL', NULL,
+        'What are the darker, cooler patches that come and go on the surface of our star called?', NULL,
+        'Sunspots', ARRAY['Solar flares', 'Prominences', 'Granules', 'Faculae', 'Coronal mass ejections', 'Spicules'], 200);
 
 -- 300 points
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
@@ -552,6 +596,22 @@ INSERT INTO questions (question_number, game_mode, category, subcategory, factio
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'ASTRONOMY_SPACE', 'ASTRONOMY_SPACE_BATCH_1', NULL,
         'Which Italian astronomer was tried by the Inquisition in 1633 for backing a Sun-centered universe?', NULL,
         'Galileo Galilei', ARRAY['Giordano Bruno', 'Johannes Kepler', 'Tycho Brahe', 'Giovanni Cassini', 'Leonardo da Vinci', 'Ptolemy'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'ASTRONOMY_SPACE', 'ORIGINAL', NULL,
+        'What is the nearest large spiral galaxy to our own, visible to the naked eye from a dark site?', NULL,
+        'Andromeda', ARRAY['The Whirlpool Galaxy', 'The Sombrero Galaxy', 'The Pinwheel Galaxy', 'Centaurus A', 'The Cartwheel Galaxy', 'The Black Eye Galaxy'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'ASTRONOMY_SPACE', 'ORIGINAL', NULL,
+        'Which car-sized NASA rover landed in Gale Crater in August 2012?', NULL,
+        'Curiosity', ARRAY['Perseverance', 'Opportunity', 'Spirit', 'Sojourner', 'Zhurong', 'Rosalind Franklin'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'ASTRONOMY_SPACE', 'ORIGINAL', NULL,
+        'Which two gases make up almost all of the Sun?', NULL,
+        'Hydrogen and helium', ARRAY['Oxygen and nitrogen', 'Hydrogen and oxygen', 'Helium and neon', 'Carbon and oxygen', 'Nitrogen and argon', 'Methane and ammonia'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'ASTRONOMY_SPACE', 'ORIGINAL', NULL,
+        'Which star cluster in the constellation Taurus is also known as the Seven Sisters?', NULL,
+        'The Pleiades', ARRAY['The Hyades', 'The Beehive Cluster', 'Omega Centauri', 'The Jewel Box', 'The Double Cluster', 'The Wild Duck Cluster'], 300);
 
 -- 400 points
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
@@ -614,10 +674,30 @@ INSERT INTO questions (question_number, game_mode, category, subcategory, factio
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'ASTRONOMY_SPACE', 'ASTRONOMY_SPACE_BATCH_1', NULL,
         'Which astronaut, America''s first in space, later hit golf balls on the Moon?', NULL,
         'Alan Shepard', ARRAY['John Glenn', 'Gus Grissom', 'Pete Conrad', 'Buzz Aldrin', 'Edgar Mitchell', 'Gordon Cooper'], 400);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'ASTRONOMY_SPACE', 'ORIGINAL', NULL,
+        'Which dwarf planet, found in 2005 and named after the Greek goddess of strife, sparked the 2006 vote that redefined what counts as a planet?', NULL,
+        'Eris', ARRAY['Haumea', 'Makemake', 'Sedna', 'Ceres', 'Quaoar', 'Gonggong'], 400);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'ASTRONOMY_SPACE', 'ORIGINAL', NULL,
+        'What is the name of the enormous canyon system on the Red Planet, about 4,000 km long?', NULL,
+        'Valles Marineris', ARRAY['Hellas Planitia', 'Tharsis Rise', 'Utopia Planitia', 'Elysium Planitia', 'Gale Crater', 'Ithaca Chasma'], 400);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'ASTRONOMY_SPACE', 'ORIGINAL', NULL,
+        'Which large moon orbits its planet backwards, opposite to the planet''s spin, and was probably captured from farther out?', NULL,
+        'Triton', ARRAY['Titan', 'Ganymede', 'Callisto', 'Europa', 'Charon', 'Oberon'], 400);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'ASTRONOMY_SPACE', 'ORIGINAL', NULL,
+        'Which European spacecraft sent its lander Philae down onto a comet in 2014?', NULL,
+        'Rosetta', ARRAY['Giotto', 'Huygens', 'Deep Impact', 'Stardust', 'Mars Express', 'Venus Express'], 400);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'ASTRONOMY_SPACE', 'ORIGINAL', NULL,
+        'After it swells into a red giant, what will our Sun finally become?', NULL,
+        'A white dwarf', ARRAY['A black hole', 'A neutron star', 'A pulsar', 'A brown dwarf', 'A quasar', 'A magnetar'], 400);
 
 COMMIT;
 
--- Check: should return 64.
+-- Check: should return 80.
 SELECT COUNT(*) FROM questions WHERE game_mode = 'TRIVI_YEAH_II' AND category = 'ASTRONOMY_SPACE';
 
 -- ============================================================================
@@ -1134,8 +1214,8 @@ SELECT COUNT(*) FROM questions WHERE game_mode = 'TRIVI_YEAH_II' AND category = 
 -- Thinking Pants category FAMOUS_FIRSTS. To change a question, change the
 -- spreadsheet and rebuild.
 --
--- Replaces the WHOLE category with the spreadsheet's 64 live questions
--- (100: 14, 200: 14, 300: 17, 400: 19), inside a transaction. Safe to re-run.
+-- Replaces the WHOLE category with the spreadsheet's 80 live questions
+-- (100: 20, 200: 20, 300: 20, 400: 20), inside a transaction. Safe to re-run.
 -- ============================================================================
 
 BEGIN;
@@ -1200,6 +1280,30 @@ INSERT INTO questions (question_number, game_mode, category, subcategory, factio
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'FAMOUS_FIRSTS', 'FAMOUS_FIRSTS_BATCH_1', NULL,
         'Which Disney character made his official debut in the 1928 cartoon "Steamboat Willie"?', NULL,
         'Mickey Mouse', ARRAY['Donald Duck', 'Goofy', 'Pluto', 'Oswald the Lucky Rabbit', 'Felix the Cat', 'Daisy Duck'], 100);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'FAMOUS_FIRSTS', 'ORIGINAL', NULL,
+        'Which superhero first appeared in Action Comics #1, in 1938?', NULL,
+        'Superman', ARRAY['Batman', 'Wonder Woman', 'Captain America', 'The Flash', 'Green Lantern', 'Captain Marvel'], 100);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'FAMOUS_FIRSTS', 'ORIGINAL', NULL,
+        'What was the first Disney theme park, opened in 1955?', NULL,
+        'Disneyland', ARRAY['Magic Kingdom', 'Epcot', 'Tokyo Disneyland', 'Disneyland Paris', 'Disney California Adventure', 'Disney''s Hollywood Studios'], 100);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'FAMOUS_FIRSTS', 'ORIGINAL', NULL,
+        'In 2021, who became the first woman to serve as Vice President of the United States?', NULL,
+        'Kamala Harris', ARRAY['Hillary Clinton', 'Nancy Pelosi', 'Geraldine Ferraro', 'Sarah Palin', 'Condoleezza Rice', 'Michelle Obama'], 100);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'FAMOUS_FIRSTS', 'ORIGINAL', NULL,
+        'What subtitle was later given to the first Star Wars film, released in 1977?', NULL,
+        'A New Hope', ARRAY['The Empire Strikes Back', 'Return of the Jedi', 'Revenge of the Sith', 'Attack of the Clones', 'The Force Awakens', 'Rogue One'], 100);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'FAMOUS_FIRSTS', 'ORIGINAL', NULL,
+        'Who became the first U.S. President to resign from office, in 1974?', NULL,
+        'Richard Nixon', ARRAY['Gerald Ford', 'Lyndon B. Johnson', 'Andrew Johnson', 'Jimmy Carter', 'Bill Clinton', 'Ronald Reagan'], 100);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'FAMOUS_FIRSTS', 'ORIGINAL', NULL,
+        'What is the first book of the Bible?', NULL,
+        'Genesis', ARRAY['Exodus', 'Leviticus', 'Numbers', 'Deuteronomy', 'Psalms', 'Matthew'], 100);
 
 -- 200 points
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
@@ -1258,6 +1362,30 @@ INSERT INTO questions (question_number, game_mode, category, subcategory, factio
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'FAMOUS_FIRSTS', 'FAMOUS_FIRSTS_BATCH_1', NULL,
         'Who was the first woman to serve on the U.S. Supreme Court, appointed in 1981?', NULL,
         'Sandra Day O''Connor', ARRAY['Ruth Bader Ginsburg', 'Sonia Sotomayor', 'Elena Kagan', 'Harriet Miers', 'Amy Coney Barrett', 'Janet Reno'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'FAMOUS_FIRSTS', 'ORIGINAL', NULL,
+        'Which team won the first Super Bowl, in January 1967?', NULL,
+        'The Green Bay Packers', ARRAY['The Kansas City Chiefs', 'The Dallas Cowboys', 'The New York Jets', 'The Baltimore Colts', 'The Oakland Raiders', 'The Cleveland Browns'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'FAMOUS_FIRSTS', 'ORIGINAL', NULL,
+        'Which country issued the world''s first adhesive postage stamp, the Penny Black, in 1840?', NULL,
+        'The United Kingdom', ARRAY['France', 'The United States', 'Switzerland', 'Brazil', 'Germany', 'Austria'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'FAMOUS_FIRSTS', 'ORIGINAL', NULL,
+        'Which Ford car, starting in 1913, was the first to be built on a moving assembly line?', NULL,
+        'The Model T', ARRAY['The Model A', 'The Mustang', 'The Thunderbird', 'The Model N', 'The Model K', 'The Edsel'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'FAMOUS_FIRSTS', 'ORIGINAL', NULL,
+        'In 2007, who became the first woman to serve as Speaker of the U.S. House of Representatives?', NULL,
+        'Nancy Pelosi', ARRAY['Hillary Clinton', 'Madeleine Albright', 'Dianne Feinstein', 'Condoleezza Rice', 'Geraldine Ferraro', 'Barbara Boxer'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'FAMOUS_FIRSTS', 'ORIGINAL', NULL,
+        'In 1800, who became the first President to live in the White House?', NULL,
+        'John Adams', ARRAY['George Washington', 'Thomas Jefferson', 'James Madison', 'James Monroe', 'John Quincy Adams', 'Andrew Jackson'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'FAMOUS_FIRSTS', 'ORIGINAL', NULL,
+        'Which Pokémon is number one in the National Pokédex?', NULL,
+        'Bulbasaur', ARRAY['Pikachu', 'Charmander', 'Squirtle', 'Ivysaur', 'Mew', 'Jigglypuff'], 200);
 
 -- 300 points
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
@@ -1328,6 +1456,18 @@ INSERT INTO questions (question_number, game_mode, category, subcategory, factio
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'FAMOUS_FIRSTS', 'FAMOUS_FIRSTS_BATCH_1', NULL,
         'Which American test pilot was the first officially credited with flying faster than sound, in 1947?', NULL,
         'Chuck Yeager', ARRAY['Scott Crossfield', 'Howard Hughes', 'John Glenn', 'Bob Hoover', 'Jacqueline Cochran', 'Wiley Post'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'FAMOUS_FIRSTS', 'ORIGINAL', NULL,
+        'In 1962, NASA''s Mariner 2 made the first successful flyby of another planet. Which one?', NULL,
+        'Venus', ARRAY['Mars', 'Mercury', 'Jupiter', 'Saturn', 'Uranus', 'Neptune'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'FAMOUS_FIRSTS', 'ORIGINAL', NULL,
+        'In 1968, who became the first Black woman elected to the U.S. Congress?', NULL,
+        'Shirley Chisholm', ARRAY['Barbara Jordan', 'Yvonne Brathwaite Burke', 'Carol Moseley Braun', 'Fannie Lou Hamer', 'Coretta Scott King', 'Maxine Waters'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'FAMOUS_FIRSTS', 'ORIGINAL', NULL,
+        'Which city opened the world''s first underground railway, in 1863?', NULL,
+        'London', ARRAY['Paris', 'New York', 'Boston', 'Budapest', 'Glasgow', 'Berlin'], 300);
 
 -- 400 points
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
@@ -1406,10 +1546,14 @@ INSERT INTO questions (question_number, game_mode, category, subcategory, factio
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'FAMOUS_FIRSTS', 'FAMOUS_FIRSTS_BATCH_1', NULL,
         'In 2012, which spacecraft became the first human-made object to enter interstellar space?', NULL,
         'Voyager 1', ARRAY['Voyager 2', 'Pioneer 10', 'Pioneer 11', 'New Horizons', 'Cassini', 'Galileo'], 400);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'FAMOUS_FIRSTS', 'ORIGINAL', NULL,
+        'In 1975, who became the first woman to reach the summit of Mount Everest?', NULL,
+        'Junko Tabei', ARRAY['Wanda Rutkiewicz', 'Stacy Allison', 'Bachendri Pal', 'Alison Hargreaves', 'Lydia Bradey', 'Arlene Blum'], 400);
 
 COMMIT;
 
--- Check: should return 64.
+-- Check: should return 80.
 SELECT COUNT(*) FROM questions WHERE game_mode = 'TRIVI_YEAH_II' AND category = 'FAMOUS_FIRSTS';
 
 -- ============================================================================
@@ -1418,8 +1562,8 @@ SELECT COUNT(*) FROM questions WHERE game_mode = 'TRIVI_YEAH_II' AND category = 
 -- Thinking Pants category FAMOUS_KNIGHTS. To change a question, change the
 -- spreadsheet and rebuild.
 --
--- Replaces the WHOLE category with the spreadsheet's 75 live questions
--- (100: 19, 200: 18, 300: 20, 400: 18), inside a transaction. Safe to re-run.
+-- Replaces the WHOLE category with the spreadsheet's 80 live questions
+-- (100: 20, 200: 20, 300: 20, 400: 20), inside a transaction. Safe to re-run.
 -- ============================================================================
 
 BEGIN;
@@ -1504,6 +1648,10 @@ INSERT INTO questions (question_number, game_mode, category, subcategory, factio
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'FAMOUS_KNIGHTS', 'FAMOUS_KNIGHTS_BATCH_1', NULL,
         'Which actor, later of "Baywatch," played crime-fighter Michael Knight alongside a talking car?', NULL,
         'David Hasselhoff', ARRAY['Tom Selleck', 'Lee Majors', 'Erik Estrada', 'Richard Dean Anderson', 'Don Johnson', 'Mr. T'], 100);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'FAMOUS_KNIGHTS', 'ORIGINAL', NULL,
+        'Which 1993 stop-motion film follows Jack Skellington, the Pumpkin King of Halloween Town?', NULL,
+        'The Nightmare Before Christmas', ARRAY['Corpse Bride', 'Coraline', 'Frankenweenie', 'James and the Giant Peach', 'Beetlejuice', 'ParaNorman'], 100);
 
 -- 200 points
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
@@ -1578,6 +1726,14 @@ INSERT INTO questions (question_number, game_mode, category, subcategory, factio
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'FAMOUS_KNIGHTS', 'FAMOUS_KNIGHTS_BATCH_1', NULL,
         'Which New Zealand beekeeper was knighted in 1953, weeks after he and Tenzing Norgay reached the top of Everest?', NULL,
         'Sir Edmund Hillary', ARRAY['Sir Ernest Shackleton', 'Sir Chris Bonington', 'Sir Ranulph Fiennes', 'Sir Francis Chichester', 'Sir Vivian Fuchs', 'Sir John Hunt'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'FAMOUS_KNIGHTS', 'ORIGINAL', NULL,
+        'Which director made "The Sixth Sense" (1999) and "Signs" (2002)?', NULL,
+        'M. Night Shyamalan', ARRAY['Christopher Nolan', 'Sam Raimi', 'Guillermo del Toro', 'Robert Zemeckis', 'Ron Howard', 'Darren Aronofsky'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'FAMOUS_KNIGHTS', 'ORIGINAL', NULL,
+        'Which 1980s NBC sitcom starred Harry Anderson as a judge working the late shift in a Manhattan courtroom?', NULL,
+        'Night Court', ARRAY['Barney Miller', 'Cheers', 'Taxi', 'Wings', 'Murphy Brown', 'Head of the Class'], 200);
 
 -- 300 points
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
@@ -1734,10 +1890,18 @@ INSERT INTO questions (question_number, game_mode, category, subcategory, factio
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'FAMOUS_KNIGHTS', 'FAMOUS_KNIGHTS_BATCH_1', NULL,
         'Who hosted NBC''s "Late Night" from 1982 to 1993 before moving to CBS?', NULL,
         'David Letterman', ARRAY['Conan O''Brien', 'Jay Leno', 'Johnny Carson', 'Arsenio Hall', 'Craig Kilborn', 'Jimmy Fallon'], 400);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'FAMOUS_KNIGHTS', 'ORIGINAL', NULL,
+        'In Malory''s "Le Morte d''Arthur," which knight, the purest of all, achieves the Holy Grail?', NULL,
+        'Sir Galahad', ARRAY['Sir Gawain', 'Sir Kay', 'Sir Gareth', 'Sir Tristan', 'Sir Lamorak', 'Sir Ywain'], 400);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'FAMOUS_KNIGHTS', 'ORIGINAL', NULL,
+        'Which 1934 F. Scott Fitzgerald novel takes its title from a line in Keats''s "Ode to a Nightingale"?', NULL,
+        'Tender Is the Night', ARRAY['The Great Gatsby', 'This Side of Paradise', 'The Beautiful and Damned', 'The Last Tycoon', 'The Sun Also Rises', 'A Farewell to Arms'], 400);
 
 COMMIT;
 
--- Check: should return 75.
+-- Check: should return 80.
 SELECT COUNT(*) FROM questions WHERE game_mode = 'TRIVI_YEAH_II' AND category = 'FAMOUS_KNIGHTS';
 
 -- ============================================================================
@@ -1746,8 +1910,8 @@ SELECT COUNT(*) FROM questions WHERE game_mode = 'TRIVI_YEAH_II' AND category = 
 -- Thinking Pants category FICTIONAL_LOCATIONS. To change a question, change the
 -- spreadsheet and rebuild.
 --
--- Replaces the WHOLE category with the spreadsheet's 75 live questions
--- (100: 19, 200: 18, 300: 19, 400: 19), inside a transaction. Safe to re-run.
+-- Replaces the WHOLE category with the spreadsheet's 80 live questions
+-- (100: 20, 200: 20, 300: 20, 400: 20), inside a transaction. Safe to re-run.
 -- ============================================================================
 
 BEGIN;
@@ -1832,6 +1996,10 @@ INSERT INTO questions (question_number, game_mode, category, subcategory, factio
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'FICTIONAL_LOCATIONS', 'FICTIONAL_LOCATIONS_BATCH_1', NULL,
         'In "Monsters, Inc.," what is the name of the monsters'' city?', NULL,
         'Monstropolis', ARRAY['Monster Island', 'Scaretown', 'Zootopia', 'Halloween Town', 'Fearville', 'Ghoulsburg'], 100);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'FICTIONAL_LOCATIONS', 'ORIGINAL', NULL,
+        'In "The Wizard of Oz," what does Dorothy follow to find the Wizard?', NULL,
+        'The Yellow Brick Road', ARRAY['The Rainbow Road', 'The Golden Highway', 'The Silver Path', 'The Ruby Trail', 'The Cobblestone Lane', 'The Poppy Path'], 100);
 
 -- 200 points
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
@@ -1906,6 +2074,14 @@ INSERT INTO questions (question_number, game_mode, category, subcategory, factio
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'FICTIONAL_LOCATIONS', 'FICTIONAL_LOCATIONS_BATCH_1', NULL,
         'In Pixar''s "Cars," in which Route 66 town does Lightning McQueen get stranded?', NULL,
         'Radiator Springs', ARRAY['Thunder Hollow', 'Monstropolis', 'Tailpipe Town', 'Motor City', 'Hubcap Hill', 'Gasket Gulch'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'FICTIONAL_LOCATIONS', 'ORIGINAL', NULL,
+        'In "Toy Story," which space-themed restaurant has a claw machine full of squeaky toy aliens?', NULL,
+        'Pizza Planet', ARRAY['Galaxy Grill', 'Rocket Diner', 'Cosmic Cafe', 'Astro Burger', 'Moon Base Pizzeria', 'Space Station Subs'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'FICTIONAL_LOCATIONS', 'ORIGINAL', NULL,
+        'In Harry Potter, what is Britain''s only all-wizarding village, which Hogwarts students visit on weekend trips?', NULL,
+        'Hogsmeade', ARRAY['Godric''s Hollow', 'Little Whinging', 'Ottery St Catchpole', 'Little Hangleton', 'Knockturn Alley', 'Tinworth'], 200);
 
 -- 300 points
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
@@ -1984,6 +2160,10 @@ INSERT INTO questions (question_number, game_mode, category, subcategory, factio
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'FICTIONAL_LOCATIONS', 'FICTIONAL_LOCATIONS_BATCH_1', NULL,
         'In "The Shining," what is the name of the snowbound Colorado hotel?', NULL,
         'The Overlook Hotel', ARRAY['The Bates Motel', 'The Grand Budapest Hotel', 'The Continental', 'Fawlty Towers', 'The Hotel Cortez', 'The Timberline Lodge'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'FICTIONAL_LOCATIONS', 'ORIGINAL', NULL,
+        'In "Parks and Recreation," which Indiana town does Leslie Knope serve?', NULL,
+        'Pawnee', ARRAY['Eagleton', 'Hawkins', 'Stars Hollow', 'Mayberry', 'Bluebell', 'Hill Valley'], 300);
 
 -- 400 points
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
@@ -2062,10 +2242,14 @@ INSERT INTO questions (question_number, game_mode, category, subcategory, factio
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'FICTIONAL_LOCATIONS', 'FICTIONAL_LOCATIONS_BATCH_1', NULL,
         'In which fictional Illinois suburb are many John Hughes films, including "The Breakfast Club," set?', NULL,
         'Shermer', ARRAY['Hill Valley', 'Hawkins', 'Haddonfield', 'Pleasantville', 'Springwood', 'Bedford Falls'], 400);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'FICTIONAL_LOCATIONS', 'ORIGINAL', NULL,
+        'Which English village is home to Agatha Christie''s elderly detective Miss Marple?', NULL,
+        'St. Mary Mead', ARRAY['King''s Abbot', 'Market Basing', 'Causton', 'Ambridge', 'Little Whinging', 'Badger''s Drift'], 400);
 
 COMMIT;
 
--- Check: should return 75.
+-- Check: should return 80.
 SELECT COUNT(*) FROM questions WHERE game_mode = 'TRIVI_YEAH_II' AND category = 'FICTIONAL_LOCATIONS';
 
 -- ============================================================================
@@ -2074,8 +2258,8 @@ SELECT COUNT(*) FROM questions WHERE game_mode = 'TRIVI_YEAH_II' AND category = 
 -- Thinking Pants category FOOD_AND_DRINK. To change a question, change the
 -- spreadsheet and rebuild.
 --
--- Replaces the WHOLE category with the spreadsheet's 70 live questions
--- (100: 17, 200: 19, 300: 18, 400: 16), inside a transaction. Safe to re-run.
+-- Replaces the WHOLE category with the spreadsheet's 80 live questions
+-- (100: 20, 200: 20, 300: 20, 400: 20), inside a transaction. Safe to re-run.
 -- ============================================================================
 
 BEGIN;
@@ -2152,6 +2336,18 @@ INSERT INTO questions (question_number, game_mode, category, subcategory, factio
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'FOOD_AND_DRINK', 'FOOD_AND_DRINK_BATCH_1', NULL,
         'What do Americans call the vegetable the British call an aubergine?', NULL,
         'Eggplant', ARRAY['Zucchini', 'Squash', 'Bell pepper', 'Cucumber', 'Okra', 'Sweet potato'], 100);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'FOOD_AND_DRINK', 'ORIGINAL', NULL,
+        'Which breakfast food is cooked in a hinged iron that presses a grid pattern into the batter?', NULL,
+        'Waffles', ARRAY['Pancakes', 'Crepes', 'French toast', 'Crumpets', 'Muffins', 'Scones'], 100);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'FOOD_AND_DRINK', 'ORIGINAL', NULL,
+        'Besides cocoa, which nut gives the spread Nutella its flavor?', NULL,
+        'Hazelnuts', ARRAY['Almonds', 'Peanuts', 'Walnuts', 'Cashews', 'Pecans', 'Macadamias'], 100);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'FOOD_AND_DRINK', 'ORIGINAL', NULL,
+        'Which country produces most of the world''s maple syrup?', NULL,
+        'Canada', ARRAY['The United States', 'Sweden', 'Norway', 'Finland', 'Russia', 'Switzerland'], 100);
 
 -- 200 points
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
@@ -2230,6 +2426,10 @@ INSERT INTO questions (question_number, game_mode, category, subcategory, factio
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'FOOD_AND_DRINK', 'FOOD_AND_DRINK_BATCH_1', NULL,
         'In a restaurant, what is a sommelier''s job?', NULL,
         'Choosing and serving the wine', ARRAY['Baking the bread', 'Plating the desserts', 'Seating the guests', 'Running the cheese board', 'Handling the bill', 'Making the coffee'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'FOOD_AND_DRINK', 'ORIGINAL', NULL,
+        'Which creamy Italian rice dish is made by stirring in hot broth a ladle at a time?', NULL,
+        'Risotto', ARRAY['Paella', 'Pilaf', 'Biryani', 'Arancini', 'Jambalaya', 'Congee'], 200);
 
 -- 300 points
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
@@ -2304,6 +2504,14 @@ INSERT INTO questions (question_number, game_mode, category, subcategory, factio
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'FOOD_AND_DRINK', 'FOOD_AND_DRINK_BATCH_1', NULL,
         'Which spice is the dried inner bark of a tree?', NULL,
         'Cinnamon', ARRAY['Nutmeg', 'Allspice', 'Ginger', 'Mace', 'Star anise', 'Bay leaf'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'FOOD_AND_DRINK', 'ORIGINAL', NULL,
+        'Which Japanese noodles are made mainly from buckwheat flour?', NULL,
+        'Soba', ARRAY['Udon', 'Ramen', 'Somen', 'Shirataki', 'Rice vermicelli', 'Glass noodles'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'FOOD_AND_DRINK', 'ORIGINAL', NULL,
+        'What is the name of the cylindrical clay oven in which naan is traditionally baked?', NULL,
+        'Tandoor', ARRAY['Tawa', 'Karahi', 'Handi', 'Chulha', 'Sigri', 'Degchi'], 300);
 
 -- 400 points
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
@@ -2370,10 +2578,26 @@ INSERT INTO questions (question_number, game_mode, category, subcategory, factio
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'FOOD_AND_DRINK', 'FOOD_AND_DRINK_BATCH_1', NULL,
         'What is the French name for flour cooked in fat, used to thicken sauces like gravy and bechamel?', NULL,
         'Roux', ARRAY['Slurry', 'Liaison', 'Mirepoix', 'Bouquet garni', 'Fond', 'Duxelles'], 400);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'FOOD_AND_DRINK', 'ORIGINAL', NULL,
+        'Which prized Spanish cured ham comes from black pigs that fatten on acorns in oak forests?', NULL,
+        'Jamon iberico', ARRAY['Jamon serrano', 'Prosciutto di Parma', 'Speck', 'Bayonne ham', 'Black Forest ham', 'Westphalian ham'], 400);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'FOOD_AND_DRINK', 'ORIGINAL', NULL,
+        'Which sweet Hungarian dessert wine is made from grapes shriveled by "noble rot"?', NULL,
+        'Tokaji', ARRAY['Sauternes', 'Ice wine', 'Marsala', 'Madeira', 'Retsina', 'Bull''s Blood'], 400);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'FOOD_AND_DRINK', 'ORIGINAL', NULL,
+        'Which spice from the ginger family is sold as small green pods and flavors Indian chai and Scandinavian sweet buns?', NULL,
+        'Cardamom', ARRAY['Fenugreek', 'Coriander', 'Cumin', 'Fennel seed', 'Star anise', 'Allspice'], 400);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'FOOD_AND_DRINK', 'ORIGINAL', NULL,
+        'Which Scottish soup is made from smoked haddock, potatoes and onions?', NULL,
+        'Cullen skink', ARRAY['Cock-a-leekie', 'Scotch broth', 'Partan bree', 'Bouillabaisse', 'Clam chowder', 'Mulligatawny'], 400);
 
 COMMIT;
 
--- Check: should return 70.
+-- Check: should return 80.
 SELECT COUNT(*) FROM questions WHERE game_mode = 'TRIVI_YEAH_II' AND category = 'FOOD_AND_DRINK';
 
 -- ============================================================================
@@ -2382,8 +2606,8 @@ SELECT COUNT(*) FROM questions WHERE game_mode = 'TRIVI_YEAH_II' AND category = 
 -- Thinking Pants category GEOGRAPHY. To change a question, change the
 -- spreadsheet and rebuild.
 --
--- Replaces the WHOLE category with the spreadsheet's 76 live questions
--- (100: 18, 200: 20, 300: 20, 400: 18), inside a transaction. Safe to re-run.
+-- Replaces the WHOLE category with the spreadsheet's 80 live questions
+-- (100: 20, 200: 20, 300: 20, 400: 20), inside a transaction. Safe to re-run.
 -- ============================================================================
 
 BEGIN;
@@ -2464,6 +2688,14 @@ INSERT INTO questions (question_number, game_mode, category, subcategory, factio
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GEOGRAPHY', 'GEOGRAPHY_BATCH_1', NULL,
         'What is the official language of Brazil?', NULL,
         'Portuguese', ARRAY['Spanish', 'English', 'French', 'Italian', 'Dutch', 'Latin'], 100);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GEOGRAPHY', 'ORIGINAL', NULL,
+        'What is the capital of Egypt?', NULL,
+        'Cairo', ARRAY['Alexandria', 'Giza', 'Luxor', 'Aswan', 'Khartoum', 'Tripoli'], 100);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GEOGRAPHY', 'ORIGINAL', NULL,
+        'Which ocean lies between Africa and Australia?', NULL,
+        'The Indian Ocean', ARRAY['The Atlantic Ocean', 'The Pacific Ocean', 'The Southern Ocean', 'The Arctic Ocean', 'The Arabian Sea', 'The Coral Sea'], 100);
 
 -- 200 points
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
@@ -2702,10 +2934,18 @@ INSERT INTO questions (question_number, game_mode, category, subcategory, factio
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GEOGRAPHY', 'GEOGRAPHY_BATCH_1', NULL,
         'The fabled desert city of Timbuktu is in which country?', NULL,
         'Mali', ARRAY['Niger', 'Mauritania', 'Burkina Faso', 'Senegal', 'Chad', 'Morocco'], 400);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GEOGRAPHY', 'ORIGINAL', NULL,
+        'Since 2005-06, which purpose-built city has been the capital of Myanmar?', NULL,
+        'Naypyidaw', ARRAY['Yangon', 'Mandalay', 'Bagan', 'Vientiane', 'Phnom Penh', 'Dhaka'], 400);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GEOGRAPHY', 'ORIGINAL', NULL,
+        'The Strait of Malacca separates the Malay Peninsula from which Indonesian island?', NULL,
+        'Sumatra', ARRAY['Java', 'Borneo', 'Sulawesi', 'Bali', 'Timor', 'New Guinea'], 400);
 
 COMMIT;
 
--- Check: should return 76.
+-- Check: should return 80.
 SELECT COUNT(*) FROM questions WHERE game_mode = 'TRIVI_YEAH_II' AND category = 'GEOGRAPHY';
 
 -- ============================================================================
@@ -2714,8 +2954,8 @@ SELECT COUNT(*) FROM questions WHERE game_mode = 'TRIVI_YEAH_II' AND category = 
 -- Thinking Pants category JUST_IN_TIME. To change a question, change the
 -- spreadsheet and rebuild.
 --
--- Replaces the WHOLE category with the spreadsheet's 66 live questions
--- (100: 17, 200: 18, 300: 15, 400: 16), inside a transaction. Safe to re-run.
+-- Replaces the WHOLE category with the spreadsheet's 80 live questions
+-- (100: 20, 200: 20, 300: 20, 400: 20), inside a transaction. Safe to re-run.
 -- ============================================================================
 
 BEGIN;
@@ -2792,6 +3032,18 @@ INSERT INTO questions (question_number, game_mode, category, subcategory, factio
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'JUST_IN_TIME', 'JUST_IN_TIME_BATCH_1', NULL,
         'The Black Forest, home of the cuckoo clock, is in which country?', NULL,
         'Germany', ARRAY['Switzerland', 'Austria', 'France', 'Czech Republic', 'Poland', 'Belgium'], 100);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'JUST_IN_TIME', 'ORIGINAL', NULL,
+        'In Disney''s "Beauty and the Beast," what has the Beast''s fussy head servant Cogsworth been turned into?', NULL,
+        'A clock', ARRAY['A candlestick', 'A teapot', 'A feather duster', 'A wardrobe', 'A teacup', 'A footstool'], 100);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'JUST_IN_TIME', 'ORIGINAL', NULL,
+        'What is a period of ten years called?', NULL,
+        'A decade', ARRAY['A century', 'A millennium', 'A score', 'A generation', 'A jubilee', 'A quarter-century'], 100);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'JUST_IN_TIME', 'ORIGINAL', NULL,
+        'How many full weeks are in a year?', NULL,
+        '52', ARRAY['48', '50', '51', '53', '54', '56'], 100);
 
 -- 200 points
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
@@ -2866,6 +3118,14 @@ INSERT INTO questions (question_number, game_mode, category, subcategory, factio
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'JUST_IN_TIME', 'JUST_IN_TIME_BATCH_1', NULL,
         'Who wrote the 1895 novel "The Time Machine"?', NULL,
         'H.G. Wells', ARRAY['Jules Verne', 'Mark Twain', 'Arthur Conan Doyle', 'Robert Louis Stevenson', 'Aldous Huxley', 'Edgar Rice Burroughs'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'JUST_IN_TIME', 'ORIGINAL', NULL,
+        'Which singer had a 1989 hit with "If I Could Turn Back Time"?', NULL,
+        'Cher', ARRAY['Tina Turner', 'Pat Benatar', 'Bonnie Tyler', 'Belinda Carlisle', 'Cyndi Lauper', 'Madonna'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'JUST_IN_TIME', 'ORIGINAL', NULL,
+        'A golden wedding anniversary celebrates how many years of marriage?', NULL,
+        '50', ARRAY['25', '30', '40', '60', '70', '75'], 200);
 
 -- 300 points
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
@@ -2928,6 +3188,26 @@ INSERT INTO questions (question_number, game_mode, category, subcategory, factio
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'JUST_IN_TIME', 'JUST_IN_TIME_BATCH_1', NULL,
         'How many official time zones does China use?', NULL,
         '1', ARRAY['2', '3', '4', '5', '6', '7'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'JUST_IN_TIME', 'ORIGINAL', NULL,
+        'Which day of the week is named after Odin, the chief Norse god?', NULL,
+        'Wednesday', ARRAY['Tuesday', 'Thursday', 'Friday', 'Monday', 'Saturday', 'Sunday'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'JUST_IN_TIME', 'ORIGINAL', NULL,
+        'Roughly how long is it from one new moon to the next?', NULL,
+        'About 29½ days', ARRAY['About 25 days', 'About 27 days', 'About 28 days', 'About 30½ days', 'About 31 days', 'About 32 days'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'JUST_IN_TIME', 'ORIGINAL', NULL,
+        'A sesquicentennial marks how many years?', NULL,
+        '150', ARRAY['75', '125', '175', '200', '250', '300'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'JUST_IN_TIME', 'ORIGINAL', NULL,
+        'Which band asked "Does Anybody Really Know What Time It Is?" on its 1969 debut album?', NULL,
+        'Chicago', ARRAY['Blood, Sweat & Tears', 'Three Dog Night', 'The Guess Who', 'Steely Dan', 'The Doobie Brothers', 'Earth, Wind & Fire'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'JUST_IN_TIME', 'ORIGINAL', NULL,
+        'In 1883, which industry got the United States and Canada to adopt standard time zones?', NULL,
+        'The railroads', ARRAY['The telegraph companies', 'The shipping lines', 'The banks', 'The newspapers', 'The postal service', 'The stock exchanges'], 300);
 
 -- 400 points
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
@@ -2994,10 +3274,26 @@ INSERT INTO questions (question_number, game_mode, category, subcategory, factio
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'JUST_IN_TIME', 'JUST_IN_TIME_BATCH_1', NULL,
         'What does the Latin phrase "tempus fugit" mean?', NULL,
         'Time flies', ARRAY['Time heals', 'Time is money', 'Seize the day', 'Time will tell', 'Remember death', 'Time stands still'], 400);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'JUST_IN_TIME', 'ORIGINAL', NULL,
+        'Which composer wrote the "Clock" Symphony, nicknamed for the tick-tock rhythm of its slow movement?', NULL,
+        'Joseph Haydn', ARRAY['Wolfgang Amadeus Mozart', 'Ludwig van Beethoven', 'Franz Schubert', 'Felix Mendelssohn', 'Johannes Brahms', 'Antonín Dvořák'], 400);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'JUST_IN_TIME', 'ORIGINAL', NULL,
+        'Before it was renamed for an emperor, which month did the Romans call Sextilis?', NULL,
+        'August', ARRAY['June', 'July', 'September', 'October', 'March', 'December'], 400);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'JUST_IN_TIME', 'ORIGINAL', NULL,
+        'Under the Gregorian calendar''s rules, which of these years was NOT a leap year?', NULL,
+        '1900', ARRAY['2000', '1600', '1904', '1896', '1960', '2024'], 400);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'JUST_IN_TIME', 'ORIGINAL', NULL,
+        'Which French author wrote the seven-volume novel "In Search of Lost Time"?', NULL,
+        'Marcel Proust', ARRAY['Gustave Flaubert', 'Victor Hugo', 'Émile Zola', 'Honoré de Balzac', 'André Gide', 'Albert Camus'], 400);
 
 COMMIT;
 
--- Check: should return 66.
+-- Check: should return 80.
 SELECT COUNT(*) FROM questions WHERE game_mode = 'TRIVI_YEAH_II' AND category = 'JUST_IN_TIME';
 
 -- ============================================================================
@@ -4078,8 +4374,8 @@ SELECT COUNT(*) FROM questions WHERE game_mode = 'TRIVI_YEAH_II' AND category = 
 -- Thinking Pants category LYRICS. To change a question, change the
 -- spreadsheet and rebuild.
 --
--- Replaces the WHOLE category with the spreadsheet's 77 live questions
--- (100: 20, 200: 20, 300: 20, 400: 17), inside a transaction. Safe to re-run.
+-- Replaces the WHOLE category with the spreadsheet's 80 live questions
+-- (100: 20, 200: 20, 300: 20, 400: 20), inside a transaction. Safe to re-run.
 -- ============================================================================
 
 BEGIN;
@@ -4402,10 +4698,22 @@ INSERT INTO questions (question_number, game_mode, category, subcategory, factio
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'LYRICS', 'LYRICS_BATCH_1', NULL,
         'Which Coldplay song begins its chorus "Nobody said it was easy"?', NULL,
         'The Scientist', ARRAY['Fix You', 'Yellow', 'Clocks', 'Viva la Vida', 'Speed of Sound', 'In My Place'], 400);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'LYRICS', 'ORIGINAL', NULL,
+        'Which Harry Chapin song ends with a father realizing "He''d grown up just like me"?', NULL,
+        'Cat''s in the Cradle', ARRAY['Taxi', 'W*O*L*D', 'Circle', 'Sniper', 'Sequel', 'Better Place to Be'], 400);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'LYRICS', 'ORIGINAL', NULL,
+        'Which Simon & Garfunkel song begins "I am just a poor boy"?', NULL,
+        'The Boxer', ARRAY['Mrs. Robinson', 'Cecilia', 'America', 'Homeward Bound', 'Scarborough Fair', 'Bridge over Troubled Water'], 400);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'LYRICS', 'ORIGINAL', NULL,
+        'Which Talking Heads song asks "Well, how did I get here?"', NULL,
+        'Once in a Lifetime', ARRAY['Burning Down the House', 'Psycho Killer', 'Road to Nowhere', 'And She Was', 'Take Me to the River', 'Life During Wartime'], 400);
 
 COMMIT;
 
--- Check: should return 77.
+-- Check: should return 80.
 SELECT COUNT(*) FROM questions WHERE game_mode = 'TRIVI_YEAH_II' AND category = 'LYRICS';
 
 -- ============================================================================
@@ -5410,8 +5718,8 @@ SELECT COUNT(*) FROM questions WHERE game_mode = 'TRIVI_YEAH_II' AND category = 
 -- Thinking Pants category MYTHOLOGY. To change a question, change the
 -- spreadsheet and rebuild.
 --
--- Replaces the WHOLE category with the spreadsheet's 71 live questions
--- (100: 18, 200: 17, 300: 20, 400: 16), inside a transaction. Safe to re-run.
+-- Replaces the WHOLE category with the spreadsheet's 80 live questions
+-- (100: 20, 200: 20, 300: 20, 400: 20), inside a transaction. Safe to re-run.
 -- ============================================================================
 
 BEGIN;
@@ -5492,6 +5800,14 @@ INSERT INTO questions (question_number, game_mode, category, subcategory, factio
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MYTHOLOGY', 'MYTHOLOGY_BATCH_1', NULL,
         'In Norse mythology, what is the great hall where warriors slain in battle feast until the end of the world?', NULL,
         'Valhalla', ARRAY['Folkvangr', 'Bilskirnir', 'Helheim', 'Gladsheim', 'Breidablik', 'Vingolf'], 100);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MYTHOLOGY', 'ORIGINAL', NULL,
+        'Which winged Roman god shoots arrows that make people fall in love?', NULL,
+        'Cupid', ARRAY['Mercury', 'Apollo', 'Bacchus', 'Vulcan', 'Faunus', 'Janus'], 100);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MYTHOLOGY', 'ORIGINAL', NULL,
+        'During the war with Troy, what giant wooden animal did the Greeks hide soldiers inside to get into the city?', NULL,
+        'A horse', ARRAY['A bull', 'A lion', 'A boar', 'An eagle', 'A ram', 'A bear'], 100);
 
 -- 200 points
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
@@ -5562,6 +5878,18 @@ INSERT INTO questions (question_number, game_mode, category, subcategory, factio
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MYTHOLOGY', 'MYTHOLOGY_BATCH_1', NULL,
         'Who is the Greek god of wine and revelry?', NULL,
         'Dionysus', ARRAY['Apollo', 'Pan', 'Hermes', 'Ares', 'Hephaestus', 'Eros'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MYTHOLOGY', 'ORIGINAL', NULL,
+        'Which lame Greek god was the blacksmith of the gods, working at his forge?', NULL,
+        'Hephaestus', ARRAY['Ares', 'Hermes', 'Apollo', 'Dionysus', 'Helios', 'Poseidon'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MYTHOLOGY', 'ORIGINAL', NULL,
+        'Which Greek goddess, queen of the gods and wife of Zeus, watched over marriage?', NULL,
+        'Hera', ARRAY['Athena', 'Aphrodite', 'Demeter', 'Hestia', 'Artemis', 'Persephone'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MYTHOLOGY', 'ORIGINAL', NULL,
+        'Which Egyptian goddess of magic and motherhood was the wife and sister of the god of the dead?', NULL,
+        'Isis', ARRAY['Hathor', 'Nephthys', 'Bastet', 'Sekhmet', 'Nut', 'Ma''at'], 200);
 
 -- 300 points
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
@@ -5710,10 +6038,26 @@ INSERT INTO questions (question_number, game_mode, category, subcategory, factio
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MYTHOLOGY', 'MYTHOLOGY_BATCH_1', NULL,
         'Which Monkey King is the hero of the Chinese classic "Journey to the West"?', NULL,
         'Sun Wukong', ARRAY['Zhu Bajie', 'Sha Wujing', 'Erlang Shen', 'Nezha', 'Hanuman', 'Tang Sanzang'], 400);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MYTHOLOGY', 'ORIGINAL', NULL,
+        'Which Greek hunter was turned into a stag and torn apart by his own hounds after seeing a goddess bathing?', NULL,
+        'Actaeon', ARRAY['Adonis', 'Orion', 'Narcissus', 'Endymion', 'Hippolytus', 'Meleager'], 400);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MYTHOLOGY', 'ORIGINAL', NULL,
+        'In Norse myth, which beloved god could be harmed by nothing except mistletoe, which killed him?', NULL,
+        'Baldur', ARRAY['Tyr', 'Heimdall', 'Freyr', 'Njord', 'Vidar', 'Bragi'], 400);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MYTHOLOGY', 'ORIGINAL', NULL,
+        'Which king of Greek myth was punished in the underworld with water and fruit that always moved just out of reach?', NULL,
+        'Tantalus', ARRAY['Sisyphus', 'Ixion', 'Tityos', 'Minos', 'Lycaon', 'Salmoneus'], 400);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MYTHOLOGY', 'ORIGINAL', NULL,
+        'Which Sumerian goddess of love and war was later worshipped by the Babylonians as Ishtar?', NULL,
+        'Inanna', ARRAY['Ereshkigal', 'Tiamat', 'Ninhursag', 'Ninlil', 'Nisaba', 'Nanshe'], 400);
 
 COMMIT;
 
--- Check: should return 71.
+-- Check: should return 80.
 SELECT COUNT(*) FROM questions WHERE game_mode = 'TRIVI_YEAH_II' AND category = 'MYTHOLOGY';
 
 -- ============================================================================
@@ -6070,8 +6414,8 @@ SELECT COUNT(*) FROM questions WHERE game_mode = 'TRIVI_YEAH_II' AND category = 
 -- Thinking Pants category SPORTS. To change a question, change the
 -- spreadsheet and rebuild.
 --
--- Replaces the WHOLE category with the spreadsheet's 76 live questions
--- (100: 20, 200: 20, 300: 18, 400: 18), inside a transaction. Safe to re-run.
+-- Replaces the WHOLE category with the spreadsheet's 80 live questions
+-- (100: 20, 200: 20, 300: 20, 400: 20), inside a transaction. Safe to re-run.
 -- ============================================================================
 
 BEGIN;
@@ -6316,6 +6660,14 @@ INSERT INTO questions (question_number, game_mode, category, subcategory, factio
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPORTS', 'SPORTS_BATCH_1', NULL,
         'How many minutes long is a regulation NBA game?', NULL,
         '48', ARRAY['40', '60', '44', '36', '50', '52'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPORTS', 'ORIGINAL', NULL,
+        'Which golfer was nicknamed "the Golden Bear"?', NULL,
+        'Jack Nicklaus', ARRAY['Arnold Palmer', 'Gary Player', 'Tom Watson', 'Greg Norman', 'Lee Trevino', 'Ben Hogan'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPORTS', 'ORIGINAL', NULL,
+        'In which athletics event did Dick Fosbury win Olympic gold in 1968 with his backward "Flop"?', NULL,
+        'High jump', ARRAY['Pole vault', 'Long jump', 'Triple jump', 'Hurdles', 'Steeplechase', 'Javelin'], 300);
 
 -- 400 points
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
@@ -6390,10 +6742,18 @@ INSERT INTO questions (question_number, game_mode, category, subcategory, factio
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPORTS', 'SPORTS_BATCH_1', NULL,
         'Which American swimmer won seven gold medals at the 1972 Munich Olympics?', NULL,
         'Mark Spitz', ARRAY['Matt Biondi', 'Johnny Weissmuller', 'Don Schollander', 'Gary Hall', 'John Naber', 'Ryan Lochte'], 400);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPORTS', 'ORIGINAL', NULL,
+        'Which Atlanta Braves slugger hit his record-breaking 715th career home run in April 1974?', NULL,
+        'Hank Aaron', ARRAY['Willie Mays', 'Mickey Mantle', 'Roberto Clemente', 'Frank Robinson', 'Harmon Killebrew', 'Reggie Jackson'], 400);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPORTS', 'ORIGINAL', NULL,
+        'Which tennis star won nine Wimbledon singles titles between 1978 and 1990?', NULL,
+        'Martina Navratilova', ARRAY['Chris Evert', 'Billie Jean King', 'Serena Williams', 'Margaret Court', 'Evonne Goolagong', 'Venus Williams'], 400);
 
 COMMIT;
 
--- Check: should return 76.
+-- Check: should return 80.
 SELECT COUNT(*) FROM questions WHERE game_mode = 'TRIVI_YEAH_II' AND category = 'SPORTS';
 
 -- ============================================================================
@@ -6402,8 +6762,8 @@ SELECT COUNT(*) FROM questions WHERE game_mode = 'TRIVI_YEAH_II' AND category = 
 -- Thinking Pants category TECHNOLOGY. To change a question, change the
 -- spreadsheet and rebuild.
 --
--- Replaces the WHOLE category with the spreadsheet's 66 live questions
--- (100: 19, 200: 15, 300: 15, 400: 17), inside a transaction. Safe to re-run.
+-- Replaces the WHOLE category with the spreadsheet's 80 live questions
+-- (100: 20, 200: 20, 300: 20, 400: 20), inside a transaction. Safe to re-run.
 -- ============================================================================
 
 BEGIN;
@@ -6488,6 +6848,10 @@ INSERT INTO questions (question_number, game_mode, category, subcategory, factio
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'TECHNOLOGY', 'TECHNOLOGY_BATCH_1', NULL,
         'Which 1980 arcade game stars a yellow circle that eats dots while dodging ghosts?', NULL,
         'Pac-Man', ARRAY['Space Invaders', 'Donkey Kong', 'Frogger', 'Galaga', 'Asteroids', 'Centipede'], 100);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'TECHNOLOGY', 'ORIGINAL', NULL,
+        'In the word "email," what does the "e" stand for?', NULL,
+        'Electronic', ARRAY['Easy', 'Express', 'External', 'Ethernet', 'Exchange', 'Encrypted'], 100);
 
 -- 200 points
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
@@ -6550,6 +6914,26 @@ INSERT INTO questions (question_number, game_mode, category, subcategory, factio
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'TECHNOLOGY', 'TECHNOLOGY_BATCH_1', NULL,
         'What is "phishing"?', NULL,
         'Tricking people into handing over passwords or personal details', ARRAY['Downloading music illegally', 'Secretly turning on a webcam', 'Flooding a website with traffic', 'Copying software without paying', 'Tracking people with cookies', 'Mining cryptocurrency on your computer'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'TECHNOLOGY', 'ORIGINAL', NULL,
+        'What does "CPU" stand for?', NULL,
+        'Central Processing Unit', ARRAY['Computer Processing Unit', 'Central Program Utility', 'Core Processing Unit', 'Central Power Unit', 'Computer Power Unit', 'Control Processing Unit'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'TECHNOLOGY', 'ORIGINAL', NULL,
+        'Which Scottish inventor gave the first public demonstration of a working television, in London in 1926?', NULL,
+        'John Logie Baird', ARRAY['Philo Farnsworth', 'Vladimir Zworykin', 'Alexander Graham Bell', 'Guglielmo Marconi', 'Thomas Edison', 'Robert Watson-Watt'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'TECHNOLOGY', 'ORIGINAL', NULL,
+        'Which word, from the Japanese for "picture" plus "character," names the little pictures like smiley faces that we send in texts?', NULL,
+        'Emoji', ARRAY['Emoticon', 'Sticker', 'GIF', 'Meme', 'Avatar', 'Icon'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'TECHNOLOGY', 'ORIGINAL', NULL,
+        'Which falling-block puzzle game did Soviet programmer Alexey Pajitnov create in 1984?', NULL,
+        'Tetris', ARRAY['Columns', 'Dr. Mario', 'Puyo Puyo', 'Lumines', 'Bejeweled', 'Klax'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'TECHNOLOGY', 'ORIGINAL', NULL,
+        'Which 2009 mobile game from Finland has players slingshot cartoon birds at egg-stealing pigs?', NULL,
+        'Angry Birds', ARRAY['Flappy Bird', 'Cut the Rope', 'Fruit Ninja', 'Candy Crush Saga', 'Doodle Jump', 'Temple Run'], 200);
 
 -- 300 points
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
@@ -6612,6 +6996,26 @@ INSERT INTO questions (question_number, game_mode, category, subcategory, factio
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'TECHNOLOGY', 'TECHNOLOGY_BATCH_1', NULL,
         'Which tech company is nicknamed "Big Blue"?', NULL,
         'IBM', ARRAY['Intel', 'Microsoft', 'HP', 'Dell', 'Cisco', 'Oracle'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'TECHNOLOGY', 'ORIGINAL', NULL,
+        'Which American founded Kodak and sold its first camera in 1888 with the slogan "You press the button, we do the rest"?', NULL,
+        'George Eastman', ARRAY['Edwin Land', 'Louis Daguerre', 'Thomas Edison', 'William Henry Fox Talbot', 'Joseph Nicephore Niepce', 'George Westinghouse'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'TECHNOLOGY', 'ORIGINAL', NULL,
+        'Which Scottish engineer greatly improved the steam engine and gave his name to a unit of power?', NULL,
+        'James Watt', ARRAY['Thomas Newcomen', 'George Stephenson', 'Richard Trevithick', 'Matthew Boulton', 'Robert Fulton', 'Isambard Kingdom Brunel'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'TECHNOLOGY', 'ORIGINAL', NULL,
+        'Which Japanese game company''s mascot is Sonic the Hedgehog?', NULL,
+        'Sega', ARRAY['Nintendo', 'Sony', 'Capcom', 'Namco', 'Konami', 'Taito'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'TECHNOLOGY', 'ORIGINAL', NULL,
+        'In a web address that starts with "https," what does the final "s" stand for?', NULL,
+        'Secure', ARRAY['Server', 'Standard', 'System', 'Site', 'Signed', 'Speed'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'TECHNOLOGY', 'ORIGINAL', NULL,
+        'Which Italian inventor shared the 1909 Nobel Prize in Physics for his work on wireless telegraphy, the forerunner of radio?', NULL,
+        'Guglielmo Marconi', ARRAY['Nikola Tesla', 'Heinrich Hertz', 'Alessandro Volta', 'Enrico Fermi', 'Antonio Meucci', 'Galileo Ferraris'], 300);
 
 -- 400 points
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
@@ -6682,10 +7086,22 @@ INSERT INTO questions (question_number, game_mode, category, subcategory, factio
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'TECHNOLOGY', 'TECHNOLOGY_BATCH_1', NULL,
         'Amazon was first incorporated in 1994 under which name, dropped because it sounded like ''cadaver''?', NULL,
         'Cadabra', ARRAY['Relentless', 'Bookshelf', 'BookStack', 'Bookworld', 'Zon', 'Bezos Books'], 400);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'TECHNOLOGY', 'ORIGINAL', NULL,
+        'In 1991, Cambridge University computer scientists pointed a camera at what, so they could check on it from their desks? It became famous as the first webcam.', NULL,
+        'A coffee pot', ARRAY['A fish tank', 'A parking lot', 'A printer', 'A vending machine', 'A pet rabbit', 'A bird feeder'], 400);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'TECHNOLOGY', 'ORIGINAL', NULL,
+        'Which programming language did Brendan Eich create in about 10 days at Netscape in 1995?', NULL,
+        'JavaScript', ARRAY['TypeScript', 'PHP', 'Perl', 'Ruby', 'ActionScript', 'CoffeeScript'], 400);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'TECHNOLOGY', 'ORIGINAL', NULL,
+        'In 1976, Steve Jobs''s new company sold its first computer, a bare circuit board, for what famously odd price?', NULL,
+        '$666.66', ARRAY['$999.99', '$500.00', '$1,000.00', '$777.77', '$1,234.56', '$299.99'], 400);
 
 COMMIT;
 
--- Check: should return 66.
+-- Check: should return 80.
 SELECT COUNT(*) FROM questions WHERE game_mode = 'TRIVI_YEAH_II' AND category = 'TECHNOLOGY';
 
 -- ============================================================================
@@ -7202,8 +7618,8 @@ SELECT COUNT(*) FROM questions WHERE game_mode = 'TRIVI_YEAH_II' AND category = 
 -- Thinking Pants category WORLD_HISTORY. To change a question, change the
 -- spreadsheet and rebuild.
 --
--- Replaces the WHOLE category with the spreadsheet's 75 live questions
--- (100: 17, 200: 20, 300: 20, 400: 18), inside a transaction. Safe to re-run.
+-- Replaces the WHOLE category with the spreadsheet's 80 live questions
+-- (100: 20, 200: 20, 300: 20, 400: 20), inside a transaction. Safe to re-run.
 -- ============================================================================
 
 BEGIN;
@@ -7280,6 +7696,18 @@ INSERT INTO questions (question_number, game_mode, category, subcategory, factio
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORLD_HISTORY', 'WORLD_HISTORY_BATCH_1', NULL,
         'The Vikings set out from which part of Europe?', NULL,
         'Scandinavia', ARRAY['The British Isles', 'The Iberian Peninsula', 'The Balkans', 'The Low Countries', 'Central Europe', 'The Baltic states'], 100);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORLD_HISTORY', 'ORIGINAL', NULL,
+        'Which English king married six times and broke with the Roman Catholic Church?', NULL,
+        'Henry VIII', ARRAY['Henry VII', 'Henry V', 'Edward VI', 'Richard III', 'James I', 'Charles I'], 100);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORLD_HISTORY', 'ORIGINAL', NULL,
+        'Which French queen, wife of Louis XVI, was executed by guillotine in 1793?', NULL,
+        'Marie Antoinette', ARRAY['Catherine de'' Medici', 'Marie de'' Medici', 'Anne of Austria', 'Eleanor of Aquitaine', 'Empress Joséphine', 'Marie Louise'], 100);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORLD_HISTORY', 'ORIGINAL', NULL,
+        'Which young pharaoh''s nearly intact tomb did Howard Carter discover in the Valley of the Kings in 1922?', NULL,
+        'Tutankhamun', ARRAY['Ramesses II', 'Akhenaten', 'Khufu', 'Thutmose III', 'Seti I', 'Amenhotep III'], 100);
 
 -- 200 points
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
@@ -7518,8 +7946,16 @@ INSERT INTO questions (question_number, game_mode, category, subcategory, factio
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORLD_HISTORY', 'WORLD_HISTORY_BATCH_1', NULL,
         'Whose 1768-71 voyage on HMS Endeavour charted the east coast of Australia?', NULL,
         'James Cook', ARRAY['Abel Tasman', 'Matthew Flinders', 'William Bligh', 'William Dampier', 'George Vancouver', 'Joseph Banks'], 400);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORLD_HISTORY', 'ORIGINAL', NULL,
+        'Which Mauryan emperor of India embraced Buddhism after the bloody Kalinga War?', NULL,
+        'Ashoka', ARRAY['Chandragupta Maurya', 'Bindusara', 'Akbar', 'Samudragupta', 'Harsha', 'Kanishka'], 400);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORLD_HISTORY', 'ORIGINAL', NULL,
+        'In which 1905 naval battle did Japan''s fleet destroy Russia''s Baltic Fleet?', NULL,
+        'The Battle of Tsushima', ARRAY['The Battle of Port Arthur', 'The Battle of the Yellow Sea', 'The Battle of Mukden', 'The Battle of Jutland', 'The Battle of Manila Bay', 'The Battle of Navarino'], 400);
 
 COMMIT;
 
--- Check: should return 75.
+-- Check: should return 80.
 SELECT COUNT(*) FROM questions WHERE game_mode = 'TRIVI_YEAH_II' AND category = 'WORLD_HISTORY';

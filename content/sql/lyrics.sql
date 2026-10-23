@@ -4,8 +4,8 @@
 -- Thinking Pants category LYRICS. To change a question, change the
 -- spreadsheet and rebuild.
 --
--- Replaces the WHOLE category with the spreadsheet's 77 live questions
--- (100: 20, 200: 20, 300: 20, 400: 17), inside a transaction. Safe to re-run.
+-- Replaces the WHOLE category with the spreadsheet's 80 live questions
+-- (100: 20, 200: 20, 300: 20, 400: 20), inside a transaction. Safe to re-run.
 -- ============================================================================
 
 BEGIN;
@@ -328,8 +328,20 @@ INSERT INTO questions (question_number, game_mode, category, subcategory, factio
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'LYRICS', 'LYRICS_BATCH_1', NULL,
         'Which Coldplay song begins its chorus "Nobody said it was easy"?', NULL,
         'The Scientist', ARRAY['Fix You', 'Yellow', 'Clocks', 'Viva la Vida', 'Speed of Sound', 'In My Place'], 400);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'LYRICS', 'ORIGINAL', NULL,
+        'Which Harry Chapin song ends with a father realizing "He''d grown up just like me"?', NULL,
+        'Cat''s in the Cradle', ARRAY['Taxi', 'W*O*L*D', 'Circle', 'Sniper', 'Sequel', 'Better Place to Be'], 400);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'LYRICS', 'ORIGINAL', NULL,
+        'Which Simon & Garfunkel song begins "I am just a poor boy"?', NULL,
+        'The Boxer', ARRAY['Mrs. Robinson', 'Cecilia', 'America', 'Homeward Bound', 'Scarborough Fair', 'Bridge over Troubled Water'], 400);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'LYRICS', 'ORIGINAL', NULL,
+        'Which Talking Heads song asks "Well, how did I get here?"', NULL,
+        'Once in a Lifetime', ARRAY['Burning Down the House', 'Psycho Killer', 'Road to Nowhere', 'And She Was', 'Take Me to the River', 'Life During Wartime'], 400);
 
 COMMIT;
 
--- Check: should return 77.
+-- Check: should return 80.
 SELECT COUNT(*) FROM questions WHERE game_mode = 'TRIVI_YEAH_II' AND category = 'LYRICS';

@@ -75,6 +75,10 @@ export function checkCategory(file, rows) {
         if (!TIERS.includes(points)) problems.push(`${where}: points must be 100, 200, 300 or 400 (got "${get(r, 'points')}")`);
         if (!question) problems.push(`${where}: no question`);
         if (!answer) problems.push(`${where}: no answer`);
+        // A picture path always starts with "/"; anything else means the
+        // row's cells shifted a column (a stray quote or comma).
+        const image = get(r, 'image');
+        if (image && !image.startsWith('/')) problems.push(`${where}: the image column should be a picture path like /maps/peru.webp (got "${image}") -- check this row's commas and quotes`);
         if (wrong.length < 3) problems.push(`${where}: needs at least 3 wrong answers (has ${wrong.length})`);
         const all = [answer, ...wrong].map(core);
         if (new Set(all).size !== all.length) problems.push(`${where}: the answer and wrong answers must all be different`);

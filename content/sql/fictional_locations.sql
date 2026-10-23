@@ -4,8 +4,8 @@
 -- Thinking Pants category FICTIONAL_LOCATIONS. To change a question, change the
 -- spreadsheet and rebuild.
 --
--- Replaces the WHOLE category with the spreadsheet's 75 live questions
--- (100: 19, 200: 18, 300: 19, 400: 19), inside a transaction. Safe to re-run.
+-- Replaces the WHOLE category with the spreadsheet's 80 live questions
+-- (100: 20, 200: 20, 300: 20, 400: 20), inside a transaction. Safe to re-run.
 -- ============================================================================
 
 BEGIN;
@@ -90,6 +90,10 @@ INSERT INTO questions (question_number, game_mode, category, subcategory, factio
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'FICTIONAL_LOCATIONS', 'FICTIONAL_LOCATIONS_BATCH_1', NULL,
         'In "Monsters, Inc.," what is the name of the monsters'' city?', NULL,
         'Monstropolis', ARRAY['Monster Island', 'Scaretown', 'Zootopia', 'Halloween Town', 'Fearville', 'Ghoulsburg'], 100);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'FICTIONAL_LOCATIONS', 'ORIGINAL', NULL,
+        'In "The Wizard of Oz," what does Dorothy follow to find the Wizard?', NULL,
+        'The Yellow Brick Road', ARRAY['The Rainbow Road', 'The Golden Highway', 'The Silver Path', 'The Ruby Trail', 'The Cobblestone Lane', 'The Poppy Path'], 100);
 
 -- 200 points
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
@@ -164,6 +168,14 @@ INSERT INTO questions (question_number, game_mode, category, subcategory, factio
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'FICTIONAL_LOCATIONS', 'FICTIONAL_LOCATIONS_BATCH_1', NULL,
         'In Pixar''s "Cars," in which Route 66 town does Lightning McQueen get stranded?', NULL,
         'Radiator Springs', ARRAY['Thunder Hollow', 'Monstropolis', 'Tailpipe Town', 'Motor City', 'Hubcap Hill', 'Gasket Gulch'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'FICTIONAL_LOCATIONS', 'ORIGINAL', NULL,
+        'In "Toy Story," which space-themed restaurant has a claw machine full of squeaky toy aliens?', NULL,
+        'Pizza Planet', ARRAY['Galaxy Grill', 'Rocket Diner', 'Cosmic Cafe', 'Astro Burger', 'Moon Base Pizzeria', 'Space Station Subs'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'FICTIONAL_LOCATIONS', 'ORIGINAL', NULL,
+        'In Harry Potter, what is Britain''s only all-wizarding village, which Hogwarts students visit on weekend trips?', NULL,
+        'Hogsmeade', ARRAY['Godric''s Hollow', 'Little Whinging', 'Ottery St Catchpole', 'Little Hangleton', 'Knockturn Alley', 'Tinworth'], 200);
 
 -- 300 points
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
@@ -242,6 +254,10 @@ INSERT INTO questions (question_number, game_mode, category, subcategory, factio
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'FICTIONAL_LOCATIONS', 'FICTIONAL_LOCATIONS_BATCH_1', NULL,
         'In "The Shining," what is the name of the snowbound Colorado hotel?', NULL,
         'The Overlook Hotel', ARRAY['The Bates Motel', 'The Grand Budapest Hotel', 'The Continental', 'Fawlty Towers', 'The Hotel Cortez', 'The Timberline Lodge'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'FICTIONAL_LOCATIONS', 'ORIGINAL', NULL,
+        'In "Parks and Recreation," which Indiana town does Leslie Knope serve?', NULL,
+        'Pawnee', ARRAY['Eagleton', 'Hawkins', 'Stars Hollow', 'Mayberry', 'Bluebell', 'Hill Valley'], 300);
 
 -- 400 points
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
@@ -320,8 +336,12 @@ INSERT INTO questions (question_number, game_mode, category, subcategory, factio
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'FICTIONAL_LOCATIONS', 'FICTIONAL_LOCATIONS_BATCH_1', NULL,
         'In which fictional Illinois suburb are many John Hughes films, including "The Breakfast Club," set?', NULL,
         'Shermer', ARRAY['Hill Valley', 'Hawkins', 'Haddonfield', 'Pleasantville', 'Springwood', 'Bedford Falls'], 400);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'FICTIONAL_LOCATIONS', 'ORIGINAL', NULL,
+        'Which English village is home to Agatha Christie''s elderly detective Miss Marple?', NULL,
+        'St. Mary Mead', ARRAY['King''s Abbot', 'Market Basing', 'Causton', 'Ambridge', 'Little Whinging', 'Badger''s Drift'], 400);
 
 COMMIT;
 
--- Check: should return 75.
+-- Check: should return 80.
 SELECT COUNT(*) FROM questions WHERE game_mode = 'TRIVI_YEAH_II' AND category = 'FICTIONAL_LOCATIONS';

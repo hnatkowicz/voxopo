@@ -4,8 +4,8 @@
 -- Thinking Pants category MYTHOLOGY. To change a question, change the
 -- spreadsheet and rebuild.
 --
--- Replaces the WHOLE category with the spreadsheet's 71 live questions
--- (100: 18, 200: 17, 300: 20, 400: 16), inside a transaction. Safe to re-run.
+-- Replaces the WHOLE category with the spreadsheet's 80 live questions
+-- (100: 20, 200: 20, 300: 20, 400: 20), inside a transaction. Safe to re-run.
 -- ============================================================================
 
 BEGIN;
@@ -86,6 +86,14 @@ INSERT INTO questions (question_number, game_mode, category, subcategory, factio
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MYTHOLOGY', 'MYTHOLOGY_BATCH_1', NULL,
         'In Norse mythology, what is the great hall where warriors slain in battle feast until the end of the world?', NULL,
         'Valhalla', ARRAY['Folkvangr', 'Bilskirnir', 'Helheim', 'Gladsheim', 'Breidablik', 'Vingolf'], 100);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MYTHOLOGY', 'ORIGINAL', NULL,
+        'Which winged Roman god shoots arrows that make people fall in love?', NULL,
+        'Cupid', ARRAY['Mercury', 'Apollo', 'Bacchus', 'Vulcan', 'Faunus', 'Janus'], 100);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MYTHOLOGY', 'ORIGINAL', NULL,
+        'During the war with Troy, what giant wooden animal did the Greeks hide soldiers inside to get into the city?', NULL,
+        'A horse', ARRAY['A bull', 'A lion', 'A boar', 'An eagle', 'A ram', 'A bear'], 100);
 
 -- 200 points
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
@@ -156,6 +164,18 @@ INSERT INTO questions (question_number, game_mode, category, subcategory, factio
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MYTHOLOGY', 'MYTHOLOGY_BATCH_1', NULL,
         'Who is the Greek god of wine and revelry?', NULL,
         'Dionysus', ARRAY['Apollo', 'Pan', 'Hermes', 'Ares', 'Hephaestus', 'Eros'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MYTHOLOGY', 'ORIGINAL', NULL,
+        'Which lame Greek god was the blacksmith of the gods, working at his forge?', NULL,
+        'Hephaestus', ARRAY['Ares', 'Hermes', 'Apollo', 'Dionysus', 'Helios', 'Poseidon'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MYTHOLOGY', 'ORIGINAL', NULL,
+        'Which Greek goddess, queen of the gods and wife of Zeus, watched over marriage?', NULL,
+        'Hera', ARRAY['Athena', 'Aphrodite', 'Demeter', 'Hestia', 'Artemis', 'Persephone'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MYTHOLOGY', 'ORIGINAL', NULL,
+        'Which Egyptian goddess of magic and motherhood was the wife and sister of the god of the dead?', NULL,
+        'Isis', ARRAY['Hathor', 'Nephthys', 'Bastet', 'Sekhmet', 'Nut', 'Ma''at'], 200);
 
 -- 300 points
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
@@ -304,8 +324,24 @@ INSERT INTO questions (question_number, game_mode, category, subcategory, factio
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MYTHOLOGY', 'MYTHOLOGY_BATCH_1', NULL,
         'Which Monkey King is the hero of the Chinese classic "Journey to the West"?', NULL,
         'Sun Wukong', ARRAY['Zhu Bajie', 'Sha Wujing', 'Erlang Shen', 'Nezha', 'Hanuman', 'Tang Sanzang'], 400);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MYTHOLOGY', 'ORIGINAL', NULL,
+        'Which Greek hunter was turned into a stag and torn apart by his own hounds after seeing a goddess bathing?', NULL,
+        'Actaeon', ARRAY['Adonis', 'Orion', 'Narcissus', 'Endymion', 'Hippolytus', 'Meleager'], 400);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MYTHOLOGY', 'ORIGINAL', NULL,
+        'In Norse myth, which beloved god could be harmed by nothing except mistletoe, which killed him?', NULL,
+        'Baldur', ARRAY['Tyr', 'Heimdall', 'Freyr', 'Njord', 'Vidar', 'Bragi'], 400);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MYTHOLOGY', 'ORIGINAL', NULL,
+        'Which king of Greek myth was punished in the underworld with water and fruit that always moved just out of reach?', NULL,
+        'Tantalus', ARRAY['Sisyphus', 'Ixion', 'Tityos', 'Minos', 'Lycaon', 'Salmoneus'], 400);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MYTHOLOGY', 'ORIGINAL', NULL,
+        'Which Sumerian goddess of love and war was later worshipped by the Babylonians as Ishtar?', NULL,
+        'Inanna', ARRAY['Ereshkigal', 'Tiamat', 'Ninhursag', 'Ninlil', 'Nisaba', 'Nanshe'], 400);
 
 COMMIT;
 
--- Check: should return 71.
+-- Check: should return 80.
 SELECT COUNT(*) FROM questions WHERE game_mode = 'TRIVI_YEAH_II' AND category = 'MYTHOLOGY';
