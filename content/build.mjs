@@ -93,7 +93,7 @@ export function checkCategory(file, rows) {
     TIERS.forEach(t => { if (!questions.some(q => q.points === t)) problems.push(`${file}: no live questions at ${t} points (the board needs every tier)`); });
     const answers = new Map();
     questions.forEach(q => answers.set(core(q.answer), (answers.get(core(q.answer)) || 0) + 1));
-    [...answers].filter(([, n]) => n > 1).forEach(([a]) => warnings.push(`${file}: the answer "${a}" is used more than once (allowed, but they could land on the same board)`));
+    [...answers].filter(([, n]) => n > 1).forEach(([a]) => warnings.push(`${file}: the answer "${a}" is used more than once (allowed -- the game never puts both on one board -- but check it is meant)`));
     return { problems, warnings, questions };
 }
 

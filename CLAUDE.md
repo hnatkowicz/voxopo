@@ -227,7 +227,9 @@ Mode keys are used in room votes and in `gameEngine.js`:
   **Board draw:** deeper categories come up more often (Randy, Oct 2026).
   Depth = questions at a category's thinnest tier; weight = its square root,
   so 4x the depth shows up about 2x as often (a nudge, not a takeover). No
-  general category appears twice in one game. Growing a category raises its
+  general category appears twice in one game, and no two tiles on one
+  board share an answer or a picture (two Apple logos, an Art picture's
+  artist and title questions). Growing a category raises its
   share on its own, with no setting to touch.
   **Direction (Randy, Oct 2026):** new general trivia goes into Thinking
   Pants categories. Trivi-yeah! is to become the house-questions-only mode
@@ -396,19 +398,26 @@ and forth until we both agree the idea is good **and** worth the effort. So:
 
 ## Ideas in the works
 
-- **Up next, in order (Randy, Oct 2026):** an **Art** category in Thinking
-  Pants, then a **Logos** category -- Randy's youngest's idea, so
-  don't let it slip; he wants to make her happy. Art: public-domain
+- **Logo My Eggo** (Logos, built Oct 2026 -- Randy's youngest's idea;
+  the title is a working one and **she gets the final say**):
+  `content/logos.csv`, Randy's logos in `public/iconic-logos/` (white
+  backgrounds, brand names stripped off) plus text-only logo and mascot
+  trivia. Logos that spell out the brand (Coca-Cola's script, Citi,
+  Prada, Ray-Ban, Stüssy, Coach's lettered one) are left out of the
+  picture tiles. More logo batches: add picture rows to the sheet.
+- **Up next (Randy, Oct 2026):** an **Art** category in Thinking
+  Pants. Art: public-domain
   paintings and some sculpture, images only from open-access museums
   (Met, Art Institute of Chicago, National Gallery of Art, Rijksmuseum,
   Cleveland, Smithsonian, Getty), each image's source page kept on file;
   no Italian-held works (Italy lets museums charge for images even of old
   art). One image can carry an artist question and, when the title can't
-  be read off the canvas, a title question; the board builder needs a rule
-  so the same image is never on one board twice. Randy is gathering the
+  be read off the canvas, a title question; the board builder already
+  keeps a picture or an answer from appearing twice on one board. Randy is gathering the
   images in a spreadsheet. Logos: simple wordmarks and shapes, plus
   text-only logo trivia ("What animal is on the Ferrari logo?"); no Disney,
-  sports leagues or Olympic rings, and never altered logos.
+  sports leagues or Olympic rings, and never parodied or mocked-up logos
+  (stripping the name off for the quiz is fine).
 - **Category depth (Randy, Oct 2026):** every text category has at least
   20 questions per tier. The family's favorites are school subjects
   (biology, astronomy, the World Wars, US history) and pop culture; new
