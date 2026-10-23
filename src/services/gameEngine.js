@@ -870,6 +870,10 @@ const TRIVI_YEAH_II_CATEGORIES = [
     // athlete arcs. One category for now; a sub-theme can split off once it's
     // deep enough. content/college_athletics.csv.
     { key: 'COLLEGE_ATHLETICS', label: 'College Athletics' },
+    // School subjects are the family's favorites (Randy, Oct 2026), with
+    // pun names. content/us_history.csv and content/world_wars.csv.
+    { key: 'US_HISTORY', label: 'Red, White & Who?' },
+    { key: 'WORLD_WARS', label: 'War & Pieces' },
     // Picture category: Randy's maps (public/maps/), shared with the Country
     // Monkey mode. 80 maps, 20 per tier (trivi_yeah_ii_country_monkey.sql).
     { key: 'COUNTRY_MONKEY', label: 'Country Monkey' },
