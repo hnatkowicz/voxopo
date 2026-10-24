@@ -402,9 +402,14 @@ and forth until we both agree the idea is good **and** worth the effort. So:
   the title is a working one and **she gets the final say**):
   `content/logos.csv`, Randy's logos in `public/iconic-logos/` (white
   backgrounds, brand names stripped off) plus text-only logo and mascot
-  trivia. Logos that spell out the brand (Coca-Cola's script, Citi,
-  Prada, Ray-Ban, Stüssy, Coach's lettered one) are left out of the
-  picture tiles. More logo batches: add picture rows to the sheet.
+  trivia, cars, airlines, apps, consoles and bands (Randy's logos, Oct
+  2026; 153 in all). A logo that spells its own name (Coca-Cola, Ford,
+  IBM...) is a 100-point **"Freebie!"** tile with silly wrong answers
+  ("Fjord", "Coca-Koala") -- on purpose: Randy, "even in a serious pub
+  game, everyone needs a laugh from time to time." That's the one place
+  joke answers belong. A text tile that a logo picture would give away
+  (Subaru's six stars, Porsche's STUTTGART) is retired. More logo
+  batches: add picture rows to the sheet.
 - **Up next (Randy, Oct 2026):** an **Art** category in Thinking
   Pants. Art: public-domain
   paintings and some sculpture, images only from open-access museums
