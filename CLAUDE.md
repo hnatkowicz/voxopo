@@ -430,12 +430,16 @@ and forth until we both agree the idea is good **and** worth the effort. So:
   Pieces: **Biology**, then separate pop-culture categories (**Video
   Games**, **Cartoons & Kids' TV**, **Pop Culture**: celebrities, viral
   moments, slogans, toys).
-- **Water images:** Wet Pants reached 20+ per tier with Randy's Asia &
-  Pacific batch (Oct 2026; 85 in all), which also gave Country Monkey's
-  Asia & Pacific games their first water. Randy still wants more
-  **rivers** (hard to plot) -- remind him; Asia has none yet. The
-  `-2` files in `public/water/` are second drawings of water already in
-  Wet Pants (Country Monkey uses them for other regions).
+- **Water images:** Wet Pants is 96 (Oct 2026). Rivers are coming in
+  batches from a list Claude gave Randy; the first batch brought the
+  Danube, Rhine, Volga, Euphrates, Ganges, Mekong, Yangtze, Niger and Rio
+  Grande. **Still to draw -- remind him:** Yellow River, Indus,
+  Irrawaddy, Amur, Brahmaputra, Tigris, Jordan, Thames, Rhône, Po,
+  Vistula, Orange, Limpopo, St. Lawrence, Columbia, Yukon, Murray. A
+  `-2` file is a second drawing (another scale or angle): the newer ones
+  (Danube, Rio Grande) are their own Wet Pants tiles, kept off the same
+  board by the no-repeat rule; the older ones (Caribbean, Gulf of Mexico,
+  ...) only give Country Monkey a second region.
 - **Thinking Pants art:** a jeans mascot, "pants on fire" for a missed
   Doubler, a leg kick for a correct one, and gold pants spinning for the
   winner. "Answers in Your Pants" is a candidate name for the speed badge.

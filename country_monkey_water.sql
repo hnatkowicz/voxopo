@@ -1,6 +1,6 @@
 -- ============================================================================
 -- Country Monkey: WATER questions ("Which body of water is highlighted?") --
--- 100 rows from 91 of Randy's water maps (public/water/): oceans, seas,
+-- 111 rows from 102 of Randy's water maps (public/water/): oceans, seas,
 -- gulfs, bays, straits, lakes and rivers. A game mixes in 3 of 20.
 --
 -- Wrong answers are the same kind of water (lakes among lakes, rivers among
@@ -9,8 +9,8 @@
 -- shortens to the same name ("Hudson" could be the bay, river or strait).
 --
 -- category = region; a few belong to two or three (the Mediterranean, the Red
--- Sea, the Indian Ocean). Rows: Africa 15, Europe 16, Asia & Pacific 13,
--- Middle East 9, Americas 47, World Wide only 0. The -2 files and
+-- Sea, the Indian Ocean). Rows: Africa 16, Europe 20, Asia & Pacific 16,
+-- Middle East 10, Americas 49, World Wide only 0. The -2 files and
 -- caspian-sea.webp are second drawings, used for a second region.
 --
 -- Safe to re-run: deletes and re-inserts the water questions only
@@ -44,6 +44,7 @@ FROM (VALUES
 ('AFRICA',            '/water/senegal-river.webp',           'Senegal River',         ARRAY['Niger River', 'Gambia River', 'Volta River', 'Congo River', 'Orange River', 'Zambezi River'], NULL::text[], 250),
 ('AFRICA',            '/water/zambia-river.webp',            'Zambezi River',         ARRAY['Limpopo River', 'Congo River', 'Orange River', 'Okavango River', 'Niger River', 'Nile River'], ARRAY['Zambezi'], 200),
 ('AFRICA',           '/water/indian-ocean.webp',            'Indian Ocean',         ARRAY['Pacific Ocean', 'South Atlantic Ocean', 'North Atlantic Ocean', 'Southern Ocean', 'Arctic Ocean', 'South China Sea'], ARRAY['Indian'], 100),
+('AFRICA',           '/water/niger-river.webp',             'Niger River',          ARRAY['Congo River', 'Senegal River', 'Nile River', 'Volta River', 'Gambia River', 'Zambezi River'], ARRAY['Niger'], 200),
 -- EUROPE
 ('EUROPE',            '/water/adriatic.webp',                'Adriatic Sea',          ARRAY['Aegean Sea', 'Ionian Sea', 'Tyrrhenian Sea', 'Black Sea', 'Ligurian Sea', 'Sea of Marmara'], ARRAY['Adriatic'], 150),
 ('EUROPE',            '/water/aegean.webp',                  'Aegean Sea',            ARRAY['Adriatic Sea', 'Ionian Sea', 'Sea of Marmara', 'Black Sea', 'Tyrrhenian Sea', 'Levantine Sea'], ARRAY['Aegean'], 150),
@@ -61,6 +62,10 @@ FROM (VALUES
 ('EUROPE',            '/water/loire-river.webp',             'Loire River',           ARRAY['Seine River', 'Garonne River', 'Rhône River', 'Rhine River', 'Dordogne River', 'Meuse River'], ARRAY['Loire'], 200),
 ('EUROPE',            '/water/tagus-river.webp',             'Tagus River',           ARRAY['Ebro River', 'Douro River', 'Guadalquivir River', 'Guadiana River', 'Garonne River', 'Loire River'], ARRAY['Tagus', 'Tejo', 'Tajo'], 250),
 ('EUROPE',           '/water/caspian-sea.webp',             'Caspian Sea',          ARRAY['Black Sea', 'Aral Sea', 'Persian Gulf', 'Sea of Azov', 'Lake Balkhash', 'Red Sea'], ARRAY['Caspian'], 100),
+('EUROPE',           '/water/danube-river.webp',            'Danube River',         ARRAY['Rhine River', 'Elbe River', 'Volga River', 'Dnieper River', 'Vistula River', 'Po River'], ARRAY['Danube'], 150),
+('EUROPE',           '/water/danube-river-2.webp',          'Danube River',         ARRAY['Rhine River', 'Elbe River', 'Volga River', 'Dnieper River', 'Vistula River', 'Po River'], ARRAY['Danube'], 200),
+('EUROPE',           '/water/rhine-river.webp',             'Rhine River',          ARRAY['Danube River', 'Elbe River', 'Rhône River', 'Meuse River', 'Seine River', 'Weser River'], ARRAY['Rhine'], 150),
+('EUROPE',           '/water/volga-river.webp',             'Volga River',          ARRAY['Don River', 'Dnieper River', 'Ural River', 'Danube River', 'Ob River', 'Dniester River'], ARRAY['Volga'], 200),
 -- ASIA (Asia & Pacific)
 ('ASIA',             '/water/andaman-sea.webp',             'Andaman Sea',          ARRAY['Bay of Bengal', 'Gulf of Thailand', 'Java Sea', 'Laccadive Sea', 'Celebes Sea', 'Sulu Sea'], ARRAY['Andaman'], 250),
 ('ASIA',             '/water/bay-bengal.webp',              'Bay of Bengal',        ARRAY['Arabian Sea', 'Andaman Sea', 'Laccadive Sea', 'Gulf of Mannar', 'Gulf of Thailand', 'South China Sea'], ARRAY['Bengal'], 150),
@@ -75,6 +80,9 @@ FROM (VALUES
 ('ASIA',             '/water/malacca-strait.webp',          'Strait of Malacca',    ARRAY['Sunda Strait', 'Lombok Strait', 'Makassar Strait', 'Taiwan Strait', 'Palk Strait', 'Strait of Hormuz'], ARRAY['Malacca', 'Straits of Malacca', 'Malacca Strait'], 200),
 ('ASIA',             '/water/south-china-sea.webp',         'South China Sea',      ARRAY['East China Sea', 'Philippine Sea', 'Java Sea', 'Yellow Sea', 'Celebes Sea', 'Gulf of Thailand'], NULL::text[], 100),
 ('ASIA',             '/water/yellow-sea.webp',              'Yellow Sea',           ARRAY['East China Sea', 'Sea of Japan', 'South China Sea', 'Korea Strait', 'Sea of Okhotsk', 'Philippine Sea'], ARRAY['Yellow'], 200),
+('ASIA',             '/water/ganges-river.webp',            'Ganges River',         ARRAY['Brahmaputra River', 'Indus River', 'Godavari River', 'Irrawaddy River', 'Mekong River', 'Narmada River'], ARRAY['Ganges', 'Ganga'], 150),
+('ASIA',             '/water/mekong-river.webp',            'Mekong River',         ARRAY['Irrawaddy River', 'Salween River', 'Red River', 'Chao Phraya River', 'Yangtze River', 'Ganges River'], ARRAY['Mekong'], 200),
+('ASIA',             '/water/yangtze-river.webp',           'Yangtze River',        ARRAY['Yellow River', 'Mekong River', 'Pearl River', 'Amur River', 'Ganges River', 'Brahmaputra River'], ARRAY['Yangtze', 'Chang Jiang', 'Yangtze Kiang'], 150),
 -- MIDDLE_EAST_ASIA
 ('MIDDLE_EAST_ASIA',  '/water/arabian-sea.webp',             'Arabian Sea',           ARRAY['Bay of Bengal', 'Gulf of Oman', 'Red Sea', 'Persian Gulf', 'Gulf of Aden', 'Laccadive Sea'], ARRAY['Arabian'], 150),
 ('MIDDLE_EAST_ASIA',  '/water/black-sea.webp',               'Black Sea',             ARRAY['Caspian Sea', 'Sea of Azov', 'Aegean Sea', 'Sea of Marmara', 'Aral Sea', 'Adriatic Sea'], ARRAY['Black'], 100),
@@ -85,6 +93,7 @@ FROM (VALUES
 ('MIDDLE_EAST_ASIA',  '/water/red-sea.webp',                 'Red Sea',               ARRAY['Persian Gulf', 'Gulf of Aden', 'Dead Sea', 'Gulf of Oman', 'Mediterranean Sea', 'Arabian Sea'], NULL::text[], 100),
 ('MIDDLE_EAST_ASIA', '/water/indian-ocean.webp',            'Indian Ocean',         ARRAY['Pacific Ocean', 'South Atlantic Ocean', 'North Atlantic Ocean', 'Southern Ocean', 'Arctic Ocean', 'South China Sea'], ARRAY['Indian'], 100),
 ('MIDDLE_EAST_ASIA', '/water/persian-gulf.webp',            'Persian Gulf',         ARRAY['Gulf of Oman', 'Red Sea', 'Arabian Sea', 'Gulf of Aden', 'Caspian Sea', 'Gulf of Aqaba'], ARRAY['Arabian Gulf'], 100),
+('MIDDLE_EAST_ASIA', '/water/euphrates-river.webp',         'Euphrates River',      ARRAY['Tigris River', 'Jordan River', 'Nile River', 'Karun River', 'Orontes River', 'Indus River'], ARRAY['Euphrates'], 200),
 -- AMERICAS
 ('AMERICAS',          '/water/baffin-bay.webp',              'Baffin Bay',            ARRAY['Hudson Bay', 'Davis Strait', 'Labrador Sea', 'Beaufort Sea', 'Greenland Sea', 'James Bay'], ARRAY['Baffin'], 200),
 ('AMERICAS',          '/water/bay-of-fundy.webp',            'Bay of Fundy',          ARRAY['Gulf of Maine', 'Gulf of St. Lawrence', 'Chesapeake Bay', 'Cape Cod Bay', 'James Bay', 'Delaware Bay'], ARRAY['Fundy'], 200),
@@ -132,10 +141,12 @@ FROM (VALUES
 ('AMERICAS',          '/water/rio-de-la-plata.webp',         'Río de la Plata',       ARRAY['Bahía Blanca', 'Paraná River', 'Gulf of San Matías', 'Uruguay River', 'Lagoa dos Patos', 'Gulf of San Jorge'], ARRAY['River Plate', 'La Plata', 'Plata'], 200),
 ('AMERICAS',          '/water/rio-negro.webp',               'Rio Negro',             ARRAY['Madeira River', 'Xingu River', 'Tapajós River', 'Orinoco River', 'Japurá River', 'Purus River'], ARRAY['Negro River', 'Negro'], 300),
 ('AMERICAS',          '/water/south-atlantic.webp',          'South Atlantic Ocean',  ARRAY['North Atlantic Ocean', 'Pacific Ocean', 'Indian Ocean', 'Southern Ocean', 'Arctic Ocean', 'Caribbean Sea'], ARRAY['South Atlantic'], 100),
-('AMERICAS',          '/water/strait-magellan.webp',         'Strait of Magellan',    ARRAY['Drake Passage', 'Beagle Channel', 'Bering Strait', 'Strait of Gibraltar', 'Davis Strait', 'Strait of Hormuz'], ARRAY['Magellan', 'Straits of Magellan', 'Magellan Strait'], 150)
+('AMERICAS',          '/water/strait-magellan.webp',         'Strait of Magellan',    ARRAY['Drake Passage', 'Beagle Channel', 'Bering Strait', 'Strait of Gibraltar', 'Davis Strait', 'Strait of Hormuz'], ARRAY['Magellan', 'Straits of Magellan', 'Magellan Strait'], 150),
+('AMERICAS',         '/water/rio-grande.webp',              'Rio Grande',           ARRAY['Colorado River', 'Red River', 'Arkansas River', 'Brazos River', 'Mississippi River', 'Gila River'], ARRAY['Río Grande', 'Rio Bravo'], 100),
+('AMERICAS',         '/water/rio-grande-2.webp',            'Rio Grande',           ARRAY['Colorado River', 'Red River', 'Arkansas River', 'Brazos River', 'Mississippi River', 'Gila River'], ARRAY['Río Grande', 'Rio Bravo'], 150)
 ) AS v(region, visual_asset, correct_answer, wrong_answers, accepted_answers, points);
 
 COMMIT;
 
--- Check: should return 100.
+-- Check: should return 111.
 SELECT COUNT(*) FROM questions WHERE game_mode = 'COUNTRY_MONKEY' AND subcategory = 'WATER';

@@ -11,7 +11,7 @@
 -- Down's country table. Landmarks get theirs from country_monkey_landmarks.sql.
 --
 -- Safe to re-run. Run it AGAIN after re-running country_monkey_water.sql
--- (that file replaces the water rows, clues and all). 86 bodies of water;
+-- (that file replaces the water rows, clues and all). 95 bodies of water;
 -- a few appear in more than one region, so more rows than that update.
 -- ============================================================================
 
@@ -107,6 +107,17 @@ UPDATE questions SET hint = 'South Korea'                        WHERE game_mode
 UPDATE questions SET hint = 'The Philippines'                    WHERE game_mode = 'COUNTRY_MONKEY' AND subcategory = 'WATER' AND correct_answer = 'South China Sea';
 UPDATE questions SET hint = 'Sumatra (Indonesia)'                WHERE game_mode = 'COUNTRY_MONKEY' AND subcategory = 'WATER' AND correct_answer = 'Strait of Malacca';
 UPDATE questions SET hint = 'North Korea'                        WHERE game_mode = 'COUNTRY_MONKEY' AND subcategory = 'WATER' AND correct_answer = 'Yellow Sea';
+
+-- Added Oct 2026 with Randy's first river batch.
+UPDATE questions SET hint = 'Budapest'                           WHERE game_mode = 'COUNTRY_MONKEY' AND subcategory = 'WATER' AND correct_answer = 'Danube River';
+UPDATE questions SET hint = 'Cologne'                            WHERE game_mode = 'COUNTRY_MONKEY' AND subcategory = 'WATER' AND correct_answer = 'Rhine River';
+UPDATE questions SET hint = 'Kazan'                              WHERE game_mode = 'COUNTRY_MONKEY' AND subcategory = 'WATER' AND correct_answer = 'Volga River';
+UPDATE questions SET hint = 'Syria'                              WHERE game_mode = 'COUNTRY_MONKEY' AND subcategory = 'WATER' AND correct_answer = 'Euphrates River';
+UPDATE questions SET hint = 'Varanasi'                           WHERE game_mode = 'COUNTRY_MONKEY' AND subcategory = 'WATER' AND correct_answer = 'Ganges River';
+UPDATE questions SET hint = 'Laos'                               WHERE game_mode = 'COUNTRY_MONKEY' AND subcategory = 'WATER' AND correct_answer = 'Mekong River';
+UPDATE questions SET hint = 'Shanghai'                           WHERE game_mode = 'COUNTRY_MONKEY' AND subcategory = 'WATER' AND correct_answer = 'Yangtze River';
+UPDATE questions SET hint = 'Mali'                               WHERE game_mode = 'COUNTRY_MONKEY' AND subcategory = 'WATER' AND correct_answer = 'Niger River';
+UPDATE questions SET hint = 'El Paso'                            WHERE game_mode = 'COUNTRY_MONKEY' AND subcategory = 'WATER' AND correct_answer = 'Rio Grande';
 
 COMMIT;
 
