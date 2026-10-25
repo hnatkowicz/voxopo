@@ -1443,7 +1443,7 @@ function startTriviYeahIIAnswerCountdown(roomCode, startCount = null) {
 // live classic Trivi-Yeah timer logic while it's still being iterated on.
 function fastForwardTriviYeahIIReveal(roomCode) {
     const room = activeRooms[roomCode];
-    if (!room) return;
+    if (!room || room.answerSpread) return;
     if (room.gameSecondsLeft > FAST_FORWARD_SECONDS) {
         // fastForward marks this as the everyone's-answered snap, not a real
         // tick -- the TV's low-time chime must stay silent for it. Without
@@ -1775,6 +1775,12 @@ function evaluateTriviYeahIIAnswers(roomCode) {
     if (room.timerInterval) { clearInterval(room.timerInterval); room.timerInterval = null; }
 
     const ty2 = room.triviYeahII;
+    // A Doubler or Hot Seat is the picker's alone, so the spread is out of one.
+    const soloPick = ty2.doubler || (ty2.trap && ty2.trap.type === 'HOT_SEAT');
+    const answering = Object.values(room.players).filter(p => !p.left);
+    if (answerSpreadFirst(room, roomCode, Object.values(ty2.answers), soloPick ? 1 : answering.length,
+        () => evaluateTriviYeahIIAnswers(roomCode))) return;
+
     const cell = ty2.grid[ty2.activeCellIndex];
     const correctLetter = ty2.activeQuestionData.correctLetter;
     const points = cell.points;
@@ -2571,6 +2577,9 @@ function revealFlagMeDownRound(roomCode) {
     const fmd = room.flagMeDown;
     if (fmd.phase !== 'CLUES') return;
     if (room.revealTimeout) { clearTimeout(room.revealTimeout); room.revealTimeout = null; }
+    const locking = Object.values(room.players).filter(p => !p.left);
+    const lockedLetters = locking.map(p => fmd.lockIns[p.name] && 'ABCD'[fmd.choices.indexOf(fmd.lockIns[p.name].choice)]);
+    if (answerSpreadFirst(room, roomCode, lockedLetters, locking.length, () => revealFlagMeDownRound(roomCode))) return;
     fmd.phase = 'REVEAL';
     const country = fmd.current;
     const results = Object.values(room.players).filter(p => !p.left).map(player => {
@@ -2617,7 +2626,7 @@ function handleFlagMeDownAction(roomCode, room, playerName, cleanText) {
     const fmd = room.flagMeDown;
     const match = /^FLAGLOCK\s+([A-D])$/i.exec(cleanText);
     if (!match) return `⚠️ That action isn't available right now.`;
-    if (fmd.phase !== 'CLUES') return `⚠️ Too late -- this one's already revealed.`;
+    if (fmd.phase !== 'CLUES' || room.answerSpread) return `⚠️ Too late -- this one's already revealed.`;
     if (playerName in fmd.lockIns) return `⚠️ Already locked in -- no changing it.`;
     const choice = fmd.choices['ABCD'.indexOf(match[1].toUpperCase())];
     if (!choice) return `⚠️ That's not one of the choices.`;
@@ -2631,7 +2640,7 @@ function handleFlagMeDownAction(roomCode, room, playerName, cleanText) {
 function checkFlagMeDownAllLocked(roomCode) {
     const room = activeRooms[roomCode];
     const fmd = room && room.flagMeDown;
-    if (!fmd || fmd.phase !== 'CLUES') return;
+    if (!fmd || fmd.phase !== 'CLUES' || room.answerSpread) return;
     const active = Object.values(room.players).filter(p => !p.left);
     if (active.length && active.every(p => p.name in fmd.lockIns)) {
         if (room.revealTimeout) clearTimeout(room.revealTimeout);
@@ -3419,6 +3428,7 @@ function clearRoomForFreshGame(room) {
     if (room.categoryTimerInterval) { clearInterval(room.categoryTimerInterval); room.categoryTimerInterval = null; }
     if (room.revealTimeout) { clearTimeout(room.revealTimeout); room.revealTimeout = null; }
     if (room.returnVoteTimeout) { clearTimeout(room.returnVoteTimeout); room.returnVoteTimeout = null; }
+    if (room.answerSpread) { clearTimeout(room.answerSpread.timeout); room.answerSpread = null; }
     room.returnVotes = new Map();
     room.venueBreak = null;
     room.endVotes = new Set();
@@ -4318,6 +4328,35 @@ function calculateCategoryWinner(room) {
 // ==========================================
 // PHASE 3: CORE QUESTIONS ENGINE
 // ==========================================
+// ---- The answer spread (Randy, Oct 2026) ----
+// When time's up, the TV's answer buttons fill to show how the room split
+// (fills only -- no names or counts, Randy's call), and a beat later the
+// right answer lights up. A reason to look up at the TV: playtesting with
+// his brother found the phones' side pages made the TV easy to ignore.
+// Phones learn the answer only at the reveal, so the beat spoils nothing.
+// Each reveal function calls this first: the first call shows the spread
+// and schedules the real reveal (the same function, called again), which
+// clears the marker and carries on as before.
+const ANSWER_SPREAD_MS = 1000;
+function answerSpreadFirst(room, roomCode, letters, total, reveal) {
+    if (room.answerSpread) {
+        room.answerSpread = null;
+        return false;
+    }
+    const counts = { A: 0, B: 0, C: 0, D: 0 };
+    letters.forEach(letter => { if (letter in counts) counts[letter]++; });
+    const epoch = room.gameEpoch;
+    room.answerSpread = {
+        timeout: setTimeout(() => {
+            if (activeRooms[roomCode] !== room || room.gameEpoch !== epoch || !room.answerSpread) return;
+            reveal();
+        }, ANSWER_SPREAD_MS)
+    };
+    broadcastToRoom(roomCode, { type: 'GAME_TIMER_TICK', secondsLeft: "TIME'S UP!" });
+    broadcastToRoom(roomCode, { type: 'ANSWER_SPREAD', counts, total: Math.max(1, total) });
+    return true;
+}
+
 function startGameRoundCountdown(roomCode, startCount = GAME_ROUND_DURATION_SECONDS) {
     const room = activeRooms[roomCode];
     if (!room) return;
@@ -4342,7 +4381,7 @@ function startGameRoundCountdown(roomCode, startCount = GAME_ROUND_DURATION_SECO
 // moment instead of a jarring instant cut to the answer.
 function fastForwardToReveal(roomCode) {
     const room = activeRooms[roomCode];
-    if (!room) return;
+    if (!room || room.answerSpread) return;
 
     if (room.gameSecondsLeft > FAST_FORWARD_SECONDS) {
         // The countdown interval decrements before it broadcasts, so without this
@@ -4360,6 +4399,10 @@ function evaluateRoundAndRevealAnswer(roomCode) {
         clearInterval(room.timerInterval);
         room.timerInterval = null;
     }
+
+    const answering = Object.values(room.players).filter(p => !p.left);
+    if (answerSpreadFirst(room, roomCode, answering.map(p => room.answers[p.name]), answering.length,
+        () => evaluateRoundAndRevealAnswer(roomCode))) return;
 
     room.gameState = 'ROUND_REVEAL';
     broadcastToRoom(roomCode, { type: 'GAME_TIMER_TICK', secondsLeft: "TIME'S UP!" });
@@ -4905,6 +4948,7 @@ export function handleIncomingMessage(fromPhone, bodyText, explicitRoomCode, pre
     // 5. Handle Live Active Choice Submissions (Phase 3)
     if (currentRoom.gameState === 'GAME_ROUND') {
         const answerChoice = cleanText.toUpperCase();
+        if (currentRoom.answerSpread) return `⚠️ Time's up -- answers are locked.`;
         if (['A', 'B', 'C', 'D'].includes(answerChoice)) {
             if (!(actingPlayerName in currentRoom.answers)) {
                 currentRoom.answerOrder = currentRoom.answerOrder || [];
@@ -4987,6 +5031,7 @@ export function handleIncomingMessage(fromPhone, bodyText, explicitRoomCode, pre
         if (noPass && answerChoice === 'PASS') return `⚠️ No passing on this one!`;
 
         if (validChoices.includes(answerChoice)) {
+            if (currentRoom.answerSpread) return `⚠️ Time's up -- answers are locked.`;
             if (isDoublerQuestion && actingPlayerName !== ty2.currentPicker) {
                 return trapType === 'HOT_SEAT'
                     ? `⚠️ Only ${ty2.currentPicker} answers this one -- they're in the Hot Seat.`

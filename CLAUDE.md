@@ -90,6 +90,10 @@ event, for a small fee. That's why hosting is gated behind access codes.
 | `/info` | `public/info.html` | Rules, TV setup, privacy, about |
 | `/admin` | `public/admin.html` | Manage access codes, reset rooms |
 
+The TV's start screen shows live counts (rooms open, people playing) from
+`/api/live-counts` -- numbers only, never room codes, since a code is the
+only lock on a room (Randy chose counts over a list of lobbies).
+
 The flow: access code → host's phone → room code → typed into the TV → players
 join on their phones via the TV's QR code or `/play`. The in-room QR code is
 drawn on the TV for that room (`/play?room=1234`), which fills the room code
@@ -280,6 +284,14 @@ Mode keys are used in room votes and in `gameEngine.js`:
   (`hints: [{ kind, label, cost, text | imageUrl }]`), shared with Flag Me
   Down's Final Wager. The same maps power the **Country Monkey** category
   in Thinking Pants (`trivi_yeah_ii_country_monkey.sql`, 80 maps, 20 per tier).
+- **The answer spread** (Randy, Oct 2026, after his brother said the
+  phones made the TV easy to ignore): when time's up in Trivi-yeah!,
+  Country Monkey, Thinking Pants and Flag Me Down, the TV's answer buttons
+  fill to show how the room split -- **fills only, no names or counts**
+  (Randy's call) -- and a one-second beat later the right answer lights
+  up (`answerSpreadFirst`, `ANSWER_SPREAD`, `drawAnswerSpread`). Answers
+  are locked during the beat, and phones learn the answer only at the
+  reveal. A Doubler or Hot Seat's spread is out of one (the picker).
 - **Question pictures** (any mode) are shown on the TV *and* phones, fetched in
   the background before they're needed, and served under a disguised address
   (`/q-img/<random>`) so a filename like `nigeria.webp` never reaches a phone.

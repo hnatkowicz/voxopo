@@ -249,6 +249,16 @@ app.post('/api/message', async (req, res) => {
     }
 });
 
+// The TV start screen's live counts: rooms open and people playing, across
+// the whole site. Numbers only -- never room codes, since a code is the only
+// lock on a room (Randy, Oct 2026: counts, not a list of lobbies).
+app.get('/api/live-counts', (req, res) => {
+    const rooms = Object.values(activeRooms);
+    const players = rooms.reduce((sum, room) => sum + Object.values(room.players || {}).filter(p => !p.left).length, 0);
+    res.setHeader('Cache-Control', 'no-store');
+    return res.json({ rooms: rooms.length, players });
+});
+
 // What a phone needs before joining: the room's venue (name, logo) and which
 // modes it offers, so the join screen only shows those. Nothing about players.
 app.get('/api/room-info/:roomCode', (req, res) => {

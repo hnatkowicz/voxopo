@@ -11,6 +11,17 @@ document.addEventListener("DOMContentLoaded", () => {
     const categoryMusic = document.getElementById('category-music');
     if (categoryMusic) categoryMusic.volume = 0.25;
 
+    // Live counts on the start screen, refreshed while it's showing.
+    const refreshLiveCounts = () => {
+        if (document.body.getAttribute('data-view') !== 'gateway') return;
+        fetch('/api/live-counts').then(r => r.json()).then(c => {
+            document.getElementById('global-active-rooms').innerText = c.rooms;
+            document.getElementById('global-players-count').innerText = c.players;
+        }).catch(() => {});
+    };
+    refreshLiveCounts();
+    setInterval(refreshLiveCounts, 15000);
+
     const btnSubmitSpectate = document.getElementById('btn-submit-spectate');
     const inputRoomCode = document.getElementById('input-room-code');
 
@@ -294,6 +305,18 @@ if (btnSubmitSpectate) {
                     lastSeenGameSecondsLeft = secondsNum;
                 }
                 // Listen for the server's clock expiration to reveal the correct answer
+                // Time's up: the answer buttons fill to show how the room split,
+                // a beat before the right one lights (see answerSpreadFirst).
+                if (data.type === 'ANSWER_SPREAD') {
+                    stopCountdownMusic();
+                    ty2AnswerCountdownActive = false;
+                    if (currentGamePhase === 'FLAG_ME_DOWN' && flagMeDownTV) {
+                        flagMeDownTV.spread = data;
+                        renderFlagMeDownTV();
+                    } else {
+                        drawAnswerSpread(data.counts, data.total, letter => document.getElementById(`choice-row-${letter}`));
+                    }
+                }
                 if (data.type === 'REVEAL_CORRECT_ANSWER') {
                     document.getElementById('room-status-text').innerText = "Round Evaluation";
                     document.getElementById('lobby-countdown').innerText = "0 s";
@@ -1829,10 +1852,14 @@ function renderFlagMeDownTV() {
             <div style="font-size: 0.75rem; font-weight: 700; color: #64748b; text-transform: uppercase; letter-spacing: 0.06em;">${label}</div>
             <div style="font-size: 1.1rem; font-weight: 600; color: ${value ? '#ffffff' : '#475569'}; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${value ? escapeHtml(value) : '&middot; &middot; &middot;'}</div>
         </div>`;
+    const spread = t.spread;
     const choices = t.choices.map((name, i) => {
         const letter = 'ABCD'[i];
         const isAnswer = reveal && name === reveal.answer;
-        return `<div style="background: ${isAnswer ? 'rgba(0, 230, 118, 0.15)' : '#1e222b'}; border: 1px solid ${isAnswer ? '#00e676' : '#222630'}; border-radius: 8px; padding: 10px 14px; display: flex; align-items: center; gap: 10px; opacity: ${reveal && !isAnswer ? 0.45 : 1};">
+        // How the room split (drawAnswerSpread): grows in once, then stays.
+        const pct = spread ? Math.round(100 * (spread.counts[letter] || 0) / Math.max(1, spread.total)) : 0;
+        const fill = spread ? `<div class="spread-fill" data-pct="${pct}" style="position: absolute; left: 0; top: 0; bottom: 0; width: ${t.spreadDrawn ? pct : 0}%; background: ${isAnswer ? SPREAD_FILL_RIGHT : SPREAD_FILL}; z-index: -1; transition: width 0.6s ease;"></div>` : '';
+        return `<div style="position: relative; overflow: hidden; z-index: 0; background: ${isAnswer ? 'rgba(0, 230, 118, 0.15)' : '#1e222b'}; border: 1px solid ${isAnswer ? '#00e676' : '#222630'}; border-radius: 8px; padding: 10px 14px; display: flex; align-items: center; gap: 10px; opacity: ${reveal && !isAnswer ? 0.45 : 1};">${fill}
             <span style="background: rgba(250, 204, 21, 0.12); color: ${FMD_COLOR}; font-weight: 700; padding: 3px 9px; border-radius: 4px; font-size: 0.85rem;">${letter}</span>
             <span style="font-size: 1.05rem; font-weight: 600; color: #f4f5f6;">${escapeHtml(name)}</span>
         </div>`;
@@ -1869,6 +1896,12 @@ function renderFlagMeDownTV() {
             ${results}
         </div>
     `;
+    // The spread grows in the first time it's drawn; redraws (the reveal) keep it.
+    if (t.spread && !t.spreadDrawn) {
+        t.spreadDrawn = true;
+        const fills = panel.querySelectorAll('.spread-fill');
+        requestAnimationFrame(() => requestAnimationFrame(() => fills.forEach(f => { f.style.width = f.dataset.pct + '%'; })));
+    }
 }
 
 function updateProfilerTally() {
@@ -2076,6 +2109,33 @@ function switchToGameOverUI(players, brand) {
     setStatusMessage(`<div style="font-weight: 600; color: #8892b0;">Match complete</div>`);
 }
 
+// How the room split, as a fill on each answer button (Randy, Oct 2026:
+// fills only, no names or counts). It grows in, then stays through the
+// reveal; the right answer's fill turns green.
+const SPREAD_FILL = 'rgba(148, 163, 184, 0.34)';
+const SPREAD_FILL_RIGHT = 'rgba(0, 230, 118, 0.32)';
+function drawAnswerSpread(counts, total, rowFor) {
+    ['A', 'B', 'C', 'D'].forEach(letter => {
+        const row = rowFor(letter);
+        if (!row) return;
+        let fill = row.querySelector('.spread-fill');
+        if (!fill) {
+            // z-index -1 inside the row's own stacking context: above the
+            // row's background, below its letter and text.
+            row.style.position = 'relative';
+            row.style.overflow = 'hidden';
+            row.style.zIndex = '0';
+            fill = document.createElement('div');
+            fill.className = 'spread-fill';
+            fill.style.cssText = `position: absolute; left: 0; top: 0; bottom: 0; width: 0; background: ${SPREAD_FILL}; z-index: -1; transition: width 0.6s ease, background 0.3s ease;`;
+            row.prepend(fill);
+        }
+        const pct = Math.round(100 * (counts[letter] || 0) / Math.max(1, total));
+        fill.dataset.pct = pct;
+        requestAnimationFrame(() => requestAnimationFrame(() => { fill.style.width = pct + '%'; }));
+    });
+}
+
 function highlightCorrectAnswerOnTV(correctLetter) {
     // Highlighting the correct choice row below is the whole reveal -- the status
     // slot's "Question X/Y" progress indicator stays as-is through this, no
@@ -2084,13 +2144,16 @@ function highlightCorrectAnswerOnTV(correctLetter) {
 
     ids.forEach(letter => {
         const rowNode = document.getElementById(`choice-row-${letter}`) || null;
+        const fill = rowNode && rowNode.querySelector('.spread-fill');
         if (letter === correctLetter) {
             if (rowNode) {
                 rowNode.style.background = "rgba(0, 230, 118, 0.08)";
                 rowNode.style.borderColor = "#00e676";
             }
-        } else {
-            if (rowNode) rowNode.style.opacity = "0.15";
+            if (fill) fill.style.background = SPREAD_FILL_RIGHT;
+        } else if (rowNode) {
+            // An answer somebody picked stays readable, so the split still shows.
+            rowNode.style.opacity = fill && Number(fill.dataset.pct) > 0 ? "0.45" : "0.15";
         }
     });
 }
