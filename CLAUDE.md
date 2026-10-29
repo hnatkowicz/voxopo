@@ -235,6 +235,14 @@ Mode keys are used in room votes and in `gameEngine.js`:
   board share an answer or a picture (two Apple logos, an Art picture's
   artist and title questions). Growing a category raises its
   share on its own, with no setting to touch.
+  **Category dial** (Randy, Oct 2026): on /admin each category is
+  **Off / Normal / Boost** (`thinking_pants_category_settings`, from
+  `thinking_pants_category_settings.sql`; no row = Normal). Boost doubles
+  the draw weight on top of the depth rule -- for a new category, to get
+  the family's verdict fast (Art), or one that rarely turns up (Logo My
+  Eggo starts on Boost: Randy's youngest had found one logo in several
+  games). Off keeps the questions but never draws the category. Three
+  settings on purpose, not a slider.
   **Direction (Randy, Oct 2026):** new general trivia goes into Thinking
   Pants categories. Trivi-yeah! is to become the house-questions-only mode
   for one-off events (baby showers, etc.), so its general decks won't grow.

@@ -892,6 +892,68 @@ const TRIVI_YEAH_II_CATEGORIES = [
     { key: 'LOGOS', label: 'Logo My Eggo' }
 ];
 const TRIVI_YEAH_II_CATEGORIES_PER_BOARD = 3;
+
+// ---- Category dial (Randy, Oct 2026) ----
+// Each category is Off, Normal or Boost, set on /admin and stored in
+// thinking_pants_category_settings (thinking_pants_category_settings.sql).
+// Boost doubles a category's draw weight on top of the depth rule below:
+// for a new category, to get the family's verdict fast (Art), or one that
+// rarely turns up (Logo My Eggo -- Randy's youngest had found one logo in
+// several games). Off keeps the questions but never draws the category.
+// Three settings, not a slider, so nobody ends up fiddling with decimals.
+// Until the SQL is run, every category is Normal.
+const CATEGORY_SETTINGS = ['OFF', 'NORMAL', 'BOOST'];
+const CATEGORY_BOOST = 2;
+async function readCategorySettings() {
+    try {
+        const result = await pool.query('SELECT category, setting FROM thinking_pants_category_settings');
+        return Object.fromEntries(result.rows.map(r => [r.category, r.setting]));
+    } catch (e) {
+        if (e.code === '42P01') return {}; // table not created yet
+        throw e;
+    }
+}
+
+// /admin: every category with its depth and dial setting.
+export async function thinkingPantsCategoryOverview() {
+    const counts = await pool.query(
+        `SELECT category, points, COUNT(*) AS n FROM questions
+         WHERE game_mode = 'TRIVI_YEAH_II' AND points = ANY($1::int[]) GROUP BY category, points`,
+        [TRIVI_YEAH_II_TIERS]
+    );
+    const byCategory = {};
+    counts.rows.forEach(r => { (byCategory[r.category] = byCategory[r.category] || {})[Number(r.points)] = Number(r.n); });
+    let installed = true, settings = {};
+    try {
+        settings = Object.fromEntries((await pool.query('SELECT category, setting FROM thinking_pants_category_settings')).rows.map(r => [r.category, r.setting]));
+    } catch (e) {
+        if (e.code !== '42P01') throw e;
+        installed = false;
+    }
+    return {
+        installed,
+        categories: TRIVI_YEAH_II_CATEGORIES.map(c => {
+            const tiers = byCategory[c.key] || {};
+            return {
+                key: c.key,
+                label: c.label,
+                total: TRIVI_YEAH_II_TIERS.reduce((sum, t) => sum + (tiers[t] || 0), 0),
+                depth: Math.min(...TRIVI_YEAH_II_TIERS.map(t => tiers[t] || 0)),
+                setting: settings[c.key] || 'NORMAL'
+            };
+        })
+    };
+}
+
+export async function setThinkingPantsCategorySetting(key, setting) {
+    if (!TRIVI_YEAH_II_CATEGORIES.some(c => c.key === key) || !CATEGORY_SETTINGS.includes(setting)) return false;
+    await pool.query(
+        `INSERT INTO thinking_pants_category_settings (category, setting, updated_at) VALUES ($1, $2, now())
+         ON CONFLICT (category) DO UPDATE SET setting = EXCLUDED.setting, updated_at = now()`,
+        [key, setting]
+    );
+    return true;
+}
 const TRIVI_YEAH_II_TIERS = [100, 200, 300, 400];
 // Both pauses grow with the tile's value -- per family playtest, harder
 // (higher-point) questions deserve more time to take in. 100 -> 400 points:
@@ -1010,7 +1072,9 @@ async function buildTriviYeahIIBoard(doublersCount, house = null, usedCategoryKe
     });
     const depthOf = key => Math.min(...TRIVI_YEAH_II_TIERS.map(t => (tiersByCategory[key] || {})[t] || 0));
     const completeKeys = new Set(Object.keys(tiersByCategory).filter(key => depthOf(key) > 0));
-    const eligibleCategories = TRIVI_YEAH_II_CATEGORIES.filter(c => completeKeys.has(c.key));
+    const dial = await readCategorySettings();
+    const eligibleCategories = TRIVI_YEAH_II_CATEGORIES.filter(c => completeKeys.has(c.key) && dial[c.key] !== 'OFF');
+    const weightOf = c => Math.sqrt(depthOf(c.key)) * (dial[c.key] === 'BOOST' ? CATEGORY_BOOST : 1);
     const useHouse = !!(house && completeKeys.has(house.key));
     if (house && !useHouse) console.warn(`[Thinking Pants] House set ${house.key} isn't complete in the database (every tier needed) -- normal board instead.`);
     // Deeper categories come up more often (Randy, Oct 2026: thin ones should
@@ -1021,10 +1085,10 @@ async function buildTriviYeahIIBoard(doublersCount, house = null, usedCategoryKe
     // game sits out, unless there aren't enough others to fill the board.
     const needed = TRIVI_YEAH_II_CATEGORIES_PER_BOARD - (useHouse ? 1 : 0);
     const fresh = eligibleCategories.filter(c => !usedCategoryKeys.has(c.key));
-    let picked = weightedSampleWithoutReplacement(fresh, c => Math.sqrt(depthOf(c.key)), needed);
+    let picked = weightedSampleWithoutReplacement(fresh, weightOf, needed);
     if (picked.length < needed) {
         const repeats = eligibleCategories.filter(c => !picked.includes(c));
-        picked = picked.concat(weightedSampleWithoutReplacement(repeats, c => Math.sqrt(depthOf(c.key)), needed - picked.length));
+        picked = picked.concat(weightedSampleWithoutReplacement(repeats, weightOf, needed - picked.length));
     }
     const chosenCategories = useHouse ? [{ key: house.key, label: house.label }, ...picked] : picked;
     if (chosenCategories.length < TRIVI_YEAH_II_CATEGORIES_PER_BOARD) {
