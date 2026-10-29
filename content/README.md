@@ -71,7 +71,8 @@ anything already run is fine to run again.
 Every Thinking Pants **text** category: Art & Architecture, Astronomy &
 Space, College Athletics, Famous Firsts, Famous (K)nights, Fictional
 Locations, Food & Drink, Geography, Just in Time, Literature, Lyrics,
-Logo My Eggo (logos), Movies & TV, Music, Mythology, Science & Nature,
+Brush With Greatness (paintings, every row has a picture), Logo My Eggo
+(logos), Movies & TV, Music, Mythology, Science & Nature,
 Sports, Technology, Red, White & Who? (US history), War & Pieces (the
 World Wars), Word Nerd and World History. Logo My Eggo mixes picture rows
 (`image` = `/iconic-logos/<file>.webp`) with text-only ones.

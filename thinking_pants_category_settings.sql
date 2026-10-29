@@ -21,5 +21,10 @@ CREATE TABLE IF NOT EXISTS thinking_pants_category_settings (
 INSERT INTO thinking_pants_category_settings (category, setting) VALUES ('LOGOS', 'BOOST')
 ON CONFLICT (category) DO NOTHING;
 
+-- Added later: Brush With Greatness (the art category) launches on Boost,
+-- to get the family's verdict fast.
+INSERT INTO thinking_pants_category_settings (category, setting) VALUES ('ART_GALLERY', 'BOOST')
+ON CONFLICT (category) DO NOTHING;
+
 -- Check: should list LOGOS | BOOST.
 SELECT category, setting FROM thinking_pants_category_settings ORDER BY category;
