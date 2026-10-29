@@ -430,9 +430,17 @@ and forth until we both agree the idea is good **and** worth the effort. So:
   joke answers belong. A text tile that a logo picture would give away
   (Subaru's six stars, Porsche's STUTTGART) is retired. More logo
   batches: add picture rows to the sheet.
-- **Up next (Randy, Oct 2026):** an **Art** category in Thinking
-  Pants. Art: public-domain
-  paintings and some sculpture, images only from open-access museums
+- **Brush With Greatness** (the art category, built Oct 2026):
+  `content/art_gallery.csv`, **picture-only** (Randy: every tile shows the
+  painting), 70 of Randy's paintings in `public/art/` (1500x1000 WebP on a
+  gallery backdrop), up to four questions each: artist, title (only when
+  it can't be read off the canvas; wrong answers are the same artist's
+  real titles), what's in it ("Which river is being crossed?"), movement,
+  and a few stories (the Syndics on Dutch Masters cigar boxes). Hard
+  paintings get a leading question ("This artist's portrait of the same
+  man is on the $1 bill"). Launched on Boost. Randy stopped at 70 to see
+  how it plays before gathering more. Sources: public-domain works from
+  open-access museums
   (Met, Art Institute of Chicago, National Gallery of Art, Rijksmuseum,
   Cleveland, Smithsonian, Getty), each image's source page kept on file;
   no Italian-held works (Italy lets museums charge for images even of old

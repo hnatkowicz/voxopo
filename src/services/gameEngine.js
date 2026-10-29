@@ -889,7 +889,12 @@ const TRIVI_YEAH_II_CATEGORIES = [
     // names stripped off; logos that spell out the brand are left out) plus
     // text-only logo trivia. content/logos.csv. The title's a working one --
     // she gets the final say.
-    { key: 'LOGOS', label: 'Logo My Eggo' }
+    { key: 'LOGOS', label: 'Logo My Eggo' },
+    // Picture-only art category (Randy, Oct 2026): 70 public-domain paintings
+    // from open-access museums (public/art/), each with up to four questions
+    // -- artist, title, what's in it, movement. The board never shows the
+    // same painting twice. content/art_gallery.csv. Starts on Boost (/admin).
+    { key: 'ART_GALLERY', label: 'Brush With Greatness' }
 ];
 const TRIVI_YEAH_II_CATEGORIES_PER_BOARD = 3;
 
