@@ -3,7 +3,7 @@ import dotenv from 'dotenv';
 import path from 'path';
 import { WebSocketServer } from 'ws';
 import pool from './config/database.js';
-import { handleIncomingMessage, activeRooms, getCategoriesForMode, resolveRequestedQuestionCount, compareByRank, closeRoom, profilerStatusFor, profilerTvSnapshot, triviYeahIITrapInfo, emptyModeVotes, finalWagerWinShare, resolveDisguisedAsset, flagMeDownStatusFor, GAME_MODE_KEYS, allowedModesFor, finalWagerRevealFor, venueBrand, endGameVoteFor } from './services/gameEngine.js';
+import { handleIncomingMessage, activeRooms, getCategoriesForMode, resolveRequestedQuestionCount, compareByRank, closeRoom, profilerStatusFor, profilerTvSnapshot, triviYeahIITrapInfo, emptyModeVotes, finalWagerWinShare, resolveDisguisedAsset, flagMeDownStatusFor, GAME_MODE_KEYS, allowedModesFor, finalWagerRevealFor, venueBrand, endGameVoteFor, thinkingPantsCategoryOverview, setThinkingPantsCategorySetting } from './services/gameEngine.js';
 import {
     isHostAuthorized, grantHostSession, isAccessCodeActive,
     isAdminAuthorized, grantAdminSession,
@@ -214,6 +214,26 @@ app.post('/api/admin/codes/:code/venue', requireAdmin, async (req, res) => {
         return res.json({ success: true, venue });
     } catch (e) {
         return res.status(500).json({ success: false, error: 'Failed to save the venue profile.' });
+    }
+});
+
+// The Thinking Pants category dial: Off / Normal / Boost per category.
+app.get('/api/admin/categories', requireAdmin, async (req, res) => {
+    try {
+        return res.json({ success: true, ...(await thinkingPantsCategoryOverview()) });
+    } catch (e) {
+        return res.status(500).json({ success: false, error: 'Failed to load categories.' });
+    }
+});
+
+app.post('/api/admin/categories/:key', requireAdmin, async (req, res) => {
+    try {
+        const ok = await setThinkingPantsCategorySetting(req.params.key, req.body && req.body.setting);
+        if (!ok) return res.status(400).json({ success: false, error: 'Unknown category or setting.' });
+        return res.json({ success: true });
+    } catch (e) {
+        if (e.code === '42P01') return res.status(409).json({ success: false, error: 'Run thinking_pants_category_settings.sql in Neon first.' });
+        return res.status(500).json({ success: false, error: 'Failed to save.' });
     }
 });
 

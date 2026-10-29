@@ -63,6 +63,15 @@
         .venue-editor .hint { color: #64748b; font-size: 0.8rem; margin-top: 4px; }
         .venue-editor .modes { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
         .venue-editor .modes label { text-transform: none; letter-spacing: 0; font-size: 0.9rem; color: #f4f5f6; font-weight: 500; margin: 0; display: flex; gap: 8px; align-items: center; }
+        .category-row { display: flex; align-items: center; gap: 10px; padding: 8px 0; border-bottom: 1px solid #1e222b; text-align: left; }
+        .category-row .name { flex: 1; min-width: 0; color: #f4f5f6; font-weight: 600; font-size: 0.95rem; }
+        .category-row .count { color: #64748b; font-size: 0.8rem; font-weight: 500; }
+        .category-row .dial { display: flex; gap: 4px; }
+        .category-row .dial button { background: #1e222b; border: 1px solid #222630; color: #94a3b8; border-radius: 6px; padding: 6px 10px; font-size: 0.8rem; font-weight: 700; cursor: pointer; }
+        .category-row .dial button.on { color: #0b0d12; }
+        .category-row .dial button.on.off { background: #ff5c5c; border-color: #ff5c5c; }
+        .category-row .dial button.on.normal { background: #94a3b8; border-color: #94a3b8; }
+        .category-row .dial button.on.boost { background: #00e676; border-color: #00e676; }
         .venue-notice { background: rgba(250, 204, 21, 0.08); border: 1px solid rgba(250, 204, 21, 0.3); color: #facc15; border-radius: 8px; padding: 12px; font-size: 0.85rem; margin-top: 16px; text-align: left; }
     </style>
 </head>
@@ -91,6 +100,13 @@
 
         <div id="venue-notice" class="venue-notice" style="display: none;">Venue profiles (pub name, logo, which modes show) turn on once you run <strong>access_codes_venue_profiles.sql</strong> in Neon.</div>
         <div id="codes-list"></div>
+
+        <div style="border-top: 1px solid #222630; margin: 28px 0 20px 0;"></div>
+        <h1 style="font-size: 1.1rem; margin-bottom: 4px;">Thinking Pants Categories</h1>
+        <p class="subtitle" style="margin-bottom: 12px;"><strong>Boost</strong> shows a category about twice as often; <strong>Off</strong> keeps its questions but never puts it on a board. Takes effect from the next board.</p>
+        <div id="category-notice" class="venue-notice" style="display: none; margin: 0 0 12px 0;">The category dial turns on once you run <strong>thinking_pants_category_settings.sql</strong> in Neon. Until then every category is Normal.</div>
+        <div id="category-list"></div>
+        <div class="feedback" id="category-feedback"></div>
 
         <div style="border-top: 1px solid #222630; margin: 28px 0 20px 0;"></div>
         <h1 style="font-size: 1.1rem; margin-bottom: 4px;">Force Reset a Room</h1>
@@ -324,12 +340,48 @@
             }
             const data = await response.json();
             if (data.success) {
+                // Already logged in (a reload): skip the login screen.
+                loginScreen.style.display = 'none';
+                manageScreen.style.display = 'block';
                 venueProfilesOn = !!data.venueProfiles;
                 houseColumnOn = !!data.houseColumn;
                 houseSets = data.houseSets || [];
                 boardRulesOn = !!data.boardRules;
                 breaksOn = !!data.breaks;
                 renderCodes(data.codes);
+                loadCategories();
+            }
+        }
+
+        // ---- Thinking Pants category dial: Off / Normal / Boost ----
+        let categoryDialOn = false;
+        async function loadCategories() {
+            const response = await fetch('/api/admin/categories');
+            const data = await response.json().catch(() => ({}));
+            if (!data.success) return;
+            categoryDialOn = !!data.installed;
+            document.getElementById('category-notice').style.display = categoryDialOn ? 'none' : 'block';
+            const esc = t => String(t).replace(/[&<>"']/g, ch => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[ch]));
+            document.getElementById('category-list').innerHTML = data.categories.map(c => `
+                <div class="category-row">
+                    <div class="name">${esc(c.label)}<div class="count">${c.depth > 0 ? `${c.total} questions` : 'Not in the database yet'}</div></div>
+                    <div class="dial">${['OFF', 'NORMAL', 'BOOST'].map(s => `<button type="button" class="${s.toLowerCase()}${c.setting === s ? ' on' : ''}" ${categoryDialOn ? '' : 'disabled'} onclick="setCategory('${c.key}', '${s}')">${s === 'OFF' ? 'Off' : s === 'NORMAL' ? 'Normal' : 'Boost'}</button>`).join('')}</div>
+                </div>`).join('');
+        }
+        async function setCategory(key, setting) {
+            const feedback = document.getElementById('category-feedback');
+            hideFeedback(feedback);
+            try {
+                const response = await fetch(`/api/admin/categories/${encodeURIComponent(key)}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ setting })
+                });
+                const data = await response.json();
+                if (!data.success) return showFeedback(feedback, data.error || 'Could not save.');
+                loadCategories();
+            } catch (err) {
+                showFeedback(feedback, 'Could not reach the server.');
             }
         }
 
