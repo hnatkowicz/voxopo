@@ -4,8 +4,8 @@
 -- Thinking Pants category WORLD_HISTORY. To change a question, change the
 -- spreadsheet and rebuild.
 --
--- Replaces the WHOLE category with the spreadsheet's 80 live questions
--- (100: 20, 200: 20, 300: 20, 400: 20), inside a transaction. Safe to re-run.
+-- Replaces the WHOLE category with the spreadsheet's 120 live questions
+-- (100: 30, 200: 30, 300: 30, 400: 30), inside a transaction. Safe to re-run.
 -- ============================================================================
 
 BEGIN;
@@ -14,10 +14,6 @@ DELETE FROM questions WHERE game_mode = 'TRIVI_YEAH_II' AND category = 'WORLD_HI
 
 
 -- 100 points
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORLD_HISTORY', 'ORIGINAL', NULL,
-        'Who was the first President of the United States?', NULL,
-        'George Washington', ARRAY['Thomas Jefferson', 'John Adams', 'Abraham Lincoln', 'Benjamin Franklin', 'James Madison', 'Alexander Hamilton'], 100);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORLD_HISTORY', 'ORIGINAL', NULL,
         'In what year did World War I begin?', NULL,
@@ -43,22 +39,6 @@ VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YE
         'In which city would you find the ancient Colosseum?', NULL,
         'Rome', ARRAY['Athens', 'Paris', 'Cairo', 'Istanbul', 'Pompeii', 'Naples'], 100);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORLD_HISTORY', 'ORIGINAL', NULL,
-        'What document, adopted on July 4, 1776, announced the American colonies'' break from Britain?', NULL,
-        'The Declaration of Independence', ARRAY['The Constitution', 'The Bill of Rights', 'The Magna Carta', 'The Articles of Confederation', 'The Emancipation Proclamation', 'The Mayflower Compact'], 100);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORLD_HISTORY', 'ORIGINAL', NULL,
-        'Which war was fought on American soil from 1861 to 1865?', NULL,
-        'The American Civil War', ARRAY['The Revolutionary War', 'The War of 1812', 'The Mexican-American War', 'The Spanish-American War', 'The French and Indian War', 'World War I'], 100);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORLD_HISTORY', 'WWII_HISTORY_FOLD_1', NULL,
-        'Who served as British Prime Minister for most of World War II?', NULL,
-        'Winston Churchill', ARRAY['Neville Chamberlain', 'Clement Attlee', 'Anthony Eden', 'Stanley Baldwin', 'Lord Halifax', 'Harold Macmillan'], 100);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORLD_HISTORY', 'WWII_HISTORY_FOLD_1', NULL,
-        'Which teenage diarist hid with her family in a secret annex in Amsterdam during the Nazi occupation?', NULL,
-        'Anne Frank', ARRAY['Etty Hillesum', 'Corrie ten Boom', 'Sophie Scholl', 'Hannah Senesh', 'Miep Gies', 'Irena Sendler'], 100);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORLD_HISTORY', 'WORLD_HISTORY_BATCH_1', NULL,
         'Which French military leader crowned himself Emperor in 1804?', NULL,
         'Napoleon Bonaparte', ARRAY['Louis XIV', 'Louis XVI', 'Charlemagne', 'Charles de Gaulle', 'Cardinal Richelieu', 'Louis-Philippe I'], 100);
@@ -76,10 +56,6 @@ VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YE
         'Pompeii', ARRAY['Naples', 'Ostia', 'Carthage', 'Syracuse', 'Capua', 'Ravenna'], 100);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORLD_HISTORY', 'WORLD_HISTORY_BATCH_1', NULL,
-        'Which civil rights leader gave the "I Have a Dream" speech in 1963?', NULL,
-        'Martin Luther King Jr.', ARRAY['Malcolm X', 'John Lewis', 'Jesse Jackson', 'Frederick Douglass', 'Medgar Evers', 'Ralph Abernathy'], 100);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORLD_HISTORY', 'WORLD_HISTORY_BATCH_1', NULL,
         'The Vikings set out from which part of Europe?', NULL,
         'Scandinavia', ARRAY['The British Isles', 'The Iberian Peninsula', 'The Balkans', 'The Low Countries', 'Central Europe', 'The Baltic states'], 100);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
@@ -94,6 +70,70 @@ INSERT INTO questions (question_number, game_mode, category, subcategory, factio
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORLD_HISTORY', 'ORIGINAL', NULL,
         'Which young pharaoh''s nearly intact tomb did Howard Carter discover in the Valley of the Kings in 1922?', NULL,
         'Tutankhamun', ARRAY['Ramesses II', 'Akhenaten', 'Khufu', 'Thutmose III', 'Seti I', 'Amenhotep III'], 100);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORLD_HISTORY', 'ORIGINAL', NULL,
+        'Which ancient Greek city is called the birthplace of democracy?', NULL,
+        'Athens', ARRAY['Sparta', 'Corinth', 'Thebes', 'Troy', 'Delphi'], 100);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORLD_HISTORY', 'ORIGINAL', NULL,
+        'Which code of honor did Japan''s samurai warriors follow?', NULL,
+        'Bushido', ARRAY['Kamikaze', 'Shogun', 'Zen', 'Ninjutsu', 'Seppuku'], 100);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORLD_HISTORY', 'ORIGINAL', NULL,
+        'Which gladiator led a huge slave revolt against Rome in 73 BC?', NULL,
+        'Spartacus', ARRAY['Maximus', 'Commodus', 'Brutus', 'Hannibal', 'Vercingetorix'], 100);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORLD_HISTORY', 'ORIGINAL', NULL,
+        'Which Greek philosopher was Plato''s teacher?', NULL,
+        'Socrates', ARRAY['Aristotle', 'Pythagoras', 'Homer', 'Archimedes', 'Diogenes'], 100);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORLD_HISTORY', 'ORIGINAL', NULL,
+        'Which language did the ancient Romans speak?', NULL,
+        'Latin', ARRAY['Greek', 'Italian', 'Aramaic', 'Etruscan', 'Hebrew'], 100);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORLD_HISTORY', 'ORIGINAL', NULL,
+        'Which river was the lifeline of ancient Egypt?', NULL,
+        'The Nile', ARRAY['The Tigris', 'The Euphrates', 'The Jordan', 'The Indus', 'The Congo'], 100);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORLD_HISTORY', 'ORIGINAL', NULL,
+        'Which country gave the Statue of Liberty to the United States?', NULL,
+        'France', ARRAY['Britain', 'Spain', 'Italy', 'The Netherlands', 'Germany'], 100);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORLD_HISTORY', 'ORIGINAL', NULL,
+        'Which ancient games, first held in 776 BC, honored the god Zeus?', NULL,
+        'The Olympic Games', ARRAY['The Pythian Games', 'The Gladiator Games', 'The Isthmian Games', 'The Roman Games', 'The Spartan Games'], 100);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORLD_HISTORY', 'ORIGINAL', NULL,
+        'Which country''s Vikings were the first Europeans to settle Iceland?', NULL,
+        'Norway', ARRAY['Denmark', 'Sweden', 'Scotland', 'Ireland', 'Finland'], 100);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORLD_HISTORY', 'ORIGINAL', NULL,
+        'Which British queen reigned for 70 years, until her death in 2022?', NULL,
+        'Elizabeth II', ARRAY['Victoria', 'Mary II', 'Anne', 'Elizabeth I', 'Alexandra'], 100);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORLD_HISTORY', 'ORIGINAL', NULL,
+        'What name is given to the medieval system of lords, knights and serfs bound by land and loyalty?', NULL,
+        'Feudalism', ARRAY['Communism', 'Mercantilism', 'Capitalism', 'Monarchy', 'Tribalism'], 100);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORLD_HISTORY', 'ORIGINAL', NULL,
+        'Which civilization built the great pyramids at Chichen Itza in Mexico?', NULL,
+        'The Maya', ARRAY['The Aztecs', 'The Inca', 'The Olmecs', 'The Toltecs', 'The Egyptians'], 100);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORLD_HISTORY', 'ORIGINAL', NULL,
+        'Which series of medieval religious wars, starting in 1096, aimed to win Jerusalem?', NULL,
+        'The Crusades', ARRAY['The Reconquista', 'The Hundred Years'' War', 'The Wars of the Roses', 'The Inquisition', 'The Thirty Years'' War'], 100);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORLD_HISTORY', 'ORIGINAL', NULL,
+        'In which country did the Industrial Revolution begin, in the 1700s?', NULL,
+        'Great Britain', ARRAY['Germany', 'France', 'The United States', 'Belgium', 'Japan'], 100);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORLD_HISTORY', 'ORIGINAL', NULL,
+        'What were the stone channels that carried water across the Roman Empire to its cities called?', NULL,
+        'Aqueducts', ARRAY['Viaducts', 'Canals', 'Cisterns', 'Sewers', 'Levees'], 100);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORLD_HISTORY', 'ORIGINAL', NULL,
+        'Which ancient city fell to a trick involving a giant wooden horse?', NULL,
+        'Troy', ARRAY['Sparta', 'Athens', 'Carthage', 'Babylon', 'Jericho'], 100);
 
 -- 200 points
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
@@ -104,10 +144,6 @@ INSERT INTO questions (question_number, game_mode, category, subcategory, factio
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORLD_HISTORY', 'ORIGINAL', NULL,
         'Julius Caesar was assassinated on the Ides of March. What date is that?', NULL,
         'March 15', ARRAY['March 1', 'March 7', 'March 13', 'March 21', 'March 25', 'March 31'], 200);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORLD_HISTORY', 'ORIGINAL', NULL,
-        'Who was the leader of Nazi Germany during World War II?', NULL,
-        'Adolf Hitler', ARRAY['Benito Mussolini', 'Joseph Stalin', 'Hermann Göring', 'Heinrich Himmler', 'Joseph Goebbels', 'Erwin Rommel'], 200);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORLD_HISTORY', 'ORIGINAL', NULL,
         'Which empire built the extensive road network and city of Machu Picchu in Peru?', NULL,
@@ -133,14 +169,6 @@ VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YE
         'Which Indian leader is famous for leading a nonviolent independence movement against British rule?', NULL,
         'Mahatma Gandhi', ARRAY['Jawaharlal Nehru', 'Subhas Chandra Bose', 'Muhammad Ali Jinnah', 'Bhagat Singh', 'Sardar Patel', 'Rabindranath Tagore'], 200);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORLD_HISTORY', 'WWII_HISTORY_FOLD_1', NULL,
-        'What was the code name for the Allied invasion of Normandy in June 1944?', NULL,
-        'Operation Overlord', ARRAY['Operation Torch', 'Operation Market Garden', 'Operation Husky', 'Operation Barbarossa', 'Operation Sea Lion', 'Operation Cobra'], 200);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORLD_HISTORY', 'WWII_HISTORY_FOLD_1', NULL,
-        'Which British mathematician, based at Bletchley Park, played a leading role in breaking the German Enigma code?', NULL,
-        'Alan Turing', ARRAY['Gordon Welchman', 'Dilly Knox', 'Bill Tutte', 'Max Newman', 'Charles Babbage', 'John von Neumann'], 200);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORLD_HISTORY', 'WORLD_HISTORY_BATCH_1', NULL,
         'Which Greek city-state''s King Leonidas led 300 soldiers at the Battle of Thermopylae?', NULL,
         'Sparta', ARRAY['Athens', 'Corinth', 'Thebes', 'Argos', 'Megara', 'Macedon'], 200);
@@ -158,10 +186,6 @@ VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YE
         'The Silk Road', ARRAY['The Spice Route', 'The Amber Road', 'The Incense Route', 'The Royal Road', 'The Tea Horse Road', 'The Grand Trunk Road'], 200);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORLD_HISTORY', 'WORLD_HISTORY_BATCH_1', NULL,
-        'Which 13-day standoff in 1962 brought the United States and the Soviet Union to the brink of nuclear war?', NULL,
-        'The Cuban Missile Crisis', ARRAY['The Bay of Pigs Invasion', 'The Berlin Blockade', 'The Suez Crisis', 'The U-2 Incident', 'The Korean War', 'The Prague Spring'], 200);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORLD_HISTORY', 'WORLD_HISTORY_BATCH_1', NULL,
         'Which king of Macedon built an empire stretching from Greece to India before dying at 32?', NULL,
         'Alexander the Great', ARRAY['Philip II of Macedon', 'Darius III', 'Xerxes I', 'Cyrus the Great', 'Pyrrhus of Epirus', 'Ptolemy I'], 200);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
@@ -176,6 +200,62 @@ INSERT INTO questions (question_number, game_mode, category, subcategory, factio
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORLD_HISTORY', 'WORLD_HISTORY_BATCH_1', NULL,
         'Which South American country is named after the independence leader Simón Bolívar?', NULL,
         'Bolivia', ARRAY['Venezuela', 'Colombia', 'Ecuador', 'Peru', 'Paraguay', 'Uruguay'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORLD_HISTORY', 'ORIGINAL', NULL,
+        'Which Venetian merchant''s book about his travels in China in the late 1200s amazed Europe?', NULL,
+        'Marco Polo', ARRAY['Ibn Battuta', 'Niccolo Machiavelli', 'Giovanni Caboto', 'Christopher Columbus', 'Zheng He'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORLD_HISTORY', 'ORIGINAL', NULL,
+        'Which Italian explorer''s first name was given to the Americas?', NULL,
+        'Amerigo Vespucci', ARRAY['Giovanni da Verrazzano', 'John Cabot', 'Marco Polo', 'Americo Columbo', 'Amadeo Ferrara'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORLD_HISTORY', 'ORIGINAL', NULL,
+        'On which ship did Charles Darwin sail around the world from 1831 to 1836?', NULL,
+        'HMS Beagle', ARRAY['HMS Endeavour', 'HMS Bounty', 'HMS Victory', 'HMS Discovery', 'HMS Challenger'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORLD_HISTORY', 'ORIGINAL', NULL,
+        'Which Scottish missionary and explorer was famously found by Henry Morton Stanley in 1871?', NULL,
+        'David Livingstone', ARRAY['Mungo Park', 'Richard Burton', 'John Speke', 'Cecil Rhodes', 'Samuel Baker'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORLD_HISTORY', 'ORIGINAL', NULL,
+        'Which Chinese philosopher''s sayings were collected in the Analects?', NULL,
+        'Confucius', ARRAY['Laozi', 'Sun Tzu', 'Mencius', 'Buddha', 'Zhuangzi'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORLD_HISTORY', 'ORIGINAL', NULL,
+        'Which Florentine banking family were patrons of Michelangelo and Botticelli?', NULL,
+        'The Medici', ARRAY['The Borgia', 'The Sforza', 'The Habsburgs', 'The Bourbons', 'The Este'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORLD_HISTORY', 'ORIGINAL', NULL,
+        'At which 1815 battle in present-day Belgium was Napoleon finally defeated?', NULL,
+        'Waterloo', ARRAY['Austerlitz', 'Leipzig', 'Borodino', 'Ypres', 'Marengo'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORLD_HISTORY', 'ORIGINAL', NULL,
+        'What was South Africa''s system of racial segregation, from 1948 to the early 1990s, called?', NULL,
+        'Apartheid', ARRAY['Jim Crow', 'Segregation Act', 'The Pass System', 'Bantustan', 'Colonialism'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORLD_HISTORY', 'ORIGINAL', NULL,
+        'In which Beijing square were pro-democracy protests crushed in 1989?', NULL,
+        'Tiananmen Square', ARRAY['Red Square', 'The Forbidden City', 'Wenceslas Square', 'Mao Square', 'People''s Park'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORLD_HISTORY', 'ORIGINAL', NULL,
+        'Which country was called the "Jewel in the Crown" of the British Empire?', NULL,
+        'India', ARRAY['Australia', 'Canada', 'Egypt', 'South Africa', 'Jamaica'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORLD_HISTORY', 'ORIGINAL', NULL,
+        'Which Norse explorer reached North America around the year 1000?', NULL,
+        'Leif Erikson', ARRAY['Erik the Red', 'Ragnar Lothbrok', 'Harald Hardrada', 'Rollo', 'Olaf Tryggvason'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORLD_HISTORY', 'ORIGINAL', NULL,
+        'What name is given to the thousands of life-size clay soldiers found near Xi''an, China, in 1974?', NULL,
+        'The Terracotta Army', ARRAY['The Clay Legion', 'The Jade Guard', 'The Stone Warriors', 'The Bronze Army', 'The Silent Battalion'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORLD_HISTORY', 'ORIGINAL', NULL,
+        'Which Russian tsar founded St. Petersburg in 1703?', NULL,
+        'Peter the Great', ARRAY['Ivan the Terrible', 'Catherine the Great', 'Nicholas II', 'Alexander I', 'Ivan III'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORLD_HISTORY', 'ORIGINAL', NULL,
+        'What name is given to the decades-long rivalry between the US and the Soviet Union after 1945?', NULL,
+        'The Cold War', ARRAY['The Iron War', 'The Long Peace', 'The Silent War', 'The Arms War', 'The Red Scare'], 200);
 
 -- 300 points
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
@@ -190,10 +270,6 @@ INSERT INTO questions (question_number, game_mode, category, subcategory, factio
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORLD_HISTORY', 'ORIGINAL', NULL,
         'What was the name of the ship that carried the Pilgrims to America in 1620?', NULL,
         'The Mayflower', ARRAY['The Santa Maria', 'The Nina', 'The Pinta', 'The Endeavour', 'The Beagle', 'The Speedwell'], 300);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORLD_HISTORY', 'ORIGINAL', NULL,
-        'Whose assassination in Sarajevo triggered the start of World War I?', NULL,
-        'Archduke Franz Ferdinand', ARRAY['Kaiser Wilhelm II', 'Tsar Nicholas II', 'King George V', 'Otto von Bismarck', 'Emperor Franz Joseph', 'Woodrow Wilson'], 300);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORLD_HISTORY', 'ORIGINAL', NULL,
         'Which naval battle in 1805 saw British Admiral Horatio Nelson defeat a combined French and Spanish fleet?', NULL,
@@ -218,14 +294,6 @@ INSERT INTO questions (question_number, game_mode, category, subcategory, factio
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORLD_HISTORY', 'ORIGINAL', NULL,
         'Which Carthaginian general famously crossed the Alps with an army that included war elephants?', NULL,
         'Hannibal', ARRAY['Hamilcar Barca', 'Hasdrubal', 'Scipio Africanus', 'Pyrrhus of Epirus', 'Julius Caesar', 'Alexander the Great'], 300);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORLD_HISTORY', 'WWII_HISTORY_FOLD_1', NULL,
-        'Which battle is widely considered the turning point of the war on the Eastern Front?', NULL,
-        'The Battle of Stalingrad', ARRAY['The Battle of Kursk', 'The Battle of Moscow', 'The Siege of Leningrad', 'The Battle of Kiev', 'The Battle of Berlin', 'The Battle of Smolensk'], 300);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORLD_HISTORY', 'WWII_HISTORY_FOLD_1', NULL,
-        'Which June 1942 naval battle is considered the turning point of the war in the Pacific?', NULL,
-        'The Battle of Midway', ARRAY['The Battle of the Coral Sea', 'The Battle of Leyte Gulf', 'The Battle of Guadalcanal', 'The Battle of the Philippine Sea', 'The Battle of Okinawa', 'The Battle of Iwo Jima'], 300);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORLD_HISTORY', 'WORLD_HISTORY_BATCH_1', NULL,
         'Which African nation kept its independence by defeating an Italian invasion at the Battle of Adwa in 1896?', NULL,
@@ -258,6 +326,58 @@ INSERT INTO questions (question_number, game_mode, category, subcategory, factio
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORLD_HISTORY', 'WORLD_HISTORY_BATCH_1', NULL,
         'Which Mughal emperor built the Taj Mahal as a tomb for his wife?', NULL,
         'Shah Jahan', ARRAY['Akbar', 'Aurangzeb', 'Babur', 'Humayun', 'Jahangir', 'Ashoka'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORLD_HISTORY', 'ORIGINAL', NULL,
+        'Which ancient people of Mesopotamia invented cuneiform, one of the first writing systems?', NULL,
+        'The Sumerians', ARRAY['The Babylonians', 'The Assyrians', 'The Phoenicians', 'The Hittites', 'The Egyptians'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORLD_HISTORY', 'ORIGINAL', NULL,
+        'Which Roman emperor made Christianity legal in 313 and founded a city on the Bosporus?', NULL,
+        'Constantine', ARRAY['Nero', 'Augustus', 'Trajan', 'Diocletian', 'Marcus Aurelius'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORLD_HISTORY', 'ORIGINAL', NULL,
+        'Which country''s 1910 revolution overthrew the dictator Porfirio Diaz?', NULL,
+        'Mexico', ARRAY['Cuba', 'Spain', 'Argentina', 'Chile', 'Colombia'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORLD_HISTORY', 'ORIGINAL', NULL,
+        'Which Chinese admiral led giant treasure fleets across the Indian Ocean in the early 1400s?', NULL,
+        'Zheng He', ARRAY['Kublai Khan', 'Sun Yat-sen', 'Marco Polo', 'Chiang Kai-shek', 'Xuanzang'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORLD_HISTORY', 'ORIGINAL', NULL,
+        'Which 1857 uprising against the British East India Company began among Indian soldiers?', NULL,
+        'The Indian Rebellion', ARRAY['The Boxer Rebellion', 'The Salt March', 'The Taiping Rebellion', 'The Boer War', 'The Opium War'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORLD_HISTORY', 'ORIGINAL', NULL,
+        'Which former enslaved man led the Haitian Revolution, the only slave uprising to found a nation?', NULL,
+        'Toussaint Louverture', ARRAY['Simon Bolivar', 'Jean-Jacques Dessalines', 'Nat Turner', 'Frederick Douglass', 'Jose de San Martin'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORLD_HISTORY', 'ORIGINAL', NULL,
+        'Which Italian patriot led the "Redshirts" in the fight to unite Italy?', NULL,
+        'Giuseppe Garibaldi', ARRAY['Giuseppe Mazzini', 'Camillo Cavour', 'Benito Mussolini', 'Victor Emmanuel II', 'Niccolo Machiavelli'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORLD_HISTORY', 'ORIGINAL', NULL,
+        'Which Norman duke won the Battle of Hastings in 1066?', NULL,
+        'William the Conqueror', ARRAY['Richard the Lionheart', 'Harold Godwinson', 'Henry II', 'Rollo', 'Edward the Confessor'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORLD_HISTORY', 'ORIGINAL', NULL,
+        'Which Chinese dynasty, ruling from 1368, built the Forbidden City?', NULL,
+        'The Ming dynasty', ARRAY['The Han dynasty', 'The Tang dynasty', 'The Song dynasty', 'The Yuan dynasty', 'The Zhou dynasty'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORLD_HISTORY', 'ORIGINAL', NULL,
+        'Which was the largest empire in history by land area?', NULL,
+        'The British Empire', ARRAY['The Mongol Empire', 'The Roman Empire', 'The Russian Empire', 'The Spanish Empire', 'The Ottoman Empire'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORLD_HISTORY', 'ORIGINAL', NULL,
+        'Who became independent India''s first prime minister, in 1947?', NULL,
+        'Jawaharlal Nehru', ARRAY['Mahatma Gandhi', 'Indira Gandhi', 'Muhammad Ali Jinnah', 'Sardar Patel', 'Rajiv Gandhi'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORLD_HISTORY', 'ORIGINAL', NULL,
+        'Which Egyptian president seized the Suez Canal in 1956?', NULL,
+        'Gamal Abdel Nasser', ARRAY['Anwar Sadat', 'Hosni Mubarak', 'King Farouk', 'Muammar Gaddafi', 'Mohamed Naguib'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORLD_HISTORY', 'ORIGINAL', NULL,
+        'Which revolutionary took power in Cuba in 1959 and ruled for nearly 50 years?', NULL,
+        'Fidel Castro', ARRAY['Che Guevara', 'Fulgencio Batista', 'Raul Castro', 'Hugo Chavez', 'Daniel Ortega'], 300);
 
 -- 400 points
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
@@ -340,8 +460,48 @@ INSERT INTO questions (question_number, game_mode, category, subcategory, factio
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORLD_HISTORY', 'ORIGINAL', NULL,
         'In which 1905 naval battle did Japan''s fleet destroy Russia''s Baltic Fleet?', NULL,
         'The Battle of Tsushima', ARRAY['The Battle of Port Arthur', 'The Battle of the Yellow Sea', 'The Battle of Mukden', 'The Battle of Jutland', 'The Battle of Manila Bay', 'The Battle of Navarino'], 400);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORLD_HISTORY', 'ORIGINAL', NULL,
+        'Which 1884-85 conference split Africa among European powers?', NULL,
+        'The Berlin Conference', ARRAY['The Congress of Vienna', 'The Paris Peace Conference', 'The Hague Conference', 'The Treaty of Utrecht', 'The Brussels Conference'], 400);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORLD_HISTORY', 'ORIGINAL', NULL,
+        'An Ottoman army was turned back in 1683 at the gates of which European capital?', NULL,
+        'Vienna', ARRAY['Budapest', 'Prague', 'Warsaw', 'Belgrade', 'Venice'], 400);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORLD_HISTORY', 'ORIGINAL', NULL,
+        'Which 1850-64 Chinese uprising, led by a man who claimed to be Jesus''s younger brother, cost millions of lives?', NULL,
+        'The Taiping Rebellion', ARRAY['The Boxer Rebellion', 'The Opium War', 'The White Lotus Rebellion', 'The Xinhai Revolution', 'The Red Turban Rebellion'], 400);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORLD_HISTORY', 'ORIGINAL', NULL,
+        'Which Ethiopian emperor pleaded for help at the League of Nations after Italy invaded his country in 1935?', NULL,
+        'Haile Selassie', ARRAY['Menelik II', 'Tewodros II', 'Yohannes IV', 'Mengistu Haile Mariam', 'Zara Yaqob'], 400);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORLD_HISTORY', 'ORIGINAL', NULL,
+        'Which 1842 treaty ended the First Opium War and handed Hong Kong to Britain?', NULL,
+        'The Treaty of Nanking', ARRAY['The Treaty of Tianjin', 'The Treaty of Shimonoseki', 'The Treaty of Beijing', 'The Treaty of Whampoa', 'The Treaty of Aigun'], 400);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORLD_HISTORY', 'ORIGINAL', NULL,
+        'Which Byzantine empress, a former actress, urged her husband to stand firm during the Nika riots of 532?', NULL,
+        'Theodora', ARRAY['Irene', 'Zoe', 'Helena', 'Anna Komnene', 'Galla Placidia'], 400);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORLD_HISTORY', 'ORIGINAL', NULL,
+        'Which ancient civilization built planned cities at Harappa and Mohenjo-daro?', NULL,
+        'The Indus Valley Civilization', ARRAY['The Mauryan Empire', 'The Gupta Empire', 'The Vedic Civilization', 'The Sumerians', 'The Khmer Empire'], 400);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORLD_HISTORY', 'ORIGINAL', NULL,
+        'Which Portuguese prince sponsored the first voyages down the coast of West Africa in the 1400s?', NULL,
+        'Henry the Navigator', ARRAY['John the Navigator', 'Manuel the Fortunate', 'Pedro the Explorer', 'Afonso the Great', 'Sebastian the Desired'], 400);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORLD_HISTORY', 'ORIGINAL', NULL,
+        'Which 1381 English uprising was led by Wat Tyler?', NULL,
+        'The Peasants'' Revolt', ARRAY['The Jacquerie', 'Kett''s Rebellion', 'The Pilgrimage of Grace', 'Jack Cade''s Rebellion', 'The Barons'' War'], 400);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORLD_HISTORY', 'ORIGINAL', NULL,
+        'Which warlord unified Japan and founded the shogunate that ruled from 1603 to 1868?', NULL,
+        'Tokugawa Ieyasu', ARRAY['Oda Nobunaga', 'Toyotomi Hideyoshi', 'Minamoto no Yoritomo', 'Takeda Shingen', 'Ashikaga Takauji'], 400);
 
 COMMIT;
 
--- Check: should return 80.
+-- Check: should return 120.
 SELECT COUNT(*) FROM questions WHERE game_mode = 'TRIVI_YEAH_II' AND category = 'WORLD_HISTORY';

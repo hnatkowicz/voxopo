@@ -901,7 +901,10 @@ const TRIVI_YEAH_II_CATEGORIES = [
     // States, capitals, city and state nicknames, flags and name origins
     // (Randy, Nov 2026). His state pictures -- map, outline alone, capital
     // star -- join as picture rows. content/great_state.csv.
-    { key: 'GREAT_STATE', label: 'The Great State of...' }
+    { key: 'GREAT_STATE', label: 'The Great State of...' },
+    // Biology (Randy, Nov 2026: "the family will love this"): cells, the
+    // body, genetics, animals, plants, microbes. content/cell_mates.csv.
+    { key: 'CELL_MATES', label: 'Cell Mates' }
 ];
 const TRIVI_YEAH_II_CATEGORIES_PER_BOARD = 3;
 
