@@ -1,6 +1,6 @@
 -- ============================================================================
 -- content/sql/ALL_CATEGORIES.sql -- GENERATED, don't edit by hand.
--- Every Thinking Pants category in content/, one after another (24 files).
+-- Every Thinking Pants category in content/, one after another (26 files).
 -- Same as running each content/sql/<category>.sql. Safe to re-run.
 -- ============================================================================
 
@@ -1070,8 +1070,8 @@ SELECT COUNT(*) FROM questions WHERE game_mode = 'TRIVI_YEAH_II' AND category = 
 -- Thinking Pants category ASTRONOMY_SPACE. To change a question, change the
 -- spreadsheet and rebuild.
 --
--- Replaces the WHOLE category with the spreadsheet's 80 live questions
--- (100: 20, 200: 20, 300: 20, 400: 20), inside a transaction. Safe to re-run.
+-- Replaces the WHOLE category with the spreadsheet's 120 live questions
+-- (100: 30, 200: 30, 300: 30, 400: 30), inside a transaction. Safe to re-run.
 -- ============================================================================
 
 BEGIN;
@@ -1160,6 +1160,46 @@ INSERT INTO questions (question_number, game_mode, category, subcategory, factio
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'ASTRONOMY_SPACE', 'ORIGINAL', NULL,
         'What are the bowl-shaped dents on the Moon''s surface, made by space rocks crashing into it, called?', NULL,
         'Craters', ARRAY['Volcanoes', 'Canyons', 'Sinkholes', 'Geysers', 'Trenches', 'Dunes'], 100);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'ASTRONOMY_SPACE', 'ORIGINAL', NULL,
+        'What do we call the path a planet follows around the Sun?', NULL,
+        'Its orbit', ARRAY['Its axis', 'Its rotation', 'Its equator', 'Its eclipse', 'Its trajectory'], 100);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'ASTRONOMY_SPACE', 'ORIGINAL', NULL,
+        'Which planet is famous for its Great Red Spot, a storm bigger than Earth?', NULL,
+        'Jupiter', ARRAY['Mars', 'Saturn', 'Neptune', 'Venus', 'Uranus'], 100);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'ASTRONOMY_SPACE', 'ORIGINAL', NULL,
+        'What is a scientist who studies stars and planets called?', NULL,
+        'An astronomer', ARRAY['An astrologer', 'A geologist', 'A meteorologist', 'A cosmetologist', 'A physician'], 100);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'ASTRONOMY_SPACE', 'ORIGINAL', NULL,
+        'What do we call a group of stars that forms a picture, like Orion?', NULL,
+        'A constellation', ARRAY['A galaxy', 'A nebula', 'A cluster', 'An asterisk', 'A comet'], 100);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'ASTRONOMY_SPACE', 'ORIGINAL', NULL,
+        'What causes day and night on Earth?', NULL,
+        'Earth spinning on its axis', ARRAY['Earth circling the Sun', 'The Moon blocking the Sun', 'The Sun circling Earth', 'Clouds covering the Sun', 'Earth''s tilt'], 100);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'ASTRONOMY_SPACE', 'ORIGINAL', NULL,
+        'When it''s summer in the United States, what season is it in Australia?', NULL,
+        'Winter', ARRAY['Summer', 'Spring', 'Fall', 'Monsoon', 'There are no seasons there'], 100);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'ASTRONOMY_SPACE', 'ORIGINAL', NULL,
+        'Which is the smallest planet in our solar system?', NULL,
+        'Mercury', ARRAY['Mars', 'Venus', 'Earth', 'Pluto', 'Neptune'], 100);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'ASTRONOMY_SPACE', 'ORIGINAL', NULL,
+        'Which tool do astronomers use to see faraway objects?', NULL,
+        'A telescope', ARRAY['A microscope', 'A periscope', 'A stethoscope', 'A kaleidoscope', 'A barometer'], 100);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'ASTRONOMY_SPACE', 'ORIGINAL', NULL,
+        'What do we call a space rock that survives its fall and lands on Earth?', NULL,
+        'A meteorite', ARRAY['A meteor', 'A comet', 'An asteroid', 'A satellite', 'A moonlet'], 100);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'ASTRONOMY_SPACE', 'ORIGINAL', NULL,
+        'What force keeps the planets in orbit around the Sun?', NULL,
+        'Gravity', ARRAY['Magnetism', 'Friction', 'Solar wind', 'Static electricity', 'Centrifugal force'], 100);
 
 -- 200 points
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
@@ -1242,6 +1282,46 @@ INSERT INTO questions (question_number, game_mode, category, subcategory, factio
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'ASTRONOMY_SPACE', 'ORIGINAL', NULL,
         'What are the darker, cooler patches that come and go on the surface of our star called?', NULL,
         'Sunspots', ARRAY['Solar flares', 'Prominences', 'Granules', 'Faculae', 'Coronal mass ejections', 'Spicules'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'ASTRONOMY_SPACE', 'ORIGINAL', NULL,
+        'Which planet is often called Earth''s twin, because it is nearly the same size?', NULL,
+        'Venus', ARRAY['Mars', 'Mercury', 'Neptune', 'Uranus', 'Saturn'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'ASTRONOMY_SPACE', 'ORIGINAL', NULL,
+        'When the lit part of the Moon is growing night by night, the Moon is said to be what?', NULL,
+        'Waxing', ARRAY['Waning', 'Gibbous', 'Eclipsing', 'Rising', 'Setting'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'ASTRONOMY_SPACE', 'ORIGINAL', NULL,
+        'Which Apollo 11 astronaut stayed in orbit while Armstrong and Aldrin walked on the Moon?', NULL,
+        'Michael Collins', ARRAY['John Glenn', 'Jim Lovell', 'Gus Grissom', 'Pete Conrad', 'Alan Bean'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'ASTRONOMY_SPACE', 'ORIGINAL', NULL,
+        'What did Apollo 15, 16 and 17 astronauts drive across the Moon?', NULL,
+        'A lunar rover', ARRAY['A moon jeep', 'A space tractor', 'A hover car', 'A crater crawler', 'A lunar sled'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'ASTRONOMY_SPACE', 'ORIGINAL', NULL,
+        'What is a light-year a measure of?', NULL,
+        'Distance', ARRAY['Time', 'Speed', 'Brightness', 'Mass', 'Age'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'ASTRONOMY_SPACE', 'ORIGINAL', NULL,
+        'What is a planet that orbits a star other than our Sun called?', NULL,
+        'An exoplanet', ARRAY['A dwarf planet', 'A rogue moon', 'A protostar', 'A planetoid', 'A white dwarf'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'ASTRONOMY_SPACE', 'ORIGINAL', NULL,
+        'What process powers the Sun?', NULL,
+        'Nuclear fusion', ARRAY['Nuclear fission', 'Burning coal', 'Chemical combustion', 'Magnetism', 'Static electricity'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'ASTRONOMY_SPACE', 'ORIGINAL', NULL,
+        'Which planet is so light for its size that it would float in a big enough bathtub?', NULL,
+        'Saturn', ARRAY['Jupiter', 'Neptune', 'Uranus', 'Mars', 'Venus'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'ASTRONOMY_SPACE', 'ORIGINAL', NULL,
+        'Which twin probes, launched in 1977, each carry a golden record of sounds from Earth?', NULL,
+        'Voyager 1 and 2', ARRAY['Pioneer 10 and 11', 'Viking 1 and 2', 'Mariner 4 and 5', 'Galileo and Cassini', 'Spirit and Opportunity'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'ASTRONOMY_SPACE', 'ORIGINAL', NULL,
+        'What is the name of NASA''s program to send astronauts back to the Moon, named for Apollo''s twin sister?', NULL,
+        'Artemis', ARRAY['Athena', 'Gemini', 'Orion', 'Hermes', 'Selene'], 200);
 
 -- 300 points
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
@@ -1324,6 +1404,46 @@ INSERT INTO questions (question_number, game_mode, category, subcategory, factio
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'ASTRONOMY_SPACE', 'ORIGINAL', NULL,
         'Which star cluster in the constellation Taurus is also known as the Seven Sisters?', NULL,
         'The Pleiades', ARRAY['The Hyades', 'The Beehive Cluster', 'Omega Centauri', 'The Jewel Box', 'The Double Cluster', 'The Wild Duck Cluster'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'ASTRONOMY_SPACE', 'ORIGINAL', NULL,
+        'Which planet has a day that is longer than its year?', NULL,
+        'Venus', ARRAY['Mercury', 'Mars', 'Jupiter', 'Neptune', 'Uranus'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'ASTRONOMY_SPACE', 'ORIGINAL', NULL,
+        'What is the name of Mars''s larger moon?', NULL,
+        'Phobos', ARRAY['Deimos', 'Titan', 'Europa', 'Charon', 'Triton'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'ASTRONOMY_SPACE', 'ORIGINAL', NULL,
+        'Which planet did William Herschel discover in 1781?', NULL,
+        'Uranus', ARRAY['Neptune', 'Saturn', 'Pluto', 'Ceres', 'Mars'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'ASTRONOMY_SPACE', 'ORIGINAL', NULL,
+        'About how old is the universe?', NULL,
+        '13.8 billion years', ARRAY['4.5 billion years', '6,000 years', '100 billion years', '1 trillion years', '500 million years'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'ASTRONOMY_SPACE', 'ORIGINAL', NULL,
+        'Which planet spins fastest, with a day only about 10 hours long?', NULL,
+        'Jupiter', ARRAY['Saturn', 'Earth', 'Mercury', 'Neptune', 'Mars'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'ASTRONOMY_SPACE', 'ORIGINAL', NULL,
+        'What color are the hottest stars?', NULL,
+        'Blue', ARRAY['Red', 'Yellow', 'Orange', 'White', 'Green'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'ASTRONOMY_SPACE', 'ORIGINAL', NULL,
+        'What type of galaxy is the Milky Way?', NULL,
+        'A barred spiral', ARRAY['An elliptical', 'An irregular', 'A ring', 'A lenticular', 'A dwarf'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'ASTRONOMY_SPACE', 'ORIGINAL', NULL,
+        'Which moon of Jupiter hides a salty ocean beneath its icy crust, making it a top place to look for life?', NULL,
+        'Europa', ARRAY['Io', 'Callisto', 'Ganymede', 'Titan', 'Phobos'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'ASTRONOMY_SPACE', 'ORIGINAL', NULL,
+        'Which space telescope, named for a 1600s astronomer, found thousands of planets around other stars?', NULL,
+        'Kepler', ARRAY['Hubble', 'Spitzer', 'Chandra', 'Herschel', 'Galileo'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'ASTRONOMY_SPACE', 'ORIGINAL', NULL,
+        'Which mission first carried people around the Moon, at Christmas 1968?', NULL,
+        'Apollo 8', ARRAY['Apollo 1', 'Apollo 7', 'Apollo 10', 'Gemini 4', 'Mercury 7'], 300);
 
 -- 400 points
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
@@ -1406,10 +1526,50 @@ INSERT INTO questions (question_number, game_mode, category, subcategory, factio
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'ASTRONOMY_SPACE', 'ORIGINAL', NULL,
         'After it swells into a red giant, what will our Sun finally become?', NULL,
         'A white dwarf', ARRAY['A black hole', 'A neutron star', 'A pulsar', 'A brown dwarf', 'A quasar', 'A magnetar'], 400);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'ASTRONOMY_SPACE', 'ORIGINAL', NULL,
+        'On average, which planet is closest to Earth?', NULL,
+        'Mercury', ARRAY['Venus', 'Mars', 'Jupiter', 'The Moon', 'Uranus'], 400);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'ASTRONOMY_SPACE', 'ORIGINAL', NULL,
+        'What color is a sunset on Mars?', NULL,
+        'Blue', ARRAY['Red', 'Orange', 'Green', 'Purple', 'White'], 400);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'ASTRONOMY_SPACE', 'ORIGINAL', NULL,
+        'Which comet broke apart and slammed into Jupiter in 1994?', NULL,
+        'Shoemaker-Levy 9', ARRAY['Halley''s Comet', 'Hale-Bopp', 'Comet Encke', 'Comet Hyakutake', 'Comet Tempel 1'], 400);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'ASTRONOMY_SPACE', 'ORIGINAL', NULL,
+        'What do we call a star that suddenly flares thousands of times brighter for a few weeks, then fades back, without destroying itself?', NULL,
+        'A nova', ARRAY['A pulsar', 'A quasar', 'A magnetar', 'A red giant', 'A brown dwarf'], 400);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'ASTRONOMY_SPACE', 'ORIGINAL', NULL,
+        'Which unit of distance equals about 3.26 light-years?', NULL,
+        'The parsec', ARRAY['The astronomical unit', 'The kiloparsec', 'The light-minute', 'The megameter', 'The stellar mile'], 400);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'ASTRONOMY_SPACE', 'ORIGINAL', NULL,
+        'Why does the Moon always show us the same face?', NULL,
+        'Tidal locking', ARRAY['It doesn''t rotate', 'Earth''s magnetic field', 'Solar wind', 'Its tilted axis', 'Its craters'], 400);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'ASTRONOMY_SPACE', 'ORIGINAL', NULL,
+        'What was the name of the world''s first space station, launched by the Soviet Union in 1971?', NULL,
+        'Salyut 1', ARRAY['Mir', 'Skylab', 'Vostok 1', 'Soyuz 1', 'Tiangong'], 400);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'ASTRONOMY_SPACE', 'ORIGINAL', NULL,
+        'Which constellation, the Swan, contains the star pattern called the Northern Cross?', NULL,
+        'Cygnus', ARRAY['Lyra', 'Aquila', 'Cassiopeia', 'Draco', 'Pegasus'], 400);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'ASTRONOMY_SPACE', 'ORIGINAL', NULL,
+        'What is the visible surface layer of the Sun called?', NULL,
+        'The photosphere', ARRAY['The corona', 'The chromosphere', 'The core', 'The heliosphere', 'The radiative zone'], 400);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'ASTRONOMY_SPACE', 'ORIGINAL', NULL,
+        'How many people have walked on the Moon?', NULL,
+        '12', ARRAY['6', '9', '18', '24', '27'], 400);
 
 COMMIT;
 
--- Check: should return 80.
+-- Check: should return 120.
 SELECT COUNT(*) FROM questions WHERE game_mode = 'TRIVI_YEAH_II' AND category = 'ASTRONOMY_SPACE';
 
 -- ============================================================================
@@ -3318,8 +3478,8 @@ SELECT COUNT(*) FROM questions WHERE game_mode = 'TRIVI_YEAH_II' AND category = 
 -- Thinking Pants category GEOGRAPHY. To change a question, change the
 -- spreadsheet and rebuild.
 --
--- Replaces the WHOLE category with the spreadsheet's 80 live questions
--- (100: 20, 200: 20, 300: 20, 400: 20), inside a transaction. Safe to re-run.
+-- Replaces the WHOLE category with the spreadsheet's 79 live questions
+-- (100: 20, 200: 19, 300: 20, 400: 20), inside a transaction. Safe to re-run.
 -- ============================================================================
 
 BEGIN;
@@ -3446,10 +3606,6 @@ INSERT INTO questions (question_number, game_mode, category, subcategory, factio
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GEOGRAPHY', 'GEOGRAPHY_BATCH_1', NULL,
         'What is the capital of New Zealand?', NULL,
         'Wellington', ARRAY['Auckland', 'Christchurch', 'Queenstown', 'Dunedin', 'Hamilton', 'Napier'], 200);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GEOGRAPHY', 'GEOGRAPHY_BATCH_1', NULL,
-        'What is the capital of the U.S. state of New York?', NULL,
-        'Albany', ARRAY['New York City', 'Buffalo', 'Rochester', 'Syracuse', 'Ithaca', 'Yonkers'], 200);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GEOGRAPHY', 'GEOGRAPHY_BATCH_1', NULL,
         'Which river flows through both Vienna and Budapest?', NULL,
@@ -3657,8 +3813,616 @@ VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YE
 
 COMMIT;
 
--- Check: should return 80.
+-- Check: should return 79.
 SELECT COUNT(*) FROM questions WHERE game_mode = 'TRIVI_YEAH_II' AND category = 'GEOGRAPHY';
+
+-- ============================================================================
+-- content/sql/great_state.sql -- GENERATED, don't edit by hand.
+-- Made by content/build.mjs from content/great_state.csv, the master copy of the
+-- Thinking Pants category GREAT_STATE. To change a question, change the
+-- spreadsheet and rebuild.
+--
+-- Replaces the WHOLE category with the spreadsheet's 145 live questions
+-- (100: 32, 200: 41, 300: 45, 400: 27), inside a transaction. Safe to re-run.
+-- ============================================================================
+
+BEGIN;
+
+DELETE FROM questions WHERE game_mode = 'TRIVI_YEAH_II' AND category = 'GREAT_STATE';
+
+
+-- 100 points
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GREAT_STATE', 'ORIGINAL', NULL,
+        'What is the capital of Texas?', NULL,
+        'Austin', ARRAY['Houston', 'Dallas', 'San Antonio', 'Fort Worth', 'El Paso'], 100);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GREAT_STATE', 'ORIGINAL', NULL,
+        'What is the capital of California?', NULL,
+        'Sacramento', ARRAY['Los Angeles', 'San Francisco', 'San Diego', 'San Jose', 'Fresno'], 100);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GREAT_STATE', 'ORIGINAL', NULL,
+        'What is the capital of Florida?', NULL,
+        'Tallahassee', ARRAY['Miami', 'Orlando', 'Tampa', 'Jacksonville', 'St. Petersburg'], 100);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GREAT_STATE', 'ORIGINAL', NULL,
+        'What is the capital of Illinois?', NULL,
+        'Springfield', ARRAY['Chicago', 'Peoria', 'Rockford', 'Naperville', 'Champaign'], 100);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GREAT_STATE', 'ORIGINAL', NULL,
+        'What is the capital of Georgia?', NULL,
+        'Atlanta', ARRAY['Savannah', 'Augusta', 'Macon', 'Athens', 'Columbus'], 100);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GREAT_STATE', 'ORIGINAL', NULL,
+        'What is the capital of Massachusetts?', NULL,
+        'Boston', ARRAY['Worcester', 'Cambridge', 'Salem', 'Plymouth', 'Lowell'], 100);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GREAT_STATE', 'ORIGINAL', NULL,
+        'What is the capital of Colorado?', NULL,
+        'Denver', ARRAY['Colorado Springs', 'Boulder', 'Aspen', 'Fort Collins', 'Pueblo'], 100);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GREAT_STATE', 'ORIGINAL', NULL,
+        'What is the capital of New York?', NULL,
+        'Albany', ARRAY['New York City', 'Buffalo', 'Rochester', 'Syracuse', 'Yonkers'], 100);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GREAT_STATE', 'ORIGINAL', NULL,
+        'What is the capital of Washington state?', NULL,
+        'Olympia', ARRAY['Seattle', 'Spokane', 'Tacoma', 'Vancouver', 'Bellevue'], 100);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GREAT_STATE', 'ORIGINAL', NULL,
+        'What is the capital of Arizona?', NULL,
+        'Phoenix', ARRAY['Tucson', 'Flagstaff', 'Scottsdale', 'Mesa', 'Sedona'], 100);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GREAT_STATE', 'ORIGINAL', NULL,
+        'What is the capital of Hawaii?', NULL,
+        'Honolulu', ARRAY['Hilo', 'Lahaina', 'Kailua', 'Kona', 'Lihue'], 100);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GREAT_STATE', 'ORIGINAL', NULL,
+        'What is the capital of Ohio?', NULL,
+        'Columbus', ARRAY['Cleveland', 'Cincinnati', 'Toledo', 'Akron', 'Dayton'], 100);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GREAT_STATE', 'ORIGINAL', NULL,
+        'Which city is nicknamed the Big Apple?', NULL,
+        'New York City', ARRAY['Boston', 'Chicago', 'Philadelphia', 'Los Angeles', 'Washington, D.C.'], 100);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GREAT_STATE', 'ORIGINAL', NULL,
+        'Which city is nicknamed the Windy City?', NULL,
+        'Chicago', ARRAY['Milwaukee', 'Cleveland', 'Detroit', 'Boston', 'Buffalo'], 100);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GREAT_STATE', 'ORIGINAL', NULL,
+        'Which city is nicknamed the Big Easy?', NULL,
+        'New Orleans', ARRAY['Memphis', 'Nashville', 'Miami', 'Houston', 'Atlanta'], 100);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GREAT_STATE', 'ORIGINAL', NULL,
+        'Which city is nicknamed the Mile High City?', NULL,
+        'Denver', ARRAY['Salt Lake City', 'Albuquerque', 'Phoenix', 'Boise', 'Cheyenne'], 100);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GREAT_STATE', 'ORIGINAL', NULL,
+        'Which city is nicknamed La La Land?', NULL,
+        'Los Angeles', ARRAY['Las Vegas', 'San Francisco', 'Nashville', 'Miami', 'San Diego'], 100);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GREAT_STATE', 'ORIGINAL', NULL,
+        'Which city is nicknamed the City of Brotherly Love?', NULL,
+        'Philadelphia', ARRAY['Boston', 'Baltimore', 'Pittsburgh', 'Richmond', 'Providence'], 100);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GREAT_STATE', 'ORIGINAL', NULL,
+        'Which city is nicknamed Music City, home of the Grand Ole Opry?', NULL,
+        'Nashville', ARRAY['Memphis', 'Austin', 'New Orleans', 'Branson', 'Detroit'], 100);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GREAT_STATE', 'ORIGINAL', NULL,
+        'Which city is nicknamed the Motor City?', NULL,
+        'Detroit', ARRAY['Cleveland', 'Indianapolis', 'Toledo', 'Pittsburgh', 'Flint'], 100);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GREAT_STATE', 'ORIGINAL', NULL,
+        'Which state is the Sunshine State?', NULL,
+        'Florida', ARRAY['California', 'Arizona', 'Hawaii', 'Texas', 'Nevada'], 100);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GREAT_STATE', 'ORIGINAL', NULL,
+        'Which state is the Lone Star State?', NULL,
+        'Texas', ARRAY['Oklahoma', 'Arizona', 'New Mexico', 'Montana', 'Alaska'], 100);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GREAT_STATE', 'ORIGINAL', NULL,
+        'Which state is the Peach State?', NULL,
+        'Georgia', ARRAY['South Carolina', 'Alabama', 'Florida', 'North Carolina', 'Tennessee'], 100);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GREAT_STATE', 'ORIGINAL', NULL,
+        'Which state is the Empire State?', NULL,
+        'New York', ARRAY['Pennsylvania', 'New Jersey', 'Massachusetts', 'Virginia', 'Illinois'], 100);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GREAT_STATE', 'ORIGINAL', NULL,
+        'Which state is called the Land of 10,000 Lakes?', NULL,
+        'Minnesota', ARRAY['Wisconsin', 'Michigan', 'Maine', 'North Dakota', 'Iowa'], 100);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GREAT_STATE', 'ORIGINAL', NULL,
+        'Mount Rushmore is carved into the Black Hills of which state?', NULL,
+        'South Dakota', ARRAY['North Dakota', 'Wyoming', 'Montana', 'Nebraska', 'Colorado'], 100);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GREAT_STATE', 'ORIGINAL', NULL,
+        'Which state is shaped like a mitten?', NULL,
+        'Michigan', ARRAY['Wisconsin', 'Minnesota', 'Ohio', 'Indiana', 'Maine'], 100);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GREAT_STATE', 'ORIGINAL', NULL,
+        'The Grand Canyon is in which state?', NULL,
+        'Arizona', ARRAY['Utah', 'Nevada', 'Colorado', 'New Mexico', 'Wyoming'], 100);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GREAT_STATE', 'ORIGINAL', NULL,
+        'Which is the only state named after a U.S. president?', NULL,
+        'Washington', ARRAY['Virginia', 'Georgia', 'Louisiana', 'Maryland', 'Delaware'], 100);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GREAT_STATE', 'ORIGINAL', NULL,
+        'Which state was its own country, an independent republic, for nearly ten years before joining the Union in 1845?', NULL,
+        'Texas', ARRAY['California', 'Florida', 'Louisiana', 'New Mexico', 'Oregon'], 100);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GREAT_STATE', 'ORIGINAL', NULL,
+        'Which state did the U.S. buy from Russia in 1867, a deal mocked as "Seward''s Folly"?', NULL,
+        'Alaska', ARRAY['Hawaii', 'Washington', 'Oregon', 'Montana', 'Idaho'], 100);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GREAT_STATE', 'ORIGINAL', NULL,
+        'Which capital hosts the Indy 500, the "Greatest Spectacle in Racing," every Memorial Day weekend?', NULL,
+        'Indianapolis', ARRAY['Columbus', 'Springfield', 'Lansing', 'Nashville', 'Des Moines'], 100);
+
+-- 200 points
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GREAT_STATE', 'ORIGINAL', NULL,
+        'What is the capital of Pennsylvania?', NULL,
+        'Harrisburg', ARRAY['Philadelphia', 'Pittsburgh', 'Scranton', 'Allentown', 'Erie'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GREAT_STATE', 'ORIGINAL', NULL,
+        'What is the capital of Tennessee?', NULL,
+        'Nashville', ARRAY['Memphis', 'Knoxville', 'Chattanooga', 'Murfreesboro', 'Jackson'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GREAT_STATE', 'ORIGINAL', NULL,
+        'What is the capital of Michigan?', NULL,
+        'Lansing', ARRAY['Detroit', 'Grand Rapids', 'Ann Arbor', 'Flint', 'Kalamazoo'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GREAT_STATE', 'ORIGINAL', NULL,
+        'What is the capital of Nevada?', NULL,
+        'Carson City', ARRAY['Las Vegas', 'Reno', 'Henderson', 'Elko', 'Sparks'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GREAT_STATE', 'ORIGINAL', NULL,
+        'What is the capital of Oregon?', NULL,
+        'Salem', ARRAY['Portland', 'Eugene', 'Bend', 'Medford', 'Corvallis'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GREAT_STATE', 'ORIGINAL', NULL,
+        'What is the capital of Louisiana?', NULL,
+        'Baton Rouge', ARRAY['New Orleans', 'Shreveport', 'Lafayette', 'Lake Charles', 'Monroe'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GREAT_STATE', 'ORIGINAL', NULL,
+        'What is the capital of Missouri?', NULL,
+        'Jefferson City', ARRAY['St. Louis', 'Kansas City', 'Springfield', 'Columbia', 'Independence'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GREAT_STATE', 'ORIGINAL', NULL,
+        'What is the capital of Minnesota?', NULL,
+        'St. Paul', ARRAY['Minneapolis', 'Duluth', 'Rochester', 'Bloomington', 'St. Cloud'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GREAT_STATE', 'ORIGINAL', NULL,
+        'What is the capital of Wisconsin?', NULL,
+        'Madison', ARRAY['Milwaukee', 'Green Bay', 'Kenosha', 'Eau Claire', 'Racine'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GREAT_STATE', 'ORIGINAL', NULL,
+        'What is the capital of New Jersey?', NULL,
+        'Trenton', ARRAY['Newark', 'Jersey City', 'Atlantic City', 'Princeton', 'Camden'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GREAT_STATE', 'ORIGINAL', NULL,
+        'What is the capital of Virginia?', NULL,
+        'Richmond', ARRAY['Virginia Beach', 'Norfolk', 'Arlington', 'Alexandria', 'Williamsburg'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GREAT_STATE', 'ORIGINAL', NULL,
+        'What is the capital of North Carolina?', NULL,
+        'Raleigh', ARRAY['Charlotte', 'Durham', 'Greensboro', 'Asheville', 'Wilmington'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GREAT_STATE', 'ORIGINAL', NULL,
+        'What is the capital of Alaska?', NULL,
+        'Juneau', ARRAY['Anchorage', 'Fairbanks', 'Nome', 'Sitka', 'Ketchikan'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GREAT_STATE', 'ORIGINAL', NULL,
+        'What is the capital of Utah?', NULL,
+        'Salt Lake City', ARRAY['Provo', 'Ogden', 'St. George', 'Park City', 'Moab'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GREAT_STATE', 'ORIGINAL', NULL,
+        'What is the capital of Alabama?', NULL,
+        'Montgomery', ARRAY['Birmingham', 'Mobile', 'Huntsville', 'Tuscaloosa', 'Selma'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GREAT_STATE', 'ORIGINAL', NULL,
+        'What is the capital of Arkansas?', NULL,
+        'Little Rock', ARRAY['Fayetteville', 'Fort Smith', 'Hot Springs', 'Jonesboro', 'Bentonville'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GREAT_STATE', 'ORIGINAL', NULL,
+        'What is the capital of Rhode Island?', NULL,
+        'Providence', ARRAY['Newport', 'Warwick', 'Cranston', 'Pawtucket', 'Woonsocket'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GREAT_STATE', 'ORIGINAL', NULL,
+        'What is the capital of New Mexico?', NULL,
+        'Santa Fe', ARRAY['Albuquerque', 'Las Cruces', 'Roswell', 'Taos', 'Rio Rancho'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GREAT_STATE', 'ORIGINAL', NULL,
+        'Which city is nicknamed Beantown?', NULL,
+        'Boston', ARRAY['New York City', 'Philadelphia', 'Baltimore', 'Providence', 'Hartford'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GREAT_STATE', 'ORIGINAL', NULL,
+        'Which city is nicknamed the Steel City?', NULL,
+        'Pittsburgh', ARRAY['Cleveland', 'Gary', 'Birmingham', 'Detroit', 'Bethlehem'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GREAT_STATE', 'ORIGINAL', NULL,
+        'Which city is nicknamed the Emerald City?', NULL,
+        'Seattle', ARRAY['Portland', 'San Francisco', 'Spokane', 'Boise', 'Tacoma'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GREAT_STATE', 'ORIGINAL', NULL,
+        'Which city is nicknamed Space City, home of NASA''s Mission Control?', NULL,
+        'Houston', ARRAY['Dallas', 'Orlando', 'Huntsville', 'Phoenix', 'San Antonio'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GREAT_STATE', 'ORIGINAL', NULL,
+        'Minneapolis and which other city are known together as the Twin Cities?', NULL,
+        'St. Paul', ARRAY['Duluth', 'Rochester', 'Bloomington', 'Milwaukee', 'Des Moines'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GREAT_STATE', 'ORIGINAL', NULL,
+        'Which state is the Garden State?', NULL,
+        'New Jersey', ARRAY['Connecticut', 'Delaware', 'Maryland', 'Vermont', 'Oregon'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GREAT_STATE', 'ORIGINAL', NULL,
+        'Which state is the Bluegrass State, home of the Derby at Churchill Downs?', NULL,
+        'Kentucky', ARRAY['Tennessee', 'Virginia', 'Maryland', 'West Virginia', 'Missouri'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GREAT_STATE', 'ORIGINAL', NULL,
+        'Which state is the Buckeye State?', NULL,
+        'Ohio', ARRAY['Indiana', 'Michigan', 'Illinois', 'Iowa', 'Pennsylvania'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GREAT_STATE', 'ORIGINAL', NULL,
+        'Which state is the Hoosier State?', NULL,
+        'Indiana', ARRAY['Ohio', 'Illinois', 'Kentucky', 'Iowa', 'Missouri'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GREAT_STATE', 'ORIGINAL', NULL,
+        'Which state is the Tar Heel State?', NULL,
+        'North Carolina', ARRAY['South Carolina', 'Virginia', 'Georgia', 'Tennessee', 'Kentucky'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GREAT_STATE', 'ORIGINAL', NULL,
+        'Which state is the Land of Lincoln?', NULL,
+        'Illinois', ARRAY['Kentucky', 'Indiana', 'Nebraska', 'Ohio', 'Missouri'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GREAT_STATE', 'ORIGINAL', NULL,
+        'Which state is called Big Sky Country?', NULL,
+        'Montana', ARRAY['Wyoming', 'Idaho', 'North Dakota', 'Colorado', 'Alaska'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GREAT_STATE', 'ORIGINAL', NULL,
+        'Which state is the Land of Enchantment?', NULL,
+        'New Mexico', ARRAY['Arizona', 'Colorado', 'Utah', 'Nevada', 'Oregon'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GREAT_STATE', 'ORIGINAL', NULL,
+        'Which state is the Last Frontier?', NULL,
+        'Alaska', ARRAY['Montana', 'Wyoming', 'Hawaii', 'Idaho', 'North Dakota'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GREAT_STATE', 'ORIGINAL', NULL,
+        'Which state''s nickname, the First State, comes from being the first to approve the Constitution?', NULL,
+        'Delaware', ARRAY['Virginia', 'Massachusetts', 'Pennsylvania', 'New Jersey', 'Rhode Island'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GREAT_STATE', 'ORIGINAL', NULL,
+        'Which became the 50th state, in 1959?', NULL,
+        'Hawaii', ARRAY['Alaska', 'Arizona', 'New Mexico', 'Oklahoma', 'Utah'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GREAT_STATE', 'ORIGINAL', NULL,
+        'Which of these is NOT a state capital?', NULL,
+        'Chicago', ARRAY['Springfield', 'Austin', 'Albany', 'Salem', 'Dover'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GREAT_STATE', 'ORIGINAL', NULL,
+        'Which state does NOT touch the Four Corners?', NULL,
+        'Nevada', ARRAY['Utah', 'Colorado', 'Arizona', 'New Mexico'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GREAT_STATE', 'ORIGINAL', NULL,
+        'Which is the only state that borders just one other state?', NULL,
+        'Maine', ARRAY['Florida', 'Washington', 'Rhode Island', 'Delaware', 'Vermont'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GREAT_STATE', 'ORIGINAL', NULL,
+        'Which state''s flag is the only one that isn''t a rectangle?', NULL,
+        'Ohio', ARRAY['Texas', 'Alaska', 'Maryland', 'Colorado', 'Wyoming'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GREAT_STATE', 'ORIGINAL', NULL,
+        'Which state''s flag carries the British Union Jack in its corner?', NULL,
+        'Hawaii', ARRAY['Georgia', 'Massachusetts', 'Virginia', 'Maine', 'New Hampshire'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GREAT_STATE', 'ORIGINAL', NULL,
+        'Salt Lake City hosted the Winter Olympics in which year?', NULL,
+        '2002', ARRAY['1980', '1996', '1998', '2006', '2010'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GREAT_STATE', 'ORIGINAL', NULL,
+        'Abraham Lincoln practiced law and is buried in which state capital?', NULL,
+        'Springfield', ARRAY['Lincoln', 'Frankfort', 'Columbus', 'Indianapolis', 'Richmond'], 200);
+
+-- 300 points
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GREAT_STATE', 'ORIGINAL', NULL,
+        'What is the capital of Kentucky?', NULL,
+        'Frankfort', ARRAY['Louisville', 'Lexington', 'Bowling Green', 'Covington', 'Owensboro'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GREAT_STATE', 'ORIGINAL', NULL,
+        'What is the capital of Vermont?', NULL,
+        'Montpelier', ARRAY['Burlington', 'Rutland', 'Bennington', 'Stowe', 'Brattleboro'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GREAT_STATE', 'ORIGINAL', NULL,
+        'What is the capital of South Dakota?', NULL,
+        'Pierre', ARRAY['Sioux Falls', 'Rapid City', 'Aberdeen', 'Brookings', 'Deadwood'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GREAT_STATE', 'ORIGINAL', NULL,
+        'What is the capital of North Dakota?', NULL,
+        'Bismarck', ARRAY['Fargo', 'Grand Forks', 'Minot', 'Williston', 'Dickinson'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GREAT_STATE', 'ORIGINAL', NULL,
+        'What is the capital of Delaware?', NULL,
+        'Dover', ARRAY['Wilmington', 'Newark', 'Rehoboth Beach', 'Smyrna', 'Milford'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GREAT_STATE', 'ORIGINAL', NULL,
+        'What is the capital of Maine?', NULL,
+        'Augusta', ARRAY['Portland', 'Bangor', 'Bar Harbor', 'Lewiston', 'Kennebunkport'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GREAT_STATE', 'ORIGINAL', NULL,
+        'What is the capital of Maryland?', NULL,
+        'Annapolis', ARRAY['Baltimore', 'Bethesda', 'Frederick', 'Rockville', 'Ocean City'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GREAT_STATE', 'ORIGINAL', NULL,
+        'What is the capital of West Virginia?', NULL,
+        'Charleston', ARRAY['Morgantown', 'Wheeling', 'Huntington', 'Parkersburg', 'Beckley'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GREAT_STATE', 'ORIGINAL', NULL,
+        'What is the capital of South Carolina?', NULL,
+        'Columbia', ARRAY['Charleston', 'Greenville', 'Myrtle Beach', 'Spartanburg', 'Hilton Head'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GREAT_STATE', 'ORIGINAL', NULL,
+        'What is the capital of Kansas?', NULL,
+        'Topeka', ARRAY['Wichita', 'Kansas City', 'Lawrence', 'Dodge City', 'Manhattan'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GREAT_STATE', 'ORIGINAL', NULL,
+        'What is the capital of Montana?', NULL,
+        'Helena', ARRAY['Billings', 'Missoula', 'Bozeman', 'Great Falls', 'Butte'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GREAT_STATE', 'ORIGINAL', NULL,
+        'What is the capital of Wyoming?', NULL,
+        'Cheyenne', ARRAY['Casper', 'Laramie', 'Jackson', 'Cody', 'Gillette'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GREAT_STATE', 'ORIGINAL', NULL,
+        'What is the capital of New Hampshire?', NULL,
+        'Concord', ARRAY['Manchester', 'Nashua', 'Portsmouth', 'Keene', 'Dover'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GREAT_STATE', 'ORIGINAL', NULL,
+        'What is the capital of Connecticut?', NULL,
+        'Hartford', ARRAY['New Haven', 'Bridgeport', 'Stamford', 'Greenwich', 'Waterbury'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GREAT_STATE', 'ORIGINAL', NULL,
+        'What is the capital of Mississippi?', NULL,
+        'Jackson', ARRAY['Biloxi', 'Tupelo', 'Gulfport', 'Hattiesburg', 'Oxford'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GREAT_STATE', 'ORIGINAL', NULL,
+        'What is the capital of Iowa?', NULL,
+        'Des Moines', ARRAY['Cedar Rapids', 'Davenport', 'Iowa City', 'Sioux City', 'Dubuque'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GREAT_STATE', 'ORIGINAL', NULL,
+        'What is the capital of Idaho?', NULL,
+        'Boise', ARRAY['Idaho Falls', 'Pocatello', 'Coeur d''Alene', 'Twin Falls', 'Moscow'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GREAT_STATE', 'ORIGINAL', NULL,
+        'What is the capital of Nebraska?', NULL,
+        'Lincoln', ARRAY['Omaha', 'Grand Island', 'Kearney', 'North Platte', 'Bellevue'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GREAT_STATE', 'ORIGINAL', NULL,
+        'Which of these IS a state capital?', NULL,
+        'Montpelier', ARRAY['Burlington', 'Portland', 'Manchester', 'Charlotte', 'Las Vegas'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GREAT_STATE', 'ORIGINAL', NULL,
+        'Which nickname belongs to Utah, whose pioneers called their land "Deseret," a word for the honeybee?', NULL,
+        'The Beehive State', ARRAY['The Silver State', 'The Gopher State', 'The Badger State', 'The Treasure State', 'The Hawkeye State'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GREAT_STATE', 'ORIGINAL', NULL,
+        'Which state is the Badger State, named for lead miners who dug into hillsides to live -- before it became better known for cheese?', NULL,
+        'Wisconsin', ARRAY['Minnesota', 'Michigan', 'Iowa', 'Illinois', 'Vermont'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GREAT_STATE', 'ORIGINAL', NULL,
+        'Which state is the Hawkeye State, home of the cornfield from "Field of Dreams"?', NULL,
+        'Iowa', ARRAY['Nebraska', 'Kansas', 'Illinois', 'Indiana', 'Minnesota'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GREAT_STATE', 'ORIGINAL', NULL,
+        'Which state is the Keystone State, where both the Declaration of Independence and the Constitution were signed?', NULL,
+        'Pennsylvania', ARRAY['Virginia', 'Massachusetts', 'New York', 'Maryland', 'New Jersey'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GREAT_STATE', 'ORIGINAL', NULL,
+        'Which state is the Volunteer State, home of the Grand Ole Opry?', NULL,
+        'Tennessee', ARRAY['Kentucky', 'Virginia', 'Texas', 'Alabama', 'Georgia'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GREAT_STATE', 'ORIGINAL', NULL,
+        'Which state is the Sooner State, named for settlers who jumped the gun in the land runs of 1889?', NULL,
+        'Oklahoma', ARRAY['Kansas', 'Nebraska', 'Texas', 'Arkansas', 'Missouri'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GREAT_STATE', 'ORIGINAL', NULL,
+        'Which state is the Granite State, with the motto "Live Free or Die"?', NULL,
+        'New Hampshire', ARRAY['Vermont', 'Maine', 'Massachusetts', 'Connecticut', 'Rhode Island'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GREAT_STATE', 'ORIGINAL', NULL,
+        'Which state''s name is French for "green mountain"?', NULL,
+        'Vermont', ARRAY['Maine', 'Oregon', 'Montana', 'Idaho', 'Delaware'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GREAT_STATE', 'ORIGINAL', NULL,
+        'Which state is the Centennial State, admitted 100 years after the Declaration of Independence?', NULL,
+        'Colorado', ARRAY['Nebraska', 'Kansas', 'Nevada', 'Utah', 'Wyoming'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GREAT_STATE', 'ORIGINAL', NULL,
+        'Which state is the Silver State, after the Comstock Lode was struck near Virginia City in 1859?', NULL,
+        'Nevada', ARRAY['Colorado', 'Montana', 'Idaho', 'Arizona', 'Utah'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GREAT_STATE', 'ORIGINAL', NULL,
+        'Which state is the Pelican State, home of Mardi Gras in the French Quarter?', NULL,
+        'Louisiana', ARRAY['Mississippi', 'Alabama', 'Florida', 'Texas', 'Georgia'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GREAT_STATE', 'ORIGINAL', NULL,
+        'Which state''s name comes from an island paradise in a Spanish novel from the 1500s?', NULL,
+        'California', ARRAY['Florida', 'Nevada', 'Colorado', 'Montana', 'Arizona'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GREAT_STATE', 'ORIGINAL', NULL,
+        'Founded in 1610, which is the oldest state capital in the U.S.?', NULL,
+        'Santa Fe', ARRAY['St. Augustine', 'Boston', 'Richmond', 'Annapolis', 'Albany'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GREAT_STATE', 'ORIGINAL', NULL,
+        'Which state capital is home to the only royal palace on U.S. soil?', NULL,
+        'Honolulu', ARRAY['Juneau', 'Santa Fe', 'Austin', 'Sacramento', 'Phoenix'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GREAT_STATE', 'ORIGINAL', NULL,
+        'Which state capital, home of the U.S. Naval Academy, briefly served as the nation''s capital in 1783-84?', NULL,
+        'Annapolis', ARRAY['Richmond', 'Dover', 'Trenton', 'Hartford', 'Providence'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GREAT_STATE', 'ORIGINAL', NULL,
+        'Which state capital grew up around Sutter''s Fort, the supply hub of the California Gold Rush?', NULL,
+        'Sacramento', ARRAY['San Francisco', 'Stockton', 'Fresno', 'Monterey', 'San Jose'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GREAT_STATE', 'ORIGINAL', NULL,
+        'Which state capital was also the capital of the Confederacy for most of the Civil War?', NULL,
+        'Richmond', ARRAY['Atlanta', 'Montgomery', 'Raleigh', 'Charleston', 'Nashville'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GREAT_STATE', 'ORIGINAL', NULL,
+        'Which state capital, named for a French fur trader, is pronounced "peer" by the people who live there?', NULL,
+        'Pierre', ARRAY['Boise', 'Des Moines', 'Baton Rouge', 'Montpelier', 'Detroit'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GREAT_STATE', 'ORIGINAL', NULL,
+        'Which state capital, once called Lancaster, was renamed in 1867 for a president who had died two years earlier?', NULL,
+        'Lincoln', ARRAY['Jefferson City', 'Madison', 'Jackson', 'Springfield', 'Pierre'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GREAT_STATE', 'ORIGINAL', NULL,
+        'Which state capital sits at the eastern end of the Erie Canal?', NULL,
+        'Albany', ARRAY['Buffalo', 'Harrisburg', 'Hartford', 'Trenton', 'Columbus'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GREAT_STATE', 'ORIGINAL', NULL,
+        'Which state capital takes its name from a mythical bird, because it rose from the ruins of an ancient canal-building people?', NULL,
+        'Phoenix', ARRAY['Sacramento', 'Santa Fe', 'Salt Lake City', 'Austin', 'Denver'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GREAT_STATE', 'ORIGINAL', NULL,
+        'Which state''s flag shows a grizzly bear, though the last of its wild grizzlies was killed in the 1920s?', NULL,
+        'California', ARRAY['Montana', 'Wyoming', 'Alaska', 'Colorado', 'Idaho'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GREAT_STATE', 'ORIGINAL', NULL,
+        'Which state''s flag, designed by a 13-year-old boy in 1927, shows the Big Dipper and the North Star?', NULL,
+        'Alaska', ARRAY['Minnesota', 'Maine', 'Montana', 'Michigan', 'North Dakota'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GREAT_STATE', 'ORIGINAL', NULL,
+        'Which state''s flag shows a palmetto tree under a crescent moon?', NULL,
+        'South Carolina', ARRAY['Florida', 'Georgia', 'North Carolina', 'Louisiana', 'Hawaii'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GREAT_STATE', 'ORIGINAL', NULL,
+        'The Mason-Dixon Line runs mainly between Pennsylvania and which state?', NULL,
+        'Maryland', ARRAY['Virginia', 'Delaware', 'West Virginia', 'Ohio', 'New Jersey'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GREAT_STATE', 'ORIGINAL', NULL,
+        'Which state touches four of the five Great Lakes?', NULL,
+        'Michigan', ARRAY['Ohio', 'Wisconsin', 'New York', 'Pennsylvania', 'Minnesota'], 300);
+
+-- 400 points
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GREAT_STATE', 'ORIGINAL', NULL,
+        'Which state is the Gopher State -- the one whose capital and largest city sit across the Mississippi from each other?', NULL,
+        'Minnesota', ARRAY['Wisconsin', 'Iowa', 'Missouri', 'Illinois', 'Kansas'], 400);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GREAT_STATE', 'ORIGINAL', NULL,
+        'Which state is the Treasure State, whose gold and silver turned Butte and Helena into boomtowns?', NULL,
+        'Montana', ARRAY['Colorado', 'Nevada', 'Idaho', 'Wyoming', 'South Dakota'], 400);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GREAT_STATE', 'ORIGINAL', NULL,
+        'Which state is the Old Dominion, birthplace of eight presidents?', NULL,
+        'Virginia', ARRAY['Massachusetts', 'Ohio', 'New York', 'Pennsylvania', 'Maryland'], 400);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GREAT_STATE', 'ORIGINAL', NULL,
+        'Which state is the Nutmeg State, where peddlers were said to sell fake wooden nutmegs -- and home to Yale?', NULL,
+        'Connecticut', ARRAY['Massachusetts', 'Rhode Island', 'New Hampshire', 'New Jersey', 'Vermont'], 400);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GREAT_STATE', 'ORIGINAL', NULL,
+        'Which state is the Equality State, the first state or territory to give women the vote, in 1869?', NULL,
+        'Wyoming', ARRAY['Utah', 'Colorado', 'Idaho', 'Montana', 'Washington'], 400);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GREAT_STATE', 'ORIGINAL', NULL,
+        'Which state is the Ocean State, home to the Gilded Age mansions of Newport?', NULL,
+        'Rhode Island', ARRAY['Maine', 'Delaware', 'New Jersey', 'Massachusetts', 'Hawaii'], 400);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GREAT_STATE', 'ORIGINAL', NULL,
+        'Which state capital was named for a German chancellor, to attract German money to the Northern Pacific Railway?', NULL,
+        'Bismarck', ARRAY['Pierre', 'Helena', 'Topeka', 'Lincoln', 'Cheyenne'], 400);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GREAT_STATE', 'ORIGINAL', NULL,
+        'Which state capital''s name comes from the French for "wooded," a welcome sight to trappers crossing a dry plain?', NULL,
+        'Boise', ARRAY['Des Moines', 'Pierre', 'Baton Rouge', 'Montpelier', 'Olympia'], 400);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GREAT_STATE', 'ORIGINAL', NULL,
+        'Which state capital''s name is French for "red stick"?', NULL,
+        'Baton Rouge', ARRAY['Des Moines', 'Boise', 'Pierre', 'Montpelier', 'Detroit'], 400);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GREAT_STATE', 'ORIGINAL', NULL,
+        'Which state capital was chosen in 1824 as a halfway point between St. Augustine and Pensacola?', NULL,
+        'Tallahassee', ARRAY['Jacksonville', 'Gainesville', 'Ocala', 'Orlando', 'Tampa'], 400);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GREAT_STATE', 'ORIGINAL', NULL,
+        'Mark Twain built his famous house and raised his family in which state capital?', NULL,
+        'Hartford', ARRAY['Jefferson City', 'Albany', 'Boston', 'Springfield', 'Concord'], 400);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GREAT_STATE', 'ORIGINAL', NULL,
+        'Which state capital sits on a narrow strip of land between Lakes Mendota and Monona?', NULL,
+        'Madison', ARRAY['Lansing', 'St. Paul', 'Augusta', 'Concord', 'Columbus'], 400);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GREAT_STATE', 'ORIGINAL', NULL,
+        'Which state''s capitol was built a little taller than the U.S. Capitol, as its people like to point out?', NULL,
+        'Texas', ARRAY['California', 'Louisiana', 'Pennsylvania', 'Ohio', 'Florida'], 400);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GREAT_STATE', 'ORIGINAL', NULL,
+        'Which state is the largest east of the Mississippi River by land area?', NULL,
+        'Georgia', ARRAY['Michigan', 'Florida', 'New York', 'Pennsylvania', 'North Carolina'], 400);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GREAT_STATE', 'ORIGINAL', NULL,
+        'Tennessee and which other state each border eight states, the most of any?', NULL,
+        'Missouri', ARRAY['Kentucky', 'Kansas', 'Arkansas', 'Colorado', 'Nebraska'], 400);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GREAT_STATE', 'ORIGINAL', NULL,
+        'Which state''s flag shows the Zia sun symbol, a red circle with rays pointing four ways?', NULL,
+        'New Mexico', ARRAY['Arizona', 'Colorado', 'Texas', 'Utah', 'Oklahoma'], 400);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GREAT_STATE', 'ORIGINAL', NULL,
+        'Which state has the longest coastline?', NULL,
+        'Alaska', ARRAY['Florida', 'California', 'Hawaii', 'Michigan', 'Maine'], 400);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GREAT_STATE', 'ORIGINAL', NULL,
+        'Which is the only state whose name has just one syllable?', NULL,
+        'Maine', ARRAY['Utah', 'Iowa', 'Ohio', 'Texas', 'Idaho'], 400);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GREAT_STATE', 'ORIGINAL', NULL,
+        'Which state is home to the Pro Football Hall of Fame and the Rock and Roll Hall of Fame?', NULL,
+        'Ohio', ARRAY['Pennsylvania', 'New York', 'Illinois', 'Indiana', 'Michigan'], 400);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GREAT_STATE', 'ORIGINAL', NULL,
+        'Which state is the Cornhusker State?', NULL,
+        'Nebraska', ARRAY['Iowa', 'Kansas', 'Illinois', 'Indiana', 'South Dakota'], 400);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GREAT_STATE', 'ORIGINAL', NULL,
+        'What is the only U.S. state capital with three words in its name?', NULL,
+        'Salt Lake City', ARRAY['Baton Rouge', 'Jefferson City', 'Carson City', 'Oklahoma City', 'Santa Fe'], 400);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GREAT_STATE', 'ORIGINAL', NULL,
+        'Which state is the Evergreen State?', NULL,
+        'Washington', ARRAY['Oregon', 'Vermont', 'Maine', 'Idaho', 'Michigan'], 400);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GREAT_STATE', 'ORIGINAL', NULL,
+        'Which state is the Show-Me State?', NULL,
+        'Missouri', ARRAY['Kansas', 'Arkansas', 'Iowa', 'Kentucky', 'Oklahoma'], 400);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GREAT_STATE', 'ORIGINAL', NULL,
+        'Which state is the Magnolia State?', NULL,
+        'Mississippi', ARRAY['Louisiana', 'Alabama', 'Georgia', 'South Carolina', 'Tennessee'], 400);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GREAT_STATE', 'ORIGINAL', NULL,
+        'Which state is the Mountain State, the only one entirely within the Appalachians?', NULL,
+        'West Virginia', ARRAY['Vermont', 'Colorado', 'Kentucky', 'Tennessee', 'New Hampshire'], 400);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GREAT_STATE', 'ORIGINAL', NULL,
+        'Which state became the 49th, in January 1959?', NULL,
+        'Alaska', ARRAY['Hawaii', 'Arizona', 'New Mexico', 'Oklahoma', 'Utah'], 400);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GREAT_STATE', 'ORIGINAL', NULL,
+        'Atlanta hosted the Summer Olympics in which year?', NULL,
+        '1996', ARRAY['1984', '1988', '1992', '2000', '2004'], 400);
+
+COMMIT;
+
+-- Check: should return 145.
+SELECT COUNT(*) FROM questions WHERE game_mode = 'TRIVI_YEAH_II' AND category = 'GREAT_STATE';
 
 -- ============================================================================
 -- content/sql/just_in_time.sql -- GENERATED, don't edit by hand.
@@ -7586,8 +8350,8 @@ SELECT COUNT(*) FROM questions WHERE game_mode = 'TRIVI_YEAH_II' AND category = 
 -- Thinking Pants category SCIENCE_NATURE. To change a question, change the
 -- spreadsheet and rebuild.
 --
--- Replaces the WHOLE category with the spreadsheet's 80 live questions
--- (100: 20, 200: 20, 300: 20, 400: 20), inside a transaction. Safe to re-run.
+-- Replaces the WHOLE category with the spreadsheet's 120 live questions
+-- (100: 30, 200: 30, 300: 30, 400: 30), inside a transaction. Safe to re-run.
 -- ============================================================================
 
 BEGIN;
@@ -7676,6 +8440,46 @@ INSERT INTO questions (question_number, game_mode, category, subcategory, factio
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SCIENCE_NATURE', 'SCIENCE_NATURE_BATCH_1', NULL,
         'Which naturalist wrote "On the Origin of Species" (1859)?', NULL,
         'Charles Darwin', ARRAY['Alfred Russel Wallace', 'Gregor Mendel', 'Carl Linnaeus', 'Thomas Huxley', 'Jean-Baptiste Lamarck', 'Isaac Newton'], 100);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SCIENCE_NATURE', 'ORIGINAL', NULL,
+        'What do bees collect from flowers to make honey?', NULL,
+        'Nectar', ARRAY['Pollen', 'Sap', 'Dew', 'Wax', 'Seeds'], 100);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SCIENCE_NATURE', 'ORIGINAL', NULL,
+        'What do we call the preserved remains or traces of ancient life found in rock?', NULL,
+        'Fossils', ARRAY['Minerals', 'Crystals', 'Sediments', 'Artifacts', 'Geodes'], 100);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SCIENCE_NATURE', 'ORIGINAL', NULL,
+        'How many legs does an insect have?', NULL,
+        'Six', ARRAY['Eight', 'Four', 'Ten', 'Twelve', 'Five'], 100);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SCIENCE_NATURE', 'ORIGINAL', NULL,
+        'At sea level, water boils at how many degrees Fahrenheit?', NULL,
+        '212', ARRAY['100', '180', '200', '250', '32'], 100);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SCIENCE_NATURE', 'ORIGINAL', NULL,
+        'What do we call animals that eat only plants?', NULL,
+        'Herbivores', ARRAY['Carnivores', 'Omnivores', 'Insectivores', 'Scavengers', 'Predators'], 100);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SCIENCE_NATURE', 'ORIGINAL', NULL,
+        'What is a baby frog called?', NULL,
+        'A tadpole', ARRAY['A kit', 'A fry', 'A cub', 'A joey', 'A calf'], 100);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SCIENCE_NATURE', 'ORIGINAL', NULL,
+        'What is a group of lions called?', NULL,
+        'A pride', ARRAY['A pack', 'A herd', 'A flock', 'A school', 'A troop'], 100);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SCIENCE_NATURE', 'ORIGINAL', NULL,
+        'Which of these metals sticks to a magnet?', NULL,
+        'Iron', ARRAY['Aluminum', 'Copper', 'Gold', 'Silver', 'Tin'], 100);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SCIENCE_NATURE', 'ORIGINAL', NULL,
+        'Which scientist is famous for the theory of relativity?', NULL,
+        'Albert Einstein', ARRAY['Isaac Newton', 'Nikola Tesla', 'Galileo Galilei', 'Stephen Hawking', 'Marie Curie'], 100);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SCIENCE_NATURE', 'ORIGINAL', NULL,
+        'Which founding father flew a kite in a thunderstorm to show that lightning is electricity?', NULL,
+        'Benjamin Franklin', ARRAY['Thomas Jefferson', 'George Washington', 'John Adams', 'Alexander Hamilton', 'Thomas Edison'], 100);
 
 -- 200 points
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
@@ -7758,6 +8562,46 @@ INSERT INTO questions (question_number, game_mode, category, subcategory, factio
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SCIENCE_NATURE', 'SCIENCE_NATURE_BATCH_1', NULL,
         'Which Russian scientist trained dogs to drool at a signal that meant food was coming?', NULL,
         'Ivan Pavlov', ARRAY['Sigmund Freud', 'B.F. Skinner', 'Carl Jung', 'Dmitri Mendeleev', 'Louis Pasteur', 'Wilhelm Wundt'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SCIENCE_NATURE', 'ORIGINAL', NULL,
+        'What is the hardest substance in the human body?', NULL,
+        'Tooth enamel', ARRAY['Bone', 'Fingernail', 'Cartilage', 'Skull', 'Hair'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SCIENCE_NATURE', 'ORIGINAL', NULL,
+        'Which layer high in the atmosphere shields us from most of the Sun''s ultraviolet rays?', NULL,
+        'The ozone layer', ARRAY['The ionosphere', 'The troposphere', 'The magnetosphere', 'The cloud layer', 'The jet stream'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SCIENCE_NATURE', 'ORIGINAL', NULL,
+        'What kind of energy is stored in a stretched rubber band?', NULL,
+        'Potential energy', ARRAY['Kinetic energy', 'Thermal energy', 'Nuclear energy', 'Sound energy', 'Light energy'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SCIENCE_NATURE', 'ORIGINAL', NULL,
+        'Water droplets forming on a cold glass are an example of what?', NULL,
+        'Condensation', ARRAY['Evaporation', 'Sublimation', 'Precipitation', 'Melting', 'Freezing'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SCIENCE_NATURE', 'ORIGINAL', NULL,
+        'What do we call a basic unit of heredity, passed from parent to child?', NULL,
+        'A gene', ARRAY['A cell', 'An atom', 'A protein', 'An enzyme', 'A hormone'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SCIENCE_NATURE', 'ORIGINAL', NULL,
+        'How many chambers does the human heart have?', NULL,
+        'Four', ARRAY['Two', 'Three', 'Five', 'Six', 'Eight'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SCIENCE_NATURE', 'ORIGINAL', NULL,
+        'Which part of a flower makes pollen?', NULL,
+        'The stamen', ARRAY['The pistil', 'The petal', 'The sepal', 'The stem', 'The ovary'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SCIENCE_NATURE', 'ORIGINAL', NULL,
+        'Sound travels fastest through which of these?', NULL,
+        'Steel', ARRAY['Water', 'Air', 'Wood', 'A vacuum'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SCIENCE_NATURE', 'ORIGINAL', NULL,
+        'Which egg-laying mammal has a duck-like bill and venomous spurs on its back legs?', NULL,
+        'The platypus', ARRAY['The echidna', 'The otter', 'The beaver', 'The mole', 'The opossum'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SCIENCE_NATURE', 'ORIGINAL', NULL,
+        'Which layer of the Earth lies just beneath the crust?', NULL,
+        'The mantle', ARRAY['The outer core', 'The inner core', 'The lithosphere', 'The bedrock', 'The magma chamber'], 200);
 
 -- 300 points
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
@@ -7840,6 +8684,46 @@ INSERT INTO questions (question_number, game_mode, category, subcategory, factio
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SCIENCE_NATURE', 'SCIENCE_NATURE_BATCH_1', NULL,
         'Whose famous thought experiment imagines a cat in a box that is both alive and dead?', NULL,
         'Erwin Schrödinger', ARRAY['Werner Heisenberg', 'Albert Einstein', 'Niels Bohr', 'Max Planck', 'Richard Feynman', 'Stephen Hawking'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SCIENCE_NATURE', 'ORIGINAL', NULL,
+        'What is the study of earthquakes called?', NULL,
+        'Seismology', ARRAY['Volcanology', 'Meteorology', 'Paleontology', 'Oceanography', 'Mineralogy'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SCIENCE_NATURE', 'ORIGINAL', NULL,
+        'Sandstone and limestone, formed in layers from pressed-together grains, are which type of rock?', NULL,
+        'Sedimentary', ARRAY['Igneous', 'Metamorphic', 'Volcanic', 'Magmatic', 'Crystalline'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SCIENCE_NATURE', 'ORIGINAL', NULL,
+        'What is the metric unit of force, named for a famous English scientist?', NULL,
+        'The newton', ARRAY['The joule', 'The watt', 'The pascal', 'The volt', 'The kelvin'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SCIENCE_NATURE', 'ORIGINAL', NULL,
+        'What is the chemical symbol for iron?', NULL,
+        'Fe', ARRAY['Ir', 'In', 'I', 'Fr', 'F'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SCIENCE_NATURE', 'ORIGINAL', NULL,
+        'What is the largest muscle in the human body?', NULL,
+        'Gluteus maximus', ARRAY['Quadriceps', 'Latissimus dorsi', 'Biceps', 'Hamstring', 'Deltoid'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SCIENCE_NATURE', 'ORIGINAL', NULL,
+        'What is the scientific name for the kneecap?', NULL,
+        'Patella', ARRAY['Tibia', 'Fibula', 'Clavicle', 'Scapula', 'Sternum'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SCIENCE_NATURE', 'ORIGINAL', NULL,
+        'In which part of a plant cell does photosynthesis take place?', NULL,
+        'The chloroplast', ARRAY['The mitochondrion', 'The nucleus', 'The vacuole', 'The cell wall', 'The ribosome'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SCIENCE_NATURE', 'ORIGINAL', NULL,
+        'Which kind of cell division makes two identical copies of a cell?', NULL,
+        'Mitosis', ARRAY['Meiosis', 'Osmosis', 'Fermentation', 'Respiration', 'Diffusion'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SCIENCE_NATURE', 'ORIGINAL', NULL,
+        'What is the point on the surface directly above where an earthquake starts called?', NULL,
+        'The epicenter', ARRAY['The fault line', 'The hypocenter', 'The aftershock', 'The seismograph', 'The tremor zone'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SCIENCE_NATURE', 'ORIGINAL', NULL,
+        'What was the name of the supercontinent that began breaking apart about 200 million years ago?', NULL,
+        'Pangaea', ARRAY['Gondwana', 'Laurasia', 'Rodinia', 'Atlantis', 'Lemuria'], 300);
 
 -- 400 points
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
@@ -7922,11 +8806,1103 @@ INSERT INTO questions (question_number, game_mode, category, subcategory, factio
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SCIENCE_NATURE', 'SCIENCE_NATURE_BATCH_1', NULL,
         'Bamboo, which can grow almost a meter in a day, is a giant type of what?', NULL,
         'Grass', ARRAY['Tree', 'Shrub', 'Fern', 'Palm', 'Vine', 'Moss'], 400);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SCIENCE_NATURE', 'ORIGINAL', NULL,
+        'Who first described cells, after looking at a slice of cork in 1665?', NULL,
+        'Robert Hooke', ARRAY['Antonie van Leeuwenhoek', 'Robert Boyle', 'Isaac Newton', 'Louis Pasteur', 'Galileo Galilei'], 400);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SCIENCE_NATURE', 'ORIGINAL', NULL,
+        'To the nearest degree, what is absolute zero on the Celsius scale?', NULL,
+        '-273', ARRAY['-100', '-196', '-212', '-300', '-459'], 400);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SCIENCE_NATURE', 'ORIGINAL', NULL,
+        'What type of chemical bond forms when two atoms share electrons?', NULL,
+        'Covalent', ARRAY['Ionic', 'Metallic', 'Hydrogen', 'Magnetic', 'Nuclear'], 400);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SCIENCE_NATURE', 'ORIGINAL', NULL,
+        'What does DNA stand for?', NULL,
+        'Deoxyribonucleic acid', ARRAY['Dinitrogen acid', 'Deoxyribose nitrate', 'Dual nucleic acid', 'Dextronucleic acid', 'Diribonucleic acid'], 400);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SCIENCE_NATURE', 'ORIGINAL', NULL,
+        'Which body system includes the thyroid, the pituitary and the adrenal glands?', NULL,
+        'The endocrine system', ARRAY['The lymphatic system', 'The nervous system', 'The digestive system', 'The immune system', 'The circulatory system'], 400);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SCIENCE_NATURE', 'ORIGINAL', NULL,
+        'Which German scientist proposed continental drift in 1912?', NULL,
+        'Alfred Wegener', ARRAY['Charles Lyell', 'James Hutton', 'Alexander von Humboldt', 'Max Planck', 'Charles Richter'], 400);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SCIENCE_NATURE', 'ORIGINAL', NULL,
+        'Water moving through a membrane toward the side with more dissolved salt or sugar is called what?', NULL,
+        'Osmosis', ARRAY['Diffusion', 'Filtration', 'Transpiration', 'Capillary action', 'Active transport'], 400);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SCIENCE_NATURE', 'ORIGINAL', NULL,
+        'Which scale, created in 1812, ranks minerals'' hardness from talc at 1 to diamond at 10?', NULL,
+        'The Mohs scale', ARRAY['The Richter scale', 'The Beaufort scale', 'The Kelvin scale', 'The pH scale', 'The Fujita scale'], 400);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SCIENCE_NATURE', 'ORIGINAL', NULL,
+        'What is the only bird known to be able to fly backwards?', NULL,
+        'The hummingbird', ARRAY['The swift', 'The kingfisher', 'The kestrel', 'The swallow', 'The dragonfly'], 400);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SCIENCE_NATURE', 'ORIGINAL', NULL,
+        'What do we call an animal that keeps a steady body temperature from the inside, like mammals and birds?', NULL,
+        'Endotherm', ARRAY['Ectotherm', 'Poikilotherm', 'Thermophile', 'Exotherm', 'Isotherm'], 400);
 
 COMMIT;
 
--- Check: should return 80.
+-- Check: should return 120.
 SELECT COUNT(*) FROM questions WHERE game_mode = 'TRIVI_YEAH_II' AND category = 'SCIENCE_NATURE';
+
+-- ============================================================================
+-- content/sql/spellbound.sql -- GENERATED, don't edit by hand.
+-- Made by content/build.mjs from content/spellbound.csv, the master copy of the
+-- Thinking Pants category SPELLBOUND. To change a question, change the
+-- spreadsheet and rebuild.
+--
+-- Replaces the WHOLE category with the spreadsheet's 256 live questions
+-- (100: 62, 200: 74, 300: 65, 400: 55), inside a transaction. Safe to re-run.
+-- ============================================================================
+
+BEGIN;
+
+DELETE FROM questions WHERE game_mode = 'TRIVI_YEAH_II' AND category = 'SPELLBOUND';
+
+
+-- 100 points
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPELLBOUND', 'ORIGINAL', NULL,
+        'Which is spelled correctly? (needed)', NULL,
+        'Necessary', ARRAY['Necesary', 'Neccessary', 'Neccesary', 'Necessery'], 100);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPELLBOUND', 'ORIGINAL', NULL,
+        'Which is spelled correctly? (apart)', NULL,
+        'Separate', ARRAY['Seperate', 'Separete', 'Seprate', 'Separrate'], 100);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPELLBOUND', 'ORIGINAL', NULL,
+        'Which is spelled correctly? (for sure)', NULL,
+        'Definitely', ARRAY['Definately', 'Definitly', 'Defenitely', 'Definatly'], 100);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPELLBOUND', 'ORIGINAL', NULL,
+        'Which is spelled correctly? (to think it''s true)', NULL,
+        'Believe', ARRAY['Beleive', 'Belive', 'Beleve', 'Bileve'], 100);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPELLBOUND', 'ORIGINAL', NULL,
+        'Which is spelled correctly? (to get)', NULL,
+        'Receive', ARRAY['Recieve', 'Receeve', 'Receve', 'Reseive'], 100);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPELLBOUND', 'ORIGINAL', NULL,
+        'Which is spelled correctly? (a pal)', NULL,
+        'Friend', ARRAY['Freind', 'Frend', 'Friennd', 'Frind'], 100);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPELLBOUND', 'ORIGINAL', NULL,
+        'Which is spelled correctly? (for the reason that)', NULL,
+        'Because', ARRAY['Becuase', 'Becase', 'Beacuse', 'Becouse'], 100);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPELLBOUND', 'ORIGINAL', NULL,
+        'Which is spelled correctly? (lovely)', NULL,
+        'Beautiful', ARRAY['Beatiful', 'Beautifull', 'Beutiful', 'Beautyful'], 100);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPELLBOUND', 'ORIGINAL', NULL,
+        'Which is spelled correctly? (strange)', NULL,
+        'Weird', ARRAY['Wierd', 'Weerd', 'Wiered', 'Weard'], 100);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPELLBOUND', 'ORIGINAL', NULL,
+        'Which is spelled correctly? (the day after today)', NULL,
+        'Tomorrow', ARRAY['Tommorow', 'Tomorow', 'Tommorrow', 'Tomorroe'], 100);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPELLBOUND', 'ORIGINAL', NULL,
+        'Which is spelled correctly? (up to the time)', NULL,
+        'Until', ARRAY['Untill', 'Untile', 'Intil', 'Untel'], 100);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPELLBOUND', 'ORIGINAL', NULL,
+        'Which is spelled correctly? (a place to borrow books)', NULL,
+        'Library', ARRAY['Libary', 'Liberry', 'Librery', 'Librarry'], 100);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPELLBOUND', 'ORIGINAL', NULL,
+        'Which is spelled correctly? (the middle of the week)', NULL,
+        'Wednesday', ARRAY['Wensday', 'Wednesay', 'Wedensday', 'Wendsday'], 100);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPELLBOUND', 'ORIGINAL', NULL,
+        'Which is spelled correctly? (runs the country)', NULL,
+        'Government', ARRAY['Goverment', 'Govermint', 'Governmant', 'Guvernment'], 100);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPELLBOUND', 'ORIGINAL', NULL,
+        'Which is spelled correctly? (the days on a page)', NULL,
+        'Calendar', ARRAY['Calender', 'Calandar', 'Calander', 'Callendar'], 100);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPELLBOUND', 'ORIGINAL', NULL,
+        'Which is spelled correctly? (where you live)', NULL,
+        'Address', ARRAY['Adress', 'Addres', 'Adddress', 'Adres'], 100);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPELLBOUND', 'ORIGINAL', NULL,
+        'Which is spelled correctly? (to the other side)', NULL,
+        'Across', ARRAY['Accross', 'Acros', 'Acrross', 'Accros'], 100);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPELLBOUND', 'ORIGINAL', NULL,
+        'Which is spelled correctly? (a company)', NULL,
+        'Business', ARRAY['Buisness', 'Busness', 'Bussiness', 'Businness'], 100);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPELLBOUND', 'ORIGINAL', NULL,
+        'Which is spelled correctly? (something unexpected)', NULL,
+        'Surprise', ARRAY['Suprise', 'Surprize', 'Surprice', 'Serprise'], 100);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPELLBOUND', 'ORIGINAL', NULL,
+        'Which is spelled correctly? (honestly)', NULL,
+        'Truly', ARRAY['Truely', 'Trully', 'Truley', 'Trooly'], 100);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPELLBOUND', 'ORIGINAL', NULL,
+        'Which is spelled correctly? (a disagreement)', NULL,
+        'Argument', ARRAY['Arguement', 'Argumint', 'Arguemint', 'Argumant'], 100);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPELLBOUND', 'ORIGINAL', NULL,
+        'Which is spelled correctly? (the rules of a language)', NULL,
+        'Grammar', ARRAY['Grammer', 'Gramar', 'Grammor', 'Gramer'], 100);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPELLBOUND', 'ORIGINAL', NULL,
+        'Which is spelled correctly? (most likely)', NULL,
+        'Probably', ARRAY['Probly', 'Probaly', 'Probablly', 'Probabley'], 100);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPELLBOUND', 'ORIGINAL', NULL,
+        'Which is spelled correctly? (not the same)', NULL,
+        'Different', ARRAY['Diffrent', 'Diferent', 'Differant', 'Diffirent'], 100);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPELLBOUND', 'ORIGINAL', NULL,
+        'Which is spelled correctly? (a place to eat out)', NULL,
+        'Restaurant', ARRAY['Restaraunt', 'Resturant', 'Restaurent', 'Restraunt'], 100);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPELLBOUND', 'ORIGINAL', NULL,
+        'Which is spelled correctly? (how a letter often ends)', NULL,
+        'Sincerely', ARRAY['Sincerly', 'Sincerley', 'Sinserely', 'Sincerelly'], 100);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPELLBOUND', 'ORIGINAL', NULL,
+        'Which is spelled correctly? (to vanish)', NULL,
+        'Disappear', ARRAY['Dissapear', 'Disapear', 'Dissappear', 'Disappeer'], 100);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPELLBOUND', 'ORIGINAL', NULL,
+        'Which is spelled correctly? (it''s in your mouth)', NULL,
+        'Tongue', ARRAY['Tounge', 'Tonge', 'Tung', 'Tonuge'], 100);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPELLBOUND', 'ORIGINAL', NULL,
+        'Which is spelled correctly? (land with water all around)', NULL,
+        'Island', ARRAY['Iland', 'Ilsand', 'Islend', 'Illand'], 100);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPELLBOUND', 'ORIGINAL', NULL,
+        'Which is spelled correctly? (to protect)', NULL,
+        'Guard', ARRAY['Gaurd', 'Gard', 'Guarde', 'Guaurd'], 100);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPELLBOUND', 'ORIGINAL', NULL,
+        'Which is spelled correctly? (a reply)', NULL,
+        'Answer', ARRAY['Anser', 'Answere', 'Ansewr', 'Awnser'], 100);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPELLBOUND', 'ORIGINAL', NULL,
+        'Which is spelled correctly? (a person in a story)', NULL,
+        'Character', ARRAY['Charactor', 'Charecter', 'Caracter', 'Charakter'], 100);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPELLBOUND', 'ORIGINAL', NULL,
+        'Which is spelled correctly? (the world around us)', NULL,
+        'Environment', ARRAY['Enviroment', 'Envirnment', 'Environmint', 'Enviornment'], 100);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPELLBOUND', 'ORIGINAL', NULL,
+        'Which is spelled correctly? (what you know)', NULL,
+        'Knowledge', ARRAY['Knowlege', 'Knowlegde', 'Knowladge', 'Nowledge'], 100);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPELLBOUND', 'ORIGINAL', NULL,
+        'Which is spelled correctly? (how tall)', NULL,
+        'Height', ARRAY['Heigth', 'Hieght', 'Hight', 'Heiht'], 100);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPELLBOUND', 'ORIGINAL', NULL,
+        'Which is spelled correctly? (alike)', NULL,
+        'Similar', ARRAY['Similiar', 'Simular', 'Similer', 'Simmilar'], 100);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPELLBOUND', 'ORIGINAL', NULL,
+        'Which is spelled correctly? (the study of the natural world)', NULL,
+        'Science', ARRAY['Sience', 'Sciense', 'Scince', 'Scence'], 100);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPELLBOUND', 'ORIGINAL', NULL,
+        'Which is spelled correctly? (December 25)', NULL,
+        'Christmas', ARRAY['Chrismas', 'Christmass', 'Crismas', 'Christmus'], 100);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPELLBOUND', 'ORIGINAL', NULL,
+        'Which is spelled correctly? (even though)', NULL,
+        'Although', ARRAY['Althogh', 'Allthough', 'Altough', 'Althouhg'], 100);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPELLBOUND', 'ORIGINAL', NULL,
+        'Which is spelled correctly? (above all)', NULL,
+        'Especially', ARRAY['Expecially', 'Especialy', 'Espeshally', 'Especally'], 100);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPELLBOUND', 'ORIGINAL', NULL,
+        'Which is spelled correctly? (most of the time)', NULL,
+        'Usually', ARRAY['Usualy', 'Usally', 'Ususally', 'Usuallly'], 100);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPELLBOUND', 'ORIGINAL', NULL,
+        'Which is spelled correctly? (holds your attention)', NULL,
+        'Interesting', ARRAY['Intresting', 'Interisting', 'Intristing', 'Interesing'], 100);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPELLBOUND', 'ORIGINAL', NULL,
+        'Which of these school words is misspelled?', NULL,
+        'Hilighter', ARRAY['Pencil', 'Teacher', 'Eraser', 'Backpack'], 100);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPELLBOUND', 'ORIGINAL', NULL,
+        'Which of these calendar words is misspelled?', NULL,
+        'Febuary', ARRAY['Tuesday', 'Saturday', 'January', 'Thursday'], 100);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPELLBOUND', 'ORIGINAL', NULL,
+        'Which of these kitchen words is misspelled?', NULL,
+        'Refridgerator', ARRAY['Microwave', 'Dishwasher', 'Toaster', 'Blender'], 100);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPELLBOUND', 'ORIGINAL', NULL,
+        'Which of these pet words is misspelled?', NULL,
+        'Tortise', ARRAY['Hamster', 'Parakeet', 'Rabbit', 'Guinea pig'], 100);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPELLBOUND', 'ORIGINAL', NULL,
+        'Which of these body words is misspelled?', NULL,
+        'Stomache', ARRAY['Shoulder', 'Muscle', 'Eyebrow', 'Knuckle'], 100);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPELLBOUND', 'ORIGINAL', NULL,
+        'Which of these weather words is misspelled?', NULL,
+        'Tornadoe', ARRAY['Hurricane', 'Blizzard', 'Thunder', 'Drizzle'], 100);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPELLBOUND', 'ORIGINAL', NULL,
+        'Which of these holiday words is misspelled?', NULL,
+        'Haloween', ARRAY['Thanksgiving', 'Easter', 'Valentine''s Day', 'New Year''s Eve'], 100);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPELLBOUND', 'ORIGINAL', NULL,
+        'Which of these fruit words is misspelled?', NULL,
+        'Bananna', ARRAY['Cherry', 'Pineapple', 'Raspberry', 'Strawberry'], 100);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPELLBOUND', 'ORIGINAL', NULL,
+        'Which of these sports words is misspelled?', NULL,
+        'Lacrose', ARRAY['Basketball', 'Volleyball', 'Gymnastics', 'Wrestling'], 100);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPELLBOUND', 'ORIGINAL', NULL,
+        'Which of these family words is misspelled?', NULL,
+        'Neice', ARRAY['Nephew', 'Cousin', 'Grandmother', 'Daughter'], 100);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPELLBOUND', 'ORIGINAL', NULL,
+        'Fill in the blank: bi_ycle', NULL,
+        'c', ARRAY['s', 'ss', 'cc'], 100);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPELLBOUND', 'ORIGINAL', NULL,
+        'Fill in the blank: cho_olate', NULL,
+        'c', ARRAY['k', 'ck', 'cc'], 100);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPELLBOUND', 'ORIGINAL', NULL,
+        'Fill in the blank: eig__h', NULL,
+        'ht', ARRAY['th', 't', 'hth'], 100);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPELLBOUND', 'ORIGINAL', NULL,
+        'Fill in the blank: ex_ellent', NULL,
+        'c', ARRAY['s', 'cc', 'x'], 100);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPELLBOUND', 'ORIGINAL', NULL,
+        'Fill in the blank: begi__ing', NULL,
+        'nn', ARRAY['n', 'ng', 'nnn'], 100);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPELLBOUND', 'ORIGINAL', NULL,
+        'Fill in the blank: wri__ng', NULL,
+        'ti', ARRAY['tti', 'te', 'tt'], 100);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPELLBOUND', 'ORIGINAL', NULL,
+        'Fill in the blank: pe__le', NULL,
+        'op', ARRAY['po', 'eo', 'ep'], 100);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPELLBOUND', 'ORIGINAL', NULL,
+        'Fill in the blank: thr__gh', NULL,
+        'ou', ARRAY['o', 'oo', 'u'], 100);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPELLBOUND', 'ORIGINAL', NULL,
+        'Fill in the blank: so__er', NULL,
+        'cc', ARRAY['c', 'k', 'ck'], 100);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPELLBOUND', 'ORIGINAL', NULL,
+        'Fill in the blank: ch__f', NULL,
+        'ie', ARRAY['ei', 'ee', 'ea'], 100);
+
+-- 200 points
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPELLBOUND', 'ORIGINAL', NULL,
+        'Which is spelled correctly? (to make someone blush)', NULL,
+        'Embarrass', ARRAY['Embarass', 'Embarras', 'Emberrass', 'Embaress'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPELLBOUND', 'ORIGINAL', NULL,
+        'Which is spelled correctly? (now and then)', NULL,
+        'Occasionally', ARRAY['Occasionaly', 'Ocassionally', 'Occassionally', 'Ocasionally'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPELLBOUND', 'ORIGINAL', NULL,
+        'Which is spelled correctly? (to make room for)', NULL,
+        'Accommodate', ARRAY['Acommodate', 'Accomodate', 'Acomodate', 'Accommadate'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPELLBOUND', 'ORIGINAL', NULL,
+        'Which is spelled correctly? (happened)', NULL,
+        'Occurred', ARRAY['Occured', 'Ocurred', 'Occurd', 'Ocured'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPELLBOUND', 'ORIGINAL', NULL,
+        'Which is spelled correctly? (a musical beat)', NULL,
+        'Rhythm', ARRAY['Rythm', 'Rhythym', 'Rhythem', 'Rythym'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPELLBOUND', 'ORIGINAL', NULL,
+        'Which is spelled correctly? (a special right)', NULL,
+        'Privilege', ARRAY['Privelege', 'Priviledge', 'Privilage', 'Privelige'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPELLBOUND', 'ORIGINAL', NULL,
+        'Which is spelled correctly? (to suggest)', NULL,
+        'Recommend', ARRAY['Reccommend', 'Recomend', 'Reccomend', 'Recommmend'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPELLBOUND', 'ORIGINAL', NULL,
+        'Which is spelled correctly? (upkeep)', NULL,
+        'Maintenance', ARRAY['Maintainance', 'Maintenence', 'Maintanance', 'Maintenanse'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPELLBOUND', 'ORIGINAL', NULL,
+        'Which is spelled correctly? (how a word is said)', NULL,
+        'Pronunciation', ARRAY['Pronounciation', 'Pronunciaton', 'Pronunsiation', 'Pronounsiation'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPELLBOUND', 'ORIGINAL', NULL,
+        'Which is spelled correctly? (on your own)', NULL,
+        'Independent', ARRAY['Independant', 'Indipendent', 'Independint', 'Indepindent'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPELLBOUND', 'ORIGINAL', NULL,
+        'Which is spelled correctly? (being real)', NULL,
+        'Existence', ARRAY['Existance', 'Existense', 'Exsistence', 'Existince'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPELLBOUND', 'ORIGINAL', NULL,
+        'Which is spelled correctly? (a graveyard)', NULL,
+        'Cemetery', ARRAY['Cemetary', 'Cematery', 'Semetery', 'Cemitery'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPELLBOUND', 'ORIGINAL', NULL,
+        'Which is spelled correctly? (it cleans the carpet)', NULL,
+        'Vacuum', ARRAY['Vaccum', 'Vacum', 'Vaccuum', 'Vacume'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPELLBOUND', 'ORIGINAL', NULL,
+        'Which is spelled correctly? (funny)', NULL,
+        'Humorous', ARRAY['Humerous', 'Humorus', 'Humoros', 'Humourus'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPELLBOUND', 'ORIGINAL', NULL,
+        'Which is spelled correctly? (right away)', NULL,
+        'Immediately', ARRAY['Immediatly', 'Imediately', 'Immediatley', 'Immedietly'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPELLBOUND', 'ORIGINAL', NULL,
+        'Which is spelled correctly? (easy to see)', NULL,
+        'Noticeable', ARRAY['Noticable', 'Noticible', 'Notecable', 'Noticeible'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPELLBOUND', 'ORIGINAL', NULL,
+        'Which is spelled correctly? (out in the open)', NULL,
+        'Publicly', ARRAY['Publically', 'Publicaly', 'Publiclly', 'Publicley'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPELLBOUND', 'ORIGINAL', NULL,
+        'Which is spelled correctly? (a timetable)', NULL,
+        'Schedule', ARRAY['Schedual', 'Scedule', 'Schedjule', 'Shedule'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPELLBOUND', 'ORIGINAL', NULL,
+        'Which is spelled correctly? (a habit or leaning)', NULL,
+        'Tendency', ARRAY['Tendancy', 'Tendencey', 'Tendensy', 'Tendincy'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPELLBOUND', 'ORIGINAL', NULL,
+        'Which is spelled correctly? (eat your ___s)', NULL,
+        'Vegetable', ARRAY['Vegtable', 'Vegatable', 'Vegetible', 'Vegitable'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPELLBOUND', 'ORIGINAL', NULL,
+        'Which is spelled correctly? (how hot or cold)', NULL,
+        'Temperature', ARRAY['Temperture', 'Tempature', 'Temprature', 'Temperatur'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPELLBOUND', 'ORIGINAL', NULL,
+        'Which is spelled correctly? (a temperature scale)', NULL,
+        'Fahrenheit', ARRAY['Farenheit', 'Fahrenhiet', 'Farenheight', 'Fahrenheight'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPELLBOUND', 'ORIGINAL', NULL,
+        'Which is spelled correctly? (a promise you keep)', NULL,
+        'Commitment', ARRAY['Commitement', 'Comittment', 'Committment', 'Comitment'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPELLBOUND', 'ORIGINAL', NULL,
+        'Which is spelled correctly? (self-control)', NULL,
+        'Discipline', ARRAY['Disipline', 'Discipine', 'Dicipline', 'Disapline'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPELLBOUND', 'ORIGINAL', NULL,
+        'Which is spelled correctly? (to stretch the truth)', NULL,
+        'Exaggerate', ARRAY['Exagerate', 'Exxagerate', 'Exaggarate', 'Exagerrate'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPELLBOUND', 'ORIGINAL', NULL,
+        'Which is spelled correctly? (to pester)', NULL,
+        'Harass', ARRAY['Harrass', 'Harras', 'Haraas', 'Herass'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPELLBOUND', 'ORIGINAL', NULL,
+        'Which is spelled correctly? (side by side, never meeting)', NULL,
+        'Parallel', ARRAY['Paralell', 'Parralel', 'Parrallel', 'Paralel'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPELLBOUND', 'ORIGINAL', NULL,
+        'Which is spelled correctly? (something you own)', NULL,
+        'Possession', ARRAY['Posession', 'Possesion', 'Posesion', 'Possessian'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPELLBOUND', 'ORIGINAL', NULL,
+        'Which is spelled correctly? (won''t give up)', NULL,
+        'Persistent', ARRAY['Persistant', 'Persistint', 'Persestent', 'Pursistent'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPELLBOUND', 'ORIGINAL', NULL,
+        'Which is spelled correctly? (sent to someone else)', NULL,
+        'Referred', ARRAY['Refered', 'Reffered', 'Referd', 'Refferred'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPELLBOUND', 'ORIGINAL', NULL,
+        'Which is spelled correctly? (to the point)', NULL,
+        'Relevant', ARRAY['Relevent', 'Relavant', 'Revelant', 'Relevint'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPELLBOUND', 'ORIGINAL', NULL,
+        'Which is spelled correctly? (it worked out)', NULL,
+        'Successful', ARRAY['Succesful', 'Successfull', 'Sucessful', 'Succesfull'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPELLBOUND', 'ORIGINAL', NULL,
+        'Which is spelled correctly? (a doorway)', NULL,
+        'Threshold', ARRAY['Threshhold', 'Threshould', 'Thresold', 'Treshold'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPELLBOUND', 'ORIGINAL', NULL,
+        'Which is spelled correctly? (after eleventh)', NULL,
+        'Twelfth', ARRAY['Twelth', 'Twelveth', 'Twelf', 'Twelfeth'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPELLBOUND', 'ORIGINAL', NULL,
+        'Which is spelled correctly? (not needed)', NULL,
+        'Unnecessary', ARRAY['Unneccessary', 'Unecessary', 'Unnecesary', 'Unnessesary'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPELLBOUND', 'ORIGINAL', NULL,
+        'Which is spelled correctly? (the bad guy)', NULL,
+        'Villain', ARRAY['Villian', 'Villan', 'Vilain', 'Vilian'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPELLBOUND', 'ORIGINAL', NULL,
+        'Which is spelled correctly? (to get hold of)', NULL,
+        'Acquire', ARRAY['Aquire', 'Acquier', 'Accquire', 'Aqcuire'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPELLBOUND', 'ORIGINAL', NULL,
+        'Which is spelled correctly? (plain to see)', NULL,
+        'Apparent', ARRAY['Apparant', 'Aparent', 'Apparint', 'Appearant'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPELLBOUND', 'ORIGINAL', NULL,
+        'Which is spelled correctly? (a group or class)', NULL,
+        'Category', ARRAY['Catagory', 'Categorie', 'Catigory', 'Categary'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPELLBOUND', 'ORIGINAL', NULL,
+        'Which is spelled correctly? (a group that meets)', NULL,
+        'Committee', ARRAY['Comittee', 'Commitee', 'Committe', 'Comitee'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPELLBOUND', 'ORIGINAL', NULL,
+        'Which is spelled correctly? (awake and aware)', NULL,
+        'Conscious', ARRAY['Concious', 'Conscous', 'Consious', 'Conscius'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPELLBOUND', 'ORIGINAL', NULL,
+        'Which is spelled correctly? (wanting to know)', NULL,
+        'Curiosity', ARRAY['Curiousity', 'Curiosaty', 'Curiousaty', 'Curiosety'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPELLBOUND', 'ORIGINAL', NULL,
+        'Which is spelled correctly? (with nothing left to lose)', NULL,
+        'Desperate', ARRAY['Desparate', 'Desperite', 'Despirate', 'Desprate'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPELLBOUND', 'ORIGINAL', NULL,
+        'Which is spelled correctly? (a tough choice)', NULL,
+        'Dilemma', ARRAY['Dilemna', 'Dillema', 'Dilema', 'Dillemma'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPELLBOUND', 'ORIGINAL', NULL,
+        'Which is spelled correctly? (gear)', NULL,
+        'Equipment', ARRAY['Equiptment', 'Equipmint', 'Equippment', 'Equpment'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPELLBOUND', 'ORIGINAL', NULL,
+        'Which is spelled correctly? (four tens)', NULL,
+        'Forty', ARRAY['Fourty', 'Fortey', 'Fourtey', 'Forti'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPELLBOUND', 'ORIGINAL', NULL,
+        'Which is spelled correctly? (keeping clean)', NULL,
+        'Hygiene', ARRAY['Hygeine', 'Hygene', 'Hygine', 'Hyjiene'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPELLBOUND', 'ORIGINAL', NULL,
+        'Which is spelled correctly? (after eighth)', NULL,
+        'Ninth', ARRAY['Nineth', 'Ninthe', 'Ninnth', 'Nineeth'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPELLBOUND', 'ORIGINAL', NULL,
+        'Which is spelled correctly? (the people next door)', NULL,
+        'Neighbor', ARRAY['Nieghbor', 'Neighber', 'Nabor', 'Neihgbor'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPELLBOUND', 'ORIGINAL', NULL,
+        'Which is spelled correctly? (to let down)', NULL,
+        'Disappoint', ARRAY['Dissapoint', 'Disapoint', 'Dissappoint', 'Disapont'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPELLBOUND', 'ORIGINAL', NULL,
+        'Which is spelled correctly? (from another country)', NULL,
+        'Foreign', ARRAY['Foriegn', 'Forein', 'Foreighn', 'Forign'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPELLBOUND', 'ORIGINAL', NULL,
+        'Which is spelled correctly? (very rich)', NULL,
+        'Millionaire', ARRAY['Millionnaire', 'Millionare', 'Milionaire', 'Millionaier'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPELLBOUND', 'ORIGINAL', NULL,
+        'Which of these music words is misspelled?', NULL,
+        'Orchastra', ARRAY['Symphony', 'Trumpet', 'Clarinet', 'Saxophone'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPELLBOUND', 'ORIGINAL', NULL,
+        'Which of these vegetable words is misspelled?', NULL,
+        'Potatoe', ARRAY['Cabbage', 'Lettuce', 'Spinach', 'Cauliflower'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPELLBOUND', 'ORIGINAL', NULL,
+        'Which of these geography words is misspelled?', NULL,
+        'Mediteranean', ARRAY['Atlantic', 'Antarctica', 'Everglades', 'Sahara'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPELLBOUND', 'ORIGINAL', NULL,
+        'Which of these science words is misspelled?', NULL,
+        'Experement', ARRAY['Hypothesis', 'Molecule', 'Laboratory', 'Microscope'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPELLBOUND', 'ORIGINAL', NULL,
+        'Which of these house words is misspelled?', NULL,
+        'Cieling', ARRAY['Chimney', 'Basement', 'Hallway', 'Bathroom'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPELLBOUND', 'ORIGINAL', NULL,
+        'Which of these money words is misspelled?', NULL,
+        'Morgage', ARRAY['Budget', 'Interest', 'Dollar', 'Savings'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPELLBOUND', 'ORIGINAL', NULL,
+        'Which of these feelings words is misspelled?', NULL,
+        'Jelous', ARRAY['Anxious', 'Nervous', 'Grateful', 'Curious'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPELLBOUND', 'ORIGINAL', NULL,
+        'Which of these travel words is misspelled?', NULL,
+        'Souvenier', ARRAY['Itinerary', 'Luggage', 'Passport', 'Tourist'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPELLBOUND', 'ORIGINAL', NULL,
+        'Which of these job words is misspelled?', NULL,
+        'Plummer', ARRAY['Electrician', 'Carpenter', 'Mechanic', 'Pharmacist'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPELLBOUND', 'ORIGINAL', NULL,
+        'Which of these animal words is misspelled?', NULL,
+        'Rhinocerous', ARRAY['Hippopotamus', 'Crocodile', 'Chimpanzee', 'Kangaroo'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPELLBOUND', 'ORIGINAL', NULL,
+        'Fill in the blank: ba__oon', NULL,
+        'll', ARRAY['l', 'le', 'ul'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPELLBOUND', 'ORIGINAL', NULL,
+        'Fill in the blank: colle_e', NULL,
+        'g', ARRAY['dg', 'j', 'gu'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPELLBOUND', 'ORIGINAL', NULL,
+        'Fill in the blank: pati_nce', NULL,
+        'e', ARRAY['a', 'i', 'ea'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPELLBOUND', 'ORIGINAL', NULL,
+        'Fill in the blank: tra_edy', NULL,
+        'g', ARRAY['dg', 'j', 'gg'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPELLBOUND', 'ORIGINAL', NULL,
+        'Fill in the blank: fa__inate', NULL,
+        'sc', ARRAY['s', 'ss', 'c'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPELLBOUND', 'ORIGINAL', NULL,
+        'Fill in the blank: Ar_tic', NULL,
+        'c', ARRAY['k', 't', 'ch'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPELLBOUND', 'ORIGINAL', NULL,
+        'Fill in the blank: nucl__r', NULL,
+        'ea', ARRAY['ue', 'e', 'a'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPELLBOUND', 'ORIGINAL', NULL,
+        'Fill in the blank: sold__r', NULL,
+        'ie', ARRAY['ei', 'ee', 'ia'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPELLBOUND', 'ORIGINAL', NULL,
+        'Fill in the blank: intellig_nt', NULL,
+        'e', ARRAY['a', 'i', 'u'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPELLBOUND', 'ORIGINAL', NULL,
+        'Fill in the blank: resist_nce', NULL,
+        'a', ARRAY['e', 'i', 'u'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPELLBOUND', 'ORIGINAL', NULL,
+        'Fill in the blank: vani__a', NULL,
+        'll', ARRAY['l', 'le', 'lla'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPELLBOUND', 'ORIGINAL', NULL,
+        'Fill in the blank: car__r', NULL,
+        'ee', ARRAY['ea', 'ie', 'e'], 200);
+
+-- 300 points
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPELLBOUND', 'ORIGINAL', NULL,
+        'Which is spelled correctly? (a thousand years)', NULL,
+        'Millennium', ARRAY['Millenium', 'Millenneum', 'Milennium', 'Millenniam'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPELLBOUND', 'ORIGINAL', NULL,
+        'Which is spelled correctly? (your inner voice)', NULL,
+        'Conscience', ARRAY['Concience', 'Consience', 'Conscence', 'Consciense'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPELLBOUND', 'ORIGINAL', NULL,
+        'Which is spelled correctly? (a form full of questions)', NULL,
+        'Questionnaire', ARRAY['Questionaire', 'Questionnair', 'Questionairre', 'Questionnare'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPELLBOUND', 'ORIGINAL', NULL,
+        'Which is spelled correctly? (an army rank)', NULL,
+        'Sergeant', ARRAY['Sargeant', 'Sergent', 'Seargent', 'Sargent'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPELLBOUND', 'ORIGINAL', NULL,
+        'Which is spelled correctly? (a ladder of rank)', NULL,
+        'Hierarchy', ARRAY['Heirarchy', 'Hierachy', 'Hierarchey', 'Hirearchy'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPELLBOUND', 'ORIGINAL', NULL,
+        'Which is spelled correctly? (a kind of glowing light)', NULL,
+        'Fluorescent', ARRAY['Flourescent', 'Florescent', 'Fluorescant', 'Fluoresent'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPELLBOUND', 'ORIGINAL', NULL,
+        'Which is spelled correctly? (a skillful move)', NULL,
+        'Maneuver', ARRAY['Manuever', 'Manuver', 'Manouver', 'Maneaver'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPELLBOUND', 'ORIGINAL', NULL,
+        'Which is spelled correctly? (a go-between)', NULL,
+        'Liaison', ARRAY['Liason', 'Liasion', 'Liaisan', 'Laison'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPELLBOUND', 'ORIGINAL', NULL,
+        'Which is spelled correctly? (someone you know a little)', NULL,
+        'Acquaintance', ARRAY['Aquaintance', 'Acquaintence', 'Acquantance', 'Acqaintance'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPELLBOUND', 'ORIGINAL', NULL,
+        'Which is spelled correctly? (a green vegetable)', NULL,
+        'Broccoli', ARRAY['Brocolli', 'Brocoli', 'Broccolli', 'Brocclie'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPELLBOUND', 'ORIGINAL', NULL,
+        'Which is spelled correctly? (blending in)', NULL,
+        'Camouflage', ARRAY['Camoflage', 'Camouflague', 'Camaflauge', 'Camoflauge'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPELLBOUND', 'ORIGINAL', NULL,
+        'Which is spelled correctly? (an Army rank above major)', NULL,
+        'Colonel', ARRAY['Coronel', 'Colonal', 'Kernal', 'Colnel'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPELLBOUND', 'ORIGINAL', NULL,
+        'Which is spelled correctly? (pure joy)', NULL,
+        'Ecstasy', ARRAY['Ecstacy', 'Extasy', 'Ecstesy', 'Exstasy'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPELLBOUND', 'ORIGINAL', NULL,
+        'Which is spelled correctly? (a cloth for your nose)', NULL,
+        'Handkerchief', ARRAY['Handkercheif', 'Hankerchief', 'Handkerchif', 'Handkershief'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPELLBOUND', 'ORIGINAL', NULL,
+        'Which is spelled correctly? (can''t do without it)', NULL,
+        'Indispensable', ARRAY['Indispensible', 'Indespensable', 'Indispensibel', 'Indispensabel'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPELLBOUND', 'ORIGINAL', NULL,
+        'Which is spelled correctly? (to vaccinate)', NULL,
+        'Inoculate', ARRAY['Innoculate', 'Inocculate', 'Innocculate', 'Inoculat'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPELLBOUND', 'ORIGINAL', NULL,
+        'Which is spelled correctly? (too good to pass up)', NULL,
+        'Irresistible', ARRAY['Irresistable', 'Iresistible', 'Irrisistible', 'Irresistibel'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPELLBOUND', 'ORIGINAL', NULL,
+        'Which is spelled correctly? (free time)', NULL,
+        'Leisure', ARRAY['Liesure', 'Leasure', 'Leisue', 'Lesiure'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPELLBOUND', 'ORIGINAL', NULL,
+        'Which is spelled correctly? (a sandwich spread)', NULL,
+        'Mayonnaise', ARRAY['Mayonaise', 'Mayonnaisse', 'Mayonase', 'Maionnaise'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPELLBOUND', 'ORIGINAL', NULL,
+        'Which is spelled correctly? (what this category hopes you won''t do)', NULL,
+        'Misspell', ARRAY['Mispell', 'Misspel', 'Mispel', 'Missspell'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPELLBOUND', 'ORIGINAL', NULL,
+        'Which is spelled correctly? (an event)', NULL,
+        'Occurrence', ARRAY['Occurence', 'Ocurrence', 'Occurrance', 'Ocurrance'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPELLBOUND', 'ORIGINAL', NULL,
+        'Which is spelled correctly? (a hobby)', NULL,
+        'Pastime', ARRAY['Passtime', 'Pasttime', 'Pastimme', 'Pastyme'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPELLBOUND', 'ORIGINAL', NULL,
+        'Which is spelled correctly? (sticking with it)', NULL,
+        'Perseverance', ARRAY['Perseverence', 'Perserverance', 'Persevereance', 'Perseveranse'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPELLBOUND', 'ORIGINAL', NULL,
+        'Which is spelled correctly? (someone who writes plays)', NULL,
+        'Playwright', ARRAY['Playwrite', 'Playright', 'Plawright', 'Playwrigt'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPELLBOUND', 'ORIGINAL', NULL,
+        'Which is spelled correctly? (proof you paid)', NULL,
+        'Receipt', ARRAY['Reciept', 'Receit', 'Recipt', 'Resceipt'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPELLBOUND', 'ORIGINAL', NULL,
+        'Which is spelled correctly? (cat and hat do it)', NULL,
+        'Rhyme', ARRAY['Rhym', 'Ryme', 'Rhymme', 'Ryhme'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPELLBOUND', 'ORIGINAL', NULL,
+        'Which is spelled correctly? (surrounding a castle)', NULL,
+        'Siege', ARRAY['Seige', 'Siedge', 'Seage', 'Sieege'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPELLBOUND', 'ORIGINAL', NULL,
+        'Which is spelled correctly? (cruel rule)', NULL,
+        'Tyranny', ARRAY['Tyrany', 'Tyrrany', 'Tirany', 'Tyranney'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPELLBOUND', 'ORIGINAL', NULL,
+        'Which is spelled correctly? (to hold back)', NULL,
+        'Withhold', ARRAY['Withold', 'Witthold', 'Withhould', 'Wihthold'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPELLBOUND', 'ORIGINAL', NULL,
+        'Which is spelled correctly? (a green squash)', NULL,
+        'Zucchini', ARRAY['Zuchini', 'Zucchinni', 'Zuccini', 'Zuchinni'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPELLBOUND', 'ORIGINAL', NULL,
+        'Which is spelled correctly? (a sea full of islands)', NULL,
+        'Caribbean', ARRAY['Carribean', 'Carribbean', 'Caribean', 'Carrabean'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPELLBOUND', 'ORIGINAL', NULL,
+        'Which is spelled correctly? (the Bay State)', NULL,
+        'Massachusetts', ARRAY['Massachusets', 'Massachussetts', 'Massachussets', 'Masachusetts'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPELLBOUND', 'ORIGINAL', NULL,
+        'Which is spelled correctly? (a river and a state)', NULL,
+        'Mississippi', ARRAY['Missisippi', 'Mississipi', 'Missisipi', 'Misssissippi'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPELLBOUND', 'ORIGINAL', NULL,
+        'Which is spelled correctly? (an Ohio city)', NULL,
+        'Cincinnati', ARRAY['Cincinatti', 'Cincinnatti', 'Cinncinati', 'Cincinati'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPELLBOUND', 'ORIGINAL', NULL,
+        'Which is spelled correctly? (the Volunteer State)', NULL,
+        'Tennessee', ARRAY['Tennesee', 'Tenessee', 'Tennesse', 'Tenesee'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPELLBOUND', 'ORIGINAL', NULL,
+        'Which is spelled correctly? (the Nutmeg State)', NULL,
+        'Connecticut', ARRAY['Conneticut', 'Connetticut', 'Connecticutt', 'Conecticut'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPELLBOUND', 'ORIGINAL', NULL,
+        'Which is spelled correctly? (the Keystone State)', NULL,
+        'Pennsylvania', ARRAY['Pensylvania', 'Pennsilvania', 'Pennsylvannia', 'Pensilvania'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPELLBOUND', 'ORIGINAL', NULL,
+        'Which is spelled correctly? (revenge)', NULL,
+        'Vengeance', ARRAY['Vengence', 'Vengance', 'Vengeence', 'Vengeanse'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPELLBOUND', 'ORIGINAL', NULL,
+        'Which is spelled correctly? (keeping watch)', NULL,
+        'Surveillance', ARRAY['Surveillence', 'Survaillance', 'Surveilance', 'Survelance'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPELLBOUND', 'ORIGINAL', NULL,
+        'Which is spelled correctly? (second in command)', NULL,
+        'Lieutenant', ARRAY['Leiutenant', 'Lieutenent', 'Lutenant', 'Lieutennant'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPELLBOUND', 'ORIGINAL', NULL,
+        'Which is spelled correctly? (a dark outline)', NULL,
+        'Silhouette', ARRAY['Silhouete', 'Silouette', 'Silhoutte', 'Sillhouette'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPELLBOUND', 'ORIGINAL', NULL,
+        'Which is spelled correctly? (red tape)', NULL,
+        'Bureaucracy', ARRAY['Beaurocracy', 'Bureacracy', 'Bureaucrasy', 'Buraucracy'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPELLBOUND', 'ORIGINAL', NULL,
+        'Which is spelled correctly? (long, thin pasta)', NULL,
+        'Spaghetti', ARRAY['Spagetti', 'Spaghettti', 'Spahgetti', 'Spagheti'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPELLBOUND', 'ORIGINAL', NULL,
+        'Which is spelled correctly? (a promise it will work)', NULL,
+        'Guarantee', ARRAY['Garantee', 'Guarentee', 'Gaurantee', 'Guarrantee'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPELLBOUND', 'ORIGINAL', NULL,
+        'Which is spelled correctly? (thrilling)', NULL,
+        'Exhilarating', ARRAY['Exhilerating', 'Exilarating', 'Exhillarating', 'Exhilirating'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPELLBOUND', 'ORIGINAL', NULL,
+        'Which is spelled correctly? (to pull back, like a tide)', NULL,
+        'Recede', ARRAY['Receede', 'Receed', 'Reacede', 'Resede'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPELLBOUND', 'ORIGINAL', NULL,
+        'Which of these dinosaur words is misspelled?', NULL,
+        'Tyrannasaurus', ARRAY['Stegosaurus', 'Triceratops', 'Velociraptor', 'Brachiosaurus'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPELLBOUND', 'ORIGINAL', NULL,
+        'Which of these dessert words is misspelled?', NULL,
+        'Merangue', ARRAY['Tiramisu', 'Sorbet', 'Cheesecake', 'Strudel'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPELLBOUND', 'ORIGINAL', NULL,
+        'Which of these anatomy words is misspelled?', NULL,
+        'Diaphram', ARRAY['Esophagus', 'Pancreas', 'Cartilage', 'Ligament'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPELLBOUND', 'ORIGINAL', NULL,
+        'Which of these instrument words is misspelled?', NULL,
+        'Tamborine', ARRAY['Accordion', 'Harmonica', 'Cello', 'Ukulele'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPELLBOUND', 'ORIGINAL', NULL,
+        'Which of these country words is misspelled?', NULL,
+        'Phillipines', ARRAY['Colombia', 'Portugal', 'Argentina', 'Venezuela'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPELLBOUND', 'ORIGINAL', NULL,
+        'Which of these weather report words is misspelled?', NULL,
+        'Precipatation', ARRAY['Humidity', 'Barometer', 'Cumulus', 'Forecast'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPELLBOUND', 'ORIGINAL', NULL,
+        'Which of these school subject words is misspelled?', NULL,
+        'Vocabulery', ARRAY['Arithmetic', 'Geography', 'Literature', 'Algebra'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPELLBOUND', 'ORIGINAL', NULL,
+        'Which of these big city words is misspelled?', NULL,
+        'Philedelphia', ARRAY['Minneapolis', 'Milwaukee', 'Sacramento', 'Louisville'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPELLBOUND', 'ORIGINAL', NULL,
+        'Which of these sea creature words is misspelled?', NULL,
+        'Barricuda', ARRAY['Manatee', 'Narwhal', 'Octopus', 'Stingray'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPELLBOUND', 'ORIGINAL', NULL,
+        'Which of these double-letter words is misspelled?', NULL,
+        'Satelite', ARRAY['Assassin', 'Bookkeeper', 'Raccoon', 'Tattoo'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPELLBOUND', 'ORIGINAL', NULL,
+        'Which of these critter words is misspelled?', NULL,
+        'Armadilo', ARRAY['Platypus', 'Chameleon', 'Porcupine', 'Iguana'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPELLBOUND', 'ORIGINAL', NULL,
+        'Fill in the blank: burgl_r', NULL,
+        'a', ARRAY['e', 'o', 'u'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPELLBOUND', 'ORIGINAL', NULL,
+        'Fill in the blank: recta__le', NULL,
+        'ng', ARRAY['n', 'gn', 'nk'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPELLBOUND', 'ORIGINAL', NULL,
+        'Fill in the blank: psy__ology', NULL,
+        'ch', ARRAY['k', 'sh', 'c'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPELLBOUND', 'ORIGINAL', NULL,
+        'Fill in the blank: sci__ors', NULL,
+        'ss', ARRAY['s', 'z', 'sz'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPELLBOUND', 'ORIGINAL', NULL,
+        'Fill in the blank: courag_ous', NULL,
+        'e', ARRAY['i', 'a', 'o'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPELLBOUND', 'ORIGINAL', NULL,
+        'Fill in the blank: defend_nt', NULL,
+        'a', ARRAY['e', 'i', 'u'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPELLBOUND', 'ORIGINAL', NULL,
+        'Fill in the blank: su_tle', NULL,
+        'b', ARRAY['p', 'bb', 'tt'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPELLBOUND', 'ORIGINAL', NULL,
+        'Fill in the blank: ex_ilarate', NULL,
+        'h', ARRAY['hh', 'x', 's'], 300);
+
+-- 400 points
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPELLBOUND', 'ORIGINAL', NULL,
+        'Which is spelled correctly? (up to no good)', NULL,
+        'Mischievous', ARRAY['Mischievious', 'Mischevious', 'Mischeivous', 'Mischevous'], 400);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPELLBOUND', 'ORIGINAL', NULL,
+        'Which is spelled correctly? (a word that sounds like what it means)', NULL,
+        'Onomatopoeia', ARRAY['Onomatopeia', 'Onomatopoea', 'Onamatopoeia', 'Onomatopoiea'], 400);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPELLBOUND', 'ORIGINAL', NULL,
+        'Which is spelled correctly? (a fall flower)', NULL,
+        'Chrysanthemum', ARRAY['Chrysanthemem', 'Chrysanthamum', 'Crysanthemum', 'Chrysanthemumm'], 400);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPELLBOUND', 'ORIGINAL', NULL,
+        'Which is spelled correctly? (a flowering shrub)', NULL,
+        'Rhododendron', ARRAY['Rhododendrum', 'Rododendron', 'Rhodedendron', 'Rhododenron'], 400);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPELLBOUND', 'ORIGINAL', NULL,
+        'Which is spelled correctly? (heavy bleeding)', NULL,
+        'Hemorrhage', ARRAY['Hemorrage', 'Hemmorrhage', 'Hemorhage', 'Hemmorage'], 400);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPELLBOUND', 'ORIGINAL', NULL,
+        'Which is spelled correctly? (a lung infection)', NULL,
+        'Pneumonia', ARRAY['Neumonia', 'Pnuemonia', 'Pneumonya', 'Pnemonia'], 400);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPELLBOUND', 'ORIGINAL', NULL,
+        'Which is spelled correctly? (a doctor of the mind)', NULL,
+        'Psychiatrist', ARRAY['Physchiatrist', 'Psychiatrest', 'Psychiatist', 'Sychiatrist'], 400);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPELLBOUND', 'ORIGINAL', NULL,
+        'Which is spelled correctly? (scouting ahead)', NULL,
+        'Reconnaissance', ARRAY['Reconnaisance', 'Reconaissance', 'Reconnaissanse', 'Reconnassaince'], 400);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPELLBOUND', 'ORIGINAL', NULL,
+        'Which is spelled correctly? (a rebirth)', NULL,
+        'Renaissance', ARRAY['Renaisance', 'Rennaissance', 'Renaissanse', 'Renaisanse'], 400);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPELLBOUND', 'ORIGINAL', NULL,
+        'Which is spelled correctly? (a personal quirk)', NULL,
+        'Idiosyncrasy', ARRAY['Idiosyncracy', 'Ideosyncrasy', 'Idiosincrasy', 'Idiosyncrasey'], 400);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPELLBOUND', 'ORIGINAL', NULL,
+        'Which is spelled correctly? (careful and hardworking)', NULL,
+        'Conscientious', ARRAY['Conscientous', 'Consciencious', 'Concientious', 'Conscientiuos'], 400);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPELLBOUND', 'ORIGINAL', NULL,
+        'Which is spelled correctly? (someone who starts a business)', NULL,
+        'Entrepreneur', ARRAY['Entrepeneur', 'Entreprenuer', 'Entrepreneaur', 'Enterpreneur'], 400);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPELLBOUND', 'ORIGINAL', NULL,
+        'Which is spelled correctly? (a frozen cocktail)', NULL,
+        'Daiquiri', ARRAY['Daquiri', 'Daiquri', 'Daiqiri', 'Daquiry'], 400);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPELLBOUND', 'ORIGINAL', NULL,
+        'Which is spelled correctly? (a hot pink)', NULL,
+        'Fuchsia', ARRAY['Fuschia', 'Fushia', 'Fuchia', 'Fewshia'], 400);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPELLBOUND', 'ORIGINAL', NULL,
+        'Which is spelled correctly? (little potato dumplings)', NULL,
+        'Gnocchi', ARRAY['Gnochi', 'Nocchi', 'Gnocci', 'Gnoochi'], 400);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPELLBOUND', 'ORIGINAL', NULL,
+        'Which is spelled correctly? (a tube of shifting colors)', NULL,
+        'Kaleidoscope', ARRAY['Kaliedoscope', 'Kaleidascope', 'Kalaidoscope', 'Kaleidescope'], 400);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPELLBOUND', 'ORIGINAL', NULL,
+        'Which is spelled correctly? (a maze)', NULL,
+        'Labyrinth', ARRAY['Labrynth', 'Labyrinthe', 'Labirinth', 'Labyrith'], 400);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPELLBOUND', 'ORIGINAL', NULL,
+        'Which is spelled correctly? (a violent whirlpool)', NULL,
+        'Maelstrom', ARRAY['Maelstorm', 'Mealstrom', 'Maelstrum', 'Maelstroom'], 400);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPELLBOUND', 'ORIGINAL', NULL,
+        'Which is spelled correctly? (an Italian soup)', NULL,
+        'Minestrone', ARRAY['Minestroni', 'Minnestrone', 'Menestrone', 'Minestrome'], 400);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPELLBOUND', 'ORIGINAL', NULL,
+        'Which is spelled correctly? (going out of date)', NULL,
+        'Obsolescence', ARRAY['Obsolesence', 'Obsolescense', 'Obsolecence', 'Obsollescence'], 400);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPELLBOUND', 'ORIGINAL', NULL,
+        'Which is spelled correctly? (all the gear that goes with it)', NULL,
+        'Paraphernalia', ARRAY['Paraphenalia', 'Parafernalia', 'Paraphanelia', 'Paraphernailia'], 400);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPELLBOUND', 'ORIGINAL', NULL,
+        'Which is spelled correctly? (an Egyptian king)', NULL,
+        'Pharaoh', ARRAY['Pharoah', 'Pharao', 'Pharoh', 'Faraoh'], 400);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPELLBOUND', 'ORIGINAL', NULL,
+        'Which is spelled correctly? (a right that''s yours alone)', NULL,
+        'Prerogative', ARRAY['Perogative', 'Prerogitive', 'Prerrogative', 'Perrogative'], 400);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPELLBOUND', 'ORIGINAL', NULL,
+        'Which is spelled correctly? (disrespectful of something sacred)', NULL,
+        'Sacrilegious', ARRAY['Sacreligious', 'Sacriligious', 'Sacrilegous', 'Sacrelegious'], 400);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPELLBOUND', 'ORIGINAL', NULL,
+        'Which is spelled correctly? (a bearded dog breed)', NULL,
+        'Schnauzer', ARRAY['Shnauzer', 'Schnowzer', 'Schnauser', 'Schnauzzer'], 400);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPELLBOUND', 'ORIGINAL', NULL,
+        'Which is spelled correctly? (short, sharp notes)', NULL,
+        'Staccato', ARRAY['Stacatto', 'Staccatto', 'Stacato', 'Stacccato'], 400);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPELLBOUND', 'ORIGINAL', NULL,
+        'Which is spelled correctly? (to waver)', NULL,
+        'Vacillate', ARRAY['Vaccilate', 'Vacilate', 'Vaccillate', 'Vacilliate'], 400);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPELLBOUND', 'ORIGINAL', NULL,
+        'Which is spelled correctly? (you play it with mallets)', NULL,
+        'Xylophone', ARRAY['Zylophone', 'Xylaphone', 'Xylophon', 'Xilophone'], 400);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPELLBOUND', 'ORIGINAL', NULL,
+        'Which is spelled correctly? (a fancy boat)', NULL,
+        'Yacht', ARRAY['Yatch', 'Yaht', 'Yahct', 'Yachte'], 400);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPELLBOUND', 'ORIGINAL', NULL,
+        'Which is spelled correctly? (a hired driver)', NULL,
+        'Chauffeur', ARRAY['Chauffer', 'Chaufeur', 'Chauffuer', 'Shofer'], 400);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPELLBOUND', 'ORIGINAL', NULL,
+        'Which is spelled correctly? (a wiener dog)', NULL,
+        'Dachshund', ARRAY['Dachsund', 'Daschund', 'Dashund', 'Dachshound'], 400);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPELLBOUND', 'ORIGINAL', NULL,
+        'Which is spelled correctly? (an eye doctor)', NULL,
+        'Ophthalmologist', ARRAY['Opthalmologist', 'Ophthamologist', 'Opthamologist', 'Ophthalmoligist'], 400);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPELLBOUND', 'ORIGINAL', NULL,
+        'Which is spelled correctly? (a flying reptile)', NULL,
+        'Pterodactyl', ARRAY['Terodactyl', 'Pteradactyl', 'Pterodactil', 'Ptereodactyl'], 400);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPELLBOUND', 'ORIGINAL', NULL,
+        'Which is spelled correctly? (a planned meeting)', NULL,
+        'Rendezvous', ARRAY['Rendevous', 'Rendezvouz', 'Rondezvous', 'Rendesvous'], 400);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPELLBOUND', 'ORIGINAL', NULL,
+        'Which is spelled correctly? (a blue gem)', NULL,
+        'Sapphire', ARRAY['Saphire', 'Sapphyre', 'Saphhire', 'Sapphier'], 400);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPELLBOUND', 'ORIGINAL', NULL,
+        'Which is spelled correctly? (short and to the point)', NULL,
+        'Succinct', ARRAY['Succint', 'Sucinct', 'Succinkt', 'Suckinct'], 400);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPELLBOUND', 'ORIGINAL', NULL,
+        'Which is spelled correctly? (matching halves)', NULL,
+        'Symmetry', ARRAY['Symetry', 'Symmetery', 'Simmetry', 'Symmettry'], 400);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPELLBOUND', 'ORIGINAL', NULL,
+        'Which is spelled correctly? (a tangy sauce)', NULL,
+        'Worcestershire', ARRAY['Worchestershire', 'Worcestshire', 'Worchestshire', 'Worcestorshire'], 400);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPELLBOUND', 'ORIGINAL', NULL,
+        'Which is spelled correctly? (espresso with foamed milk)', NULL,
+        'Cappuccino', ARRAY['Cappucino', 'Capuccino', 'Capucino', 'Cappuchino'], 400);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPELLBOUND', 'ORIGINAL', NULL,
+        'Which is spelled correctly? (a sea creature and a flower)', NULL,
+        'Anemone', ARRAY['Anenome', 'Anemonee', 'Anemoni', 'Annemone'], 400);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPELLBOUND', 'ORIGINAL', NULL,
+        'Which is spelled correctly? (a tiny dog breed)', NULL,
+        'Chihuahua', ARRAY['Chiuaua', 'Chihauhua', 'Chiwawa', 'Chihuahwa'], 400);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPELLBOUND', 'ORIGINAL', NULL,
+        'Which is spelled correctly? (an expert judge of taste)', NULL,
+        'Connoisseur', ARRAY['Connoiseur', 'Conoisseur', 'Connaisseur', 'Connoissuer'], 400);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPELLBOUND', 'ORIGINAL', NULL,
+        'Which is spelled correctly? (middle-class)', NULL,
+        'Bourgeois', ARRAY['Bourgois', 'Burgeois', 'Bourjeois', 'Bourgeoiss'], 400);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPELLBOUND', 'ORIGINAL', NULL,
+        'Which of these French words is misspelled?', NULL,
+        'Boquet', ARRAY['Croissant', 'Plateau', 'Ballet', 'Beige'], 400);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPELLBOUND', 'ORIGINAL', NULL,
+        'Which of these medical words is misspelled?', NULL,
+        'Diabeties', ARRAY['Bronchitis', 'Arthritis', 'Laryngitis', 'Tonsillitis'], 400);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPELLBOUND', 'ORIGINAL', NULL,
+        'Which of these Italian food words is misspelled?', NULL,
+        'Parmesean', ARRAY['Mozzarella', 'Bruschetta', 'Prosciutto', 'Ricotta'], 400);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPELLBOUND', 'ORIGINAL', NULL,
+        'Which of these landmark words is misspelled?', NULL,
+        'Galapogos', ARRAY['Appalachian', 'Himalayas', 'Kilimanjaro', 'Serengeti'], 400);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPELLBOUND', 'ORIGINAL', NULL,
+        'Which of these punctuation words is misspelled?', NULL,
+        'Apostrophy', ARRAY['Parentheses', 'Semicolon', 'Ellipsis', 'Hyphen'], 400);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPELLBOUND', 'ORIGINAL', NULL,
+        'Which of these biology words is misspelled?', NULL,
+        'Chromosone', ARRAY['Photosynthesis', 'Mitochondria', 'Cytoplasm', 'Nucleus'], 400);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPELLBOUND', 'ORIGINAL', NULL,
+        'Fill in the blank: a__ihilate', NULL,
+        'nn', ARRAY['n', 'm', 'nh'], 400);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPELLBOUND', 'ORIGINAL', NULL,
+        'Fill in the blank: cello_hane', NULL,
+        'p', ARRAY['f', 'ff', 'h'], 400);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPELLBOUND', 'ORIGINAL', NULL,
+        'Fill in the blank: anaph__axis', NULL,
+        'yl', ARRAY['il', 'yll', 'ill'], 400);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPELLBOUND', 'ORIGINAL', NULL,
+        'Fill in the blank: chandel__r', NULL,
+        'ie', ARRAY['ee', 'ea', 'ei'], 400);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPELLBOUND', 'ORIGINAL', NULL,
+        'Fill in the blank: li__orice', NULL,
+        'qu', ARRAY['c', 'k', 'ck'], 400);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPELLBOUND', 'ORIGINAL', NULL,
+        'Fill in the blank: conv_lescent', NULL,
+        'a', ARRAY['e', 'i', 'o'], 400);
+
+COMMIT;
+
+-- Check: should return 256.
+SELECT COUNT(*) FROM questions WHERE game_mode = 'TRIVI_YEAH_II' AND category = 'SPELLBOUND';
 
 -- ============================================================================
 -- content/sql/sports.sql -- GENERATED, don't edit by hand.
@@ -8978,8 +10954,8 @@ SELECT COUNT(*) FROM questions WHERE game_mode = 'TRIVI_YEAH_II' AND category = 
 -- Thinking Pants category WORD_NERD. To change a question, change the
 -- spreadsheet and rebuild.
 --
--- Replaces the WHOLE category with the spreadsheet's 120 live questions
--- (100: 30, 200: 30, 300: 30, 400: 30), inside a transaction. Safe to re-run.
+-- Replaces the WHOLE category with the spreadsheet's 116 live questions
+-- (100: 29, 200: 29, 300: 29, 400: 29), inside a transaction. Safe to re-run.
 -- ============================================================================
 
 BEGIN;
@@ -9085,10 +11061,6 @@ VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YE
         'Which food is named after an English earl who supposedly wanted to eat without leaving the card table?', NULL,
         'The sandwich', ARRAY['The hamburger', 'The hot dog', 'The pretzel', 'The biscuit', 'The pizza', 'The crumpet'], 100);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORD_NERD', 'Spelling ladder: necessary (100), accommodate (200), millennium (300), supersede (400).', NULL,
-        'Spelling bee: which is correct?', NULL,
-        'Necessary', ARRAY['Neccessary', 'Necessery', 'Neccesary', 'Necesary', 'Nessecary', 'Neccessery'], 100);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORD_NERD', 'Phobia ladder: spiders (100), small spaces (200), heights (300), the number 13 (400). Entomophobia is insects, ophidiophobia snakes.', NULL,
         'What is the fear of spiders called?', NULL,
         'Arachnophobia', ARRAY['Agoraphobia', 'Claustrophobia', 'Acrophobia', 'Entomophobia', 'Ophidiophobia', 'Aquaphobia'], 100);
@@ -9170,10 +11142,6 @@ INSERT INTO questions (question_number, game_mode, category, subcategory, factio
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORD_NERD', 'Light Amplification by Stimulated Emission of Radiation.', NULL,
         '"Laser" started out as a set of initials. What does its L stand for?', NULL,
         'Light', ARRAY['Long', 'Linear', 'Liquid', 'Lens', 'Low', 'Luminous'], 200);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORD_NERD', 'WORD_NERD_BATCH_1', NULL,
-        'Spelling bee, round 2: which is correct?', NULL,
-        'Accommodate', ARRAY['Accomodate', 'Acommodate', 'Acomodate', 'Accomadate', 'Acommadate', 'Accommadate'], 200);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORD_NERD', 'WORD_NERD_BATCH_1', NULL,
         'What is a "faux pas"?', NULL,
@@ -9260,10 +11228,6 @@ INSERT INTO questions (question_number, game_mode, category, subcategory, factio
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORD_NERD', 'WORD_NERD_BATCH_1', NULL,
         'A group of owls is called a what?', NULL,
         'A parliament', ARRAY['A murder', 'A gaggle', 'A pride', 'A congress', 'A senate', 'A pod'], 300);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORD_NERD', 'WORD_NERD_BATCH_1', NULL,
-        'Spelling bee, round 3: which is correct?', NULL,
-        'Millennium', ARRAY['Millenium', 'Milennium', 'Milenium', 'Millenniem', 'Millinium', 'Milleneum'], 300);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORD_NERD', 'County Mayo, 1880.', NULL,
         'The word "boycott" comes from Charles Boycott. Who was he?', NULL,
@@ -9399,10 +11363,6 @@ VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YE
         'Mishearing a song lyric, like "Excuse me while I kiss this guy," is called what?', NULL,
         'A mondegreen', ARRAY['A malapropism', 'A spoonerism', 'An eggcorn', 'An earworm', 'A homophone', 'A misnomer'], 400);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORD_NERD', '"Supercede" is the common mistake.', NULL,
-        'Spelling bee, final round: which is correct?', NULL,
-        'Supersede', ARRAY['Supercede', 'Superseed', 'Supersead', 'Superceed', 'Superscede', 'Superseede'], 400);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORD_NERD', 'WORD_NERD_BATCH_1', NULL,
         '"Nostalgia" comes from Greek. What does it literally mean?', NULL,
         'Homecoming pain', ARRAY['Old memories', 'Sweet sadness', 'Lost time', 'Golden age', 'Dream of youth', 'Sleepless longing'], 400);
@@ -9477,7 +11437,7 @@ VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YE
 
 COMMIT;
 
--- Check: should return 120.
+-- Check: should return 116.
 SELECT COUNT(*) FROM questions WHERE game_mode = 'TRIVI_YEAH_II' AND category = 'WORD_NERD';
 
 -- ============================================================================

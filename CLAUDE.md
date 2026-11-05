@@ -472,8 +472,34 @@ and forth until we both agree the idea is good **and** worth the effort. So:
   text-only logo trivia ("What animal is on the Ferrari logo?"); no Disney,
   sports leagues or Olympic rings, and never parodied or mocked-up logos
   (stripping the name off for the quiz is fine).
+- **Spellbound** (Randy, Nov 2026: "a spelling test during trivia night"):
+  `content/spellbound.csv`, 256 questions, **all spelling, no vocab** (vocab
+  stays in Word Nerd, whose old spelling-bee rows are retired). Three kinds:
+  "Which is spelled correctly? (meaning)", "Which of these <theme> words is
+  misspelled?" and "Fill in the blank: acco_odate". American spelling,
+  one right answer per tile: no words whose "misspelling" is a dictionary
+  variant (judgment/judgement, minuscule/miniscule, supersede/supercede).
+  Wrong answers are mistakes real people make. No word is the target of
+  two tiles, so one tile can't give another away.
+- **The Great State of...** (Randy, Nov 2026): `content/great_state.csv`,
+  145 text questions -- capitals, city nicknames (Big Apple, La La Land),
+  state nicknames, flags, where names came from. Famous nicknames asked
+  straight; obscure ones get a second-cousin clue ("Utah's pioneers called
+  their land Deseret, a word for the honeybee"). **No "currently has /
+  doesn't have" facts** (Randy, on Montpelier having no McDonald's: true
+  now, maybe not later). Randy is drawing three pictures per state --
+  highlighted on the US map, the outline alone, and the map with a star
+  on the capital -- as `public/states/<state>-map.webp`,
+  `<state>-outline.webp` and `<state>-capital.webp` (lowercase, hyphens:
+  `new-hampshire-map.webp`; 1200x900 WebP like the country maps). They
+  join the sheet as picture rows once uploaded. Geography's New York
+  capital question was retired to avoid a repeat.
+- **Saturday Mornings** (cartoons and kids' TV) is parked (Randy, Nov
+  2026). Text-only if it happens: cartoon characters and real people's
+  likenesses are off the table for a paid pub game.
 - **Category depth (Randy, Oct 2026):** every text category has at least
-  20 questions per tier. The family's favorites are school subjects
+  20 questions per tier. Science & Nature and Astronomy & Space are at 30
+  per tier (Nov 2026: "we're nerds"). The family's favorites are school subjects
   (biology, astronomy, the World Wars, US history) and pop culture; new
   categories get pun names. Queued after Red, White & Who? and War &
   Pieces: **Biology**, then separate pop-culture categories (**Video

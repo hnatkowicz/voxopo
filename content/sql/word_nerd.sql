@@ -4,8 +4,8 @@
 -- Thinking Pants category WORD_NERD. To change a question, change the
 -- spreadsheet and rebuild.
 --
--- Replaces the WHOLE category with the spreadsheet's 120 live questions
--- (100: 30, 200: 30, 300: 30, 400: 30), inside a transaction. Safe to re-run.
+-- Replaces the WHOLE category with the spreadsheet's 116 live questions
+-- (100: 29, 200: 29, 300: 29, 400: 29), inside a transaction. Safe to re-run.
 -- ============================================================================
 
 BEGIN;
@@ -111,10 +111,6 @@ VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YE
         'Which food is named after an English earl who supposedly wanted to eat without leaving the card table?', NULL,
         'The sandwich', ARRAY['The hamburger', 'The hot dog', 'The pretzel', 'The biscuit', 'The pizza', 'The crumpet'], 100);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORD_NERD', 'Spelling ladder: necessary (100), accommodate (200), millennium (300), supersede (400).', NULL,
-        'Spelling bee: which is correct?', NULL,
-        'Necessary', ARRAY['Neccessary', 'Necessery', 'Neccesary', 'Necesary', 'Nessecary', 'Neccessery'], 100);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORD_NERD', 'Phobia ladder: spiders (100), small spaces (200), heights (300), the number 13 (400). Entomophobia is insects, ophidiophobia snakes.', NULL,
         'What is the fear of spiders called?', NULL,
         'Arachnophobia', ARRAY['Agoraphobia', 'Claustrophobia', 'Acrophobia', 'Entomophobia', 'Ophidiophobia', 'Aquaphobia'], 100);
@@ -196,10 +192,6 @@ INSERT INTO questions (question_number, game_mode, category, subcategory, factio
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORD_NERD', 'Light Amplification by Stimulated Emission of Radiation.', NULL,
         '"Laser" started out as a set of initials. What does its L stand for?', NULL,
         'Light', ARRAY['Long', 'Linear', 'Liquid', 'Lens', 'Low', 'Luminous'], 200);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORD_NERD', 'WORD_NERD_BATCH_1', NULL,
-        'Spelling bee, round 2: which is correct?', NULL,
-        'Accommodate', ARRAY['Accomodate', 'Acommodate', 'Acomodate', 'Accomadate', 'Acommadate', 'Accommadate'], 200);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORD_NERD', 'WORD_NERD_BATCH_1', NULL,
         'What is a "faux pas"?', NULL,
@@ -286,10 +278,6 @@ INSERT INTO questions (question_number, game_mode, category, subcategory, factio
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORD_NERD', 'WORD_NERD_BATCH_1', NULL,
         'A group of owls is called a what?', NULL,
         'A parliament', ARRAY['A murder', 'A gaggle', 'A pride', 'A congress', 'A senate', 'A pod'], 300);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORD_NERD', 'WORD_NERD_BATCH_1', NULL,
-        'Spelling bee, round 3: which is correct?', NULL,
-        'Millennium', ARRAY['Millenium', 'Milennium', 'Milenium', 'Millenniem', 'Millinium', 'Milleneum'], 300);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORD_NERD', 'County Mayo, 1880.', NULL,
         'The word "boycott" comes from Charles Boycott. Who was he?', NULL,
@@ -425,10 +413,6 @@ VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YE
         'Mishearing a song lyric, like "Excuse me while I kiss this guy," is called what?', NULL,
         'A mondegreen', ARRAY['A malapropism', 'A spoonerism', 'An eggcorn', 'An earworm', 'A homophone', 'A misnomer'], 400);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORD_NERD', '"Supercede" is the common mistake.', NULL,
-        'Spelling bee, final round: which is correct?', NULL,
-        'Supersede', ARRAY['Supercede', 'Superseed', 'Supersead', 'Superceed', 'Superscede', 'Superseede'], 400);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORD_NERD', 'WORD_NERD_BATCH_1', NULL,
         '"Nostalgia" comes from Greek. What does it literally mean?', NULL,
         'Homecoming pain', ARRAY['Old memories', 'Sweet sadness', 'Lost time', 'Golden age', 'Dream of youth', 'Sleepless longing'], 400);
@@ -503,5 +487,5 @@ VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YE
 
 COMMIT;
 
--- Check: should return 120.
+-- Check: should return 116.
 SELECT COUNT(*) FROM questions WHERE game_mode = 'TRIVI_YEAH_II' AND category = 'WORD_NERD';
