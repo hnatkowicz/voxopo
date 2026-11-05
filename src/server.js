@@ -4,7 +4,7 @@ import dotenv from 'dotenv';
 import path from 'path';
 import { WebSocketServer } from 'ws';
 import pool from './config/database.js';
-import { handleIncomingMessage, activeRooms, getCategoriesForMode, resolveRequestedQuestionCount, compareByRank, closeRoom, profilerStatusFor, profilerTvSnapshot, triviYeahIITrapInfo, emptyModeVotes, finalWagerWinShare, resolveDisguisedAsset, flagMeDownStatusFor, GAME_MODE_KEYS, allowedModesFor, finalWagerRevealFor, venueBrand, endGameVoteFor, thinkingPantsCategoryOverview, setThinkingPantsCategorySetting } from './services/gameEngine.js';
+import { handleIncomingMessage, activeRooms, getCategoriesForMode, resolveRequestedQuestionCount, compareByRank, closeRoom, profilerStatusFor, profilerTvSnapshot, triviYeahIITrapInfo, emptyModeVotes, finalWagerWinShare, resolveDisguisedAsset, flagMeDownStatusFor, GAME_MODE_KEYS, allowedModesFor, finalWagerRevealFor, venueBrand, endGameVoteFor, thinkingPantsCategoryOverview, setThinkingPantsCategorySetting, venueCategoryOverview, setVenueCategorySetting } from './services/gameEngine.js';
 import {
     isHostAuthorized, grantHostSession, isAccessCodeActive,
     isAdminAuthorized, grantAdminSession,
@@ -118,6 +118,10 @@ app.post('/api/create-room', async (req, res) => {
         // Initialize the unified memory container state properties on the backend instantly
         activeRooms[code] = {
             gameState: 'LOBBY',
+            // Which access code opened the room: its per-venue category dial
+            // is read at each Thinking Pants board (a venue setting, nothing
+            // about players).
+            accessCode: openingCode ? normalizeCode(openingCode) : null,
             players: {},
             screens: [],
             timerInterval: null,
@@ -186,6 +190,27 @@ function requireAdmin(req, res, next) {
 app.get('/api/admin/health', requireAdmin, (req, res) => {
     res.setHeader('Cache-Control', 'no-store');
     return res.json({ success: true, ...healthSnapshot(activeRooms) });
+});
+
+// Per-venue Thinking Pants category dial (access_code_category_settings.sql).
+app.get('/api/admin/codes/:code/categories', requireAdmin, async (req, res) => {
+    try {
+        return res.json({ success: true, ...(await venueCategoryOverview(normalizeCode(req.params.code))) });
+    } catch (err) {
+        console.error('❌ [Admin] venue categories:', err.message);
+        return res.status(500).json({ success: false, error: 'Could not load categories.' });
+    }
+});
+app.post('/api/admin/codes/:code/categories/:key', requireAdmin, async (req, res) => {
+    try {
+        const ok = await setVenueCategorySetting(normalizeCode(req.params.code), req.params.key, req.body && req.body.setting);
+        if (!ok) return res.status(400).json({ success: false, error: 'Unknown code, category or setting.' });
+        return res.json({ success: true });
+    } catch (err) {
+        if (err.code === '42P01') return res.status(400).json({ success: false, error: 'Run access_code_category_settings.sql in Neon first.' });
+        console.error('❌ [Admin] venue category save:', err.message);
+        return res.status(500).json({ success: false, error: 'Could not save.' });
+    }
 });
 
 app.get('/api/admin/codes', requireAdmin, async (req, res) => {

@@ -42,7 +42,7 @@
         .feedback.success { display: block; background: rgba(0, 230, 118, 0.08); border-color: rgba(0, 230, 118, 0.3); color: #00e676; }
 
         #manage-screen { display: none; max-width: 640px; }
-        .code-row { display: flex; align-items: center; gap: 12px; padding: 14px; background: #1e222b; border: 1px solid #222630; border-radius: 8px; margin-bottom: 10px; }
+        .code-row { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; padding: 14px; background: #1e222b; border: 1px solid #222630; border-radius: 8px; margin-bottom: 10px; }
         .code-row .code-text { font-family: monospace; font-weight: 700; font-size: 1rem; min-width: 110px; }
         .code-row .code-label { flex: 1; color: #94a3b8; font-size: 0.85rem; text-align: left; }
         .code-row .code-status { font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; padding: 4px 10px; border-radius: 999px; }
@@ -78,6 +78,14 @@
         .category-row .dial button.on.off { background: #ff5c5c; border-color: #ff5c5c; }
         .category-row .dial button.on.normal { background: #94a3b8; border-color: #94a3b8; }
         .category-row .dial button.on.boost { background: #00e676; border-color: #00e676; }
+        .category-row .dial button.on.default { background: #475569; border-color: #475569; color: #f4f5f6; }
+        .venue-dial { background: #14161d; border: 1px solid #222630; border-radius: 8px; padding: 12px 14px; margin: -4px 0 12px 0; }
+        .venue-dial .subtitle { text-align: left; }
+        /* Four buttons don't fit beside a name on a phone: name on top, dial below. */
+        .venue-dial .category-row { flex-wrap: wrap; }
+        .venue-dial .category-row .name { flex: 1 1 100%; }
+        .venue-dial .category-row .dial { flex-wrap: wrap; }
+        .venue-dial-warning { color: #facc15; font-size: 0.85rem; text-align: left; margin: 6px 0 10px 0; }
         .venue-notice { background: rgba(250, 204, 21, 0.08); border: 1px solid rgba(250, 204, 21, 0.3); color: #facc15; border-radius: 8px; padding: 12px; font-size: 0.85rem; margin-top: 16px; text-align: left; }
     </style>
 </head>
@@ -115,7 +123,7 @@
 
         <div style="border-top: 1px solid #222630; margin: 28px 0 20px 0;"></div>
         <h1 style="font-size: 1.1rem; margin-bottom: 4px;">Thinking Pants Categories</h1>
-        <p class="subtitle" style="margin-bottom: 12px;"><strong>Boost</strong> shows a category about twice as often; <strong>Off</strong> keeps its questions but never puts it on a board. Takes effect from the next board.</p>
+        <p class="subtitle" style="margin-bottom: 12px;"><strong>Boost</strong> shows a category about twice as often; <strong>Off</strong> keeps its questions but never puts it on a board. Takes effect from the next board. These are the defaults for every venue; a code's <strong>Categories</strong> button can change them for that venue only.</p>
         <div id="category-notice" class="venue-notice" style="display: none; margin: 0 0 12px 0;">The category dial turns on once you run <strong>thinking_pants_category_settings.sql</strong> in Neon. Until then every category is Normal.</div>
         <div id="category-list"></div>
         <div class="feedback" id="category-feedback"></div>
@@ -176,6 +184,8 @@
         }
         let loadedCodes = [];
         let openVenueEditor = null;
+        let openVenueDial = null;      // access code whose category list is open
+        let venueDialData = null;
 
         function esc(text) {
             return String(text == null ? '' : text).replace(/[&<>"']/g, ch => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[ch]));
@@ -288,10 +298,69 @@
                     <span class="code-label">${esc(c.label)}${venueSummary(c)}</span>
                     <span class="code-status ${c.active ? 'active' : 'inactive'}">${c.active ? 'Active' : 'Revoked'}</span>
                     ${venueProfilesOn ? `<button onclick="toggleVenueEditor('${esc(c.code)}')">Venue</button>` : ''}
+                    <button onclick="toggleVenueDial('${esc(c.code)}')">Categories</button>
                     <button onclick="toggleCode('${esc(c.code)}', ${!c.active})">${c.active ? 'Revoke' : 'Reactivate'}</button>
                 </div>
                 ${openVenueEditor === c.code ? venueEditorHtml(c) : ''}
+                ${openVenueDial === c.code ? venueDialHtml(c.code) : ''}
             `).join('');
+        }
+
+        // ---- Per-venue category dial (Randy, Nov 2026) ----
+        // Default follows the global dial below; Off / Normal / Boost win for
+        // this code's rooms only. Takes effect from the next board.
+        async function toggleVenueDial(code) {
+            openVenueDial = openVenueDial === code ? null : code;
+            venueDialData = null;
+            renderCodes(loadedCodes);
+            if (openVenueDial) await loadVenueDial(code);
+        }
+        async function loadVenueDial(code) {
+            const response = await fetch(`/api/admin/codes/${encodeURIComponent(code)}/categories`);
+            const data = await response.json().catch(() => ({}));
+            if (openVenueDial !== code) return;
+            venueDialData = data.success ? data : { error: data.error || 'Could not load categories.' };
+            renderCodes(loadedCodes);
+        }
+        function venueDialHtml(code) {
+            const d = venueDialData;
+            if (!d) return '<div class="venue-dial"><p class="subtitle">Loading...</p></div>';
+            if (d.error) return `<div class="venue-dial"><p class="subtitle">${esc(d.error)}</p></div>`;
+            const label = s => ({ OFF: 'Off', NORMAL: 'Normal', BOOST: 'Boost' })[s] || s;
+            const warning = d.playable < 3
+                ? `Only ${d.playable} categories are on here, too few to fill a board, so this venue's games use the global settings instead.`
+                : d.playable < d.perGame
+                    ? `Only ${d.playable} categories are on here. A game uses ${d.perGame}, so some will repeat within a game.`
+                    : '';
+            return `<div class="venue-dial">
+                <p class="subtitle" style="margin-bottom: 8px;">Thinking Pants categories for <strong>${esc(code)}</strong>'s rooms only. <strong>Default</strong> follows the global setting (shown in brackets). ${d.playable} of ${d.categories.filter(c => c.depth > 0).length} categories on.</p>
+                ${d.installed ? '' : '<div class="venue-notice" style="margin: 0 0 10px 0;">Per-venue settings turn on once you run <strong>access_code_category_settings.sql</strong> in Neon.</div>'}
+                ${warning ? `<div class="venue-dial-warning">${warning}</div>` : ''}
+                ${d.categories.map(c => `
+                    <div class="category-row">
+                        <div class="name">${esc(c.label)}<div class="count">${c.depth > 0 ? `${c.total} questions` : 'Not in the database yet'}</div></div>
+                        <div class="dial">${['DEFAULT', 'OFF', 'NORMAL', 'BOOST'].map(s => `<button type="button" class="${s.toLowerCase()}${c.venue === s ? ' on' : ''}" ${d.installed ? '' : 'disabled'} onclick="setVenueCategory('${esc(code)}', '${c.key}', '${s}')">${s === 'DEFAULT' ? `Default (${label(c.global)})` : label(s)}</button>`).join('')}</div>
+                    </div>`).join('')}
+                <div class="feedback" id="venue-dial-feedback"></div>
+            </div>`;
+        }
+        async function setVenueCategory(code, key, setting) {
+            try {
+                const response = await fetch(`/api/admin/codes/${encodeURIComponent(code)}/categories/${encodeURIComponent(key)}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ setting })
+                });
+                const data = await response.json();
+                if (!data.success) {
+                    const feedback = document.getElementById('venue-dial-feedback');
+                    return feedback && showFeedback(feedback, data.error || 'Could not save.');
+                }
+                loadVenueDial(code);
+            } catch (err) {
+                const feedback = document.getElementById('venue-dial-feedback');
+                if (feedback) showFeedback(feedback, 'Could not reach the server.');
+            }
         }
 
         function toggleVenueEditor(code) {
