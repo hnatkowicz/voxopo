@@ -304,7 +304,8 @@ Mode keys are used in room votes and in `gameEngine.js`:
   SQL). No clue on file (a territory's flag) -> no button. Clues are data
   (`hints: [{ kind, label, cost, text | imageUrl }]`), shared with Flag Me
   Down's Final Wager. The same maps power the **Country Monkey** category
-  in Thinking Pants (`trivi_yeah_ii_country_monkey.sql`, 80 maps, 20 per tier).
+  in Thinking Pants (`trivi_yeah_ii_country_monkey.sql`, 120 maps, 30 per tier;
+  grown from 80 in Nov 2026 with maps already in the repo).
 - **The answer spread** (Randy, Oct 2026, after his brother said the
   phones made the TV easy to ignore): when time's up in Trivi-yeah!,
   Country Monkey, Thinking Pants and Flag Me Down, the TV's answer buttons
@@ -333,7 +334,7 @@ Mode keys are used in room votes and in `gameEngine.js`:
   + `profiler_questions_batch_2.sql`), balanced 100/100/100 across
   intensity 1/2/3 because each game cycles light -> medium -> deep.
 - **Thinking Pants geography categories:** Country Monkey (maps), **Flag Me
-  Down** (flags, `trivi_yeah_ii_flag_me_down.sql`, 80), **Wet Pants**
+  Down** (flags, `trivi_yeah_ii_flag_me_down.sql`, 120), **Wet Pants**
   (water, `trivi_yeah_ii_wet_pants.sql`, 103) and **Wish You Were Here**
   (landmarks, `content/landmarks.csv`, 132; a postcard name because it has
   natural wonders too) -- the cross-play with Country Monkey is deliberate.
@@ -527,6 +528,17 @@ and forth until we both agree the idea is good **and** worth the effort. So:
   board, "Wet Pants: Oceans, rivers & lakes"): pinned (Randy, Nov 2026).
   The first question makes a title clear, and regulars knowing the names
   is a small, fair edge.
+- **Per-venue category dial** (Randy asked, Nov 2026; not built yet):
+  each access code gets its own Off / Normal / Boost list plus "Default"
+  (follow the global dial), copied into the room with the rest of the
+  profile. Main use is Off (no College Athletics at a library night).
+  Warn on /admin when a venue has too few categories on. Medium lift;
+  worth doing before pubs start in earnest.
+- **Depth plan (Nov 2026):** after Country Monkey and Flag Me Down (120
+  each), Red, White & Who? and War & Pieces to 120, then Sports, Food &
+  Drink and World History, then Cell Mates (Biology). Niche pun
+  categories (Famous (K)nights, Fictional Locations, Just in Time,
+  Lyrics) stay at 80 on purpose.
 - **Mind Field:** a name saved for a future mode built around hidden traps
   on a board.
 - **Final Wager clues elsewhere:** the bought-clue mechanic now runs in
