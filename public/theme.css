@@ -1,28 +1,95 @@
-/* theme.css -- every color RandoMania! uses, in one place (Nov 2026).
+/* theme.css -- RandoMania!'s look in one place: colors and fonts.
  *
- * Gathered from ~900 hand-typed colors across the pages so the look can be
- * changed in one file. This first version is a straight copy: every page
- * looks exactly as before (checked screen by screen, pixel for pixel).
- * Near-identical shades are still separate names on purpose; they can be
- * merged when the palette changes.
+ * Denim & Gold (Randy, Nov 2026): deep denim backgrounds, gold as the
+ * brand color (buttons, selections, scores, board tiles), cream text.
+ * Green means "right" and red means "wrong" -- nothing else -- so the
+ * brand color moved off green to keep that meaning clear (and to stop
+ * looking like other trivia apps' dark-and-neon-green).
  *
- * Use: color: var(--rm-green);  or with transparency:
- *      background: rgba(var(--rm-green-rgb), 0.15);
- * Map, flag and state pictures have their colors drawn in -- this file
- * doesn't touch them.
+ * Fonts: Bricolage Grotesque for headings and the wordmark (Randy picked
+ * it for its harder corners over the rounder Fredoka), DM Sans for text.
+ * Both are free under the SIL Open Font License (public/fonts/*-OFL.txt,
+ * credited on /info), copied into the site so nothing loads from outside.
+ *
+ * Use: color: var(--rm-brand);  or with transparency:
+ *      background: rgba(var(--rm-brand-rgb), 0.15);
+ * Never type a hex color into a page -- add or reuse a name here.
+ * Map, flag and state pictures have their colors drawn in; this file
+ * doesn't touch them (the maps' green highlight still means "this one").
  */
+@font-face {
+    font-family: 'Bricolage Grotesque';
+    font-style: normal;
+    font-weight: 500 800;
+    font-display: swap;
+    src: url('/fonts/bricolage-grotesque-normal-latin-ext.woff2') format('woff2');
+    unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C4, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+@font-face {
+    font-family: 'Bricolage Grotesque';
+    font-style: normal;
+    font-weight: 500 800;
+    font-display: swap;
+    src: url('/fonts/bricolage-grotesque-normal-latin.woff2') format('woff2');
+    unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+    font-family: 'DM Sans';
+    font-style: italic;
+    font-weight: 400 700;
+    font-display: swap;
+    src: url('/fonts/dm-sans-italic-latin-ext.woff2') format('woff2');
+    unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C4, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+@font-face {
+    font-family: 'DM Sans';
+    font-style: italic;
+    font-weight: 400 700;
+    font-display: swap;
+    src: url('/fonts/dm-sans-italic-latin.woff2') format('woff2');
+    unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+    font-family: 'DM Sans';
+    font-style: normal;
+    font-weight: 400 800;
+    font-display: swap;
+    src: url('/fonts/dm-sans-normal-latin-ext.woff2') format('woff2');
+    unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C4, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+@font-face {
+    font-family: 'DM Sans';
+    font-style: normal;
+    font-weight: 400 800;
+    font-display: swap;
+    src: url('/fonts/dm-sans-normal-latin.woff2') format('woff2');
+    unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
 :root {
-    --rm-green: #00e676;
-    --rm-green-dark: #00c862;
-    --rm-red: #ff4757;
-    --rm-red-soft: #ff5c5c;
-    --rm-red-bright: #ff3d3d;
-    --rm-red-deep: #e63e4d;
-    --rm-red-muted: #b05c5c;
-    --rm-orange: #ffa500;
-    --rm-orange-hot: #ff7a1a;
-    --rm-orange-dark: #e59400;
-    --rm-orange-soft: #ff9a4d;
+    --rm-font-body: 'DM Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    --rm-font-display: 'Bricolage Grotesque', 'DM Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+
+    /* brand */
+    --rm-brand: #f5b82e;        /* gold */
+    --rm-brand-dark: #dfa21a;   /* gold, pressed/hover */
+    --rm-brand-ink: #2a1c00;    /* text on a gold button */
+    --rm-second: #5b8bd9;       /* denim blue accent */
+
+    /* meanings */
+    --rm-green: #34d47f;        /* right / correct / won */
+    --rm-green-dark: #27b86b;
+    --rm-red: #ff5a5f;          /* wrong / danger */
+    --rm-red-soft: #ff6b6b;
+    --rm-red-bright: #ff4d4d;
+    --rm-red-deep: #e8475a;
+    --rm-red-muted: #b45c66;
+    --rm-orange: #ffa53d;       /* heads-up */
+    --rm-orange-hot: #ff7f2a;
+    --rm-orange-dark: #e8922c;
+    --rm-orange-soft: #ffa060;
+
+    /* named colors kept from before (mode colors, medals, badges) */
     --rm-yellow: #facc15;
     --rm-yellow-soft: #f9c74f;
     --rm-gold: #ffd700;
@@ -31,54 +98,64 @@
     --rm-medal-bronze: #cd7f32;
     --rm-purple: #bb6bd9;
     --rm-pink: #f472b6;
-    --rm-blue: #2d9cdb;
+    --rm-blue: #5b8bd9;
     --rm-cyan: #06b6d4;
-    --rm-periwinkle: #8892b0;
-    --rm-white: #ffffff;
-    --rm-text: #f4f5f6;
-    --rm-text-2: #e2e5e9;
-    --rm-text-3: #e1e1e6;
-    --rm-text-light: #cbd5e1;
-    --rm-text-soft: #94a3b8;
-    --rm-text-muted: #64748b;
-    --rm-slate-600: #475569;
-    --rm-slate-700: #334155;
-    --rm-bg: #0d0e11;
-    --rm-bg-deep: #0b0d12;
-    --rm-bg-deep-2: #0b0e14;
-    --rm-bg-2: #121214;
-    --rm-surface: #14161d;
-    --rm-surface-1b: #1a1d25;
-    --rm-surface-1c: #1c1f28;
-    --rm-surface-1d: #1c1f29;
-    --rm-surface-2: #1e222b;
-    --rm-surface-2b: #202024;
-    --rm-border: #222630;
-    --rm-border-2: #262b36;
-    --rm-border-3: #2a2f3a;
+    --rm-periwinkle: #8fa3c8;
     --rm-yellow-warm: #ffd54f;
     --rm-yellow-bright: #ffd600;
     --rm-lime: #a3e635;
 
+    /* text: cream on denim */
+    --rm-white: #ffffff;
+    --rm-text: #f4f1e8;
+    --rm-text-2: #ebe6da;
+    --rm-text-3: #ebe6da;
+    --rm-text-light: #d3dcea;
+    --rm-text-soft: #a7b6d1;
+    --rm-text-muted: #7f92b4;
+    --rm-slate-600: #4a6290;
+    --rm-slate-700: #34507d;
+
+    /* denim backgrounds, darkest to lightest */
+    --rm-bg: #0b1424;
+    --rm-bg-deep: #08101e;
+    --rm-bg-deep-2: #08101e;
+    --rm-bg-2: #0b1424;
+    --rm-surface: #12203a;
+    --rm-surface-1b: #152541;
+    --rm-surface-1c: #172845;
+    --rm-surface-1d: #172845;
+    --rm-surface-2: #1a2c4d;
+    --rm-surface-2b: #1a2c4d;
+    --rm-border: #27406a;
+    --rm-border-2: #2c4775;
+    --rm-border-3: #31507f;
+
     /* the same colors as r, g, b, for rgba(..., alpha) */
-    --rm-green-rgb: 0, 230, 118;
-    --rm-red-rgb: 255, 71, 87;
-    --rm-orange-rgb: 255, 165, 0;
+    --rm-brand-rgb: 245, 184, 46;
+    --rm-green-rgb: 52, 212, 127;
+    --rm-red-rgb: 255, 90, 95;
+    --rm-orange-rgb: 255, 165, 61;
     --rm-yellow-rgb: 250, 204, 21;
     --rm-pink-rgb: 244, 114, 182;
-    --rm-red-soft-rgb: 255, 92, 92;
+    --rm-red-soft-rgb: 255, 107, 107;
     --rm-gold-rgb: 255, 215, 0;
     --rm-purple-rgb: 187, 107, 217;
-    --rm-blue-rgb: 45, 156, 219;
+    --rm-blue-rgb: 91, 139, 217;
     --rm-white-rgb: 255, 255, 255;
-    --rm-surface-2-rgb: 30, 34, 43;
+    --rm-surface-2-rgb: 26, 44, 77;
     --rm-black-rgb: 0, 0, 0;
     --rm-medal-gold-rgb: 212, 175, 55;
     --rm-medal-silver-rgb: 184, 188, 196;
     --rm-medal-bronze-rgb: 205, 127, 50;
-    --rm-text-muted-rgb: 100, 116, 139;
-    --rm-orange-hot-rgb: 255, 122, 26;
-    --rm-bg-rgb: 13, 14, 17;
-    --rm-text-soft-rgb: 148, 163, 184;
-    --rm-surface-rgb: 20, 22, 29;
+    --rm-text-muted-rgb: 127, 146, 180;
+    --rm-orange-hot-rgb: 255, 127, 42;
+    --rm-bg-rgb: 11, 20, 36;
+    --rm-text-soft-rgb: 167, 182, 209;
+    --rm-surface-rgb: 18, 32, 58;
 }
+
+/* Headings and the big names use the display face everywhere. */
+h1, h2, h3, .panel-title, .board-title, .mode-tile-name, .mode-pick-name { font-family: var(--rm-font-display); letter-spacing: -0.01em; }
+/* Buttons and form fields don't inherit the page font by default. */
+button, input, select, textarea { font-family: inherit; }

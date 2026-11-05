@@ -7,10 +7,12 @@
     <title>RandoMania!</title>
     <link rel="canonical" href="https://randomania.tv/" />
     <link rel="icon" type="image/x-icon" href="/R.ico" />
+    <link rel="icon" type="image/svg+xml" href="/r-icon.svg">
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png">
     <style>
         * { box-sizing: border-box; }
         body {
-            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", sans-serif;
+            font-family: var(--rm-font-body);
             background: var(--rm-bg);
             color: var(--rm-text);
             margin: 0;
@@ -53,12 +55,12 @@
             gap: 6px;
             transition: border-color 0.2s, transform 0.2s;
         }
-        .role-card:hover { border-color: var(--rm-green); transform: translateY(-2px); }
+        .role-card:hover { border-color: var(--rm-brand); transform: translateY(-2px); }
         .role-icon { font-size: 1.6rem; margin-bottom: 4px; }
         .role-title { font-size: 1.05rem; font-weight: 600; color: var(--rm-white); letter-spacing: -0.01em; }
         .role-desc { font-size: 0.85rem; color: var(--rm-text-muted); line-height: 1.4; }
-        .role-card.primary { border-color: rgba(var(--rm-green-rgb), 0.3); background: rgba(var(--rm-green-rgb), 0.04); }
-        .role-card.primary .role-title { color: var(--rm-green); }
+        .role-card.primary { border-color: rgba(var(--rm-brand-rgb), 0.3); background: rgba(var(--rm-brand-rgb), 0.04); }
+        .role-card.primary .role-title { color: var(--rm-brand); }
 
         footer {
             margin-top: 48px;
@@ -67,7 +69,7 @@
             text-align: center;
         }
         footer a { color: var(--rm-text-muted); text-decoration: none; }
-        footer a:hover { color: var(--rm-green); }
+        footer a:hover { color: var(--rm-brand); }
     </style>
 </head>
 <body>
@@ -78,7 +80,7 @@
         <a class="role-card primary" href="/host">
             <span class="role-icon">🎬</span>
             <span class="role-title">Host a Game</span>
-            <span class="role-desc">Have an access code? Spin up a new lobby and get a room code to share.</span>
+            <span class="role-desc">Have an access code? Open a new room and get a code to share.</span>
         </a>
         <a class="role-card" href="/tv">
             <span class="role-icon">📺</span>

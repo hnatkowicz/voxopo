@@ -6,13 +6,13 @@
 // Icons: Randy's art at public/modes/<icon>.svg. Until a file exists, the
 // tile shows the emoji instead -- uploading the SVG needs no code change.
 window.RANDOMANIA_MODES = [
-    { key: 'TRIVI_YEAH',      name: 'Trivi-yeah!',     blurb: 'Classic multiple-choice trivia', tag: null,         color: 'var(--rm-green)', emoji: '❓', icon: 'mode-trivi-yeah' },
+    { key: 'TRIVI_YEAH',      name: 'Trivi-yeah!',     blurb: 'Classic multiple-choice trivia', tag: null,         color: 'var(--rm-brand)', emoji: '❓', icon: 'mode-trivi-yeah' },
     // Byline says "trivia" so a stranger at a pub knows what it is; the
     // "Beta" tag came off once it became the flagship (Randy, Nov 2026).
     { key: 'TRIVI_YEAH_II',   name: 'Thinking Pants',  blurb: 'Board trivia, bet big',          tag: null,         color: 'var(--rm-cyan)', emoji: '👖', icon: 'mode-thinking-pants' },
     { key: 'COUNTRY_MONKEY',  name: 'Country Monkey',  blurb: 'Find it on the map',             tag: null,         color: 'var(--rm-orange)', emoji: '🐒', icon: 'mode-country-monkey' },
     { key: 'FLAG_ME_DOWN',    name: 'Flag Me Down',    blurb: 'Name it before the clues do',    tag: 'New',        color: 'var(--rm-yellow)', emoji: '🚩', icon: 'mode-flag-me-down' },
-    { key: 'EMPOSSDURR',      name: 'EmpossDurr',      blurb: 'Find the impostor',              tag: null,         color: 'var(--rm-red)', emoji: '🕵️', icon: 'mode-empossdurr' },
+    { key: 'EMPOSSDURR',      name: 'EmpossDurr',      blurb: 'Find the impostor',              tag: null,         color: 'var(--rm-orange-hot)', emoji: '🕵️', icon: 'mode-empossdurr' },
     { key: 'ON_THE_SPECTRUM', name: 'On The Spectrum', blurb: 'Guess where friends land',       tag: null,         color: 'var(--rm-purple)', emoji: '🎚️', icon: 'mode-on-the-spectrum' },
     { key: 'PROFILER',        name: 'Profiler',        blurb: 'Who said that?',                 tag: '4+ players', color: 'var(--rm-pink)', emoji: '🔍', icon: 'mode-profiler' }
 ];
@@ -51,7 +51,7 @@ window.modeForVenue = function (mode) {
 window.renderModeElectionTiles = function (allowedKeys) {
     return `
         <div class="panel-box">
-            <h2 class="panel-title">Active Module Election</h2>
+            <h2 class="panel-title">What should we play?</h2>
             <div class="mode-grid">
                 ${window.modesShown(allowedKeys).map(m => `
                     <div class="mode-tile">

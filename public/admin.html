@@ -6,9 +6,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>RandoMania | Admin</title>
     <link rel="icon" type="image/x-icon" href="/R.ico" />
+    <link rel="icon" type="image/svg+xml" href="/r-icon.svg">
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png">
     <style>
         body {
-            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", sans-serif;
+            font-family: var(--rm-font-body);
             background: var(--rm-bg);
             color: var(--rm-text);
             margin: 0;
@@ -30,10 +32,10 @@
         .input-group { margin-bottom: 20px; text-align: left; }
         label { display: block; margin-bottom: 10px; font-size: 0.75rem; color: var(--rm-text-muted); text-transform: uppercase; font-weight: 600; letter-spacing: 0.08em; }
         input[type="text"], input[type="password"] { width: 100%; padding: 14px; background: var(--rm-surface-2); border: 1px solid var(--rm-border); border-radius: 8px; color: var(--rm-white); font-size: 1.05rem; box-sizing: border-box; transition: border-color 0.2s; }
-        input:focus { border-color: var(--rm-green); outline: none; }
+        input:focus { border-color: var(--rm-brand); outline: none; }
 
-        .btn { background: var(--rm-green); color: var(--rm-bg); border: none; padding: 14px; border-radius: 8px; font-size: 1rem; font-weight: 600; width: 100%; cursor: pointer; letter-spacing: 0.02em; }
-        .btn:hover { background: var(--rm-green-dark); }
+        .btn { background: var(--rm-brand); color: var(--rm-bg); border: none; padding: 14px; border-radius: 8px; font-size: 1rem; font-weight: 600; width: 100%; cursor: pointer; letter-spacing: 0.02em; }
+        .btn:hover { background: var(--rm-brand-dark); }
         .btn:disabled { background: var(--rm-surface-2); color: var(--rm-text-muted); cursor: not-allowed; }
         .btn-secondary { background: var(--rm-surface-2); color: var(--rm-text); border: 1px solid var(--rm-border); }
         .btn-secondary:hover { background: var(--rm-border-2); }
@@ -44,7 +46,7 @@
 
         #manage-screen { display: none; max-width: 640px; }
         .code-row { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; padding: 14px; background: var(--rm-surface-2); border: 1px solid var(--rm-border); border-radius: 8px; margin-bottom: 10px; }
-        .code-row .code-text { font-family: monospace; font-weight: 700; font-size: 1rem; min-width: 110px; }
+        .code-row .code-text { font-family: var(--rm-font-body); font-variant-numeric: tabular-nums; font-weight: 700; font-size: 1rem; min-width: 110px; }
         .code-row .code-label { flex: 1; color: var(--rm-text-soft); font-size: 0.85rem; text-align: left; }
         .code-row .code-status { font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; padding: 4px 10px; border-radius: 999px; }
         .code-status.active { color: var(--rm-green); background: rgba(var(--rm-green-rgb), 0.1); }
@@ -78,7 +80,7 @@
         .category-row .dial button.on { color: var(--rm-bg-deep); }
         .category-row .dial button.on.off { background: var(--rm-red-soft); border-color: var(--rm-red-soft); }
         .category-row .dial button.on.normal { background: var(--rm-text-soft); border-color: var(--rm-text-soft); }
-        .category-row .dial button.on.boost { background: var(--rm-green); border-color: var(--rm-green); }
+        .category-row .dial button.on.boost { background: var(--rm-brand); border-color: var(--rm-brand); }
         .category-row .dial button.on.default { background: var(--rm-slate-600); border-color: var(--rm-slate-600); color: var(--rm-text); }
         .venue-dial { background: var(--rm-surface); border: 1px solid var(--rm-border); border-radius: 8px; padding: 12px 14px; margin: -4px 0 12px 0; }
         .venue-dial .subtitle { text-align: left; }

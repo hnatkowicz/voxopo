@@ -1,5 +1,5 @@
 body {
-            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, sans-serif;
+            font-family: var(--rm-font-body);
             background: var(--rm-bg);
             color: var(--rm-text);
             margin: 0;
@@ -24,22 +24,22 @@ body {
             display: flex;
             align-items: center;
             gap: 12px;
-            background: rgba(var(--rm-green-rgb), 0.06);
-            border: 1px solid rgba(var(--rm-green-rgb), 0.15);
+            background: rgba(var(--rm-brand-rgb), 0.06);
+            border: 1px solid rgba(var(--rm-brand-rgb), 0.15);
             padding: 8px 16px;
             border-radius: 30px;
         }
         .status-dot {
             width: 8px;
             height: 8px;
-            background: var(--rm-green);
+            background: var(--rm-brand);
             border-radius: 50%;
-            box-shadow: 0 0 12px var(--rm-green);
+            box-shadow: 0 0 12px var(--rm-brand);
         }
         .status-text {
             font-size: 0.85rem;
             font-weight: 600;
-            color: var(--rm-green);
+            color: var(--rm-brand);
             text-transform: uppercase;
             letter-spacing: 0.05em;
         }
@@ -111,7 +111,7 @@ body {
             overflow: hidden;
         }
         .progress-fill {
-            background: var(--rm-green);
+            background: var(--rm-brand);
             width: 0%;
             height: 100%;
             border-radius: 20px;
@@ -153,7 +153,7 @@ body {
         .identity-wrap { display: flex; align-items: center; gap: 6px; min-width: 0; }
         .player-emoji { font-size: 1.2rem; flex-shrink: 0; }
         .player-name { font-weight: 500; color: var(--rm-white); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; min-width: 0; }
-        .score-col { width: 20%; text-align: right; color: var(--rm-green); font-weight: 600; }
+        .score-col { width: 20%; text-align: right; color: var(--rm-brand); font-weight: 600; }
 
         /* Per-round answer status "light" -- invisible until a player submits
            (light yellow), then either turns green (correct) or reverts to
@@ -182,7 +182,7 @@ body {
             width: 22px;
             height: 22px;
             border-radius: 50%;
-            background: var(--rm-green);
+            background: var(--rm-brand);
             color: var(--rm-bg);
             font-size: 0.85rem;
             font-weight: 700;
@@ -290,7 +290,7 @@ body {
             color: var(--rm-white);
         }
         .toast-highlight {
-            color: var(--rm-green);
+            color: var(--rm-brand);
             font-weight: 600;
         }
         /* Content-unavailable warning -- same toast shell, orange accent
@@ -306,9 +306,9 @@ body {
         /* Column-sweep celebration -- same toast shell, green accent to read
            as a win, not a heads-up. */
         .toast-card.celebration {
-            border-color: rgba(var(--rm-green-rgb), 0.5);
-            background: rgba(var(--rm-green-rgb), 0.08);
-            box-shadow: 0 12px 32px rgba(var(--rm-black-rgb),0.5), 0 0 24px rgba(var(--rm-green-rgb), 0.2);
+            border-color: rgba(var(--rm-brand-rgb), 0.5);
+            background: rgba(var(--rm-brand-rgb), 0.08);
+            box-shadow: 0 12px 32px rgba(var(--rm-black-rgb),0.5), 0 0 24px rgba(var(--rm-brand-rgb), 0.2);
         }
         .toast-celebration-icon {
             font-size: 1.3rem;
@@ -335,7 +335,7 @@ body[data-view="game"] #game-screen {
 
 /* Sleek Gaming Form Button Styling rules */
 .action-btn-primary {
-    background: var(--rm-green);
+    background: var(--rm-brand);
     color: var(--rm-bg-deep-2);
     border: none;
     border-radius: 8px;
@@ -346,7 +346,7 @@ body[data-view="game"] #game-screen {
     transition: transform 0.15s ease, background 0.15s ease;
 }
 .action-btn-primary:hover {
-    background: var(--rm-green-dark);
+    background: var(--rm-brand-dark);
     transform: translateY(-1px);
 }
 .action-btn-primary:active {
@@ -436,7 +436,7 @@ body[data-view="game"] #game-screen {
 
 /* Custom Interactive UI Button Properties */
 .action-btn-primary {
-    background: var(--rm-green);
+    background: var(--rm-brand);
     color: var(--rm-bg-deep-2);
     border: none;
     border-radius: 8px;
@@ -447,7 +447,7 @@ body[data-view="game"] #game-screen {
     transition: transform 0.15s ease, background 0.15s ease;
 }
 .action-btn-primary:hover {
-    background: var(--rm-green-dark);
+    background: var(--rm-brand-dark);
     transform: translateY(-1px);
 }
 .action-btn-primary:active {
