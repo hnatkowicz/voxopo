@@ -1,0 +1,84 @@
+/* theme.css -- every color RandoMania! uses, in one place (Nov 2026).
+ *
+ * Gathered from ~900 hand-typed colors across the pages so the look can be
+ * changed in one file. This first version is a straight copy: every page
+ * looks exactly as before (checked screen by screen, pixel for pixel).
+ * Near-identical shades are still separate names on purpose; they can be
+ * merged when the palette changes.
+ *
+ * Use: color: var(--rm-green);  or with transparency:
+ *      background: rgba(var(--rm-green-rgb), 0.15);
+ * Map, flag and state pictures have their colors drawn in -- this file
+ * doesn't touch them.
+ */
+:root {
+    --rm-green: #00e676;
+    --rm-green-dark: #00c862;
+    --rm-red: #ff4757;
+    --rm-red-soft: #ff5c5c;
+    --rm-red-bright: #ff3d3d;
+    --rm-red-deep: #e63e4d;
+    --rm-red-muted: #b05c5c;
+    --rm-orange: #ffa500;
+    --rm-orange-hot: #ff7a1a;
+    --rm-orange-dark: #e59400;
+    --rm-orange-soft: #ff9a4d;
+    --rm-yellow: #facc15;
+    --rm-yellow-soft: #f9c74f;
+    --rm-gold: #ffd700;
+    --rm-medal-gold: #d4af37;
+    --rm-medal-silver: #b8bcc4;
+    --rm-medal-bronze: #cd7f32;
+    --rm-purple: #bb6bd9;
+    --rm-pink: #f472b6;
+    --rm-blue: #2d9cdb;
+    --rm-cyan: #06b6d4;
+    --rm-periwinkle: #8892b0;
+    --rm-white: #ffffff;
+    --rm-text: #f4f5f6;
+    --rm-text-2: #e2e5e9;
+    --rm-text-3: #e1e1e6;
+    --rm-text-light: #cbd5e1;
+    --rm-text-soft: #94a3b8;
+    --rm-text-muted: #64748b;
+    --rm-slate-600: #475569;
+    --rm-slate-700: #334155;
+    --rm-bg: #0d0e11;
+    --rm-bg-deep: #0b0d12;
+    --rm-bg-deep-2: #0b0e14;
+    --rm-bg-2: #121214;
+    --rm-surface: #14161d;
+    --rm-surface-1b: #1a1d25;
+    --rm-surface-1c: #1c1f28;
+    --rm-surface-1d: #1c1f29;
+    --rm-surface-2: #1e222b;
+    --rm-surface-2b: #202024;
+    --rm-border: #222630;
+    --rm-border-2: #262b36;
+    --rm-border-3: #2a2f3a;
+    --rm-yellow-warm: #ffd54f;
+    --rm-yellow-bright: #ffd600;
+    --rm-lime: #a3e635;
+
+    /* the same colors as r, g, b, for rgba(..., alpha) */
+    --rm-green-rgb: 0, 230, 118;
+    --rm-red-rgb: 255, 71, 87;
+    --rm-orange-rgb: 255, 165, 0;
+    --rm-yellow-rgb: 250, 204, 21;
+    --rm-pink-rgb: 244, 114, 182;
+    --rm-red-soft-rgb: 255, 92, 92;
+    --rm-gold-rgb: 255, 215, 0;
+    --rm-purple-rgb: 187, 107, 217;
+    --rm-blue-rgb: 45, 156, 219;
+    --rm-white-rgb: 255, 255, 255;
+    --rm-surface-2-rgb: 30, 34, 43;
+    --rm-black-rgb: 0, 0, 0;
+    --rm-medal-gold-rgb: 212, 175, 55;
+    --rm-medal-silver-rgb: 184, 188, 196;
+    --rm-medal-bronze-rgb: 205, 127, 50;
+    --rm-text-muted-rgb: 100, 116, 139;
+    --rm-orange-hot-rgb: 255, 122, 26;
+    --rm-bg-rgb: 13, 14, 17;
+    --rm-text-soft-rgb: 148, 163, 184;
+    --rm-surface-rgb: 20, 22, 29;
+}

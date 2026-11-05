@@ -94,6 +94,14 @@ event, for a small fee. That's why hosting is gated behind access codes.
   phones connected, TVs, requests/second, phone reply time, bandwidth
   this hour, memory, time since the last restart. Counts only, nothing
   about players, nothing saved.
+- **Colors live in `public/theme.css`** (Nov 2026): every color the pages
+  use is a named variable there (`var(--rm-green)`, or with transparency
+  `rgba(var(--rm-green-rgb), 0.15)`), linked first in every page's head.
+  Never type a hex color into a page again -- add or reuse a name. The
+  first version copied the old ~900 hand-typed colors exactly (checked
+  pixel for pixel), so near-identical shades are still separate names,
+  to merge when the palette changes. Map, flag and state pictures have
+  their colors drawn in and aren't affected.
 - **Env vars:** `DATABASE_URL`, `ADMIN_PASSWORD`, `PORT`.
 
 ### The three devices

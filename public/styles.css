@@ -1,7 +1,7 @@
 body {
             font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, sans-serif;
-            background: #0d0e11;
-            color: #f4f5f6;
+            background: var(--rm-bg);
+            color: var(--rm-text);
             margin: 0;
             padding: 40px;
             box-sizing: border-box;
@@ -11,8 +11,8 @@ body {
             letter-spacing: -0.01em;
         }
         .hud-banner {
-            background: #14161d;
-            border: 1px solid #222630;
+            background: var(--rm-surface);
+            border: 1px solid var(--rm-border);
             border-radius: 12px;
             padding: 24px 40px;
             margin-bottom: 32px;
@@ -24,34 +24,34 @@ body {
             display: flex;
             align-items: center;
             gap: 12px;
-            background: rgba(0, 230, 118, 0.06);
-            border: 1px solid rgba(0, 230, 118, 0.15);
+            background: rgba(var(--rm-green-rgb), 0.06);
+            border: 1px solid rgba(var(--rm-green-rgb), 0.15);
             padding: 8px 16px;
             border-radius: 30px;
         }
         .status-dot {
             width: 8px;
             height: 8px;
-            background: #00e676;
+            background: var(--rm-green);
             border-radius: 50%;
-            box-shadow: 0 0 12px #00e676;
+            box-shadow: 0 0 12px var(--rm-green);
         }
         .status-text {
             font-size: 0.85rem;
             font-weight: 600;
-            color: #00e676;
+            color: var(--rm-green);
             text-transform: uppercase;
             letter-spacing: 0.05em;
         }
         .hud-metric {
             font-size: 0.9rem;
-            color: #8892b0;
+            color: var(--rm-periwinkle);
             text-transform: uppercase;
             letter-spacing: 0.08em;
             font-weight: 500;
         }
         .hud-value {
-            color: #ffffff;
+            color: var(--rm-white);
             font-weight: 700;
             font-size: 1.4rem;
             margin-left: 6px;
@@ -69,16 +69,16 @@ body {
         }
         .right-column {
             flex: 35;
-            background: #14161d;
-            border: 1px solid #222630;
+            background: var(--rm-surface);
+            border: 1px solid var(--rm-border);
             border-radius: 12px;
             padding: 32px;
             display: flex;
             flex-direction: column;
         }
         .panel-box {
-            background: #14161d;
-            border: 1px solid #222630;
+            background: var(--rm-surface);
+            border: 1px solid var(--rm-border);
             border-radius: 12px;
             padding: 40px;
             flex: 1;
@@ -88,7 +88,7 @@ body {
         }
         .panel-title {
             margin: 0 0 32px 0;
-            color: #ffffff;
+            color: var(--rm-white);
             font-size: 1.25rem;
             font-weight: 600;
             letter-spacing: -0.02em;
@@ -102,16 +102,16 @@ body {
             font-size: 0.95rem;
             font-weight: 500;
             margin-bottom: 10px;
-            color: #e2e5e9;
+            color: var(--rm-text-2);
         }
         .progress-track {
-            background: #1e222b;
+            background: var(--rm-surface-2);
             height: 12px;
             border-radius: 20px;
             overflow: hidden;
         }
         .progress-fill {
-            background: #00e676;
+            background: var(--rm-green);
             width: 0%;
             height: 100%;
             border-radius: 20px;
@@ -119,7 +119,7 @@ body {
         }
         .board-title {
             margin: 0 0 24px 0;
-            color: #ffffff;
+            color: var(--rm-white);
             font-size: 1.25rem;
             font-weight: 600;
             letter-spacing: -0.02em;
@@ -130,21 +130,21 @@ body {
             table-layout: fixed; /* required for name-col ellipsis to actually clip instead of stretching the table */
         }
         .leaderboard-table th {
-            color: #64748b;
+            color: var(--rm-text-muted);
             font-size: 0.75rem;
             text-transform: uppercase;
             letter-spacing: 0.08em;
             font-weight: 600;
             padding-bottom: 16px;
-            border-bottom: 1px solid #222630;
+            border-bottom: 1px solid var(--rm-border);
         }
         .leaderboard-table td {
             padding: 16px 0;
-            border-bottom: 1px solid #1e222b;
+            border-bottom: 1px solid var(--rm-surface-2);
             font-size: 1.05rem;
         }
         .indicator-col { width: 6%; }
-        .rank-col { width: 9%; color: #64748b; font-weight: 600; }
+        .rank-col { width: 9%; color: var(--rm-text-muted); font-weight: 600; }
         .awards-col { width: 18%; white-space: nowrap; }
         /* Emoji + name are one "identity" cell (a tight flex gap, not two
            independently-widthed columns) so they read as grouped data instead
@@ -152,8 +152,8 @@ body {
         .identity-col { width: 47%; overflow: hidden; }
         .identity-wrap { display: flex; align-items: center; gap: 6px; min-width: 0; }
         .player-emoji { font-size: 1.2rem; flex-shrink: 0; }
-        .player-name { font-weight: 500; color: #ffffff; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; min-width: 0; }
-        .score-col { width: 20%; text-align: right; color: #00e676; font-weight: 600; }
+        .player-name { font-weight: 500; color: var(--rm-white); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; min-width: 0; }
+        .score-col { width: 20%; text-align: right; color: var(--rm-green); font-weight: 600; }
 
         /* Per-round answer status "light" -- invisible until a player submits
            (light yellow), then either turns green (correct) or reverts to
@@ -167,8 +167,8 @@ body {
             background: transparent;
             transition: background-color 0.3s ease;
         }
-        .status-indicator.answered { background: #ffd54f; }
-        .status-indicator.correct { background: #00e676; }
+        .status-indicator.answered { background: var(--rm-yellow-warm); }
+        .status-indicator.correct { background: var(--rm-green); }
 
         /* In-round achievement badges (framework -- see AWARD_DISPLAY in app.js
            for how new award types plug in). Each type shows as a single badge
@@ -182,16 +182,16 @@ body {
             width: 22px;
             height: 22px;
             border-radius: 50%;
-            background: #00e676;
-            color: #0d0e11;
+            background: var(--rm-green);
+            color: var(--rm-bg);
             font-size: 0.85rem;
             font-weight: 700;
             margin-right: 4px;
         }
         .award-pulse { animation: awardPulse 1.6s ease-in-out infinite; }
         @keyframes awardPulse {
-            0%, 100% { box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.35); }
-            50% { box-shadow: 0 0 6px 3px rgba(255, 255, 255, 0.35); }
+            0%, 100% { box-shadow: 0 0 0 0 rgba(var(--rm-white-rgb), 0.35); }
+            50% { box-shadow: 0 0 6px 3px rgba(var(--rm-white-rgb), 0.35); }
         }
         /* Icon badges have no circular backdrop -- it's the SVG's own shape,
            painted via a CSS mask (rather than an <img>) so its color is ours
@@ -211,7 +211,7 @@ body {
             mask-size: contain;
         }
         .badge-speed3 {
-            background-color: #ffd600;
+            background-color: var(--rm-yellow-bright);
             -webkit-mask-image: url('/bolt-icon.svg');
             mask-image: url('/bolt-icon.svg');
         }
@@ -234,32 +234,32 @@ body {
         /* spectrum-bow.svg is still a CSS-masked placeholder shape, not yet
            drawn with its own colors like this mode's other badge art. */
         .badge-spectrum-sharpshooter {
-            background-color: #2d9cdb;
+            background-color: var(--rm-blue);
             -webkit-mask-image: url('/spectrum-bow.svg');
             mask-image: url('/spectrum-bow.svg');
         }
         /* A distinct alien-green, separate from every other badge color, so
            this one reads as its own "just for fun" thing at a glance. */
         .badge-spectrum-lost-in-space {
-            background-color: #a3e635;
+            background-color: var(--rm-lime);
             -webkit-mask-image: url('/spectrum-lost-in-space.svg');
             mask-image: url('/spectrum-lost-in-space.svg');
         }
 
         /* Light, unobtrusive context appended after a module's name -- never
            competes with the name itself for attention. */
-        .module-descriptor { color: #64748b; font-weight: 400; font-size: 0.8rem; }
+        .module-descriptor { color: var(--rm-text-muted); font-weight: 400; font-size: 0.8rem; }
         /* Lobby mode tiles (built from public/modes.js) -- two columns so the
            list can keep growing without scrolling off the TV. */
         /* Compact (count beside the name, thinner bar) so a growing list
            doesn't push the join banner off the bottom of the TV (Randy, Oct 2026). */
         .mode-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-        .mode-tile { background: #14161d; border: 1px solid #222630; border-radius: 12px; padding: 10px 14px; display: flex; flex-direction: column; gap: 8px; }
+        .mode-tile { background: var(--rm-surface); border: 1px solid var(--rm-border); border-radius: 12px; padding: 10px 14px; display: flex; flex-direction: column; gap: 8px; }
         .mode-tile-head { display: flex; align-items: center; gap: 12px; }
-        .mode-tile-name { font-size: 1.05rem; font-weight: 700; color: #f4f5f6; }
-        .mode-tile-tag { font-size: 0.65rem; font-weight: 700; color: #ffa500; border: 1px solid rgba(255, 165, 0, 0.35); border-radius: 4px; padding: 1px 6px; margin-left: 4px; vertical-align: middle; text-transform: uppercase; letter-spacing: 0.04em; }
-        .mode-tile-blurb { font-size: 0.85rem; color: #94a3b8; } /* brighter for a dim pub (Randy, Nov 2026) */
-        .mode-tile-count { font-size: 0.8rem; color: #64748b; text-align: right; white-space: nowrap; flex-shrink: 0; align-self: flex-start; }
+        .mode-tile-name { font-size: 1.05rem; font-weight: 700; color: var(--rm-text); }
+        .mode-tile-tag { font-size: 0.65rem; font-weight: 700; color: var(--rm-orange); border: 1px solid rgba(var(--rm-orange-rgb), 0.35); border-radius: 4px; padding: 1px 6px; margin-left: 4px; vertical-align: middle; text-transform: uppercase; letter-spacing: 0.04em; }
+        .mode-tile-blurb { font-size: 0.85rem; color: var(--rm-text-soft); } /* brighter for a dim pub (Randy, Nov 2026) */
+        .mode-tile-count { font-size: 0.8rem; color: var(--rm-text-muted); text-align: right; white-space: nowrap; flex-shrink: 0; align-self: flex-start; }
                 /* Sliding Toast Alert Notification Window Styles */
         .toast-container {
             position: fixed;
@@ -269,14 +269,14 @@ body {
             pointer-events: none;
         }
         .toast-card {
-            background: rgba(20, 22, 29, 0.95);
-            border: 1px solid #222630;
+            background: rgba(var(--rm-surface-rgb), 0.95);
+            border: 1px solid var(--rm-border);
             border-radius: 8px;
             padding: 16px 24px;
             display: flex;
             align-items: center;
             gap: 16px;
-            box-shadow: 0 12px 32px rgba(0,0,0,0.5);
+            box-shadow: 0 12px 32px rgba(var(--rm-black-rgb),0.5);
             transform: translateX(-150%);
             transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             backdrop-filter: blur(8px);
@@ -287,18 +287,18 @@ body {
         .toast-text {
             font-size: 1rem;
             font-weight: 500;
-            color: #ffffff;
+            color: var(--rm-white);
         }
         .toast-highlight {
-            color: #00e676;
+            color: var(--rm-green);
             font-weight: 600;
         }
         /* Content-unavailable warning -- same toast shell, orange accent
            instead of the default neutral border so it reads as "heads up,"
            not just another routine notification. */
         .toast-card.warning {
-            border-color: rgba(255, 165, 0, 0.4);
-            background: rgba(255, 165, 0, 0.08);
+            border-color: rgba(var(--rm-orange-rgb), 0.4);
+            background: rgba(var(--rm-orange-rgb), 0.08);
         }
         .toast-warning-icon {
             font-size: 1.3rem;
@@ -306,9 +306,9 @@ body {
         /* Column-sweep celebration -- same toast shell, green accent to read
            as a win, not a heads-up. */
         .toast-card.celebration {
-            border-color: rgba(0, 230, 118, 0.5);
-            background: rgba(0, 230, 118, 0.08);
-            box-shadow: 0 12px 32px rgba(0,0,0,0.5), 0 0 24px rgba(0, 230, 118, 0.2);
+            border-color: rgba(var(--rm-green-rgb), 0.5);
+            background: rgba(var(--rm-green-rgb), 0.08);
+            box-shadow: 0 12px 32px rgba(var(--rm-black-rgb),0.5), 0 0 24px rgba(var(--rm-green-rgb), 0.2);
         }
         .toast-celebration-icon {
             font-size: 1.3rem;
@@ -335,8 +335,8 @@ body[data-view="game"] #game-screen {
 
 /* Sleek Gaming Form Button Styling rules */
 .action-btn-primary {
-    background: #00e676;
-    color: #0b0e14;
+    background: var(--rm-green);
+    color: var(--rm-bg-deep-2);
     border: none;
     border-radius: 8px;
     padding: 16px 32px;
@@ -346,7 +346,7 @@ body[data-view="game"] #game-screen {
     transition: transform 0.15s ease, background 0.15s ease;
 }
 .action-btn-primary:hover {
-    background: #00c862;
+    background: var(--rm-green-dark);
     transform: translateY(-1px);
 }
 .action-btn-primary:active {
@@ -354,9 +354,9 @@ body[data-view="game"] #game-screen {
 }
 
 .action-btn-secondary {
-    background: #14161d;
-    color: #ffffff;
-    border: 1px solid #222630;
+    background: var(--rm-surface);
+    color: var(--rm-white);
+    border: 1px solid var(--rm-border);
     border-radius: 8px;
     padding: 14px 28px;
     font-size: 1rem;
@@ -365,15 +365,15 @@ body[data-view="game"] #game-screen {
     transition: border-color 0.15s ease, background 0.15s ease;
 }
 .action-btn-secondary:hover {
-    border-color: #64748b;
-    background: #1c1f29;
+    border-color: var(--rm-text-muted);
+    background: var(--rm-surface-1d);
 }
 
 /* Final leaderboard rows -- same sleek button feel as .action-btn-secondary,
    with a gold/silver/bronze accent per rank instead of an icon. */
 .leaderboard-btn {
-    background: #14161d;
-    border: 1px solid #222630;
+    background: var(--rm-surface);
+    border: 1px solid var(--rm-border);
     border-radius: 8px;
     padding: 16px 24px;
     display: flex;
@@ -381,7 +381,7 @@ body[data-view="game"] #game-screen {
     align-items: center;
 }
 .leaderboard-btn-name {
-    color: #ffffff;
+    color: var(--rm-white);
     font-size: 1.05rem;
     font-weight: 600;
     flex: 1 1 auto;
@@ -397,20 +397,20 @@ body[data-view="game"] #game-screen {
     flex-shrink: 0;
 }
 .leaderboard-btn.rank-gold {
-    border-color: #d4af37;
-    background: rgba(212, 175, 55, 0.08);
+    border-color: var(--rm-medal-gold);
+    background: rgba(var(--rm-medal-gold-rgb), 0.08);
 }
-.leaderboard-btn.rank-gold .leaderboard-btn-score { color: #d4af37; }
+.leaderboard-btn.rank-gold .leaderboard-btn-score { color: var(--rm-medal-gold); }
 .leaderboard-btn.rank-silver {
-    border-color: #b8bcc4;
-    background: rgba(184, 188, 196, 0.08);
+    border-color: var(--rm-medal-silver);
+    background: rgba(var(--rm-medal-silver-rgb), 0.08);
 }
-.leaderboard-btn.rank-silver .leaderboard-btn-score { color: #b8bcc4; }
+.leaderboard-btn.rank-silver .leaderboard-btn-score { color: var(--rm-medal-silver); }
 .leaderboard-btn.rank-bronze {
-    border-color: #cd7f32;
-    background: rgba(205, 127, 50, 0.08);
+    border-color: var(--rm-medal-bronze);
+    background: rgba(var(--rm-medal-bronze-rgb), 0.08);
 }
-.leaderboard-btn.rank-bronze .leaderboard-btn-score { color: #cd7f32; }
+.leaderboard-btn.rank-bronze .leaderboard-btn-score { color: var(--rm-medal-bronze); }
 
 /* ========================================== */
 /*  VIEWPORT ENGINE VISIBILITY STATES         */
@@ -436,8 +436,8 @@ body[data-view="game"] #game-screen {
 
 /* Custom Interactive UI Button Properties */
 .action-btn-primary {
-    background: #00e676;
-    color: #0b0e14;
+    background: var(--rm-green);
+    color: var(--rm-bg-deep-2);
     border: none;
     border-radius: 8px;
     padding: 16px 32px;
@@ -447,7 +447,7 @@ body[data-view="game"] #game-screen {
     transition: transform 0.15s ease, background 0.15s ease;
 }
 .action-btn-primary:hover {
-    background: #00c862;
+    background: var(--rm-green-dark);
     transform: translateY(-1px);
 }
 .action-btn-primary:active {
@@ -455,9 +455,9 @@ body[data-view="game"] #game-screen {
 }
 
 .action-btn-secondary {
-    background: #14161d;
-    color: #ffffff;
-    border: 1px solid #222630;
+    background: var(--rm-surface);
+    color: var(--rm-white);
+    border: 1px solid var(--rm-border);
     border-radius: 8px;
     padding: 14px 28px;
     font-size: 1rem;
@@ -466,8 +466,8 @@ body[data-view="game"] #game-screen {
     transition: border-color 0.15s ease, background 0.15s ease;
 }
 .action-btn-secondary:hover {
-    border-color: #64748b;
-    background: #1c1f29;
+    border-color: var(--rm-text-muted);
+    background: var(--rm-surface-1d);
 }
 
 /* ---------- Pub rooms (a venue access code with the PUB profile) ----------
@@ -477,16 +477,16 @@ body[data-view="game"] #game-screen {
 .venue-banner, .venue-hud { display: none; }
 body.pub-profile.tv-lobby .venue-banner {
     display: flex; align-items: center; gap: 24px;
-    background: #14161d; border: 1px solid #222630; border-radius: 12px;
+    background: var(--rm-surface); border: 1px solid var(--rm-border); border-radius: 12px;
     padding: 16px 24px; margin-bottom: 20px; flex-shrink: 0;
 }
 /* Logos are 2:1 (see public/venues/README.md); anything else fits inside. */
 #venue-banner-logo { width: 180px; height: 90px; object-fit: contain; flex-shrink: 0; }
-.venue-banner-name { font-size: 2.2rem; font-weight: 800; color: #ffffff; letter-spacing: -0.02em; line-height: 1.1; }
-.venue-banner-tagline { font-size: 1.05rem; color: #94a3b8; font-weight: 500; margin-top: 4px; }
+.venue-banner-name { font-size: 2.2rem; font-weight: 800; color: var(--rm-white); letter-spacing: -0.02em; line-height: 1.1; }
+.venue-banner-tagline { font-size: 1.05rem; color: var(--rm-text-soft); font-weight: 500; margin-top: 4px; }
 body.pub-profile:not(.tv-lobby) .venue-hud { display: flex; align-items: center; gap: 10px; }
 #venue-hud-logo { height: 32px; width: 64px; object-fit: contain; }
-#venue-hud-name { font-size: 1rem; font-weight: 700; color: #f4f5f6; white-space: nowrap; }
+#venue-hud-name { font-size: 1rem; font-weight: 700; color: var(--rm-text); white-space: nowrap; }
 body.pub-profile.tv-lobby #room-qr-box { width: 230px !important; height: 230px !important; padding: 6px !important; }
 body.pub-profile:not(.tv-lobby) #room-qr-box { width: 130px !important; height: 130px !important; }
 body.pub-profile.tv-lobby #onboarding-text-slot > div:first-child { font-size: 1.6rem !important; }
@@ -499,9 +499,9 @@ body.pub-profile.tv-lobby #onboarding-text-slot { flex: 2 !important; }
     display: inline-block;
     margin-left: 10px;
     padding: 1px 8px;
-    border: 2px solid #ff7a1a;
+    border: 2px solid var(--rm-orange-hot);
     border-radius: 4px;
-    color: #ff7a1a;
+    color: var(--rm-orange-hot);
     font-size: 0.8rem;
     font-weight: 900;
     letter-spacing: 0.08em;

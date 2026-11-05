@@ -1,95 +1,96 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <link rel="stylesheet" href="/theme.css">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>RandoMania | Controller</title>
     <style>
         body { 
             font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", sans-serif; 
-            background: #0d0e11; 
-            color: #f4f5f6; 
+            background: var(--rm-bg); 
+            color: var(--rm-text); 
             text-align: center; 
             padding: 30px 20px; 
             margin: 0; 
             letter-spacing: -0.01em;
         }
         .card { 
-            background: #14161d; 
-            border: 1px solid #222630; 
+            background: var(--rm-surface); 
+            border: 1px solid var(--rm-border); 
             border-radius: 12px; 
             padding: 32px 24px; 
             max-width: 400px; 
             margin: 20px auto; 
-            box-shadow: 0 4px 20px rgba(0,0,0,0.3); 
+            box-shadow: 0 4px 20px rgba(var(--rm-black-rgb),0.3); 
         }
-        h1 { color: #ffffff; font-size: 1.5rem; font-weight: 600; margin: 0 0 6px 0; letter-spacing: -0.02em; }
-        p.subtitle { color: #64748b; margin: 0 0 32px 0; font-size: 0.9rem; font-weight: 500; }
+        h1 { color: var(--rm-white); font-size: 1.5rem; font-weight: 600; margin: 0 0 6px 0; letter-spacing: -0.02em; }
+        p.subtitle { color: var(--rm-text-muted); margin: 0 0 32px 0; font-size: 0.9rem; font-weight: 500; }
         
         .input-group { margin-bottom: 24px; text-align: left; }
-        label { display: block; margin-bottom: 10px; font-size: 0.75rem; color: #64748b; text-transform: uppercase; font-weight: 600; letter-spacing: 0.08em; }
-        input[type="text"] { width: 100%; padding: 14px; background: #1e222b; border: 1px solid #222630; border-radius: 8px; color: #fff; font-size: 1.05rem; box-sizing: border-box; transition: border-color 0.2s; }
-        input[type="text"]:focus { border-color: #00e676; outline: none; }
+        label { display: block; margin-bottom: 10px; font-size: 0.75rem; color: var(--rm-text-muted); text-transform: uppercase; font-weight: 600; letter-spacing: 0.08em; }
+        input[type="text"] { width: 100%; padding: 14px; background: var(--rm-surface-2); border: 1px solid var(--rm-border); border-radius: 8px; color: var(--rm-white); font-size: 1.05rem; box-sizing: border-box; transition: border-color 0.2s; }
+        input[type="text"]:focus { border-color: var(--rm-green); outline: none; }
         
         .emoji-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 8px; margin-bottom: 16px; }
-        .emoji-btn { background: #1e222b; border: 1px solid #222630; font-size: 1.3rem; padding: 12px 0; border-radius: 8px; cursor: pointer; transition: all 0.1s ease; }
-        .emoji-btn.selected { background: rgba(0, 230, 118, 0.06); border-color: #00e676; transform: scale(1.05); }
+        .emoji-btn { background: var(--rm-surface-2); border: 1px solid var(--rm-border); font-size: 1.3rem; padding: 12px 0; border-radius: 8px; cursor: pointer; transition: all 0.1s ease; }
+        .emoji-btn.selected { background: rgba(var(--rm-green-rgb), 0.06); border-color: var(--rm-green); transform: scale(1.05); }
 
         .module-list { display: flex; flex-direction: column; gap: 10px; margin-top: 8px; }
         .module-row {
-            background: #1e222b;
-            border: 1px solid #222630;
+            background: var(--rm-surface-2);
+            border: 1px solid var(--rm-border);
             border-radius: 8px;
             padding: 16px 20px;
             text-align: left;
             cursor: pointer;
             font-size: 1rem;
             font-weight: 500;
-            color: #e2e5e9;
+            color: var(--rm-text-2);
             transition: all 0.15s ease;
         }
         /* Mode picker: two tappable tiles per row, icon on top. */
         .mode-pick-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
         .module-row.mode-pick { display: flex; flex-direction: column; align-items: center; text-align: center; gap: 6px; padding: 14px 10px; }
         .mode-pick-name { font-weight: 700; font-size: 0.95rem; line-height: 1.2; }
-        .mode-pick-blurb { font-size: 0.72rem; color: #94a3b8; line-height: 1.25; font-weight: 400; }
+        .mode-pick-blurb { font-size: 0.72rem; color: var(--rm-text-soft); line-height: 1.25; font-weight: 400; }
         .module-row.selected { 
-            border-color: #00e676; 
-            background: rgba(0, 230, 118, 0.04); 
-            color: #00e676; 
+            border-color: var(--rm-green); 
+            background: rgba(var(--rm-green-rgb), 0.04); 
+            color: var(--rm-green); 
             font-weight: 600;
         }
         /* Your answer before the reveal: white, not green, so it doesn't look
            "right" before anyone knows (Randy, Oct 2026). The reveal paints
            the real answer green and a wrong pick red. Votes keep .selected. */
         /* .btn.btn-risk: .btn is declared further down, so it needs the extra weight. */
-        .btn.btn-risk { background: linear-gradient(135deg, #ff7a1a, #ff3d3d); color: #ffffff; margin-top: 4px; font-weight: 800; letter-spacing: 0.04em; }
-        .btn.btn-risk:hover { background: linear-gradient(135deg, #ff7a1a, #ff3d3d); }
-        .btn.btn-risk.nothing { background: #1e222b; color: #94a3b8; border: 1px dashed #334155; font-weight: 600; }
-        #fw-wager-input.all-in, #ty2-wager-input.all-in { border-color: #ff7a1a !important; box-shadow: 0 0 14px rgba(255, 122, 26, 0.55); }
+        .btn.btn-risk { background: linear-gradient(135deg, var(--rm-orange-hot), var(--rm-red-bright)); color: var(--rm-white); margin-top: 4px; font-weight: 800; letter-spacing: 0.04em; }
+        .btn.btn-risk:hover { background: linear-gradient(135deg, var(--rm-orange-hot), var(--rm-red-bright)); }
+        .btn.btn-risk.nothing { background: var(--rm-surface-2); color: var(--rm-text-soft); border: 1px dashed var(--rm-slate-700); font-weight: 600; }
+        #fw-wager-input.all-in, #ty2-wager-input.all-in { border-color: var(--rm-orange-hot) !important; box-shadow: 0 0 14px rgba(var(--rm-orange-hot-rgb), 0.55); }
         .module-row.picked {
-            border-color: #e2e5e9;
-            background: rgba(255, 255, 255, 0.08);
-            color: #ffffff;
+            border-color: var(--rm-text-2);
+            background: rgba(var(--rm-white-rgb), 0.08);
+            color: var(--rm-white);
             font-weight: 600;
         }
 
-        .btn { background: #00e676; color: #0d0e11; border: none; padding: 16px; border-radius: 8px; font-size: 1.05rem; font-weight: 600; width: 100%; cursor: pointer; margin-top: 24px; letter-spacing: 0.02em; }
-        .btn:hover { background: #00c862; }
+        .btn { background: var(--rm-green); color: var(--rm-bg); border: none; padding: 16px; border-radius: 8px; font-size: 1.05rem; font-weight: 600; width: 100%; cursor: pointer; margin-top: 24px; letter-spacing: 0.02em; }
+        .btn:hover { background: var(--rm-green-dark); }
         /* Explicit disabled treatment -- the browser default on a bright
            green button over a dark theme looks like a rendering glitch, not
            an intentional "pick something first" state. */
-        .btn:disabled { background: #1e222b; color: #64748b; cursor: not-allowed; }
-        .btn:disabled:hover { background: #1e222b; }
-        .btn-leave { background: transparent; color: #ff4757; border: 1px solid rgba(255, 71, 87, 0.3); margin-top: 14px; }
-        .btn-leave:hover { background: rgba(255, 71, 87, 0.08); }
+        .btn:disabled { background: var(--rm-surface-2); color: var(--rm-text-muted); cursor: not-allowed; }
+        .btn:disabled:hover { background: var(--rm-surface-2); }
+        .btn-leave { background: transparent; color: var(--rm-red); border: 1px solid rgba(var(--rm-red-rgb), 0.3); margin-top: 14px; }
+        .btn-leave:hover { background: rgba(var(--rm-red-rgb), 0.08); }
         /* The final "yes, really" step of leaving or ending a game: solid red,
            so it can't be mistaken for the outlined button that opened it
            (Randy, Nov 2026: the two looked alike and confused players). */
-        .btn-danger { background: #ff4757; color: #ffffff; border: none; }
-        .btn-danger:hover { background: #e63e4d; }
-        .btn-horn { background: #ffa500; margin-top: 16px; }
-        .btn-horn:hover { background: #e59400; }
+        .btn-danger { background: var(--rm-red); color: var(--rm-white); border: none; }
+        .btn-danger:hover { background: var(--rm-red-deep); }
+        .btn-horn { background: var(--rm-orange); margin-top: 16px; }
+        .btn-horn:hover { background: var(--rm-orange-dark); }
         .feedback { margin-top: 20px; font-weight: 500; padding: 12px; border-radius: 8px; display: none; font-size: 0.9rem; border: 1px solid transparent; }
 
         #game-screen { display: none; }
@@ -97,14 +98,14 @@
         #empossdurr-screen { display: none; }
         #on-the-spectrum-screen { display: none; }
         #profiler-screen { display: none; }
-        .pf-question { font-size: 1.15rem; font-weight: 600; color: #ffffff; text-align: center; line-height: 1.4; margin: 16px 0 20px 0; }
-        .pf-post-label { text-align: center; color: #f472b6; font-weight: 600; margin-top: 4px; }
-        .pf-post-answer { text-align: center; font-size: 1.5rem; font-weight: 800; color: #ffffff; margin: 4px 0 18px 0; line-height: 1.3; }
+        .pf-question { font-size: 1.15rem; font-weight: 600; color: var(--rm-white); text-align: center; line-height: 1.4; margin: 16px 0 20px 0; }
+        .pf-post-label { text-align: center; color: var(--rm-pink); font-weight: 600; margin-top: 4px; }
+        .pf-post-answer { text-align: center; font-size: 1.5rem; font-weight: 800; color: var(--rm-white); margin: 4px 0 18px 0; line-height: 1.3; }
         .pf-pick-row { display: flex; align-items: center; justify-content: space-between; }
-        .pf-pick-check { font-weight: 800; color: #f472b6; }
-        .pf-result { background: #14161d; border: 1px solid #222630; border-radius: 10px; padding: 14px; text-align: center; margin: 10px 0; }
-        .pf-result-points { font-size: 1.6rem; font-weight: 800; color: #00e676; }
-        .pf-personal { background: rgba(244, 114, 182, 0.08); border: 1px solid rgba(244, 114, 182, 0.4); border-radius: 10px; padding: 12px 14px; margin-top: 14px; text-align: left; color: #e2e5e9; font-size: 0.95rem; line-height: 1.6; }
+        .pf-pick-check { font-weight: 800; color: var(--rm-pink); }
+        .pf-result { background: var(--rm-surface); border: 1px solid var(--rm-border); border-radius: 10px; padding: 14px; text-align: center; margin: 10px 0; }
+        .pf-result-points { font-size: 1.6rem; font-weight: 800; color: var(--rm-green); }
+        .pf-personal { background: rgba(var(--rm-pink-rgb), 0.08); border: 1px solid rgba(var(--rm-pink-rgb), 0.4); border-radius: 10px; padding: 12px 14px; margin-top: 14px; text-align: left; color: var(--rm-text-2); font-size: 0.95rem; line-height: 1.6; }
 
         .ed-role-banner { border-radius: 8px; padding: 18px; margin-bottom: 20px; text-align: center; }
         /* Deliberately identical for word and impostor -- a real player's
@@ -122,53 +123,53 @@
            wording now ("You Are the Impostor" vs "Secret Word"), styled
            identically in every other way. Reading words (unlike registering
            a color) takes a deliberate look nobody gets from a glance. */
-        .ed-role-banner.ed-role-word, .ed-role-banner.ed-role-impostor { background: rgba(0, 230, 118, 0.06); border: 1px solid rgba(0, 230, 118, 0.3); }
+        .ed-role-banner.ed-role-word, .ed-role-banner.ed-role-impostor { background: rgba(var(--rm-green-rgb), 0.06); border: 1px solid rgba(var(--rm-green-rgb), 0.3); }
         .ed-role-label { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.08em; font-weight: 600; margin-bottom: 6px; }
-        .ed-role-word .ed-role-label, .ed-role-impostor .ed-role-label { color: #00e676; }
-        .ed-role-value { font-size: 1.4rem; font-weight: 700; color: #ffffff; letter-spacing: -0.01em; }
+        .ed-role-word .ed-role-label, .ed-role-impostor .ed-role-label { color: var(--rm-green); }
+        .ed-role-value { font-size: 1.4rem; font-weight: 700; color: var(--rm-white); letter-spacing: -0.01em; }
 
-        .ed-status-line { font-size: 0.85rem; color: #64748b; text-align: center; margin: 12px 0; }
-        .ed-timer { font-size: 2rem; font-weight: 700; color: #ffffff; text-align: center; margin: 12px 0; }
+        .ed-status-line { font-size: 0.85rem; color: var(--rm-text-muted); text-align: center; margin: 12px 0; }
+        .ed-timer { font-size: 2rem; font-weight: 700; color: var(--rm-white); text-align: center; margin: 12px 0; }
 
-        .ots-statement { font-size: 1.15rem; font-weight: 600; color: #ffffff; text-align: center; line-height: 1.4; margin: 16px 0 24px 0; }
+        .ots-statement { font-size: 1.15rem; font-weight: 600; color: var(--rm-white); text-align: center; line-height: 1.4; margin: 16px 0 24px 0; }
         /* "Disagree"/"Agree" bracket the number, all above the slider --
            a dragging finger would otherwise obscure the exact value at the
            worst moment, and reading the two words either side of the number
            makes the 0-100 scale legible without the slider itself in view. */
         .ots-readout-row { display: flex; align-items: center; justify-content: center; gap: 16px; margin-bottom: 12px; }
-        .ots-slider-value { font-size: 2.2rem; font-weight: 700; color: #00e676; text-align: center; min-width: 60px; }
-        .ots-slider-label { font-size: 0.75rem; color: #64748b; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; }
+        .ots-slider-value { font-size: 2.2rem; font-weight: 700; color: var(--rm-green); text-align: center; min-width: 60px; }
+        .ots-slider-label { font-size: 0.75rem; color: var(--rm-text-muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; }
         /* Visually separates the readout from the slider it belongs to --
            without it the number reads as floating free rather than clearly
            "belonging" to the control underneath. */
-        .ots-readout-divider { border: none; border-top: 1px solid #222630; margin: 0 0 20px 0; }
+        .ots-readout-divider { border: none; border-top: 1px solid var(--rm-border); margin: 0 0 20px 0; }
         .ots-slider-row { margin: 0 0 20px 0; }
         /* Horizontal range input, deliberately not vertical -- a vertical
            drag gesture on a phone card fights with the page's own scroll.
            Sized up from the platform default for an easier thumb target. */
-        .ots-slider { width: 100%; -webkit-appearance: none; appearance: none; height: 14px; border-radius: 7px; background: #1e222b; outline: none; }
-        .ots-slider::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 36px; height: 36px; border-radius: 50%; background: #00e676; cursor: pointer; border: 4px solid #0d0e11; }
-        .ots-slider::-moz-range-thumb { width: 36px; height: 36px; border-radius: 50%; background: #00e676; cursor: pointer; border: 4px solid #0d0e11; }
+        .ots-slider { width: 100%; -webkit-appearance: none; appearance: none; height: 14px; border-radius: 7px; background: var(--rm-surface-2); outline: none; }
+        .ots-slider::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 36px; height: 36px; border-radius: 50%; background: var(--rm-green); cursor: pointer; border: 4px solid var(--rm-bg); }
+        .ots-slider::-moz-range-thumb { width: 36px; height: 36px; border-radius: 50%; background: var(--rm-green); cursor: pointer; border: 4px solid var(--rm-bg); }
         .ots-results-list { display: flex; flex-direction: column; gap: 8px; margin: 16px 0; text-align: left; }
         /* Same filled-bar language as the module vote bars elsewhere in
            RandoMania!, all one color (this mode's own purple) -- the bar's
            only job is to show the 0-100 value at a glance, not to also
            encode accuracy, so it never changes color row to row. */
-        .ots-result-row { display: flex; align-items: center; gap: 12px; padding: 10px 14px; background: #1e222b; border: 1px solid #222630; border-radius: 8px; font-size: 0.9rem; }
-        .ots-result-row.ots-result-me { border-color: #00e676; background: rgba(0, 230, 118, 0.06); }
-        .ots-result-row.ots-result-named { border-color: #bb6bd9; }
-        .ots-result-name { font-weight: 600; color: #f4f5f6; flex-shrink: 0; min-width: 30%; }
-        .ots-result-named-tag { color: #bb6bd9; font-weight: 700; font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.06em; margin-left: 6px; }
-        .ots-result-bar-track { flex: 1; background: #14161d; height: 10px; border-radius: 20px; overflow: hidden; }
-        .ots-result-bar-fill { background: #bb6bd9; height: 100%; }
-        .ots-result-value { font-weight: 700; color: #f4f5f6; min-width: 28px; text-align: right; flex-shrink: 0; }
+        .ots-result-row { display: flex; align-items: center; gap: 12px; padding: 10px 14px; background: var(--rm-surface-2); border: 1px solid var(--rm-border); border-radius: 8px; font-size: 0.9rem; }
+        .ots-result-row.ots-result-me { border-color: var(--rm-green); background: rgba(var(--rm-green-rgb), 0.06); }
+        .ots-result-row.ots-result-named { border-color: var(--rm-purple); }
+        .ots-result-name { font-weight: 600; color: var(--rm-text); flex-shrink: 0; min-width: 30%; }
+        .ots-result-named-tag { color: var(--rm-purple); font-weight: 700; font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.06em; margin-left: 6px; }
+        .ots-result-bar-track { flex: 1; background: var(--rm-surface); height: 10px; border-radius: 20px; overflow: hidden; }
+        .ots-result-bar-fill { background: var(--rm-purple); height: 100%; }
+        .ots-result-value { font-weight: 700; color: var(--rm-text); min-width: 28px; text-align: right; flex-shrink: 0; }
 
-        .btn-ready { background: #1e222b; border: 1px solid #222630; color: #e2e5e9; }
-        .btn-ready.ed-active { background: rgba(0, 230, 118, 0.08); border-color: #00e676; color: #00e676; }
-        .btn-skip { background: #1e222b; border: 1px solid #222630; color: #94a3b8; margin-top: 16px; }
-        .btn-skip.ed-active { background: rgba(255, 165, 0, 0.08); border-color: #ffa500; color: #ffa500; }
-        .btn-play-again { background: #ffa500; color: #0d0e11; }
-        .btn-play-again:hover { background: #e59400; }
+        .btn-ready { background: var(--rm-surface-2); border: 1px solid var(--rm-border); color: var(--rm-text-2); }
+        .btn-ready.ed-active { background: rgba(var(--rm-green-rgb), 0.08); border-color: var(--rm-green); color: var(--rm-green); }
+        .btn-skip { background: var(--rm-surface-2); border: 1px solid var(--rm-border); color: var(--rm-text-soft); margin-top: 16px; }
+        .btn-skip.ed-active { background: rgba(var(--rm-orange-rgb), 0.08); border-color: var(--rm-orange); color: var(--rm-orange); }
+        .btn-play-again { background: var(--rm-orange); color: var(--rm-bg); }
+        .btn-play-again:hover { background: var(--rm-orange-dark); }
         /* Declare and its decoy twin share this identical, muted style on
            purpose -- same size, same neutral color as every other button,
            so the impostor's phone doesn't visually shout "I'm different"
@@ -185,102 +186,102 @@
            background, just a color that actually registers as "this one's
            different" among the three buttons on this screen, rather than
            disappearing into it. */
-        .btn-declare, .btn-ed-decoy { background: #1e222b; border: 1px solid #222630; color: #b05c5c; }
-        .btn-declare:hover, .btn-ed-decoy:hover { background: #262b36; }
+        .btn-declare, .btn-ed-decoy { background: var(--rm-surface-2); border: 1px solid var(--rm-border); color: var(--rm-red-muted); }
+        .btn-declare:hover, .btn-ed-decoy:hover { background: var(--rm-border-2); }
         .btn-locked { opacity: 0.4; pointer-events: none; }
 
         /* Full-screen takeover the instant the impostor declares -- fires on
            every phone, not just theirs, so the room's attention snaps up
            regardless of what anyone was looking at. */
         #ed-declare-splash {
-            display: none; position: fixed; inset: 0; background: rgba(13, 14, 17, 0.97);
+            display: none; position: fixed; inset: 0; background: rgba(var(--rm-bg-rgb), 0.97);
             z-index: 1000; flex-direction: column; align-items: center; justify-content: center;
             text-align: center; padding: 24px;
         }
         #ed-declare-splash .ed-splash-icon { font-size: 3.5rem; margin-bottom: 16px; }
-        #ed-declare-splash .ed-splash-title { font-size: 1.6rem; font-weight: 700; color: #ffa500; letter-spacing: -0.02em; margin-bottom: 8px; }
-        #ed-declare-splash .ed-splash-sub { font-size: 0.95rem; color: #94a3b8; }
-        .player-badge { background: #1e222b; padding: 14px; border-radius: 8px; border: 1px solid #222630; margin-bottom: 24px; font-size: 0.95rem; color: #00e676; font-weight: 600; text-align: left; display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+        #ed-declare-splash .ed-splash-title { font-size: 1.6rem; font-weight: 700; color: var(--rm-orange); letter-spacing: -0.02em; margin-bottom: 8px; }
+        #ed-declare-splash .ed-splash-sub { font-size: 0.95rem; color: var(--rm-text-soft); }
+        .player-badge { background: var(--rm-surface-2); padding: 14px; border-radius: 8px; border: 1px solid var(--rm-border); margin-bottom: 24px; font-size: 0.95rem; color: var(--rm-green); font-weight: 600; text-align: left; display: flex; justify-content: space-between; align-items: center; gap: 12px; }
         .player-badge-identity { display: flex; align-items: center; gap: 6px; min-width: 0; overflow: hidden; }
-        .player-badge-name { color: #fff; font-weight: bold; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-        .player-badge-room { color: #64748b; font-weight: 500; flex-shrink: 0; white-space: nowrap; }
-        .player-badge-room strong { color: #fff; font-weight: bold; }
+        .player-badge-name { color: var(--rm-white); font-weight: bold; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .player-badge-room { color: var(--rm-text-muted); font-weight: 500; flex-shrink: 0; white-space: nowrap; }
+        .player-badge-room strong { color: var(--rm-white); font-weight: bold; }
 
         .logo-header { height: 34px; width: auto; margin: 0 auto 10px auto; display: block; }
 
         /* Light, unobtrusive context appended after a module's name -- never
            competes with the name itself for attention. */
-        .module-descriptor { color: #64748b; font-weight: 400; font-size: 0.78rem; }
+        .module-descriptor { color: var(--rm-text-muted); font-weight: 400; font-size: 0.78rem; }
 
 
         /* Mirrors the TV's final-leaderboard medal styling (public/styles.css) so a
            player's own placement card reads as "the same result," not a re-skin. */
-        .leaderboard-btn { background: #1e222b; border: 1px solid #222630; border-radius: 8px; padding: 16px 20px; display: flex; justify-content: space-between; align-items: center; text-align: left; margin-top: 16px; }
-        .leaderboard-btn-name { color: #ffffff; font-size: 1.05rem; font-weight: 600; }
+        .leaderboard-btn { background: var(--rm-surface-2); border: 1px solid var(--rm-border); border-radius: 8px; padding: 16px 20px; display: flex; justify-content: space-between; align-items: center; text-align: left; margin-top: 16px; }
+        .leaderboard-btn-name { color: var(--rm-white); font-size: 1.05rem; font-weight: 600; }
         .leaderboard-btn-score { font-size: 1.05rem; font-weight: 700; }
-        .leaderboard-btn.rank-gold { border-color: #d4af37; background: rgba(212, 175, 55, 0.08); }
-        .leaderboard-btn.rank-gold .leaderboard-btn-score { color: #d4af37; }
-        .leaderboard-btn.rank-silver { border-color: #b8bcc4; background: rgba(184, 188, 196, 0.08); }
-        .leaderboard-btn.rank-silver .leaderboard-btn-score { color: #b8bcc4; }
-        .leaderboard-btn.rank-bronze { border-color: #cd7f32; background: rgba(205, 127, 50, 0.08); }
-        .leaderboard-btn.rank-bronze .leaderboard-btn-score { color: #cd7f32; }
+        .leaderboard-btn.rank-gold { border-color: var(--rm-medal-gold); background: rgba(var(--rm-medal-gold-rgb), 0.08); }
+        .leaderboard-btn.rank-gold .leaderboard-btn-score { color: var(--rm-medal-gold); }
+        .leaderboard-btn.rank-silver { border-color: var(--rm-medal-silver); background: rgba(var(--rm-medal-silver-rgb), 0.08); }
+        .leaderboard-btn.rank-silver .leaderboard-btn-score { color: var(--rm-medal-silver); }
+        .leaderboard-btn.rank-bronze { border-color: var(--rm-medal-bronze); background: rgba(var(--rm-medal-bronze-rgb), 0.08); }
+        .leaderboard-btn.rank-bronze .leaderboard-btn-score { color: var(--rm-medal-bronze); }
         /* Side pages (Randy, Oct 2026). Kids on a school trip played with
            no TV, so the phone grew a page on each side of the game: swipe
            left for Info (the scores), swipe right for Room (QR code, Leave
            Room). The game stays in the middle and keeps only what you tap;
            a thin strip on top keeps your name and score in view. */
-        .top-strip { display: none; position: fixed; top: 0; left: 0; right: 0; z-index: 60; height: 44px; padding: 0 12px 0 16px; box-sizing: border-box; align-items: center; justify-content: space-between; background: #0d0e11; border-bottom: 1px solid #1a1d25; }
+        .top-strip { display: none; position: fixed; top: 0; left: 0; right: 0; z-index: 60; height: 44px; padding: 0 12px 0 16px; box-sizing: border-box; align-items: center; justify-content: space-between; background: var(--rm-bg); border-bottom: 1px solid var(--rm-surface-1b); }
         body.in-room .top-strip { display: flex; }
         body.in-room { padding-top: 44px; }
         .top-strip-me { display: flex; align-items: center; gap: 8px; min-width: 0; font-weight: 600; font-size: 0.95rem; }
-        .top-strip-name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: #ffffff; }
-        .top-strip-score { color: #00e676; font-weight: 700; white-space: nowrap; }
+        .top-strip-name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--rm-white); }
+        .top-strip-score { color: var(--rm-green); font-weight: 700; white-space: nowrap; }
         .page-dots { display: flex; flex-shrink: 0; }
         .page-dot { width: 28px; height: 36px; border: none; background: none; padding: 0; display: flex; align-items: center; justify-content: center; cursor: pointer; }
-        .page-dot::after { content: ''; width: 8px; height: 8px; border-radius: 50%; background: #334155; transition: background 0.2s; }
-        .page-dot.active::after { background: #00e676; }
+        .page-dot::after { content: ''; width: 8px; height: 8px; border-radius: 50%; background: var(--rm-slate-700); transition: background 0.2s; }
+        .page-dot.active::after { background: var(--rm-green); }
         /* Each game screen used to carry its own name/room/score badge and
            its own Leave Room button, right under the answers where an
            excited thumb could bump it. The strip and the Room page have
            them now. (Still shown on the "you left" screen.) */
         body.in-room .player-badge, body.in-room .leave-room-btn { display: none !important; }
-        .side-page { position: fixed; top: 44px; left: 0; right: 0; bottom: 0; z-index: 50; background: #0d0e11; overflow-y: auto; padding: 0 20px 30px; box-sizing: border-box; transition: transform 0.25s ease; visibility: hidden; }
+        .side-page { position: fixed; top: 44px; left: 0; right: 0; bottom: 0; z-index: 50; background: var(--rm-bg); overflow-y: auto; padding: 0 20px 30px; box-sizing: border-box; transition: transform 0.25s ease; visibility: hidden; }
         .side-page.from-right { transform: translateX(100%); }
         .side-page.from-left { transform: translateX(-100%); }
         .side-page.open { transform: translateX(0); visibility: visible; }
         .side-page.closing { visibility: visible; }
-        .page-hint { display: none; position: fixed; top: 52px; left: 50%; transform: translateX(-50%); z-index: 55; background: #1e222b; border: 1px solid #00e676; border-radius: 999px; padding: 8px 14px; font-size: 0.8rem; color: #e2e5e9; white-space: nowrap; box-shadow: 0 4px 20px rgba(0,0,0,0.4); }
-        .room-qr img { display: block; width: 100%; max-width: 240px; margin: 0 auto; background: #ffffff; border-radius: 12px; padding: 10px; box-sizing: border-box; }
+        .page-hint { display: none; position: fixed; top: 52px; left: 50%; transform: translateX(-50%); z-index: 55; background: var(--rm-surface-2); border: 1px solid var(--rm-green); border-radius: 999px; padding: 8px 14px; font-size: 0.8rem; color: var(--rm-text-2); white-space: nowrap; box-shadow: 0 4px 20px rgba(var(--rm-black-rgb),0.4); }
+        .room-qr img { display: block; width: 100%; max-width: 240px; margin: 0 auto; background: var(--rm-white); border-radius: 12px; padding: 10px; box-sizing: border-box; }
         .sound-options { display: flex; gap: 8px; }
-        .sound-options button { flex: 1; background: #1e222b; border: 1px solid #222630; color: #94a3b8; border-radius: 8px; padding: 10px 4px; font-size: 0.9rem; font-weight: 600; cursor: pointer; }
-        .sound-options button.active { border-color: #e2e5e9; color: #ffffff; background: rgba(255, 255, 255, 0.08); }
-        .room-code-big { font-size: 2.4rem; font-weight: 800; letter-spacing: 0.15em; color: #ffffff; margin-bottom: 8px; }
+        .sound-options button { flex: 1; background: var(--rm-surface-2); border: 1px solid var(--rm-border); color: var(--rm-text-soft); border-radius: 8px; padding: 10px 4px; font-size: 0.9rem; font-weight: 600; cursor: pointer; }
+        .sound-options button.active { border-color: var(--rm-text-2); color: var(--rm-white); background: rgba(var(--rm-white-rgb), 0.08); }
+        .room-code-big { font-size: 2.4rem; font-weight: 800; letter-spacing: 0.15em; color: var(--rm-white); margin-bottom: 8px; }
         .scores-list { display: flex; flex-direction: column; gap: 8px; margin-top: 8px; }
-        .scores-row { display: flex; align-items: center; gap: 12px; background: #1e222b; border: 1px solid #222630; border-radius: 8px; padding: 12px 16px; text-align: left; }
-        .scores-row.me { border-color: #00e676; background: rgba(0, 230, 118, 0.06); }
-        .scores-rank { width: 1.6em; color: #64748b; font-weight: 700; }
-        .scores-row.rank-1 .scores-rank { color: #d4af37; }
-        .scores-row.rank-2 .scores-rank { color: #b8bcc4; }
-        .scores-row.rank-3 .scores-rank { color: #cd7f32; }
-        .scores-name { flex: 1; color: #ffffff; font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-        .scores-points { font-weight: 700; color: #e2e5e9; }
-        .scores-hint { color: #64748b; font-size: 0.8rem; margin: 18px 0 0 0; }
+        .scores-row { display: flex; align-items: center; gap: 12px; background: var(--rm-surface-2); border: 1px solid var(--rm-border); border-radius: 8px; padding: 12px 16px; text-align: left; }
+        .scores-row.me { border-color: var(--rm-green); background: rgba(var(--rm-green-rgb), 0.06); }
+        .scores-rank { width: 1.6em; color: var(--rm-text-muted); font-weight: 700; }
+        .scores-row.rank-1 .scores-rank { color: var(--rm-medal-gold); }
+        .scores-row.rank-2 .scores-rank { color: var(--rm-medal-silver); }
+        .scores-row.rank-3 .scores-rank { color: var(--rm-medal-bronze); }
+        .scores-name { flex: 1; color: var(--rm-white); font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .scores-points { font-weight: 700; color: var(--rm-text-2); }
+        .scores-hint { color: var(--rm-text-muted); font-size: 0.8rem; margin: 18px 0 0 0; }
         .info-where { text-align: left; margin-bottom: 20px; }
-        .info-mode { display: flex; align-items: center; gap: 10px; font-size: 1.3rem; font-weight: 700; color: #ffffff; }
-        .info-line { color: #94a3b8; font-size: 0.9rem; font-weight: 500; margin-top: 6px; }
+        .info-mode { display: flex; align-items: center; gap: 10px; font-size: 1.3rem; font-weight: 700; color: var(--rm-white); }
+        .info-line { color: var(--rm-text-soft); font-size: 0.9rem; font-weight: 500; margin-top: 6px; }
         .info-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(90px, 1fr)); gap: 8px; margin-bottom: 24px; }
-        .info-stat { background: #1e222b; border: 1px solid #222630; border-radius: 8px; padding: 10px 8px; }
-        .info-stat-num { font-size: 1.3rem; font-weight: 700; color: #ffffff; }
-        .info-stat-label { font-size: 0.7rem; color: #64748b; text-transform: uppercase; letter-spacing: 0.06em; font-weight: 600; margin-top: 2px; }
+        .info-stat { background: var(--rm-surface-2); border: 1px solid var(--rm-border); border-radius: 8px; padding: 10px 8px; }
+        .info-stat-num { font-size: 1.3rem; font-weight: 700; color: var(--rm-white); }
+        .info-stat-label { font-size: 0.7rem; color: var(--rm-text-muted); text-transform: uppercase; letter-spacing: 0.06em; font-weight: 600; margin-top: 2px; }
         .info-heading { text-align: left; margin-bottom: 4px; }
-        .recap { background: #1e222b; border: 1px solid #222630; border-radius: 8px; padding: 12px 16px; text-align: left; margin: 8px 0 24px 0; }
-        .recap-label { color: #64748b; font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; }
-        .recap-answer { color: #ffffff; font-size: 1.15rem; font-weight: 700; margin: 4px 0; }
-        .recap-line { color: #94a3b8; font-size: 0.85rem; }
+        .recap { background: var(--rm-surface-2); border: 1px solid var(--rm-border); border-radius: 8px; padding: 12px 16px; text-align: left; margin: 8px 0 24px 0; }
+        .recap-label { color: var(--rm-text-muted); font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; }
+        .recap-answer { color: var(--rm-white); font-size: 1.15rem; font-weight: 700; margin: 4px 0; }
+        .recap-line { color: var(--rm-text-soft); font-size: 0.85rem; }
         .recap-you { font-size: 0.85rem; font-weight: 600; margin-top: 6px; }
-        .recap-you.right { color: #00e676; }
-        .recap-you.wrong { color: #ff4757; }
-        .recap-you.none { color: #64748b; }
+        .recap-you.right { color: var(--rm-green); }
+        .recap-you.wrong { color: var(--rm-red); }
+        .recap-you.none { color: var(--rm-text-muted); }
     </style>
 </head>
 <body>
@@ -307,7 +308,7 @@
             <h1>Invite a friend</h1>
             <p class="subtitle" style="margin-bottom: 16px;">Scan to join this room</p>
             <div class="room-qr"><img id="room-qr-img" alt="QR code to join this room"></div>
-            <p class="subtitle" style="margin: 16px 0 4px 0;">or go to <strong id="room-site" style="color: #cbd5e1;"></strong> and enter</p>
+            <p class="subtitle" style="margin: 16px 0 4px 0;">or go to <strong id="room-site" style="color: var(--rm-text-light);"></strong> and enter</p>
             <div class="room-code-big" id="room-code-big">----</div>
             <div class="sound-setting">
                 <label style="margin: 22px 0 8px;">Sound on this phone</label>
@@ -345,7 +346,7 @@
             <!-- inputmode: phones show the digit pad, not the full keyboard. -->
             <input type="text" id="room-code" placeholder="e.g., 1234" inputmode="numeric" pattern="[0-9]*" maxlength="4" autocomplete="off" oninput="refreshJoinModes()">
             <!-- A pub room says where you are once the code is in. -->
-            <div id="join-venue-line" style="display: none; margin-top: 10px; font-weight: 700; color: #facc15;"></div>
+            <div id="join-venue-line" style="display: none; margin-top: 10px; font-weight: 700; color: var(--rm-yellow);"></div>
         </div>
         <div class="input-group">
             <label>Your Nickname</label>
@@ -522,21 +523,21 @@
             <img id="q-visual-image" src="" alt="" style="width: 100%; aspect-ratio: 4 / 3; max-height: 220px; object-fit: contain; border-radius: 8px;">
         </div>
 
-        <div id="question-text-display" style="text-align: left; font-size: 1.1rem; font-weight: 600; color: #ffffff; line-height: 1.4; margin: 20px 0;"></div>
+        <div id="question-text-display" style="text-align: left; font-size: 1.1rem; font-weight: 600; color: var(--rm-white); line-height: 1.4; margin: 20px 0;"></div>
 
         <div class="module-list">
             <!-- Full-width minimalist answer choice rows -->
             <div class="module-row" id="choice-row-A" onclick="submitTriviaAnswer(this, 'A')">
-                <span style="background: rgba(0, 230, 118, 0.1); color: #00e676; font-weight: 700; padding: 4px 10px; border-radius: 4px; font-size: 0.85rem; margin-right: 12px;">A</span><span id="choice-text-A">-</span>
+                <span style="background: rgba(var(--rm-green-rgb), 0.1); color: var(--rm-green); font-weight: 700; padding: 4px 10px; border-radius: 4px; font-size: 0.85rem; margin-right: 12px;">A</span><span id="choice-text-A">-</span>
             </div>
             <div class="module-row" id="choice-row-B" onclick="submitTriviaAnswer(this, 'B')">
-                <span style="background: rgba(0, 230, 118, 0.1); color: #00e676; font-weight: 700; padding: 4px 10px; border-radius: 4px; font-size: 0.85rem; margin-right: 12px;">B</span><span id="choice-text-B">-</span>
+                <span style="background: rgba(var(--rm-green-rgb), 0.1); color: var(--rm-green); font-weight: 700; padding: 4px 10px; border-radius: 4px; font-size: 0.85rem; margin-right: 12px;">B</span><span id="choice-text-B">-</span>
             </div>
             <div class="module-row" id="choice-row-C" onclick="submitTriviaAnswer(this, 'C')">
-                <span style="background: rgba(0, 230, 118, 0.1); color: #00e676; font-weight: 700; padding: 4px 10px; border-radius: 4px; font-size: 0.85rem; margin-right: 12px;">C</span><span id="choice-text-C">-</span>
+                <span style="background: rgba(var(--rm-green-rgb), 0.1); color: var(--rm-green); font-weight: 700; padding: 4px 10px; border-radius: 4px; font-size: 0.85rem; margin-right: 12px;">C</span><span id="choice-text-C">-</span>
             </div>
             <div class="module-row" id="choice-row-D" onclick="submitTriviaAnswer(this, 'D')">
-                <span style="background: rgba(0, 230, 118, 0.1); color: #00e676; font-weight: 700; padding: 4px 10px; border-radius: 4px; font-size: 0.85rem; margin-right: 12px;">D</span><span id="choice-text-D">-</span>
+                <span style="background: rgba(var(--rm-green-rgb), 0.1); color: var(--rm-green); font-weight: 700; padding: 4px 10px; border-radius: 4px; font-size: 0.85rem; margin-right: 12px;">D</span><span id="choice-text-D">-</span>
             </div>
         </div>
 
@@ -566,33 +567,33 @@
             <!-- Persistent through reveal/wager/side-bet -- players kept
                  losing track of the category once it vanished after the
                  opening beat. -->
-            <div id="ty2-doubler-category-badge" style="font-size: 0.8rem; font-weight: 600; color: #ffa500; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 10px; display: none;"></div>
+            <div id="ty2-doubler-category-badge" style="font-size: 0.8rem; font-weight: 600; color: var(--rm-orange); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 10px; display: none;"></div>
             <div id="ty2-doubler-reveal-box" style="display: none;">
-                <div style="font-size: 1.8rem; font-weight: 800; color: #ffa500; margin-bottom: 8px;">DOUBLER!</div>
-                <div id="ty2-doubler-reveal-text" style="color: #94a3b8;"></div>
+                <div style="font-size: 1.8rem; font-weight: 800; color: var(--rm-orange); margin-bottom: 8px;">DOUBLER!</div>
+                <div id="ty2-doubler-reveal-text" style="color: var(--rm-text-soft);"></div>
             </div>
             <div id="ty2-wager-box" style="display: none;">
                 <div id="ty2-wager-prompt-text" style="font-weight: 600; margin-bottom: 14px;"></div>
                 <div id="ty2-wager-input-row" style="display: none;">
-                    <input type="number" id="ty2-wager-input" min="0" inputmode="numeric" pattern="[0-9]*" placeholder="0" oninput="updateMaxBet()" style="width: 100%; padding: 12px; font-size: 1.1rem; border-radius: 8px; border: 1px solid #222630; background: #14161d; color: #fff; margin-bottom: 10px; box-sizing: border-box; transition: box-shadow 0.2s, border-color 0.2s;" />
+                    <input type="number" id="ty2-wager-input" min="0" inputmode="numeric" pattern="[0-9]*" placeholder="0" oninput="updateMaxBet()" style="width: 100%; padding: 12px; font-size: 1.1rem; border-radius: 8px; border: 1px solid var(--rm-border); background: var(--rm-surface); color: var(--rm-white); margin-bottom: 10px; box-sizing: border-box; transition: box-shadow 0.2s, border-color 0.2s;" />
                     <!-- Max Bet (Randy, Oct 2026): fills in the most you can wager;
                          you still press Lock In, and can type over it. -->
                     <button type="button" class="btn btn-risk" id="ty2-max-btn" onclick="maxBet()">🔥 👖 Pants on the Line! 🔥</button>
-                    <div id="ty2-max-quip" style="min-height: 1.2em; margin-top: 8px; font-size: 0.85rem; font-weight: 600; color: #ff9a4d; text-align: center;"></div>
-                    <div id="ty2-stakes" style="margin-top: 4px; font-size: 0.85rem; color: #94a3b8; text-align: center;"></div>
+                    <div id="ty2-max-quip" style="min-height: 1.2em; margin-top: 8px; font-size: 0.85rem; font-weight: 600; color: var(--rm-orange-soft); text-align: center;"></div>
+                    <div id="ty2-stakes" style="margin-top: 4px; font-size: 0.85rem; color: var(--rm-text-soft); text-align: center;"></div>
                     <button class="btn" style="margin-top: 14px;" onclick="submitTriviYeahIIWager()">Lock In Wager</button>
                 </div>
             </div>
             <div id="ty2-sidebet-box" style="display: none;">
-                <div id="ty2-sidebet-wager-text" style="font-weight: 700; color: #ffa500; font-size: 1.3rem; margin-bottom: 14px;"></div>
+                <div id="ty2-sidebet-wager-text" style="font-weight: 700; color: var(--rm-orange); font-size: 1.3rem; margin-bottom: 14px;"></div>
                 <!-- No amount entry -- a side bet always stakes the tile's
                      own value, same for every bettor. One tap locks it in. -->
                 <div class="module-list" id="ty2-sidebet-buttons" style="display: none;">
-                    <div class="module-row" id="ty2-bet-row-FOR" onclick="submitTriviYeahIISideBet(this, 'FOR')" style="text-align: center; font-weight: 700; color: #00e676;">For &mdash; they'll get it right</div>
-                    <div class="module-row" id="ty2-bet-row-AGAINST" onclick="submitTriviYeahIISideBet(this, 'AGAINST')" style="text-align: center; font-weight: 700; color: #ff5c5c;">Against &mdash; they'll miss it</div>
-                    <div class="module-row" id="ty2-bet-row-PASS" onclick="submitTriviYeahIISideBet(this, 'PASS')" style="margin-top: 10px; border-style: dashed; color: #94a3b8; text-align: center; font-weight: 600;">Pass -- sit this one out</div>
+                    <div class="module-row" id="ty2-bet-row-FOR" onclick="submitTriviYeahIISideBet(this, 'FOR')" style="text-align: center; font-weight: 700; color: var(--rm-green);">For &mdash; they'll get it right</div>
+                    <div class="module-row" id="ty2-bet-row-AGAINST" onclick="submitTriviYeahIISideBet(this, 'AGAINST')" style="text-align: center; font-weight: 700; color: var(--rm-red-soft);">Against &mdash; they'll miss it</div>
+                    <div class="module-row" id="ty2-bet-row-PASS" onclick="submitTriviYeahIISideBet(this, 'PASS')" style="margin-top: 10px; border-style: dashed; color: var(--rm-text-soft); text-align: center; font-weight: 600;">Pass -- sit this one out</div>
                 </div>
-                <div id="ty2-sidebet-waiting-text" style="color: #94a3b8; display: none;"></div>
+                <div id="ty2-sidebet-waiting-text" style="color: var(--rm-text-soft); display: none;"></div>
             </div>
         </div>
 
@@ -605,8 +606,8 @@
              choices -- same category -> +2s -> question -> +2s -> buttons
              pacing as the TV, driven by the server's phase, not a local timer. -->
         <div id="ty2-reveal-container" style="display: none; margin-top: 16px;">
-            <div id="ty2-category-meta" style="font-size: 0.8rem; font-weight: 600; color: #64748b; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 10px;"></div>
-            <div id="ty2-question-text" style="text-align: left; font-size: 1.05rem; font-weight: 600; color: #ffffff; line-height: 1.4; margin-bottom: 16px;"></div>
+            <div id="ty2-category-meta" style="font-size: 0.8rem; font-weight: 600; color: var(--rm-text-muted); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 10px;"></div>
+            <div id="ty2-question-text" style="text-align: left; font-size: 1.05rem; font-weight: 600; color: var(--rm-white); line-height: 1.4; margin-bottom: 16px;"></div>
             <!-- Picture questions (Country Monkey maps): a close-up for anyone
                  who can't make out the TV from the couch. Kept to about a
                  quarter of the screen so all the answer buttons still fit. -->
@@ -614,19 +615,19 @@
                 <img id="ty2-visual-image" src="" alt="" style="width: 100%; aspect-ratio: 4 / 3; max-height: 26vh; object-fit: contain; border-radius: 8px;">
             </div>
             <div class="module-list" id="ty2-choices-list" style="display: none;">
-                <div class="module-row" id="ty2-choice-row-A" onclick="submitTriviYeahIIAnswer(this, 'A')"><span style="background: rgba(0, 230, 118, 0.1); color: #00e676; font-weight: 700; padding: 4px 10px; border-radius: 4px; font-size: 0.85rem; margin-right: 12px;">A</span><span id="ty2-choice-text-A">-</span></div>
-                <div class="module-row" id="ty2-choice-row-B" onclick="submitTriviYeahIIAnswer(this, 'B')"><span style="background: rgba(0, 230, 118, 0.1); color: #00e676; font-weight: 700; padding: 4px 10px; border-radius: 4px; font-size: 0.85rem; margin-right: 12px;">B</span><span id="ty2-choice-text-B">-</span></div>
-                <div class="module-row" id="ty2-choice-row-C" onclick="submitTriviYeahIIAnswer(this, 'C')"><span style="background: rgba(0, 230, 118, 0.1); color: #00e676; font-weight: 700; padding: 4px 10px; border-radius: 4px; font-size: 0.85rem; margin-right: 12px;">C</span><span id="ty2-choice-text-C">-</span></div>
-                <div class="module-row" id="ty2-choice-row-D" onclick="submitTriviYeahIIAnswer(this, 'D')"><span style="background: rgba(0, 230, 118, 0.1); color: #00e676; font-weight: 700; padding: 4px 10px; border-radius: 4px; font-size: 0.85rem; margin-right: 12px;">D</span><span id="ty2-choice-text-D">-</span></div>
+                <div class="module-row" id="ty2-choice-row-A" onclick="submitTriviYeahIIAnswer(this, 'A')"><span style="background: rgba(var(--rm-green-rgb), 0.1); color: var(--rm-green); font-weight: 700; padding: 4px 10px; border-radius: 4px; font-size: 0.85rem; margin-right: 12px;">A</span><span id="ty2-choice-text-A">-</span></div>
+                <div class="module-row" id="ty2-choice-row-B" onclick="submitTriviYeahIIAnswer(this, 'B')"><span style="background: rgba(var(--rm-green-rgb), 0.1); color: var(--rm-green); font-weight: 700; padding: 4px 10px; border-radius: 4px; font-size: 0.85rem; margin-right: 12px;">B</span><span id="ty2-choice-text-B">-</span></div>
+                <div class="module-row" id="ty2-choice-row-C" onclick="submitTriviYeahIIAnswer(this, 'C')"><span style="background: rgba(var(--rm-green-rgb), 0.1); color: var(--rm-green); font-weight: 700; padding: 4px 10px; border-radius: 4px; font-size: 0.85rem; margin-right: 12px;">C</span><span id="ty2-choice-text-C">-</span></div>
+                <div class="module-row" id="ty2-choice-row-D" onclick="submitTriviYeahIIAnswer(this, 'D')"><span style="background: rgba(var(--rm-green-rgb), 0.1); color: var(--rm-green); font-weight: 700; padding: 4px 10px; border-radius: 4px; font-size: 0.85rem; margin-right: 12px;">D</span><span id="ty2-choice-text-D">-</span></div>
                 <!-- Deliberately plain/muted, no lettered badge -- this is an
                      opt-out from the wrong-answer penalty, not a 5th choice,
                      and shouldn't read as one at a glance. Hidden entirely
                      for a Doubler question -- see renderTriviYeahII. -->
-                <div class="module-row" id="ty2-choice-row-PASS" onclick="submitTriviYeahIIAnswer(this, 'PASS')" style="margin-top: 10px; border-style: dashed; color: #94a3b8; text-align: center; font-weight: 600;">Pass -- no points, no penalty</div>
+                <div class="module-row" id="ty2-choice-row-PASS" onclick="submitTriviYeahIIAnswer(this, 'PASS')" style="margin-top: 10px; border-style: dashed; color: var(--rm-text-soft); text-align: center; font-weight: 600;">Pass -- no points, no penalty</div>
             </div>
             <!-- Non-picker view of a Doubler's ANSWERING phase -- they already
                  placed their side bet, so there's nothing left to tap. -->
-            <div id="ty2-doubler-spectator-text" style="display: none; color: #94a3b8; text-align: center; padding: 20px 0;"></div>
+            <div id="ty2-doubler-spectator-text" style="display: none; color: var(--rm-text-soft); text-align: center; padding: 20px 0;"></div>
             <div id="ty2-feedback" class="feedback" style="margin-top: 24px; font-weight: 600; text-align: left; padding: 14px 20px; display: none;"></div>
         </div>
 
@@ -640,7 +641,7 @@
 
         <!-- Fixed one-line height: when this wrapped or emptied, the buttons
              below jumped mid-tap (Randy's playtest). -->
-        <div id="fmd-worth" style="font-size: 1.2rem; font-weight: 800; color: #facc15; text-align: center; margin: 16px 0 10px; height: 1.5em; line-height: 1.5em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"></div>
+        <div id="fmd-worth" style="font-size: 1.2rem; font-weight: 800; color: var(--rm-yellow); text-align: center; margin: 16px 0 10px; height: 1.5em; line-height: 1.5em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"></div>
         <div id="fmd-flag-container" style="display: none; text-align: center; margin: 0 0 12px;">
             <img id="fmd-flag-image" src="" alt="" style="width: 100%; aspect-ratio: 4 / 3; max-height: 20vh; object-fit: contain; border-radius: 8px;">
         </div>
@@ -648,7 +649,7 @@
              the clues (also on the TV) go below them. -->
         <div class="module-list" id="fmd-choices-list"></div>
         <div id="fmd-feedback" class="feedback" style="margin-top: 12px; font-weight: 600; text-align: left; padding: 14px 20px; display: none;"></div>
-        <div id="fmd-clues" style="text-align: left; font-size: 0.95rem; color: #cbd5e1; line-height: 1.5; margin: 12px 0;"></div>
+        <div id="fmd-clues" style="text-align: left; font-size: 0.95rem; color: var(--rm-text-light); line-height: 1.5; margin: 12px 0;"></div>
         <div id="fmd-map-container" style="display: none; text-align: center; margin: 0 0 12px;">
             <img id="fmd-map-image" src="" alt="" style="width: 100%; aspect-ratio: 4 / 3; max-height: 18vh; object-fit: contain; border-radius: 8px;">
         </div>
@@ -662,18 +663,18 @@
         <p class="subtitle" id="fw-status-line" style="margin-bottom: 20px;">...</p>
 
 
-        <div id="fw-topic-meta" style="font-size: 0.85rem; font-weight: 600; color: #64748b; text-transform: uppercase; letter-spacing: 0.06em; margin-top: 16px; margin-bottom: 10px; text-align: center;"></div>
+        <div id="fw-topic-meta" style="font-size: 0.85rem; font-weight: 600; color: var(--rm-text-muted); text-transform: uppercase; letter-spacing: 0.06em; margin-top: 16px; margin-bottom: 10px; text-align: center;"></div>
 
         <!-- WAGER: private, one-shot -- no changing it after submit. -->
         <div id="fw-wager-box" style="display: none; margin-top: 10px;">
             <div id="fw-wager-prompt-text" style="font-weight: 600; margin-bottom: 14px; text-align: center;"></div>
             <div id="fw-wager-input-row" style="display: none;">
-                <input type="number" id="fw-wager-input" min="0" inputmode="numeric" pattern="[0-9]*" placeholder="0" oninput="updateRiskItAll()" style="width: 100%; padding: 12px; font-size: 1.1rem; border-radius: 8px; border: 1px solid #222630; background: #14161d; color: #fff; margin-bottom: 10px; box-sizing: border-box; transition: box-shadow 0.2s, border-color 0.2s;" />
+                <input type="number" id="fw-wager-input" min="0" inputmode="numeric" pattern="[0-9]*" placeholder="0" oninput="updateRiskItAll()" style="width: 100%; padding: 12px; font-size: 1.1rem; border-radius: 8px; border: 1px solid var(--rm-border); background: var(--rm-surface); color: var(--rm-white); margin-bottom: 10px; box-sizing: border-box; transition: box-shadow 0.2s, border-color 0.2s;" />
                 <!-- Risk It All (Randy's son's idea, Oct 2026): fills in your
                      whole score; you still press Lock In, and can type over it. -->
                 <button type="button" class="btn btn-risk" id="fw-risk-btn" onclick="riskItAll()"></button>
-                <div id="fw-risk-quip" style="min-height: 1.2em; margin-top: 8px; font-size: 0.85rem; font-weight: 600; color: #ff9a4d; text-align: center;"></div>
-                <div id="fw-stakes" style="margin-top: 4px; font-size: 0.85rem; color: #94a3b8; text-align: center;"></div>
+                <div id="fw-risk-quip" style="min-height: 1.2em; margin-top: 8px; font-size: 0.85rem; font-weight: 600; color: var(--rm-orange-soft); text-align: center;"></div>
+                <div id="fw-stakes" style="margin-top: 4px; font-size: 0.85rem; color: var(--rm-text-soft); text-align: center;"></div>
                 <button class="btn" style="margin-top: 14px;" onclick="submitTriviYeahIIFinalWager()">Lock In Wager</button>
             </div>
         </div>
@@ -681,19 +682,19 @@
         <!-- ANSWER: free text, toUppercase as typed, resubmittable until
              the 40s clock runs out. -->
         <div id="fw-answer-box" style="display: none; margin-top: 10px;">
-            <div id="fw-question-text" style="text-align: left; font-size: 1.05rem; font-weight: 600; color: #ffffff; line-height: 1.4; margin-bottom: 16px;"></div>
+            <div id="fw-question-text" style="text-align: left; font-size: 1.05rem; font-weight: 600; color: var(--rm-white); line-height: 1.4; margin-bottom: 16px;"></div>
             <!-- Country Monkey's Final Wager map (hidden for Thinking Pants). -->
             <div id="fw-visual-container" style="display: none; text-align: center; margin: 0 0 14px;">
                 <img id="fw-visual-image" src="" alt="" style="width: 100%; aspect-ratio: 4 / 3; max-height: 26vh; object-fit: contain; border-radius: 8px;">
             </div>
-            <input type="text" id="fw-answer-input" placeholder="YOUR ANSWER" autocomplete="off" autocorrect="off" spellcheck="false" style="width: 100%; padding: 12px; font-size: 1.1rem; font-weight: 700; text-transform: uppercase; border-radius: 8px; border: 1px solid #222630; background: #14161d; color: #fff; margin-bottom: 10px; box-sizing: border-box;" oninput="this.value = this.value.toUpperCase();" />
+            <input type="text" id="fw-answer-input" placeholder="YOUR ANSWER" autocomplete="off" autocorrect="off" spellcheck="false" style="width: 100%; padding: 12px; font-size: 1.1rem; font-weight: 700; text-transform: uppercase; border-radius: 8px; border: 1px solid var(--rm-border); background: var(--rm-surface); color: var(--rm-white); margin-bottom: 10px; box-sizing: border-box;" oninput="this.value = this.value.toUpperCase();" />
             <button class="btn" onclick="submitTriviYeahIIFinalAnswer()">Lock In Final Answer</button>
             <!-- Flag Me Down only: private clues, each taking 25% off what
                  you'd win (a wrong answer still loses the whole wager). -->
             <div id="fw-hints-box" style="display: none; margin-top: 16px;">
-                <div id="fw-hints-worth" style="font-size: 0.85rem; font-weight: 600; color: #94a3b8; text-align: center; margin-bottom: 8px;"></div>
+                <div id="fw-hints-worth" style="font-size: 0.85rem; font-weight: 600; color: var(--rm-text-soft); text-align: center; margin-bottom: 8px;"></div>
                 <div id="fw-hints-buttons" style="display: flex; gap: 8px;"></div>
-                <div id="fw-hints-opened" style="text-align: left; font-size: 0.95rem; color: #cbd5e1; line-height: 1.5; margin-top: 10px;"></div>
+                <div id="fw-hints-opened" style="text-align: left; font-size: 0.95rem; color: var(--rm-text-light); line-height: 1.5; margin-top: 10px;"></div>
                 <div id="fw-hint-map-container" style="display: none; text-align: center; margin: 10px 0 0;">
                     <img id="fw-hint-map-image" src="" alt="" style="width: 100%; aspect-ratio: 4 / 3; max-height: 18vh; object-fit: contain; border-radius: 8px;">
                 </div>
@@ -702,7 +703,7 @@
         </div>
 
         <!-- REVEAL: all the drama happens on the TV from here. -->
-        <div id="fw-reveal-box" style="display: none; margin-top: 10px; text-align: center; color: #94a3b8; padding: 30px 0;">
+        <div id="fw-reveal-box" style="display: none; margin-top: 10px; text-align: center; color: var(--rm-text-soft); padding: 30px 0;">
             👀 Watch the TV for the results!
         </div>
 
@@ -717,10 +718,10 @@
         <img id="break-logo" alt="" style="display: none; max-width: 70%; max-height: 90px; margin: 0 auto 14px;">
         <h1>☕ Break time</h1>
         <p class="subtitle" id="break-venue" style="margin-bottom: 18px;"></p>
-        <div id="break-clock" style="font-size: 3rem; font-weight: 800; color: #ffffff; letter-spacing: 0.04em;">0:00</div>
+        <div id="break-clock" style="font-size: 3rem; font-weight: 800; color: var(--rm-white); letter-spacing: 0.04em;">0:00</div>
         <p class="subtitle" id="break-clock-label" style="margin: 4px 0 20px 0;">until the game picks up again</p>
         <button class="btn" id="break-back-btn" onclick="sendImBack()">I'm back!</button>
-        <div id="break-tally" style="color: #94a3b8; font-size: 0.9rem; margin-top: 12px;"></div>
+        <div id="break-tally" style="color: var(--rm-text-soft); font-size: 0.9rem; margin-top: 12px;"></div>
     </div>
 
     <!-- SCREEN 5: GAME OVER -->
@@ -870,7 +871,7 @@
         // but a stray tap shouldn't drop anyone out of a game.
         function renderLeaveArea(confirming) {
             document.getElementById('room-leave-area').innerHTML = confirming
-                ? `<p class="subtitle" style="margin: 20px 0 0 0; color: #e2e5e9;">Leave the room? You can rejoin with the same name.</p>
+                ? `<p class="subtitle" style="margin: 20px 0 0 0; color: var(--rm-text-2);">Leave the room? You can rejoin with the same name.</p>
                    <button type="button" class="btn" style="margin-top: 12px;" onclick="renderLeaveArea(false)">Stay</button>
                    <button type="button" class="btn btn-danger" style="margin-top: 10px;" onclick="leaveRoom()">Leave</button>`
                 : `<button type="button" class="btn btn-leave" style="margin-top: 20px;" onclick="renderLeaveArea(true)">Leave Room</button>`;
@@ -1172,10 +1173,10 @@
             area.style.display = 'block';
             const tally = endVote.votes ? `${endVote.votes} of ${endVote.needed} needed so far.` : '';
             area.innerHTML = endVote.mine
-                ? `<p class="subtitle" style="margin: 20px 0 0 0; color: #e2e5e9;">🚪 You voted to end this game. ${tally}</p>
+                ? `<p class="subtitle" style="margin: 20px 0 0 0; color: var(--rm-text-2);">🚪 You voted to end this game. ${tally}</p>
                    <button type="button" class="btn btn-leave" style="margin-top: 10px;" onclick="sendEndVote(false)">Take my vote back</button>`
                 : endVoteConfirming
-                    ? `<p class="subtitle" style="margin: 20px 0 0 0; color: #e2e5e9;">End this game for everyone? It ends once more than half the room agrees (${endVote.needed} of ${endVote.total}), and everyone goes back to the lobby. ${tally}</p>
+                    ? `<p class="subtitle" style="margin: 20px 0 0 0; color: var(--rm-text-2);">End this game for everyone? It ends once more than half the room agrees (${endVote.needed} of ${endVote.total}), and everyone goes back to the lobby. ${tally}</p>
                        <button type="button" class="btn btn-danger" style="margin-top: 10px;" onclick="sendEndVote(true)">Yes, vote to end it</button>
                        <button type="button" class="btn" style="margin-top: 10px;" onclick="endVoteConfirming = false; renderEndVote(lastEndVote)">Never mind</button>`
                     : `<button type="button" class="btn btn-leave" style="margin-top: 20px;" onclick="endVoteConfirming = true; renderEndVote(lastEndVote)">🚪 Vote to end this game</button>
@@ -1323,16 +1324,16 @@
             const feedback = document.getElementById('login-feedback');
 
             if (!room || !name) {
-                showFeedback(feedback, "⚠️ Name and Room fields are required.", "rgba(255,165,0,0.15)", "#ffa500", "rgba(255,165,0,0.1)");
+                showFeedback(feedback, "⚠️ Name and Room fields are required.", "rgba(var(--rm-orange-rgb),0.15)", "var(--rm-orange)", "rgba(var(--rm-orange-rgb),0.1)");
                 return;
             }
             if (!chosenModule) {
-                showFeedback(feedback, "⚠️ Select a module preference to submit your vote.", "rgba(255,165,0,0.15)", "#ffa500", "rgba(255,165,0,0.1)");
+                showFeedback(feedback, "⚠️ Select a module preference to submit your vote.", "rgba(var(--rm-orange-rgb),0.15)", "var(--rm-orange)", "rgba(var(--rm-orange-rgb),0.1)");
                 return;
             }
 
             localStorage.setItem('randomania_nickname', name);
-            showFeedback(feedback, "Connecting to live room pool...", "rgba(255,165,0,0.06)", "#ffa500", "rgba(255,165,0,0.1)");
+            showFeedback(feedback, "Connecting to live room pool...", "rgba(var(--rm-orange-rgb),0.06)", "var(--rm-orange)", "rgba(var(--rm-orange-rgb),0.1)");
 
             try {
                 const completeBodyText = `${room} ${name} ${chosenAvatar} ${chosenModule}`;
@@ -1344,7 +1345,7 @@
                 const data = await response.json();
 
                 if (data && data.success === false) {
-                    showFeedback(feedback, data.reply, "rgba(255,71,87,0.06)", "#ff4757", "rgba(255,71,87,0.1)");
+                    showFeedback(feedback, data.reply, "rgba(var(--rm-red-rgb),0.06)", "var(--rm-red)", "rgba(var(--rm-red-rgb),0.1)");
                     return;
                 }
 
@@ -1364,7 +1365,7 @@
                 initRoomStatePoller(room, name);
 
             } catch (error) {
-                showFeedback(feedback, "❌ Live connection timed out. Check server logs.", "rgba(255,71,87,0.06)", "#ff4757", "rgba(255,71,87,0.1)");
+                showFeedback(feedback, "❌ Live connection timed out. Check server logs.", "rgba(var(--rm-red-rgb),0.06)", "var(--rm-red)", "rgba(var(--rm-red-rgb),0.1)");
             }
         }
 
@@ -1552,9 +1553,9 @@
                 if (!revealedLetter) { row.style.borderColor = ''; row.style.background = ''; row.style.color = ''; return; }
                 row.classList.remove('selected', 'picked');
                 if (letter === revealedLetter) {
-                    row.style.borderColor = '#00e676'; row.style.background = 'rgba(0, 230, 118, 0.12)'; row.style.color = '#00e676'; row.style.opacity = '1';
+                    row.style.borderColor = 'var(--rm-green)'; row.style.background = 'rgba(var(--rm-green-rgb), 0.12)'; row.style.color = 'var(--rm-green)'; row.style.opacity = '1';
                 } else if (letter === myAnswer) {
-                    row.style.borderColor = '#ff5c5c'; row.style.background = 'rgba(255, 71, 87, 0.12)'; row.style.color = '#ff5c5c'; row.style.opacity = '1';
+                    row.style.borderColor = 'var(--rm-red-soft)'; row.style.background = 'rgba(var(--rm-red-rgb), 0.12)'; row.style.color = 'var(--rm-red-soft)'; row.style.opacity = '1';
                 } else {
                     row.style.borderColor = ''; row.style.background = ''; row.style.color = ''; row.style.opacity = '0.3';
                 }
@@ -1608,7 +1609,7 @@
                     body: JSON.stringify({ From: registeredName, Body: selectedLetter, roomCode: localStorage.getItem('randomania_roomcode') })
                 });
             } catch (error) {
-                showFeedback(feedback, "❌ Transmission failure.", "rgba(255,71,87,0.06)", "#ff4757", "rgba(255,71,87,0.1)");
+                showFeedback(feedback, "❌ Transmission failure.", "rgba(var(--rm-red-rgb),0.06)", "var(--rm-red)", "rgba(var(--rm-red-rgb),0.1)");
             }
         }
 
@@ -1620,7 +1621,7 @@
             const feedback = document.getElementById('category-feedback');
             const registeredName = localStorage.getItem('randomania_nickname') || 'test-handset';
             
-            showFeedback(feedback, "Logging sub-vote...", "rgba(255,165,0,0.06)", "#ffa500", "rgba(255,165,0,0.1)");
+            showFeedback(feedback, "Logging sub-vote...", "rgba(var(--rm-orange-rgb),0.06)", "var(--rm-orange)", "rgba(var(--rm-orange-rgb),0.1)");
 
             try {
                 const response = await fetch('/api/message', {
@@ -1629,9 +1630,9 @@
                     body: JSON.stringify({ From: registeredName, Body: categoryKey, roomCode: localStorage.getItem('randomania_roomcode') })
                 });
                 const data = await response.json();
-                showFeedback(feedback, data.reply, "rgba(0,230,118,0.06)", "#00e676", "rgba(0,230,118,0.1)");
+                showFeedback(feedback, data.reply, "rgba(var(--rm-green-rgb),0.06)", "var(--rm-green)", "rgba(var(--rm-green-rgb),0.1)");
             } catch (error) {
-                showFeedback(feedback, "❌ Transmission failed.", "rgba(255,71,87,0.06)", "#ff4757", "rgba(255,71,87,0.1)");
+                showFeedback(feedback, "❌ Transmission failed.", "rgba(var(--rm-red-rgb),0.06)", "var(--rm-red)", "rgba(var(--rm-red-rgb),0.1)");
             }
         }
 
@@ -1714,18 +1715,18 @@
                 let html = '';
                 for (let c = 0; c < categoryCount; c++) {
                     const first = data.grid[c * tierCount];
-                    html += `<div style="padding: 4px; text-align: center; font-size: 0.6rem; font-weight: 700; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.02em;">${first ? first.categoryLabel : ''}</div>`;
+                    html += `<div style="padding: 4px; text-align: center; font-size: 0.6rem; font-weight: 700; color: var(--rm-text-soft); text-transform: uppercase; letter-spacing: 0.02em;">${first ? first.categoryLabel : ''}</div>`;
                 }
                 for (let t = 0; t < tierCount; t++) {
                     for (let c = 0; c < categoryCount; c++) {
                         const cell = data.grid[c * tierCount + t];
                         if (!cell) { html += '<div></div>'; continue; }
                         if (cell.cleared) {
-                            html += `<div style="background: #14161d; border: 1px solid #1c1f28; border-radius: 8px; padding: 14px 2px; text-align: center; color: #334155; font-weight: 700;">&mdash;</div>`;
+                            html += `<div style="background: var(--rm-surface); border: 1px solid var(--rm-surface-1c); border-radius: 8px; padding: 14px 2px; text-align: center; color: var(--rm-slate-700); font-weight: 700;">&mdash;</div>`;
                         } else if (data.isMyPick) {
-                            html += `<div class="module-row" style="border: 2px solid #00e676; box-shadow: 0 0 8px rgba(0, 230, 118, 0.25); padding: 13px 2px; text-align: center; color: #00e676; font-weight: 800;" onclick="submitTriviYeahIIPick(this, ${cell.index})">${cell.points}</div>`;
+                            html += `<div class="module-row" style="border: 2px solid var(--rm-green); box-shadow: 0 0 8px rgba(var(--rm-green-rgb), 0.25); padding: 13px 2px; text-align: center; color: var(--rm-green); font-weight: 800;" onclick="submitTriviYeahIIPick(this, ${cell.index})">${cell.points}</div>`;
                         } else {
-                            html += `<div style="background: #14161d; border: 2px solid #00e676; box-shadow: 0 0 8px rgba(0, 230, 118, 0.25); border-radius: 8px; padding: 13px 2px; text-align: center; color: #00e676; font-weight: 800; opacity: 0.5;">${cell.points}</div>`;
+                            html += `<div style="background: var(--rm-surface); border: 2px solid var(--rm-green); box-shadow: 0 0 8px rgba(var(--rm-green-rgb), 0.25); border-radius: 8px; padding: 13px 2px; text-align: center; color: var(--rm-green); font-weight: 800; opacity: 0.5;">${cell.points}</div>`;
                         }
                     }
                 }
@@ -1851,9 +1852,9 @@
                 const won = data.doubler.pickerCorrect;
                 const payout = data.doubler.wagerAmount;
                 showFeedback(feedback, won ? `Correct! You won ${payout} points.` : `Missed it -- you lost ${payout} points.`,
-                    won ? "rgba(0,230,118,0.06)" : "rgba(255,71,87,0.06)", won ? "#00e676" : "#ff4757", won ? "rgba(0,230,118,0.15)" : "rgba(255,71,87,0.1)");
+                    won ? "rgba(var(--rm-green-rgb),0.06)" : "rgba(var(--rm-red-rgb),0.06)", won ? "var(--rm-green)" : "var(--rm-red)", won ? "rgba(var(--rm-green-rgb),0.15)" : "rgba(var(--rm-red-rgb),0.1)");
             } else if (data.trapOutcome && data.triviYeahIIPhase === 'ROUND_REVEAL' && trapOutcomeLine(data.trapOutcome, nickname)) {
-                showFeedback(feedback, trapOutcomeLine(data.trapOutcome, nickname), "rgba(255,92,92,0.06)", "#ff5c5c", "rgba(255,92,92,0.15)");
+                showFeedback(feedback, trapOutcomeLine(data.trapOutcome, nickname), "rgba(var(--rm-red-soft-rgb),0.06)", "var(--rm-red-soft)", "rgba(var(--rm-red-soft-rgb),0.15)");
             } else {
                 // A plain reveal needs no line: the buttons show it. Doubler and
                 // trap lines above stay -- they explain a jump in your score.
@@ -1991,17 +1992,17 @@
                     : t.type === 'WEDGIE' ? `If ${t.picker} misses it, ${t.setter} collects the points.` : t.rule;
                 box.innerHTML = `
                     <div>${phoneTrapIcon(t.type, 90)}</div>
-                    <div style="font-size: 1.8rem; font-weight: 800; color: #ff5c5c; margin: 8px 0;">${t.label.toUpperCase()}</div>
-                    <div style="color: #e2e5e9; font-weight: 600;">${rule}</div>
-                    <div style="color: #64748b; margin-top: 8px; font-size: 0.9rem;">Set by ${t.setter}</div>`;
+                    <div style="font-size: 1.8rem; font-weight: 800; color: var(--rm-red-soft); margin: 8px 0;">${t.label.toUpperCase()}</div>
+                    <div style="color: var(--rm-text-2); font-weight: 600;">${rule}</div>
+                    <div style="color: var(--rm-text-muted); margin-top: 8px; font-size: 0.9rem;">Set by ${t.setter}</div>`;
                 return;
             }
             if (!data.isTrapSetter) {
                 status.innerText = 'Shhh...';
                 box.innerHTML = `
                     <div>${phoneTrapIcon('SETTING', 80)}</div>
-                    <div style="font-weight: 700; color: #ffffff; margin-top: 10px;">${data.trapSetter} swept a column...</div>
-                    <div style="color: #94a3b8; margin-top: 4px;">...and is up to something.</div>`;
+                    <div style="font-weight: 700; color: var(--rm-white); margin-top: 10px;">${data.trapSetter} swept a column...</div>
+                    <div style="color: var(--rm-text-soft); margin-top: 4px;">...and is up to something.</div>`;
                 return;
             }
             // The setter: step 1, a tile; step 2, the trap. "No trap" any time.
@@ -2012,19 +2013,19 @@
                 let html = '';
                 for (let c = 0; c < categoryCount; c++) {
                     const first = data.grid[c * tierCount];
-                    html += `<div style="padding: 4px; text-align: center; font-size: 0.6rem; font-weight: 700; color: #94a3b8; text-transform: uppercase;">${first ? first.categoryLabel : ''}</div>`;
+                    html += `<div style="padding: 4px; text-align: center; font-size: 0.6rem; font-weight: 700; color: var(--rm-text-soft); text-transform: uppercase;">${first ? first.categoryLabel : ''}</div>`;
                 }
                 for (let t = 0; t < tierCount; t++) {
                     for (let c = 0; c < categoryCount; c++) {
                         const cell = data.grid[c * tierCount + t];
-                        if (!cell || cell.cleared) { html += `<div style="background: #14161d; border: 1px solid #1c1f28; border-radius: 8px; padding: 14px 2px; color: #334155; font-weight: 700;">&mdash;</div>`; continue; }
-                        html += `<div class="module-row" style="border: 2px solid #ff5c5c; padding: 13px 2px; text-align: center; color: #ff5c5c; font-weight: 800;" onclick="chooseTrapTile(${cell.index})">${cell.points}</div>`;
+                        if (!cell || cell.cleared) { html += `<div style="background: var(--rm-surface); border: 1px solid var(--rm-surface-1c); border-radius: 8px; padding: 14px 2px; color: var(--rm-slate-700); font-weight: 700;">&mdash;</div>`; continue; }
+                        html += `<div class="module-row" style="border: 2px solid var(--rm-red-soft); padding: 13px 2px; text-align: center; color: var(--rm-red-soft); font-weight: 800;" onclick="chooseTrapTile(${cell.index})">${cell.points}</div>`;
                     }
                 }
                 box.innerHTML = `
                     <p class="ed-status-line" style="margin-top: 0;">Pick a tile. Nobody else will know -- not even whether you set one.</p>
                     <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px;">${html}</div>
-                    <button class="btn btn-leave" style="margin-top: 16px; color: #94a3b8; border-color: #222630;" onclick="sendTrapCommand('TRAP_SKIP')">No trap</button>`;
+                    <button class="btn btn-leave" style="margin-top: 16px; color: var(--rm-text-soft); border-color: var(--rm-border);" onclick="sendTrapCommand('TRAP_SKIP')">No trap</button>`;
                 return;
             }
             const cell = (data.grid || []).find(c => c.index === ty2TrapStep);
@@ -2034,10 +2035,10 @@
                 <div class="module-list">${TY2_TRAPS.map(t => `
                     <div class="module-row" style="text-align: left;" onclick="sendTrapCommand('TRAP ${ty2TrapStep} ${t.key}')">
                         <div style="font-weight: 800; display: flex; align-items: center; gap: 8px;">${phoneTrapIcon(t.key, 30)} ${t.label}</div>
-                        <div style="font-size: 0.8rem; color: #94a3b8; margin-top: 2px;">${t.rule}</div>
+                        <div style="font-size: 0.8rem; color: var(--rm-text-soft); margin-top: 2px;">${t.rule}</div>
                     </div>`).join('')}</div>
-                <button class="btn btn-leave" style="margin-top: 12px; color: #94a3b8; border-color: #222630;" onclick="chooseTrapTile(null)">Back</button>
-                <button class="btn btn-leave" style="margin-top: 8px; color: #94a3b8; border-color: #222630;" onclick="sendTrapCommand('TRAP_SKIP')">No trap</button>`;
+                <button class="btn btn-leave" style="margin-top: 12px; color: var(--rm-text-soft); border-color: var(--rm-border);" onclick="chooseTrapTile(null)">Back</button>
+                <button class="btn btn-leave" style="margin-top: 8px; color: var(--rm-text-soft); border-color: var(--rm-border);" onclick="sendTrapCommand('TRAP_SKIP')">No trap</button>`;
         }
 
         function chooseTrapTile(index) {
@@ -2096,7 +2097,7 @@
                     body: JSON.stringify({ From: registeredName, Body: selectedLetter, roomCode: localStorage.getItem('randomania_roomcode') })
                 });
             } catch (error) {
-                showFeedback(feedback, "❌ Transmission failure.", "rgba(255,71,87,0.06)", "#ff4757", "rgba(255,71,87,0.1)");
+                showFeedback(feedback, "❌ Transmission failure.", "rgba(var(--rm-red-rgb),0.06)", "var(--rm-red)", "rgba(var(--rm-red-rgb),0.1)");
             }
         }
 
@@ -2178,8 +2179,8 @@
             document.getElementById('fmd-choices-list').innerHTML = (data.choices || []).map((name, i) => {
                 const letter = 'ABCD'[i];
                 let style = '';
-                if (revealed && name === data.answer) style = 'border-color: #00e676; color: #00e676;';
-                else if (revealed && name === myChoice) style = 'border-color: #ff5c5c; color: #ff5c5c;';
+                if (revealed && name === data.answer) style = 'border-color: var(--rm-green); color: var(--rm-green);';
+                else if (revealed && name === myChoice) style = 'border-color: var(--rm-red-soft); color: var(--rm-red-soft);';
                 const selected = !revealed && name === myChoice ? ' picked' : '';
                 // Dim the rest once you've locked; keep your pick (and the answer) bright.
                 const done = revealed || myChoice;
@@ -2187,7 +2188,7 @@
                 const locked = done && !keepBright ? ' btn-locked' : '';
                 if (done) style += ' pointer-events: none;';
                 const click = done ? '' : ` onclick="submitFlagMeDownLock(this, '${letter}')"`;
-                return `<div class="module-row${selected}${locked}" style="${style}"${click}><span style="background: rgba(250, 204, 21, 0.12); color: #facc15; font-weight: 700; padding: 4px 10px; border-radius: 4px; font-size: 0.85rem; margin-right: 12px;">${letter}</span>${escapeFmd(name)}</div>`;
+                return `<div class="module-row${selected}${locked}" style="${style}"${click}><span style="background: rgba(var(--rm-yellow-rgb), 0.12); color: var(--rm-yellow); font-weight: 700; padding: 4px 10px; border-radius: 4px; font-size: 0.85rem; margin-right: 12px;">${letter}</span>${escapeFmd(name)}</div>`;
             }).join('');
 
             const feedback = document.getElementById('fmd-feedback');
@@ -2214,9 +2215,9 @@
                     body: JSON.stringify({ From: registeredName, Body: `FLAGLOCK ${letter}`, roomCode: localStorage.getItem('randomania_roomcode') })
                 });
                 const data = await response.json();
-                if (data.reply && data.reply.startsWith('⚠️')) showFeedback(feedback, data.reply, "rgba(255,71,87,0.06)", "#ff4757", "rgba(255,71,87,0.1)");
+                if (data.reply && data.reply.startsWith('⚠️')) showFeedback(feedback, data.reply, "rgba(var(--rm-red-rgb),0.06)", "var(--rm-red)", "rgba(var(--rm-red-rgb),0.1)");
             } catch (error) {
-                showFeedback(feedback, "❌ Transmission failure.", "rgba(255,71,87,0.06)", "#ff4757", "rgba(255,71,87,0.1)");
+                showFeedback(feedback, "❌ Transmission failure.", "rgba(var(--rm-red-rgb),0.06)", "var(--rm-red)", "rgba(var(--rm-red-rgb),0.1)");
             }
             fmdLastRenderKey = null;
         }
@@ -2281,7 +2282,7 @@
                 document.getElementById('fw-question-text').innerText = data.questionText || '';
                 const feedback = document.getElementById('fw-answer-feedback');
                 if (data.myAnswer) {
-                    showFeedback(feedback, `LOCKED IN: "${data.myAnswer}" -- you can still change it before time's up.`, "rgba(255,255,255,0.06)", "#e2e5e9", "rgba(255,255,255,0.15)");
+                    showFeedback(feedback, `LOCKED IN: "${data.myAnswer}" -- you can still change it before time's up.`, "rgba(var(--rm-white-rgb),0.06)", "var(--rm-text-2)", "rgba(var(--rm-white-rgb),0.15)");
                 } else {
                     feedback.style.display = 'none';
                 }
@@ -2295,23 +2296,23 @@
             revealBox.style.display = 'block';
             const r = data.myReveal;
             revealBox.innerHTML = r
-                ? `<div style="color: #94a3b8;">The answer</div>
-                   <div style="color: #ffffff; font-size: 1.4rem; font-weight: 800; margin: 4px 0 16px;">${escapeFmd(r.correctAnswer)}</div>
-                   ${r.played ? `<div style="color: #94a3b8;">Your answer: <strong style="color: #e2e5e9;">${r.answerText ? escapeFmd(r.answerText) : '(none)'}</strong></div>` : ''}
+                ? `<div style="color: var(--rm-text-soft);">The answer</div>
+                   <div style="color: var(--rm-white); font-size: 1.4rem; font-weight: 800; margin: 4px 0 16px;">${escapeFmd(r.correctAnswer)}</div>
+                   ${r.played ? `<div style="color: var(--rm-text-soft);">Your answer: <strong style="color: var(--rm-text-2);">${r.answerText ? escapeFmd(r.answerText) : '(none)'}</strong></div>` : ''}
                    <div style="margin-top: 10px;">${finalWagerResultLine(r)}</div>`
                 : '👀 Watch the TV for the results!';
         }
 
         function finalWagerResultLine(r) {
             if (!r || !r.played) return '';
-            if (!r.shown) return '<span style="color: #94a3b8;">Your result is coming up on the TV…</span>';
+            if (!r.shown) return '<span style="color: var(--rm-text-soft);">Your result is coming up on the TV…</span>';
             if (r.correct) {
                 const won = r.delta > 0 ? `+${r.delta}${r.clueUsed ? ' (after your clue)' : ''}` : '(you wagered 0)';
-                return `<span style="color: #00e676; font-weight: 700;">${r.allIn ? '🔥 ALL IN and it paid off!' : '✓ It counted!'} ${won}</span>`;
+                return `<span style="color: var(--rm-green); font-weight: 700;">${r.allIn ? '🔥 ALL IN and it paid off!' : '✓ It counted!'} ${won}</span>`;
             }
-            if (r.allIn) return `<span style="color: #ff4757; font-weight: 700;">✗ All in… and all gone. −${r.wager}</span>`;
+            if (r.allIn) return `<span style="color: var(--rm-red); font-weight: 700;">✗ All in… and all gone. −${r.wager}</span>`;
             const lost = r.wager > 0 ? `−${r.wager}` : '(you wagered 0, nothing lost)';
-            return `<span style="color: #ff4757; font-weight: 700;">✗ Not this time. ${lost}</span>`;
+            return `<span style="color: var(--rm-red); font-weight: 700;">✗ Not this time. ${lost}</span>`;
         }
 
         // Final Wager clues (Flag Me Down: region/capital/map; Country
@@ -2338,7 +2339,7 @@
                 buttons.innerHTML = data.hintsAvailable ? mine.menu.map(h =>
                     used.includes(h.kind)
                         ? `<div class="module-row btn-locked" style="flex: 1; text-align: center; font-weight: 700; padding: 10px 4px; opacity: 0.5;">${escapeFmd(h.label)} ✓</div>`
-                        : `<div class="module-row" style="flex: 1; text-align: center; font-weight: 700; padding: 10px 4px;" onclick="openFinalWagerHint(this, '${h.kind}')">${single ? 'Get a clue: ' : ''}${escapeFmd(h.label)}<br><span style="font-size: 0.75rem; color: #ff5c5c;">-${Math.round(100 * h.cost)}%</span></div>`
+                        : `<div class="module-row" style="flex: 1; text-align: center; font-weight: 700; padding: 10px 4px;" onclick="openFinalWagerHint(this, '${h.kind}')">${single ? 'Get a clue: ' : ''}${escapeFmd(h.label)}<br><span style="font-size: 0.75rem; color: var(--rm-red-soft);">-${Math.round(100 * h.cost)}%</span></div>`
                 ).join('') : '';
             }
             const lines = mine.opened.filter(h => h.text).map(h => `${h.icon || '💡'} ${escapeFmd(h.label)}: <strong>${escapeFmd(h.text)}</strong>`);
@@ -2370,7 +2371,7 @@
             const logo = document.getElementById('break-logo');
             if (data.logoUrl && logo.dataset.src !== data.logoUrl) { logo.dataset.src = data.logoUrl; logo.src = data.logoUrl; logo.onerror = () => { logo.style.display = 'none'; }; }
             logo.style.display = data.logoUrl ? 'block' : 'none';
-            document.getElementById('break-clock').style.color = s <= 30 ? '#00e676' : '#ffffff';
+            document.getElementById('break-clock').style.color = s <= 30 ? 'var(--rm-green)' : 'var(--rm-white)';
             document.getElementById('break-clock-label').innerText = s <= 30 ? '⏰ Back in 30 seconds -- find your seat!' : 'until the game picks up again';
             const button = document.getElementById('break-back-btn');
             button.style.display = data.iAmBack ? 'none' : '';
@@ -2483,9 +2484,9 @@
                     body: JSON.stringify({ From: registeredName, Body: `FANSWER ${answerText}`, roomCode: localStorage.getItem('randomania_roomcode') })
                 });
                 fwLastRenderKey = null;
-                showFeedback(feedback, `LOCKED IN: "${answerText}" -- you can still change it before time's up.`, "rgba(255,255,255,0.06)", "#e2e5e9", "rgba(255,255,255,0.15)");
+                showFeedback(feedback, `LOCKED IN: "${answerText}" -- you can still change it before time's up.`, "rgba(var(--rm-white-rgb),0.06)", "var(--rm-text-2)", "rgba(var(--rm-white-rgb),0.15)");
             } catch (error) {
-                showFeedback(feedback, "❌ Transmission failure.", "rgba(255,71,87,0.06)", "#ff4757", "rgba(255,71,87,0.1)");
+                showFeedback(feedback, "❌ Transmission failure.", "rgba(var(--rm-red-rgb),0.06)", "var(--rm-red)", "rgba(var(--rm-red-rgb),0.1)");
             }
         }
 
@@ -2508,9 +2509,9 @@
                     body: JSON.stringify({ From: registeredName, Body: modeKey, roomCode: localStorage.getItem('randomania_roomcode') })
                 });
                 const data = await response.json();
-                showFeedback(feedback, data.reply, "rgba(0,230,118,0.06)", "#00e676", "rgba(0,230,118,0.1)");
+                showFeedback(feedback, data.reply, "rgba(var(--rm-green-rgb),0.06)", "var(--rm-green)", "rgba(var(--rm-green-rgb),0.1)");
             } catch (error) {
-                showFeedback(feedback, "❌ Vote transmission failed.", "rgba(255,71,87,0.06)", "#ff4757", "rgba(255,71,87,0.1)");
+                showFeedback(feedback, "❌ Vote transmission failed.", "rgba(var(--rm-red-rgb),0.06)", "var(--rm-red)", "rgba(var(--rm-red-rgb),0.1)");
             }
         }
 
@@ -2547,7 +2548,7 @@
         function clickEmpossDurrDecoy(element) {
             const feedback = document.getElementById('ed-feedback');
             const reaction = ED_DECOY_REACTIONS[Math.floor(Math.random() * ED_DECOY_REACTIONS.length)];
-            showFeedback(feedback, reaction, "rgba(30,34,43,0.8)", "#e2e5e9", "rgba(255,255,255,0.06)");
+            showFeedback(feedback, reaction, "rgba(var(--rm-surface-2-rgb),0.8)", "var(--rm-text-2)", "rgba(var(--rm-white-rgb),0.06)");
         }
 
         function renderEmpossDurr(data, nickname, roomCode) {
@@ -2783,7 +2784,7 @@
                 if (data.myAnswer) {
                     const mine = (data.options || []).find(o => o.key === data.myAnswer);
                     container.innerHTML = `${q}
-                        <p class="ed-status-line">You said <strong style="color:#fff;">${pfEscape(mine ? mine.text : data.myAnswer)}</strong>. Keep a straight face...</p>
+                        <p class="ed-status-line">You said <strong style="color:var(--rm-white);">${pfEscape(mine ? mine.text : data.myAnswer)}</strong>. Keep a straight face...</p>
                         <div class="ed-status-line" id="pf-tally">${data.answeredCount} / ${data.rosterCount} answered</div>`;
                 } else {
                     const rows = (data.options || []).map(o =>
@@ -2803,7 +2804,7 @@
                     <div class="pf-post-answer">“${pfEscape(data.post.answerText)}”</div>`;
                 if (data.myPicks) {
                     container.innerHTML = `${postHtml}
-                        <p class="ed-status-line">You picked <strong style="color:#fff;">${data.myPicks.map(pfEscape).join(', ')}</strong>.</p>
+                        <p class="ed-status-line">You picked <strong style="color:var(--rm-white);">${data.myPicks.map(pfEscape).join(', ')}</strong>.</p>
                         <div class="ed-status-line" id="pf-tally">${data.guessedCount} / ${data.guessersNeeded} locked in</div>`;
                     return;
                 }
@@ -2813,7 +2814,7 @@
                 const me = localStorage.getItem('randomania_nickname');
                 const instruction = `Who said it? Pick ${data.picksNeeded}.`;
                 const rows = (data.pickCandidates || []).map((name, i) =>
-                    `<div class="module-row pf-pick-row" data-pick-index="${i}" onclick="toggleProfilerPick(${i})"><span>${pfEscape(name)}${name === me ? ' <span style="color:#64748b;font-weight:400;">(you)</span>' : ''}</span><span class="pf-pick-check"></span></div>`
+                    `<div class="module-row pf-pick-row" data-pick-index="${i}" onclick="toggleProfilerPick(${i})"><span>${pfEscape(name)}${name === me ? ' <span style="color:var(--rm-text-muted);font-weight:400;">(you)</span>' : ''}</span><span class="pf-pick-check"></span></div>`
                 ).join('');
                 container.innerHTML = `${postHtml}
                     <p class="ed-status-line">${instruction}<br><span style="font-size: 0.75rem;">If you said it, pick yourself too.</span></p>
@@ -2845,7 +2846,7 @@
                 container.innerHTML = `
                     <div class="pf-post-label">“${pfEscape(data.reveal.answerText)}” was...</div>
                     <div class="pf-post-answer">${(data.reveal.choosers || []).map(pfEscape).join(' & ')}</div>
-                    <div class="pf-result">${line}${iWasIt ? `<div style="margin-top:6px;color:#f472b6;font-weight:700;">Open book: +${openBook || 0}</div>` : ''}</div>
+                    <div class="pf-result">${line}${iWasIt ? `<div style="margin-top:6px;color:var(--rm-pink);font-weight:700;">Open book: +${openBook || 0}</div>` : ''}</div>
                     <button class="btn" id="pf-continue-btn" onclick="submitProfilerContinue()" ${data.iHaveVotedContinue ? 'disabled' : ''}>${data.iHaveVotedContinue ? 'Waiting on the room...' : 'Continue'}</button>
                     <div class="ed-status-line" id="pf-tally">${data.continueVotedCount} / ${data.continueTotalNeeded} ready</div>`;
                 return;
@@ -2900,11 +2901,11 @@
                 // Success needs no message -- the screen itself flips to the
                 // locked-in view on the next poll. Only surface problems.
                 if (data.reply && data.reply.startsWith('⚠️')) {
-                    showFeedback(feedback, data.reply, "rgba(255,71,87,0.06)", "#ff4757", "rgba(255,71,87,0.1)");
+                    showFeedback(feedback, data.reply, "rgba(var(--rm-red-rgb),0.06)", "var(--rm-red)", "rgba(var(--rm-red-rgb),0.1)");
                     pfLastPhaseKey = null; // rebuild so the buttons come back for another try
                 }
             } catch (error) {
-                showFeedback(feedback, "❌ Action transmission failed.", "rgba(255,71,87,0.06)", "#ff4757", "rgba(255,71,87,0.1)");
+                showFeedback(feedback, "❌ Action transmission failed.", "rgba(var(--rm-red-rgb),0.06)", "var(--rm-red)", "rgba(var(--rm-red-rgb),0.1)");
             }
         }
 
@@ -3055,9 +3056,9 @@
                     body: JSON.stringify({ From: registeredName, Body: body, roomCode: localStorage.getItem('randomania_roomcode') })
                 });
                 const data = await response.json();
-                if (!suppressFeedback) showFeedback(feedback, data.reply, "rgba(0,230,118,0.06)", "#00e676", "rgba(0,230,118,0.1)");
+                if (!suppressFeedback) showFeedback(feedback, data.reply, "rgba(var(--rm-green-rgb),0.06)", "var(--rm-green)", "rgba(var(--rm-green-rgb),0.1)");
             } catch (error) {
-                showFeedback(feedback, "❌ Action transmission failed.", "rgba(255,71,87,0.06)", "#ff4757", "rgba(255,71,87,0.1)");
+                showFeedback(feedback, "❌ Action transmission failed.", "rgba(var(--rm-red-rgb),0.06)", "var(--rm-red)", "rgba(var(--rm-red-rgb),0.1)");
             }
         }
 
@@ -3110,9 +3111,9 @@
                     body: JSON.stringify({ From: registeredName, Body: body, roomCode: localStorage.getItem('randomania_roomcode') })
                 });
                 const data = await response.json();
-                showFeedback(feedback, data.reply, "rgba(0,230,118,0.06)", "#00e676", "rgba(0,230,118,0.1)");
+                showFeedback(feedback, data.reply, "rgba(var(--rm-green-rgb),0.06)", "var(--rm-green)", "rgba(var(--rm-green-rgb),0.1)");
             } catch (error) {
-                showFeedback(feedback, "❌ Transmission failed.", "rgba(255,71,87,0.06)", "#ff4757", "rgba(255,71,87,0.1)");
+                showFeedback(feedback, "❌ Transmission failed.", "rgba(var(--rm-red-rgb),0.06)", "var(--rm-red)", "rgba(var(--rm-red-rgb),0.1)");
             }
         }
 
@@ -3147,7 +3148,7 @@
         // every phone's poller picks up the phase change automatically.
         async function submitStartVote() {
             const feedback = document.getElementById('game-feedback');
-            showFeedback(feedback, "Transmitting data frame...", "rgba(255,165,0,0.06)", "#ffa500", "rgba(255,165,0,0.1)");
+            showFeedback(feedback, "Transmitting data frame...", "rgba(var(--rm-orange-rgb),0.06)", "var(--rm-orange)", "rgba(var(--rm-orange-rgb),0.1)");
 
             try {
                 const registeredName = localStorage.getItem('randomania_nickname') || 'test-handset';
@@ -3157,9 +3158,9 @@
                     body: JSON.stringify({ From: registeredName, Body: 'START', roomCode: localStorage.getItem('randomania_roomcode') })
                 });
                 const data = await response.json();
-                showFeedback(feedback, data.reply, "rgba(0,230,118,0.06)", "#00e676", "rgba(0,230,118,0.1)");
+                showFeedback(feedback, data.reply, "rgba(var(--rm-green-rgb),0.06)", "var(--rm-green)", "rgba(var(--rm-green-rgb),0.1)");
             } catch (error) {
-                showFeedback(feedback, "❌ Action transmission failed.", "rgba(255,71,87,0.06)", "#ff4757", "rgba(255,71,87,0.1)");
+                showFeedback(feedback, "❌ Action transmission failed.", "rgba(var(--rm-red-rgb),0.06)", "var(--rm-red)", "rgba(var(--rm-red-rgb),0.1)");
             }
         }
 
@@ -3176,10 +3177,10 @@
                     body: JSON.stringify({ From: registeredName, Body: 'START', roomCode: localStorage.getItem('randomania_roomcode') })
                 });
                 const data = await response.json();
-                showFeedback(feedback, data.reply, "rgba(0,230,118,0.06)", "#00e676", "rgba(0,230,118,0.1)");
+                showFeedback(feedback, data.reply, "rgba(var(--rm-green-rgb),0.06)", "var(--rm-green)", "rgba(var(--rm-green-rgb),0.1)");
             } catch (error) {
                 document.getElementById('category-start-btn').classList.remove('btn-locked');
-                showFeedback(feedback, "❌ Action transmission failed.", "rgba(255,71,87,0.06)", "#ff4757", "rgba(255,71,87,0.1)");
+                showFeedback(feedback, "❌ Action transmission failed.", "rgba(var(--rm-red-rgb),0.06)", "var(--rm-red)", "rgba(var(--rm-red-rgb),0.1)");
             }
         }
 
@@ -3191,7 +3192,7 @@
             const feedback = document.getElementById('playagain-feedback');
             const registeredName = localStorage.getItem('randomania_nickname') || 'test-handset';
 
-            showFeedback(feedback, "Locking in...", "rgba(255,165,0,0.06)", "#ffa500", "rgba(255,165,0,0.1)");
+            showFeedback(feedback, "Locking in...", "rgba(var(--rm-orange-rgb),0.06)", "var(--rm-orange)", "rgba(var(--rm-orange-rgb),0.1)");
 
             try {
                 const response = await fetch('/api/message', {
@@ -3200,9 +3201,9 @@
                     body: JSON.stringify({ From: registeredName, Body: action, roomCode: localStorage.getItem('randomania_roomcode') })
                 });
                 const data = await response.json();
-                showFeedback(feedback, data.reply, "rgba(0,230,118,0.06)", "#00e676", "rgba(0,230,118,0.1)");
+                showFeedback(feedback, data.reply, "rgba(var(--rm-green-rgb),0.06)", "var(--rm-green)", "rgba(var(--rm-green-rgb),0.1)");
             } catch (error) {
-                showFeedback(feedback, "❌ Transmission failed.", "rgba(255,71,87,0.06)", "#ff4757", "rgba(255,71,87,0.1)");
+                showFeedback(feedback, "❌ Transmission failed.", "rgba(var(--rm-red-rgb),0.06)", "var(--rm-red)", "rgba(var(--rm-red-rgb),0.1)");
             }
         }
 
@@ -3249,8 +3250,8 @@
                     <span class="leaderboard-btn-score">${score} pts</span>
                 </div>
                 <p class="subtitle" style="margin: 14px 0 0 0;">${headline}</p>
-                ${data.brand ? `<p style="color: #94a3b8; font-size: 0.9rem; margin: 6px 0 0 0;">${thanks}</p>` : ''}
-                <p style="color: #64748b; font-size: 0.85rem; margin: 4px 0 0 0;">${subline}</p>
+                ${data.brand ? `<p style="color: var(--rm-text-soft); font-size: 0.9rem; margin: 6px 0 0 0;">${thanks}</p>` : ''}
+                <p style="color: var(--rm-text-muted); font-size: 0.85rem; margin: 4px 0 0 0;">${subline}</p>
                 ${data.profilerPersonal ? profilerPersonalHtml(data.profilerPersonal) : ''}
                 ${data.myFinalWager && data.myFinalWager.played ? `<p style="font-size: 0.9rem; margin: 10px 0 0 0;">Final Wager: ${finalWagerResultLine(data.myFinalWager)}</p>` : ''}
                 ${hornButton}
@@ -3319,7 +3320,7 @@
                 const data = await response.json();
 
                 if (data && data.success === false) {
-                    showFeedback(feedback, data.reply, "rgba(255,71,87,0.06)", "#ff4757", "rgba(255,71,87,0.1)");
+                    showFeedback(feedback, data.reply, "rgba(var(--rm-red-rgb),0.06)", "var(--rm-red)", "rgba(var(--rm-red-rgb),0.1)");
                     return;
                 }
 
@@ -3335,7 +3336,7 @@
                 // progress") if not. No need to duplicate that routing here.
                 initRoomStatePoller(room, name);
             } catch (error) {
-                showFeedback(feedback, "❌ Rejoin request failed to transmit.", "rgba(255,71,87,0.06)", "#ff4757", "rgba(255,71,87,0.1)");
+                showFeedback(feedback, "❌ Rejoin request failed to transmit.", "rgba(var(--rm-red-rgb),0.06)", "var(--rm-red)", "rgba(var(--rm-red-rgb),0.1)");
             }
         }
 
