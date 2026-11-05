@@ -4,8 +4,8 @@
 -- Thinking Pants category US_HISTORY. To change a question, change the
 -- spreadsheet and rebuild.
 --
--- Replaces the WHOLE category with the spreadsheet's 80 live questions
--- (100: 20, 200: 20, 300: 20, 400: 20), inside a transaction. Safe to re-run.
+-- Replaces the WHOLE category with the spreadsheet's 120 live questions
+-- (100: 30, 200: 30, 300: 30, 400: 30), inside a transaction. Safe to re-run.
 -- ============================================================================
 
 BEGIN;
@@ -94,6 +94,46 @@ INSERT INTO questions (question_number, game_mode, category, subcategory, factio
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'US_HISTORY', 'ORIGINAL', NULL,
         'Which American city was largely destroyed by an earthquake and the fires that followed in April 1906?', NULL,
         'San Francisco', ARRAY['Los Angeles', 'Seattle', 'Chicago', 'San Diego', 'Portland', 'Sacramento'], 100);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'US_HISTORY', 'ORIGINAL', NULL,
+        'Who was the first President of the United States?', NULL,
+        'George Washington', ARRAY['John Adams', 'Thomas Jefferson', 'Benjamin Franklin', 'James Madison', 'John Hancock'], 100);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'US_HISTORY', 'ORIGINAL', NULL,
+        'Which document did the Continental Congress adopt on July 4, 1776?', NULL,
+        'The Declaration of Independence', ARRAY['The Constitution', 'The Bill of Rights', 'The Articles of Confederation', 'The Mayflower Compact', 'The Federalist Papers'], 100);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'US_HISTORY', 'ORIGINAL', NULL,
+        'Who gave the "I Have a Dream" speech at the 1963 March on Washington?', NULL,
+        'Martin Luther King Jr.', ARRAY['Malcolm X', 'John Lewis', 'Medgar Evers', 'Jesse Jackson', 'Thurgood Marshall'], 100);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'US_HISTORY', 'ORIGINAL', NULL,
+        'What are the first ten amendments to the Constitution called?', NULL,
+        'The Bill of Rights', ARRAY['The Preamble', 'The Articles', 'The Federalist Papers', 'The Great Compromise', 'The Ten Commandments'], 100);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'US_HISTORY', 'ORIGINAL', NULL,
+        'Who made the first powered airplane flight, at Kitty Hawk, North Carolina, in 1903?', NULL,
+        'The Wright brothers', ARRAY['The Montgolfier brothers', 'Charles Lindbergh', 'Glenn Curtiss', 'Amelia Earhart', 'Samuel Langley'], 100);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'US_HISTORY', 'ORIGINAL', NULL,
+        'Which war was fought between the Union and the Confederacy from 1861 to 1865?', NULL,
+        'The Civil War', ARRAY['The War of 1812', 'The Mexican-American War', 'The Revolutionary War', 'The Spanish-American War', 'The French and Indian War'], 100);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'US_HISTORY', 'ORIGINAL', NULL,
+        'Which cracked symbol of American freedom hangs in Philadelphia?', NULL,
+        'The Liberty Bell', ARRAY['The Statue of Liberty', 'Plymouth Rock', 'The Spirit of St. Louis', 'The Old North Church bell', 'The Star-Spangled Banner'], 100);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'US_HISTORY', 'ORIGINAL', NULL,
+        'Which 1848-1855 rush brought some 300,000 fortune seekers to California?', NULL,
+        'The Gold Rush', ARRAY['The Land Rush', 'The Silver Rush', 'The Oil Boom', 'The Klondike Rush', 'The Oklahoma Land Run'], 100);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'US_HISTORY', 'ORIGINAL', NULL,
+        'In which Massachusetts town were the infamous witch trials held in 1692?', NULL,
+        'Salem', ARRAY['Plymouth', 'Concord', 'Lexington', 'Boston', 'Springfield'], 100);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'US_HISTORY', 'ORIGINAL', NULL,
+        'Which short 1863 speech by Lincoln begins "Four score and seven years ago"?', NULL,
+        'The Gettysburg Address', ARRAY['The Emancipation Proclamation', 'The Second Inaugural Address', 'The House Divided speech', 'The Cooper Union speech', 'The Farewell Address'], 100);
 
 -- 200 points
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
@@ -176,6 +216,46 @@ INSERT INTO questions (question_number, game_mode, category, subcategory, factio
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'US_HISTORY', 'ORIGINAL', NULL,
         'What was the name of the US program, begun in 1948, that sent billions of dollars to rebuild Western Europe after World War II?', NULL,
         'The Marshall Plan', ARRAY['Lend-Lease', 'The Dawes Plan', 'The Young Plan', 'The Monroe Doctrine', 'The Good Neighbor Policy', 'The Open Door Policy'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'US_HISTORY', 'ORIGINAL', NULL,
+        'Which inventor lit up part of lower Manhattan from his Pearl Street power station in 1882?', NULL,
+        'Thomas Edison', ARRAY['Nikola Tesla', 'George Westinghouse', 'Alexander Graham Bell', 'Samuel Morse', 'J.P. Morgan'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'US_HISTORY', 'ORIGINAL', NULL,
+        'Who was the first First Lady of the United States?', NULL,
+        'Martha Washington', ARRAY['Abigail Adams', 'Dolley Madison', 'Mary Todd Lincoln', 'Martha Jefferson', 'Elizabeth Monroe'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'US_HISTORY', 'ORIGINAL', NULL,
+        'How many times was Franklin D. Roosevelt elected president?', NULL,
+        'Four', ARRAY['Two', 'Three', 'Five', 'Six', 'One'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'US_HISTORY', 'ORIGINAL', NULL,
+        'Which trail of about 2,000 miles carried pioneers from Missouri to the Pacific Northwest?', NULL,
+        'The Oregon Trail', ARRAY['The Santa Fe Trail', 'The Chisholm Trail', 'The Natchez Trace', 'The Mormon Trail', 'The Appalachian Trail'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'US_HISTORY', 'ORIGINAL', NULL,
+        'Which 1862 law offered settlers 160 acres of public land if they farmed it for five years?', NULL,
+        'The Homestead Act', ARRAY['The Morrill Act', 'The Pacific Railway Act', 'The Dawes Act', 'The Land Ordinance', 'The Northwest Ordinance'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'US_HISTORY', 'ORIGINAL', NULL,
+        'Which Lakota leader, alongside Crazy Horse, led the warriors who defeated Custer at Little Bighorn in 1876?', NULL,
+        'Sitting Bull', ARRAY['Geronimo', 'Red Cloud', 'Chief Joseph', 'Black Hawk', 'Tecumseh'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'US_HISTORY', 'ORIGINAL', NULL,
+        'Who invented the cotton gin in 1793?', NULL,
+        'Eli Whitney', ARRAY['Cyrus McCormick', 'John Deere', 'Samuel Slater', 'Robert Fulton', 'Elias Howe'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'US_HISTORY', 'ORIGINAL', NULL,
+        'Which 1860-61 mail service used relays of riders on horseback between Missouri and California?', NULL,
+        'The Pony Express', ARRAY['Wells Fargo', 'The Butterfield Overland Mail', 'The Transcontinental Railroad', 'The Oregon Express', 'The Overland Telegraph'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'US_HISTORY', 'ORIGINAL', NULL,
+        'What nickname was given to October 29, 1929, the worst day of the stock market crash?', NULL,
+        'Black Tuesday', ARRAY['Black Friday', 'Black Monday', 'Bloody Sunday', 'Blue Monday', 'Dark Thursday'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'US_HISTORY', 'ORIGINAL', NULL,
+        'Which 13-day standoff in October 1962 over Soviet missiles brought the world close to nuclear war?', NULL,
+        'The Cuban Missile Crisis', ARRAY['The Bay of Pigs', 'The Berlin Airlift', 'The Suez Crisis', 'The U-2 Incident', 'The Korean Armistice'], 200);
 
 -- 300 points
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
@@ -258,6 +338,46 @@ INSERT INTO questions (question_number, game_mode, category, subcategory, factio
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'US_HISTORY', 'ORIGINAL', NULL,
         'Who became the first woman to serve as US Secretary of State, in 1997?', NULL,
         'Madeleine Albright', ARRAY['Condoleezza Rice', 'Jeane Kirkpatrick', 'Janet Reno', 'Elizabeth Dole', 'Donna Shalala', 'Geraldine Ferraro'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'US_HISTORY', 'ORIGINAL', NULL,
+        'Which 1853 land purchase from Mexico gave the US southern Arizona and New Mexico for a railroad route?', NULL,
+        'The Gadsden Purchase', ARRAY['The Louisiana Purchase', 'The Treaty of Guadalupe Hidalgo', 'The Adams-Onís Treaty', 'The Oregon Treaty', 'The Mexican Cession'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'US_HISTORY', 'ORIGINAL', NULL,
+        'Which president died just 31 days after his inauguration, the shortest time in office?', NULL,
+        'William Henry Harrison', ARRAY['James Garfield', 'Zachary Taylor', 'Warren G. Harding', 'John Tyler', 'William McKinley'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'US_HISTORY', 'ORIGINAL', NULL,
+        'Which 1857 Supreme Court case ruled that Black Americans could not be citizens?', NULL,
+        'Dred Scott v. Sandford', ARRAY['Plessy v. Ferguson', 'Marbury v. Madison', 'McCulloch v. Maryland', 'Gibbons v. Ogden', 'Worcester v. Georgia'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'US_HISTORY', 'ORIGINAL', NULL,
+        'Which nurse, called the "Angel of the Battlefield" in the Civil War, founded the American Red Cross in 1881?', NULL,
+        'Clara Barton', ARRAY['Florence Nightingale', 'Dorothea Dix', 'Mary Walker', 'Louisa May Alcott', 'Susan B. Anthony'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'US_HISTORY', 'ORIGINAL', NULL,
+        'Which 1944 law paid for college and home loans for returning World War II veterans?', NULL,
+        'The GI Bill', ARRAY['The Marshall Plan', 'The Social Security Act', 'The Lend-Lease Act', 'The Fair Deal', 'The Taft-Hartley Act'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'US_HISTORY', 'ORIGINAL', NULL,
+        'Who sent the first long-distance telegraph message, "What hath God wrought," in 1844?', NULL,
+        'Samuel Morse', ARRAY['Alexander Graham Bell', 'Thomas Edison', 'Cyrus Field', 'Joseph Henry', 'Guglielmo Marconi'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'US_HISTORY', 'ORIGINAL', NULL,
+        'Which president led the US through the Mexican-American War, in the name of "Manifest Destiny"?', NULL,
+        'James K. Polk', ARRAY['Andrew Jackson', 'John Tyler', 'Zachary Taylor', 'Martin Van Buren', 'Millard Fillmore'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'US_HISTORY', 'ORIGINAL', NULL,
+        'Which president''s 1823 "doctrine" warned European powers against new colonies in the Americas?', NULL,
+        'James Monroe', ARRAY['John Quincy Adams', 'James Madison', 'Thomas Jefferson', 'Andrew Jackson', 'John Adams'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'US_HISTORY', 'ORIGINAL', NULL,
+        'Which sitting vice president killed Alexander Hamilton in a duel in 1804?', NULL,
+        'Aaron Burr', ARRAY['George Clinton', 'John Adams', 'Thomas Jefferson', 'Elbridge Gerry', 'John C. Calhoun'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'US_HISTORY', 'ORIGINAL', NULL,
+        'Which September 1862 battle in Maryland was the bloodiest single day in American history?', NULL,
+        'Antietam', ARRAY['Gettysburg', 'Shiloh', 'Bull Run', 'Fredericksburg', 'Chancellorsville'], 300);
 
 -- 400 points
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
@@ -340,8 +460,48 @@ INSERT INTO questions (question_number, game_mode, category, subcategory, factio
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'US_HISTORY', 'ORIGINAL', NULL,
         'Which 1882 law was the first major federal law to bar immigrants of a specific nationality?', NULL,
         'The Chinese Exclusion Act', ARRAY['The Gentlemen''s Agreement', 'The Immigration Act of 1924', 'The Alien and Sedition Acts', 'The Dawes Act', 'The Pendleton Act', 'The Homestead Act'], 400);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'US_HISTORY', 'ORIGINAL', NULL,
+        'Which 1798 laws let the government deport "dangerous" immigrants and jail critics of the government?', NULL,
+        'The Alien and Sedition Acts', ARRAY['The Espionage Act', 'The Embargo Act', 'The Intolerable Acts', 'The Naturalization Act of 1870', 'The Patriot Act'], 400);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'US_HISTORY', 'ORIGINAL', NULL,
+        'In which 1832 crisis did South Carolina declare federal tariffs void inside its borders?', NULL,
+        'The Nullification Crisis', ARRAY['The Whiskey Rebellion', 'The Secession Winter', 'The Tariff of Abominations', 'The Bank War', 'The Panic of 1837'], 400);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'US_HISTORY', 'ORIGINAL', NULL,
+        'Which 1919 strike made Massachusetts governor Calvin Coolidge a national figure?', NULL,
+        'The Boston Police Strike', ARRAY['The Lawrence Textile Strike', 'The Great Steel Strike', 'The Seattle General Strike', 'The Pullman Strike', 'The Homestead Strike'], 400);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'US_HISTORY', 'ORIGINAL', NULL,
+        'Which 1917 law made it a crime to interfere with the war effort, and later sent Eugene V. Debs to prison?', NULL,
+        'The Espionage Act', ARRAY['The Sedition Act of 1798', 'The Smith Act', 'The Volstead Act', 'The Selective Service Act', 'The Clayton Act'], 400);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'US_HISTORY', 'ORIGINAL', NULL,
+        'Which colony was founded in 1732 as a fresh start for debtors and a buffer against Spanish Florida?', NULL,
+        'Georgia', ARRAY['South Carolina', 'North Carolina', 'Maryland', 'Virginia', 'Delaware'], 400);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'US_HISTORY', 'ORIGINAL', NULL,
+        'Which Kentucky senator, behind the Missouri Compromise and the Compromise of 1850, was called the "Great Compromiser"?', NULL,
+        'Henry Clay', ARRAY['Daniel Webster', 'John C. Calhoun', 'Stephen Douglas', 'Thomas Hart Benton', 'John J. Crittenden'], 400);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'US_HISTORY', 'ORIGINAL', NULL,
+        'Which 1966 Supreme Court case requires police to tell suspects about their right to remain silent?', NULL,
+        'Miranda v. Arizona', ARRAY['Gideon v. Wainwright', 'Mapp v. Ohio', 'Escobedo v. Illinois', 'Terry v. Ohio', 'Roe v. Wade'], 400);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'US_HISTORY', 'ORIGINAL', NULL,
+        'What name was given to the 1919-20 roundups of suspected radicals, led by the U.S. attorney general?', NULL,
+        'The Palmer Raids', ARRAY['The Red Scare Trials', 'The McCarthy Hearings', 'The Slacker Raids', 'The Haymarket Raids', 'The Bisbee Deportation'], 400);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'US_HISTORY', 'ORIGINAL', NULL,
+        'Which 1913 law created the nation''s central banking system?', NULL,
+        'The Federal Reserve Act', ARRAY['The Glass-Steagall Act', 'The Sherman Act', 'The Coinage Act', 'The National Bank Act', 'The Gold Standard Act'], 400);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'US_HISTORY', 'ORIGINAL', NULL,
+        'Which explorer led an 1806 expedition into the Southwest and gave his name to a famous Colorado mountain?', NULL,
+        'Zebulon Pike', ARRAY['John C. Fremont', 'Stephen Long', 'Meriwether Lewis', 'Kit Carson', 'Jedediah Smith'], 400);
 
 COMMIT;
 
--- Check: should return 80.
+-- Check: should return 120.
 SELECT COUNT(*) FROM questions WHERE game_mode = 'TRIVI_YEAH_II' AND category = 'US_HISTORY';
