@@ -1372,6 +1372,19 @@
         let edLastPhaseKey = null; // "<empossdurrPhase>|<round>" -- rebuild ed-phase-content only when this changes
         let edDeclareSplashShown = false; // guards the splash from re-firing every poll tick while DECLARE_VERDICT is active
 
+        // The scoreboard only comes down when it changed (Nov 2026: at 80
+        // players it was most of every once-a-second reply). The phone says
+        // which version it holds and reuses its copy when the server skips it.
+        let standingsCache = { room: null, version: null, standings: [] };
+        function fillStandings(data, roomCode) {
+            if (!data) return;
+            if (Array.isArray(data.standings)) {
+                standingsCache = { room: roomCode, version: data.standingsVersion || null, standings: data.standings };
+            } else if (data.standingsVersion && standingsCache.room === roomCode && standingsCache.version === data.standingsVersion) {
+                data.standings = standingsCache.standings;
+            }
+        }
+
         function initRoomStatePoller(roomCode, nickname) {
             roomStateTrackerInterval = setInterval(async () => {
                 try {
@@ -1379,9 +1392,11 @@
                     const response = await fetch('/api/room-status', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ roomCode: roomCode, playerName: nickname })
+                        body: JSON.stringify({ roomCode: roomCode, playerName: nickname,
+                            standingsVersion: standingsCache.room === roomCode ? standingsCache.version : null })
                     });
                     const data = await response.json();
+                    fillStandings(data, roomCode);
 
                     if (data && data.phase) {
                         updateSidePages(data, nickname, roomCode);

@@ -1,4 +1,5 @@
 import express from 'express';
+import compression from 'compression';
 import dotenv from 'dotenv';
 import path from 'path';
 import { WebSocketServer } from 'ws';
@@ -12,6 +13,7 @@ import {
     listAccessCodes, addAccessCode, setAccessCodeActive, normalizeCode,
     hostSessionCode, getAccessCodeVenue, venueProfilesInstalled, sanitizeVenue, updateAccessCodeVenue, houseColumnInstalled, listHouseSets, boardRulesInstalled, breaksInstalled
 } from './services/accessControl.js';
+import { healthMiddleware, attachHealthTracking, healthSnapshot } from './services/serverHealth.js';
 import { fileURLToPath } from 'url';
 
 // Recreate __dirname cleanly for ES module environments
@@ -26,7 +28,19 @@ const PORT = process.env.PORT || 3000;
 // req.secure and req.ip would reflect that internal hop, not the real client,
 // which would silently disable the Secure cookie flag and admin-login rate limit.
 app.set('trust proxy', 1);
+// Two reply headers the game never uses, trimmed since every phone gets a
+// reply every second (Nov 2026 bandwidth work): the "X-Powered-By: Express"
+// tag, and the ETag on dynamic replies (static files keep theirs).
+app.disable('x-powered-by');
+app.set('etag', false);
 
+// Live health counters for /admin (requests, phone poll timing).
+app.use(healthMiddleware);
+// Squeeze text replies before they go out (Nov 2026 load test: one
+// 80-player room sent ~1.6 GB an hour, mostly the scoreboard inside each
+// phone's once-a-second status reply -- gzip shrinks that ~85%). Pictures
+// are already compressed and are left alone.
+app.use(compression());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 // Tell Express to serve everything inside the 'public' folder as static assets.
@@ -168,6 +182,12 @@ function requireAdmin(req, res, next) {
     return res.status(401).json({ success: false, error: 'Not authenticated.' });
 }
 
+// The /admin "Live health" panel: counts and timings only, never who's playing.
+app.get('/api/admin/health', requireAdmin, (req, res) => {
+    res.setHeader('Cache-Control', 'no-store');
+    return res.json({ success: true, ...healthSnapshot(activeRooms) });
+});
+
 app.get('/api/admin/codes', requireAdmin, async (req, res) => {
     try {
         const codes = await listAccessCodes(pool);
@@ -299,9 +319,16 @@ app.post('/api/room-status', (req, res) => {
         if (targetRoom) {
             const sendJson = res.json.bind(res);
             const me = playerName ? targetRoom.players[playerName] : null;
+            // The scoreboard is the biggest part of this reply and grows with
+            // the room, so it's only sent when it changed since this phone
+            // last got it (the phone sends back the version it holds).
+            // Nov 2026 load test: at 80 players it was 3.3 KB of every poll.
+            const standingsVersion = targetRoom.phoneStandingsVersion || null;
+            const phoneHasStandings = standingsVersion && req.body.standingsVersion === standingsVersion;
             res.json = body => sendJson(body && body.phase ? {
                 ...body,
-                standings: targetRoom.phoneStandings || [],
+                ...(phoneHasStandings ? {} : { standings: targetRoom.phoneStandings || [] }),
+                standingsVersion,
                 mode: targetRoom.gameState === 'LOBBY' ? null : (targetRoom.winningGameMode || null),
                 myStats: me ? { fastest: me.timesFastest || 0, bullseyes: me.bullseyeCount || 0, faced: me.questionsFaced || 0 } : null,
                 // Phones make their own sounds only when no TV is connected
@@ -658,6 +685,7 @@ async function startServer() {
             console.log(`===============================================`);
         });
 
+        attachHealthTracking(serverInstance);
         const wss = new WebSocketServer({ server: serverInstance });
 
         wss.on('connection', (socket) => {

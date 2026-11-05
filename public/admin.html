@@ -63,6 +63,12 @@
         .venue-editor .hint { color: #64748b; font-size: 0.8rem; margin-top: 4px; }
         .venue-editor .modes { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
         .venue-editor .modes label { text-transform: none; letter-spacing: 0; font-size: 0.9rem; color: #f4f5f6; font-weight: 500; margin: 0; display: flex; gap: 8px; align-items: center; }
+        .health-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 10px; margin-bottom: 8px; }
+        .health-tile { background: #1e222b; border: 1px solid #222630; border-radius: 10px; padding: 10px 12px; text-align: left; }
+        .health-tile .value { color: #f4f5f6; font-size: 1.35rem; font-weight: 800; line-height: 1.2; }
+        .health-tile .label { color: #94a3b8; font-size: 0.75rem; font-weight: 600; margin-top: 2px; }
+        .health-tile .hint { color: #64748b; font-size: 0.72rem; margin-top: 2px; }
+        .health-note { color: #64748b; font-size: 0.78rem; text-align: left; }
         .category-row { display: flex; align-items: center; gap: 10px; padding: 8px 0; border-bottom: 1px solid #1e222b; text-align: left; }
         .category-row .name { flex: 1; min-width: 0; color: #f4f5f6; font-weight: 600; font-size: 0.95rem; }
         .category-row .count { color: #64748b; font-size: 0.8rem; font-weight: 500; }
@@ -88,6 +94,12 @@
     </div>
 
     <div id="manage-screen" class="card">
+        <h1 style="font-size: 1.1rem; margin-bottom: 4px;">Live Health</h1>
+        <p class="subtitle" style="margin-bottom: 12px;">How the server is doing right now. Updates every 5 seconds.</p>
+        <div class="health-grid" id="health-grid"></div>
+        <div class="health-note" id="health-note"></div>
+        <div style="border-top: 1px solid #222630; margin: 24px 0 20px 0;"></div>
+
         <h1>Access Codes</h1>
         <p class="subtitle">Add, activate, or revoke venue access codes.</p>
 
@@ -350,7 +362,38 @@
                 breaksOn = !!data.breaks;
                 renderCodes(data.codes);
                 loadCategories();
+                startHealth();
             }
+        }
+
+        // ---- Live health (Randy, Nov 2026: getting ready for busy pub nights) ----
+        // Counts and timings only. Readable from a phone at the back of the pub.
+        let healthTimer = null;
+        async function loadHealth() {
+            try {
+                const response = await fetch('/api/admin/health');
+                if (!response.ok) return;
+                const h = await response.json();
+                if (!h.success) return;
+                const tile = (value, label, hint = '') => `<div class="health-tile"><div class="value">${value}</div><div class="label">${label}</div>${hint ? `<div class="hint">${hint}</div>` : ''}</div>`;
+                const ms = v => v === null ? '--' : `${v} ms`;
+                const up = h.upMinutes < 60 ? `${h.upMinutes} min` : h.upMinutes < 2880 ? `${Math.floor(h.upMinutes / 60)} h ${h.upMinutes % 60} min` : `${Math.floor(h.upMinutes / 1440)} days`;
+                document.getElementById('health-grid').innerHTML = [
+                    tile(h.rooms, 'Rooms open'),
+                    tile(h.phonesCheckingIn, 'Phones connected', `${h.players} players in rooms`),
+                    tile(h.tvs, 'TVs connected'),
+                    tile(h.requestsPerSecond, 'Requests / second', 'about 1 per phone'),
+                    tile(ms(h.pollMs.typical), 'Phone reply time', `slowest 5%: ${ms(h.pollMs.slow)}`),
+                    tile(`${h.bandwidth.lastHourMB} MB`, h.bandwidth.hourWindowMinutes >= 59 ? 'Sent in the last hour' : `Sent in the last ${Math.max(1, h.bandwidth.hourWindowMinutes)} min`, `${h.bandwidth.lastMinuteMB} MB in the last minute`),
+                    tile(`${h.memoryMB} MB`, 'Memory in use'),
+                    tile(up, 'Up since restart', new Date(h.upSinceISO).toLocaleString())
+                ].join('');
+                document.getElementById('health-note').textContent = 'A restart (every deploy) ends all live games, so avoid shipping changes during an event. Phone reply times under 50 ms are healthy.';
+            } catch (err) { /* keep the last reading */ }
+        }
+        function startHealth() {
+            loadHealth();
+            if (!healthTimer) healthTimer = setInterval(() => { if (!document.hidden && manageScreen.style.display !== 'none') loadHealth(); }, 5000);
         }
 
         // ---- Thinking Pants category dial: Off / Normal / Boost ----

@@ -76,7 +76,24 @@ event, for a small fee. That's why hosting is gated behind access codes.
   setting rather than a rule tied to player count). Pickles & Pins is the test venue
   (Randy's logo `pickles-pins.svg`: the pickle-jar-and-pin mark, no
   lettering, since the banner prints the name beside it).
-- **Hosting:** Render, which terminates TLS. That's why `trust proxy` is set.
+- **Hosting:** Render (a paid plan, Nov 2026), which terminates TLS. That's
+  why `trust proxy` is set. **Every deploy restarts the server and ends
+  every live game** (rooms live in memory), so nothing is merged during a
+  venue event -- Randy says when events are.
+- **Load and bandwidth (Nov 2026 load test, one 80-player room):** phones
+  don't use WebSockets (only the TV does); each phone polls
+  `/api/room-status` once a second. Replies took ~1-4 ms, so CPU isn't the
+  limit -- bandwidth was: ~1.6 GB/hour, mostly the scoreboard inside every
+  reply (it grows with the room, so traffic grew with the square of the
+  players). Now replies are gzipped (`compression`), and the scoreboard
+  is sent only when it changed (`phoneStandingsVersion`; the phone sends
+  back the version it holds and reuses its copy): ~330 MB/hour for the
+  same room, headers included. The database is read only when a game or
+  board starts and at host login -- never per tap. **/admin "Live
+  health"** (`src/services/serverHealth.js`, `/api/admin/health`): rooms,
+  phones connected, TVs, requests/second, phone reply time, bandwidth
+  this hour, memory, time since the last restart. Counts only, nothing
+  about players, nothing saved.
 - **Env vars:** `DATABASE_URL`, `ADMIN_PASSWORD`, `PORT`.
 
 ### The three devices
@@ -546,6 +563,14 @@ and forth until we both agree the idea is good **and** worth the effort. So:
   retired there. Next: Sports and Food & Drink. Niche pun
   categories (Famous (K)nights, Fictional Locations, Just in Time,
   Lyrics) stay at 80 on purpose.
+- **Rename Thinking Pants to "Trivia Night"?** (Randy asked, Nov 2026;
+  undecided.) Claude's view: clearer for strangers, but generic, and the
+  pants jokes (Pants on Fire, Wet Pants, Bet Your Pants!, the Wedgie) lose
+  their anchor; it also sits awkwardly next to Trivi-yeah!. Suggested a
+  clearer tile byline instead ("Trivia night: a Jeopardy-style board...")
+  and, if pubs want it, a venue-chosen display name later.
+- **Standalone states quiz page** (Randy, Nov 2026, "another time"): his
+  100 state pictures as a phone quiz anyone can run.
 - **Mind Field:** a name saved for a future mode built around hidden traps
   on a board.
 - **Final Wager clues elsewhere:** the bought-clue mechanic now runs in
