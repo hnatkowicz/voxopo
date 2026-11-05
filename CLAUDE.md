@@ -483,7 +483,7 @@ and forth until we both agree the idea is good **and** worth the effort. So:
   Wrong answers are mistakes real people make. No word is the target of
   two tiles, so one tile can't give another away.
 - **The Great State of...** (Randy, Nov 2026): `content/great_state.csv`,
-  306 questions (145 text, 161 picture) -- capitals, city nicknames (Big Apple, La La Land),
+  307 questions (145 text, 162 picture) -- capitals, city nicknames (Big Apple, La La Land),
   state nicknames, flags, where names came from. Famous nicknames asked
   straight; obscure ones get a second-cousin clue ("Utah's pioneers called
   their land Deseret, a word for the honeybee"). **No "currently has /
@@ -498,9 +498,8 @@ and forth until we both agree the idea is good **and** worth the effort. So:
   questions: "Which state is highlighted?" (map), "The star marks a state
   capital. Which city is it?" and "Which state is this?" (outline + star),
   and questions about the highlighted state (Yellowstone, the Ohio River,
-  Louisiana's parishes). **`colorado-map.webp` shows Wyoming** -- left out
-  until Randy re-exports it; then add its "Which state is highlighted?"
-  row. Geography's New York capital question was retired to avoid a
+  Louisiana's parishes). (`colorado-map.webp` first showed Wyoming;
+  Randy re-exported it.) Geography's New York capital question was retired to avoid a
   repeat.
 - **Saturday Mornings** (cartoons and kids' TV) is parked (Randy, Nov
   2026). Text-only if it happens: cartoon characters and real people's
