@@ -228,10 +228,17 @@ Mode keys are used in room votes and in `gameEngine.js`:
   the picker's wager, a misunderstanding).
   The answer clock is 40s (Randy: "needs 10 more seconds"), music over the
   last 30. **Final Wager questions** (`trivi_yeah_ii_final_wager_content.sql`,
-  76): typed answers, so most carry a fair clue to the answer inside the
-  question (Randy, Nov 2026: "an element of the answer is in the question,
-  allowing an educated guess" -- "Which frontier city, named for a French
-  king, was the starting point for Lewis and Clark?").
+  87): typed answers, each with a **"second-cousin" clue** -- one that
+  takes knowledge and reasoning to turn into the answer, never the answer
+  itself (Randy, Nov 2026: "...also names the top bone of your spine" for
+  Atlas, "the same Latin word as the chemical symbol Ag" for Argentina).
+  Aim for 250-350 difficulty on average; a famous fact alone (the painter
+  who cut off his ear) is too easy, and a capital city is never the clue
+  unless it's the point. 11 of them (about 1 in 8) are **picture
+  questions** -- a flag, landmark, painting or logo (`visual_asset`),
+  shown once answering opens, still with a knowledge clue. No guard
+  against a picture that was on the board earlier (Randy: rare by
+  definition, "and fun if encountered").
   Categories are listed in `TRIVI_YEAH_II_CATEGORIES`. Every category needs a
   full pool for every tier (the engine fails fast if one is incomplete).
   **Board draw:** deeper categories come up more often (Randy, Oct 2026).
@@ -445,7 +452,12 @@ and forth until we both agree the idea is good **and** worth the effort. So:
   and a few stories (the Syndics on Dutch Masters cigar boxes). Title
   questions use **fill-in-the-blank** where the whole title would show on
   the canvas (Randy's idea: "_____ of the Normandy Train"); the blanked
-  word is never something you can see. 137 questions. Hard
+  word is never something you can see. **"Which painting is this?"**
+  (Randy, Nov 2026) covers most of the rest: wrong answers are other
+  real, well-known paintings, the same artist first, then the same era or
+  subject -- never a reworded title. Skipped where the title is the
+  subject (Joan of Arc, View of Toledo) or near-twin paintings (Monet's
+  two footbridges). 171 questions. Hard
   paintings get a leading question ("This artist's portrait of the same
   man is on the $1 bill"). Launched on Boost. Randy stopped at 70 to see
   how it plays before gathering more. Sources: public-domain works from
