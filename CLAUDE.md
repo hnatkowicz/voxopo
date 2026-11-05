@@ -272,7 +272,18 @@ Mode keys are used in room votes and in `gameEngine.js`:
   the family's verdict fast (Art), or one that rarely turns up (Logo My
   Eggo starts on Boost: Randy's youngest had found one logo in several
   games). Off keeps the questions but never draws the category. Three
-  settings on purpose, not a slider.
+  settings on purpose, not a slider. **Per venue** (Randy, Nov 2026:
+  boosting state capitals for his youngest boosted them at every venue
+  too): each access code's **Categories** button on /admin sets Default
+  (follow the global dial) / Off / Normal / Boost for that code's rooms
+  only (`access_code_category_settings`, from
+  `access_code_category_settings.sql`; no row = Default). The room
+  remembers which code opened it (`room.accessCode`) and the board reads
+  the venue's settings live, so a change applies from the next board.
+  /admin warns under 9 categories on (a game uses 9, so some repeat); a
+  venue whose settings can't fill a board falls back to the global dial
+  rather than breaking the game. Main use is Off (no College Athletics at
+  a library night).
   **Direction (Randy, Oct 2026):** new general trivia goes into Thinking
   Pants categories. Trivi-yeah! is to become the house-questions-only mode
   for one-off events (baby showers, etc.), so its general decks won't grow.
@@ -550,12 +561,6 @@ and forth until we both agree the idea is good **and** worth the effort. So:
   board, "Wet Pants: Oceans, rivers & lakes"): pinned (Randy, Nov 2026).
   The first question makes a title clear, and regulars knowing the names
   is a small, fair edge.
-- **Per-venue category dial** (Randy asked, Nov 2026; not built yet):
-  each access code gets its own Off / Normal / Boost list plus "Default"
-  (follow the global dial), copied into the room with the rest of the
-  profile. Main use is Off (no College Athletics at a library night).
-  Warn on /admin when a venue has too few categories on. Medium lift;
-  worth doing before pubs start in earnest.
 - **Depth plan (Nov 2026):** Country Monkey, Flag Me Down, Red, White &
   Who?, War & Pieces and World History are at 120, and **Cell Mates**
   (biology, `content/cell_mates.csv`, 120) is built. World History's 13
@@ -563,6 +568,10 @@ and forth until we both agree the idea is good **and** worth the effort. So:
   retired there. Next: Sports and Food & Drink. Niche pun
   categories (Famous (K)nights, Fictional Locations, Just in Time,
   Lyrics) stay at 80 on purpose.
+- **Mode bylines** (the small gray line under each mode's name on the TV
+  and phone tiles, `public/modes.js`): Thinking Pants reads "Board
+  trivia, bet big" so strangers know it's trivia, its "Beta" tag is gone,
+  and the gray was brightened for dim pubs (Randy, Nov 2026).
 - **Rename Thinking Pants to "Trivia Night"?** (Randy asked, Nov 2026;
   undecided.) Claude's view: clearer for strangers, but generic, and the
   pants jokes (Pants on Fire, Wet Pants, Bet Your Pants!, the Wedgie) lose

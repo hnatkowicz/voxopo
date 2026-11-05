@@ -936,6 +936,59 @@ async function readCategorySettings() {
     }
 }
 
+// ---- Per-venue dial (Randy, Nov 2026) ----
+// An access code can override the global dial for its own rooms
+// (access_code_category_settings.sql). No row = "Default": follow the
+// global setting. Read live at each board, like the global dial, so a
+// change on /admin takes effect from the next board.
+async function readVenueCategorySettings(code) {
+    if (!code) return {};
+    try {
+        const result = await pool.query('SELECT category, setting FROM access_code_category_settings WHERE code = $1', [code]);
+        return Object.fromEntries(result.rows.map(r => [r.category, r.setting]));
+    } catch (e) {
+        if (e.code === '42P01') return {}; // table not created yet
+        throw e;
+    }
+}
+
+// A game uses 9 general categories (3 boards of 3, no repeats); fewer than
+// that "on" for a venue means repeats within a game, and under 3 a board
+// can't be filled at all (then the venue's Offs are ignored).
+const CATEGORIES_PER_GAME = 9;
+
+// /admin, per access code: each category's global and venue settings.
+export async function venueCategoryOverview(code) {
+    const overview = await thinkingPantsCategoryOverview();
+    let installed = true, venue = {};
+    try {
+        venue = Object.fromEntries((await pool.query('SELECT category, setting FROM access_code_category_settings WHERE code = $1', [code])).rows.map(r => [r.category, r.setting]));
+    } catch (e) {
+        if (e.code !== '42P01') throw e;
+        installed = false;
+    }
+    const categories = overview.categories.map(c => ({ ...c, global: c.setting, venue: venue[c.key] || 'DEFAULT', effective: venue[c.key] || c.setting }));
+    const playable = categories.filter(c => c.depth > 0 && c.effective !== 'OFF').length;
+    return { installed, categories, playable, perGame: CATEGORIES_PER_GAME };
+}
+
+// setting: OFF / NORMAL / BOOST, or DEFAULT to follow the global dial again.
+export async function setVenueCategorySetting(code, key, setting) {
+    if (!TRIVI_YEAH_II_CATEGORIES.some(c => c.key === key)) return false;
+    if (setting === 'DEFAULT') {
+        await pool.query('DELETE FROM access_code_category_settings WHERE code = $1 AND category = $2', [code, key]);
+        return true;
+    }
+    if (!CATEGORY_SETTINGS.includes(setting)) return false;
+    const result = await pool.query(
+        `INSERT INTO access_code_category_settings (code, category, setting, updated_at)
+         SELECT code, $2, $3, now() FROM access_codes WHERE code = $1
+         ON CONFLICT (code, category) DO UPDATE SET setting = EXCLUDED.setting, updated_at = now()`,
+        [code, key, setting]
+    );
+    return result.rowCount > 0;
+}
+
 // /admin: every category with its depth and dial setting.
 export async function thinkingPantsCategoryOverview() {
     const counts = await pool.query(
@@ -1074,7 +1127,7 @@ function publicTriviYeahIIGrid(room) {
 // House sets aren't in TRIVI_YEAH_II_CATEGORIES, so they never turn up on an
 // ordinary board. usedIds keeps a game's house rounds from repeating a
 // question; an incomplete house set just means a normal board.
-async function buildTriviYeahIIBoard(doublersCount, house = null, usedCategoryKeys = new Set()) {
+async function buildTriviYeahIIBoard(doublersCount, house = null, usedCategoryKeys = new Set(), accessCode = null) {
     // Only categories with a question at every tier in the database are
     // eligible -- so a category can ship in code before its .sql file has been
     // run in Neon (or be missing a tier) without ever breaking a game.
@@ -1094,10 +1147,20 @@ async function buildTriviYeahIIBoard(doublersCount, house = null, usedCategoryKe
     });
     const depthOf = key => Math.min(...TRIVI_YEAH_II_TIERS.map(t => (tiersByCategory[key] || {})[t] || 0));
     const completeKeys = new Set(Object.keys(tiersByCategory).filter(key => depthOf(key) > 0));
-    const dial = await readCategorySettings();
-    const eligibleCategories = TRIVI_YEAH_II_CATEGORIES.filter(c => completeKeys.has(c.key) && dial[c.key] !== 'OFF');
-    const weightOf = c => Math.sqrt(depthOf(c.key)) * (dial[c.key] === 'BOOST' ? CATEGORY_BOOST : 1);
+    const globalDial = await readCategorySettings();
+    // The venue's own settings win over the global dial (per-venue dial).
+    let dial = { ...globalDial, ...(await readVenueCategorySettings(accessCode)) };
     const useHouse = !!(house && completeKeys.has(house.key));
+    let eligibleCategories = TRIVI_YEAH_II_CATEGORIES.filter(c => completeKeys.has(c.key) && dial[c.key] !== 'OFF');
+    // A venue that switched off nearly everything can't break a game:
+    // if its settings can't fill a board, use the global dial instead
+    // (/admin warns long before this).
+    if (eligibleCategories.length < TRIVI_YEAH_II_CATEGORIES_PER_BOARD - (useHouse ? 1 : 0)) {
+        console.warn(`[Thinking Pants] Access code ${accessCode}'s category settings leave too few categories -- using the global dial for this board.`);
+        dial = globalDial;
+        eligibleCategories = TRIVI_YEAH_II_CATEGORIES.filter(c => completeKeys.has(c.key) && dial[c.key] !== 'OFF');
+    }
+    const weightOf = c => Math.sqrt(depthOf(c.key)) * (dial[c.key] === 'BOOST' ? CATEGORY_BOOST : 1);
     if (house && !useHouse) console.warn(`[Thinking Pants] House set ${house.key} isn't complete in the database (every tier needed) -- normal board instead.`);
     // Deeper categories come up more often (Randy, Oct 2026: thin ones should
     // be rarer so their questions don't repeat). Weight = square root of the
@@ -1220,7 +1283,7 @@ async function startTriviYeahIIRound(roomCode) {
     ty2.usedCategoryKeys = ty2.usedCategoryKeys || new Set(); // no general category twice in one game
     const { grid, chosenCategories } = await buildTriviYeahIIBoard(doublersCount,
         houseThisRound ? { key: houseSetting.key, label: houseSetting.label, usedIds: ty2.usedHouseIds } : null,
-        ty2.usedCategoryKeys);
+        ty2.usedCategoryKeys, room.accessCode || null);
     chosenCategories.forEach(c => ty2.usedCategoryKeys.add(c.key));
 
     ty2.grid = grid;

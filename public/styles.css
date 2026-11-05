@@ -258,7 +258,7 @@ body {
         .mode-tile-head { display: flex; align-items: center; gap: 12px; }
         .mode-tile-name { font-size: 1.05rem; font-weight: 700; color: #f4f5f6; }
         .mode-tile-tag { font-size: 0.65rem; font-weight: 700; color: #ffa500; border: 1px solid rgba(255, 165, 0, 0.35); border-radius: 4px; padding: 1px 6px; margin-left: 4px; vertical-align: middle; text-transform: uppercase; letter-spacing: 0.04em; }
-        .mode-tile-blurb { font-size: 0.85rem; color: #64748b; }
+        .mode-tile-blurb { font-size: 0.85rem; color: #94a3b8; } /* brighter for a dim pub (Randy, Nov 2026) */
         .mode-tile-count { font-size: 0.8rem; color: #64748b; text-align: right; white-space: nowrap; flex-shrink: 0; align-self: flex-start; }
                 /* Sliding Toast Alert Notification Window Styles */
         .toast-container {
