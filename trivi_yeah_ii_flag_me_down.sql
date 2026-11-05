@@ -1,5 +1,6 @@
 -- ============================================================================
--- Thinking Pants: the "Flag Me Down" category -- 80 flags, 20 per point tier
+-- Thinking Pants: the "Flag Me Down" category -- 120 flags, 30 per point tier
+-- (80 at first; grown to 120 in Nov 2026)
 -- (100 = Japan, Canada, Brazil ... 400 = the look-alike tricolors and harder
 -- flags), each with 6 look-alike flags as wrong answers (3 shown each time).
 --
@@ -40,6 +41,16 @@ FROM (VALUES
 ('/flags/se.svg',       'Sweden',                  ARRAY['Iceland', 'Åland Islands', 'Kosovo', 'CEFTA', 'European Union', 'Romania'], 100),
 ('/flags/us.svg',       'United States',           ARRAY['Liberia', 'Malaysia', 'Puerto Rico', 'Cuba', 'Chile', 'US Virgin Islands'], 100),
 ('/flags/ua.svg',       'Ukraine',                 ARRAY['Colombia', 'Rwanda', 'Guinea-Bissau', 'Ecuador', 'Liechtenstein', 'Bosnia and Herzegovina'], 100),
+('/flags/za.svg',       'South Africa',            ARRAY['Pitcairn Islands', 'Liechtenstein', 'New Zealand', 'Haiti', 'Mauritania', 'Ascension Island'], 100),
+('/flags/il.svg',       'Israel',                  ARRAY['Uruguay', 'Argentina', 'Cyprus', 'Galicia', 'Uzbekistan', 'Lebanon'], 100),
+('/flags/tr.svg',       'Turkiye',                 ARRAY['Tunisia', 'China', 'Vietnam', 'Hong Kong', 'Kyrgyzstan', 'Bahrain'], 100),
+('/flags/eu.svg',       'European Union',          ARRAY['CEFTA', 'Pacific Community', 'ASEAN', 'Curaçao', 'Kosovo', 'Iceland'], 100),
+('/flags/un.svg',       'United Nations',          ARRAY['Micronesia', 'Somalia', 'Guatemala', 'Antarctica', 'French Southern and Antarctic Lands', 'Palau'], 100),
+('/flags/nl.svg',       'Netherlands',             ARRAY['Paraguay', 'Hungary', 'Egypt', 'Croatia', 'Austria', 'Latvia'], 100),
+('/flags/dk.svg',       'Denmark',                 ARRAY['Austria', 'Latvia', 'Morocco', 'Turkiye', 'Isle of Man', 'Montenegro'], 100),
+('/flags/ru.svg',       'Russia',                  ARRAY['Bulgaria', 'Slovakia', 'Slovenia', 'Serbia', 'Czech Republic', 'Poland'], 100),
+('/flags/sa.svg',       'Saudi Arabia',            ARRAY['Arab League', 'Macau', 'Turkmenistan', 'Bangladesh', 'Pakistan', 'Afghanistan'], 100),
+('/flags/ar.svg',       'Argentina',               ARRAY['Honduras', 'Micronesia', 'United Nations', 'Nicaragua', 'El Salvador', 'Guatemala'], 100),
 -- 200 points
 ('/flags/be.svg',       'Belgium',                 ARRAY['Chad', 'Romania', 'Senegal', 'Andorra', 'Moldova', 'Portugal'], 200),
 ('/flags/no.svg',       'Norway',                  ARRAY['Hong Kong', 'Morocco', 'China', 'Vietnam', 'Austria', 'Latvia'], 200),
@@ -61,6 +72,16 @@ FROM (VALUES
 ('/flags/gb-sct.svg',   'Scotland',                ARRAY['Finland', 'Greece', 'Iceland', 'Jersey', 'Jamaica', 'Antarctica'], 200),
 ('/flags/cz.svg',       'Czech Republic',          ARRAY['Chile', 'Poland', 'Indonesia', 'Monaco', 'Slovakia', 'Russia'], 200),
 ('/flags/co.svg',       'Colombia',                ARRAY['Ecuador', 'Venezuela', 'Mauritius', 'Ukraine', 'Grenada', 'Bermuda'], 200),
+('/flags/gb-wls.svg',   'Wales',                   ARRAY['Oman', 'Eritrea', 'San Marino', 'Serbia', 'Poland', 'Belarus'], 200),
+('/flags/is.svg',       'Iceland',                 ARRAY['Sweden', 'Åland Islands', 'ASEAN', 'European Union', 'CEFTA', 'Kosovo'], 200),
+('/flags/np.svg',       'Nepal',                   ARRAY['Martinique', 'Papua New Guinea', 'Libya', 'St. Kitts and Nevis', 'Timor-Leste', 'Cook Islands'], 200),
+('/flags/cy.svg',       'Cyprus',                  ARRAY['Japan', 'US Virgin Islands', 'South Korea', 'England', 'Galicia', 'Jersey'], 200),
+('/flags/hr.svg',       'Croatia',                 ARRAY['Paraguay', 'Netherlands', 'Yemen', 'Iran', 'Luxembourg', 'Hungary'], 200),
+('/flags/et.svg',       'Ethiopia',                ARRAY['Bolivia', 'Ghana', 'Burkina Faso', 'Hungary', 'Equatorial Guinea', 'Niger'], 200),
+('/flags/ma.svg',       'Morocco',                 ARRAY['Vietnam', 'China', 'Montenegro', 'Turkiye', 'Tunisia', 'Burkina Faso'], 200),
+('/flags/va.svg',       'Vatican City',            ARRAY['Niue', 'Malta', 'Canary Islands', 'Cyprus', 'Faroe Islands', 'Jersey'], 200),
+('/flags/lk.svg',       'Sri Lanka',               ARRAY['Montenegro', 'Morocco', 'Vietnam', 'Spain', 'China', 'Timor-Leste'], 200),
+('/flags/pa.svg',       'Panama',                  ARRAY['Chile', 'Czech Republic', 'United States', 'Greenland', 'Sint Maarten', 'Paraguay'], 200),
 -- 300 points
 ('/flags/ge.svg',       'Georgia',                 ARRAY['Northern Ireland', 'England', 'Guernsey', 'Japan', 'Bahrain', 'Israel'], 300),
 ('/flags/al.svg',       'Albania',                 ARRAY['Kyrgyzstan', 'Switzerland', 'China', 'Turkiye', 'Isle of Man', 'Montenegro'], 300),
@@ -82,6 +103,16 @@ FROM (VALUES
 ('/flags/uy.svg',       'Uruguay',                 ARRAY['Israel', 'US Virgin Islands', 'Galicia', 'South Korea', 'Guatemala', 'Argentina'], 300),
 ('/flags/gt.svg',       'Guatemala',               ARRAY['United Nations', 'Antarctica', 'Micronesia', 'Somalia', 'Argentina', 'Aruba'], 300),
 ('/flags/my.svg',       'Malaysia',                ARRAY['Samoa', 'Czech Republic', 'Serbia', 'Morocco', 'Taiwan', 'Vietnam'], 300),
+('/flags/dz.svg',       'Algeria',                 ARRAY['Malta', 'Madagascar', 'Qatar', 'Pakistan', 'Djibouti', 'Canary Islands'], 300),
+('/flags/so.svg',       'Somalia',                 ARRAY['United Nations', 'Micronesia', 'Palau', 'Guatemala', 'Botswana', 'DR Congo'], 300),
+('/flags/bd.svg',       'Bangladesh',              ARRAY['Macau', 'Arab League', 'Saudi Arabia', 'Turkmenistan', 'ASEAN', 'Tokelau'], 300),
+('/flags/tw.svg',       'Taiwan',                  ARRAY['Samoa', 'Albania', 'Kyrgyzstan', 'China', 'Papua New Guinea', 'Tonga'], 300),
+('/flags/qa.svg',       'Qatar',                   ARRAY['Bahrain', 'Malta', 'Madagascar', 'Algeria', 'Pakistan', 'Turkiye'], 300),
+('/flags/hk.svg',       'Hong Kong',               ARRAY['China', 'Vietnam', 'Tunisia', 'Turkiye', 'Maldives', 'Samoa'], 300),
+('/flags/kz.svg',       'Kazakhstan',              ARRAY['United Nations', 'Palau', 'Tuvalu', 'Aruba', 'Uzbekistan', 'Azerbaijan'], 300),
+('/flags/lr.svg',       'Liberia',                 ARRAY['Samoa', 'Chile', 'Morocco', 'Denmark', 'Tunisia', 'Burundi'], 300),
+('/flags/gh.svg',       'Ghana',                   ARRAY['Bolivia', 'Ethiopia', 'Belarus', 'Vanuatu', 'Burkina Faso', 'Mauritius'], 300),
+('/flags/ve.svg',       'Venezuela',               ARRAY['Armenia', 'Lithuania', 'Myanmar', 'Colombia', 'Ecuador', 'Grenada'], 300),
 -- 400 points
 ('/flags/tl.svg',       'Timor-Leste',             ARRAY['Isle of Man', 'Vietnam', 'Morocco', 'Montenegro', 'Samoa', 'China'], 400),
 ('/flags/aq.svg',       'Antarctica',              ARRAY['United Nations', 'Guatemala', 'Micronesia', 'Somalia', 'French Southern and Antarctic Lands', 'Argentina'], 400),
@@ -102,10 +133,20 @@ FROM (VALUES
 ('/flags/kw.svg',       'Kuwait',                  ARRAY['Equatorial Guinea', 'Sudan', 'Hungary', 'Vanuatu', 'Iran', 'Yemen'], 400),
 ('/flags/rw.svg',       'Rwanda',                  ARRAY['Ukraine', 'Gabon', 'Azerbaijan', 'Tuvalu', 'Mauritius', 'Cabo Verde'], 400),
 ('/flags/im.svg',       'Isle of Man',             ARRAY['Montenegro', 'Morocco', 'Tonga', 'Tunisia', 'Albania', 'Switzerland'], 400),
-('/flags/om.svg',       'Oman',                    ARRAY['Eritrea', 'Belarus', 'Wales', 'Azerbaijan', 'Bahrain', 'Turkiye'], 400)
+('/flags/om.svg',       'Oman',                    ARRAY['Eritrea', 'Belarus', 'Wales', 'Azerbaijan', 'Bahrain', 'Turkiye'], 400),
+('/flags/lu.svg',       'Luxembourg',              ARRAY['Paraguay', 'Iran', 'Hungary', 'Niger', 'Croatia', 'Austria'], 400),
+('/flags/si.svg',       'Slovenia',                ARRAY['Russia', 'Slovakia', 'Bulgaria', 'Serbia', 'Czech Republic', 'Poland'], 400),
+('/flags/mn.svg',       'Mongolia',                ARRAY['Morocco', 'Maldives', 'Hong Kong', 'Vietnam', 'China', 'Samoa'], 400),
+('/flags/gl.svg',       'Greenland',               ARRAY['Poland', 'Monaco', 'Indonesia', 'Singapore', 'Chile', 'Bermuda'], 400),
+('/flags/bb.svg',       'Barbados',                ARRAY['CEFTA', 'Chad', 'Tokelau', 'ASEAN', 'Curaçao', 'Belize'], 400),
+('/flags/sc.svg',       'Seychelles',              ARRAY['Belarus', 'Namibia', 'Czech Republic', 'Equatorial Guinea', 'Ghana', 'Niger'], 400),
+('/flags/me.svg',       'Montenegro',              ARRAY['Morocco', 'Vietnam', 'Isle of Man', 'China', 'North Macedonia', 'Albania'], 400),
+('/flags/zm.svg',       'Zambia',                  ARRAY['Cocos (Keeling) Islands', 'Turkmenistan', 'Saudi Arabia', 'Martinique', 'Benin', 'Burkina Faso'], 400),
+('/flags/es-ct.svg',    'Catalonia',               ARRAY['North Macedonia', 'Vietnam', 'Spain', 'China', 'Montenegro', 'Isle of Man'], 400),
+('/flags/bn.svg',       'Brunei',                  ARRAY['Niue', 'Bhutan', 'Catalonia', 'Lithuania', 'Myanmar', 'India'], 400)
 ) AS v(visual_asset, correct_answer, wrong_answers, points);
 
 COMMIT;
 
--- Check: should return 80.
+-- Check: should return 120.
 SELECT COUNT(*) FROM questions WHERE game_mode = 'TRIVI_YEAH_II' AND category = 'FLAG_ME_DOWN';

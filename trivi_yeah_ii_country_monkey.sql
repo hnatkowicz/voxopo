@@ -1,7 +1,8 @@
 -- ============================================================================
--- Thinking Pants: the "Country Monkey" category -- 80 map questions, 20 per
+-- Thinking Pants: the "Country Monkey" category -- 120 map questions, 30 per
 -- point tier (100 = famous shapes ... 400 = Burundi, Bhutan, Eswatini), using
--- Randy's maps in public/maps/. 80 different countries, so a board can never
+-- Randy's maps in public/maps/. 120 different countries (80 at first; grown
+-- to 120 in Nov 2026 from maps already in the repo), so a board can never
 -- show the same country twice.
 --
 -- Safe to re-run: deletes and re-inserts this category only, inside a
@@ -44,6 +45,16 @@ FROM (VALUES
 ('/maps/germany.webp',                    'Germany',                 ARRAY['Poland', 'Austria', 'Czech Republic', 'Netherlands', 'France', 'Denmark'], 100),
 ('/maps/saudi-arabia.webp',               'Saudi Arabia',            ARRAY['Yemen', 'Oman', 'Iraq', 'Jordan', 'United Arab Emirates', 'Egypt'], 100),
 ('/maps/new-zealand.webp',                'New Zealand',             ARRAY['Australia', 'Fiji', 'Papua New Guinea', 'Tonga', 'Vanuatu', 'Solomon Islands'], 100),
+('/maps/denmark.webp',                    'Denmark',                 ARRAY['Norway', 'Netherlands', 'Sweden', 'Germany', 'Estonia', 'Belgium'], 100),
+('/maps/switzerland.webp',                'Switzerland',             ARRAY['Austria', 'Liechtenstein', 'Belgium', 'Luxembourg', 'Slovenia', 'Czech Republic'], 100),
+('/maps/romania.webp',                    'Romania',                 ARRAY['Bulgaria', 'Moldova', 'Hungary', 'Ukraine', 'Serbia', 'Slovakia'], 100),
+('/maps/papua-new-guinea-2.webp',         'Papua New Guinea',        ARRAY['Indonesia', 'Solomon Islands', 'Timor-Leste', 'Equatorial Guinea', 'Vanuatu', 'Fiji'], 100),
+('/maps/drc.webp',                        'DR Congo',                ARRAY['Rep. of Congo', 'Angola', 'Central African Republic', 'Zambia', 'Tanzania', 'Gabon'], 100),
+('/maps/ghana.webp',                      'Ghana',                   ARRAY['Togo', 'Ivory Coast', 'Burkina Faso', 'Benin', 'Guinea', 'Liberia'], 100),
+('/maps/austria.webp',                    'Austria',                 ARRAY['Switzerland', 'Hungary', 'Czech Republic', 'Slovakia', 'Slovenia', 'Australia'], 100),
+('/maps/belgium.webp',                    'Belgium',                 ARRAY['Netherlands', 'Luxembourg', 'Switzerland', 'Austria', 'Denmark', 'France'], 100),
+('/maps/ecuador.webp',                    'Ecuador',                 ARRAY['Peru', 'Colombia', 'Bolivia', 'Venezuela', 'Panama', 'Paraguay'], 100),
+('/maps/bangladesh.webp',                 'Bangladesh',              ARRAY['Myanmar', 'Bhutan', 'Nepal', 'Sri Lanka', 'Pakistan', 'Cambodia'], 100),
 -- 200 points
 ('/maps/argentina.webp',                  'Argentina',               ARRAY['Chile', 'Uruguay', 'Paraguay', 'Bolivia', 'Peru', 'Brazil'], 200),
 ('/maps/peru.webp',                       'Peru',                    ARRAY['Ecuador', 'Bolivia', 'Colombia', 'Chile', 'Paraguay', 'Venezuela'], 200),
@@ -65,6 +76,16 @@ FROM (VALUES
 ('/maps/poland.webp',                     'Poland',                  ARRAY['Germany', 'Czech Republic', 'Belarus', 'Ukraine', 'Lithuania', 'Slovakia'], 200),
 ('/maps/morocco.webp',                    'Morocco',                 ARRAY['Algeria', 'Western Sahara', 'Tunisia', 'Mauritania', 'Libya', 'Portugal'], 200),
 ('/maps/kenya.webp',                      'Kenya',                   ARRAY['Tanzania', 'Uganda', 'Ethiopia', 'Somalia', 'South Sudan', 'Rwanda'], 200),
+('/maps/tanzania.webp',                   'Tanzania',                ARRAY['Kenya', 'Mozambique', 'Uganda', 'Zambia', 'Malawi', 'Somalia'], 200),
+('/maps/zimbabwe.webp',                   'Zimbabwe',                ARRAY['Zambia', 'Botswana', 'Mozambique', 'Malawi', 'Namibia', 'South Africa'], 200),
+('/maps/mozambique.webp',                 'Mozambique',              ARRAY['Malawi', 'Tanzania', 'Zimbabwe', 'Zambia', 'Madagascar', 'Eswatini'], 200),
+('/maps/hungary.webp',                    'Hungary',                 ARRAY['Austria', 'Slovakia', 'Romania', 'Serbia', 'Czech Republic', 'Croatia'], 200),
+('/maps/croatia.webp',                    'Croatia',                 ARRAY['Slovenia', 'Bosnia and Herzegovina', 'Serbia', 'Montenegro', 'Hungary', 'Slovakia'], 200),
+('/maps/czech-republic.webp',             'Czech Republic',          ARRAY['Slovakia', 'Austria', 'Poland', 'Hungary', 'Slovenia', 'Germany'], 200),
+('/maps/nepal.webp',                      'Nepal',                   ARRAY['Bhutan', 'Bangladesh', 'Mongolia', 'Sri Lanka', 'Pakistan', 'Myanmar'], 200),
+('/maps/bolivia-2.webp',                  'Bolivia',                 ARRAY['Paraguay', 'Peru', 'Ecuador', 'Chile', 'Uruguay', 'Colombia'], 200),
+('/maps/uruguay-2.webp',                  'Uruguay',                 ARRAY['Paraguay', 'Argentina', 'Brazil', 'Bolivia', 'Ecuador', 'Chile'], 200),
+('/maps/uae.webp',                        'United Arab Emirates',    ARRAY['Oman', 'Qatar', 'Bahrain', 'Kuwait', 'Yemen', 'Saudi Arabia'], 200),
 -- 300 points
 ('/maps/nigeria.webp',                    'Nigeria',                 ARRAY['Niger', 'Cameroon', 'Benin', 'Ghana', 'Chad', 'Togo'], 300),
 ('/maps/ethiopia.webp',                   'Ethiopia',                ARRAY['Somalia', 'Eritrea', 'Kenya', 'South Sudan', 'Sudan', 'Djibouti'], 300),
@@ -86,6 +107,16 @@ FROM (VALUES
 ('/maps/algeria.webp',                    'Algeria',                 ARRAY['Libya', 'Morocco', 'Tunisia', 'Mali', 'Niger', 'Mauritania'], 300),
 ('/maps/libya.webp',                      'Libya',                   ARRAY['Algeria', 'Egypt', 'Tunisia', 'Chad', 'Sudan', 'Niger'], 300),
 ('/maps/netherlands.webp',                'Netherlands',             ARRAY['Belgium', 'Luxembourg', 'Denmark', 'Germany', 'Switzerland', 'Austria'], 300),
+('/maps/namibia.webp',                    'Namibia',                 ARRAY['Botswana', 'Angola', 'South Africa', 'Zambia', 'Zimbabwe', 'Lesotho'], 300),
+('/maps/mali.webp',                       'Mali',                    ARRAY['Niger', 'Mauritania', 'Burkina Faso', 'Algeria', 'Malawi', 'Chad'], 300),
+('/maps/cambodia.webp',                   'Cambodia',                ARRAY['Laos', 'Thailand', 'Vietnam', 'Myanmar', 'Malaysia', 'Bangladesh'], 300),
+('/maps/paraguay-2.webp',                 'Paraguay',                ARRAY['Uruguay', 'Bolivia', 'Argentina', 'Peru', 'Ecuador', 'Chile'], 300),
+('/maps/jordan-2.webp',                   'Jordan',                  ARRAY['Israel', 'Syria', 'Lebanon', 'Iraq', 'Saudi Arabia', 'Kuwait'], 300),
+('/maps/oman.webp',                       'Oman',                    ARRAY['Yemen', 'United Arab Emirates', 'Saudi Arabia', 'Qatar', 'Kuwait', 'Bahrain'], 300),
+('/maps/costa-rica.webp',                 'Costa Rica',              ARRAY['Panama', 'Nicaragua', 'Honduras', 'El Salvador', 'Guatemala', 'Belize'], 300),
+('/maps/belarus.webp',                    'Belarus',                 ARRAY['Ukraine', 'Lithuania', 'Latvia', 'Poland', 'Moldova', 'Russia'], 300),
+('/maps/serbia.webp',                     'Serbia',                  ARRAY['Bosnia and Herzegovina', 'Croatia', 'Montenegro', 'Bulgaria', 'Hungary', 'Kosovo'], 300),
+('/maps/botswana.webp',                   'Botswana',                ARRAY['Namibia', 'Zimbabwe', 'Zambia', 'South Africa', 'Lesotho', 'Malawi'], 300),
 -- 400 points
 ('/maps/burundi.webp',                    'Burundi',                 ARRAY['Rwanda', 'Uganda', 'Malawi', 'Tanzania', 'Eswatini', 'Lesotho'], 400),
 ('/maps/rwanda.webp',                     'Rwanda',                  ARRAY['Burundi', 'Uganda', 'Malawi', 'Tanzania', 'Eswatini', 'Lesotho'], 400),
@@ -106,10 +137,20 @@ FROM (VALUES
 ('/maps/laos.webp',                       'Laos',                    ARRAY['Cambodia', 'Vietnam', 'Thailand', 'Myanmar', 'Bhutan', 'Nepal'], 400),
 ('/maps/quatar.webp',                     'Qatar',                   ARRAY['Bahrain', 'Kuwait', 'United Arab Emirates', 'Oman', 'Yemen', 'Lebanon'], 400),
 ('/maps/bahrain.webp',                    'Bahrain',                 ARRAY['Qatar', 'Kuwait', 'United Arab Emirates', 'Oman', 'Brunei', 'Lebanon'], 400),
-('/maps/slovenia.webp',                   'Slovenia',                ARRAY['Slovakia', 'Croatia', 'Austria', 'Hungary', 'Montenegro', 'Switzerland'], 400)
+('/maps/slovenia.webp',                   'Slovenia',                ARRAY['Slovakia', 'Croatia', 'Austria', 'Hungary', 'Montenegro', 'Switzerland'], 400),
+('/maps/latvia.webp',                     'Latvia',                  ARRAY['Lithuania', 'Estonia', 'Belarus', 'Finland', 'Poland', 'Moldova'], 400),
+('/maps/estonia.webp',                    'Estonia',                 ARRAY['Latvia', 'Lithuania', 'Finland', 'Belarus', 'Denmark', 'Moldova'], 400),
+('/maps/malawi-2.webp',                   'Malawi',                  ARRAY['Mozambique', 'Zambia', 'Tanzania', 'Zimbabwe', 'Burundi', 'Mali'], 400),
+('/maps/eritrea.webp',                    'Eritrea',                 ARRAY['Djibouti', 'Ethiopia', 'Yemen', 'Sudan', 'Somalia', 'South Sudan'], 400),
+('/maps/armenia-2.webp',                  'Armenia',                 ARRAY['Azerbaijan', 'Georgia', 'Albania', 'Turkmenistan', 'Moldova', 'Kyrgyzstan'], 400),
+('/maps/azerbaijan-2.webp',               'Azerbaijan',              ARRAY['Armenia', 'Georgia', 'Turkmenistan', 'Uzbekistan', 'Kazakhstan', 'Afghanistan'], 400),
+('/maps/guyana-2.webp',                   'Guyana',                  ARRAY['Suriname', 'Venezuela', 'Ghana', 'Belize', 'Ecuador', 'Colombia'], 400),
+('/maps/albania.webp',                    'Albania',                 ARRAY['North Macedonia', 'Montenegro', 'Kosovo', 'Greece', 'Armenia', 'Bosnia and Herzegovina'], 400),
+('/maps/gabon.webp',                      'Gabon',                   ARRAY['Rep. of Congo', 'Equatorial Guinea', 'Cameroon', 'Angola', 'The Gambia', 'Ghana'], 400),
+('/maps/sierra-leone.webp',               'Sierra Leone',            ARRAY['Liberia', 'Guinea', 'Guinea-Bissau', 'Ivory Coast', 'The Gambia', 'Togo'], 400)
 ) AS v(visual_asset, correct_answer, wrong_answers, points);
 
 COMMIT;
 
--- Check: should return 80.
+-- Check: should return 120.
 SELECT COUNT(*) FROM questions WHERE game_mode = 'TRIVI_YEAH_II' AND category = 'COUNTRY_MONKEY';
