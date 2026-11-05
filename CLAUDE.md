@@ -143,6 +143,35 @@ event, for a small fee. That's why hosting is gated behind access codes.
 | `/info` | `public/info.html` | Rules, TV setup, privacy, about |
 | `/admin` | `public/admin.html` | Manage access codes, reset rooms |
 
+**TV hardening (Nov 2026; Fire TV sticks are common, and hotels, schools
+and libraries can block things):**
+- **Fallback connection.** The TV normally gets everything over a live
+  connection (WebSocket). Before this, if it dropped, the TV froze until
+  someone reloaded. Now every TV message is numbered, and the room keeps
+  the last 150 (`room.tvLog`, `broadcastToRoom`). If the live connection
+  never opens (5s) or drops, the TV checks in twice a second at
+  `/api/tv-events` with the last number it saw, and retries the live
+  connection every 15s, which picks up from that number. If it falls too
+  far behind, it gets a fresh snapshot (`tvSnapshotMessages`, shared with
+  `REGISTER_SCREEN`). A TV on the fallback counts as connected for the
+  phones' sounds and /admin health (`tvIsConnected`). Tested: a fully
+  blocked network, a mid-game drop and recovery (no message missed or
+  repeated), and a normal network (the fallback never fires).
+- **Full screen and staying awake.** Pressing Show on the TV goes full
+  screen and asks the device to stay awake (Wake Lock, taken back when
+  the page returns). A Full screen button in the top bar gets back in
+  after Back/Esc; it's hidden while full screen.
+- **Installable.** `public/tv.webmanifest` (TV page only, opens `/tv`
+  full screen): Chrome/Edge on a laptop offer to install it as an app.
+  There's no service worker and no offline copy on purpose, since a TV
+  running an old page against a new server would break.
+- **Parked:** the TV shows its own code and the host's phone links it (no
+  typing on a remote), and a Fire TV app (a wrapper around the website),
+  pending Randy's Fire Stick test. Raspberry Pi box: dropped (Randy wasn't
+  impressed with the family's). Hosting at a hotel: bring a laptop plus
+  HDMI, and a phone hotspot as backup. Phones don't need the venue's
+  Wi-Fi at all.
+
 The TV's start screen shows live counts (rooms open, people playing) from
 `/api/live-counts` -- numbers only, never room codes, since a code is the
 only lock on a room (Randy chose counts over a list of lobbies).

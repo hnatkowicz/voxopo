@@ -83,7 +83,9 @@ export function healthSnapshot(activeRooms) {
             // Phones poll every second; one heard from in the last 10s is live.
             if (now - (p.lastSeen || 0) < 10 * 1000) phonesCheckingIn++;
         }
-        tvs += (room.screens || []).filter(s => s.readyState === 1).length;
+        const liveTvs = (room.screens || []).filter(s => s.readyState === 1).length;
+        // A TV on the fallback (no live connection) checks in twice a second.
+        tvs += liveTvs || (now - (room.tvLastPoll || 0) < 5000 ? 1 : 0);
     }
     const minute = changeOver(60 * 1000, 'requests');
     const hourBytes = changeOver(60 * 60 * 1000, 'bytes');
