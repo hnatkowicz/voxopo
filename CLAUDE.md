@@ -102,6 +102,23 @@ event, for a small fee. That's why hosting is gated behind access codes.
   pixel for pixel), so near-identical shades are still separate names,
   to merge when the palette changes. Map, flag and state pictures have
   their colors drawn in and aren't affected.
+- **The look (Phase 1 rebrand, Randy, Nov 2026):** **Denim & Gold** --
+  deep denim backgrounds, cream text, gold (`--rm-brand`) as the brand
+  color for buttons, highlights and the wordmark. **Green means only
+  right/correct and red only wrong** (or a destructive "yes"); a timer or
+  a mode color is never red or green. Fonts are self-hosted in
+  `public/fonts/` (OFL, credited on `/info`): **Bricolage Grotesque** for
+  headings and big names (`--rm-font-display`; Randy: "Bricolage FTW!",
+  after Fredoka felt too "Comic Sans"), **DM Sans** for everything else
+  (`--rm-font-body`). The wordmark (`randomania-logo.svg`, "Rando" cream,
+  "Mania!" gold) and the **R!** icon (`r-icon.svg`, favicon, apple-touch
+  icon) are drawn from Bricolage -- Randy: "the R! in the right font with
+  the right background color is enough." Copy is plain voice ("Join",
+  "Pick a game", "Couldn't reach the room. Try again."), no jargon.
+  Next: **Phase 2**, a read-along TV for Thinking Pants (question ~3x
+  today's size, a 30%-wide always-visible scoreboard rail that keeps
+  emojis and every badge, badges right after the name, top 8 + "+N more
+  playing"), then **Phase 3**, the other modes' TV screens.
 - **Env vars:** `DATABASE_URL`, `ADMIN_PASSWORD`, `PORT`.
 
 ### The three devices

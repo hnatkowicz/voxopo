@@ -6,9 +6,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>RandoMania | Host</title>
     <link rel="icon" type="image/x-icon" href="/R.ico" />
+    <link rel="icon" type="image/svg+xml" href="/r-icon.svg">
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png">
     <style>
         body {
-            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", sans-serif;
+            font-family: var(--rm-font-body);
             background: var(--rm-bg);
             color: var(--rm-text);
             text-align: center;
@@ -31,10 +33,10 @@
         .input-group { margin-bottom: 24px; text-align: left; }
         label { display: block; margin-bottom: 10px; font-size: 0.75rem; color: var(--rm-text-muted); text-transform: uppercase; font-weight: 600; letter-spacing: 0.08em; }
         input[type="text"] { width: 100%; padding: 14px; background: var(--rm-surface-2); border: 1px solid var(--rm-border); border-radius: 8px; color: var(--rm-white); font-size: 1.05rem; box-sizing: border-box; transition: border-color 0.2s; }
-        input[type="text"]:focus { border-color: var(--rm-green); outline: none; }
+        input[type="text"]:focus { border-color: var(--rm-brand); outline: none; }
 
-        .btn { background: var(--rm-green); color: var(--rm-bg); border: none; padding: 16px; border-radius: 8px; font-size: 1.05rem; font-weight: 600; width: 100%; cursor: pointer; letter-spacing: 0.02em; }
-        .btn:hover { background: var(--rm-green-dark); }
+        .btn { background: var(--rm-brand); color: var(--rm-bg); border: none; padding: 16px; border-radius: 8px; font-size: 1.05rem; font-weight: 600; width: 100%; cursor: pointer; letter-spacing: 0.02em; }
+        .btn:hover { background: var(--rm-brand-dark); }
         .btn:disabled { background: var(--rm-surface-2); color: var(--rm-text-muted); cursor: not-allowed; }
         .btn:disabled:hover { background: var(--rm-surface-2); }
 
@@ -43,11 +45,11 @@
 
         #result-screen { display: none; }
         .lobby-code-display {
-            font-family: monospace;
+            font-family: var(--rm-font-body); font-variant-numeric: tabular-nums;
             font-size: 3rem;
             font-weight: 700;
             letter-spacing: 8px;
-            color: var(--rm-green);
+            color: var(--rm-brand);
             background: var(--rm-surface-2);
             border: 1px solid var(--rm-border);
             border-radius: 12px;
@@ -60,7 +62,7 @@
 <body>
     <div id="entry-screen" class="card">
         <h1>Host a Game</h1>
-        <p class="subtitle">Enter your access code to spin up a lobby.</p>
+        <p class="subtitle">Enter your access code to open a room.</p>
         <div class="input-group">
             <label for="access-code">Access Code</label>
             <input type="text" id="access-code" placeholder="e.g. OAK-0912" autocapitalize="characters" autocomplete="off">
@@ -71,9 +73,9 @@
 
     <div id="result-screen" class="card">
         <h1>You're Live</h1>
-        <p class="subtitle">Enter this on your TV to open the lobby.</p>
+        <p class="subtitle">Type this into the TV to open the room.</p>
         <div class="lobby-code-display" id="lobby-code-display">----</div>
-        <div class="instruction">On the TV, go to <strong>randomania.tv</strong> and type this code into the lobby entry field. Every TV at the venue can join with the same code.</div>
+        <div class="instruction">On the TV, go to <strong>randomania.tv</strong> and type this code into the room code box. Every TV at the venue can join with the same code.</div>
     </div>
 
     <script>

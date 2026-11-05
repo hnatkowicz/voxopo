@@ -171,7 +171,7 @@ if (btnSubmitSpectate) {
                     ${venue.logoUrl ? `<img src="${venue.logoUrl}" alt="" style="height: 140px; width: auto; max-width: 80%; object-fit: contain;" onerror="this.remove()">` : ''}
                     <div style="font-size: 2.2rem; font-weight: 800; color: var(--rm-white);">☕ Break time${venue.name ? ` <span style="color: var(--rm-text-soft); font-weight: 600;">at ${escapeHtml(venue.name)}</span>` : ''}</div>
                     ${notes.length ? `<div id="venue-break-note" style="font-size: 2.8rem; font-weight: 700; line-height: 1.25; color: var(--rm-yellow); min-height: 2.5em; max-width: 92%; display: flex; align-items: center; justify-content: center; transition: opacity 0.4s;"></div>` : ''}
-                    <div id="venue-break-headsup" style="display: none; font-size: 1.6rem; font-weight: 800; color: var(--rm-green);">⏰ Back in 30 seconds!</div>
+                    <div id="venue-break-headsup" style="display: none; font-size: 1.6rem; font-weight: 800; color: var(--rm-brand);">⏰ Back in 30 seconds!</div>
                     <div id="venue-break-tally" style="color: var(--rm-text-soft); font-size: 1rem;">${data.backCount || 0} of ${data.totalPlayers || 0} are back</div>
                     <div style="color: var(--rm-text-muted); font-size: 0.9rem;">Tap "I'm back" on your phone -- we pick up when everyone has, or when the clock runs out.</div>
                 </div>
@@ -193,7 +193,7 @@ if (btnSubmitSpectate) {
             socket = new WebSocket(`wss://${window.location.host}`);
             
             socket.onopen = () => {
-                document.getElementById('room-status-text').innerText = "Connected Live";
+                document.getElementById('room-status-text').innerText = "Live";
                 socket.send(JSON.stringify({ type: 'REGISTER_SCREEN', roomCode: roomCode }));
             };
 
@@ -402,7 +402,7 @@ if (btnSubmitSpectate) {
                 }
                 if (data.type === 'RETURN_TO_LOBBY') {
                     profilerCountdownActive = false;
-                    document.getElementById('room-status-text').innerText = "Connected Live";
+                    document.getElementById('room-status-text').innerText = "Live";
                     document.getElementById('lobby-countdown').innerText = "60s";
                     stopCategoryMusic();
                     stopCountdownMusic();
@@ -826,7 +826,7 @@ if (btnSubmitSpectate) {
                         <td class="indicator-col"></td>
                         <td class="rank-col" style="color: var(--rm-border);">—</td>
                         <td class="awards-col"></td>
-                        <td class="identity-col"><span class="identity-wrap"><span class="player-emoji" style="color: var(--rm-border);">👤</span><span class="player-name" style="color: var(--rm-text-muted); font-style: italic;">Lobby is empty...</span></span></td>
+                        <td class="identity-col"><span class="identity-wrap"><span class="player-emoji" style="color: var(--rm-border);">👤</span><span class="player-name" style="color: var(--rm-text-muted); font-style: italic;">Waiting for players...</span></span></td>
                         <td class="score-col" style="color: var(--rm-border);">0</td>
                     </tr>
                 `;
@@ -838,7 +838,7 @@ if (btnSubmitSpectate) {
             // and would otherwise stomp the in-game/game-over status message.
             if (currentGamePhase === 'LOBBY' && !currentStatusHtml.includes('START')) {
                 setStatusMessage(`
-                    <div style="font-weight: 600; color: var(--rm-periwinkle); margin-bottom: 2px;">PRESS START TO CONFIRM</div>
+                    <div style="font-weight: 600; color: var(--rm-periwinkle); margin-bottom: 2px;">EVERYONE IN? PRESS START</div>
                     <div style="font-size: 0.8rem; color: var(--rm-text-muted);">Skips the countdown once everyone's in</div>
                 `);
             }
@@ -961,7 +961,7 @@ if (btnSubmitSpectate) {
                 slot.innerHTML = `
                     <div style="display: flex; align-items: center; justify-content: flex-end; gap: 10px; transition: transform 0.3s ease; transform: scale(0.95); opacity: 0;" id="inline-toast-card">
                         <div style="text-align: right;">
-                            <div style="font-size: 0.85rem; font-weight: 600; color: var(--rm-green); letter-spacing: -0.01em;">New player joined</div>
+                            <div style="font-size: 0.85rem; font-weight: 600; color: var(--rm-brand); letter-spacing: -0.01em;">New player joined</div>
                             <div style="font-size: 0.85rem; color: var(--rm-text-muted);">${nextPlayer.name}</div>
                         </div>
                         <span style="font-size: 1.1rem;">${nextPlayer.emoji || '👤'}</span>
@@ -1018,7 +1018,7 @@ if (btnSubmitSpectate) {
             currentGamePhase = 'CATEGORY_VOTE';
             // Phones have a Start button here too now, same as the lobby.
             setStatusMessage(`
-                <div style="font-weight: 600; color: var(--rm-periwinkle); margin-bottom: 2px;">PRESS START TO CONFIRM</div>
+                <div style="font-weight: 600; color: var(--rm-periwinkle); margin-bottom: 2px;">EVERYONE IN? PRESS START</div>
                 <div style="font-size: 0.8rem; color: var(--rm-text-muted);">Skips the countdown once everyone's in</div>
             `);
 
@@ -1084,19 +1084,19 @@ if (btnSubmitSpectate) {
             const choiceGrid = `
                 <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; width: 100%;">
                     <div id="choice-row-A" style="background: var(--rm-surface-2); border: 1px solid var(--rm-border); border-radius: 8px; padding: 16px; display: flex; align-items: center; gap: 12px; transition: all 0.3s ease;">
-                        <span style="background: rgba(var(--rm-green-rgb), 0.1); color: var(--rm-green); font-weight: 700; padding: 4px 10px; border-radius: 4px; font-size: 0.85rem;">A</span>
+                        <span style="background: rgba(var(--rm-brand-rgb), 0.1); color: var(--rm-brand); font-weight: 700; padding: 4px 10px; border-radius: 4px; font-size: 0.85rem;">A</span>
                         <span style="font-size: 1rem; font-weight: 500; color: var(--rm-text-2);">${choiceA}</span>
                     </div>
                     <div id="choice-row-B" style="background: var(--rm-surface-2); border: 1px solid var(--rm-border); border-radius: 8px; padding: 16px; display: flex; align-items: center; gap: 12px; transition: all 0.3s ease;">
-                        <span style="background: rgba(var(--rm-green-rgb), 0.1); color: var(--rm-green); font-weight: 700; padding: 4px 10px; border-radius: 4px; font-size: 0.85rem;">B</span>
+                        <span style="background: rgba(var(--rm-brand-rgb), 0.1); color: var(--rm-brand); font-weight: 700; padding: 4px 10px; border-radius: 4px; font-size: 0.85rem;">B</span>
                         <span style="font-size: 1rem; font-weight: 500; color: var(--rm-text-2);">${choiceB}</span>
                     </div>
                     <div id="choice-row-C" style="background: var(--rm-surface-2); border: 1px solid var(--rm-border); border-radius: 8px; padding: 16px; display: flex; align-items: center; gap: 12px; transition: all 0.3s ease;">
-                        <span style="background: rgba(var(--rm-green-rgb), 0.1); color: var(--rm-green); font-weight: 700; padding: 4px 10px; border-radius: 4px; font-size: 0.85rem;">C</span>
+                        <span style="background: rgba(var(--rm-brand-rgb), 0.1); color: var(--rm-brand); font-weight: 700; padding: 4px 10px; border-radius: 4px; font-size: 0.85rem;">C</span>
                         <span style="font-size: 1rem; font-weight: 500; color: var(--rm-text-2);">${choiceC}</span>
                     </div>
                     <div id="choice-row-D" style="background: var(--rm-surface-2); border: 1px solid var(--rm-border); border-radius: 8px; padding: 16px; display: flex; align-items: center; gap: 12px; transition: all 0.3s ease;">
-                        <span style="background: rgba(var(--rm-green-rgb), 0.1); color: var(--rm-green); font-weight: 700; padding: 4px 10px; border-radius: 4px; font-size: 0.85rem;">D</span>
+                        <span style="background: rgba(var(--rm-brand-rgb), 0.1); color: var(--rm-brand); font-weight: 700; padding: 4px 10px; border-radius: 4px; font-size: 0.85rem;">D</span>
                         <span style="font-size: 1rem; font-weight: 500; color: var(--rm-text-2);">${choiceD}</span>
                     </div>
                 </div>
@@ -1167,7 +1167,7 @@ function switchToTriviYeahIIBoardUI(grid, currentPicker, round, totalRounds) {
 
     currentGamePhase = 'TRIVI_YEAH_II_ROUND';
     document.getElementById('room-status-text').innerText = `Thinking Pants — Round ${triviYeahIICurrentRound}/${triviYeahIITotalRounds}`;
-    setStatusMessage(`<div style="font-weight: 600; color: var(--rm-green);">${currentPicker}'s pick!</div>`);
+    setStatusMessage(`<div style="font-weight: 600; color: var(--rm-brand);">${currentPicker}'s pick!</div>`);
 
     // The grid arrives category-major (3 categories x 4 tiers, flat array of
     // 12) -- transposed here into a 3-column x 4-row CSS grid so categories
@@ -1188,7 +1188,7 @@ function switchToTriviYeahIIBoardUI(grid, currentPicker, round, totalRounds) {
             if (!cell) { tileCells.push('<div></div>'); continue; }
             tileCells.push(cell.cleared
                 ? `<div style="background: var(--rm-surface); border: 1px solid var(--rm-surface-1c); border-radius: 8px; padding: 16px 4px; text-align: center; color: var(--rm-slate-700); font-size: 1.1rem; font-weight: 700;">&mdash;</div>`
-                : `<div style="background: var(--rm-surface); border: 2px solid var(--rm-green); box-shadow: 0 0 10px rgba(var(--rm-green-rgb), 0.25); border-radius: 8px; padding: 15px 4px; text-align: center; color: var(--rm-green); font-size: 1.25rem; font-weight: 800;">${cell.points}</div>`);
+                : `<div style="background: var(--rm-surface); border: 2px solid var(--rm-brand); box-shadow: 0 0 10px rgba(var(--rm-brand-rgb), 0.25); border-radius: 8px; padding: 15px 4px; text-align: center; color: var(--rm-brand); font-size: 1.25rem; font-weight: 800;">${cell.points}</div>`);
         }
     }
 
@@ -1252,7 +1252,7 @@ function showTriviYeahIISpotlightUI(partial) {
             <div class="panel-box" style="padding: 40px; flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; min-height: 400px; box-sizing: border-box;">
                 <div style="font-size: 0.85rem; font-weight: 600; color: var(--rm-text-muted); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 14px;">Up next</div>
                 <div style="font-size: 2rem; font-weight: 800; color: var(--rm-white); margin-bottom: 10px;">${categoryLabel}</div>
-                <div style="font-size: 1.1rem; font-weight: 700; color: var(--rm-green);">${points} points</div>
+                <div style="font-size: 1.1rem; font-weight: 700; color: var(--rm-brand);">${points} points</div>
             </div>
         `;
         return;
@@ -1291,19 +1291,19 @@ function showTriviYeahIISpotlightUI(partial) {
     const choiceGrid = `
         <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; width: 100%;">
             <div id="choice-row-A" style="background: var(--rm-surface-2); border: 1px solid var(--rm-border); border-radius: 8px; padding: 16px; display: flex; align-items: center; gap: 12px; transition: all 0.3s ease;">
-                <span style="background: rgba(var(--rm-green-rgb), 0.1); color: var(--rm-green); font-weight: 700; padding: 4px 10px; border-radius: 4px; font-size: 0.85rem;">A</span>
+                <span style="background: rgba(var(--rm-brand-rgb), 0.1); color: var(--rm-brand); font-weight: 700; padding: 4px 10px; border-radius: 4px; font-size: 0.85rem;">A</span>
                 <span style="font-size: 1rem; font-weight: 500; color: var(--rm-text-2);">${choiceA}</span>
             </div>
             <div id="choice-row-B" style="background: var(--rm-surface-2); border: 1px solid var(--rm-border); border-radius: 8px; padding: 16px; display: flex; align-items: center; gap: 12px; transition: all 0.3s ease;">
-                <span style="background: rgba(var(--rm-green-rgb), 0.1); color: var(--rm-green); font-weight: 700; padding: 4px 10px; border-radius: 4px; font-size: 0.85rem;">B</span>
+                <span style="background: rgba(var(--rm-brand-rgb), 0.1); color: var(--rm-brand); font-weight: 700; padding: 4px 10px; border-radius: 4px; font-size: 0.85rem;">B</span>
                 <span style="font-size: 1rem; font-weight: 500; color: var(--rm-text-2);">${choiceB}</span>
             </div>
             <div id="choice-row-C" style="background: var(--rm-surface-2); border: 1px solid var(--rm-border); border-radius: 8px; padding: 16px; display: flex; align-items: center; gap: 12px; transition: all 0.3s ease;">
-                <span style="background: rgba(var(--rm-green-rgb), 0.1); color: var(--rm-green); font-weight: 700; padding: 4px 10px; border-radius: 4px; font-size: 0.85rem;">C</span>
+                <span style="background: rgba(var(--rm-brand-rgb), 0.1); color: var(--rm-brand); font-weight: 700; padding: 4px 10px; border-radius: 4px; font-size: 0.85rem;">C</span>
                 <span style="font-size: 1rem; font-weight: 500; color: var(--rm-text-2);">${choiceC}</span>
             </div>
             <div id="choice-row-D" style="background: var(--rm-surface-2); border: 1px solid var(--rm-border); border-radius: 8px; padding: 16px; display: flex; align-items: center; gap: 12px; transition: all 0.3s ease;">
-                <span style="background: rgba(var(--rm-green-rgb), 0.1); color: var(--rm-green); font-weight: 700; padding: 4px 10px; border-radius: 4px; font-size: 0.85rem;">D</span>
+                <span style="background: rgba(var(--rm-brand-rgb), 0.1); color: var(--rm-brand); font-weight: 700; padding: 4px 10px; border-radius: 4px; font-size: 0.85rem;">D</span>
                 <span style="font-size: 1rem; font-weight: 500; color: var(--rm-text-2);">${choiceD}</span>
             </div>
         </div>
@@ -2098,7 +2098,7 @@ function switchToGameOverUI(players, brand) {
     panel.innerHTML = `
         <div class="panel-box" style="padding: 40px; flex: 1; display: flex; flex-direction: column; justify-content: center;">
             ${brand && brand.logoUrl ? `<img src="${brand.logoUrl}" alt="" style="display: block; height: 120px; width: auto; max-width: 70%; object-fit: contain; margin: 0 auto 20px;" onerror="this.remove()">` : ''}
-            <h2 class="panel-title" style="margin-bottom: 8px;">Final Leaderboard</h2>
+            <h2 class="panel-title" style="margin-bottom: 8px;">Final scores</h2>
             <p style="color: var(--rm-text-muted); font-size: 0.95rem; margin: 0 0 32px 0; font-weight: 500;">${brand ? `Thanks for playing at ${escapeHtml(brand.name)}!${brand.tagline ? ` <span style="color: var(--rm-text-soft);">${escapeHtml(brand.tagline)}</span>` : ''}` : 'Thanks for playing!'}</p>
             <div style="display: flex; flex-direction: column; gap: 36px;">${rows}</div>
             <div id="return-vote-tally" style="color: var(--rm-text-muted); font-size: 0.85rem; text-align: center; margin-top: 28px;"></div>
@@ -2106,7 +2106,7 @@ function switchToGameOverUI(players, brand) {
     `;
 
     currentGamePhase = 'GAME_OVER';
-    setStatusMessage(`<div style="font-weight: 600; color: var(--rm-periwinkle);">Match complete</div>`);
+    setStatusMessage(`<div style="font-weight: 600; color: var(--rm-periwinkle);">Game over</div>`);
 }
 
 // How the room split, as a fill on each answer button (Randy, Oct 2026:
