@@ -534,9 +534,9 @@ and forth until we both agree the idea is good **and** worth the effort. So:
   profile. Main use is Off (no College Athletics at a library night).
   Warn on /admin when a venue has too few categories on. Medium lift;
   worth doing before pubs start in earnest.
-- **Depth plan (Nov 2026):** after Country Monkey and Flag Me Down (120
-  each), Red, White & Who? and War & Pieces to 120, then Sports, Food &
-  Drink and World History, then Cell Mates (Biology). Niche pun
+- **Depth plan (Nov 2026):** Country Monkey, Flag Me Down, Red, White &
+  Who? and War & Pieces are at 120 (done); next Sports, Food & Drink and
+  World History, then Cell Mates (Biology). Niche pun
   categories (Famous (K)nights, Fictional Locations, Just in Time,
   Lyrics) stay at 80 on purpose.
 - **Mind Field:** a name saved for a future mode built around hidden traps
