@@ -4334,8 +4334,8 @@ SELECT COUNT(*) FROM questions WHERE game_mode = 'TRIVI_YEAH_II' AND category = 
 -- Thinking Pants category GREAT_STATE. To change a question, change the
 -- spreadsheet and rebuild.
 --
--- Replaces the WHOLE category with the spreadsheet's 306 live questions
--- (100: 54, 200: 108, 300: 95, 400: 49), inside a transaction. Safe to re-run.
+-- Replaces the WHOLE category with the spreadsheet's 307 live questions
+-- (100: 54, 200: 108, 300: 96, 400: 49), inside a transaction. Safe to re-run.
 -- ============================================================================
 
 BEGIN;
@@ -5376,6 +5376,10 @@ INSERT INTO questions (question_number, game_mode, category, subcategory, factio
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GREAT_STATE', 'ORIGINAL', NULL,
         'Which giant dam on the Colorado River sits on the highlighted state''s border with Nevada?', '/states/arizona-map.webp',
         'Hoover Dam', ARRAY['Grand Coulee Dam', 'Shasta Dam', 'Bonneville Dam', 'Fort Peck Dam', 'Oroville Dam'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GREAT_STATE', 'ORIGINAL', NULL,
+        'Which state is highlighted?', '/states/colorado-map.webp',
+        'Colorado', ARRAY['Wyoming', 'Utah', 'Kansas', 'New Mexico', 'Nebraska'], 300);
 
 -- 400 points
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
@@ -5577,7 +5581,7 @@ VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YE
 
 COMMIT;
 
--- Check: should return 306.
+-- Check: should return 307.
 SELECT COUNT(*) FROM questions WHERE game_mode = 'TRIVI_YEAH_II' AND category = 'GREAT_STATE';
 
 -- ============================================================================
