@@ -98,7 +98,7 @@
             </div>
             
             <div class="hud-metric">Room Code <span class="hud-value" style="color: var(--rm-brand);" id="display-room-code-badge">----</span></div>
-            <div class="hud-metric">Players Joined <span class="hud-value" id="lobby-player-count">0</span></div>
+            <div class="hud-metric" id="hud-players">Players Joined <span class="hud-value" id="lobby-player-count">0</span></div>
             <div class="hud-value" style="color: var(--rm-text); font-size: 1.6rem;" id="lobby-countdown">60s</div>
         </div>
     
@@ -121,7 +121,7 @@
                 </div>
     
                 <!-- MODERN HIGH-UTILITY ONBOARDING PANEL (Stays locked permanently!) -->
-                <div style="background: var(--rm-surface); border: 1px solid var(--rm-border); border-radius: 12px; padding: 20px 24px; margin-top: 24px; display: flex; align-items: center; gap: 20px; box-sizing: border-box; position: relative; min-height: 114px; flex-shrink: 0;">
+                <div id="tv-foot" style="background: var(--rm-surface); border: 1px solid var(--rm-border); border-radius: 12px; padding: 20px 24px; margin-top: 24px; display: flex; align-items: center; gap: 20px; box-sizing: border-box; position: relative; min-height: 114px; flex-shrink: 0;">
                     <div id="room-qr-box" style="background: var(--rm-white); padding: 2px; border-radius: 8px; display: flex; justify-content: center; align-items: center; width: 96px; height: 96px; box-sizing: border-box; flex-shrink: 0; z-index: 10; margin-right: 12px;">
                         <!-- Swapped for this room's own code (play?room=1234) by app.js. -->
                         <img id="room-qr-image" src="qr.png" alt="Scan to Play" style="width: 100%; height: 100%; object-fit: contain;">

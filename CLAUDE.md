@@ -115,10 +115,21 @@ event, for a small fee. That's why hosting is gated behind access codes.
   icon) are drawn from Bricolage -- Randy: "the R! in the right font with
   the right background color is enough." Copy is plain voice ("Join",
   "Pick a game", "Couldn't reach the room. Try again."), no jargon.
-  Next: **Phase 2**, a read-along TV for Thinking Pants (question ~3x
-  today's size, a 30%-wide always-visible scoreboard rail that keeps
-  emojis and every badge, badges right after the name, top 8 + "+N more
-  playing"), then **Phase 3**, the other modes' TV screens.
+  **Phase 2 (built Nov 2026): the read-along TV for Thinking Pants**
+  (Randy: "we all wear glasses begrudgingly"). While a Thinking Pants
+  game is on, `body.tp-layout` sizes everything to the screen (`--u` =
+  1% of the width, or of a 16:9 frame on taller screens), drops the
+  boxes, and makes the question ~3x its old size (69px on a 1080p TV,
+  was 22px). The scoreboard is a 30%-wide rail that's always on screen:
+  emojis and every badge kept (badges right after the name), ▲▼ after a
+  score change, top 8 + "+N more playing", and the name is the only
+  thing that shortens. Pub rooms drop "Players joined" from the top bar
+  (the venue's name takes its place). The screens use the `tp-*` pieces
+  in `styles.css`; `updateTpLayout` in `app.js` turns the layout on for
+  Thinking Pants' broadcasts and off for anything else. The Final Wager
+  is shared, so in Country Monkey and Flag Me Down it uses the same
+  pieces inside the old boxed layout. Next: **Phase 3**, the other
+  modes' TV screens.
 - **Env vars:** `DATABASE_URL`, `ADMIN_PASSWORD`, `PORT`.
 
 ### The three devices

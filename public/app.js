@@ -200,6 +200,7 @@ if (btnSubmitSpectate) {
             socket.onmessage = (event) => {
                 const data = JSON.parse(event.data);
                 console.log("[WebSocket API Event Received]", data);
+                updateTpLayout(data);
 
                 // The room's gone -- everyone left, or an admin force-reset it.
                 // Bounce back to the gateway screen and drop this connection;
@@ -816,6 +817,70 @@ if (btnSubmitSpectate) {
             }).join('');
         }
 
+        // ---------- Thinking Pants read-along layout (Phase 2) ----------
+        // Turned on by Thinking Pants' own broadcasts and off by anything
+        // that starts something else. The Final Wager's broadcasts are
+        // shared with Country Monkey and Flag Me Down, so they leave the
+        // layout as it was.
+        const TP_LAYOUT_OFF = new Set(['ROOM_CLOSED', 'RETURN_TO_LOBBY', 'TRANSITION_TO_CATEGORY_VOTE', 'TRANSITION_TO_QUESTION',
+            'EMPOSSDURR_ROUND_START', 'ON_THE_SPECTRUM_ROUND_START', 'FLAG_ME_DOWN_ROUND', 'PROFILER_QUESTION']);
+        function updateTpLayout(data) {
+            let on = null;
+            if (data.type === 'TRANSITION_TO_TRIVI_YEAH_II' || /^TRIVI_YEAH_II_(?!FINAL_)/.test(data.type)) on = true;
+            else if (TP_LAYOUT_OFF.has(data.type)) on = false;
+            else if (data.type === 'STATE_CATCH_UP') on = data.gameState === 'TRIVI_YEAH_II_ROUND';
+            if (on === null || on === document.body.classList.contains('tp-layout')) return;
+            document.body.classList.toggle('tp-layout', on);
+            railMoves = {};
+            railLastScores = null;
+            updateLeaderboardUI(cachedPlayersSnapshot);
+        }
+
+        // The rail's arrows: who moved up or down at the last score change.
+        // They stay put until scores change again (joins and answer dots
+        // redraw the rail without moving anyone).
+        const RAIL_MAX_ROWS = 8; // then "+N more playing" (pub rooms)
+        let railMoves = {};
+        let railLastScores = null;
+        let railLastRanks = {};
+        function updateRailMoves(sorted) {
+            const scores = sorted.map(p => `${p.name}:${p.score || 0}`).sort().join('|');
+            const ranks = {};
+            sorted.forEach((p, i) => { ranks[p.name] = i; });
+            if (railLastScores !== null && scores !== railLastScores) {
+                railMoves = {};
+                sorted.forEach((p, i) => {
+                    const before = railLastRanks[p.name];
+                    if (before === undefined || before === i) return;
+                    railMoves[p.name] = before > i ? 'up' : 'down';
+                });
+            }
+            railLastScores = scores;
+            railLastRanks = ranks;
+        }
+
+        function renderRailRows(sorted) {
+            const shown = sorted.slice(0, RAIL_MAX_ROWS);
+            const rows = shown.map((player, index) => {
+                const status = playerAnswerStatus[player.name];
+                const indicatorClass = status === 'correct' ? 'correct' : (status === 'answered' ? 'answered' : '');
+                const move = railMoves[player.name];
+                return `
+                    <tr class="rail-row${index === 0 && (player.score || 0) > 0 ? ' lead' : ''}">
+                        <td class="rail-rank"><span class="status-indicator ${indicatorClass}"></span>${index + 1}</td>
+                        <td class="rail-id"><span class="rail-wrap">
+                            <span class="rail-emoji">${player.emoji || '👤'}</span>
+                            <span class="rail-name">${escapeHtml(player.name)}</span>
+                            <span class="rail-badges">${renderAwardBadges(player.awards)}</span>
+                            ${move ? `<span class="rail-move ${move}">${move === 'up' ? '▲' : '▼'}</span>` : ''}
+                        </span></td>
+                        <td class="rail-score">${(player.score || 0).toLocaleString()}</td>
+                    </tr>`;
+            }).join('');
+            const more = sorted.length - shown.length;
+            return rows + (more > 0 ? `<tr class="rail-more"><td colspan="3">+${more} more playing</td></tr>` : '');
+        }
+
         function updateLeaderboardUI(playersList) {
             document.getElementById('lobby-player-count').innerText = playersList.length;
             const tbody = document.getElementById('leaderboard-rows');
@@ -845,6 +910,11 @@ if (btnSubmitSpectate) {
 
             tbody.innerHTML = '';
             playersList.sort(compareByRank);
+            updateRailMoves(playersList);
+            if (document.body.classList.contains('tp-layout')) {
+                tbody.innerHTML = renderRailRows(playersList);
+                return;
+            }
 
             playersList.forEach((player, index) => {
                 const row = document.createElement('tr');
@@ -1158,6 +1228,19 @@ let triviYeahIISpotlightCache = {};
 let triviYeahIICurrentRound = 1;
 let triviYeahIITotalRounds = 3;
 
+// The Thinking Pants screens below are built from the tp-* pieces in
+// styles.css, sized to the screen (Phase 2, Randy, Nov 2026: the question
+// is ~3x its old size). They stay readable in the old boxed layout too,
+// since the Final Wager is shared with Country Monkey and Flag Me Down.
+function tpStage(classes, inner) {
+    return `<div class="tp-stage ${classes || ''}">${inner}</div>`;
+}
+// Long questions step down a size so the answers still fit.
+function tpQuestion(text, isPicture) {
+    const long = (text || '').length > (isPicture ? 80 : 120);
+    return `<div class="tp-q${long ? ' tp-long' : ''}">${text || ''}</div>`;
+}
+
 function switchToTriviYeahIIBoardUI(grid, currentPicker, round, totalRounds) {
     const panel = document.getElementById('active-content-stage');
     const boardGrid = grid || [];
@@ -1178,7 +1261,7 @@ function switchToTriviYeahIIBoardUI(grid, currentPicker, round, totalRounds) {
     const headerCells = [];
     for (let c = 0; c < categoryCount; c++) {
         const first = boardGrid[c * tierCount];
-        headerCells.push(`<div style="padding: 8px 4px; text-align: center; font-size: 0.72rem; font-weight: 700; color: var(--rm-text-soft); text-transform: uppercase; letter-spacing: 0.04em;">${first ? first.categoryLabel : ''}</div>`);
+        headerCells.push(`<div class="tp-board-head">${first ? first.categoryLabel : ''}</div>`);
     }
 
     const tileCells = [];
@@ -1187,19 +1270,12 @@ function switchToTriviYeahIIBoardUI(grid, currentPicker, round, totalRounds) {
             const cell = boardGrid[c * tierCount + t];
             if (!cell) { tileCells.push('<div></div>'); continue; }
             tileCells.push(cell.cleared
-                ? `<div style="background: var(--rm-surface); border: 1px solid var(--rm-surface-1c); border-radius: 8px; padding: 16px 4px; text-align: center; color: var(--rm-slate-700); font-size: 1.1rem; font-weight: 700;">&mdash;</div>`
-                : `<div style="background: var(--rm-surface); border: 2px solid var(--rm-brand); box-shadow: 0 0 10px rgba(var(--rm-brand-rgb), 0.25); border-radius: 8px; padding: 15px 4px; text-align: center; color: var(--rm-brand); font-size: 1.25rem; font-weight: 800;">${cell.points}</div>`);
+                ? `<div class="tp-tile tp-gone">&mdash;</div>`
+                : `<div class="tp-tile">${cell.points}</div>`);
         }
     }
 
-    panel.innerHTML = `
-        <div class="panel-box" style="padding: 24px; flex: 1; display: flex; flex-direction: column; justify-content: center;">
-            <div style="display: grid; grid-template-columns: repeat(${categoryCount}, 1fr); gap: 8px;">
-                ${headerCells.join('')}
-                ${tileCells.join('')}
-            </div>
-        </div>
-    `;
+    panel.innerHTML = tpStage('', `<div class="tp-board">${headerCells.join('')}${tileCells.join('')}</div>`);
 }
 
 // Brief full-panel announcement between rounds -- fires once a board's fully
@@ -1208,13 +1284,10 @@ function switchToTriviYeahIIBoardUI(grid, currentPicker, round, totalRounds) {
 function showTriviYeahIIRoundTransitionUI(completedRound, nextRound, totalRounds) {
     const panel = document.getElementById('active-content-stage');
     document.getElementById('room-status-text').innerText = `Thinking Pants — Round ${completedRound} Complete`;
-
-    panel.innerHTML = `
-        <div class="panel-box" style="padding: 40px; flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; min-height: 400px; box-sizing: border-box;">
-            <div style="font-size: 0.9rem; font-weight: 600; color: var(--rm-text-muted); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 14px;">Round ${completedRound} Complete</div>
-            <div style="font-size: 2rem; font-weight: 800; color: var(--rm-white); margin-bottom: 8px;">Starting Round ${nextRound} of ${totalRounds}</div>
-        </div>
-    `;
+    panel.innerHTML = tpStage('tp-center', `
+        <div class="tp-kicker">Round ${completedRound} Complete</div>
+        <div class="tp-big">Starting Round ${nextRound} of ${totalRounds}</div>
+    `);
 }
 
 // Fetches a question picture in the background so it's already in the
@@ -1233,109 +1306,35 @@ function showTriviYeahIISpotlightUI(partial) {
     Object.assign(triviYeahIISpotlightCache, partial);
     const { stage, categoryLabel, questionText, points, choiceA, choiceB, choiceC, choiceD, visualAsset } = triviYeahIISpotlightCache;
 
-    // Picture questions (Country Monkey maps, etc.): picture on the left,
-    // text on the right -- same layout as the Country Monkey mode's screen.
-    const pictureBlock = visualAsset ? `
-        <div style="flex: 1.2; text-align: center; min-width: 0;">
-            <img src="${visualAsset}" alt="" style="width: 100%; aspect-ratio: 4 / 3; max-height: 420px; object-fit: contain; border-radius: 8px; display: block; margin: 0 auto;">
-        </div>
-    ` : '';
-
-    const categoryBlock = `
-        <div style="font-size: 0.85rem; font-weight: 600; color: var(--rm-text-muted); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 16px;">
-            ${categoryLabel || ''}${points ? ` &middot; ${points} pts` : ''}
-        </div>
-    `;
-
     if (stage === 'category') {
-        panel.innerHTML = `
-            <div class="panel-box" style="padding: 40px; flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; min-height: 400px; box-sizing: border-box;">
-                <div style="font-size: 0.85rem; font-weight: 600; color: var(--rm-text-muted); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 14px;">Up next</div>
-                <div style="font-size: 2rem; font-weight: 800; color: var(--rm-white); margin-bottom: 10px;">${categoryLabel}</div>
-                <div style="font-size: 1.1rem; font-weight: 700; color: var(--rm-brand);">${points} points</div>
-            </div>
-        `;
+        panel.innerHTML = tpStage('tp-center', `
+            <div class="tp-kicker">Up next</div>
+            <div class="tp-big">${categoryLabel}</div>
+            <div class="tp-mid" style="color: var(--rm-brand);">${points} points</div>
+        `);
         return;
     }
 
-    if (stage === 'question' && visualAsset) {
-        panel.innerHTML = `
-            <div class="panel-box" style="padding: 40px; flex: 1; display: flex; flex-direction: row; align-items: center; gap: 32px; min-height: 400px; box-sizing: border-box;">
-                ${pictureBlock}
-                <div style="flex: 1; text-align: left; min-width: 0;">
-                    ${categoryBlock}
-                    <div style="font-size: 1.4rem; font-weight: 600; color: var(--rm-white); line-height: 1.4; letter-spacing: -0.01em;">
-                        ${questionText}
-                    </div>
-                </div>
-            </div>
-        `;
-        return;
-    }
+    const eyebrow = `<div class="tp-eyebrow">${categoryLabel || ''}${points ? ` &middot; <span class="tp-pts">${points}</span>` : ''}</div>`;
 
-    if (stage === 'question') {
-        panel.innerHTML = `
-            <div class="panel-box" style="padding: 40px; flex: 1; display: flex; flex-direction: column; justify-content: center; text-align: left; min-height: 400px; box-sizing: border-box;">
-                ${categoryBlock}
-                <div style="font-size: 1.4rem; font-weight: 600; color: var(--rm-white); line-height: 1.4; letter-spacing: -0.01em;">
-                    ${questionText}
-                </div>
-            </div>
-        `;
-        return;
-    }
+    // stage === 'answers' -- the choice rows keep their choice-row-X ids, so
+    // the answer spread and highlightCorrectAnswerOnTV work on them unchanged.
+    const answers = stage === 'answers' ? `
+        <div class="tp-answers">
+            ${[['A', choiceA], ['B', choiceB], ['C', choiceC], ['D', choiceD]].map(([letter, text]) =>
+                `<div id="choice-row-${letter}" class="tp-ans"><b>${letter}</b><span>${text}</span></div>`).join('')}
+        </div>` : '';
 
-    // stage === 'answers' -- identical choice-row markup/ids to classic
-    // Trivi-yeah!'s switchToQuestionUI, so highlightCorrectAnswerOnTV (fired
-    // on TRIVI_YEAH_II_ROUND_REVEAL) works completely unmodified on it.
-    const choiceGrid = `
-        <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; width: 100%;">
-            <div id="choice-row-A" style="background: var(--rm-surface-2); border: 1px solid var(--rm-border); border-radius: 8px; padding: 16px; display: flex; align-items: center; gap: 12px; transition: all 0.3s ease;">
-                <span style="background: rgba(var(--rm-brand-rgb), 0.1); color: var(--rm-brand); font-weight: 700; padding: 4px 10px; border-radius: 4px; font-size: 0.85rem;">A</span>
-                <span style="font-size: 1rem; font-weight: 500; color: var(--rm-text-2);">${choiceA}</span>
-            </div>
-            <div id="choice-row-B" style="background: var(--rm-surface-2); border: 1px solid var(--rm-border); border-radius: 8px; padding: 16px; display: flex; align-items: center; gap: 12px; transition: all 0.3s ease;">
-                <span style="background: rgba(var(--rm-brand-rgb), 0.1); color: var(--rm-brand); font-weight: 700; padding: 4px 10px; border-radius: 4px; font-size: 0.85rem;">B</span>
-                <span style="font-size: 1rem; font-weight: 500; color: var(--rm-text-2);">${choiceB}</span>
-            </div>
-            <div id="choice-row-C" style="background: var(--rm-surface-2); border: 1px solid var(--rm-border); border-radius: 8px; padding: 16px; display: flex; align-items: center; gap: 12px; transition: all 0.3s ease;">
-                <span style="background: rgba(var(--rm-brand-rgb), 0.1); color: var(--rm-brand); font-weight: 700; padding: 4px 10px; border-radius: 4px; font-size: 0.85rem;">C</span>
-                <span style="font-size: 1rem; font-weight: 500; color: var(--rm-text-2);">${choiceC}</span>
-            </div>
-            <div id="choice-row-D" style="background: var(--rm-surface-2); border: 1px solid var(--rm-border); border-radius: 8px; padding: 16px; display: flex; align-items: center; gap: 12px; transition: all 0.3s ease;">
-                <span style="background: rgba(var(--rm-brand-rgb), 0.1); color: var(--rm-brand); font-weight: 700; padding: 4px 10px; border-radius: 4px; font-size: 0.85rem;">D</span>
-                <span style="font-size: 1rem; font-weight: 500; color: var(--rm-text-2);">${choiceD}</span>
-            </div>
-        </div>
-    `;
-
+    // Picture questions (maps, flags, paintings...): the picture on the left,
+    // the words and answers on the right.
     if (visualAsset) {
-        // Choices stack in one column beside the picture (same ids, so the
-        // correct-answer highlight still works).
-        panel.innerHTML = `
-            <div class="panel-box" style="padding: 40px; flex: 1; display: flex; flex-direction: row; align-items: center; gap: 32px; min-height: 400px; box-sizing: border-box;">
-                ${pictureBlock}
-                <div style="flex: 1; text-align: left; min-width: 0;">
-                    ${categoryBlock}
-                    <div style="font-size: 1.2rem; font-weight: 600; color: var(--rm-white); line-height: 1.3; margin-bottom: 18px; letter-spacing: -0.01em;">
-                        ${questionText}
-                    </div>
-                    ${choiceGrid.replace('grid-template-columns: repeat(2, 1fr)', 'grid-template-columns: 1fr')}
-                </div>
-            </div>
-        `;
+        panel.innerHTML = tpStage('tp-split', `
+            <div class="tp-pic"><img src="${visualAsset}" alt=""></div>
+            <div class="tp-words">${eyebrow}${tpQuestion(questionText, true)}${answers}</div>
+        `);
         return;
     }
-
-    panel.innerHTML = `
-        <div class="panel-box" style="padding: 40px; flex: 1; display: flex; flex-direction: column; justify-content: space-between; text-align: left; min-height: 400px; box-sizing: border-box;">
-            ${categoryBlock}
-            <div style="font-size: 1.4rem; font-weight: 600; color: var(--rm-white); line-height: 1.4; flex: 1; display: flex; align-items: center; margin-bottom: 24px; letter-spacing: -0.01em;">
-                ${questionText}
-            </div>
-            ${choiceGrid}
-        </div>
-    `;
+    panel.innerHTML = tpStage('', `${eyebrow}${tpQuestion(questionText, false)}${answers}`);
 }
 
 // Dramatic full-panel beat before the wager prompt -- same shape as the
@@ -1346,7 +1345,7 @@ function showTriviYeahIISpotlightUI(partial) {
 // beat.
 function doublerCategoryBadge(categoryLabel) {
     return categoryLabel
-        ? `<div style="font-size: 0.8rem; font-weight: 600; color: var(--rm-orange); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 10px;">Category: ${categoryLabel}</div>`
+        ? `<div class="tp-eyebrow" style="color: var(--rm-orange);">Category: ${categoryLabel}</div>`
         : '';
 }
 
@@ -1357,9 +1356,10 @@ const TRAP_ICON_FILES = { SETTING: 'trap-setting', PANTS_ON_FIRE: 'trap-pants-on
 const TRAP_ICON_EMOJI = { SETTING: '🤫', PANTS_ON_FIRE: '🔥', HOT_SEAT: '🪑', WEDGIE: '🩲' };
 let activeTrapTV = null; // the revealed trap on the current tile, for the question-phase banner
 
-function trapIconHtml(key, sizePx) {
+// size is in screen units (--u), so the icons grow with the screen too.
+function trapIconHtml(key, sizeU) {
     const emoji = TRAP_ICON_EMOJI[key] || '⚠️';
-    return `<img src="/traps/${TRAP_ICON_FILES[key]}.svg" alt="" style="height: ${sizePx}px; width: auto;" onerror="this.outerHTML='<span style=&quot;font-size: ${Math.round(sizePx * 0.8)}px; line-height: 1;&quot;>${emoji}</span>'">`;
+    return `<img src="/traps/${TRAP_ICON_FILES[key]}.svg" alt="" style="height: calc(var(--u) * ${sizeU}); width: auto;" onerror="this.outerHTML='<span style=&quot;font-size: calc(var(--u) * ${sizeU * 0.8}); line-height: 1;&quot;>${emoji}</span>'">`;
 }
 
 function trapRuleFor(trap) {
@@ -1371,39 +1371,35 @@ function trapRuleFor(trap) {
 function showTriviYeahIITrapSettingUI(setter) {
     const panel = document.getElementById('active-content-stage');
     document.getElementById('room-status-text').innerText = "Thinking Pants — Shhh...";
-    panel.innerHTML = `
-        <div class="panel-box" style="padding: 40px; flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; min-height: 400px; box-sizing: border-box;">
-            <div style="margin-bottom: 14px;">${trapIconHtml('SETTING', 90)}</div>
-            <div style="font-size: 1.9rem; font-weight: 800; color: var(--rm-white); margin-bottom: 8px;">${escapeHtml(setter)} swept a column...</div>
-            <div style="font-size: 1.2rem; color: var(--rm-text-soft);">...and is up to something.</div>
-        </div>
-    `;
+    panel.innerHTML = tpStage('tp-center', `
+        <div>${trapIconHtml('SETTING', 9)}</div>
+        <div class="tp-big" style="font-size: calc(var(--u) * 4);">${escapeHtml(setter)} swept a column...</div>
+        <div class="tp-small">...and is up to something.</div>
+    `);
     setStatusMessage(`<div style="font-weight: 600; color: var(--rm-periwinkle);">🤫 Shhh...</div>`);
 }
 
 function showTriviYeahIITrapRevealUI(data) {
     const panel = document.getElementById('active-content-stage');
     document.getElementById('room-status-text').innerText = `Thinking Pants — ${data.label}!`;
-    panel.innerHTML = `
-        <div class="panel-box" style="padding: 40px; flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; min-height: 400px; box-sizing: border-box;">
-            ${doublerCategoryBadge(data.categoryLabel)}
-            <div style="font-size: 0.85rem; font-weight: 600; color: var(--rm-text-muted); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 10px;">It's a trap!</div>
-            <div style="margin-bottom: 10px;">${trapIconHtml(data.trapType, 110)}</div>
-            <div style="font-size: 2.6rem; font-weight: 800; color: var(--rm-red-soft); margin-bottom: 10px; text-shadow: 0 0 20px rgba(var(--rm-red-soft-rgb), 0.35);">${escapeHtml(data.label).toUpperCase()}</div>
-            <div style="font-size: 1.2rem; font-weight: 600; color: var(--rm-white); max-width: 700px;">${trapRuleFor(data)}</div>
-            <div style="font-size: 1rem; color: var(--rm-text-soft); margin-top: 10px;">Set by ${escapeHtml(data.setter)} · ${data.points} points</div>
-        </div>
-    `;
+    panel.innerHTML = tpStage('tp-center', `
+        ${doublerCategoryBadge(data.categoryLabel)}
+        <div class="tp-kicker">It's a trap!</div>
+        <div>${trapIconHtml(data.trapType, 10)}</div>
+        <div class="tp-big" style="color: var(--rm-red-soft); text-shadow: 0 0 20px rgba(var(--rm-red-soft-rgb), 0.35);">${escapeHtml(data.label).toUpperCase()}</div>
+        <div class="tp-mid">${trapRuleFor(data)}</div>
+        <div class="tp-small">Set by ${escapeHtml(data.setter)} · ${data.points} points</div>
+    `);
 }
 
 // Keeps the trap visible while the question plays out.
 function addTriviYeahIITrapBanner() {
     if (!activeTrapTV) return;
-    const box = document.querySelector('#active-content-stage .panel-box');
+    const box = document.querySelector('#active-content-stage .tp-words') || document.querySelector('#active-content-stage .tp-stage');
     if (!box) return;
     const banner = document.createElement('div');
-    banner.style.cssText = 'display: flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 14px; font-weight: 700; color: var(--rm-red-soft);';
-    banner.innerHTML = `${trapIconHtml(activeTrapTV.trapType, 34)}<span>${escapeHtml(activeTrapTV.label).toUpperCase()} · ${trapRuleFor(activeTrapTV)}</span>`;
+    banner.className = 'tp-banner';
+    banner.innerHTML = `${trapIconHtml(activeTrapTV.trapType, 3.4)}<span>${escapeHtml(activeTrapTV.label).toUpperCase()} · ${trapRuleFor(activeTrapTV)}</span>`;
     box.insertBefore(banner, box.firstChild);
     document.getElementById('room-status-text').innerText = `Thinking Pants — ${activeTrapTV.label}`;
 }
@@ -1430,30 +1426,26 @@ function showTriviYeahIIDoublerRevealUI(picker, points, categoryLabel, multiplie
     doublerMultiplier = multiplier || 1;
     const panel = document.getElementById('active-content-stage');
     document.getElementById('room-status-text').innerText = "Thinking Pants — Doubler!";
-    panel.innerHTML = `
-        <div class="panel-box" style="padding: 40px; flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; min-height: 400px; box-sizing: border-box;">
-            ${doublerCategoryBadge(categoryLabel)}
-            <div style="font-size: 0.85rem; font-weight: 600; color: var(--rm-text-muted); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 14px;">Surprise tile</div>
-            <div style="font-size: 2.4rem; font-weight: 800; color: var(--rm-orange); margin-bottom: 10px; text-shadow: 0 0 20px rgba(var(--rm-orange-rgb), 0.4);">DOUBLER!</div>
-            <div style="font-size: 1.2rem; font-weight: 700; color: var(--rm-white);">${picker} is on the hook for this one.</div>
-            <div style="font-size: 1rem; color: var(--rm-text-soft); margin-top: 6px;">Tile value: ${points} points</div>
-            ${doublerMultiplier > 1 ? `<div style="font-size: 1.4rem; font-weight: 800; color: var(--rm-orange-hot); margin-top: 14px;">🔥 Final round: side bets are DOUBLED, win or lose!</div>` : ''}
-        </div>
-    `;
+    panel.innerHTML = tpStage('tp-center', `
+        ${doublerCategoryBadge(categoryLabel)}
+        <div class="tp-kicker">Surprise tile</div>
+        <div class="tp-big" style="color: var(--rm-orange); text-shadow: 0 0 20px rgba(var(--rm-orange-rgb), 0.4);">DOUBLER!</div>
+        <div class="tp-mid">${picker} is on the hook for this one.</div>
+        <div class="tp-small">Tile value: ${points} points</div>
+        ${doublerMultiplier > 1 ? `<div class="tp-mid" style="color: var(--rm-orange-hot);">🔥 Final round: side bets are DOUBLED, win or lose!</div>` : ''}
+    `);
 }
 
 // Waiting room while only the picker's phone shows a wager input -- nothing
 // for anyone else to do yet, so this stays deliberately passive.
 function showTriviYeahIIWagerPromptUI(picker, maxWager, tileValue, categoryLabel) {
     const panel = document.getElementById('active-content-stage');
-    panel.innerHTML = `
-        <div class="panel-box" style="padding: 40px; flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; min-height: 400px; box-sizing: border-box;">
-            ${doublerCategoryBadge(categoryLabel)}
-            <div style="font-size: 0.85rem; font-weight: 600; color: var(--rm-text-muted); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 14px;">Waiting on the wager</div>
-            <div style="font-size: 1.6rem; font-weight: 700; color: var(--rm-white); margin-bottom: 10px;">${picker} is deciding how much to risk&hellip;</div>
-            <div style="font-size: 1rem; color: var(--rm-text-soft);">Anywhere from 0 to ${maxWager} points (tile is worth ${tileValue})</div>
-        </div>
-    `;
+    panel.innerHTML = tpStage('tp-center', `
+        ${doublerCategoryBadge(categoryLabel)}
+        <div class="tp-kicker">Waiting on the wager</div>
+        <div class="tp-mid" style="font-size: calc(var(--u) * 3.4);">${picker} is deciding how much to risk&hellip;</div>
+        <div class="tp-small">Anywhere from 0 to ${maxWager} points (tile is worth ${tileValue})</div>
+    `);
 }
 
 // Once the picker's wager locks in, the room sees it immediately -- then
@@ -1463,15 +1455,13 @@ function showTriviYeahIIWagerPromptUI(picker, maxWager, tileValue, categoryLabel
 function showTriviYeahIISideBetsOpenUI(picker, wagerAmount, tileValue, categoryLabel) {
     const panel = document.getElementById('active-content-stage');
     document.getElementById('room-status-text').innerText = "Thinking Pants — Side Bets Open";
-    panel.innerHTML = `
-        <div class="panel-box" style="padding: 40px; flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; min-height: 400px; box-sizing: border-box;">
-            ${doublerCategoryBadge(categoryLabel)}
-            <div style="font-size: 0.85rem; font-weight: 600; color: var(--rm-text-muted); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 14px;">${picker}'s wager</div>
-            <div style="font-size: 2.2rem; font-weight: 800; color: var(--rm-orange); margin-bottom: 18px;">${wagerAmount} points</div>
-            <div style="font-size: 1.1rem; font-weight: 600; color: var(--rm-white);">Will ${picker} get it right?</div>
-            <div style="font-size: 1rem; color: var(--rm-text-soft); margin-top: 6px;">Place your side bet -- For, Against, or Pass -- at ${tileValue * doublerMultiplier} points${doublerMultiplier > 1 ? ` <strong style="color: var(--rm-orange-hot);">(doubled!)</strong>` : ''}</div>
-        </div>
-    `;
+    panel.innerHTML = tpStage('tp-center', `
+        ${doublerCategoryBadge(categoryLabel)}
+        <div class="tp-kicker">${picker}'s wager</div>
+        <div class="tp-big" style="color: var(--rm-orange);">${wagerAmount} points</div>
+        <div class="tp-mid">Will ${picker} get it right?</div>
+        <div class="tp-small">Place your side bet -- For, Against, or Pass -- at ${tileValue * doublerMultiplier} points${doublerMultiplier > 1 ? ` <strong style="color: var(--rm-orange-hot);">(doubled!)</strong>` : ''}</div>
+    `);
 }
 
 // Final beat of the Doubler sequence -- shows the picker's wager outcome
@@ -1485,18 +1475,16 @@ function showTriviYeahIIDoublerResultUI(data) {
         : `<span style="color: var(--rm-red-soft);">${data.picker} missed it -- &minus;${data.wagerAmount} points.</span>`;
 
     const sideBetRows = Object.entries(data.sideBetResults || {}).map(([name, delta]) => {
-        if (delta === 0) return `<div style="font-size: 0.95rem; color: var(--rm-text-muted);">${name} passed.</div>`;
+        if (delta === 0) return `<div class="tp-small" style="color: var(--rm-text-muted);">${name} passed.</div>`;
         const won = delta > 0;
-        return `<div style="font-size: 0.95rem; color: ${won ? 'var(--rm-green)' : 'var(--rm-red-soft)'};">${name} ${won ? 'won' : 'lost'} ${Math.abs(delta)} points.</div>`;
+        return `<div class="tp-small" style="color: ${won ? 'var(--rm-green)' : 'var(--rm-red-soft)'};">${name} ${won ? 'won' : 'lost'} ${Math.abs(delta)} points.</div>`;
     }).join('');
 
-    panel.innerHTML = `
-        <div class="panel-box" style="padding: 40px; flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; min-height: 400px; box-sizing: border-box; gap: 6px;">
-            <div style="font-size: 0.85rem; font-weight: 600; color: var(--rm-text-muted); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 4px;">Correct answer was ${data.correctLetter}</div>
-            <div style="font-size: 1.5rem; font-weight: 700; margin-bottom: 10px;">${pickerLine}</div>
-            ${sideBetRows}
-        </div>
-    `;
+    panel.innerHTML = tpStage('tp-center', `
+        <div class="tp-kicker">Correct answer was ${data.correctLetter}</div>
+        <div class="tp-mid" style="font-size: calc(var(--u) * 3.2);">${pickerLine}</div>
+        <div style="display: flex; flex-direction: column; gap: calc(var(--u) * 0.4);">${sideBetRows}</div>
+    `);
 }
 
 // ---------- Trivi-Yeah II: Final Wager ----------
@@ -1512,66 +1500,47 @@ let finalWagerModeLabel = 'Thinking Pants';
 function showTriviYeahIIFinalCategoryRevealUI(topicLabel) {
     const panel = document.getElementById('active-content-stage');
     document.getElementById('room-status-text').innerText = `${finalWagerModeLabel} — Final Wager`;
-    panel.innerHTML = `
-        <div class="panel-box" style="padding: 40px; flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; min-height: 400px; box-sizing: border-box;">
-            <div style="font-size: 0.85rem; font-weight: 600; color: var(--rm-text-muted); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 14px;">One question left. Everything's on the line.</div>
-            <div style="font-size: 2.6rem; font-weight: 800; color: var(--rm-gold); margin-bottom: 14px; text-shadow: 0 0 24px rgba(var(--rm-gold-rgb), 0.35);">FINAL WAGER</div>
-            <div style="font-size: 1.3rem; font-weight: 700; color: var(--rm-white);">Topic: ${topicLabel}</div>
-        </div>
-    `;
+    panel.innerHTML = tpStage('tp-center', `
+        <div class="tp-kicker">One question left. Everything's on the line.</div>
+        <div class="tp-big" style="color: var(--rm-gold); text-shadow: 0 0 24px rgba(var(--rm-gold-rgb), 0.35);">FINAL WAGER</div>
+        <div class="tp-mid">Topic: ${topicLabel}</div>
+    `);
 }
 
 function showTriviYeahIIFinalWagerOpenUI() {
     const panel = document.getElementById('active-content-stage');
-    panel.innerHTML = `
-        <div class="panel-box" style="padding: 40px; flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; min-height: 400px; box-sizing: border-box;">
-            <div style="font-size: 0.85rem; font-weight: 600; color: var(--rm-text-muted); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 14px;">Wagering now</div>
-            <div style="font-size: 1.6rem; font-weight: 700; color: var(--rm-white); margin-bottom: 10px;">Everyone's deciding how much to risk&hellip;</div>
-            <div style="font-size: 1rem; color: var(--rm-text-soft);">Every wager stays secret until the big reveal.</div>
-        </div>
-    `;
+    panel.innerHTML = tpStage('tp-center', `
+        <div class="tp-kicker">Wagering now</div>
+        <div class="tp-mid" style="font-size: calc(var(--u) * 3.4);">Everyone's deciding how much to risk&hellip;</div>
+        <div class="tp-small">Every wager stays secret until the big reveal.</div>
+    `);
 }
 
 function showTriviYeahIIFinalAnswerOpenUI(topicLabel, questionText, visualAsset) {
     const panel = document.getElementById('active-content-stage');
+    const eyebrow = `<div class="tp-eyebrow">Final Wager &middot; ${topicLabel}</div>`;
+    const typeLine = `<div class="tp-small">Type your answer on your phone. Close spellings count.</div>`;
     if (visualAsset) {
-        // Country Monkey: the map on the left, same layout as its questions.
-        panel.innerHTML = `
-            <div class="panel-box" style="padding: 40px; flex: 1; display: flex; flex-direction: row; align-items: center; gap: 32px; min-height: 400px; box-sizing: border-box;">
-                <div style="flex: 1.2; text-align: center; min-width: 0;">
-                    <img src="${visualAsset}" alt="" style="width: 100%; aspect-ratio: 4 / 3; max-height: 420px; object-fit: contain; border-radius: 8px; display: block; margin: 0 auto;">
-                </div>
-                <div style="flex: 1; text-align: left; min-width: 0;">
-                    <div style="font-size: 0.85rem; font-weight: 600; color: var(--rm-text-muted); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 16px;">Final Wager &middot; ${topicLabel}</div>
-                    <div style="font-size: 1.5rem; font-weight: 600; color: var(--rm-white); line-height: 1.4; letter-spacing: -0.01em;">${questionText}</div>
-                    <div style="font-size: 1rem; color: var(--rm-text-soft); margin-top: 14px;">Type your answer on your phone. Close spellings count.</div>
-                </div>
-            </div>
-        `;
+        // A picture question: the picture on the left, same as the board's.
+        panel.innerHTML = tpStage('tp-split', `
+            <div class="tp-pic"><img src="${visualAsset}" alt=""></div>
+            <div class="tp-words">${eyebrow}${tpQuestion(questionText, true)}${typeLine}</div>
+        `);
         return;
     }
-    panel.innerHTML = `
-        <div class="panel-box" style="padding: 40px; flex: 1; display: flex; flex-direction: column; justify-content: center; text-align: left; min-height: 400px; box-sizing: border-box;">
-            <div style="font-size: 0.85rem; font-weight: 600; color: var(--rm-text-muted); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 16px;">Final Wager &middot; ${topicLabel}</div>
-            <div style="font-size: 1.5rem; font-weight: 600; color: var(--rm-white); line-height: 1.4; letter-spacing: -0.01em;">
-                ${questionText}
-            </div>
-        </div>
-    `;
+    panel.innerHTML = tpStage('', `${eyebrow}${tpQuestion(questionText, false)}${typeLine}`);
 }
 
 function showTriviYeahIIFinalRevealStartUI(correctAnswer) {
     finalWagerRevealLog = [];
     const panel = document.getElementById('active-content-stage');
-    panel.innerHTML = `
-        <div class="panel-box" style="padding: 32px 40px; flex: 1; display: flex; flex-direction: column; min-height: 400px; box-sizing: border-box;">
-            <div style="text-align: center; margin-bottom: 20px;">
-                <div style="font-size: 0.85rem; font-weight: 600; color: var(--rm-text-muted); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 8px;">Time's up! The correct answer was</div>
-                <div style="font-size: 1.8rem; font-weight: 800; color: var(--rm-green);">${correctAnswer}</div>
-            </div>
-            <div id="final-wager-reveal-log" style="display: flex; flex-direction: column; gap: 10px; overflow-y: auto;"></div>
+    panel.innerHTML = tpStage('', `
+        <div style="text-align: center; display: flex; flex-direction: column; gap: calc(var(--u) * 0.6);">
+            <div class="tp-kicker">Time's up! The correct answer was</div>
+            <div class="tp-big" style="color: var(--rm-green); font-size: calc(var(--u) * 4.2);">${correctAnswer}</div>
         </div>
-    `;
+        <div id="final-wager-reveal-log" class="tp-reveal-log"></div>
+    `);
 }
 
 function showTriviYeahIIFinalRevealStepUI(data) {
@@ -1584,20 +1553,22 @@ function showTriviYeahIIFinalRevealStepUI(data) {
         const resultColor = step.correct ? 'var(--rm-green)' : 'var(--rm-red-soft)';
         const sign = step.correct ? '+' : '&minus;';
         return `
-            <div style="background: ${isLatest ? 'rgba(var(--rm-gold-rgb), 0.08)' : 'var(--rm-surface-2)'}; border: 1px solid ${isLatest ? 'var(--rm-gold)' : 'var(--rm-border)'}; border-radius: 8px; padding: 14px 18px; display: flex; justify-content: space-between; align-items: center; gap: 16px;">
-                <div style="text-align: left;">
-                    <div style="font-weight: 700; font-size: 1.05rem; color: var(--rm-white);">${step.playerName}${step.allIn ? ` <span class="all-in-stamp${isLatest ? ' slam' : ''}">ALL IN!</span>` : ''}</div>
-                    <div style="font-size: 0.9rem; color: var(--rm-text-soft); margin-top: 2px;">Answered: "${step.answerText ? escapeHtml(step.answerText) : '(no answer)'}"</div>
+            <div class="tp-reveal-row${isLatest ? ' tp-latest' : ''}">
+                <div style="text-align: left; min-width: 0;">
+                    <div class="tp-who">${step.playerName}${step.allIn ? ` <span class="all-in-stamp${isLatest ? ' slam' : ''}">ALL IN!</span>` : ''}</div>
+                    <div class="tp-said">Answered: "${step.answerText ? escapeHtml(step.answerText) : '(no answer)'}"</div>
                 </div>
-                <div style="text-align: right;">
-                    <div style="font-weight: 700; color: ${resultColor};">${step.correct ? 'Correct' : 'Incorrect'} &middot; ${sign}${step.correct && step.winAmount != null ? step.winAmount : step.wagerAmount}</div>
-                    ${step.hintsUsed != null ? `<div style="font-size: 0.85rem; color: var(--rm-text-soft);">${step.hintsUsed === 0 ? 'no clues!' : `${step.hintsUsed} clue${step.hintsUsed > 1 ? 's' : ''} used`}</div>` : ''}
-                    <div style="font-size: 0.9rem; color: var(--rm-text-soft); margin-top: 2px;">New score: ${step.newScore}</div>
+                <div style="text-align: right; flex-shrink: 0;">
+                    <div class="tp-result" style="color: ${resultColor};">${step.correct ? 'Correct' : 'Incorrect'} &middot; ${sign}${step.correct && step.winAmount != null ? step.winAmount : step.wagerAmount}</div>
+                    ${step.hintsUsed != null ? `<div class="tp-note">${step.hintsUsed === 0 ? 'no clues!' : `${step.hintsUsed} clue${step.hintsUsed > 1 ? 's' : ''} used`}</div>` : ''}
+                    <div class="tp-note">New score: ${step.newScore}</div>
                 </div>
             </div>
         `;
     });
     log.innerHTML = rows.join('');
+    // A big room's list outgrows the screen: keep the newest reveal in view.
+    log.lastElementChild && log.lastElementChild.scrollIntoView({ block: 'nearest' });
 }
 
 // ---------- EmpossDurr ----------
