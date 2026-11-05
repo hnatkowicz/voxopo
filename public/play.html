@@ -83,6 +83,11 @@
         .btn:disabled:hover { background: #1e222b; }
         .btn-leave { background: transparent; color: #ff4757; border: 1px solid rgba(255, 71, 87, 0.3); margin-top: 14px; }
         .btn-leave:hover { background: rgba(255, 71, 87, 0.08); }
+        /* The final "yes, really" step of leaving or ending a game: solid red,
+           so it can't be mistaken for the outlined button that opened it
+           (Randy, Nov 2026: the two looked alike and confused players). */
+        .btn-danger { background: #ff4757; color: #ffffff; border: none; }
+        .btn-danger:hover { background: #e63e4d; }
         .btn-horn { background: #ffa500; margin-top: 16px; }
         .btn-horn:hover { background: #e59400; }
         .feedback { margin-top: 20px; font-weight: 500; padding: 12px; border-radius: 8px; display: none; font-size: 0.9rem; border: 1px solid transparent; }
@@ -867,7 +872,7 @@
             document.getElementById('room-leave-area').innerHTML = confirming
                 ? `<p class="subtitle" style="margin: 20px 0 0 0; color: #e2e5e9;">Leave the room? You can rejoin with the same name.</p>
                    <button type="button" class="btn" style="margin-top: 12px;" onclick="renderLeaveArea(false)">Stay</button>
-                   <button type="button" class="btn btn-leave" style="margin-top: 10px;" onclick="leaveRoom()">Leave</button>`
+                   <button type="button" class="btn btn-danger" style="margin-top: 10px;" onclick="leaveRoom()">Leave</button>`
                 : `<button type="button" class="btn btn-leave" style="margin-top: 20px;" onclick="renderLeaveArea(true)">Leave Room</button>`;
         }
 
@@ -1171,7 +1176,7 @@
                    <button type="button" class="btn btn-leave" style="margin-top: 10px;" onclick="sendEndVote(false)">Take my vote back</button>`
                 : endVoteConfirming
                     ? `<p class="subtitle" style="margin: 20px 0 0 0; color: #e2e5e9;">End this game for everyone? It ends once more than half the room agrees (${endVote.needed} of ${endVote.total}), and everyone goes back to the lobby. ${tally}</p>
-                       <button type="button" class="btn btn-leave" style="margin-top: 10px;" onclick="sendEndVote(true)">Yes, vote to end it</button>
+                       <button type="button" class="btn btn-danger" style="margin-top: 10px;" onclick="sendEndVote(true)">Yes, vote to end it</button>
                        <button type="button" class="btn" style="margin-top: 10px;" onclick="endVoteConfirming = false; renderEndVote(lastEndVote)">Never mind</button>`
                     : `<button type="button" class="btn btn-leave" style="margin-top: 20px;" onclick="endVoteConfirming = true; renderEndVote(lastEndVote)">🚪 Vote to end this game</button>
                        ${tally ? `<p class="subtitle" style="margin: 8px 0 0 0;">${tally}</p>` : ''}`;
