@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <link rel="stylesheet" href="/theme.css">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>RM! Live Interface</title>
@@ -23,7 +24,7 @@
                     <div class="status-text">Connected Live</div>
                 </div>
             </div>
-            <div class="hud-metric" style="color: #64748b; font-weight: 600; letter-spacing: 0.05em;">SYSTEM GATEWAY</div>
+            <div class="hud-metric" style="color: var(--rm-text-muted); font-weight: 600; letter-spacing: 0.05em;">SYSTEM GATEWAY</div>
         </div>
 
         <div class="split-container">
@@ -31,23 +32,23 @@
             <div class="left-column" style="flex: 65; display: flex; flex-direction: column;">
                 <div class="panel-box" style="flex: 1; display: flex; flex-direction: column; justify-content: center; gap: 24px; padding: 40px;">
                     <h2 class="panel-title" style="margin-bottom: 8px;">Join a Lobby</h2>
-                    <p style="color: #64748b; font-size: 0.9rem; margin: -12px 0 0 0;">Enter the lobby code your host gave you.</p>
+                    <p style="color: var(--rm-text-muted); font-size: 0.9rem; margin: -12px 0 0 0;">Enter the lobby code your host gave you.</p>
 
                     <div style="display: flex; gap: 12px;">
-                        <input type="text" id="input-room-code" placeholder="Enter 4-Digit Code" maxlength="4" inputmode="numeric" pattern="[0-9]*" autocomplete="off" style="flex: 1; background: #14161d; border: 1px solid #222630; border-radius: 8px; color: #fff; padding: 14px; font-family: monospace; font-size: 1.2rem; text-align: center; letter-spacing: 4px;">
+                        <input type="text" id="input-room-code" placeholder="Enter 4-Digit Code" maxlength="4" inputmode="numeric" pattern="[0-9]*" autocomplete="off" style="flex: 1; background: var(--rm-surface); border: 1px solid var(--rm-border); border-radius: 8px; color: var(--rm-white); padding: 14px; font-family: monospace; font-size: 1.2rem; text-align: center; letter-spacing: 4px;">
                         <button id="btn-submit-spectate" class="action-btn-primary" style="padding: 0 24px; font-size: 1rem;">View</button>
                     </div>
-                    <a href="/host" style="color: #64748b; font-size: 0.85rem; text-decoration: none;">Need to host a new game instead? &rarr;</a>
+                    <a href="/host" style="color: var(--rm-text-muted); font-size: 0.85rem; text-decoration: none;">Need to host a new game instead? &rarr;</a>
                 </div>
 
                 <!-- PERSISTENT QR BLOCK (Stays visible exactly as specified) -->
-                <div style="background: #14161d; border: 1px solid #222630; border-radius: 12px; padding: 20px 24px; margin-top: 24px; display: flex; align-items: center; gap: 20px; box-sizing: border-box; position: relative; min-height: 114px; flex-shrink: 0;">
-                    <div style="background: #ffffff; padding: 2px; border-radius: 8px; display: flex; justify-content: center; align-items: center; width: 96px; height: 96px; box-sizing: border-box; flex-shrink: 0; z-index: 10; margin-right: 12px;">
+                <div style="background: var(--rm-surface); border: 1px solid var(--rm-border); border-radius: 12px; padding: 20px 24px; margin-top: 24px; display: flex; align-items: center; gap: 20px; box-sizing: border-box; position: relative; min-height: 114px; flex-shrink: 0;">
+                    <div style="background: var(--rm-white); padding: 2px; border-radius: 8px; display: flex; justify-content: center; align-items: center; width: 96px; height: 96px; box-sizing: border-box; flex-shrink: 0; z-index: 10; margin-right: 12px;">
                         <img src="qr.png" alt="Scan to Play" style="width: 100%; height: 100%; object-fit: contain;">
                     </div>
                     <div style="text-align: left; flex: 1;">
-                        <div style="font-size: 1rem; font-weight: 600; color: #ffffff; margin-bottom: 4px; letter-spacing: -0.01em;">SCAN TO JOIN THE LOBBY MATCH NOW</div>
-                        <div style="font-size: 0.85rem; color: #64748b; font-weight: 500;">Or open your phone browser and type: <br><span style="color: #00e676; font-weight: 600;">randomania.tv/play</span></div>
+                        <div style="font-size: 1rem; font-weight: 600; color: var(--rm-white); margin-bottom: 4px; letter-spacing: -0.01em;">SCAN TO JOIN THE LOBBY MATCH NOW</div>
+                        <div style="font-size: 0.85rem; color: var(--rm-text-muted); font-weight: 500;">Or open your phone browser and type: <br><span style="color: var(--rm-green); font-weight: 600;">randomania.tv/play</span></div>
                     </div>
                 </div>
             </div>
@@ -56,16 +57,16 @@
             <div class="right-column" style="flex: 35;">
                 <h2 class="board-title">Right Now</h2>
                 <div style="flex: 1; display: flex; flex-direction: column; gap: 20px; padding: 12px 0;">
-                    <p style="color: #64748b; font-size: 0.9rem; line-height: 1.5; margin: 0 0 12px 0;">Live across RandoMania! right now.</p>
+                    <p style="color: var(--rm-text-muted); font-size: 0.9rem; line-height: 1.5; margin: 0 0 12px 0;">Live across RandoMania! right now.</p>
                     
-                    <div style="background: #14161d; border: 1px solid #222630; border-radius: 8px; padding: 16px 20px; display: flex; justify-content: space-between; align-items: center;">
+                    <div style="background: var(--rm-surface); border: 1px solid var(--rm-border); border-radius: 8px; padding: 16px 20px; display: flex; justify-content: space-between; align-items: center;">
                         <span style="color: #f4f5f690; font-weight: 500;">Rooms Open</span>
-                        <span id="global-active-rooms" style="color: #00e676; font-size: 1.4rem; font-weight: 700; font-family: monospace;">--</span>
+                        <span id="global-active-rooms" style="color: var(--rm-green); font-size: 1.4rem; font-weight: 700; font-family: monospace;">--</span>
                     </div>
 
-                    <div style="background: #14161d; border: 1px solid #222630; border-radius: 8px; padding: 16px 20px; display: flex; justify-content: space-between; align-items: center;">
+                    <div style="background: var(--rm-surface); border: 1px solid var(--rm-border); border-radius: 8px; padding: 16px 20px; display: flex; justify-content: space-between; align-items: center;">
                         <span style="color: #f4f5f690; font-weight: 500;">Playing Now</span>
-                        <span id="global-players-count" style="color: #2d9cdb; font-size: 1.4rem; font-weight: 700; font-family: monospace;">--</span>
+                        <span id="global-players-count" style="color: var(--rm-blue); font-size: 1.4rem; font-weight: 700; font-family: monospace;">--</span>
                     </div>
                 </div>
             </div>
@@ -94,9 +95,9 @@
                 </div>
             </div>
             
-            <div class="hud-metric">Room Code <span class="hud-value" style="color: #00e676;" id="display-room-code-badge">----</span></div>
+            <div class="hud-metric">Room Code <span class="hud-value" style="color: var(--rm-green);" id="display-room-code-badge">----</span></div>
             <div class="hud-metric">Players Joined <span class="hud-value" id="lobby-player-count">0</span></div>
-            <div class="hud-value" style="color: #ff4757; font-size: 1.6rem;" id="lobby-countdown">60s</div>
+            <div class="hud-value" style="color: var(--rm-red); font-size: 1.6rem;" id="lobby-countdown">60s</div>
         </div>
     
         <div class="split-container">
@@ -118,14 +119,14 @@
                 </div>
     
                 <!-- MODERN HIGH-UTILITY ONBOARDING PANEL (Stays locked permanently!) -->
-                <div style="background: #14161d; border: 1px solid #222630; border-radius: 12px; padding: 20px 24px; margin-top: 24px; display: flex; align-items: center; gap: 20px; box-sizing: border-box; position: relative; min-height: 114px; flex-shrink: 0;">
-                    <div id="room-qr-box" style="background: #ffffff; padding: 2px; border-radius: 8px; display: flex; justify-content: center; align-items: center; width: 96px; height: 96px; box-sizing: border-box; flex-shrink: 0; z-index: 10; margin-right: 12px;">
+                <div style="background: var(--rm-surface); border: 1px solid var(--rm-border); border-radius: 12px; padding: 20px 24px; margin-top: 24px; display: flex; align-items: center; gap: 20px; box-sizing: border-box; position: relative; min-height: 114px; flex-shrink: 0;">
+                    <div id="room-qr-box" style="background: var(--rm-white); padding: 2px; border-radius: 8px; display: flex; justify-content: center; align-items: center; width: 96px; height: 96px; box-sizing: border-box; flex-shrink: 0; z-index: 10; margin-right: 12px;">
                         <!-- Swapped for this room's own code (play?room=1234) by app.js. -->
                         <img id="room-qr-image" src="qr.png" alt="Scan to Play" style="width: 100%; height: 100%; object-fit: contain;">
                     </div>
                     <div id="onboarding-text-slot" style="text-align: left; flex: 1;">
-                        <div style="font-size: 1rem; font-weight: 600; color: #ffffff; margin-bottom: 4px; letter-spacing: -0.01em;">SCAN TO JOIN ANY TIME</div>
-                        <div style="font-size: 0.85rem; color: #64748b; font-weight: 500;">Or open your phone browser and type: <br><span style="color: #00e676; font-weight: 600;">randomania.tv/play</span></div>
+                        <div style="font-size: 1rem; font-weight: 600; color: var(--rm-white); margin-bottom: 4px; letter-spacing: -0.01em;">SCAN TO JOIN ANY TIME</div>
+                        <div style="font-size: 0.85rem; color: var(--rm-text-muted); font-weight: 500;">Or open your phone browser and type: <br><span style="color: var(--rm-green); font-weight: 600;">randomania.tv/play</span></div>
                     </div>
                     <div id="onboarding-status-slot" style="text-align: right; flex: 1; transition: opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1); opacity: 1;"></div>
                 </div>
@@ -137,7 +138,7 @@
                 <div style="flex: 1; overflow-y: auto;">
                     <table class="leaderboard-table">
                         <tbody id="leaderboard-rows">
-                            <tr><td class="indicator-col"></td><td class="rank-col">1</td><td class="awards-col"></td><td class="identity-col"><span class="identity-wrap"><span class="player-emoji">👤</span><span class="player-name" style="color: #64748b;">Awaiting entries...</span></span></td><td class="score-col" style="color: #64748b;">0</td></tr>
+                            <tr><td class="indicator-col"></td><td class="rank-col">1</td><td class="awards-col"></td><td class="identity-col"><span class="identity-wrap"><span class="player-emoji">👤</span><span class="player-name" style="color: var(--rm-text-muted);">Awaiting entries...</span></span></td><td class="score-col" style="color: var(--rm-text-muted);">0</td></tr>
                         </tbody>
                     </table>
                 </div>

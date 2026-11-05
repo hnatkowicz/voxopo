@@ -151,7 +151,7 @@ if (btnSubmitSpectate) {
             if (!banner) {
                 banner = document.createElement('div');
                 banner.id = 'end-vote-banner';
-                banner.style.cssText = 'position: fixed; top: 14px; left: 50%; transform: translateX(-50%); z-index: 50; background: #1e222b; border: 1px solid #334155; border-radius: 999px; padding: 8px 18px; color: #cbd5e1; font-size: 0.95rem; font-weight: 600;';
+                banner.style.cssText = 'position: fixed; top: 14px; left: 50%; transform: translateX(-50%); z-index: 50; background: var(--rm-surface-2); border: 1px solid var(--rm-slate-700); border-radius: 999px; padding: 8px 18px; color: var(--rm-text-light); font-size: 0.95rem; font-weight: 600;';
                 document.body.appendChild(banner);
             }
             banner.innerText = `🚪 ${votes} of ${needed} needed to end this game`;
@@ -169,11 +169,11 @@ if (btnSubmitSpectate) {
             document.getElementById('active-content-stage').innerHTML = `
                 <div class="panel-box" style="padding: 32px 40px; flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; min-height: 400px; box-sizing: border-box; gap: 12px;">
                     ${venue.logoUrl ? `<img src="${venue.logoUrl}" alt="" style="height: 140px; width: auto; max-width: 80%; object-fit: contain;" onerror="this.remove()">` : ''}
-                    <div style="font-size: 2.2rem; font-weight: 800; color: #ffffff;">☕ Break time${venue.name ? ` <span style="color: #94a3b8; font-weight: 600;">at ${escapeHtml(venue.name)}</span>` : ''}</div>
-                    ${notes.length ? `<div id="venue-break-note" style="font-size: 2.8rem; font-weight: 700; line-height: 1.25; color: #facc15; min-height: 2.5em; max-width: 92%; display: flex; align-items: center; justify-content: center; transition: opacity 0.4s;"></div>` : ''}
-                    <div id="venue-break-headsup" style="display: none; font-size: 1.6rem; font-weight: 800; color: #00e676;">⏰ Back in 30 seconds!</div>
-                    <div id="venue-break-tally" style="color: #94a3b8; font-size: 1rem;">${data.backCount || 0} of ${data.totalPlayers || 0} are back</div>
-                    <div style="color: #64748b; font-size: 0.9rem;">Tap "I'm back" on your phone -- we pick up when everyone has, or when the clock runs out.</div>
+                    <div style="font-size: 2.2rem; font-weight: 800; color: var(--rm-white);">☕ Break time${venue.name ? ` <span style="color: var(--rm-text-soft); font-weight: 600;">at ${escapeHtml(venue.name)}</span>` : ''}</div>
+                    ${notes.length ? `<div id="venue-break-note" style="font-size: 2.8rem; font-weight: 700; line-height: 1.25; color: var(--rm-yellow); min-height: 2.5em; max-width: 92%; display: flex; align-items: center; justify-content: center; transition: opacity 0.4s;"></div>` : ''}
+                    <div id="venue-break-headsup" style="display: none; font-size: 1.6rem; font-weight: 800; color: var(--rm-green);">⏰ Back in 30 seconds!</div>
+                    <div id="venue-break-tally" style="color: var(--rm-text-soft); font-size: 1rem;">${data.backCount || 0} of ${data.totalPlayers || 0} are back</div>
+                    <div style="color: var(--rm-text-muted); font-size: 0.9rem;">Tap "I'm back" on your phone -- we pick up when everyone has, or when the clock runs out.</div>
                 </div>
             `;
             // The venue's notes, one at a time, every 10 seconds.
@@ -824,10 +824,10 @@ if (btnSubmitSpectate) {
                 tbody.innerHTML = `
                     <tr>
                         <td class="indicator-col"></td>
-                        <td class="rank-col" style="color: #222630;">—</td>
+                        <td class="rank-col" style="color: var(--rm-border);">—</td>
                         <td class="awards-col"></td>
-                        <td class="identity-col"><span class="identity-wrap"><span class="player-emoji" style="color: #222630;">👤</span><span class="player-name" style="color: #64748b; font-style: italic;">Lobby is empty...</span></span></td>
-                        <td class="score-col" style="color: #222630;">0</td>
+                        <td class="identity-col"><span class="identity-wrap"><span class="player-emoji" style="color: var(--rm-border);">👤</span><span class="player-name" style="color: var(--rm-text-muted); font-style: italic;">Lobby is empty...</span></span></td>
+                        <td class="score-col" style="color: var(--rm-border);">0</td>
                     </tr>
                 `;
                 return;
@@ -838,8 +838,8 @@ if (btnSubmitSpectate) {
             // and would otherwise stomp the in-game/game-over status message.
             if (currentGamePhase === 'LOBBY' && !currentStatusHtml.includes('START')) {
                 setStatusMessage(`
-                    <div style="font-weight: 600; color: #8892b0; margin-bottom: 2px;">PRESS START TO CONFIRM</div>
-                    <div style="font-size: 0.8rem; color: #64748b;">Skips the countdown once everyone's in</div>
+                    <div style="font-weight: 600; color: var(--rm-periwinkle); margin-bottom: 2px;">PRESS START TO CONFIRM</div>
+                    <div style="font-size: 0.8rem; color: var(--rm-text-muted);">Skips the countdown once everyone's in</div>
                 `);
             }
 
@@ -903,8 +903,8 @@ if (btnSubmitSpectate) {
             const slot = document.getElementById('onboarding-status-slot');
             if (!slot) return;
             contentWarningHtml = `
-                <div style="font-weight: 700; color: #ffa500; margin-bottom: 2px;">⚠️ Heads up</div>
-                <div style="font-size: 0.85rem; color: #e2e5e9;">${escapeHtml(message)}</div>
+                <div style="font-weight: 700; color: var(--rm-orange); margin-bottom: 2px;">⚠️ Heads up</div>
+                <div style="font-size: 0.85rem; color: var(--rm-text-2);">${escapeHtml(message)}</div>
             `;
             slot.innerHTML = contentWarningHtml;
             slot.style.opacity = "1";
@@ -961,8 +961,8 @@ if (btnSubmitSpectate) {
                 slot.innerHTML = `
                     <div style="display: flex; align-items: center; justify-content: flex-end; gap: 10px; transition: transform 0.3s ease; transform: scale(0.95); opacity: 0;" id="inline-toast-card">
                         <div style="text-align: right;">
-                            <div style="font-size: 0.85rem; font-weight: 600; color: #00e676; letter-spacing: -0.01em;">New player joined</div>
-                            <div style="font-size: 0.85rem; color: #64748b;">${nextPlayer.name}</div>
+                            <div style="font-size: 0.85rem; font-weight: 600; color: var(--rm-green); letter-spacing: -0.01em;">New player joined</div>
+                            <div style="font-size: 0.85rem; color: var(--rm-text-muted);">${nextPlayer.name}</div>
                         </div>
                         <span style="font-size: 1.1rem;">${nextPlayer.emoji || '👤'}</span>
                     </div>
@@ -998,7 +998,7 @@ if (btnSubmitSpectate) {
         // button mashing, keyed by the category's real key (e.g. WWII_HISTORY) rather
         // than fixed cat1/2/3 slots -- supports any number of categories per mode.
         let activeCategoryLabels = {};
-        const CATEGORY_BAR_COLORS = ['#ffa500', '#00e676', '#ff4757', '#2d9cdb', '#bb6bd9', '#f9c74f'];
+        const CATEGORY_BAR_COLORS = ['var(--rm-orange)', 'var(--rm-green)', 'var(--rm-red)', 'var(--rm-blue)', 'var(--rm-purple)', 'var(--rm-yellow-soft)'];
 
         // Canonical display names, matching exactly what the lobby's own module
         // election rows show (index.html). A generic key.replace('_', ' ') +
@@ -1018,15 +1018,15 @@ if (btnSubmitSpectate) {
             currentGamePhase = 'CATEGORY_VOTE';
             // Phones have a Start button here too now, same as the lobby.
             setStatusMessage(`
-                <div style="font-weight: 600; color: #8892b0; margin-bottom: 2px;">PRESS START TO CONFIRM</div>
-                <div style="font-size: 0.8rem; color: #64748b;">Skips the countdown once everyone's in</div>
+                <div style="font-weight: 600; color: var(--rm-periwinkle); margin-bottom: 2px;">PRESS START TO CONFIRM</div>
+                <div style="font-size: 0.8rem; color: var(--rm-text-muted);">Skips the countdown once everyone's in</div>
             `);
 
             const rows = categoryList.map((c, index) => `
                 <div class="vote-row">
                     <div class="vote-meta">
-                        <span id="lbl-${c.key}" style="font-weight: 500; color: #ffffff;">${c.label}</span>
-                        <span id="ccount-${c.key}" style="color: #64748b; font-weight: 500;">0 votes (0%)</span>
+                        <span id="lbl-${c.key}" style="font-weight: 500; color: var(--rm-white);">${c.label}</span>
+                        <span id="ccount-${c.key}" style="color: var(--rm-text-muted); font-weight: 500;">0 votes (0%)</span>
                     </div>
                     <div class="progress-track"><div id="cbar-${c.key}" class="progress-fill" style="background: ${CATEGORY_BAR_COLORS[index % CATEGORY_BAR_COLORS.length]};"></div></div>
                 </div>
@@ -1035,7 +1035,7 @@ if (btnSubmitSpectate) {
             panel.innerHTML = `
                 <div class="panel-box" style="padding: 40px; flex: 1; display: flex; flex-direction: column; justify-content: center;">
                     <h2 class="panel-title" style="margin-bottom: 8px;">Winner: ${displayGameName}</h2>
-                    <p style="color: #64748b; font-size: 0.95rem; margin: 0 0 32px 0; font-weight: 500;">Select your sub-deck preference on your phone now</p>
+                    <p style="color: var(--rm-text-muted); font-size: 0.95rem; margin: 0 0 32px 0; font-weight: 500;">Select your sub-deck preference on your phone now</p>
 
                     <div style="display: flex; flex-direction: column;">
                         ${rows}
@@ -1066,7 +1066,7 @@ if (btnSubmitSpectate) {
             const panel = document.getElementById('active-content-stage');
             // The venue's Trivi-yeah! carries its logo and name instead of a deck name.
             const deckLine = brand
-                ? `<span style="display: inline-flex; align-items: center; gap: 12px;">${brand.logoUrl ? `<img src="${brand.logoUrl}" alt="" style="height: 34px; width: auto; max-width: 90px; object-fit: contain;" onerror="this.remove()">` : ''}<span>Trivi-yeah! <span style="color: #94a3b8;">at ${escapeHtml(brand.name)}</span></span></span>`
+                ? `<span style="display: inline-flex; align-items: center; gap: 12px;">${brand.logoUrl ? `<img src="${brand.logoUrl}" alt="" style="height: 34px; width: auto; max-width: 90px; object-fit: contain;" onerror="this.remove()">` : ''}<span>Trivi-yeah! <span style="color: var(--rm-text-soft);">at ${escapeHtml(brand.name)}</span></span></span>`
                 : `Active Deck: ${categoryLabel}`;
 
             currentGamePhase = 'GAME_ROUND';
@@ -1075,7 +1075,7 @@ if (btnSubmitSpectate) {
             // repeating it here as text would just be redundant -- this stays as progress
             // (Question X/Y) through both the waiting and reveal states of the round.
             setStatusMessage(`
-                <div style="font-weight: 600; color: #64748b;">Question ${questionNumber || '?'} / ${totalQuestions || '?'}</div>
+                <div style="font-weight: 600; color: var(--rm-text-muted);">Question ${questionNumber || '?'} / ${totalQuestions || '?'}</div>
             `);
 
             // Choice-row markup is identical whether or not there's a visual_asset --
@@ -1083,21 +1083,21 @@ if (btnSubmitSpectate) {
             // so this stays the single source of truth for what "the choices" look like.
             const choiceGrid = `
                 <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; width: 100%;">
-                    <div id="choice-row-A" style="background: #1e222b; border: 1px solid #222630; border-radius: 8px; padding: 16px; display: flex; align-items: center; gap: 12px; transition: all 0.3s ease;">
-                        <span style="background: rgba(0, 230, 118, 0.1); color: #00e676; font-weight: 700; padding: 4px 10px; border-radius: 4px; font-size: 0.85rem;">A</span>
-                        <span style="font-size: 1rem; font-weight: 500; color: #e2e5e9;">${choiceA}</span>
+                    <div id="choice-row-A" style="background: var(--rm-surface-2); border: 1px solid var(--rm-border); border-radius: 8px; padding: 16px; display: flex; align-items: center; gap: 12px; transition: all 0.3s ease;">
+                        <span style="background: rgba(var(--rm-green-rgb), 0.1); color: var(--rm-green); font-weight: 700; padding: 4px 10px; border-radius: 4px; font-size: 0.85rem;">A</span>
+                        <span style="font-size: 1rem; font-weight: 500; color: var(--rm-text-2);">${choiceA}</span>
                     </div>
-                    <div id="choice-row-B" style="background: #1e222b; border: 1px solid #222630; border-radius: 8px; padding: 16px; display: flex; align-items: center; gap: 12px; transition: all 0.3s ease;">
-                        <span style="background: rgba(0, 230, 118, 0.1); color: #00e676; font-weight: 700; padding: 4px 10px; border-radius: 4px; font-size: 0.85rem;">B</span>
-                        <span style="font-size: 1rem; font-weight: 500; color: #e2e5e9;">${choiceB}</span>
+                    <div id="choice-row-B" style="background: var(--rm-surface-2); border: 1px solid var(--rm-border); border-radius: 8px; padding: 16px; display: flex; align-items: center; gap: 12px; transition: all 0.3s ease;">
+                        <span style="background: rgba(var(--rm-green-rgb), 0.1); color: var(--rm-green); font-weight: 700; padding: 4px 10px; border-radius: 4px; font-size: 0.85rem;">B</span>
+                        <span style="font-size: 1rem; font-weight: 500; color: var(--rm-text-2);">${choiceB}</span>
                     </div>
-                    <div id="choice-row-C" style="background: #1e222b; border: 1px solid #222630; border-radius: 8px; padding: 16px; display: flex; align-items: center; gap: 12px; transition: all 0.3s ease;">
-                        <span style="background: rgba(0, 230, 118, 0.1); color: #00e676; font-weight: 700; padding: 4px 10px; border-radius: 4px; font-size: 0.85rem;">C</span>
-                        <span style="font-size: 1rem; font-weight: 500; color: #e2e5e9;">${choiceC}</span>
+                    <div id="choice-row-C" style="background: var(--rm-surface-2); border: 1px solid var(--rm-border); border-radius: 8px; padding: 16px; display: flex; align-items: center; gap: 12px; transition: all 0.3s ease;">
+                        <span style="background: rgba(var(--rm-green-rgb), 0.1); color: var(--rm-green); font-weight: 700; padding: 4px 10px; border-radius: 4px; font-size: 0.85rem;">C</span>
+                        <span style="font-size: 1rem; font-weight: 500; color: var(--rm-text-2);">${choiceC}</span>
                     </div>
-                    <div id="choice-row-D" style="background: #1e222b; border: 1px solid #222630; border-radius: 8px; padding: 16px; display: flex; align-items: center; gap: 12px; transition: all 0.3s ease;">
-                        <span style="background: rgba(0, 230, 118, 0.1); color: #00e676; font-weight: 700; padding: 4px 10px; border-radius: 4px; font-size: 0.85rem;">D</span>
-                        <span style="font-size: 1rem; font-weight: 500; color: #e2e5e9;">${choiceD}</span>
+                    <div id="choice-row-D" style="background: var(--rm-surface-2); border: 1px solid var(--rm-border); border-radius: 8px; padding: 16px; display: flex; align-items: center; gap: 12px; transition: all 0.3s ease;">
+                        <span style="background: rgba(var(--rm-green-rgb), 0.1); color: var(--rm-green); font-weight: 700; padding: 4px 10px; border-radius: 4px; font-size: 0.85rem;">D</span>
+                        <span style="font-size: 1rem; font-weight: 500; color: var(--rm-text-2);">${choiceD}</span>
                     </div>
                 </div>
             `;
@@ -1115,10 +1115,10 @@ if (btnSubmitSpectate) {
                             <img src="${visualAsset}" alt="" style="width: 100%; aspect-ratio: 4 / 3; max-height: 340px; object-fit: contain; border-radius: 8px;">
                         </div>
                         <div style="flex: 1; text-align: left; display: flex; flex-direction: column; gap: 16px;">
-                            <div style="font-size: 0.85rem; font-weight: 600; color: #64748b; text-transform: uppercase; letter-spacing: 0.08em;">
+                            <div style="font-size: 0.85rem; font-weight: 600; color: var(--rm-text-muted); text-transform: uppercase; letter-spacing: 0.08em;">
                                 ${deckLine}
                             </div>
-                            <div style="font-size: 1.2rem; font-weight: 600; color: #ffffff; line-height: 1.3; letter-spacing: -0.01em;">
+                            <div style="font-size: 1.2rem; font-weight: 600; color: var(--rm-white); line-height: 1.3; letter-spacing: -0.01em;">
                                 ${questionText}
                             </div>
                             ${choiceGrid}
@@ -1131,11 +1131,11 @@ if (btnSubmitSpectate) {
             panel.innerHTML = `
                 <div class="panel-box" style="padding: 40px; flex: 1; display: flex; flex-direction: column; justify-content: space-between; text-align: left; min-height: 400px; box-sizing: border-box;">
 
-                    <div style="font-size: 0.85rem; font-weight: 600; color: #64748b; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 16px;">
+                    <div style="font-size: 0.85rem; font-weight: 600; color: var(--rm-text-muted); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 16px;">
                         ${deckLine}
                     </div>
 
-                    <div style="font-size: 1.4rem; font-weight: 600; color: #ffffff; line-height: 1.4; flex: 1; display: flex; align-items: center; margin-bottom: 24px; letter-spacing: -0.01em;">
+                    <div style="font-size: 1.4rem; font-weight: 600; color: var(--rm-white); line-height: 1.4; flex: 1; display: flex; align-items: center; margin-bottom: 24px; letter-spacing: -0.01em;">
                         ${questionText}
                     </div>
 
@@ -1167,7 +1167,7 @@ function switchToTriviYeahIIBoardUI(grid, currentPicker, round, totalRounds) {
 
     currentGamePhase = 'TRIVI_YEAH_II_ROUND';
     document.getElementById('room-status-text').innerText = `Thinking Pants — Round ${triviYeahIICurrentRound}/${triviYeahIITotalRounds}`;
-    setStatusMessage(`<div style="font-weight: 600; color: #00e676;">${currentPicker}'s pick!</div>`);
+    setStatusMessage(`<div style="font-weight: 600; color: var(--rm-green);">${currentPicker}'s pick!</div>`);
 
     // The grid arrives category-major (3 categories x 4 tiers, flat array of
     // 12) -- transposed here into a 3-column x 4-row CSS grid so categories
@@ -1178,7 +1178,7 @@ function switchToTriviYeahIIBoardUI(grid, currentPicker, round, totalRounds) {
     const headerCells = [];
     for (let c = 0; c < categoryCount; c++) {
         const first = boardGrid[c * tierCount];
-        headerCells.push(`<div style="padding: 8px 4px; text-align: center; font-size: 0.72rem; font-weight: 700; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.04em;">${first ? first.categoryLabel : ''}</div>`);
+        headerCells.push(`<div style="padding: 8px 4px; text-align: center; font-size: 0.72rem; font-weight: 700; color: var(--rm-text-soft); text-transform: uppercase; letter-spacing: 0.04em;">${first ? first.categoryLabel : ''}</div>`);
     }
 
     const tileCells = [];
@@ -1187,8 +1187,8 @@ function switchToTriviYeahIIBoardUI(grid, currentPicker, round, totalRounds) {
             const cell = boardGrid[c * tierCount + t];
             if (!cell) { tileCells.push('<div></div>'); continue; }
             tileCells.push(cell.cleared
-                ? `<div style="background: #14161d; border: 1px solid #1c1f28; border-radius: 8px; padding: 16px 4px; text-align: center; color: #334155; font-size: 1.1rem; font-weight: 700;">&mdash;</div>`
-                : `<div style="background: #14161d; border: 2px solid #00e676; box-shadow: 0 0 10px rgba(0, 230, 118, 0.25); border-radius: 8px; padding: 15px 4px; text-align: center; color: #00e676; font-size: 1.25rem; font-weight: 800;">${cell.points}</div>`);
+                ? `<div style="background: var(--rm-surface); border: 1px solid var(--rm-surface-1c); border-radius: 8px; padding: 16px 4px; text-align: center; color: var(--rm-slate-700); font-size: 1.1rem; font-weight: 700;">&mdash;</div>`
+                : `<div style="background: var(--rm-surface); border: 2px solid var(--rm-green); box-shadow: 0 0 10px rgba(var(--rm-green-rgb), 0.25); border-radius: 8px; padding: 15px 4px; text-align: center; color: var(--rm-green); font-size: 1.25rem; font-weight: 800;">${cell.points}</div>`);
         }
     }
 
@@ -1211,8 +1211,8 @@ function showTriviYeahIIRoundTransitionUI(completedRound, nextRound, totalRounds
 
     panel.innerHTML = `
         <div class="panel-box" style="padding: 40px; flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; min-height: 400px; box-sizing: border-box;">
-            <div style="font-size: 0.9rem; font-weight: 600; color: #64748b; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 14px;">Round ${completedRound} Complete</div>
-            <div style="font-size: 2rem; font-weight: 800; color: #ffffff; margin-bottom: 8px;">Starting Round ${nextRound} of ${totalRounds}</div>
+            <div style="font-size: 0.9rem; font-weight: 600; color: var(--rm-text-muted); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 14px;">Round ${completedRound} Complete</div>
+            <div style="font-size: 2rem; font-weight: 800; color: var(--rm-white); margin-bottom: 8px;">Starting Round ${nextRound} of ${totalRounds}</div>
         </div>
     `;
 }
@@ -1242,7 +1242,7 @@ function showTriviYeahIISpotlightUI(partial) {
     ` : '';
 
     const categoryBlock = `
-        <div style="font-size: 0.85rem; font-weight: 600; color: #64748b; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 16px;">
+        <div style="font-size: 0.85rem; font-weight: 600; color: var(--rm-text-muted); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 16px;">
             ${categoryLabel || ''}${points ? ` &middot; ${points} pts` : ''}
         </div>
     `;
@@ -1250,9 +1250,9 @@ function showTriviYeahIISpotlightUI(partial) {
     if (stage === 'category') {
         panel.innerHTML = `
             <div class="panel-box" style="padding: 40px; flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; min-height: 400px; box-sizing: border-box;">
-                <div style="font-size: 0.85rem; font-weight: 600; color: #64748b; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 14px;">Up next</div>
-                <div style="font-size: 2rem; font-weight: 800; color: #ffffff; margin-bottom: 10px;">${categoryLabel}</div>
-                <div style="font-size: 1.1rem; font-weight: 700; color: #00e676;">${points} points</div>
+                <div style="font-size: 0.85rem; font-weight: 600; color: var(--rm-text-muted); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 14px;">Up next</div>
+                <div style="font-size: 2rem; font-weight: 800; color: var(--rm-white); margin-bottom: 10px;">${categoryLabel}</div>
+                <div style="font-size: 1.1rem; font-weight: 700; color: var(--rm-green);">${points} points</div>
             </div>
         `;
         return;
@@ -1264,7 +1264,7 @@ function showTriviYeahIISpotlightUI(partial) {
                 ${pictureBlock}
                 <div style="flex: 1; text-align: left; min-width: 0;">
                     ${categoryBlock}
-                    <div style="font-size: 1.4rem; font-weight: 600; color: #ffffff; line-height: 1.4; letter-spacing: -0.01em;">
+                    <div style="font-size: 1.4rem; font-weight: 600; color: var(--rm-white); line-height: 1.4; letter-spacing: -0.01em;">
                         ${questionText}
                     </div>
                 </div>
@@ -1277,7 +1277,7 @@ function showTriviYeahIISpotlightUI(partial) {
         panel.innerHTML = `
             <div class="panel-box" style="padding: 40px; flex: 1; display: flex; flex-direction: column; justify-content: center; text-align: left; min-height: 400px; box-sizing: border-box;">
                 ${categoryBlock}
-                <div style="font-size: 1.4rem; font-weight: 600; color: #ffffff; line-height: 1.4; letter-spacing: -0.01em;">
+                <div style="font-size: 1.4rem; font-weight: 600; color: var(--rm-white); line-height: 1.4; letter-spacing: -0.01em;">
                     ${questionText}
                 </div>
             </div>
@@ -1290,21 +1290,21 @@ function showTriviYeahIISpotlightUI(partial) {
     // on TRIVI_YEAH_II_ROUND_REVEAL) works completely unmodified on it.
     const choiceGrid = `
         <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; width: 100%;">
-            <div id="choice-row-A" style="background: #1e222b; border: 1px solid #222630; border-radius: 8px; padding: 16px; display: flex; align-items: center; gap: 12px; transition: all 0.3s ease;">
-                <span style="background: rgba(0, 230, 118, 0.1); color: #00e676; font-weight: 700; padding: 4px 10px; border-radius: 4px; font-size: 0.85rem;">A</span>
-                <span style="font-size: 1rem; font-weight: 500; color: #e2e5e9;">${choiceA}</span>
+            <div id="choice-row-A" style="background: var(--rm-surface-2); border: 1px solid var(--rm-border); border-radius: 8px; padding: 16px; display: flex; align-items: center; gap: 12px; transition: all 0.3s ease;">
+                <span style="background: rgba(var(--rm-green-rgb), 0.1); color: var(--rm-green); font-weight: 700; padding: 4px 10px; border-radius: 4px; font-size: 0.85rem;">A</span>
+                <span style="font-size: 1rem; font-weight: 500; color: var(--rm-text-2);">${choiceA}</span>
             </div>
-            <div id="choice-row-B" style="background: #1e222b; border: 1px solid #222630; border-radius: 8px; padding: 16px; display: flex; align-items: center; gap: 12px; transition: all 0.3s ease;">
-                <span style="background: rgba(0, 230, 118, 0.1); color: #00e676; font-weight: 700; padding: 4px 10px; border-radius: 4px; font-size: 0.85rem;">B</span>
-                <span style="font-size: 1rem; font-weight: 500; color: #e2e5e9;">${choiceB}</span>
+            <div id="choice-row-B" style="background: var(--rm-surface-2); border: 1px solid var(--rm-border); border-radius: 8px; padding: 16px; display: flex; align-items: center; gap: 12px; transition: all 0.3s ease;">
+                <span style="background: rgba(var(--rm-green-rgb), 0.1); color: var(--rm-green); font-weight: 700; padding: 4px 10px; border-radius: 4px; font-size: 0.85rem;">B</span>
+                <span style="font-size: 1rem; font-weight: 500; color: var(--rm-text-2);">${choiceB}</span>
             </div>
-            <div id="choice-row-C" style="background: #1e222b; border: 1px solid #222630; border-radius: 8px; padding: 16px; display: flex; align-items: center; gap: 12px; transition: all 0.3s ease;">
-                <span style="background: rgba(0, 230, 118, 0.1); color: #00e676; font-weight: 700; padding: 4px 10px; border-radius: 4px; font-size: 0.85rem;">C</span>
-                <span style="font-size: 1rem; font-weight: 500; color: #e2e5e9;">${choiceC}</span>
+            <div id="choice-row-C" style="background: var(--rm-surface-2); border: 1px solid var(--rm-border); border-radius: 8px; padding: 16px; display: flex; align-items: center; gap: 12px; transition: all 0.3s ease;">
+                <span style="background: rgba(var(--rm-green-rgb), 0.1); color: var(--rm-green); font-weight: 700; padding: 4px 10px; border-radius: 4px; font-size: 0.85rem;">C</span>
+                <span style="font-size: 1rem; font-weight: 500; color: var(--rm-text-2);">${choiceC}</span>
             </div>
-            <div id="choice-row-D" style="background: #1e222b; border: 1px solid #222630; border-radius: 8px; padding: 16px; display: flex; align-items: center; gap: 12px; transition: all 0.3s ease;">
-                <span style="background: rgba(0, 230, 118, 0.1); color: #00e676; font-weight: 700; padding: 4px 10px; border-radius: 4px; font-size: 0.85rem;">D</span>
-                <span style="font-size: 1rem; font-weight: 500; color: #e2e5e9;">${choiceD}</span>
+            <div id="choice-row-D" style="background: var(--rm-surface-2); border: 1px solid var(--rm-border); border-radius: 8px; padding: 16px; display: flex; align-items: center; gap: 12px; transition: all 0.3s ease;">
+                <span style="background: rgba(var(--rm-green-rgb), 0.1); color: var(--rm-green); font-weight: 700; padding: 4px 10px; border-radius: 4px; font-size: 0.85rem;">D</span>
+                <span style="font-size: 1rem; font-weight: 500; color: var(--rm-text-2);">${choiceD}</span>
             </div>
         </div>
     `;
@@ -1317,7 +1317,7 @@ function showTriviYeahIISpotlightUI(partial) {
                 ${pictureBlock}
                 <div style="flex: 1; text-align: left; min-width: 0;">
                     ${categoryBlock}
-                    <div style="font-size: 1.2rem; font-weight: 600; color: #ffffff; line-height: 1.3; margin-bottom: 18px; letter-spacing: -0.01em;">
+                    <div style="font-size: 1.2rem; font-weight: 600; color: var(--rm-white); line-height: 1.3; margin-bottom: 18px; letter-spacing: -0.01em;">
                         ${questionText}
                     </div>
                     ${choiceGrid.replace('grid-template-columns: repeat(2, 1fr)', 'grid-template-columns: 1fr')}
@@ -1330,7 +1330,7 @@ function showTriviYeahIISpotlightUI(partial) {
     panel.innerHTML = `
         <div class="panel-box" style="padding: 40px; flex: 1; display: flex; flex-direction: column; justify-content: space-between; text-align: left; min-height: 400px; box-sizing: border-box;">
             ${categoryBlock}
-            <div style="font-size: 1.4rem; font-weight: 600; color: #ffffff; line-height: 1.4; flex: 1; display: flex; align-items: center; margin-bottom: 24px; letter-spacing: -0.01em;">
+            <div style="font-size: 1.4rem; font-weight: 600; color: var(--rm-white); line-height: 1.4; flex: 1; display: flex; align-items: center; margin-bottom: 24px; letter-spacing: -0.01em;">
                 ${questionText}
             </div>
             ${choiceGrid}
@@ -1346,7 +1346,7 @@ function showTriviYeahIISpotlightUI(partial) {
 // beat.
 function doublerCategoryBadge(categoryLabel) {
     return categoryLabel
-        ? `<div style="font-size: 0.8rem; font-weight: 600; color: #ffa500; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 10px;">Category: ${categoryLabel}</div>`
+        ? `<div style="font-size: 0.8rem; font-weight: 600; color: var(--rm-orange); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 10px;">Category: ${categoryLabel}</div>`
         : '';
 }
 
@@ -1374,11 +1374,11 @@ function showTriviYeahIITrapSettingUI(setter) {
     panel.innerHTML = `
         <div class="panel-box" style="padding: 40px; flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; min-height: 400px; box-sizing: border-box;">
             <div style="margin-bottom: 14px;">${trapIconHtml('SETTING', 90)}</div>
-            <div style="font-size: 1.9rem; font-weight: 800; color: #ffffff; margin-bottom: 8px;">${escapeHtml(setter)} swept a column...</div>
-            <div style="font-size: 1.2rem; color: #94a3b8;">...and is up to something.</div>
+            <div style="font-size: 1.9rem; font-weight: 800; color: var(--rm-white); margin-bottom: 8px;">${escapeHtml(setter)} swept a column...</div>
+            <div style="font-size: 1.2rem; color: var(--rm-text-soft);">...and is up to something.</div>
         </div>
     `;
-    setStatusMessage(`<div style="font-weight: 600; color: #8892b0;">🤫 Shhh...</div>`);
+    setStatusMessage(`<div style="font-weight: 600; color: var(--rm-periwinkle);">🤫 Shhh...</div>`);
 }
 
 function showTriviYeahIITrapRevealUI(data) {
@@ -1387,11 +1387,11 @@ function showTriviYeahIITrapRevealUI(data) {
     panel.innerHTML = `
         <div class="panel-box" style="padding: 40px; flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; min-height: 400px; box-sizing: border-box;">
             ${doublerCategoryBadge(data.categoryLabel)}
-            <div style="font-size: 0.85rem; font-weight: 600; color: #64748b; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 10px;">It's a trap!</div>
+            <div style="font-size: 0.85rem; font-weight: 600; color: var(--rm-text-muted); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 10px;">It's a trap!</div>
             <div style="margin-bottom: 10px;">${trapIconHtml(data.trapType, 110)}</div>
-            <div style="font-size: 2.6rem; font-weight: 800; color: #ff5c5c; margin-bottom: 10px; text-shadow: 0 0 20px rgba(255, 92, 92, 0.35);">${escapeHtml(data.label).toUpperCase()}</div>
-            <div style="font-size: 1.2rem; font-weight: 600; color: #ffffff; max-width: 700px;">${trapRuleFor(data)}</div>
-            <div style="font-size: 1rem; color: #94a3b8; margin-top: 10px;">Set by ${escapeHtml(data.setter)} · ${data.points} points</div>
+            <div style="font-size: 2.6rem; font-weight: 800; color: var(--rm-red-soft); margin-bottom: 10px; text-shadow: 0 0 20px rgba(var(--rm-red-soft-rgb), 0.35);">${escapeHtml(data.label).toUpperCase()}</div>
+            <div style="font-size: 1.2rem; font-weight: 600; color: var(--rm-white); max-width: 700px;">${trapRuleFor(data)}</div>
+            <div style="font-size: 1rem; color: var(--rm-text-soft); margin-top: 10px;">Set by ${escapeHtml(data.setter)} · ${data.points} points</div>
         </div>
     `;
 }
@@ -1402,7 +1402,7 @@ function addTriviYeahIITrapBanner() {
     const box = document.querySelector('#active-content-stage .panel-box');
     if (!box) return;
     const banner = document.createElement('div');
-    banner.style.cssText = 'display: flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 14px; font-weight: 700; color: #ff5c5c;';
+    banner.style.cssText = 'display: flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 14px; font-weight: 700; color: var(--rm-red-soft);';
     banner.innerHTML = `${trapIconHtml(activeTrapTV.trapType, 34)}<span>${escapeHtml(activeTrapTV.label).toUpperCase()} · ${trapRuleFor(activeTrapTV)}</span>`;
     box.insertBefore(banner, box.firstChild);
     document.getElementById('room-status-text').innerText = `Thinking Pants — ${activeTrapTV.label}`;
@@ -1421,7 +1421,7 @@ function showTriviYeahIITrapOutcome(trap) {
     } else {
         line = `🔥 Pants on Fire! Wrong answers cost double.`;
     }
-    setStatusMessage(`<div style="font-weight: 700; color: #ff5c5c;">${line}</div>`);
+    setStatusMessage(`<div style="font-weight: 700; color: var(--rm-red-soft);">${line}</div>`);
 }
 
 // Last-round Doublers pay double (Randy, Oct 2026); set by the reveal.
@@ -1433,11 +1433,11 @@ function showTriviYeahIIDoublerRevealUI(picker, points, categoryLabel, multiplie
     panel.innerHTML = `
         <div class="panel-box" style="padding: 40px; flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; min-height: 400px; box-sizing: border-box;">
             ${doublerCategoryBadge(categoryLabel)}
-            <div style="font-size: 0.85rem; font-weight: 600; color: #64748b; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 14px;">Surprise tile</div>
-            <div style="font-size: 2.4rem; font-weight: 800; color: #ffa500; margin-bottom: 10px; text-shadow: 0 0 20px rgba(255, 165, 0, 0.4);">DOUBLER!</div>
-            <div style="font-size: 1.2rem; font-weight: 700; color: #ffffff;">${picker} is on the hook for this one.</div>
-            <div style="font-size: 1rem; color: #94a3b8; margin-top: 6px;">Tile value: ${points} points</div>
-            ${doublerMultiplier > 1 ? `<div style="font-size: 1.4rem; font-weight: 800; color: #ff7a1a; margin-top: 14px;">🔥 Final round: side bets are DOUBLED, win or lose!</div>` : ''}
+            <div style="font-size: 0.85rem; font-weight: 600; color: var(--rm-text-muted); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 14px;">Surprise tile</div>
+            <div style="font-size: 2.4rem; font-weight: 800; color: var(--rm-orange); margin-bottom: 10px; text-shadow: 0 0 20px rgba(var(--rm-orange-rgb), 0.4);">DOUBLER!</div>
+            <div style="font-size: 1.2rem; font-weight: 700; color: var(--rm-white);">${picker} is on the hook for this one.</div>
+            <div style="font-size: 1rem; color: var(--rm-text-soft); margin-top: 6px;">Tile value: ${points} points</div>
+            ${doublerMultiplier > 1 ? `<div style="font-size: 1.4rem; font-weight: 800; color: var(--rm-orange-hot); margin-top: 14px;">🔥 Final round: side bets are DOUBLED, win or lose!</div>` : ''}
         </div>
     `;
 }
@@ -1449,9 +1449,9 @@ function showTriviYeahIIWagerPromptUI(picker, maxWager, tileValue, categoryLabel
     panel.innerHTML = `
         <div class="panel-box" style="padding: 40px; flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; min-height: 400px; box-sizing: border-box;">
             ${doublerCategoryBadge(categoryLabel)}
-            <div style="font-size: 0.85rem; font-weight: 600; color: #64748b; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 14px;">Waiting on the wager</div>
-            <div style="font-size: 1.6rem; font-weight: 700; color: #ffffff; margin-bottom: 10px;">${picker} is deciding how much to risk&hellip;</div>
-            <div style="font-size: 1rem; color: #94a3b8;">Anywhere from 0 to ${maxWager} points (tile is worth ${tileValue})</div>
+            <div style="font-size: 0.85rem; font-weight: 600; color: var(--rm-text-muted); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 14px;">Waiting on the wager</div>
+            <div style="font-size: 1.6rem; font-weight: 700; color: var(--rm-white); margin-bottom: 10px;">${picker} is deciding how much to risk&hellip;</div>
+            <div style="font-size: 1rem; color: var(--rm-text-soft);">Anywhere from 0 to ${maxWager} points (tile is worth ${tileValue})</div>
         </div>
     `;
 }
@@ -1466,10 +1466,10 @@ function showTriviYeahIISideBetsOpenUI(picker, wagerAmount, tileValue, categoryL
     panel.innerHTML = `
         <div class="panel-box" style="padding: 40px; flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; min-height: 400px; box-sizing: border-box;">
             ${doublerCategoryBadge(categoryLabel)}
-            <div style="font-size: 0.85rem; font-weight: 600; color: #64748b; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 14px;">${picker}'s wager</div>
-            <div style="font-size: 2.2rem; font-weight: 800; color: #ffa500; margin-bottom: 18px;">${wagerAmount} points</div>
-            <div style="font-size: 1.1rem; font-weight: 600; color: #ffffff;">Will ${picker} get it right?</div>
-            <div style="font-size: 1rem; color: #94a3b8; margin-top: 6px;">Place your side bet -- For, Against, or Pass -- at ${tileValue * doublerMultiplier} points${doublerMultiplier > 1 ? ` <strong style="color: #ff7a1a;">(doubled!)</strong>` : ''}</div>
+            <div style="font-size: 0.85rem; font-weight: 600; color: var(--rm-text-muted); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 14px;">${picker}'s wager</div>
+            <div style="font-size: 2.2rem; font-weight: 800; color: var(--rm-orange); margin-bottom: 18px;">${wagerAmount} points</div>
+            <div style="font-size: 1.1rem; font-weight: 600; color: var(--rm-white);">Will ${picker} get it right?</div>
+            <div style="font-size: 1rem; color: var(--rm-text-soft); margin-top: 6px;">Place your side bet -- For, Against, or Pass -- at ${tileValue * doublerMultiplier} points${doublerMultiplier > 1 ? ` <strong style="color: var(--rm-orange-hot);">(doubled!)</strong>` : ''}</div>
         </div>
     `;
 }
@@ -1481,18 +1481,18 @@ function showTriviYeahIIDoublerResultUI(data) {
     const panel = document.getElementById('active-content-stage');
 
     const pickerLine = data.pickerCorrect
-        ? `<span style="color: #00e676;">${data.picker} got it right -- +${data.wagerAmount} points!</span>`
-        : `<span style="color: #ff5c5c;">${data.picker} missed it -- &minus;${data.wagerAmount} points.</span>`;
+        ? `<span style="color: var(--rm-green);">${data.picker} got it right -- +${data.wagerAmount} points!</span>`
+        : `<span style="color: var(--rm-red-soft);">${data.picker} missed it -- &minus;${data.wagerAmount} points.</span>`;
 
     const sideBetRows = Object.entries(data.sideBetResults || {}).map(([name, delta]) => {
-        if (delta === 0) return `<div style="font-size: 0.95rem; color: #64748b;">${name} passed.</div>`;
+        if (delta === 0) return `<div style="font-size: 0.95rem; color: var(--rm-text-muted);">${name} passed.</div>`;
         const won = delta > 0;
-        return `<div style="font-size: 0.95rem; color: ${won ? '#00e676' : '#ff5c5c'};">${name} ${won ? 'won' : 'lost'} ${Math.abs(delta)} points.</div>`;
+        return `<div style="font-size: 0.95rem; color: ${won ? 'var(--rm-green)' : 'var(--rm-red-soft)'};">${name} ${won ? 'won' : 'lost'} ${Math.abs(delta)} points.</div>`;
     }).join('');
 
     panel.innerHTML = `
         <div class="panel-box" style="padding: 40px; flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; min-height: 400px; box-sizing: border-box; gap: 6px;">
-            <div style="font-size: 0.85rem; font-weight: 600; color: #64748b; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 4px;">Correct answer was ${data.correctLetter}</div>
+            <div style="font-size: 0.85rem; font-weight: 600; color: var(--rm-text-muted); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 4px;">Correct answer was ${data.correctLetter}</div>
             <div style="font-size: 1.5rem; font-weight: 700; margin-bottom: 10px;">${pickerLine}</div>
             ${sideBetRows}
         </div>
@@ -1514,9 +1514,9 @@ function showTriviYeahIIFinalCategoryRevealUI(topicLabel) {
     document.getElementById('room-status-text').innerText = `${finalWagerModeLabel} — Final Wager`;
     panel.innerHTML = `
         <div class="panel-box" style="padding: 40px; flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; min-height: 400px; box-sizing: border-box;">
-            <div style="font-size: 0.85rem; font-weight: 600; color: #64748b; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 14px;">One question left. Everything's on the line.</div>
-            <div style="font-size: 2.6rem; font-weight: 800; color: #ffd700; margin-bottom: 14px; text-shadow: 0 0 24px rgba(255, 215, 0, 0.35);">FINAL WAGER</div>
-            <div style="font-size: 1.3rem; font-weight: 700; color: #ffffff;">Topic: ${topicLabel}</div>
+            <div style="font-size: 0.85rem; font-weight: 600; color: var(--rm-text-muted); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 14px;">One question left. Everything's on the line.</div>
+            <div style="font-size: 2.6rem; font-weight: 800; color: var(--rm-gold); margin-bottom: 14px; text-shadow: 0 0 24px rgba(var(--rm-gold-rgb), 0.35);">FINAL WAGER</div>
+            <div style="font-size: 1.3rem; font-weight: 700; color: var(--rm-white);">Topic: ${topicLabel}</div>
         </div>
     `;
 }
@@ -1525,9 +1525,9 @@ function showTriviYeahIIFinalWagerOpenUI() {
     const panel = document.getElementById('active-content-stage');
     panel.innerHTML = `
         <div class="panel-box" style="padding: 40px; flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; min-height: 400px; box-sizing: border-box;">
-            <div style="font-size: 0.85rem; font-weight: 600; color: #64748b; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 14px;">Wagering now</div>
-            <div style="font-size: 1.6rem; font-weight: 700; color: #ffffff; margin-bottom: 10px;">Everyone's deciding how much to risk&hellip;</div>
-            <div style="font-size: 1rem; color: #94a3b8;">Every wager stays secret until the big reveal.</div>
+            <div style="font-size: 0.85rem; font-weight: 600; color: var(--rm-text-muted); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 14px;">Wagering now</div>
+            <div style="font-size: 1.6rem; font-weight: 700; color: var(--rm-white); margin-bottom: 10px;">Everyone's deciding how much to risk&hellip;</div>
+            <div style="font-size: 1rem; color: var(--rm-text-soft);">Every wager stays secret until the big reveal.</div>
         </div>
     `;
 }
@@ -1542,9 +1542,9 @@ function showTriviYeahIIFinalAnswerOpenUI(topicLabel, questionText, visualAsset)
                     <img src="${visualAsset}" alt="" style="width: 100%; aspect-ratio: 4 / 3; max-height: 420px; object-fit: contain; border-radius: 8px; display: block; margin: 0 auto;">
                 </div>
                 <div style="flex: 1; text-align: left; min-width: 0;">
-                    <div style="font-size: 0.85rem; font-weight: 600; color: #64748b; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 16px;">Final Wager &middot; ${topicLabel}</div>
-                    <div style="font-size: 1.5rem; font-weight: 600; color: #ffffff; line-height: 1.4; letter-spacing: -0.01em;">${questionText}</div>
-                    <div style="font-size: 1rem; color: #94a3b8; margin-top: 14px;">Type your answer on your phone. Close spellings count.</div>
+                    <div style="font-size: 0.85rem; font-weight: 600; color: var(--rm-text-muted); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 16px;">Final Wager &middot; ${topicLabel}</div>
+                    <div style="font-size: 1.5rem; font-weight: 600; color: var(--rm-white); line-height: 1.4; letter-spacing: -0.01em;">${questionText}</div>
+                    <div style="font-size: 1rem; color: var(--rm-text-soft); margin-top: 14px;">Type your answer on your phone. Close spellings count.</div>
                 </div>
             </div>
         `;
@@ -1552,8 +1552,8 @@ function showTriviYeahIIFinalAnswerOpenUI(topicLabel, questionText, visualAsset)
     }
     panel.innerHTML = `
         <div class="panel-box" style="padding: 40px; flex: 1; display: flex; flex-direction: column; justify-content: center; text-align: left; min-height: 400px; box-sizing: border-box;">
-            <div style="font-size: 0.85rem; font-weight: 600; color: #64748b; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 16px;">Final Wager &middot; ${topicLabel}</div>
-            <div style="font-size: 1.5rem; font-weight: 600; color: #ffffff; line-height: 1.4; letter-spacing: -0.01em;">
+            <div style="font-size: 0.85rem; font-weight: 600; color: var(--rm-text-muted); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 16px;">Final Wager &middot; ${topicLabel}</div>
+            <div style="font-size: 1.5rem; font-weight: 600; color: var(--rm-white); line-height: 1.4; letter-spacing: -0.01em;">
                 ${questionText}
             </div>
         </div>
@@ -1566,8 +1566,8 @@ function showTriviYeahIIFinalRevealStartUI(correctAnswer) {
     panel.innerHTML = `
         <div class="panel-box" style="padding: 32px 40px; flex: 1; display: flex; flex-direction: column; min-height: 400px; box-sizing: border-box;">
             <div style="text-align: center; margin-bottom: 20px;">
-                <div style="font-size: 0.85rem; font-weight: 600; color: #64748b; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 8px;">Time's up! The correct answer was</div>
-                <div style="font-size: 1.8rem; font-weight: 800; color: #00e676;">${correctAnswer}</div>
+                <div style="font-size: 0.85rem; font-weight: 600; color: var(--rm-text-muted); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 8px;">Time's up! The correct answer was</div>
+                <div style="font-size: 1.8rem; font-weight: 800; color: var(--rm-green);">${correctAnswer}</div>
             </div>
             <div id="final-wager-reveal-log" style="display: flex; flex-direction: column; gap: 10px; overflow-y: auto;"></div>
         </div>
@@ -1581,18 +1581,18 @@ function showTriviYeahIIFinalRevealStepUI(data) {
 
     const rows = finalWagerRevealLog.map((step, i) => {
         const isLatest = i === finalWagerRevealLog.length - 1;
-        const resultColor = step.correct ? '#00e676' : '#ff5c5c';
+        const resultColor = step.correct ? 'var(--rm-green)' : 'var(--rm-red-soft)';
         const sign = step.correct ? '+' : '&minus;';
         return `
-            <div style="background: ${isLatest ? 'rgba(255, 215, 0, 0.08)' : '#1e222b'}; border: 1px solid ${isLatest ? '#ffd700' : '#222630'}; border-radius: 8px; padding: 14px 18px; display: flex; justify-content: space-between; align-items: center; gap: 16px;">
+            <div style="background: ${isLatest ? 'rgba(var(--rm-gold-rgb), 0.08)' : 'var(--rm-surface-2)'}; border: 1px solid ${isLatest ? 'var(--rm-gold)' : 'var(--rm-border)'}; border-radius: 8px; padding: 14px 18px; display: flex; justify-content: space-between; align-items: center; gap: 16px;">
                 <div style="text-align: left;">
-                    <div style="font-weight: 700; font-size: 1.05rem; color: #ffffff;">${step.playerName}${step.allIn ? ` <span class="all-in-stamp${isLatest ? ' slam' : ''}">ALL IN!</span>` : ''}</div>
-                    <div style="font-size: 0.9rem; color: #94a3b8; margin-top: 2px;">Answered: "${step.answerText ? escapeHtml(step.answerText) : '(no answer)'}"</div>
+                    <div style="font-weight: 700; font-size: 1.05rem; color: var(--rm-white);">${step.playerName}${step.allIn ? ` <span class="all-in-stamp${isLatest ? ' slam' : ''}">ALL IN!</span>` : ''}</div>
+                    <div style="font-size: 0.9rem; color: var(--rm-text-soft); margin-top: 2px;">Answered: "${step.answerText ? escapeHtml(step.answerText) : '(no answer)'}"</div>
                 </div>
                 <div style="text-align: right;">
                     <div style="font-weight: 700; color: ${resultColor};">${step.correct ? 'Correct' : 'Incorrect'} &middot; ${sign}${step.correct && step.winAmount != null ? step.winAmount : step.wagerAmount}</div>
-                    ${step.hintsUsed != null ? `<div style="font-size: 0.85rem; color: #94a3b8;">${step.hintsUsed === 0 ? 'no clues!' : `${step.hintsUsed} clue${step.hintsUsed > 1 ? 's' : ''} used`}</div>` : ''}
-                    <div style="font-size: 0.9rem; color: #94a3b8; margin-top: 2px;">New score: ${step.newScore}</div>
+                    ${step.hintsUsed != null ? `<div style="font-size: 0.85rem; color: var(--rm-text-soft);">${step.hintsUsed === 0 ? 'no clues!' : `${step.hintsUsed} clue${step.hintsUsed > 1 ? 's' : ''} used`}</div>` : ''}
+                    <div style="font-size: 0.9rem; color: var(--rm-text-soft); margin-top: 2px;">New score: ${step.newScore}</div>
                 </div>
             </div>
         `;
@@ -1616,19 +1616,19 @@ function switchToEmpossDurrDiscussionUI(round, totalRounds, starterName) {
     const panel = document.getElementById('active-content-stage');
     currentGamePhase = 'EMPOSSDURR_ROUND';
     setStatusMessage(`
-        <div style="font-weight: 600; color: #64748b;">Round ${round} / ${totalRounds}</div>
+        <div style="font-weight: 600; color: var(--rm-text-muted);">Round ${round} / ${totalRounds}</div>
     `);
     panel.innerHTML = `
         <div class="panel-box" style="padding: 40px; flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; min-height: 400px; box-sizing: border-box;">
-            <div style="font-size: 0.85rem; font-weight: 600; color: #64748b; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 8px;">
+            <div style="font-size: 0.85rem; font-weight: 600; color: var(--rm-text-muted); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 8px;">
                 Active Deck: EmpossDurr
             </div>
-            <div style="font-size: 1.6rem; font-weight: 700; color: #ffffff; letter-spacing: -0.02em; margin-bottom: 20px;">
+            <div style="font-size: 1.6rem; font-weight: 700; color: var(--rm-white); letter-spacing: -0.02em; margin-bottom: 20px;">
                 ${currentEmpossDurrStarterName || 'Someone'}, start the round of one-word clues.
             </div>
-            <div style="font-size: 1rem; color: #94a3b8; margin-bottom: 6px;">Round ${round} of ${totalRounds}</div>
-            <div id="ed-tv-ready-tally" style="font-size: 1.1rem; font-weight: 600; color: #ffa500;">0 / 0 ready to vote</div>
-            <div id="ed-tv-skip-tally" style="font-size: 0.9rem; font-weight: 600; color: #64748b; margin-top: 6px;">0 / 0 want to skip</div>
+            <div style="font-size: 1rem; color: var(--rm-text-soft); margin-bottom: 6px;">Round ${round} of ${totalRounds}</div>
+            <div id="ed-tv-ready-tally" style="font-size: 1.1rem; font-weight: 600; color: var(--rm-orange);">0 / 0 ready to vote</div>
+            <div id="ed-tv-skip-tally" style="font-size: 0.9rem; font-weight: 600; color: var(--rm-text-muted); margin-top: 6px;">0 / 0 want to skip</div>
         </div>
     `;
 }
@@ -1647,12 +1647,12 @@ function switchToEmpossDurrAccuseVoteUI(votedCount, totalNeeded, secondsLeft) {
     panel.innerHTML = `
         <div class="panel-box" style="padding: 40px; flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; min-height: 400px; box-sizing: border-box;">
             <img src="/vote.svg" alt="" style="width: 56px; height: 56px; margin-bottom: 12px;">
-            <div style="font-size: 0.85rem; font-weight: 600; color: #64748b; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 8px;">
+            <div style="font-size: 0.85rem; font-weight: 600; color: var(--rm-text-muted); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 8px;">
                 Accuse Vote In Progress
             </div>
-            <div id="ed-tv-tally" style="font-size: 3rem; font-weight: 700; color: #ffffff;">${votedCount ?? 0} / ${totalNeeded ?? 0}</div>
-            <div id="ed-tv-timer" style="font-size: 1.3rem; font-weight: 600; color: #ffa500; margin-top: 8px;">${secondsLeft ?? ''} s</div>
-            <div style="font-size: 1rem; color: #94a3b8; margin-top: 12px;">Votes are secret -- resolves once everyone's in, or when time runs out. Watch names light up below as they lock in.</div>
+            <div id="ed-tv-tally" style="font-size: 3rem; font-weight: 700; color: var(--rm-white);">${votedCount ?? 0} / ${totalNeeded ?? 0}</div>
+            <div id="ed-tv-timer" style="font-size: 1.3rem; font-weight: 600; color: var(--rm-orange); margin-top: 8px;">${secondsLeft ?? ''} s</div>
+            <div style="font-size: 1rem; color: var(--rm-text-soft); margin-top: 12px;">Votes are secret -- resolves once everyone's in, or when time runs out. Watch names light up below as they lock in.</div>
         </div>
     `;
 }
@@ -1671,8 +1671,8 @@ function switchToEmpossDurrAccuseResultUI(resolution, impostorName) {
     }
     panel.innerHTML = `
         <div class="panel-box" style="padding: 40px; flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; min-height: 400px; box-sizing: border-box;">
-            <div style="font-size: 1.6rem; font-weight: 700; color: #ffffff; letter-spacing: -0.02em; margin-bottom: 12px;">${headline}</div>
-            <div style="font-size: 1rem; color: #94a3b8;">${sub}</div>
+            <div style="font-size: 1.6rem; font-weight: 700; color: var(--rm-white); letter-spacing: -0.02em; margin-bottom: 12px;">${headline}</div>
+            <div style="font-size: 1rem; color: var(--rm-text-soft);">${sub}</div>
         </div>
     `;
 }
@@ -1684,12 +1684,12 @@ function switchToEmpossDurrAccuseResultUI(resolution, impostorName) {
 function switchToEmpossDurrDeclareSplashUI(impostorName, votedCount, totalNeeded, secondsLeft) {
     const panel = document.getElementById('active-content-stage');
     panel.innerHTML = `
-        <div class="panel-box" style="padding: 40px; flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; min-height: 400px; box-sizing: border-box; background: rgba(255, 165, 0, 0.06); border-color: rgba(255, 165, 0, 0.4);">
+        <div class="panel-box" style="padding: 40px; flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; min-height: 400px; box-sizing: border-box; background: rgba(var(--rm-orange-rgb), 0.06); border-color: rgba(var(--rm-orange-rgb), 0.4);">
             <img src="/exclaim.svg" alt="" style="width: 56px; height: 56px; margin-bottom: 12px;">
-            <div style="font-size: 2rem; font-weight: 700; color: #ffa500; letter-spacing: -0.02em; margin-bottom: 12px;">${impostorName} DECLARES!</div>
-            <div style="font-size: 1rem; color: #94a3b8; margin-bottom: 20px;">Everyone but the impostor is voting: was their guess correct? Resolves once every juror's in, or when time runs out.</div>
-            <div id="ed-tv-tally" style="font-size: 2.2rem; font-weight: 700; color: #ffffff;">${votedCount ?? 0} / ${totalNeeded ?? 0}</div>
-            <div id="ed-tv-timer" style="font-size: 1.2rem; font-weight: 600; color: #ffa500; margin-top: 8px;">${secondsLeft ?? ''} s</div>
+            <div style="font-size: 2rem; font-weight: 700; color: var(--rm-orange); letter-spacing: -0.02em; margin-bottom: 12px;">${impostorName} DECLARES!</div>
+            <div style="font-size: 1rem; color: var(--rm-text-soft); margin-bottom: 20px;">Everyone but the impostor is voting: was their guess correct? Resolves once every juror's in, or when time runs out.</div>
+            <div id="ed-tv-tally" style="font-size: 2.2rem; font-weight: 700; color: var(--rm-white);">${votedCount ?? 0} / ${totalNeeded ?? 0}</div>
+            <div id="ed-tv-timer" style="font-size: 1.2rem; font-weight: 600; color: var(--rm-orange); margin-top: 8px;">${secondsLeft ?? ''} s</div>
         </div>
     `;
 }
@@ -1698,8 +1698,8 @@ function switchToEmpossDurrSkippedUI() {
     const panel = document.getElementById('active-content-stage');
     panel.innerHTML = `
         <div class="panel-box" style="padding: 40px; flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; min-height: 400px; box-sizing: border-box;">
-            <div style="font-size: 1.6rem; font-weight: 700; color: #ffffff; letter-spacing: -0.02em; margin-bottom: 12px;">Round skipped by group vote!</div>
-            <div style="font-size: 1rem; color: #94a3b8;">A fresh word is coming up -- no scores changed.</div>
+            <div style="font-size: 1.6rem; font-weight: 700; color: var(--rm-white); letter-spacing: -0.02em; margin-bottom: 12px;">Round skipped by group vote!</div>
+            <div style="font-size: 1rem; color: var(--rm-text-soft);">A fresh word is coming up -- no scores changed.</div>
         </div>
     `;
 }
@@ -1716,10 +1716,10 @@ function switchToEmpossDurrDeclareResultUI(correct, impostorName) {
     panel.innerHTML = `
         <div class="panel-box" style="padding: 40px; flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; min-height: 400px; box-sizing: border-box;">
             ${wrongGuessIcon}
-            <div style="font-size: 1.6rem; font-weight: 700; color: #ffffff; letter-spacing: -0.02em; margin-bottom: 12px;">
+            <div style="font-size: 1.6rem; font-weight: 700; color: var(--rm-white); letter-spacing: -0.02em; margin-bottom: 12px;">
                 ${correct ? `${impostorName} guessed correctly!` : `${impostorName} guessed wrong!`}
             </div>
-            <div style="font-size: 1rem; color: #94a3b8;">Round over -- next round starting shortly.</div>
+            <div style="font-size: 1rem; color: var(--rm-text-soft);">Round over -- next round starting shortly.</div>
         </div>
     `;
 }
@@ -1730,13 +1730,13 @@ function switchToEmpossDurrDeclareResultUI(correct, impostorName) {
 
 function switchToOnTheSpectrumSetTargetUI(namedPlayerName, statementText, round, totalRounds) {
     const panel = document.getElementById('active-content-stage');
-    setStatusMessage(`<div style="font-weight: 600; color: #64748b;">Round ${round} / ${totalRounds}</div>`);
+    setStatusMessage(`<div style="font-weight: 600; color: var(--rm-text-muted);">Round ${round} / ${totalRounds}</div>`);
     panel.innerHTML = `
         <div class="panel-box" style="padding: 40px; flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; min-height: 400px; box-sizing: border-box;">
-            <div style="font-size: 0.85rem; font-weight: 600; color: #64748b; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 8px;">Active Deck: On the Spectrum</div>
-            <div style="font-size: 1.6rem; font-weight: 700; color: #ffffff; letter-spacing: -0.02em; margin-bottom: 20px;">${namedPlayerName}, set your true answer.</div>
-            <div style="font-size: 1.1rem; color: #e2e5e9; margin-bottom: 6px; max-width: 640px;">${statementText}</div>
-            <div style="font-size: 0.9rem; color: #64748b; margin-top: 12px;">Everyone else, get ready to guess.</div>
+            <div style="font-size: 0.85rem; font-weight: 600; color: var(--rm-text-muted); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 8px;">Active Deck: On the Spectrum</div>
+            <div style="font-size: 1.6rem; font-weight: 700; color: var(--rm-white); letter-spacing: -0.02em; margin-bottom: 20px;">${namedPlayerName}, set your true answer.</div>
+            <div style="font-size: 1.1rem; color: var(--rm-text-2); margin-bottom: 6px; max-width: 640px;">${statementText}</div>
+            <div style="font-size: 0.9rem; color: var(--rm-text-muted); margin-top: 12px;">Everyone else, get ready to guess.</div>
         </div>
     `;
 }
@@ -1745,9 +1745,9 @@ function switchToOnTheSpectrumGuessingUI(namedPlayerName, statementText) {
     const panel = document.getElementById('active-content-stage');
     panel.innerHTML = `
         <div class="panel-box" style="padding: 40px; flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; min-height: 400px; box-sizing: border-box;">
-            <div style="font-size: 0.85rem; font-weight: 600; color: #64748b; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 8px;">Guessing ${namedPlayerName}'s answer</div>
-            <div style="font-size: 1.3rem; font-weight: 700; color: #ffffff; letter-spacing: -0.02em; margin-bottom: 24px; max-width: 640px;">${statementText}</div>
-            <div id="ots-tv-lockin-tally" style="font-size: 1.1rem; font-weight: 600; color: #ffa500;">0 / 0 locked in</div>
+            <div style="font-size: 0.85rem; font-weight: 600; color: var(--rm-text-muted); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 8px;">Guessing ${namedPlayerName}'s answer</div>
+            <div style="font-size: 1.3rem; font-weight: 700; color: var(--rm-white); letter-spacing: -0.02em; margin-bottom: 24px; max-width: 640px;">${statementText}</div>
+            <div id="ots-tv-lockin-tally" style="font-size: 1.1rem; font-weight: 600; color: var(--rm-orange);">0 / 0 locked in</div>
         </div>
     `;
 }
@@ -1761,7 +1761,7 @@ function updateOnTheSpectrumLockInTallyTV(lockedInNames, totalGuessersNeeded) {
 // consistent color for every row here, the named player's row told apart
 // by label/border instead, so the bar color always just means "On the
 // Spectrum" rather than trying to also encode accuracy.
-const ON_THE_SPECTRUM_BAR_COLOR = '#bb6bd9';
+const ON_THE_SPECTRUM_BAR_COLOR = 'var(--rm-purple)';
 
 function otsBarRow(name, value, isNamed) {
     const pct = Math.max(0, Math.min(100, value));
@@ -1769,10 +1769,10 @@ function otsBarRow(name, value, isNamed) {
         ? `${name} <span style="color: ${ON_THE_SPECTRUM_BAR_COLOR}; font-weight: 700; font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.06em; margin-left: 6px;">actual</span>`
         : name;
     return `
-        <div style="display: flex; align-items: center; gap: 16px; background: #14161d; border: 1px solid ${isNamed ? ON_THE_SPECTRUM_BAR_COLOR : '#222630'}; border-radius: 8px; padding: 10px 18px;">
-            <span style="font-weight: 600; color: #f4f5f6; min-width: 160px; flex-shrink: 0;">${nameLabel}</span>
+        <div style="display: flex; align-items: center; gap: 16px; background: var(--rm-surface); border: 1px solid ${isNamed ? ON_THE_SPECTRUM_BAR_COLOR : 'var(--rm-border)'}; border-radius: 8px; padding: 10px 18px;">
+            <span style="font-weight: 600; color: var(--rm-text); min-width: 160px; flex-shrink: 0;">${nameLabel}</span>
             <div class="progress-track" style="flex: 1;"><div class="progress-fill" style="background: ${ON_THE_SPECTRUM_BAR_COLOR}; width: ${pct}%;"></div></div>
-            <span style="font-weight: 700; color: #f4f5f6; min-width: 32px; text-align: right;">${value}</span>
+            <span style="font-weight: 700; color: var(--rm-text); min-width: 32px; text-align: right;">${value}</span>
         </div>
     `;
 }
@@ -1791,11 +1791,11 @@ function switchToOnTheSpectrumRevealUI(namedPlayerName, statementText, targetVal
 
     panel.innerHTML = `
         <div class="panel-box" style="padding: 40px; flex: 1; display: flex; flex-direction: column; justify-content: center;">
-            <div style="font-size: 1rem; color: #94a3b8; margin-bottom: 20px; text-align: center;">${statementText}</div>
+            <div style="font-size: 1rem; color: var(--rm-text-soft); margin-bottom: 20px; text-align: center;">${statementText}</div>
             <div style="display: flex; flex-direction: column; gap: 10px;">${rows}</div>
-            ${remaining > 0 ? `<div style="text-align: center; color: #64748b; margin-top: 12px; font-size: 0.9rem;">+${remaining} more -- check your phone for the full list</div>` : ''}
-            <div id="ots-tv-continue-tally" style="text-align: center; color: #64748b; margin-top: 20px; font-size: 0.9rem;">0 / 0 want to continue</div>
-            <div id="ots-tv-timer" style="text-align: center; font-size: 1.2rem; font-weight: 600; color: #ffa500; margin-top: 8px;">${secondsLeft ?? ''} s</div>
+            ${remaining > 0 ? `<div style="text-align: center; color: var(--rm-text-muted); margin-top: 12px; font-size: 0.9rem;">+${remaining} more -- check your phone for the full list</div>` : ''}
+            <div id="ots-tv-continue-tally" style="text-align: center; color: var(--rm-text-muted); margin-top: 20px; font-size: 0.9rem;">0 / 0 want to continue</div>
+            <div id="ots-tv-timer" style="text-align: center; font-size: 1.2rem; font-weight: 600; color: var(--rm-orange); margin-top: 8px;">${secondsLeft ?? ''} s</div>
         </div>
     `;
 }
@@ -1809,7 +1809,7 @@ function updateOnTheSpectrumContinueTallyTV(votedCount, totalNeeded) {
 // PROFILER TV UI
 // ==========================================
 
-const PROFILER_COLOR = '#f472b6';
+const PROFILER_COLOR = 'var(--rm-pink)';
 let profilerAnsweredCount = 0;
 let profilerGuessedCount = 0;
 let profilerTallyTotal = 0;
@@ -1821,8 +1821,8 @@ function profilerEmojiFor(name) {
 }
 
 function profilerHeader(round, totalRounds) {
-    setStatusMessage(`<div style="font-weight: 600; color: #64748b;">Round ${round} / ${totalRounds}</div>`);
-    return `<div style="font-size: 0.85rem; font-weight: 600; color: #64748b; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 10px;">Profiler · Round ${round} of ${totalRounds}</div>`;
+    setStatusMessage(`<div style="font-weight: 600; color: var(--rm-text-muted);">Round ${round} / ${totalRounds}</div>`);
+    return `<div style="font-size: 0.85rem; font-weight: 600; color: var(--rm-text-muted); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 10px;">Profiler · Round ${round} of ${totalRounds}</div>`;
 }
 
 // ---------- Flag Me Down ----------
@@ -1830,7 +1830,7 @@ function profilerHeader(round, totalRounds) {
 // right the value ladder (400 -> 100), the clues so far, and the four
 // choices. The reveal lights up the answer and shows who locked in when.
 let flagMeDownTV = null;
-const FMD_COLOR = '#facc15';
+const FMD_COLOR = 'var(--rm-yellow)';
 const FMD_STAGES = [['Flag', 400], ['Region', 300], ['Capital', 200], ['Map', 100]];
 
 function renderFlagMeDownTV() {
@@ -1840,17 +1840,17 @@ function renderFlagMeDownTV() {
     const reveal = t.reveal;
     const ladder = FMD_STAGES.map(([label, pts], i) => {
         const now = !reveal && i === t.stage, past = i < t.stage || reveal;
-        return `<div style="flex: 1; text-align: center; padding: 8px 4px; border-radius: 8px; background: ${now ? 'rgba(250, 204, 21, 0.15)' : '#14161d'}; border: 1px solid ${now ? FMD_COLOR : '#222630'}; opacity: ${past && !now ? 0.45 : 1};">
-            <div style="font-size: 0.75rem; font-weight: 700; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.06em;">${label}</div>
-            <div style="font-size: 1.15rem; font-weight: 800; color: ${now ? FMD_COLOR : '#f4f5f6'};">${pts}</div>
+        return `<div style="flex: 1; text-align: center; padding: 8px 4px; border-radius: 8px; background: ${now ? 'rgba(var(--rm-yellow-rgb), 0.15)' : 'var(--rm-surface)'}; border: 1px solid ${now ? FMD_COLOR : 'var(--rm-border)'}; opacity: ${past && !now ? 0.45 : 1};">
+            <div style="font-size: 0.75rem; font-weight: 700; color: var(--rm-text-soft); text-transform: uppercase; letter-spacing: 0.06em;">${label}</div>
+            <div style="font-size: 1.15rem; font-weight: 800; color: ${now ? FMD_COLOR : 'var(--rm-text)'};">${pts}</div>
         </div>`;
     }).join('');
     // Two clue cells side by side; the value space is always there, so
     // nothing shifts when a clue lands.
     const clueCell = (label, value) => `
-        <div style="flex: 1; min-width: 0; background: #14161d; border: 1px solid #222630; border-radius: 8px; padding: 8px 14px;">
-            <div style="font-size: 0.75rem; font-weight: 700; color: #64748b; text-transform: uppercase; letter-spacing: 0.06em;">${label}</div>
-            <div style="font-size: 1.1rem; font-weight: 600; color: ${value ? '#ffffff' : '#475569'}; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${value ? escapeHtml(value) : '&middot; &middot; &middot;'}</div>
+        <div style="flex: 1; min-width: 0; background: var(--rm-surface); border: 1px solid var(--rm-border); border-radius: 8px; padding: 8px 14px;">
+            <div style="font-size: 0.75rem; font-weight: 700; color: var(--rm-text-muted); text-transform: uppercase; letter-spacing: 0.06em;">${label}</div>
+            <div style="font-size: 1.1rem; font-weight: 600; color: ${value ? 'var(--rm-white)' : 'var(--rm-slate-600)'}; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${value ? escapeHtml(value) : '&middot; &middot; &middot;'}</div>
         </div>`;
     const spread = t.spread;
     const choices = t.choices.map((name, i) => {
@@ -1859,18 +1859,18 @@ function renderFlagMeDownTV() {
         // How the room split (drawAnswerSpread): grows in once, then stays.
         const pct = spread ? Math.round(100 * (spread.counts[letter] || 0) / Math.max(1, spread.total)) : 0;
         const fill = spread ? `<div class="spread-fill" data-pct="${pct}" style="position: absolute; left: 0; top: 0; bottom: 0; width: ${t.spreadDrawn ? pct : 0}%; background: ${isAnswer ? SPREAD_FILL_RIGHT : SPREAD_FILL}; z-index: -1; transition: width 0.6s ease;"></div>` : '';
-        return `<div style="position: relative; overflow: hidden; z-index: 0; background: ${isAnswer ? 'rgba(0, 230, 118, 0.15)' : '#1e222b'}; border: 1px solid ${isAnswer ? '#00e676' : '#222630'}; border-radius: 8px; padding: 10px 14px; display: flex; align-items: center; gap: 10px; opacity: ${reveal && !isAnswer ? 0.45 : 1};">${fill}
-            <span style="background: rgba(250, 204, 21, 0.12); color: ${FMD_COLOR}; font-weight: 700; padding: 3px 9px; border-radius: 4px; font-size: 0.85rem;">${letter}</span>
-            <span style="font-size: 1.05rem; font-weight: 600; color: #f4f5f6;">${escapeHtml(name)}</span>
+        return `<div style="position: relative; overflow: hidden; z-index: 0; background: ${isAnswer ? 'rgba(var(--rm-green-rgb), 0.15)' : 'var(--rm-surface-2)'}; border: 1px solid ${isAnswer ? 'var(--rm-green)' : 'var(--rm-border)'}; border-radius: 8px; padding: 10px 14px; display: flex; align-items: center; gap: 10px; opacity: ${reveal && !isAnswer ? 0.45 : 1};">${fill}
+            <span style="background: rgba(var(--rm-yellow-rgb), 0.12); color: ${FMD_COLOR}; font-weight: 700; padding: 3px 9px; border-radius: 4px; font-size: 0.85rem;">${letter}</span>
+            <span style="font-size: 1.05rem; font-weight: 600; color: var(--rm-text);">${escapeHtml(name)}</span>
         </div>`;
     }).join('');
     const results = reveal ? `<div style="display: flex; flex-wrap: wrap; gap: 8px; min-height: 32px;">${reveal.results.map(r => `
-        <div style="background: #14161d; border: 1px solid ${r.correct ? '#00e676' : '#222630'}; border-radius: 999px; padding: 5px 12px; font-size: 0.95rem; color: ${r.correct ? '#00e676' : '#94a3b8'};">
-            ${escapeHtml(r.name)} ${r.correct ? `+${r.points} <span style="color: #64748b;">(${r.stageLabel})</span>` : (r.choice ? '&#10007;' : '&ndash;')}
+        <div style="background: var(--rm-surface); border: 1px solid ${r.correct ? 'var(--rm-green)' : 'var(--rm-border)'}; border-radius: 999px; padding: 5px 12px; font-size: 0.95rem; color: ${r.correct ? 'var(--rm-green)' : 'var(--rm-text-soft)'};">
+            ${escapeHtml(r.name)} ${r.correct ? `+${r.points} <span style="color: var(--rm-text-muted);">(${r.stageLabel})</span>` : (r.choice ? '&#10007;' : '&ndash;')}
         </div>`).join('')}</div>`
         : `<div style="display: flex; justify-content: space-between; align-items: center; min-height: 32px;">
-            <div id="fmd-tv-tally" style="font-size: 1rem; font-weight: 600; color: #ffa500;">${t.locked} locked in</div>
-            <div style="font-size: 0.9rem; color: #94a3b8;">Lock in on your phone -- the sooner you're sure, the more it's worth.</div>
+            <div id="fmd-tv-tally" style="font-size: 1rem; font-weight: 600; color: var(--rm-orange);">${t.locked} locked in</div>
+            <div style="font-size: 0.9rem; color: var(--rm-text-soft);">Lock in on your phone -- the sooner you're sure, the more it's worth.</div>
         </div>`;
     // Flag and map side by side in two same-size boxes (Randy: it got
     // crowded once the map arrived, and they're on the phones too). The map
@@ -1878,13 +1878,13 @@ function renderFlagMeDownTV() {
     const box = 'flex: 1; min-width: 0; height: 210px; border-radius: 8px; box-sizing: border-box;';
     const showMap = t.mapUrl && (t.stage >= 3 || reveal);
     const mapBox = showMap
-        ? `<img src="${t.mapUrl}" alt="" style="${box} object-fit: contain; background: #14161d;">`
-        : `<div style="${box} border: 1px dashed #2a2f3a; display: flex; align-items: center; justify-content: center; color: #475569; font-weight: 600; font-size: 1rem;">🗺️ Map &middot; last clue</div>`;
+        ? `<img src="${t.mapUrl}" alt="" style="${box} object-fit: contain; background: var(--rm-surface);">`
+        : `<div style="${box} border: 1px dashed var(--rm-border-3); display: flex; align-items: center; justify-content: center; color: var(--rm-slate-600); font-weight: 600; font-size: 1rem;">🗺️ Map &middot; last clue</div>`;
     panel.innerHTML = `
         <div class="panel-box" style="padding: 24px 32px; flex: 1; display: flex; flex-direction: column; gap: 12px; min-height: 400px; box-sizing: border-box; text-align: left;">
             <div style="display: flex; align-items: baseline; justify-content: space-between; gap: 16px;">
-                <div style="font-size: 1.5rem; font-weight: 700; color: #ffffff;">${reveal ? `It's ${escapeHtml(reveal.answer)}!` : 'Whose flag is this?'}</div>
-                <div style="font-size: 0.85rem; font-weight: 600; color: #64748b; text-transform: uppercase; letter-spacing: 0.08em; white-space: nowrap;">Flag ${t.round} of ${t.totalRounds}</div>
+                <div style="font-size: 1.5rem; font-weight: 700; color: var(--rm-white);">${reveal ? `It's ${escapeHtml(reveal.answer)}!` : 'Whose flag is this?'}</div>
+                <div style="font-size: 0.85rem; font-weight: 600; color: var(--rm-text-muted); text-transform: uppercase; letter-spacing: 0.08em; white-space: nowrap;">Flag ${t.round} of ${t.totalRounds}</div>
             </div>
             <div style="display: flex; gap: 16px;">
                 <img src="${t.flagUrl}" alt="" style="${box} object-fit: contain;">
@@ -1914,16 +1914,16 @@ function updateProfilerTally() {
 function switchToProfilerQuestionUI(data) {
     const panel = document.getElementById('active-content-stage');
     const options = (data.options || []).map(o => `
-        <div style="background: #14161d; border: 1px solid #222630; border-radius: 10px; padding: 12px 18px; font-size: 1.15rem; font-weight: 600; color: #f4f5f6;">${escapeHtml(o.text)}</div>
+        <div style="background: var(--rm-surface); border: 1px solid var(--rm-border); border-radius: 10px; padding: 12px 18px; font-size: 1.15rem; font-weight: 600; color: var(--rm-text);">${escapeHtml(o.text)}</div>
     `).join('');
     panel.innerHTML = `
         <div class="panel-box" style="padding: 40px; flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; min-height: 400px; box-sizing: border-box;">
             ${profilerHeader(data.round, data.totalRounds)}
             ${data.isReplacement ? `<div style="color: ${PROFILER_COLOR}; font-weight: 700; margin-bottom: 10px;">New question!</div>` : ''}
-            <div style="font-size: 1.9rem; font-weight: 700; color: #ffffff; letter-spacing: -0.02em; margin-bottom: 28px; max-width: 760px;">${escapeHtml(data.questionText)}</div>
+            <div style="font-size: 1.9rem; font-weight: 700; color: var(--rm-white); letter-spacing: -0.02em; margin-bottom: 28px; max-width: 760px;">${escapeHtml(data.questionText)}</div>
             <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; width: 100%; max-width: 760px; margin-bottom: 24px;">${options}</div>
-            <div style="font-size: 0.95rem; color: #94a3b8; margin-bottom: 8px;">Answer honestly on your phone -- nobody sees it yet.</div>
-            <div id="pf-tv-tally" style="font-size: 1.1rem; font-weight: 600; color: #ffa500;"></div>
+            <div style="font-size: 0.95rem; color: var(--rm-text-soft); margin-bottom: 8px;">Answer honestly on your phone -- nobody sees it yet.</div>
+            <div id="pf-tv-tally" style="font-size: 1.1rem; font-weight: 600; color: var(--rm-orange);"></div>
         </div>
     `;
     currentGamePhase = 'PROFILER_ANSWER';
@@ -1939,11 +1939,11 @@ function switchToProfilerPostUI(data) {
     panel.innerHTML = `
         <div class="panel-box" style="padding: 40px; flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; min-height: 400px; box-sizing: border-box;">
             ${profilerHeader(data.round, data.totalRounds)}
-            <div style="font-size: 1.1rem; color: #94a3b8; margin-bottom: 22px; max-width: 760px;">${escapeHtml(data.questionText)}</div>
+            <div style="font-size: 1.1rem; color: var(--rm-text-soft); margin-bottom: 22px; max-width: 760px;">${escapeHtml(data.questionText)}</div>
             <div style="font-size: 1.3rem; font-weight: 600; color: ${PROFILER_COLOR}; margin-bottom: 6px;">${who}</div>
-            <div style="font-size: 2.6rem; font-weight: 800; color: #ffffff; letter-spacing: -0.02em; margin-bottom: 26px; max-width: 760px;">“${escapeHtml(data.answerText)}”</div>
-            <div style="font-size: 1rem; color: #94a3b8; margin-bottom: 8px;">${pickLine}</div>
-            <div id="pf-tv-tally" style="font-size: 1.1rem; font-weight: 600; color: #ffa500;"></div>
+            <div style="font-size: 2.6rem; font-weight: 800; color: var(--rm-white); letter-spacing: -0.02em; margin-bottom: 26px; max-width: 760px;">“${escapeHtml(data.answerText)}”</div>
+            <div style="font-size: 1rem; color: var(--rm-text-soft); margin-bottom: 8px;">${pickLine}</div>
+            <div id="pf-tv-tally" style="font-size: 1.1rem; font-weight: 600; color: var(--rm-orange);"></div>
         </div>
     `;
     currentGamePhase = 'PROFILER_GUESS';
@@ -1958,9 +1958,9 @@ function switchToProfilerUnanimousUI(data) {
         <div class="panel-box" style="padding: 40px; flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; min-height: 400px; box-sizing: border-box;">
             <div style="font-size: 3rem; font-weight: 800; color: ${PROFILER_COLOR}; margin-bottom: 12px;">Unanimous!</div>
             ${data.answerText
-                ? `<div style="font-size: 1.3rem; color: #e2e5e9; margin-bottom: 18px;">Everyone said “${escapeHtml(data.answerText)}”</div>`
-                : `<div style="font-size: 1.3rem; color: #e2e5e9; margin-bottom: 18px;">Not enough answers to play this one.</div>`}
-            <div style="font-size: 1rem; color: #64748b;">Nothing to guess -- here comes a new question.</div>
+                ? `<div style="font-size: 1.3rem; color: var(--rm-text-2); margin-bottom: 18px;">Everyone said “${escapeHtml(data.answerText)}”</div>`
+                : `<div style="font-size: 1.3rem; color: var(--rm-text-2); margin-bottom: 18px;">Not enough answers to play this one.</div>`}
+            <div style="font-size: 1rem; color: var(--rm-text-muted);">Nothing to guess -- here comes a new question.</div>
         </div>
     `;
     currentGamePhase = 'PROFILER_UNANIMOUS';
@@ -1971,27 +1971,27 @@ function switchToProfilerRevealUI(data) {
     const choosers = (data.choosers || []).map(name => {
         const finders = (data.foundBy && data.foundBy[name]) || [];
         return `
-            <div style="background: rgba(244, 114, 182, 0.08); border: 1px solid ${PROFILER_COLOR}; border-radius: 12px; padding: 16px 22px; min-width: 200px;">
-                <div style="font-size: 1.7rem; font-weight: 800; color: #ffffff;">${profilerEmojiFor(name)} ${escapeHtml(name)}</div>
-                <div style="font-size: 0.95rem; color: #94a3b8; margin-top: 4px;">${finders.length ? `Found by ${finders.map(escapeHtml).join(', ')}` : 'Nobody found them!'}</div>
+            <div style="background: rgba(var(--rm-pink-rgb), 0.08); border: 1px solid ${PROFILER_COLOR}; border-radius: 12px; padding: 16px 22px; min-width: 200px;">
+                <div style="font-size: 1.7rem; font-weight: 800; color: var(--rm-white);">${profilerEmojiFor(name)} ${escapeHtml(name)}</div>
+                <div style="font-size: 0.95rem; color: var(--rm-text-soft); margin-top: 4px;">${finders.length ? `Found by ${finders.map(escapeHtml).join(', ')}` : 'Nobody found them!'}</div>
                 ${data.openBook && data.openBook[name] ? `<div style="font-weight: 700; color: ${PROFILER_COLOR}; margin-top: 4px;">+${data.openBook[name]} open book</div>` : ''}
             </div>
         `;
     }).join('');
     const scorers = (data.results || []).filter(r => r.points > 0).map(r => `
-        <span style="background: #14161d; border: 1px solid #222630; border-radius: 20px; padding: 6px 14px; font-weight: 600; color: #f4f5f6;">
-            ${escapeHtml(r.name)} <span style="color: #00e676;">+${r.points}</span>${r.perfect && r.needed >= 2 ? ' 🎯' : ''}
+        <span style="background: var(--rm-surface); border: 1px solid var(--rm-border); border-radius: 20px; padding: 6px 14px; font-weight: 600; color: var(--rm-text);">
+            ${escapeHtml(r.name)} <span style="color: var(--rm-green);">+${r.points}</span>${r.perfect && r.needed >= 2 ? ' 🎯' : ''}
         </span>
     `).join('');
     panel.innerHTML = `
         <div class="panel-box" style="padding: 40px; flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; min-height: 400px; box-sizing: border-box;">
             ${profilerHeader(data.round, data.totalRounds)}
-            <div style="font-size: 1.1rem; color: #94a3b8; margin-bottom: 6px;">${escapeHtml(data.questionText)}</div>
-            <div style="font-size: 1.6rem; font-weight: 700; color: #ffffff; margin-bottom: 24px;">“${escapeHtml(data.answerText)}” was...</div>
+            <div style="font-size: 1.1rem; color: var(--rm-text-soft); margin-bottom: 6px;">${escapeHtml(data.questionText)}</div>
+            <div style="font-size: 1.6rem; font-weight: 700; color: var(--rm-white); margin-bottom: 24px;">“${escapeHtml(data.answerText)}” was...</div>
             <div style="display: flex; flex-wrap: wrap; gap: 14px; justify-content: center; margin-bottom: 24px;">${choosers}</div>
-            <div style="display: flex; flex-wrap: wrap; gap: 8px; justify-content: center;">${scorers || '<span style="color: #64748b;">Nobody read this one right.</span>'}</div>
-            <div style="margin-top: 26px; font-size: 0.95rem; color: #94a3b8;">Talk it over -- tap <strong style="color: #f4f5f6;">Continue</strong> on your phone when you're ready.</div>
-            <div id="pf-tv-continue-tally" style="font-size: 1.05rem; font-weight: 600; color: #ffa500; margin-top: 6px;"></div>
+            <div style="display: flex; flex-wrap: wrap; gap: 8px; justify-content: center;">${scorers || '<span style="color: var(--rm-text-muted);">Nobody read this one right.</span>'}</div>
+            <div style="margin-top: 26px; font-size: 0.95rem; color: var(--rm-text-soft);">Talk it over -- tap <strong style="color: var(--rm-text);">Continue</strong> on your phone when you're ready.</div>
+            <div id="pf-tv-continue-tally" style="font-size: 1.05rem; font-weight: 600; color: var(--rm-orange); margin-top: 6px;"></div>
         </div>
     `;
     currentGamePhase = 'PROFILER_REVEAL';
@@ -2006,31 +2006,31 @@ function updateProfilerContinueTally(votedCount, totalNeeded) {
 function switchToProfilerAwardsUI(data) {
     const panel = document.getElementById('active-content-stage');
     const awards = (data.awards || []).map(a => `
-        <div style="background: #14161d; border: 1px solid #222630; border-radius: 12px; padding: 14px 18px; text-align: center; flex: 1 1 160px;">
+        <div style="background: var(--rm-surface); border: 1px solid var(--rm-border); border-radius: 12px; padding: 14px 18px; text-align: center; flex: 1 1 160px;">
             <div style="font-size: 1.8rem;">${a.emoji}</div>
             <div style="font-size: 0.75rem; font-weight: 700; color: ${PROFILER_COLOR}; text-transform: uppercase; letter-spacing: 0.06em; margin-top: 4px;">${escapeHtml(a.title)}</div>
-            <div style="font-size: 1.15rem; font-weight: 700; color: #ffffff; margin-top: 4px;">${a.names.map(escapeHtml).join(' & ')}</div>
-            <div style="font-size: 0.8rem; color: #64748b; margin-top: 2px;">${escapeHtml(a.detail || '')}</div>
+            <div style="font-size: 1.15rem; font-weight: 700; color: var(--rm-white); margin-top: 4px;">${a.names.map(escapeHtml).join(' & ')}</div>
+            <div style="font-size: 0.8rem; color: var(--rm-text-muted); margin-top: 2px;">${escapeHtml(a.detail || '')}</div>
         </div>
     `).join('');
     const bars = (data.bars || []).map(b => `
         <div style="display: flex; align-items: center; gap: 14px;">
-            <span style="font-weight: 600; color: #f4f5f6; min-width: 150px; text-align: left; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${profilerEmojiFor(b.name)} ${escapeHtml(b.name)}</span>
+            <span style="font-weight: 600; color: var(--rm-text); min-width: 150px; text-align: left; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${profilerEmojiFor(b.name)} ${escapeHtml(b.name)}</span>
             <div class="progress-track" style="flex: 1;"><div class="progress-fill" style="background: ${PROFILER_COLOR}; width: ${Math.max(0, Math.min(100, b.accuracy))}%;"></div></div>
-            <span style="font-weight: 700; color: #f4f5f6; min-width: 48px; text-align: right;">${b.accuracy}%</span>
+            <span style="font-weight: 700; color: var(--rm-text); min-width: 48px; text-align: right;">${b.accuracy}%</span>
         </div>
     `).join('');
     panel.innerHTML = `
         <div class="panel-box" style="padding: 36px; flex: 1; display: flex; flex-direction: column; justify-content: center; box-sizing: border-box;">
             <h2 class="panel-title" style="margin-bottom: 18px; text-align: center;">Who Knows Who</h2>
             <div style="display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 26px;">${awards}</div>
-            <div style="font-size: 0.8rem; font-weight: 600; color: #64748b; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 10px;">How well you read the room</div>
+            <div style="font-size: 0.8rem; font-weight: 600; color: var(--rm-text-muted); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 10px;">How well you read the room</div>
             <div style="display: flex; flex-direction: column; gap: 10px;">${bars}</div>
-            <div style="text-align: center; color: #64748b; margin-top: 20px; font-size: 0.9rem;">Check your phone for who you know best.</div>
+            <div style="text-align: center; color: var(--rm-text-muted); margin-top: 20px; font-size: 0.9rem;">Check your phone for who you know best.</div>
         </div>
     `;
     currentGamePhase = 'PROFILER_AWARDS';
-    setStatusMessage(`<div style="font-weight: 600; color: #8892b0;">Final results</div>`);
+    setStatusMessage(`<div style="font-weight: 600; color: var(--rm-periwinkle);">Final results</div>`);
 }
 
 // A reloaded TV gets a full snapshot of the current phase (see
@@ -2099,21 +2099,21 @@ function switchToGameOverUI(players, brand) {
         <div class="panel-box" style="padding: 40px; flex: 1; display: flex; flex-direction: column; justify-content: center;">
             ${brand && brand.logoUrl ? `<img src="${brand.logoUrl}" alt="" style="display: block; height: 120px; width: auto; max-width: 70%; object-fit: contain; margin: 0 auto 20px;" onerror="this.remove()">` : ''}
             <h2 class="panel-title" style="margin-bottom: 8px;">Final Leaderboard</h2>
-            <p style="color: #64748b; font-size: 0.95rem; margin: 0 0 32px 0; font-weight: 500;">${brand ? `Thanks for playing at ${escapeHtml(brand.name)}!${brand.tagline ? ` <span style="color: #94a3b8;">${escapeHtml(brand.tagline)}</span>` : ''}` : 'Thanks for playing!'}</p>
+            <p style="color: var(--rm-text-muted); font-size: 0.95rem; margin: 0 0 32px 0; font-weight: 500;">${brand ? `Thanks for playing at ${escapeHtml(brand.name)}!${brand.tagline ? ` <span style="color: var(--rm-text-soft);">${escapeHtml(brand.tagline)}</span>` : ''}` : 'Thanks for playing!'}</p>
             <div style="display: flex; flex-direction: column; gap: 36px;">${rows}</div>
-            <div id="return-vote-tally" style="color: #64748b; font-size: 0.85rem; text-align: center; margin-top: 28px;"></div>
+            <div id="return-vote-tally" style="color: var(--rm-text-muted); font-size: 0.85rem; text-align: center; margin-top: 28px;"></div>
         </div>
     `;
 
     currentGamePhase = 'GAME_OVER';
-    setStatusMessage(`<div style="font-weight: 600; color: #8892b0;">Match complete</div>`);
+    setStatusMessage(`<div style="font-weight: 600; color: var(--rm-periwinkle);">Match complete</div>`);
 }
 
 // How the room split, as a fill on each answer button (Randy, Oct 2026:
 // fills only, no names or counts). It grows in, then stays through the
 // reveal; the right answer's fill turns green.
-const SPREAD_FILL = 'rgba(148, 163, 184, 0.34)';
-const SPREAD_FILL_RIGHT = 'rgba(0, 230, 118, 0.32)';
+const SPREAD_FILL = 'rgba(var(--rm-text-soft-rgb), 0.34)';
+const SPREAD_FILL_RIGHT = 'rgba(var(--rm-green-rgb), 0.32)';
 function drawAnswerSpread(counts, total, rowFor) {
     ['A', 'B', 'C', 'D'].forEach(letter => {
         const row = rowFor(letter);
@@ -2147,8 +2147,8 @@ function highlightCorrectAnswerOnTV(correctLetter) {
         const fill = rowNode && rowNode.querySelector('.spread-fill');
         if (letter === correctLetter) {
             if (rowNode) {
-                rowNode.style.background = "rgba(0, 230, 118, 0.08)";
-                rowNode.style.borderColor = "#00e676";
+                rowNode.style.background = "rgba(var(--rm-green-rgb), 0.08)";
+                rowNode.style.borderColor = "var(--rm-green)";
             }
             if (fill) fill.style.background = SPREAD_FILL_RIGHT;
         } else if (rowNode) {

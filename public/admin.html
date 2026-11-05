@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <link rel="stylesheet" href="/theme.css">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>RandoMania | Admin</title>
@@ -8,85 +9,85 @@
     <style>
         body {
             font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", sans-serif;
-            background: #0d0e11;
-            color: #f4f5f6;
+            background: var(--rm-bg);
+            color: var(--rm-text);
             margin: 0;
             padding: 30px 20px;
             letter-spacing: -0.01em;
         }
         .card {
-            background: #14161d;
-            border: 1px solid #222630;
+            background: var(--rm-surface);
+            border: 1px solid var(--rm-border);
             border-radius: 12px;
             padding: 32px 24px;
             max-width: 480px;
             margin: 20px auto;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+            box-shadow: 0 4px 20px rgba(var(--rm-black-rgb),0.3);
         }
-        h1 { color: #ffffff; font-size: 1.5rem; font-weight: 600; margin: 0 0 6px 0; letter-spacing: -0.02em; text-align: center; }
-        p.subtitle { color: #64748b; margin: 0 0 32px 0; font-size: 0.9rem; font-weight: 500; text-align: center; }
+        h1 { color: var(--rm-white); font-size: 1.5rem; font-weight: 600; margin: 0 0 6px 0; letter-spacing: -0.02em; text-align: center; }
+        p.subtitle { color: var(--rm-text-muted); margin: 0 0 32px 0; font-size: 0.9rem; font-weight: 500; text-align: center; }
 
         .input-group { margin-bottom: 20px; text-align: left; }
-        label { display: block; margin-bottom: 10px; font-size: 0.75rem; color: #64748b; text-transform: uppercase; font-weight: 600; letter-spacing: 0.08em; }
-        input[type="text"], input[type="password"] { width: 100%; padding: 14px; background: #1e222b; border: 1px solid #222630; border-radius: 8px; color: #fff; font-size: 1.05rem; box-sizing: border-box; transition: border-color 0.2s; }
-        input:focus { border-color: #00e676; outline: none; }
+        label { display: block; margin-bottom: 10px; font-size: 0.75rem; color: var(--rm-text-muted); text-transform: uppercase; font-weight: 600; letter-spacing: 0.08em; }
+        input[type="text"], input[type="password"] { width: 100%; padding: 14px; background: var(--rm-surface-2); border: 1px solid var(--rm-border); border-radius: 8px; color: var(--rm-white); font-size: 1.05rem; box-sizing: border-box; transition: border-color 0.2s; }
+        input:focus { border-color: var(--rm-green); outline: none; }
 
-        .btn { background: #00e676; color: #0d0e11; border: none; padding: 14px; border-radius: 8px; font-size: 1rem; font-weight: 600; width: 100%; cursor: pointer; letter-spacing: 0.02em; }
-        .btn:hover { background: #00c862; }
-        .btn:disabled { background: #1e222b; color: #64748b; cursor: not-allowed; }
-        .btn-secondary { background: #1e222b; color: #f4f5f6; border: 1px solid #222630; }
-        .btn-secondary:hover { background: #262b36; }
+        .btn { background: var(--rm-green); color: var(--rm-bg); border: none; padding: 14px; border-radius: 8px; font-size: 1rem; font-weight: 600; width: 100%; cursor: pointer; letter-spacing: 0.02em; }
+        .btn:hover { background: var(--rm-green-dark); }
+        .btn:disabled { background: var(--rm-surface-2); color: var(--rm-text-muted); cursor: not-allowed; }
+        .btn-secondary { background: var(--rm-surface-2); color: var(--rm-text); border: 1px solid var(--rm-border); }
+        .btn-secondary:hover { background: var(--rm-border-2); }
 
         .feedback { margin-top: 16px; font-weight: 500; padding: 12px; border-radius: 8px; display: none; font-size: 0.9rem; border: 1px solid transparent; }
-        .feedback.error { display: block; background: rgba(255, 71, 87, 0.08); border-color: rgba(255, 71, 87, 0.3); color: #ff4757; }
-        .feedback.success { display: block; background: rgba(0, 230, 118, 0.08); border-color: rgba(0, 230, 118, 0.3); color: #00e676; }
+        .feedback.error { display: block; background: rgba(var(--rm-red-rgb), 0.08); border-color: rgba(var(--rm-red-rgb), 0.3); color: var(--rm-red); }
+        .feedback.success { display: block; background: rgba(var(--rm-green-rgb), 0.08); border-color: rgba(var(--rm-green-rgb), 0.3); color: var(--rm-green); }
 
         #manage-screen { display: none; max-width: 640px; }
-        .code-row { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; padding: 14px; background: #1e222b; border: 1px solid #222630; border-radius: 8px; margin-bottom: 10px; }
+        .code-row { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; padding: 14px; background: var(--rm-surface-2); border: 1px solid var(--rm-border); border-radius: 8px; margin-bottom: 10px; }
         .code-row .code-text { font-family: monospace; font-weight: 700; font-size: 1rem; min-width: 110px; }
-        .code-row .code-label { flex: 1; color: #94a3b8; font-size: 0.85rem; text-align: left; }
+        .code-row .code-label { flex: 1; color: var(--rm-text-soft); font-size: 0.85rem; text-align: left; }
         .code-row .code-status { font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; padding: 4px 10px; border-radius: 999px; }
-        .code-status.active { color: #00e676; background: rgba(0, 230, 118, 0.1); }
-        .code-status.inactive { color: #64748b; background: rgba(100, 116, 139, 0.15); }
-        .code-row button { flex-shrink: 0; padding: 8px 14px; font-size: 0.8rem; border-radius: 6px; border: 1px solid #222630; background: #14161d; color: #f4f5f6; cursor: pointer; }
-        .code-row button:hover { background: #222630; }
+        .code-status.active { color: var(--rm-green); background: rgba(var(--rm-green-rgb), 0.1); }
+        .code-status.inactive { color: var(--rm-text-muted); background: rgba(var(--rm-text-muted-rgb), 0.15); }
+        .code-row button { flex-shrink: 0; padding: 8px 14px; font-size: 0.8rem; border-radius: 6px; border: 1px solid var(--rm-border); background: var(--rm-surface); color: var(--rm-text); cursor: pointer; }
+        .code-row button:hover { background: var(--rm-border); }
 
         .add-code-form { display: flex; gap: 10px; margin-top: 24px; flex-wrap: wrap; }
         .add-code-form input { flex: 1; min-width: 140px; }
         .add-code-form button { flex-shrink: 0; }
         #codes-list { margin-top: 20px; }
-        .empty-state { color: #64748b; text-align: center; padding: 20px; font-size: 0.9rem; }
-        .code-venue-tag { font-size: 0.7rem; font-weight: 700; color: #facc15; border: 1px solid rgba(250, 204, 21, 0.35); border-radius: 4px; padding: 1px 6px; margin-left: 6px; text-transform: uppercase; letter-spacing: 0.04em; }
-        .venue-editor { background: #14161d; border: 1px solid #222630; border-radius: 8px; padding: 16px; margin: -4px 0 12px 0; text-align: left; }
+        .empty-state { color: var(--rm-text-muted); text-align: center; padding: 20px; font-size: 0.9rem; }
+        .code-venue-tag { font-size: 0.7rem; font-weight: 700; color: var(--rm-yellow); border: 1px solid rgba(var(--rm-yellow-rgb), 0.35); border-radius: 4px; padding: 1px 6px; margin-left: 6px; text-transform: uppercase; letter-spacing: 0.04em; }
+        .venue-editor { background: var(--rm-surface); border: 1px solid var(--rm-border); border-radius: 8px; padding: 16px; margin: -4px 0 12px 0; text-align: left; }
         .venue-editor .row { margin-bottom: 12px; }
-        .venue-editor select, .venue-editor input[type="text"] { width: 100%; padding: 10px; background: #1e222b; border: 1px solid #222630; border-radius: 8px; color: #fff; font-size: 0.95rem; box-sizing: border-box; }
-        .venue-editor .hint { color: #64748b; font-size: 0.8rem; margin-top: 4px; }
+        .venue-editor select, .venue-editor input[type="text"] { width: 100%; padding: 10px; background: var(--rm-surface-2); border: 1px solid var(--rm-border); border-radius: 8px; color: var(--rm-white); font-size: 0.95rem; box-sizing: border-box; }
+        .venue-editor .hint { color: var(--rm-text-muted); font-size: 0.8rem; margin-top: 4px; }
         .venue-editor .modes { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
-        .venue-editor .modes label { text-transform: none; letter-spacing: 0; font-size: 0.9rem; color: #f4f5f6; font-weight: 500; margin: 0; display: flex; gap: 8px; align-items: center; }
+        .venue-editor .modes label { text-transform: none; letter-spacing: 0; font-size: 0.9rem; color: var(--rm-text); font-weight: 500; margin: 0; display: flex; gap: 8px; align-items: center; }
         .health-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 10px; margin-bottom: 8px; }
-        .health-tile { background: #1e222b; border: 1px solid #222630; border-radius: 10px; padding: 10px 12px; text-align: left; }
-        .health-tile .value { color: #f4f5f6; font-size: 1.35rem; font-weight: 800; line-height: 1.2; }
-        .health-tile .label { color: #94a3b8; font-size: 0.75rem; font-weight: 600; margin-top: 2px; }
-        .health-tile .hint { color: #64748b; font-size: 0.72rem; margin-top: 2px; }
-        .health-note { color: #64748b; font-size: 0.78rem; text-align: left; }
-        .category-row { display: flex; align-items: center; gap: 10px; padding: 8px 0; border-bottom: 1px solid #1e222b; text-align: left; }
-        .category-row .name { flex: 1; min-width: 0; color: #f4f5f6; font-weight: 600; font-size: 0.95rem; }
-        .category-row .count { color: #64748b; font-size: 0.8rem; font-weight: 500; }
+        .health-tile { background: var(--rm-surface-2); border: 1px solid var(--rm-border); border-radius: 10px; padding: 10px 12px; text-align: left; }
+        .health-tile .value { color: var(--rm-text); font-size: 1.35rem; font-weight: 800; line-height: 1.2; }
+        .health-tile .label { color: var(--rm-text-soft); font-size: 0.75rem; font-weight: 600; margin-top: 2px; }
+        .health-tile .hint { color: var(--rm-text-muted); font-size: 0.72rem; margin-top: 2px; }
+        .health-note { color: var(--rm-text-muted); font-size: 0.78rem; text-align: left; }
+        .category-row { display: flex; align-items: center; gap: 10px; padding: 8px 0; border-bottom: 1px solid var(--rm-surface-2); text-align: left; }
+        .category-row .name { flex: 1; min-width: 0; color: var(--rm-text); font-weight: 600; font-size: 0.95rem; }
+        .category-row .count { color: var(--rm-text-muted); font-size: 0.8rem; font-weight: 500; }
         .category-row .dial { display: flex; gap: 4px; }
-        .category-row .dial button { background: #1e222b; border: 1px solid #222630; color: #94a3b8; border-radius: 6px; padding: 6px 10px; font-size: 0.8rem; font-weight: 700; cursor: pointer; }
-        .category-row .dial button.on { color: #0b0d12; }
-        .category-row .dial button.on.off { background: #ff5c5c; border-color: #ff5c5c; }
-        .category-row .dial button.on.normal { background: #94a3b8; border-color: #94a3b8; }
-        .category-row .dial button.on.boost { background: #00e676; border-color: #00e676; }
-        .category-row .dial button.on.default { background: #475569; border-color: #475569; color: #f4f5f6; }
-        .venue-dial { background: #14161d; border: 1px solid #222630; border-radius: 8px; padding: 12px 14px; margin: -4px 0 12px 0; }
+        .category-row .dial button { background: var(--rm-surface-2); border: 1px solid var(--rm-border); color: var(--rm-text-soft); border-radius: 6px; padding: 6px 10px; font-size: 0.8rem; font-weight: 700; cursor: pointer; }
+        .category-row .dial button.on { color: var(--rm-bg-deep); }
+        .category-row .dial button.on.off { background: var(--rm-red-soft); border-color: var(--rm-red-soft); }
+        .category-row .dial button.on.normal { background: var(--rm-text-soft); border-color: var(--rm-text-soft); }
+        .category-row .dial button.on.boost { background: var(--rm-green); border-color: var(--rm-green); }
+        .category-row .dial button.on.default { background: var(--rm-slate-600); border-color: var(--rm-slate-600); color: var(--rm-text); }
+        .venue-dial { background: var(--rm-surface); border: 1px solid var(--rm-border); border-radius: 8px; padding: 12px 14px; margin: -4px 0 12px 0; }
         .venue-dial .subtitle { text-align: left; }
         /* Four buttons don't fit beside a name on a phone: name on top, dial below. */
         .venue-dial .category-row { flex-wrap: wrap; }
         .venue-dial .category-row .name { flex: 1 1 100%; }
         .venue-dial .category-row .dial { flex-wrap: wrap; }
-        .venue-dial-warning { color: #facc15; font-size: 0.85rem; text-align: left; margin: 6px 0 10px 0; }
-        .venue-notice { background: rgba(250, 204, 21, 0.08); border: 1px solid rgba(250, 204, 21, 0.3); color: #facc15; border-radius: 8px; padding: 12px; font-size: 0.85rem; margin-top: 16px; text-align: left; }
+        .venue-dial-warning { color: var(--rm-yellow); font-size: 0.85rem; text-align: left; margin: 6px 0 10px 0; }
+        .venue-notice { background: rgba(var(--rm-yellow-rgb), 0.08); border: 1px solid rgba(var(--rm-yellow-rgb), 0.3); color: var(--rm-yellow); border-radius: 8px; padding: 12px; font-size: 0.85rem; margin-top: 16px; text-align: left; }
     </style>
 </head>
 <body>
@@ -106,7 +107,7 @@
         <p class="subtitle" style="margin-bottom: 12px;">How the server is doing right now. Updates every 5 seconds.</p>
         <div class="health-grid" id="health-grid"></div>
         <div class="health-note" id="health-note"></div>
-        <div style="border-top: 1px solid #222630; margin: 24px 0 20px 0;"></div>
+        <div style="border-top: 1px solid var(--rm-border); margin: 24px 0 20px 0;"></div>
 
         <h1>Access Codes</h1>
         <p class="subtitle">Add, activate, or revoke venue access codes.</p>
@@ -121,14 +122,14 @@
         <div id="venue-notice" class="venue-notice" style="display: none;">Venue profiles (pub name, logo, which modes show) turn on once you run <strong>access_codes_venue_profiles.sql</strong> in Neon.</div>
         <div id="codes-list"></div>
 
-        <div style="border-top: 1px solid #222630; margin: 28px 0 20px 0;"></div>
+        <div style="border-top: 1px solid var(--rm-border); margin: 28px 0 20px 0;"></div>
         <h1 style="font-size: 1.1rem; margin-bottom: 4px;">Thinking Pants Categories</h1>
         <p class="subtitle" style="margin-bottom: 12px;"><strong>Boost</strong> shows a category about twice as often; <strong>Off</strong> keeps its questions but never puts it on a board. Takes effect from the next board. These are the defaults for every venue; a code's <strong>Categories</strong> button can change them for that venue only.</p>
         <div id="category-notice" class="venue-notice" style="display: none; margin: 0 0 12px 0;">The category dial turns on once you run <strong>thinking_pants_category_settings.sql</strong> in Neon. Until then every category is Normal.</div>
         <div id="category-list"></div>
         <div class="feedback" id="category-feedback"></div>
 
-        <div style="border-top: 1px solid #222630; margin: 28px 0 20px 0;"></div>
+        <div style="border-top: 1px solid var(--rm-border); margin: 28px 0 20px 0;"></div>
         <h1 style="font-size: 1.1rem; margin-bottom: 4px;">Force Reset a Room</h1>
         <p class="subtitle" style="margin-bottom: 16px;">Bounces that room's TV back to its lobby-code screen and frees the code. Use this if a room is stuck or abandoned.</p>
         <div class="add-code-form">
@@ -168,15 +169,15 @@
             key = (key || '').trim().toUpperCase();
             if (!key) return '';
             const set = houseSets.find(h => h.key === key);
-            if (!set) return `<span style="color: #ff5c5c;">&#9888; No house questions named ${esc(key)} in the database. Check the spelling against the list.</span>`;
+            if (!set) return `<span style="color: var(--rm-red-soft);">&#9888; No house questions named ${esc(key)} in the database. Check the spelling against the list.</span>`;
             // These questions are also Trivi-yeah!, the venue's own game: the
             // whole set easy to hard, up to 20 a game (the rest carry over).
             const game = set.total > 20
                 ? `Trivi-yeah! plays 20 a game; Play Again picks up the other ${set.total - 20}.`
                 : `Trivi-yeah! plays all ${set.total} in one game.`;
-            const short = set.total < 8 ? ` <span style="color: #ffa500;">&#9888; That's a very short game; 12 to 20 questions plays best.</span>` : '';
-            if (!set.complete) return `<span style="color: #ff5c5c;">&#9888; ${esc(key)} is missing a tier (${[100, 200, 300, 400].map(t => `${t}: ${set.tiers[t] || 0}`).join(', ')}); the board skips it until every tier has a question.</span> ${game}${short}`;
-            return `<span style="color: #00e676;">&#10003; ${esc(key)}: ${set.total} questions.</span> ${game}${short}`;
+            const short = set.total < 8 ? ` <span style="color: var(--rm-orange);">&#9888; That's a very short game; 12 to 20 questions plays best.</span>` : '';
+            if (!set.complete) return `<span style="color: var(--rm-red-soft);">&#9888; ${esc(key)} is missing a tier (${[100, 200, 300, 400].map(t => `${t}: ${set.tiers[t] || 0}`).join(', ')}); the board skips it until every tier has a question.</span> ${game}${short}`;
+            return `<span style="color: var(--rm-green);">&#10003; ${esc(key)}: ${set.total} questions.</span> ${game}${short}`;
         }
         function refreshHouseStatus() {
             const el = document.getElementById('venue-house-status');
@@ -271,7 +272,7 @@
                         <div class="hint">Between Thinking Pants rounds and after a Trivi-yeah! game: the TV shows the venue's big logo, the join QR code and the notes below. It ends on its own, or early once everyone taps "I'm back".</div>
                     </div>
                     <div class="row"><label>Break notes (one per line, up to 10)</label>
-                        <textarea id="venue-break-notes" rows="5" maxlength="1300" placeholder="Type your own lines here, for example:&#10;Half-price wings until 9!&#10;Next trivia night: Thursday the 30th" style="width: 100%; box-sizing: border-box; background: #14161d; border: 1px solid #222630; border-radius: 8px; color: #fff; padding: 10px; font-family: inherit;">${esc((c.break_notes || []).join('\n'))}</textarea>
+                        <textarea id="venue-break-notes" rows="5" maxlength="1300" placeholder="Type your own lines here, for example:&#10;Half-price wings until 9!&#10;Next trivia night: Thursday the 30th" style="width: 100%; box-sizing: border-box; background: var(--rm-surface); border: 1px solid var(--rm-border); border-radius: 8px; color: var(--rm-white); padding: 10px; font-family: inherit;">${esc((c.break_notes || []).join('\n'))}</textarea>
                         <div class="hint">Deals, event news, fun facts about the guest of honor. Each line shows for 10 seconds. Gray text is only an example; with no notes, the TV shows the venue's tagline.</div>
                     </div>
                     ` : `<div class="hint" style="margin-bottom: 12px;">Venue breaks turn on once you run <strong>access_codes_breaks.sql</strong> in Neon.</div>`}

@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <link rel="stylesheet" href="/theme.css">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>RandoMania | Host</title>
@@ -8,37 +9,37 @@
     <style>
         body {
             font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", sans-serif;
-            background: #0d0e11;
-            color: #f4f5f6;
+            background: var(--rm-bg);
+            color: var(--rm-text);
             text-align: center;
             padding: 30px 20px;
             margin: 0;
             letter-spacing: -0.01em;
         }
         .card {
-            background: #14161d;
-            border: 1px solid #222630;
+            background: var(--rm-surface);
+            border: 1px solid var(--rm-border);
             border-radius: 12px;
             padding: 32px 24px;
             max-width: 400px;
             margin: 20px auto;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+            box-shadow: 0 4px 20px rgba(var(--rm-black-rgb),0.3);
         }
-        h1 { color: #ffffff; font-size: 1.5rem; font-weight: 600; margin: 0 0 6px 0; letter-spacing: -0.02em; }
-        p.subtitle { color: #64748b; margin: 0 0 32px 0; font-size: 0.9rem; font-weight: 500; }
+        h1 { color: var(--rm-white); font-size: 1.5rem; font-weight: 600; margin: 0 0 6px 0; letter-spacing: -0.02em; }
+        p.subtitle { color: var(--rm-text-muted); margin: 0 0 32px 0; font-size: 0.9rem; font-weight: 500; }
 
         .input-group { margin-bottom: 24px; text-align: left; }
-        label { display: block; margin-bottom: 10px; font-size: 0.75rem; color: #64748b; text-transform: uppercase; font-weight: 600; letter-spacing: 0.08em; }
-        input[type="text"] { width: 100%; padding: 14px; background: #1e222b; border: 1px solid #222630; border-radius: 8px; color: #fff; font-size: 1.05rem; box-sizing: border-box; transition: border-color 0.2s; }
-        input[type="text"]:focus { border-color: #00e676; outline: none; }
+        label { display: block; margin-bottom: 10px; font-size: 0.75rem; color: var(--rm-text-muted); text-transform: uppercase; font-weight: 600; letter-spacing: 0.08em; }
+        input[type="text"] { width: 100%; padding: 14px; background: var(--rm-surface-2); border: 1px solid var(--rm-border); border-radius: 8px; color: var(--rm-white); font-size: 1.05rem; box-sizing: border-box; transition: border-color 0.2s; }
+        input[type="text"]:focus { border-color: var(--rm-green); outline: none; }
 
-        .btn { background: #00e676; color: #0d0e11; border: none; padding: 16px; border-radius: 8px; font-size: 1.05rem; font-weight: 600; width: 100%; cursor: pointer; letter-spacing: 0.02em; }
-        .btn:hover { background: #00c862; }
-        .btn:disabled { background: #1e222b; color: #64748b; cursor: not-allowed; }
-        .btn:disabled:hover { background: #1e222b; }
+        .btn { background: var(--rm-green); color: var(--rm-bg); border: none; padding: 16px; border-radius: 8px; font-size: 1.05rem; font-weight: 600; width: 100%; cursor: pointer; letter-spacing: 0.02em; }
+        .btn:hover { background: var(--rm-green-dark); }
+        .btn:disabled { background: var(--rm-surface-2); color: var(--rm-text-muted); cursor: not-allowed; }
+        .btn:disabled:hover { background: var(--rm-surface-2); }
 
         .feedback { margin-top: 20px; font-weight: 500; padding: 12px; border-radius: 8px; display: none; font-size: 0.9rem; border: 1px solid transparent; }
-        .feedback.error { display: block; background: rgba(255, 71, 87, 0.08); border-color: rgba(255, 71, 87, 0.3); color: #ff4757; }
+        .feedback.error { display: block; background: rgba(var(--rm-red-rgb), 0.08); border-color: rgba(var(--rm-red-rgb), 0.3); color: var(--rm-red); }
 
         #result-screen { display: none; }
         .lobby-code-display {
@@ -46,14 +47,14 @@
             font-size: 3rem;
             font-weight: 700;
             letter-spacing: 8px;
-            color: #00e676;
-            background: #1e222b;
-            border: 1px solid #222630;
+            color: var(--rm-green);
+            background: var(--rm-surface-2);
+            border: 1px solid var(--rm-border);
             border-radius: 12px;
             padding: 24px 12px;
             margin: 24px 0;
         }
-        .instruction { color: #94a3b8; font-size: 0.9rem; line-height: 1.5; }
+        .instruction { color: var(--rm-text-soft); font-size: 0.9rem; line-height: 1.5; }
     </style>
 </head>
 <body>
