@@ -2138,7 +2138,7 @@ async function pickFinalWagerQuestion() {
     let result;
     try {
         result = await pool.query(
-            `SELECT question_text, correct_answer, subcategory, accepted_answers
+            `SELECT id, question_text, correct_answer, subcategory, accepted_answers, visual_asset
              FROM questions
              WHERE game_mode = 'TRIVI_YEAH_II' AND category = 'FINAL_WAGER'
              ORDER BY random() LIMIT 1`
@@ -2150,7 +2150,7 @@ async function pickFinalWagerQuestion() {
         // correct_answer alone.
         console.error(`⚠️ [Trivi-Yeah II] Final Wager query failed (${error.message}) -- retrying without accepted_answers.`);
         result = await pool.query(
-            `SELECT question_text, correct_answer, subcategory
+            `SELECT id, question_text, correct_answer, subcategory
              FROM questions
              WHERE game_mode = 'TRIVI_YEAH_II' AND category = 'FINAL_WAGER'
              ORDER BY random() LIMIT 1`
@@ -2167,12 +2167,18 @@ async function pickFinalWagerQuestion() {
     const acceptedAnswers = (row.accepted_answers && row.accepted_answers.length > 0)
         ? row.accepted_answers
         : [row.correct_answer];
-    return { questionText: row.question_text, correctAnswer: row.correct_answer, acceptedAnswers, topicLabel: row.subcategory || 'Final Wager' };
+    return { questionText: row.question_text, correctAnswer: row.correct_answer, acceptedAnswers, topicLabel: row.subcategory || 'Final Wager', row };
 }
 
 async function startTriviYeahIIFinalWager(roomCode) {
-    const question = await pickFinalWagerQuestion();
-    startFinalWager(roomCode, { ...question, modeLabel: 'Thinking Pants' });
+    const { row, ...question } = await pickFinalWagerQuestion();
+    // A few Final Wager questions carry a picture (Randy, Nov 2026: "an
+    // interesting anomaly") -- a flag, painting, logo or landmark, always
+    // with a clue in the text, shown once answering opens like Country
+    // Monkey's. Same disguised address as every question picture.
+    const room = activeRooms[roomCode];
+    const visualAsset = room && row && row.visual_asset ? disguisedAssetUrl(room, row) : null;
+    startFinalWager(roomCode, { ...question, visualAsset, modeLabel: 'Thinking Pants' });
 }
 
 // The Final Wager is shared: Thinking Pants and Country Monkey both close on
