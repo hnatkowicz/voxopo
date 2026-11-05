@@ -230,8 +230,15 @@ function broadcastToRoom(roomCode, payload) {
     // right. Captured even with no TV connected -- phone-only play (a
     // school trip with no TV, Oct 2026) is exactly who it's for.
     if (room && Array.isArray(payload.players) && (payload.type === 'LEADERBOARD_UPDATE' || payload.type === 'GAME_OVER')) {
-        room.phoneStandings = payload.players.filter(p => !p.left).slice().sort(compareByRank)
+        const standings = payload.players.filter(p => !p.left).slice().sort(compareByRank)
             .map(p => ({ name: p.name, emoji: p.emoji || null, score: p.score || 0 }));
+        // A new version only when the scoreboard really changed, so phones can
+        // skip re-downloading it every second (see /api/room-status). Random,
+        // not a counter, so a phone's old version never matches a new room.
+        if (JSON.stringify(standings) !== JSON.stringify(room.phoneStandings)) {
+            room.phoneStandings = standings;
+            room.phoneStandingsVersion = Math.random().toString(36).slice(2, 10);
+        }
     }
     if (room && room.screens) {
         room.screens.forEach(socket => {
