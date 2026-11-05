@@ -4,8 +4,8 @@
 -- Thinking Pants category ART_GALLERY. To change a question, change the
 -- spreadsheet and rebuild.
 --
--- Replaces the WHOLE category with the spreadsheet's 113 live questions
--- (100: 21, 200: 20, 300: 43, 400: 29), inside a transaction. Safe to re-run.
+-- Replaces the WHOLE category with the spreadsheet's 137 live questions
+-- (100: 21, 200: 20, 300: 56, 400: 40), inside a transaction. Safe to re-run.
 -- ============================================================================
 
 BEGIN;
@@ -354,6 +354,58 @@ INSERT INTO questions (question_number, game_mode, category, subcategory, factio
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'ART_GALLERY', 'ORIGINAL', NULL,
         'In Dutch, a rowdy, messy home is called a household of which painter?', '/art/merry-family.webp',
         'Jan Steen', ARRAY['Rembrandt', 'Johannes Vermeer', 'Frans Hals', 'Pieter de Hooch', 'Hieronymus Bosch', 'Pieter Bruegel the Elder'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'ART_GALLERY', 'ORIGINAL', NULL,
+        'This portrait''s famous title hid its sitter''s name. What is it?', '/art/madame-x.webp',
+        'Madame X', ARRAY['Lady Agnew of Lochnaw', 'Carnation, Lily, Lily, Rose', 'The Daughters of Edward Darley Boit', 'El Jaleo', 'Mrs. Hugh Hammersley', 'Lady with the Rose'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'ART_GALLERY', 'ORIGINAL', NULL,
+        'What''s this painting called?', '/art/gulf-stream.webp',
+        'The Gulf Stream', ARRAY['The Life Line', 'Eight Bells', 'The Fox Hunt', 'Snap the Whip', 'Northeaster', 'The Veteran in a New Field'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'ART_GALLERY', 'ORIGINAL', NULL,
+        'The trains are hidden in the steam. What is this painting called?', '/art/railway-manet.webp',
+        'The Railway', ARRAY['Olympia', 'The Luncheon on the Grass', 'A Bar at the Folies-Bergère', 'The Fifer', 'The Balcony', 'Boating'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'ART_GALLERY', 'ORIGINAL', NULL,
+        'What''s this painting called?', '/art/fortune-teller.webp',
+        'The Fortune-Teller', ARRAY['The Cheat with the Ace of Diamonds', 'The Card Sharps', 'The Hurdy-Gurdy Player', 'The Penitent Magdalene', 'The Musicians', 'Saint Joseph the Carpenter'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'ART_GALLERY', 'ORIGINAL', NULL,
+        'What''s this painting called?', '/art/annunciation-eyck.webp',
+        'The Annunciation', ARRAY['The Visitation', 'The Nativity', 'The Adoration of the Magi', 'The Coronation of the Virgin', 'The Presentation in the Temple', 'The Assumption of the Virgin'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'ART_GALLERY', 'ORIGINAL', NULL,
+        'Its Tahitian title, "Ia Orana Maria," means "Hail _____."', '/art/orana-maria.webp',
+        'Mary', ARRAY['Queen', 'Mother', 'Island', 'Morning', 'Sun', 'Ocean'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'ART_GALLERY', 'ORIGINAL', NULL,
+        'Fill in the blank: "The _____ Swan"', '/art/threatened-swan.webp',
+        'Threatened', ARRAY['Dying', 'Black', 'Proud', 'Wounded', 'Silent', 'Golden'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'ART_GALLERY', 'ORIGINAL', NULL,
+        'Fill in the blank: "The _____ Family"', '/art/merry-family.webp',
+        'Merry', ARRAY['Holy', 'Royal', 'Peasant', 'Quiet', 'Sleeping', 'Painter''s'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'ART_GALLERY', 'ORIGINAL', NULL,
+        'Fill in the blank: "The _____ Letter"', '/art/love-letter-vermeer.webp',
+        'Love', ARRAY['Last', 'Secret', 'Lost', 'Farewell', 'First', 'Unopened'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'ART_GALLERY', 'ORIGINAL', NULL,
+        'Fill in the blank: "Breezing Up (A Fair _____)"', '/art/breezing-up-fair-wind.webp',
+        'Wind', ARRAY['Day', 'Sea', 'Tide', 'Sail', 'Weather', 'Morning'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'ART_GALLERY', 'ORIGINAL', NULL,
+        'Fill in the blank: "The _____ Net"', '/art/herring-net.webp',
+        'Herring', ARRAY['Cod', 'Salmon', 'Lobster', 'Trout', 'Mackerel', 'Tuna'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'ART_GALLERY', 'ORIGINAL', NULL,
+        'Fill in the blank: "Woman with a Parasol: Madame Monet and Her _____"', '/art/woman-parasol.webp',
+        'Son', ARRAY['Daughter', 'Dog', 'Sister', 'Mother', 'Maid', 'Husband'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'ART_GALLERY', 'ORIGINAL', NULL,
+        'Fill in the blank: "Two Sisters (On the _____)"', '/art/two-sisters-terrace.webp',
+        'Terrace', ARRAY['Balcony', 'Beach', 'Riverbank', 'Boat', 'Lawn', 'Porch'], 300);
 
 -- 400 points
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
@@ -472,8 +524,52 @@ INSERT INTO questions (question_number, game_mode, category, subcategory, factio
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'ART_GALLERY', 'ORIGINAL', NULL,
         'This 1650 painting is the most famous by which Dutch artist?', '/art/threatened-swan.webp',
         'Jan Asselijn', ARRAY['Jan Steen', 'Melchior d''Hondecoeter', 'Paulus Potter', 'Aelbert Cuyp', 'Jan Weenix', 'Frans Snyders'], 400);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'ART_GALLERY', 'ORIGINAL', NULL,
+        'What''s this painting called?', '/art/the-oxbow.webp',
+        'The Oxbow', ARRAY['The Course of Empire', 'The Voyage of Life', 'View of Schroon Mountain', 'The Titan''s Goblet', 'Falls of the Kaaterskill', 'Lake with Dead Trees'], 400);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'ART_GALLERY', 'ORIGINAL', NULL,
+        'Fill in the blank: "_____ of the Normandy Train"', '/art/arrival-normandy-train.webp',
+        'Arrival', ARRAY['Departure', 'Return', 'Delay', 'Approach', 'Passing', 'Coming'], 400);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'ART_GALLERY', 'ORIGINAL', NULL,
+        'Fill in the blank: "Under the Wave off _____"', '/art/great-wave.webp',
+        'Kanagawa', ARRAY['Edo', 'Kyoto', 'Osaka', 'Nagasaki', 'Yokohama', 'Kamakura'], 400);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'ART_GALLERY', 'ORIGINAL', NULL,
+        'Its nickname is "Red Fuji." Fill in its real title: "Fine Wind, Clear _____"', '/art/red-fuji.webp',
+        'Morning', ARRAY['Evening', 'Night', 'Sky', 'Water', 'Day', 'Autumn'], 400);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'ART_GALLERY', 'ORIGINAL', NULL,
+        'Its Tahitian title, "Mahana no Atua," means "Day of the _____."', '/art/day-of-the-god.webp',
+        'God', ARRAY['Sun', 'Sea', 'Dead', 'Feast', 'Island', 'Harvest'], 400);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'ART_GALLERY', 'ORIGINAL', NULL,
+        'Fill in the blank: "The _____ of the Virgin"', '/art/assumption-virgin.webp',
+        'Assumption', ARRAY['Annunciation', 'Coronation', 'Adoration', 'Visitation', 'Presentation', 'Immaculate Conception'], 400);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'ART_GALLERY', 'ORIGINAL', NULL,
+        'Fill in the blank: "The Syndics of the _____ Guild"', '/art/drapers-guild.webp',
+        'Drapers''', ARRAY['Bakers''', 'Brewers''', 'Goldsmiths''', 'Shoemakers''', 'Fishmongers''', 'Surgeons'''], 400);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'ART_GALLERY', 'ORIGINAL', NULL,
+        'Fill in the blank: "Stag at _____''s"', '/art/stag-sharkeys.webp',
+        'Sharkey', ARRAY['Murphy', 'Rooney', 'McGraw', 'Kelly', 'O''Brien', 'Casey'], 400);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'ART_GALLERY', 'ORIGINAL', NULL,
+        'Fill in the blank: "The _____ Brothers Turning the Stake"', '/art/biglin-brothers.webp',
+        'Biglin', ARRAY['Wright', 'Ringling', 'Grimm', 'Warner', 'Marx', 'Mayo'], 400);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'ART_GALLERY', 'ORIGINAL', NULL,
+        'It''s known as the "_____ portrait," after a British lord who owned it.', '/art/washington-lansdowne-portrait.webp',
+        'Lansdowne', ARRAY['Athenaeum', 'Vaughan', 'Gibbs', 'Munro', 'Lenox', 'Hamilton'], 400);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'ART_GALLERY', 'ORIGINAL', NULL,
+        'This young Florentine woman is Ginevra de'' _____. Fill in her family name.', '/art/ginevra-de-benci.webp',
+        'Benci', ARRAY['Medici', 'Este', 'Sforza', 'Gonzaga', 'Strozzi', 'Pazzi'], 400);
 
 COMMIT;
 
--- Check: should return 113.
+-- Check: should return 137.
 SELECT COUNT(*) FROM questions WHERE game_mode = 'TRIVI_YEAH_II' AND category = 'ART_GALLERY';

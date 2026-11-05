@@ -120,7 +120,9 @@ mode titles used to sit atop each game screen ("Active Match Question" was
 dropped outright). Swipe right for
 **Room**: the room's QR code and code (a friend scans in from your phone)
 the Sound setting, **Vote to end this game** and Leave Room, which asks first (it used to sit under the answers on every
-screen and got bumped in fast play). Vote to end (Randy, Oct 2026): no
+screen and got bumped in fast play). The final "yes" of leaving or voting
+to end is solid red (`.btn-danger`), unlike the outlined button that opens
+it (Randy, Nov 2026: the two looked alike). Vote to end (Randy, Oct 2026): no
 game leader, so ending early is a room vote -- more than half the players
 (`endGameVoteFor`), votes can be taken back, and it goes straight to the
 lobby; the TV shows a small "x of n needed" pill while votes are in. The game page keeps only what changes
@@ -225,7 +227,11 @@ Mode keys are used in room votes and in `gameEngine.js`:
   own wager is never doubled (Randy, Oct 2026 -- the first build doubled
   the picker's wager, a misunderstanding).
   The answer clock is 40s (Randy: "needs 10 more seconds"), music over the
-  last 30.
+  last 30. **Final Wager questions** (`trivi_yeah_ii_final_wager_content.sql`,
+  76): typed answers, so most carry a fair clue to the answer inside the
+  question (Randy, Nov 2026: "an element of the answer is in the question,
+  allowing an educated guess" -- "Which frontier city, named for a French
+  king, was the starting point for Lewis and Clark?").
   Categories are listed in `TRIVI_YEAH_II_CATEGORIES`. Every category needs a
   full pool for every tier (the engine fails fast if one is incomplete).
   **Board draw:** deeper categories come up more often (Randy, Oct 2026).
@@ -436,7 +442,10 @@ and forth until we both agree the idea is good **and** worth the effort. So:
   gallery backdrop), up to four questions each: artist, title (only when
   it can't be read off the canvas; wrong answers are the same artist's
   real titles), what's in it ("Which river is being crossed?"), movement,
-  and a few stories (the Syndics on Dutch Masters cigar boxes). Hard
+  and a few stories (the Syndics on Dutch Masters cigar boxes). Title
+  questions use **fill-in-the-blank** where the whole title would show on
+  the canvas (Randy's idea: "_____ of the Normandy Train"); the blanked
+  word is never something you can see. 137 questions. Hard
   paintings get a leading question ("This artist's portrait of the same
   man is on the $1 bill"). Launched on Boost. Randy stopped at 70 to see
   how it plays before gathering more. Sources: public-domain works from
