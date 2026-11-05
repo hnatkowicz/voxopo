@@ -1,6 +1,6 @@
 -- ============================================================================
 -- content/sql/ALL_CATEGORIES.sql -- GENERATED, don't edit by hand.
--- Every Thinking Pants category in content/, one after another (26 files).
+-- Every Thinking Pants category in content/, one after another (27 files).
 -- Same as running each content/sql/<category>.sql. Safe to re-run.
 -- ============================================================================
 
@@ -1571,6 +1571,514 @@ COMMIT;
 
 -- Check: should return 120.
 SELECT COUNT(*) FROM questions WHERE game_mode = 'TRIVI_YEAH_II' AND category = 'ASTRONOMY_SPACE';
+
+-- ============================================================================
+-- content/sql/cell_mates.sql -- GENERATED, don't edit by hand.
+-- Made by content/build.mjs from content/cell_mates.csv, the master copy of the
+-- Thinking Pants category CELL_MATES. To change a question, change the
+-- spreadsheet and rebuild.
+--
+-- Replaces the WHOLE category with the spreadsheet's 120 live questions
+-- (100: 30, 200: 30, 300: 30, 400: 30), inside a transaction. Safe to re-run.
+-- ============================================================================
+
+BEGIN;
+
+DELETE FROM questions WHERE game_mode = 'TRIVI_YEAH_II' AND category = 'CELL_MATES';
+
+
+-- 100 points
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'CELL_MATES', 'ORIGINAL', NULL,
+        'What is the smallest unit of life that can live on its own?', NULL,
+        'The cell', ARRAY['The atom', 'The molecule', 'The organ', 'The tissue', 'The gene'], 100);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'CELL_MATES', 'ORIGINAL', NULL,
+        'Which organs do you breathe with?', NULL,
+        'The lungs', ARRAY['The kidneys', 'The heart', 'The liver', 'The stomach', 'The intestines'], 100);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'CELL_MATES', 'ORIGINAL', NULL,
+        'Which blood cells carry oxygen around your body?', NULL,
+        'Red blood cells', ARRAY['White blood cells', 'Platelets', 'Plasma', 'Nerve cells', 'Stem cells'], 100);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'CELL_MATES', 'ORIGINAL', NULL,
+        'Which organ inside your skull lets you think, remember and feel?', NULL,
+        'The brain', ARRAY['The heart', 'The spine', 'The lungs', 'The liver', 'The thyroid'], 100);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'CELL_MATES', 'ORIGINAL', NULL,
+        'What is a baby goat called?', NULL,
+        'A kid', ARRAY['A calf', 'A foal', 'A lamb', 'A cub', 'A joey'], 100);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'CELL_MATES', 'ORIGINAL', NULL,
+        'What is the largest land animal?', NULL,
+        'The African elephant', ARRAY['The hippopotamus', 'The white rhinoceros', 'The giraffe', 'The polar bear', 'The bison'], 100);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'CELL_MATES', 'ORIGINAL', NULL,
+        'What do we call animals with no backbone, like worms and jellyfish?', NULL,
+        'Invertebrates', ARRAY['Vertebrates', 'Mammals', 'Amphibians', 'Reptiles', 'Marsupials'], 100);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'CELL_MATES', 'ORIGINAL', NULL,
+        'Which lizard is famous for changing its color?', NULL,
+        'The chameleon', ARRAY['The iguana', 'The gecko', 'The Komodo dragon', 'The skink', 'The Gila monster'], 100);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'CELL_MATES', 'ORIGINAL', NULL,
+        'What kind of animal is a whale?', NULL,
+        'A mammal', ARRAY['A fish', 'An amphibian', 'A reptile', 'A crustacean'], 100);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'CELL_MATES', 'ORIGINAL', NULL,
+        'What is the colored part of your eye called?', NULL,
+        'The iris', ARRAY['The pupil', 'The retina', 'The cornea', 'The lens', 'The sclera'], 100);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'CELL_MATES', 'ORIGINAL', NULL,
+        'What do we call an animal that hunts other animals for food?', NULL,
+        'A predator', ARRAY['Prey', 'A parasite', 'A grazer', 'A decomposer', 'A host'], 100);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'CELL_MATES', 'ORIGINAL', NULL,
+        'What do we call the natural home of a plant or animal?', NULL,
+        'Its habitat', ARRAY['Its niche', 'Its colony', 'Its territory', 'Its den', 'Its nest'], 100);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'CELL_MATES', 'ORIGINAL', NULL,
+        'Which organ churns and starts digesting your food after you swallow it?', NULL,
+        'The stomach', ARRAY['The liver', 'The kidneys', 'The lungs', 'The pancreas', 'The bladder'], 100);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'CELL_MATES', 'ORIGINAL', NULL,
+        'Which part of a plant soaks up water from the soil?', NULL,
+        'The roots', ARRAY['The leaves', 'The stem', 'The flowers', 'The seeds', 'The bark'], 100);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'CELL_MATES', 'ORIGINAL', NULL,
+        'Which body system is made up of your bones?', NULL,
+        'The skeletal system', ARRAY['The muscular system', 'The nervous system', 'The digestive system', 'The circulatory system', 'The immune system'], 100);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'CELL_MATES', 'ORIGINAL', NULL,
+        'Where are most of your taste buds?', NULL,
+        'On your tongue', ARRAY['In your nose', 'On your lips', 'On the roof of your mouth', 'In your throat', 'On your teeth'], 100);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'CELL_MATES', 'ORIGINAL', NULL,
+        'Which animal is famous for building dams across streams?', NULL,
+        'The beaver', ARRAY['The otter', 'The muskrat', 'The raccoon', 'The badger', 'The squirrel'], 100);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'CELL_MATES', 'ORIGINAL', NULL,
+        'What do we call a scientist who studies living things?', NULL,
+        'A biologist', ARRAY['A geologist', 'A chemist', 'A physicist', 'An astronomer', 'A meteorologist'], 100);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'CELL_MATES', 'ORIGINAL', NULL,
+        'Which is the largest kind of penguin?', NULL,
+        'The emperor penguin', ARRAY['The king penguin', 'The macaroni penguin', 'The gentoo penguin', 'The rockhopper penguin', 'The Adelie penguin'], 100);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'CELL_MATES', 'ORIGINAL', NULL,
+        'What do giant pandas eat almost all the time?', NULL,
+        'Bamboo', ARRAY['Eucalyptus', 'Fish', 'Berries', 'Grass', 'Insects'], 100);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'CELL_MATES', 'ORIGINAL', NULL,
+        'Which animal''s black-and-white stripes are unique to each one, like a fingerprint?', NULL,
+        'The zebra', ARRAY['The skunk', 'The badger', 'The tapir', 'The okapi', 'The panda'], 100);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'CELL_MATES', 'ORIGINAL', NULL,
+        'What do we call animals that eat mostly meat?', NULL,
+        'Carnivores', ARRAY['Herbivores', 'Omnivores', 'Frugivores', 'Granivores', 'Detritivores'], 100);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'CELL_MATES', 'ORIGINAL', NULL,
+        'Which animal is nicknamed the "ship of the desert"?', NULL,
+        'The camel', ARRAY['The horse', 'The donkey', 'The llama', 'The ostrich', 'The elephant'], 100);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'CELL_MATES', 'ORIGINAL', NULL,
+        'Which sea animal has eight arms and can squirt ink?', NULL,
+        'The octopus', ARRAY['The squid', 'The starfish', 'The jellyfish', 'The crab', 'The sea urchin'], 100);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'CELL_MATES', 'ORIGINAL', NULL,
+        'What do we call a kind of animal, like the dodo, that no longer lives anywhere on Earth?', NULL,
+        'Extinct', ARRAY['Endangered', 'Threatened', 'Invasive', 'Dormant', 'Migrated'], 100);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'CELL_MATES', 'ORIGINAL', NULL,
+        'Which sense do the nerves in your skin give you?', NULL,
+        'Touch', ARRAY['Taste', 'Smell', 'Hearing', 'Sight', 'Balance'], 100);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'CELL_MATES', 'ORIGINAL', NULL,
+        'What is a group of fish swimming together called?', NULL,
+        'A school', ARRAY['A pod', 'A herd', 'A flock', 'A gaggle', 'A pride'], 100);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'CELL_MATES', 'ORIGINAL', NULL,
+        'Which masked animal with a ringed tail is famous for "washing" its food?', NULL,
+        'The raccoon', ARRAY['The opossum', 'The red panda', 'The lemur', 'The badger', 'The ferret'], 100);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'CELL_MATES', 'ORIGINAL', NULL,
+        'Which slow, slimy animal carries its shell on its back?', NULL,
+        'The snail', ARRAY['The slug', 'The turtle', 'The crab', 'The clam', 'The worm'], 100);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'CELL_MATES', 'ORIGINAL', NULL,
+        'About how long does a human pregnancy last?', NULL,
+        'Nine months', ARRAY['Six months', 'Seven months', 'Twelve months', 'Fourteen months', 'Five months'], 100);
+
+-- 200 points
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'CELL_MATES', 'ORIGINAL', NULL,
+        'What are the tiny blood vessels that link arteries and veins called?', NULL,
+        'Capillaries', ARRAY['Ventricles', 'Valves', 'Alveoli', 'Nephrons', 'Platelets'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'CELL_MATES', 'ORIGINAL', NULL,
+        'Which part of your body has 26 bones and carries your weight?', NULL,
+        'The foot', ARRAY['The hand', 'The skull', 'The spine', 'The knee', 'The pelvis'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'CELL_MATES', 'ORIGINAL', NULL,
+        'What do we call animals that are active during the day?', NULL,
+        'Diurnal', ARRAY['Nocturnal', 'Crepuscular', 'Seasonal', 'Dormant', 'Migratory'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'CELL_MATES', 'ORIGINAL', NULL,
+        'Strep throat is caused by which kind of microbe?', NULL,
+        'Bacteria', ARRAY['A virus', 'A fungus', 'A parasite', 'Yeast', 'An amoeba'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'CELL_MATES', 'ORIGINAL', NULL,
+        'Diving at over 200 miles an hour, which bird is the fastest animal on Earth?', NULL,
+        'The peregrine falcon', ARRAY['The bald eagle', 'The golden eagle', 'The swift', 'The ostrich', 'The hummingbird'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'CELL_MATES', 'ORIGINAL', NULL,
+        'How many legs does a crab have, counting its claws?', NULL,
+        'Ten', ARRAY['Six', 'Eight', 'Twelve', 'Four', 'Fourteen'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'CELL_MATES', 'ORIGINAL', NULL,
+        'Which pointed teeth, named for dogs, are used for tearing food?', NULL,
+        'Canines', ARRAY['Incisors', 'Molars', 'Premolars', 'Wisdom teeth', 'Fangs'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'CELL_MATES', 'ORIGINAL', NULL,
+        'Which tube carries food from your throat down to your stomach?', NULL,
+        'The esophagus', ARRAY['The trachea', 'The larynx', 'The aorta', 'The colon', 'The bronchus'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'CELL_MATES', 'ORIGINAL', NULL,
+        'What is the thin outer layer that controls what goes in and out of an animal cell?', NULL,
+        'The cell membrane', ARRAY['The cell wall', 'The nucleus', 'The cytoplasm', 'The chloroplast', 'The vacuole'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'CELL_MATES', 'ORIGINAL', NULL,
+        'A tadpole turning into a frog is an example of what?', NULL,
+        'Metamorphosis', ARRAY['Mutation', 'Hibernation', 'Evolution', 'Migration', 'Photosynthesis'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'CELL_MATES', 'ORIGINAL', NULL,
+        'How many teeth does an adult human usually have, wisdom teeth included?', NULL,
+        '32', ARRAY['28', '20', '36', '40', '24'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'CELL_MATES', 'ORIGINAL', NULL,
+        'What is the everyday word for an animal, like a lizard, whose body temperature follows its surroundings?', NULL,
+        'Cold-blooded', ARRAY['Warm-blooded', 'Hot-blooded', 'Thick-skinned', 'Thin-blooded', 'Shell-backed'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'CELL_MATES', 'ORIGINAL', NULL,
+        'Which organ stores urine until you go to the bathroom?', NULL,
+        'The bladder', ARRAY['The kidneys', 'The gallbladder', 'The spleen', 'The appendix', 'The liver'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'CELL_MATES', 'ORIGINAL', NULL,
+        'What is the largest artery in the human body?', NULL,
+        'The aorta', ARRAY['The carotid', 'The femoral artery', 'The vena cava', 'The pulmonary vein', 'The jugular'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'CELL_MATES', 'ORIGINAL', NULL,
+        'Carrots are famous for which vitamin, said to be good for your eyes?', NULL,
+        'Vitamin A', ARRAY['Vitamin C', 'Vitamin B12', 'Vitamin E', 'Vitamin K', 'Vitamin B6'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'CELL_MATES', 'ORIGINAL', NULL,
+        'Which tiny living fungus makes bread dough rise?', NULL,
+        'Yeast', ARRAY['Mold', 'Bacteria', 'Algae', 'Baking soda', 'Flour mites'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'CELL_MATES', 'ORIGINAL', NULL,
+        'What is the female part of a flower, where seeds form?', NULL,
+        'The pistil', ARRAY['The stamen', 'The petal', 'The sepal', 'The pollen', 'The anther'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'CELL_MATES', 'ORIGINAL', NULL,
+        'Chimpanzees and which other ape are humans'' closest living relatives?', NULL,
+        'The bonobo', ARRAY['The gorilla', 'The orangutan', 'The gibbon', 'The baboon', 'The mandrill'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'CELL_MATES', 'ORIGINAL', NULL,
+        'What is the name for the body system that fights germs and disease?', NULL,
+        'The immune system', ARRAY['The endocrine system', 'The nervous system', 'The digestive system', 'The skeletal system', 'The respiratory system'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'CELL_MATES', 'ORIGINAL', NULL,
+        'What do we call a group of similar cells working together, like muscle or skin?', NULL,
+        'A tissue', ARRAY['An organ', 'An organism', 'A system', 'A molecule', 'A colony'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'CELL_MATES', 'ORIGINAL', NULL,
+        'Which sea creature has no brain, no heart and no bones, and is about 95% water?', NULL,
+        'The jellyfish', ARRAY['The sea cucumber', 'The octopus', 'The starfish', 'The squid', 'The sea slug'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'CELL_MATES', 'ORIGINAL', NULL,
+        'What is the medical name for your windpipe?', NULL,
+        'The trachea', ARRAY['The esophagus', 'The larynx', 'The pharynx', 'The bronchus', 'The aorta'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'CELL_MATES', 'ORIGINAL', NULL,
+        'What do we call animals, like vultures and hyenas, that feed on dead animals?', NULL,
+        'Scavengers', ARRAY['Predators', 'Parasites', 'Herbivores', 'Producers', 'Pollinators'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'CELL_MATES', 'ORIGINAL', NULL,
+        'What do we call all the connected food chains in an ecosystem?', NULL,
+        'A food web', ARRAY['A food pyramid', 'A life cycle', 'A habitat', 'A biome', 'A carbon cycle'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'CELL_MATES', 'ORIGINAL', NULL,
+        'What are the bones of your spine called?', NULL,
+        'Vertebrae', ARRAY['Ribs', 'Phalanges', 'Metacarpals', 'Carpals', 'Tarsals'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'CELL_MATES', 'ORIGINAL', NULL,
+        'Which organs let fish take oxygen from water?', NULL,
+        'Gills', ARRAY['Fins', 'Scales', 'Lungs', 'Swim bladders', 'Spiracles'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'CELL_MATES', 'ORIGINAL', NULL,
+        'Which rainforest mammal is famous for being the slowest, spending most of its life hanging in trees?', NULL,
+        'The sloth', ARRAY['The koala', 'The tree kangaroo', 'The lemur', 'The tapir', 'The armadillo'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'CELL_MATES', 'ORIGINAL', NULL,
+        'Where in the body are red blood cells made?', NULL,
+        'In the bone marrow', ARRAY['In the heart', 'In the liver', 'In the spleen', 'In the kidneys', 'In the lungs'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'CELL_MATES', 'ORIGINAL', NULL,
+        'What are the cells that carry signals through your nervous system called?', NULL,
+        'Neurons', ARRAY['Platelets', 'Antibodies', 'Hormones', 'Enzymes', 'Red blood cells'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'CELL_MATES', 'ORIGINAL', NULL,
+        'Which scientist studied wild chimpanzees for decades at Gombe, in Tanzania?', NULL,
+        'Jane Goodall', ARRAY['Dian Fossey', 'Birute Galdikas', 'Rachel Carson', 'Mary Leakey', 'David Attenborough'], 200);
+
+-- 300 points
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'CELL_MATES', 'ORIGINAL', NULL,
+        'Which of these is NOT alive by most scientists'' definition?', NULL,
+        'A virus', ARRAY['A bacterium', 'A yeast cell', 'An amoeba', 'A mushroom', 'An algae cell'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'CELL_MATES', 'ORIGINAL', NULL,
+        'How many pairs of chromosomes do most human cells have?', NULL,
+        '23', ARRAY['12', '20', '24', '32', '46'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'CELL_MATES', 'ORIGINAL', NULL,
+        'Which pigment gives skin, hair and eyes their color?', NULL,
+        'Melanin', ARRAY['Chlorophyll', 'Keratin', 'Hemoglobin', 'Carotene', 'Collagen'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'CELL_MATES', 'ORIGINAL', NULL,
+        'Which clear part of the eye changes shape to focus light?', NULL,
+        'The lens', ARRAY['The iris', 'The pupil', 'The cornea', 'The retina', 'The optic nerve'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'CELL_MATES', 'ORIGINAL', NULL,
+        'Which animal''s fingerprints are so like a human''s that they could confuse a crime lab?', NULL,
+        'The koala', ARRAY['The chimpanzee', 'The raccoon', 'The gorilla', 'The orangutan', 'The sloth'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'CELL_MATES', 'ORIGINAL', NULL,
+        'Which tiny parts of a cell build proteins?', NULL,
+        'Ribosomes', ARRAY['Lysosomes', 'Vacuoles', 'Chloroplasts', 'Centrioles', 'Mitochondria'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'CELL_MATES', 'ORIGINAL', NULL,
+        'Besides the platypus, which spiny mammal lays eggs?', NULL,
+        'The echidna', ARRAY['The hedgehog', 'The porcupine', 'The armadillo', 'The pangolin', 'The tenrec'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'CELL_MATES', 'ORIGINAL', NULL,
+        'What is a baby swan called?', NULL,
+        'A cygnet', ARRAY['A gosling', 'A duckling', 'A fledgling', 'A cria', 'A squab'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'CELL_MATES', 'ORIGINAL', NULL,
+        'Spiders make silk with organs called what?', NULL,
+        'Spinnerets', ARRAY['Pedipalps', 'Chelicerae', 'Mandibles', 'Antennae', 'Tarsi'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'CELL_MATES', 'ORIGINAL', NULL,
+        'What shape is a DNA molecule?', NULL,
+        'A double helix', ARRAY['A single spiral', 'A triangle', 'A ring', 'A double cone', 'A ladder of circles'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'CELL_MATES', 'ORIGINAL', NULL,
+        'Which two scientists described the shape of DNA in 1953?', NULL,
+        'Watson and Crick', ARRAY['Darwin and Wallace', 'Pasteur and Koch', 'Curie and Curie', 'Hooke and Boyle', 'Mendel and Morgan'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'CELL_MATES', 'ORIGINAL', NULL,
+        'What is a change in a gene''s DNA called?', NULL,
+        'A mutation', ARRAY['An adaptation', 'A mitosis', 'An allele', 'A clone', 'A trait'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'CELL_MATES', 'ORIGINAL', NULL,
+        'Which body system includes your spleen, lymph nodes and tonsils?', NULL,
+        'The lymphatic system', ARRAY['The digestive system', 'The endocrine system', 'The urinary system', 'The skeletal system', 'The nervous system'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'CELL_MATES', 'ORIGINAL', NULL,
+        'Which is the largest part of the human brain, handling thinking and memory?', NULL,
+        'The cerebrum', ARRAY['The cerebellum', 'The brain stem', 'The hypothalamus', 'The medulla', 'The pituitary'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'CELL_MATES', 'ORIGINAL', NULL,
+        'Which naturalist came up with the theory of natural selection at the same time as Darwin?', NULL,
+        'Alfred Russel Wallace', ARRAY['Thomas Huxley', 'Jean-Baptiste Lamarck', 'Gregor Mendel', 'Charles Lyell', 'Louis Agassiz'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'CELL_MATES', 'ORIGINAL', NULL,
+        'The finches of which islands helped inspire Darwin''s thinking about evolution?', NULL,
+        'The Galapagos Islands', ARRAY['The Canary Islands', 'The Falkland Islands', 'Madagascar', 'The Hawaiian Islands', 'The Azores'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'CELL_MATES', 'ORIGINAL', NULL,
+        'What is it called when two species live together and both benefit, like bees and flowers?', NULL,
+        'Mutualism', ARRAY['Parasitism', 'Predation', 'Commensalism', 'Competition', 'Camouflage'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'CELL_MATES', 'ORIGINAL', NULL,
+        'Which part of a cell is its "garbage disposal," breaking down waste?', NULL,
+        'The lysosome', ARRAY['The ribosome', 'The nucleus', 'The Golgi apparatus', 'The vacuole', 'The centriole'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'CELL_MATES', 'ORIGINAL', NULL,
+        'Which protein in red blood cells carries oxygen?', NULL,
+        'Hemoglobin', ARRAY['Insulin', 'Keratin', 'Collagen', 'Melanin', 'Adrenaline'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'CELL_MATES', 'ORIGINAL', NULL,
+        'What is the medical name for your voice box?', NULL,
+        'The larynx', ARRAY['The pharynx', 'The trachea', 'The epiglottis', 'The esophagus', 'The thorax'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'CELL_MATES', 'ORIGINAL', NULL,
+        'Which Southeast Asian plant has the largest single flower in the world, and smells like rotting meat?', NULL,
+        'Rafflesia', ARRAY['Titan arum', 'Lotus', 'Giant water lily', 'Bird of paradise', 'Sunflower'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'CELL_MATES', 'ORIGINAL', NULL,
+        'Which gorilla became famous for learning to use more than 1,000 signs in sign language?', NULL,
+        'Koko', ARRAY['Harambe', 'Bubbles', 'Washoe', 'Kanzi', 'Titus'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'CELL_MATES', 'ORIGINAL', NULL,
+        'Which mammal has the longest pregnancy, nearly two years?', NULL,
+        'The elephant', ARRAY['The blue whale', 'The giraffe', 'The rhinoceros', 'The camel', 'The gorilla'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'CELL_MATES', 'ORIGINAL', NULL,
+        'What do we call a plant that lives for more than two years?', NULL,
+        'A perennial', ARRAY['An annual', 'A biennial', 'An evergreen', 'A deciduous', 'A succulent'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'CELL_MATES', 'ORIGINAL', NULL,
+        'Which tiny pieces in your blood help it clot when you get a cut?', NULL,
+        'Platelets', ARRAY['White blood cells', 'Red blood cells', 'Plasma', 'Antibodies', 'Hormones'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'CELL_MATES', 'ORIGINAL', NULL,
+        'What is a group of flamingos called?', NULL,
+        'A flamboyance', ARRAY['A parade', 'A blush', 'A gala', 'A dazzle', 'A pageant'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'CELL_MATES', 'ORIGINAL', NULL,
+        'Which marine biologist''s 1962 book "Silent Spring" warned about the pesticide DDT?', NULL,
+        'Rachel Carson', ARRAY['Jane Goodall', 'Sylvia Earle', 'Dian Fossey', 'Barbara McClintock', 'Rosalind Franklin'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'CELL_MATES', 'ORIGINAL', NULL,
+        'How many compartments does a cow''s stomach have?', NULL,
+        'Four', ARRAY['One', 'Two', 'Three', 'Six', 'Seven'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'CELL_MATES', 'ORIGINAL', NULL,
+        'What is the light-sensitive layer at the back of the eye called?', NULL,
+        'The retina', ARRAY['The iris', 'The cornea', 'The lens', 'The pupil', 'The sclera'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'CELL_MATES', 'ORIGINAL', NULL,
+        'What is the longest nerve in the human body, running down each leg?', NULL,
+        'The sciatic nerve', ARRAY['The vagus nerve', 'The optic nerve', 'The femoral nerve', 'The ulnar nerve', 'The spinal cord'], 300);
+
+-- 400 points
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'CELL_MATES', 'ORIGINAL', NULL,
+        'What is the name of the heart''s natural pacemaker, which starts each heartbeat?', NULL,
+        'The sinoatrial node', ARRAY['The aortic valve', 'The left ventricle', 'The bundle of His', 'The pericardium', 'The septum'], 400);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'CELL_MATES', 'ORIGINAL', NULL,
+        'Which tube connects your middle ear to your throat, and pops when you change altitude?', NULL,
+        'The Eustachian tube', ARRAY['The cochlea', 'The fallopian tube', 'The ear canal', 'The semicircular canal', 'The auditory nerve'], 400);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'CELL_MATES', 'ORIGINAL', NULL,
+        'The Portuguese man o'' war isn''t a true jellyfish. It''s a colony of tiny animals called what?', NULL,
+        'A siphonophore', ARRAY['A coral polyp', 'A sea anemone', 'A comb jelly', 'A hydra', 'A sponge'], 400);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'CELL_MATES', 'ORIGINAL', NULL,
+        'Which animal has the densest fur of any, up to a million hairs per square inch?', NULL,
+        'The sea otter', ARRAY['The chinchilla', 'The polar bear', 'The beaver', 'The mink', 'The arctic fox'], 400);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'CELL_MATES', 'ORIGINAL', NULL,
+        'What are the building blocks of proteins called?', NULL,
+        'Amino acids', ARRAY['Nucleotides', 'Fatty acids', 'Sugars', 'Enzymes', 'Lipids'], 400);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'CELL_MATES', 'ORIGINAL', NULL,
+        'Whose swan-neck flask experiments disproved the idea that life springs up from nothing?', NULL,
+        'Louis Pasteur', ARRAY['Robert Koch', 'Joseph Lister', 'Edward Jenner', 'Francesco Redi', 'Lazzaro Spallanzani'], 400);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'CELL_MATES', 'ORIGINAL', NULL,
+        'What is the name for the planned, natural death of cells?', NULL,
+        'Apoptosis', ARRAY['Necrosis', 'Mitosis', 'Meiosis', 'Autolysis', 'Lysis'], 400);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'CELL_MATES', 'ORIGINAL', NULL,
+        'Which of these is NOT one of the four bases in DNA?', NULL,
+        'Uracil', ARRAY['Adenine', 'Guanine', 'Cytosine', 'Thymine'], 400);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'CELL_MATES', 'ORIGINAL', NULL,
+        'Which part of the cell packages proteins to ship them out?', NULL,
+        'The Golgi apparatus', ARRAY['The ribosome', 'The lysosome', 'The nucleolus', 'The centriole', 'The vacuole'], 400);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'CELL_MATES', 'ORIGINAL', NULL,
+        'Which Dutch cloth merchant first saw living bacteria through his own microscopes, in the 1670s?', NULL,
+        'Antonie van Leeuwenhoek', ARRAY['Robert Hooke', 'Christiaan Huygens', 'Jan Swammerdam', 'Zacharias Janssen', 'Hans Lippershey'], 400);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'CELL_MATES', 'ORIGINAL', NULL,
+        'What is the medical name for your collarbone?', NULL,
+        'The clavicle', ARRAY['The scapula', 'The sternum', 'The patella', 'The ulna', 'The radius'], 400);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'CELL_MATES', 'ORIGINAL', NULL,
+        'What are the tiny air sacs in your lungs, where oxygen passes into the blood, called?', NULL,
+        'Alveoli', ARRAY['Bronchi', 'Cilia', 'Villi', 'Capillaries', 'Nephrons'], 400);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'CELL_MATES', 'ORIGINAL', NULL,
+        'Which Mexican salamander can regrow its legs and even parts of its heart and brain?', NULL,
+        'The axolotl', ARRAY['The hellbender', 'The newt', 'The mudpuppy', 'The olm', 'The fire salamander'], 400);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'CELL_MATES', 'ORIGINAL', NULL,
+        'Which clear part of the eye has no blood vessels and takes its oxygen straight from the air?', NULL,
+        'The cornea', ARRAY['The iris', 'The retina', 'The pupil', 'The sclera', 'The optic nerve'], 400);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'CELL_MATES', 'ORIGINAL', NULL,
+        'Which hormone, made when it gets dark, helps control when you feel sleepy?', NULL,
+        'Melatonin', ARRAY['Serotonin', 'Adrenaline', 'Insulin', 'Cortisol', 'Dopamine'], 400);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'CELL_MATES', 'ORIGINAL', NULL,
+        'Which famous line of human cells, taken without consent in 1951, has been used in countless medical studies?', NULL,
+        'HeLa cells', ARRAY['Stem cells', 'CAR-T cells', 'Vero cells', 'MCF-7 cells', 'K-562 cells'], 400);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'CELL_MATES', 'ORIGINAL', NULL,
+        'Which vitamin does your blood need in order to clot?', NULL,
+        'Vitamin K', ARRAY['Vitamin A', 'Vitamin C', 'Vitamin D', 'Vitamin E', 'Vitamin B12'], 400);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'CELL_MATES', 'ORIGINAL', NULL,
+        'Which gas-filled organ lets a fish float at different depths without swimming?', NULL,
+        'The swim bladder', ARRAY['The gill sac', 'The lateral line', 'The air fin', 'The float gland', 'The spiracle'], 400);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'CELL_MATES', 'ORIGINAL', NULL,
+        'Single-celled microbes once lumped with bacteria now form their own branch of life. What are they called?', NULL,
+        'Archaea', ARRAY['Protists', 'Fungi', 'Viruses', 'Prions', 'Algae'], 400);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'CELL_MATES', 'ORIGINAL', NULL,
+        'What are the tiny hairs that sweep dust and mucus out of your airways?', NULL,
+        'Cilia', ARRAY['Villi', 'Flagella', 'Alveoli', 'Microvilli', 'Follicles'], 400);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'CELL_MATES', 'ORIGINAL', NULL,
+        'Which Austrian scientist showed that baby geese "imprint" on the first moving thing they see?', NULL,
+        'Konrad Lorenz', ARRAY['Ivan Pavlov', 'B.F. Skinner', 'Niko Tinbergen', 'Karl von Frisch', 'Sigmund Freud'], 400);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'CELL_MATES', 'ORIGINAL', NULL,
+        'The famous 3.2-million-year-old skeleton known as "Lucy" belongs to which species?', NULL,
+        'Australopithecus afarensis', ARRAY['Homo erectus', 'Homo habilis', 'Homo neanderthalensis', 'Paranthropus boisei', 'Ardipithecus ramidus'], 400);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'CELL_MATES', 'ORIGINAL', NULL,
+        'About how long is the adult human small intestine?', NULL,
+        'About 20 feet', ARRAY['About 3 feet', 'About 6 feet', 'About 50 feet', 'About 100 feet', 'About 10 inches'], 400);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'CELL_MATES', 'ORIGINAL', NULL,
+        'Which is the largest cell in the human body?', NULL,
+        'The egg cell', ARRAY['The nerve cell', 'The red blood cell', 'The muscle cell', 'The skin cell', 'The fat cell'], 400);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'CELL_MATES', 'ORIGINAL', NULL,
+        'Which blood vessel carries blood from the heart to the lungs?', NULL,
+        'The pulmonary artery', ARRAY['The aorta', 'The pulmonary vein', 'The vena cava', 'The carotid artery', 'The coronary artery'], 400);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'CELL_MATES', 'ORIGINAL', NULL,
+        'Under its orange fur, what does a tiger''s skin look like?', NULL,
+        'Striped', ARRAY['Plain orange', 'Spotted', 'Solid black', 'Pink', 'Pale white'], 400);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'CELL_MATES', 'ORIGINAL', NULL,
+        'Which seabird has the largest wingspan of any living bird, up to about 11 feet?', NULL,
+        'The wandering albatross', ARRAY['The bald eagle', 'The Andean condor', 'The pelican', 'The frigatebird', 'The golden eagle'], 400);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'CELL_MATES', 'ORIGINAL', NULL,
+        'What is the medical name for your shinbone?', NULL,
+        'The tibia', ARRAY['The fibula', 'The femur', 'The radius', 'The ulna', 'The humerus'], 400);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'CELL_MATES', 'ORIGINAL', NULL,
+        'Which plant hormone makes a stem bend toward the light?', NULL,
+        'Auxin', ARRAY['Ethylene', 'Gibberellin', 'Chlorophyll', 'Abscisic acid', 'Cytokinin'], 400);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'CELL_MATES', 'ORIGINAL', NULL,
+        'What tough protein are your hair and fingernails made of?', NULL,
+        'Keratin', ARRAY['Collagen', 'Melanin', 'Calcium', 'Elastin', 'Chitin'], 400);
+
+COMMIT;
+
+-- Check: should return 120.
+SELECT COUNT(*) FROM questions WHERE game_mode = 'TRIVI_YEAH_II' AND category = 'CELL_MATES';
 
 -- ============================================================================
 -- content/sql/college_athletics.sql -- GENERATED, don't edit by hand.
@@ -11610,8 +12118,8 @@ SELECT COUNT(*) FROM questions WHERE game_mode = 'TRIVI_YEAH_II' AND category = 
 -- Thinking Pants category WORLD_HISTORY. To change a question, change the
 -- spreadsheet and rebuild.
 --
--- Replaces the WHOLE category with the spreadsheet's 80 live questions
--- (100: 20, 200: 20, 300: 20, 400: 20), inside a transaction. Safe to re-run.
+-- Replaces the WHOLE category with the spreadsheet's 120 live questions
+-- (100: 30, 200: 30, 300: 30, 400: 30), inside a transaction. Safe to re-run.
 -- ============================================================================
 
 BEGIN;
@@ -11620,10 +12128,6 @@ DELETE FROM questions WHERE game_mode = 'TRIVI_YEAH_II' AND category = 'WORLD_HI
 
 
 -- 100 points
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORLD_HISTORY', 'ORIGINAL', NULL,
-        'Who was the first President of the United States?', NULL,
-        'George Washington', ARRAY['Thomas Jefferson', 'John Adams', 'Abraham Lincoln', 'Benjamin Franklin', 'James Madison', 'Alexander Hamilton'], 100);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORLD_HISTORY', 'ORIGINAL', NULL,
         'In what year did World War I begin?', NULL,
@@ -11649,22 +12153,6 @@ VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YE
         'In which city would you find the ancient Colosseum?', NULL,
         'Rome', ARRAY['Athens', 'Paris', 'Cairo', 'Istanbul', 'Pompeii', 'Naples'], 100);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORLD_HISTORY', 'ORIGINAL', NULL,
-        'What document, adopted on July 4, 1776, announced the American colonies'' break from Britain?', NULL,
-        'The Declaration of Independence', ARRAY['The Constitution', 'The Bill of Rights', 'The Magna Carta', 'The Articles of Confederation', 'The Emancipation Proclamation', 'The Mayflower Compact'], 100);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORLD_HISTORY', 'ORIGINAL', NULL,
-        'Which war was fought on American soil from 1861 to 1865?', NULL,
-        'The American Civil War', ARRAY['The Revolutionary War', 'The War of 1812', 'The Mexican-American War', 'The Spanish-American War', 'The French and Indian War', 'World War I'], 100);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORLD_HISTORY', 'WWII_HISTORY_FOLD_1', NULL,
-        'Who served as British Prime Minister for most of World War II?', NULL,
-        'Winston Churchill', ARRAY['Neville Chamberlain', 'Clement Attlee', 'Anthony Eden', 'Stanley Baldwin', 'Lord Halifax', 'Harold Macmillan'], 100);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORLD_HISTORY', 'WWII_HISTORY_FOLD_1', NULL,
-        'Which teenage diarist hid with her family in a secret annex in Amsterdam during the Nazi occupation?', NULL,
-        'Anne Frank', ARRAY['Etty Hillesum', 'Corrie ten Boom', 'Sophie Scholl', 'Hannah Senesh', 'Miep Gies', 'Irena Sendler'], 100);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORLD_HISTORY', 'WORLD_HISTORY_BATCH_1', NULL,
         'Which French military leader crowned himself Emperor in 1804?', NULL,
         'Napoleon Bonaparte', ARRAY['Louis XIV', 'Louis XVI', 'Charlemagne', 'Charles de Gaulle', 'Cardinal Richelieu', 'Louis-Philippe I'], 100);
@@ -11682,10 +12170,6 @@ VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YE
         'Pompeii', ARRAY['Naples', 'Ostia', 'Carthage', 'Syracuse', 'Capua', 'Ravenna'], 100);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORLD_HISTORY', 'WORLD_HISTORY_BATCH_1', NULL,
-        'Which civil rights leader gave the "I Have a Dream" speech in 1963?', NULL,
-        'Martin Luther King Jr.', ARRAY['Malcolm X', 'John Lewis', 'Jesse Jackson', 'Frederick Douglass', 'Medgar Evers', 'Ralph Abernathy'], 100);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORLD_HISTORY', 'WORLD_HISTORY_BATCH_1', NULL,
         'The Vikings set out from which part of Europe?', NULL,
         'Scandinavia', ARRAY['The British Isles', 'The Iberian Peninsula', 'The Balkans', 'The Low Countries', 'Central Europe', 'The Baltic states'], 100);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
@@ -11700,6 +12184,70 @@ INSERT INTO questions (question_number, game_mode, category, subcategory, factio
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORLD_HISTORY', 'ORIGINAL', NULL,
         'Which young pharaoh''s nearly intact tomb did Howard Carter discover in the Valley of the Kings in 1922?', NULL,
         'Tutankhamun', ARRAY['Ramesses II', 'Akhenaten', 'Khufu', 'Thutmose III', 'Seti I', 'Amenhotep III'], 100);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORLD_HISTORY', 'ORIGINAL', NULL,
+        'Which ancient Greek city is called the birthplace of democracy?', NULL,
+        'Athens', ARRAY['Sparta', 'Corinth', 'Thebes', 'Troy', 'Delphi'], 100);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORLD_HISTORY', 'ORIGINAL', NULL,
+        'Which code of honor did Japan''s samurai warriors follow?', NULL,
+        'Bushido', ARRAY['Kamikaze', 'Shogun', 'Zen', 'Ninjutsu', 'Seppuku'], 100);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORLD_HISTORY', 'ORIGINAL', NULL,
+        'Which gladiator led a huge slave revolt against Rome in 73 BC?', NULL,
+        'Spartacus', ARRAY['Maximus', 'Commodus', 'Brutus', 'Hannibal', 'Vercingetorix'], 100);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORLD_HISTORY', 'ORIGINAL', NULL,
+        'Which Greek philosopher was Plato''s teacher?', NULL,
+        'Socrates', ARRAY['Aristotle', 'Pythagoras', 'Homer', 'Archimedes', 'Diogenes'], 100);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORLD_HISTORY', 'ORIGINAL', NULL,
+        'Which language did the ancient Romans speak?', NULL,
+        'Latin', ARRAY['Greek', 'Italian', 'Aramaic', 'Etruscan', 'Hebrew'], 100);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORLD_HISTORY', 'ORIGINAL', NULL,
+        'Which river was the lifeline of ancient Egypt?', NULL,
+        'The Nile', ARRAY['The Tigris', 'The Euphrates', 'The Jordan', 'The Indus', 'The Congo'], 100);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORLD_HISTORY', 'ORIGINAL', NULL,
+        'Which country gave the Statue of Liberty to the United States?', NULL,
+        'France', ARRAY['Britain', 'Spain', 'Italy', 'The Netherlands', 'Germany'], 100);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORLD_HISTORY', 'ORIGINAL', NULL,
+        'Which ancient games, first held in 776 BC, honored the god Zeus?', NULL,
+        'The Olympic Games', ARRAY['The Pythian Games', 'The Gladiator Games', 'The Isthmian Games', 'The Roman Games', 'The Spartan Games'], 100);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORLD_HISTORY', 'ORIGINAL', NULL,
+        'Which country''s Vikings were the first Europeans to settle Iceland?', NULL,
+        'Norway', ARRAY['Denmark', 'Sweden', 'Scotland', 'Ireland', 'Finland'], 100);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORLD_HISTORY', 'ORIGINAL', NULL,
+        'Which British queen reigned for 70 years, until her death in 2022?', NULL,
+        'Elizabeth II', ARRAY['Victoria', 'Mary II', 'Anne', 'Elizabeth I', 'Alexandra'], 100);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORLD_HISTORY', 'ORIGINAL', NULL,
+        'What name is given to the medieval system of lords, knights and serfs bound by land and loyalty?', NULL,
+        'Feudalism', ARRAY['Communism', 'Mercantilism', 'Capitalism', 'Monarchy', 'Tribalism'], 100);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORLD_HISTORY', 'ORIGINAL', NULL,
+        'Which civilization built the great pyramids at Chichen Itza in Mexico?', NULL,
+        'The Maya', ARRAY['The Aztecs', 'The Inca', 'The Olmecs', 'The Toltecs', 'The Egyptians'], 100);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORLD_HISTORY', 'ORIGINAL', NULL,
+        'Which series of medieval religious wars, starting in 1096, aimed to win Jerusalem?', NULL,
+        'The Crusades', ARRAY['The Reconquista', 'The Hundred Years'' War', 'The Wars of the Roses', 'The Inquisition', 'The Thirty Years'' War'], 100);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORLD_HISTORY', 'ORIGINAL', NULL,
+        'In which country did the Industrial Revolution begin, in the 1700s?', NULL,
+        'Great Britain', ARRAY['Germany', 'France', 'The United States', 'Belgium', 'Japan'], 100);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORLD_HISTORY', 'ORIGINAL', NULL,
+        'What were the stone channels that carried water across the Roman Empire to its cities called?', NULL,
+        'Aqueducts', ARRAY['Viaducts', 'Canals', 'Cisterns', 'Sewers', 'Levees'], 100);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORLD_HISTORY', 'ORIGINAL', NULL,
+        'Which ancient city fell to a trick involving a giant wooden horse?', NULL,
+        'Troy', ARRAY['Sparta', 'Athens', 'Carthage', 'Babylon', 'Jericho'], 100);
 
 -- 200 points
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
@@ -11710,10 +12258,6 @@ INSERT INTO questions (question_number, game_mode, category, subcategory, factio
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORLD_HISTORY', 'ORIGINAL', NULL,
         'Julius Caesar was assassinated on the Ides of March. What date is that?', NULL,
         'March 15', ARRAY['March 1', 'March 7', 'March 13', 'March 21', 'March 25', 'March 31'], 200);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORLD_HISTORY', 'ORIGINAL', NULL,
-        'Who was the leader of Nazi Germany during World War II?', NULL,
-        'Adolf Hitler', ARRAY['Benito Mussolini', 'Joseph Stalin', 'Hermann Göring', 'Heinrich Himmler', 'Joseph Goebbels', 'Erwin Rommel'], 200);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORLD_HISTORY', 'ORIGINAL', NULL,
         'Which empire built the extensive road network and city of Machu Picchu in Peru?', NULL,
@@ -11739,14 +12283,6 @@ VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YE
         'Which Indian leader is famous for leading a nonviolent independence movement against British rule?', NULL,
         'Mahatma Gandhi', ARRAY['Jawaharlal Nehru', 'Subhas Chandra Bose', 'Muhammad Ali Jinnah', 'Bhagat Singh', 'Sardar Patel', 'Rabindranath Tagore'], 200);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORLD_HISTORY', 'WWII_HISTORY_FOLD_1', NULL,
-        'What was the code name for the Allied invasion of Normandy in June 1944?', NULL,
-        'Operation Overlord', ARRAY['Operation Torch', 'Operation Market Garden', 'Operation Husky', 'Operation Barbarossa', 'Operation Sea Lion', 'Operation Cobra'], 200);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORLD_HISTORY', 'WWII_HISTORY_FOLD_1', NULL,
-        'Which British mathematician, based at Bletchley Park, played a leading role in breaking the German Enigma code?', NULL,
-        'Alan Turing', ARRAY['Gordon Welchman', 'Dilly Knox', 'Bill Tutte', 'Max Newman', 'Charles Babbage', 'John von Neumann'], 200);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORLD_HISTORY', 'WORLD_HISTORY_BATCH_1', NULL,
         'Which Greek city-state''s King Leonidas led 300 soldiers at the Battle of Thermopylae?', NULL,
         'Sparta', ARRAY['Athens', 'Corinth', 'Thebes', 'Argos', 'Megara', 'Macedon'], 200);
@@ -11764,10 +12300,6 @@ VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YE
         'The Silk Road', ARRAY['The Spice Route', 'The Amber Road', 'The Incense Route', 'The Royal Road', 'The Tea Horse Road', 'The Grand Trunk Road'], 200);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORLD_HISTORY', 'WORLD_HISTORY_BATCH_1', NULL,
-        'Which 13-day standoff in 1962 brought the United States and the Soviet Union to the brink of nuclear war?', NULL,
-        'The Cuban Missile Crisis', ARRAY['The Bay of Pigs Invasion', 'The Berlin Blockade', 'The Suez Crisis', 'The U-2 Incident', 'The Korean War', 'The Prague Spring'], 200);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORLD_HISTORY', 'WORLD_HISTORY_BATCH_1', NULL,
         'Which king of Macedon built an empire stretching from Greece to India before dying at 32?', NULL,
         'Alexander the Great', ARRAY['Philip II of Macedon', 'Darius III', 'Xerxes I', 'Cyrus the Great', 'Pyrrhus of Epirus', 'Ptolemy I'], 200);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
@@ -11782,6 +12314,62 @@ INSERT INTO questions (question_number, game_mode, category, subcategory, factio
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORLD_HISTORY', 'WORLD_HISTORY_BATCH_1', NULL,
         'Which South American country is named after the independence leader Simón Bolívar?', NULL,
         'Bolivia', ARRAY['Venezuela', 'Colombia', 'Ecuador', 'Peru', 'Paraguay', 'Uruguay'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORLD_HISTORY', 'ORIGINAL', NULL,
+        'Which Venetian merchant''s book about his travels in China in the late 1200s amazed Europe?', NULL,
+        'Marco Polo', ARRAY['Ibn Battuta', 'Niccolo Machiavelli', 'Giovanni Caboto', 'Christopher Columbus', 'Zheng He'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORLD_HISTORY', 'ORIGINAL', NULL,
+        'Which Italian explorer''s first name was given to the Americas?', NULL,
+        'Amerigo Vespucci', ARRAY['Giovanni da Verrazzano', 'John Cabot', 'Marco Polo', 'Americo Columbo', 'Amadeo Ferrara'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORLD_HISTORY', 'ORIGINAL', NULL,
+        'On which ship did Charles Darwin sail around the world from 1831 to 1836?', NULL,
+        'HMS Beagle', ARRAY['HMS Endeavour', 'HMS Bounty', 'HMS Victory', 'HMS Discovery', 'HMS Challenger'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORLD_HISTORY', 'ORIGINAL', NULL,
+        'Which Scottish missionary and explorer was famously found by Henry Morton Stanley in 1871?', NULL,
+        'David Livingstone', ARRAY['Mungo Park', 'Richard Burton', 'John Speke', 'Cecil Rhodes', 'Samuel Baker'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORLD_HISTORY', 'ORIGINAL', NULL,
+        'Which Chinese philosopher''s sayings were collected in the Analects?', NULL,
+        'Confucius', ARRAY['Laozi', 'Sun Tzu', 'Mencius', 'Buddha', 'Zhuangzi'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORLD_HISTORY', 'ORIGINAL', NULL,
+        'Which Florentine banking family were patrons of Michelangelo and Botticelli?', NULL,
+        'The Medici', ARRAY['The Borgia', 'The Sforza', 'The Habsburgs', 'The Bourbons', 'The Este'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORLD_HISTORY', 'ORIGINAL', NULL,
+        'At which 1815 battle in present-day Belgium was Napoleon finally defeated?', NULL,
+        'Waterloo', ARRAY['Austerlitz', 'Leipzig', 'Borodino', 'Ypres', 'Marengo'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORLD_HISTORY', 'ORIGINAL', NULL,
+        'What was South Africa''s system of racial segregation, from 1948 to the early 1990s, called?', NULL,
+        'Apartheid', ARRAY['Jim Crow', 'Segregation Act', 'The Pass System', 'Bantustan', 'Colonialism'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORLD_HISTORY', 'ORIGINAL', NULL,
+        'In which Beijing square were pro-democracy protests crushed in 1989?', NULL,
+        'Tiananmen Square', ARRAY['Red Square', 'The Forbidden City', 'Wenceslas Square', 'Mao Square', 'People''s Park'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORLD_HISTORY', 'ORIGINAL', NULL,
+        'Which country was called the "Jewel in the Crown" of the British Empire?', NULL,
+        'India', ARRAY['Australia', 'Canada', 'Egypt', 'South Africa', 'Jamaica'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORLD_HISTORY', 'ORIGINAL', NULL,
+        'Which Norse explorer reached North America around the year 1000?', NULL,
+        'Leif Erikson', ARRAY['Erik the Red', 'Ragnar Lothbrok', 'Harald Hardrada', 'Rollo', 'Olaf Tryggvason'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORLD_HISTORY', 'ORIGINAL', NULL,
+        'What name is given to the thousands of life-size clay soldiers found near Xi''an, China, in 1974?', NULL,
+        'The Terracotta Army', ARRAY['The Clay Legion', 'The Jade Guard', 'The Stone Warriors', 'The Bronze Army', 'The Silent Battalion'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORLD_HISTORY', 'ORIGINAL', NULL,
+        'Which Russian tsar founded St. Petersburg in 1703?', NULL,
+        'Peter the Great', ARRAY['Ivan the Terrible', 'Catherine the Great', 'Nicholas II', 'Alexander I', 'Ivan III'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORLD_HISTORY', 'ORIGINAL', NULL,
+        'What name is given to the decades-long rivalry between the US and the Soviet Union after 1945?', NULL,
+        'The Cold War', ARRAY['The Iron War', 'The Long Peace', 'The Silent War', 'The Arms War', 'The Red Scare'], 200);
 
 -- 300 points
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
@@ -11796,10 +12384,6 @@ INSERT INTO questions (question_number, game_mode, category, subcategory, factio
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORLD_HISTORY', 'ORIGINAL', NULL,
         'What was the name of the ship that carried the Pilgrims to America in 1620?', NULL,
         'The Mayflower', ARRAY['The Santa Maria', 'The Nina', 'The Pinta', 'The Endeavour', 'The Beagle', 'The Speedwell'], 300);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORLD_HISTORY', 'ORIGINAL', NULL,
-        'Whose assassination in Sarajevo triggered the start of World War I?', NULL,
-        'Archduke Franz Ferdinand', ARRAY['Kaiser Wilhelm II', 'Tsar Nicholas II', 'King George V', 'Otto von Bismarck', 'Emperor Franz Joseph', 'Woodrow Wilson'], 300);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORLD_HISTORY', 'ORIGINAL', NULL,
         'Which naval battle in 1805 saw British Admiral Horatio Nelson defeat a combined French and Spanish fleet?', NULL,
@@ -11824,14 +12408,6 @@ INSERT INTO questions (question_number, game_mode, category, subcategory, factio
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORLD_HISTORY', 'ORIGINAL', NULL,
         'Which Carthaginian general famously crossed the Alps with an army that included war elephants?', NULL,
         'Hannibal', ARRAY['Hamilcar Barca', 'Hasdrubal', 'Scipio Africanus', 'Pyrrhus of Epirus', 'Julius Caesar', 'Alexander the Great'], 300);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORLD_HISTORY', 'WWII_HISTORY_FOLD_1', NULL,
-        'Which battle is widely considered the turning point of the war on the Eastern Front?', NULL,
-        'The Battle of Stalingrad', ARRAY['The Battle of Kursk', 'The Battle of Moscow', 'The Siege of Leningrad', 'The Battle of Kiev', 'The Battle of Berlin', 'The Battle of Smolensk'], 300);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORLD_HISTORY', 'WWII_HISTORY_FOLD_1', NULL,
-        'Which June 1942 naval battle is considered the turning point of the war in the Pacific?', NULL,
-        'The Battle of Midway', ARRAY['The Battle of the Coral Sea', 'The Battle of Leyte Gulf', 'The Battle of Guadalcanal', 'The Battle of the Philippine Sea', 'The Battle of Okinawa', 'The Battle of Iwo Jima'], 300);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORLD_HISTORY', 'WORLD_HISTORY_BATCH_1', NULL,
         'Which African nation kept its independence by defeating an Italian invasion at the Battle of Adwa in 1896?', NULL,
@@ -11864,6 +12440,58 @@ INSERT INTO questions (question_number, game_mode, category, subcategory, factio
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORLD_HISTORY', 'WORLD_HISTORY_BATCH_1', NULL,
         'Which Mughal emperor built the Taj Mahal as a tomb for his wife?', NULL,
         'Shah Jahan', ARRAY['Akbar', 'Aurangzeb', 'Babur', 'Humayun', 'Jahangir', 'Ashoka'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORLD_HISTORY', 'ORIGINAL', NULL,
+        'Which ancient people of Mesopotamia invented cuneiform, one of the first writing systems?', NULL,
+        'The Sumerians', ARRAY['The Babylonians', 'The Assyrians', 'The Phoenicians', 'The Hittites', 'The Egyptians'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORLD_HISTORY', 'ORIGINAL', NULL,
+        'Which Roman emperor made Christianity legal in 313 and founded a city on the Bosporus?', NULL,
+        'Constantine', ARRAY['Nero', 'Augustus', 'Trajan', 'Diocletian', 'Marcus Aurelius'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORLD_HISTORY', 'ORIGINAL', NULL,
+        'Which country''s 1910 revolution overthrew the dictator Porfirio Diaz?', NULL,
+        'Mexico', ARRAY['Cuba', 'Spain', 'Argentina', 'Chile', 'Colombia'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORLD_HISTORY', 'ORIGINAL', NULL,
+        'Which Chinese admiral led giant treasure fleets across the Indian Ocean in the early 1400s?', NULL,
+        'Zheng He', ARRAY['Kublai Khan', 'Sun Yat-sen', 'Marco Polo', 'Chiang Kai-shek', 'Xuanzang'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORLD_HISTORY', 'ORIGINAL', NULL,
+        'Which 1857 uprising against the British East India Company began among Indian soldiers?', NULL,
+        'The Indian Rebellion', ARRAY['The Boxer Rebellion', 'The Salt March', 'The Taiping Rebellion', 'The Boer War', 'The Opium War'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORLD_HISTORY', 'ORIGINAL', NULL,
+        'Which former enslaved man led the Haitian Revolution, the only slave uprising to found a nation?', NULL,
+        'Toussaint Louverture', ARRAY['Simon Bolivar', 'Jean-Jacques Dessalines', 'Nat Turner', 'Frederick Douglass', 'Jose de San Martin'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORLD_HISTORY', 'ORIGINAL', NULL,
+        'Which Italian patriot led the "Redshirts" in the fight to unite Italy?', NULL,
+        'Giuseppe Garibaldi', ARRAY['Giuseppe Mazzini', 'Camillo Cavour', 'Benito Mussolini', 'Victor Emmanuel II', 'Niccolo Machiavelli'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORLD_HISTORY', 'ORIGINAL', NULL,
+        'Which Norman duke won the Battle of Hastings in 1066?', NULL,
+        'William the Conqueror', ARRAY['Richard the Lionheart', 'Harold Godwinson', 'Henry II', 'Rollo', 'Edward the Confessor'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORLD_HISTORY', 'ORIGINAL', NULL,
+        'Which Chinese dynasty, ruling from 1368, built the Forbidden City?', NULL,
+        'The Ming dynasty', ARRAY['The Han dynasty', 'The Tang dynasty', 'The Song dynasty', 'The Yuan dynasty', 'The Zhou dynasty'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORLD_HISTORY', 'ORIGINAL', NULL,
+        'Which was the largest empire in history by land area?', NULL,
+        'The British Empire', ARRAY['The Mongol Empire', 'The Roman Empire', 'The Russian Empire', 'The Spanish Empire', 'The Ottoman Empire'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORLD_HISTORY', 'ORIGINAL', NULL,
+        'Who became independent India''s first prime minister, in 1947?', NULL,
+        'Jawaharlal Nehru', ARRAY['Mahatma Gandhi', 'Indira Gandhi', 'Muhammad Ali Jinnah', 'Sardar Patel', 'Rajiv Gandhi'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORLD_HISTORY', 'ORIGINAL', NULL,
+        'Which Egyptian president seized the Suez Canal in 1956?', NULL,
+        'Gamal Abdel Nasser', ARRAY['Anwar Sadat', 'Hosni Mubarak', 'King Farouk', 'Muammar Gaddafi', 'Mohamed Naguib'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORLD_HISTORY', 'ORIGINAL', NULL,
+        'Which revolutionary took power in Cuba in 1959 and ruled for nearly 50 years?', NULL,
+        'Fidel Castro', ARRAY['Che Guevara', 'Fulgencio Batista', 'Raul Castro', 'Hugo Chavez', 'Daniel Ortega'], 300);
 
 -- 400 points
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
@@ -11946,10 +12574,50 @@ INSERT INTO questions (question_number, game_mode, category, subcategory, factio
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORLD_HISTORY', 'ORIGINAL', NULL,
         'In which 1905 naval battle did Japan''s fleet destroy Russia''s Baltic Fleet?', NULL,
         'The Battle of Tsushima', ARRAY['The Battle of Port Arthur', 'The Battle of the Yellow Sea', 'The Battle of Mukden', 'The Battle of Jutland', 'The Battle of Manila Bay', 'The Battle of Navarino'], 400);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORLD_HISTORY', 'ORIGINAL', NULL,
+        'Which 1884-85 conference split Africa among European powers?', NULL,
+        'The Berlin Conference', ARRAY['The Congress of Vienna', 'The Paris Peace Conference', 'The Hague Conference', 'The Treaty of Utrecht', 'The Brussels Conference'], 400);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORLD_HISTORY', 'ORIGINAL', NULL,
+        'An Ottoman army was turned back in 1683 at the gates of which European capital?', NULL,
+        'Vienna', ARRAY['Budapest', 'Prague', 'Warsaw', 'Belgrade', 'Venice'], 400);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORLD_HISTORY', 'ORIGINAL', NULL,
+        'Which 1850-64 Chinese uprising, led by a man who claimed to be Jesus''s younger brother, cost millions of lives?', NULL,
+        'The Taiping Rebellion', ARRAY['The Boxer Rebellion', 'The Opium War', 'The White Lotus Rebellion', 'The Xinhai Revolution', 'The Red Turban Rebellion'], 400);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORLD_HISTORY', 'ORIGINAL', NULL,
+        'Which Ethiopian emperor pleaded for help at the League of Nations after Italy invaded his country in 1935?', NULL,
+        'Haile Selassie', ARRAY['Menelik II', 'Tewodros II', 'Yohannes IV', 'Mengistu Haile Mariam', 'Zara Yaqob'], 400);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORLD_HISTORY', 'ORIGINAL', NULL,
+        'Which 1842 treaty ended the First Opium War and handed Hong Kong to Britain?', NULL,
+        'The Treaty of Nanking', ARRAY['The Treaty of Tianjin', 'The Treaty of Shimonoseki', 'The Treaty of Beijing', 'The Treaty of Whampoa', 'The Treaty of Aigun'], 400);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORLD_HISTORY', 'ORIGINAL', NULL,
+        'Which Byzantine empress, a former actress, urged her husband to stand firm during the Nika riots of 532?', NULL,
+        'Theodora', ARRAY['Irene', 'Zoe', 'Helena', 'Anna Komnene', 'Galla Placidia'], 400);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORLD_HISTORY', 'ORIGINAL', NULL,
+        'Which ancient civilization built planned cities at Harappa and Mohenjo-daro?', NULL,
+        'The Indus Valley Civilization', ARRAY['The Mauryan Empire', 'The Gupta Empire', 'The Vedic Civilization', 'The Sumerians', 'The Khmer Empire'], 400);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORLD_HISTORY', 'ORIGINAL', NULL,
+        'Which Portuguese prince sponsored the first voyages down the coast of West Africa in the 1400s?', NULL,
+        'Henry the Navigator', ARRAY['John the Navigator', 'Manuel the Fortunate', 'Pedro the Explorer', 'Afonso the Great', 'Sebastian the Desired'], 400);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORLD_HISTORY', 'ORIGINAL', NULL,
+        'Which 1381 English uprising was led by Wat Tyler?', NULL,
+        'The Peasants'' Revolt', ARRAY['The Jacquerie', 'Kett''s Rebellion', 'The Pilgrimage of Grace', 'Jack Cade''s Rebellion', 'The Barons'' War'], 400);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORLD_HISTORY', 'ORIGINAL', NULL,
+        'Which warlord unified Japan and founded the shogunate that ruled from 1603 to 1868?', NULL,
+        'Tokugawa Ieyasu', ARRAY['Oda Nobunaga', 'Toyotomi Hideyoshi', 'Minamoto no Yoritomo', 'Takeda Shingen', 'Ashikaga Takauji'], 400);
 
 COMMIT;
 
--- Check: should return 80.
+-- Check: should return 120.
 SELECT COUNT(*) FROM questions WHERE game_mode = 'TRIVI_YEAH_II' AND category = 'WORLD_HISTORY';
 
 -- ============================================================================

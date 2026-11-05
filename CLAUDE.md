@@ -488,10 +488,11 @@ and forth until we both agree the idea is good **and** worth the effort. So:
   straight; obscure ones get a second-cousin clue ("Utah's pioneers called
   their land Deseret, a word for the honeybee"). **No "currently has /
   doesn't have" facts** (Randy, on Montpelier having no McDonald's: true
-  now, maybe not later). Randy is drawing three pictures per state --
-  highlighted on the US map, the outline alone, and the map with a star
-  on the capital -- as `public/states/<state>-map.webp`,
-  `<state>-outline.webp` and `<state>-capital.webp` (lowercase, hyphens:
+  now, maybe not later). Randy is drawing the state pictures: highlighted
+  on the US map, and the state's outline with a star on its capital
+  (Randy, Nov 2026: an outline alone is too hard for some states, and
+  the star is a fair clue) -- `public/states/<state>-map.webp` and
+  `<state>-capital.webp`; no `-outline` files (lowercase, hyphens:
   `new-hampshire-map.webp`; 1200x900 WebP like the country maps). They
   join the sheet as picture rows once uploaded. Geography's New York
   capital question was retired to avoid a repeat.
@@ -502,8 +503,7 @@ and forth until we both agree the idea is good **and** worth the effort. So:
   20 questions per tier. Science & Nature and Astronomy & Space are at 30
   per tier (Nov 2026: "we're nerds"). The family's favorites are school subjects
   (biology, astronomy, the World Wars, US history) and pop culture; new
-  categories get pun names. Queued after Red, White & Who? and War &
-  Pieces: **Biology**, then separate pop-culture categories (**Video
+  categories get pun names. Next, separate pop-culture categories (**Video
   Games**, **Cartoons & Kids' TV**, **Pop Culture**: celebrities, viral
   moments, slogans, toys).
 - **Water images:** Wet Pants is 103 (Oct 2026). Rivers are coming in
@@ -535,8 +535,10 @@ and forth until we both agree the idea is good **and** worth the effort. So:
   Warn on /admin when a venue has too few categories on. Medium lift;
   worth doing before pubs start in earnest.
 - **Depth plan (Nov 2026):** Country Monkey, Flag Me Down, Red, White &
-  Who? and War & Pieces are at 120 (done); next Sports, Food & Drink and
-  World History, then Cell Mates (Biology). Niche pun
+  Who?, War & Pieces and World History are at 120, and **Cell Mates**
+  (biology, `content/cell_mates.csv`, 120) is built. World History's 13
+  questions that duplicated Red, White & Who? and War & Pieces were
+  retired there. Next: Sports and Food & Drink. Niche pun
   categories (Famous (K)nights, Fictional Locations, Just in Time,
   Lyrics) stay at 80 on purpose.
 - **Mind Field:** a name saved for a future mode built around hidden traps
