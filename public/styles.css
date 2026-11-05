@@ -653,3 +653,19 @@ body.tp-layout .status-text { white-space: nowrap; overflow: hidden; text-overfl
 /* A pub's name takes the player count's place up top; the rail shows who's playing. */
 body.tp-layout.pub-profile #hud-players { display: none; }
 body.tp-layout .status-pill { flex-shrink: 0; }
+
+/* Full screen button (TV top bar): only while not full screen, and only
+   where the browser can do it. Pressing Show goes full screen on its own;
+   this gets back in after Back/Esc. */
+.hud-fullscreen {
+    background: transparent; color: var(--rm-text-soft); border: 1px solid var(--rm-border);
+    border-radius: 8px; padding: 6px 12px; font-size: 0.85rem; font-weight: 600; cursor: pointer; white-space: nowrap;
+}
+.hud-fullscreen:hover, .hud-fullscreen:focus-visible { color: var(--rm-text); border-color: var(--rm-brand); outline: none; }
+body.is-fullscreen .hud-fullscreen, body.no-fullscreen .hud-fullscreen { display: none; }
+body.tp-layout .hud-fullscreen { font-size: calc(var(--u) * 1.2); padding: calc(var(--u) * 0.4) calc(var(--u) * 0.9); border-radius: calc(var(--u) * 0.6); }
+/* Tight top bar (a pub's name at 720p): the button is just its icon, and a
+   long venue name shortens rather than running into the room code. */
+body.tp-layout .hud-fullscreen-label { display: none; }
+body.tp-layout .venue-hud { min-width: 0; flex-shrink: 1; overflow: hidden; }
+body.tp-layout #venue-hud-name { overflow: hidden; text-overflow: ellipsis; min-width: 0; }

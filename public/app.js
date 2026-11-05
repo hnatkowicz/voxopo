@@ -25,12 +25,46 @@ document.addEventListener("DOMContentLoaded", () => {
     const btnSubmitSpectate = document.getElementById('btn-submit-spectate');
     const inputRoomCode = document.getElementById('input-room-code');
 
+    // ---------- Full screen, and keeping the TV awake (Nov 2026) ----------
+    // A Fire TV stick's browser shows its address bar and starts the
+    // screensaver after a few minutes without a remote press, mid-game.
+    // Pressing Show goes full screen and asks the device to stay awake;
+    // the top bar's Full screen button gets back in after Back/Esc.
+    function isFullscreen() { return !!(document.fullscreenElement || document.webkitFullscreenElement); }
+    function enterFullscreen() {
+        const el = document.documentElement;
+        const request = el.requestFullscreen || el.webkitRequestFullscreen;
+        if (!request || isFullscreen()) return;
+        try { const result = request.call(el); if (result && result.catch) result.catch(() => {}); } catch (err) {}
+    }
+    let screenWakeLock = null;
+    async function keepScreenAwake() {
+        if (!('wakeLock' in navigator) || screenWakeLock || document.visibilityState !== 'visible') return;
+        try {
+            screenWakeLock = await navigator.wakeLock.request('screen');
+            screenWakeLock.addEventListener('release', () => { screenWakeLock = null; });
+        } catch (err) { /* not allowed here -- nothing else to do */ }
+    }
+    // The device drops the wake lock whenever the page is hidden; take it back.
+    document.addEventListener('visibilitychange', () => {
+        if (document.body.getAttribute('data-view') === 'game') keepScreenAwake();
+    });
+    const syncFullscreenButton = () => document.body.classList.toggle('is-fullscreen', isFullscreen());
+    document.addEventListener('fullscreenchange', syncFullscreenButton);
+    document.addEventListener('webkitfullscreenchange', syncFullscreenButton);
+    const canFullscreen = !!(document.documentElement.requestFullscreen || document.documentElement.webkitRequestFullscreen);
+    document.body.classList.toggle('no-fullscreen', !canFullscreen);
+    const btnFullscreen = document.getElementById('btn-fullscreen');
+    if (btnFullscreen) btnFullscreen.addEventListener('click', () => { enterFullscreen(); keepScreenAwake(); });
+
 // 1. SUBMIT MANUALLY ENTERED LOBBY CODE -- the only way into a game from the
 // TV now. Room creation lives exclusively on /host, gated by an access code;
 // the TV only ever joins a lobby that already exists.
 if (btnSubmitSpectate) {
     btnSubmitSpectate.addEventListener('click', () => {
         unlockAllAudio(); // real user gesture right here -- primes playback for later WebSocket-triggered calls
+        enterFullscreen(); // same click: full screen needs one too
+        keepScreenAwake();
         const enteredCode = inputRoomCode.value.trim().toUpperCase();
         if (enteredCode.length === 4) {
             document.getElementById('display-room-code-badge').innerText = enteredCode;
@@ -188,17 +222,91 @@ if (btnSubmitSpectate) {
             if (noteEl && notes.length > 1) venueBreakNotesTimer = setInterval(showNote, 10000);
         }
 
+        // ---------- The TV's connection to the room ----------
+        // Normally a live connection (WebSocket). If it never opens (some
+        // hotel, school and library networks block them) or drops (a Wi-Fi
+        // blip), the TV checks in twice a second over plain web requests
+        // instead (/api/tv-events) and keeps retrying the live connection
+        // in the background (Nov 2026). Before this, a dropped connection
+        // froze the TV until someone reloaded the page. Every message is
+        // numbered, so switching between the two never skips or repeats one.
+        let tvRoomCode = null;
+        let tvLastSeq = null;   // the last numbered message this TV has handled
+        let tvClosed = false;   // the room's gone; stop trying
+        let tvPollTimer = null, tvRetryTimer = null, tvPollBusy = false;
+        const TV_POLL_MS = 500;
+        const TV_RETRY_LIVE_MS = 15000;
+
+        function tvSocketOpen() { return !!socket && socket.readyState === 1; }
+
         function connectWebSocketEngine(roomCode) {
             showRoomQrCode(roomCode);
-            socket = new WebSocket(`wss://${window.location.host}`);
-            
-            socket.onopen = () => {
-                document.getElementById('room-status-text').innerText = "Live";
-                socket.send(JSON.stringify({ type: 'REGISTER_SCREEN', roomCode: roomCode }));
-            };
+            tvRoomCode = roomCode;
+            tvLastSeq = null;
+            tvClosed = false;
+            stopTvFallback();
+            openTvSocket();
+            // A live connection that hasn't opened in 5 seconds probably won't.
+            setTimeout(() => { if (!tvSocketOpen() && tvRoomCode === roomCode) startTvFallback(); }, 5000);
+        }
 
-            socket.onmessage = (event) => {
-                const data = JSON.parse(event.data);
+        function openTvSocket() {
+            const ws = new WebSocket(`wss://${window.location.host}`);
+            socket = ws;
+            ws.onopen = () => {
+                if (tvLastSeq === null) document.getElementById('room-status-text').innerText = "Live";
+                // After a drop, say how far we got, to get just what was missed.
+                ws.send(JSON.stringify({ type: 'REGISTER_SCREEN', roomCode: tvRoomCode, after: tvLastSeq }));
+                stopTvFallback();
+            };
+            ws.onmessage = (event) => receiveTvMessage(JSON.parse(event.data));
+            ws.onclose = () => { if (socket === ws && !tvClosed) startTvFallback(); };
+        }
+
+        function startTvFallback() {
+            if (tvPollTimer || tvClosed) return;
+            console.warn('[TV] No live connection -- checking in over plain requests instead.');
+            const poll = async () => {
+                if (tvPollBusy || tvClosed) return;
+                tvPollBusy = true;
+                try {
+                    const res = await fetch('/api/tv-events', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ roomCode: tvRoomCode, after: tvLastSeq })
+                    });
+                    const body = await res.json();
+                    if (body.closed) receiveTvMessage({ type: 'ROOM_CLOSED' });
+                    else (body.messages || []).forEach(m => receiveTvMessage(JSON.parse(m)));
+                } catch (err) {
+                    // A blip on the fallback too: just try again next time.
+                } finally {
+                    tvPollBusy = false;
+                }
+            };
+            poll();
+            tvPollTimer = setInterval(poll, TV_POLL_MS);
+            tvRetryTimer = setInterval(() => { if (!tvSocketOpen() && !tvClosed) openTvSocket(); }, TV_RETRY_LIVE_MS);
+        }
+
+        function stopTvFallback() {
+            if (tvPollTimer) clearInterval(tvPollTimer);
+            if (tvRetryTimer) clearInterval(tvRetryTimer);
+            tvPollTimer = tvRetryTimer = null;
+        }
+
+        // Every message, from either path, comes through here once.
+        function receiveTvMessage(data) {
+            if (typeof data._seq === 'number') {
+                // A snapshot (joining, or too far behind) always applies;
+                // anything else already handled is skipped.
+                if (!data._snapshot && tvLastSeq !== null && data._seq <= tvLastSeq) return;
+                tvLastSeq = data._seq;
+            }
+            handleTvMessage(data);
+        }
+
+        function handleTvMessage(data) {
                 console.log("[WebSocket API Event Received]", data);
                 updateTpLayout(data);
 
@@ -207,7 +315,9 @@ if (btnSubmitSpectate) {
                 // there's nothing left on the other end to stay wired to.
                 if (data.type === 'ROOM_CLOSED') {
                     document.body.setAttribute('data-view', 'gateway');
-                    socket.close();
+                    tvClosed = true;
+                    stopTvFallback();
+                    if (socket) socket.close();
                     return;
                 }
 
@@ -760,7 +870,6 @@ if (btnSubmitSpectate) {
                     switchToProfilerAwardsUI(data);
                     playAudioTrack('win-music');
                 }
-            };
         }
 
         // Award-type framework: each entry in a player's `awards` map (type -> level)

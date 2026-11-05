@@ -9,6 +9,12 @@
     <link rel="icon" type="image/x-icon" href="/R.ico" />
     <link rel="icon" type="image/svg+xml" href="/r-icon.svg">
     <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+    <!-- Installable as an app on a laptop (Chrome/Edge: the install button
+         in the address bar) -- opens the TV page full screen. TV page only;
+         phones are untouched. No offline copy on purpose: we deploy often, and a
+         TV running yesterday's page against today's server would break. -->
+    <link rel="manifest" href="/tv.webmanifest">
+    <meta name="theme-color" content="#0b1424">
     <link rel="stylesheet" href="/styles.css">
 </head>
 <body data-view="gateway">
@@ -99,7 +105,10 @@
             
             <div class="hud-metric">Room Code <span class="hud-value" style="color: var(--rm-brand);" id="display-room-code-badge">----</span></div>
             <div class="hud-metric" id="hud-players">Players Joined <span class="hud-value" id="lobby-player-count">0</span></div>
-            <div class="hud-value" style="color: var(--rm-text); font-size: 1.6rem;" id="lobby-countdown">60s</div>
+            <div style="display: flex; align-items: center; gap: 16px;">
+                <button id="btn-fullscreen" class="hud-fullscreen" title="Full screen">⛶<span class="hud-fullscreen-label"> Full screen</span></button>
+                <div class="hud-value" style="color: var(--rm-text); font-size: 1.6rem;" id="lobby-countdown">60s</div>
+            </div>
         </div>
     
         <div class="split-container">

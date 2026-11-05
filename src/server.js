@@ -4,7 +4,7 @@ import dotenv from 'dotenv';
 import path from 'path';
 import { WebSocketServer } from 'ws';
 import pool from './config/database.js';
-import { handleIncomingMessage, activeRooms, getCategoriesForMode, resolveRequestedQuestionCount, compareByRank, closeRoom, profilerStatusFor, profilerTvSnapshot, triviYeahIITrapInfo, emptyModeVotes, finalWagerWinShare, resolveDisguisedAsset, flagMeDownStatusFor, GAME_MODE_KEYS, allowedModesFor, finalWagerRevealFor, venueBrand, endGameVoteFor, thinkingPantsCategoryOverview, setThinkingPantsCategorySetting, venueCategoryOverview, setVenueCategorySetting } from './services/gameEngine.js';
+import { handleIncomingMessage, activeRooms, getCategoriesForMode, resolveRequestedQuestionCount, compareByRank, closeRoom, profilerStatusFor, profilerTvSnapshot, triviYeahIITrapInfo, emptyModeVotes, finalWagerWinShare, resolveDisguisedAsset, flagMeDownStatusFor, GAME_MODE_KEYS, allowedModesFor, finalWagerRevealFor, venueBrand, endGameVoteFor, thinkingPantsCategoryOverview, setThinkingPantsCategorySetting, venueCategoryOverview, setVenueCategorySetting, tvMessagesSince, tvIsConnected } from './services/gameEngine.js';
 import {
     isHostAuthorized, grantHostSession, isAccessCodeActive,
     isAdminAuthorized, grantAdminSession,
@@ -359,7 +359,7 @@ app.post('/api/room-status', (req, res) => {
                 // Phones make their own sounds only when no TV is connected
                 // (Randy, Oct 2026: phone-only play "feels too quiet"), and
                 // use the clock for the last-seconds warning.
-                tvConnected: targetRoom.screens.some(socket => socket.readyState === 1),
+                tvConnected: tvIsConnected(targetRoom),
                 // The Room page's "vote to end this game" (null outside a game).
                 endVote: endGameVoteFor(targetRoom, playerName),
                 clock: targetRoom.gameSecondsLeft ?? null,
@@ -698,6 +698,55 @@ app.get('/host', (req, res) => { res.sendFile(path.resolve('public/host.html'));
 app.get('/info', (req, res) => { res.sendFile(path.resolve('public/info.html')); });
 app.get('/admin', (req, res) => { res.sendFile(path.resolve('public/admin.html')); });
 
+// What a TV needs when it (re)joins a room: the venue look, the scoreboard
+// and, mid-game, a catch-up of the current phase. Shared by the live
+// connection and the /api/tv-events fallback. Each carries the room's
+// latest message number, so the TV knows where to pick up.
+function tvSnapshotMessages(room) {
+    const tag = { _seq: room.tvSeq || 0, _snapshot: true };
+    const messages = [
+        // Pub look and which mode tiles to show -- sent first so the
+        // TV draws the right lobby.
+        { type: 'ROOM_VENUE', venue: room.venue || null, allowedModes: allowedModesFor(room) },
+        { type: 'LEADERBOARD_UPDATE', players: Object.values(room.players) }
+    ];
+    if (room.gameState !== 'LOBBY') {
+        messages.push({
+            type: 'STATE_CATCH_UP',
+            gameState: room.gameState,
+            winningGameMode: room.winningGameMode,
+            // Recompute the same category list the CATEGORY_VOTE broadcast used,
+            // so a reconnecting screen shows the real sub-deck names, not defaults.
+            categories: getCategoriesForMode(room.winningGameMode),
+            activeQuestionData: room.activeQuestionData, // Sends the live trivia question text!
+            // Pass down whatever timer metrics are left on the clock
+            lobbySecondsLeft: room.lobbySecondsLeft,
+            categorySecondsLeft: room.categorySecondsLeft,
+            gameSecondsLeft: room.gameSecondsLeft,
+            // Round numbers only -- never the secret word or who the
+            // impostor is, same rule as every other EmpossDurr broadcast.
+            empossdurrRound: room.empossdurr ? room.empossdurr.currentRound : null,
+            empossdurrTotalRounds: room.empossdurr ? room.empossdurr.totalRounds : null,
+            profiler: room.gameState === 'PROFILER_ROUND' ? profilerTvSnapshot(room) : null
+        });
+    }
+    return messages.map(m => JSON.stringify({ ...m, ...tag }));
+}
+
+// The TV's fallback when its live connection drops or never opens (a
+// strict hotel, school or library network; Nov 2026): it asks twice a
+// second for the messages after the last one it saw. Same room-code lock
+// as the live connection, and the same messages -- nothing a TV couldn't
+// already get.
+app.post('/api/tv-events', (req, res) => {
+    const room = activeRooms[String(req.body.roomCode || '')];
+    if (!room) return res.json({ closed: true });
+    room.tvLastPoll = Date.now();
+    const after = Number.isInteger(req.body.after) ? req.body.after : null;
+    const missed = after === null ? null : tvMessagesSince(room, after);
+    res.json({ messages: missed || tvSnapshotMessages(room) });
+});
+
 async function startServer() {
     try {
         console.log('⏳ Verifying cloud database availability...');
@@ -736,44 +785,11 @@ async function startServer() {
                         activeRooms[roomCode].screens.push(socket);
                         console.log(`✅ [WebSocket] Room ${roomCode} TV layout screen explicitly locked live.`);
 
-                        // Pub look and which mode tiles to show -- sent first so the
-                        // TV draws the right lobby.
-                        socket.send(JSON.stringify({
-                            type: 'ROOM_VENUE',
-                            venue: activeRooms[roomCode].venue || null,
-                            allowedModes: allowedModesFor(activeRooms[roomCode])
-                        }));
-
-                        socket.send(JSON.stringify({
-                            type: 'LEADERBOARD_UPDATE',
-                            players: Object.values(activeRooms[roomCode].players)
-                        }));
-
-                        const currentRoomState = activeRooms[roomCode];
-                            if (currentRoomState.gameState !== 'LOBBY') {
-                                // Recompute the same category list the CATEGORY_VOTE broadcast used,
-                                // so a reconnecting screen shows the real sub-deck names, not defaults.
-                                const categories = getCategoriesForMode(currentRoomState.winningGameMode);
-
-                                socket.send(JSON.stringify({
-                                    type: 'STATE_CATCH_UP',
-                                    gameState: currentRoomState.gameState,
-                                    winningGameMode: currentRoomState.winningGameMode,
-                                    categories,
-                                    activeQuestionData: currentRoomState.activeQuestionData, // Sends the live trivia question text!
-                                    // Pass down whatever timer metrics are left on the clock
-                                    lobbySecondsLeft: currentRoomState.lobbySecondsLeft,
-                                    categorySecondsLeft: currentRoomState.categorySecondsLeft,
-                                    gameSecondsLeft: currentRoomState.gameSecondsLeft,
-                                    // Round numbers only -- never the secret word or who the
-                                    // impostor is, same rule as every other EmpossDurr broadcast.
-                                    empossdurrRound: currentRoomState.empossdurr ? currentRoomState.empossdurr.currentRound : null,
-                                    empossdurrTotalRounds: currentRoomState.empossdurr ? currentRoomState.empossdurr.totalRounds : null,
-                                    profiler: currentRoomState.gameState === 'PROFILER_ROUND' ? profilerTvSnapshot(currentRoomState) : null
-                                }));
-                                console.log(`[Sync Engine] Sent catch-up payload for active room ${roomCode} to fresh display listener.`);
-                            }
-                        }
+                        // A TV coming back from the fallback says how far it got,
+                        // and gets just what it missed; otherwise a fresh snapshot.
+                        const missed = Number.isInteger(data.after) ? tvMessagesSince(activeRooms[roomCode], data.after) : null;
+                        (missed || tvSnapshotMessages(activeRooms[roomCode])).forEach(m => socket.send(m));
+                    }
                 } catch (err) {
                     console.error('❌ [Socket Error]:', err.message);
                 }

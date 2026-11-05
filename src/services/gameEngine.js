@@ -240,13 +240,43 @@ function broadcastToRoom(roomCode, payload) {
             room.phoneStandingsVersion = Math.random().toString(36).slice(2, 10);
         }
     }
-    if (room && room.screens) {
+    if (!room) return;
+    // Every TV message is numbered and the last TV_LOG_SIZE are kept, so a
+    // TV whose live connection drops (a Wi-Fi blip) or never opens (a
+    // strict hotel or school network) can fetch what it missed over plain
+    // web requests instead -- /api/tv-events (Nov 2026).
+    room.tvSeq = (room.tvSeq || 0) + 1;
+    const message = JSON.stringify({ ...payload, _seq: room.tvSeq });
+    if (!room.tvLog) room.tvLog = [];
+    room.tvLog.push({ seq: room.tvSeq, message });
+    if (room.tvLog.length > TV_LOG_SIZE) room.tvLog.shift();
+    if (room.screens) {
         room.screens.forEach(socket => {
             if (socket.readyState === 1) {
-                socket.send(JSON.stringify(payload));
+                socket.send(message);
             }
         });
     }
+}
+
+// ~2 minutes of a busy game (the answer clock sends one a second), far
+// more than a TV checking in twice a second ever needs.
+const TV_LOG_SIZE = 150;
+
+// The TV messages after `after`, or null if some have already been
+// dropped from the log (the TV then starts over from a fresh snapshot).
+export function tvMessagesSince(room, after) {
+    const log = room.tvLog || [];
+    if (!log.length) return (room.tvSeq || 0) <= after ? [] : null;
+    if (after < log[0].seq - 1) return null;
+    return log.filter(e => e.seq > after).map(e => e.message);
+}
+
+// A TV counts as connected with an open live connection, or if it checked
+// in over the fallback in the last few seconds.
+export function tvIsConnected(room) {
+    return (room.screens || []).some(socket => socket.readyState === 1)
+        || Date.now() - (room.tvLastPoll || 0) < 5000;
 }
 
 // Fired right before a content-missing bounce-to-lobby (see the empty-bank
