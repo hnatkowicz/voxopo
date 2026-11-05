@@ -523,6 +523,10 @@ and forth until we both agree the idea is good **and** worth the effort. So:
 - **Profiler** content rule: every option must be one a person would
   comfortably own out loud. No politics, religion as identity, sex, bodies,
   money, health, or questions about people in the room.
+- **Category subtitles** (a small gray line under each pun name on the
+  board, "Wet Pants: Oceans, rivers & lakes"): pinned (Randy, Nov 2026).
+  The first question makes a title clear, and regulars knowing the names
+  is a small, fair edge.
 - **Mind Field:** a name saved for a future mode built around hidden traps
   on a board.
 - **Final Wager clues elsewhere:** the bought-clue mechanic now runs in
