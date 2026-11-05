@@ -483,7 +483,7 @@ and forth until we both agree the idea is good **and** worth the effort. So:
   Wrong answers are mistakes real people make. No word is the target of
   two tiles, so one tile can't give another away.
 - **The Great State of...** (Randy, Nov 2026): `content/great_state.csv`,
-  145 text questions -- capitals, city nicknames (Big Apple, La La Land),
+  306 questions (145 text, 161 picture) -- capitals, city nicknames (Big Apple, La La Land),
   state nicknames, flags, where names came from. Famous nicknames asked
   straight; obscure ones get a second-cousin clue ("Utah's pioneers called
   their land Deseret, a word for the honeybee"). **No "currently has /
@@ -493,9 +493,15 @@ and forth until we both agree the idea is good **and** worth the effort. So:
   (Randy, Nov 2026: an outline alone is too hard for some states, and
   the star is a fair clue) -- `public/states/<state>-map.webp` and
   `<state>-capital.webp`; no `-outline` files (lowercase, hyphens:
-  `new-hampshire-map.webp`; 1200x900 WebP like the country maps). They
-  join the sheet as picture rows once uploaded. Geography's New York
-  capital question was retired to avoid a repeat.
+  `new-hampshire-map.webp`; 1200x900 WebP like the country maps). Randy
+  drew all 100 (Nov 2026; his youngest is learning the capitals). Picture
+  questions: "Which state is highlighted?" (map), "The star marks a state
+  capital. Which city is it?" and "Which state is this?" (outline + star),
+  and questions about the highlighted state (Yellowstone, the Ohio River,
+  Louisiana's parishes). **`colorado-map.webp` shows Wyoming** -- left out
+  until Randy re-exports it; then add its "Which state is highlighted?"
+  row. Geography's New York capital question was retired to avoid a
+  repeat.
 - **Saturday Mornings** (cartoons and kids' TV) is parked (Randy, Nov
   2026). Text-only if it happens: cartoon characters and real people's
   likenesses are off the table for a paid pub game.
