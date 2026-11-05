@@ -23,7 +23,7 @@
 100,A group of lions is called a what?,A pride,A pack,A herd,A troop,A gang,A mob,A colony,,WORD_NERD_BATCH_1,2026-10-18,,
 100,"On an invitation, ""RSVP"" comes from a French phrase meaning what?",Please reply,Bring a guest,Dress formally,Arrive on time,"No gifts, please",Food will be served,Seating is limited,,WORD_NERD_BATCH_1,2026-10-18,,
 100,Which food is named after an English earl who supposedly wanted to eat without leaving the card table?,The sandwich,The hamburger,The hot dog,The pretzel,The biscuit,The pizza,The crumpet,,WORD_NERD_BATCH_1,2026-10-18,,
-100,Spelling bee: which is correct?,Necessary,Neccessary,Necessery,Neccesary,Necesary,Nessecary,Neccessery,,"Spelling ladder: necessary (100), accommodate (200), millennium (300), supersede (400).",2026-10-18,,WORD_NERD_BATCH_1
+100,Spelling bee: which is correct?,Necessary,Neccessary,Necessery,Neccesary,Necesary,Nessecary,Neccessery,,"Spelling ladder: necessary (100), accommodate (200), millennium (300), supersede (400).",2026-10-18,yes,"Retired Nov 2026: spelling now has its own category, Spellbound. WORD_NERD_BATCH_1"
 100,What is the fear of spiders called?,Arachnophobia,Agoraphobia,Claustrophobia,Acrophobia,Entomophobia,Ophidiophobia,Aquaphobia,,"Phobia ladder: spiders (100), small spaces (200), heights (300), the number 13 (400). Entomophobia is insects, ophidiophobia snakes.",2026-10-18,,WORD_NERD_BATCH_1
 100,"What does ""bon voyage"" mean?",Have a good trip,Good luck,See you soon,Welcome home,Enjoy your meal,Good evening,Safe and sound,,WORD_NERD_BATCH_1,2026-10-18,,
 100,"Which word means ""happening once a year""?",Annual,Biennial,Biannual,Centennial,Perpetual,Millennial,Quarterly,,Biennial = every two years; biannual = twice a year.,2026-10-18,,WORD_NERD_BATCH_1
@@ -44,7 +44,7 @@
 200,What is a bibliophile?,A lover of books,A Bible scholar,A fear of books,A bookbinder,A speed reader,A bad writer,A book critic,,WORD_NERD_BATCH_1,2026-10-18,,
 200,"In ""scuba,"" what does the S stand for?",Self-contained,Submarine,Sea,Safety,Surface,Snorkel,Swimming,,Self-Contained Underwater Breathing Apparatus.,2026-10-18,,WORD_NERD_BATCH_1
 200,"""Laser"" started out as a set of initials. What does its L stand for?",Light,Long,Linear,Liquid,Lens,Low,Luminous,,Light Amplification by Stimulated Emission of Radiation.,2026-10-18,,WORD_NERD_BATCH_1
-200,"Spelling bee, round 2: which is correct?",Accommodate,Accomodate,Acommodate,Acomodate,Accomadate,Acommadate,Accommadate,,WORD_NERD_BATCH_1,2026-10-18,,
+200,"Spelling bee, round 2: which is correct?",Accommodate,Accomodate,Acommodate,Acomodate,Accomadate,Acommadate,Accommadate,,WORD_NERD_BATCH_1,2026-10-18,yes,"Retired Nov 2026: spelling now has its own category, Spellbound."
 200,"What is a ""faux pas""?",A social blunder,A fake friend,A dance move,A secret signal,A father figure,A fancy dinner,A small gift,,WORD_NERD_BATCH_1,2026-10-18,,
 200,"What does ""carpe diem"" mean?",Seize the day,Fish of the day,Live and let live,Rest in peace,Day by day,Count the days,Love conquers all,,WORD_NERD_BATCH_1,2026-10-18,,
 200,"What does ""e.g."" stand for?",For example,That is,And so on,Note well,Approximately,Especially,Namely,,"From Latin ""exempli gratia."" ""That is"" is i.e.; ""and so on"" is etc.",2026-10-18,,WORD_NERD_BATCH_1
@@ -66,7 +66,7 @@
 300,"What does ""arbitrary"" mean?","Based on random choice, not reason",Settled by a judge,Carefully planned,Related to trees,Very strict,Out of date,Shared equally,,PRIMARY_SCHOOL_FOLD_1,2026-10-18,,
 300,"What does ""pragmatic"" mean?",Practical,Talkative,Boastful,Stubborn,Dreamy,Old-fashioned,Pushy,,PRIMARY_SCHOOL_FOLD_1,2026-10-18,,
 300,A group of owls is called a what?,A parliament,A murder,A gaggle,A pride,A congress,A senate,A pod,,WORD_NERD_BATCH_1,2026-10-18,,
-300,"Spelling bee, round 3: which is correct?",Millennium,Millenium,Milennium,Milenium,Millenniem,Millinium,Milleneum,,WORD_NERD_BATCH_1,2026-10-18,,
+300,"Spelling bee, round 3: which is correct?",Millennium,Millenium,Milennium,Milenium,Millenniem,Millinium,Milleneum,,WORD_NERD_BATCH_1,2026-10-18,yes,"Retired Nov 2026: spelling now has its own category, Spellbound."
 300,"The word ""boycott"" comes from Charles Boycott. Who was he?",An Irish land agent his neighbors shunned,A pirate who refused to fight,A shopkeeper who went bankrupt,A captain who abandoned ship,A ballplayer who quit his team,A factory owner who fired everyone,A soldier who deserted,,"County Mayo, 1880.",2026-10-18,,WORD_NERD_BATCH_1
 300,"""Quarantine"" comes from an Italian phrase meaning what?",Forty days,Sick house,Closed door,Stay alone,Safe harbor,Waiting room,Fever ward,,Venice made arriving ships wait 40 days during plague outbreaks.,2026-10-18,,WORD_NERD_BATCH_1
 300,"What does ""schadenfreude"" mean?",Pleasure at someone else's misfortune,Fear of missing out,Longing for home,Joy of being alone,Embarrassment for someone else,Guilt over success,Love of shade,,WORD_NERD_BATCH_1,2026-10-18,,
@@ -100,7 +100,7 @@
 400,What is triskaidekaphobia?,Fear of the number 13,Fear of triangles,Fear of tricycles,Fear of three-legged animals,Fear of long words,Fear of Fridays,Fear of being tricked,,WORD_NERD_BATCH_1,2026-10-18,,
 400,"Mixing up similar-sounding words for comic effect, like ""the pineapple of politeness,"" is called what?",A malapropism,A spoonerism,An oxymoron,An eggcorn,A pun,A mondegreen,A euphemism,,"After Mrs. Malaprop in Sheridan's 1775 play ""The Rivals,"" who says it (for ""pinnacle"").",2026-10-18,,WORD_NERD_BATCH_1
 400,"Mishearing a song lyric, like ""Excuse me while I kiss this guy,"" is called what?",A mondegreen,A malapropism,A spoonerism,An eggcorn,An earworm,A homophone,A misnomer,,"Hendrix sang ""kiss the sky.""",2026-10-18,,WORD_NERD_BATCH_1
-400,"Spelling bee, final round: which is correct?",Supersede,Supercede,Superseed,Supersead,Superceed,Superscede,Superseede,,"""Supercede"" is the common mistake.",2026-10-18,,WORD_NERD_BATCH_1
+400,"Spelling bee, final round: which is correct?",Supersede,Supercede,Superseed,Supersead,Superceed,Superscede,Superseede,,"""Supercede"" is the common mistake.",2026-10-18,yes,"Retired Nov 2026: spelling now has its own category, Spellbound. WORD_NERD_BATCH_1"
 400,"""Nostalgia"" comes from Greek. What does it literally mean?",Homecoming pain,Old memories,Sweet sadness,Lost time,Golden age,Dream of youth,Sleepless longing,,WORD_NERD_BATCH_1,2026-10-18,,
 400,"""Ballot"" comes from an Italian word meaning what?",Little ball,Paper slip,Secret box,Public voice,Small coin,Wooden token,Show of hands,,Votes were once cast by dropping small balls into a box.,2026-10-18,,WORD_NERD_BATCH_1
 400,"The word ""deadline"" first meant what?",A line prisoners would be shot for crossing,The last train of the day,A rope on a sinking ship,A newspaper's final print run,The edge of a cemetery,A finish line in horse racing,A telegraph wire that stopped working,,From Civil War prison camps such as Andersonville.,2026-10-18,,WORD_NERD_BATCH_1

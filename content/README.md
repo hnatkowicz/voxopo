@@ -73,7 +73,7 @@ Space, College Athletics, Famous Firsts, Famous (K)nights, Fictional
 Locations, Food & Drink, Geography, Just in Time, Literature, Lyrics,
 Brush With Greatness (paintings, every row has a picture), Logo My Eggo
 (logos), Movies & TV, Music, Mythology, Science & Nature,
-Sports, Technology, Red, White & Who? (US history), War & Pieces (the
+Spellbound (spelling), Sports, Technology, The Great State of... (states), Red, White & Who? (US history), War & Pieces (the
 World Wars), Word Nerd and World History. Logo My Eggo mixes picture rows
 (`image` = `/iconic-logos/<file>.webp`) with text-only ones.
 

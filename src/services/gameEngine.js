@@ -894,7 +894,14 @@ const TRIVI_YEAH_II_CATEGORIES = [
     // from open-access museums (public/art/), each with up to four questions
     // -- artist, title, what's in it, movement. The board never shows the
     // same painting twice. content/art_gallery.csv. Starts on Boost (/admin).
-    { key: 'ART_GALLERY', label: 'Brush With Greatness' }
+    { key: 'ART_GALLERY', label: 'Brush With Greatness' },
+    // A spelling test in the middle of trivia night (Randy, Nov 2026): all
+    // spelling, no vocab (that stays in Word Nerd). content/spellbound.csv.
+    { key: 'SPELLBOUND', label: 'Spellbound' },
+    // States, capitals, city and state nicknames, flags and name origins
+    // (Randy, Nov 2026). His state pictures -- map, outline alone, capital
+    // star -- join as picture rows. content/great_state.csv.
+    { key: 'GREAT_STATE', label: 'The Great State of...' }
 ];
 const TRIVI_YEAH_II_CATEGORIES_PER_BOARD = 3;
 

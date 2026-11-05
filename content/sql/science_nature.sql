@@ -4,8 +4,8 @@
 -- Thinking Pants category SCIENCE_NATURE. To change a question, change the
 -- spreadsheet and rebuild.
 --
--- Replaces the WHOLE category with the spreadsheet's 80 live questions
--- (100: 20, 200: 20, 300: 20, 400: 20), inside a transaction. Safe to re-run.
+-- Replaces the WHOLE category with the spreadsheet's 120 live questions
+-- (100: 30, 200: 30, 300: 30, 400: 30), inside a transaction. Safe to re-run.
 -- ============================================================================
 
 BEGIN;
@@ -94,6 +94,46 @@ INSERT INTO questions (question_number, game_mode, category, subcategory, factio
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SCIENCE_NATURE', 'SCIENCE_NATURE_BATCH_1', NULL,
         'Which naturalist wrote "On the Origin of Species" (1859)?', NULL,
         'Charles Darwin', ARRAY['Alfred Russel Wallace', 'Gregor Mendel', 'Carl Linnaeus', 'Thomas Huxley', 'Jean-Baptiste Lamarck', 'Isaac Newton'], 100);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SCIENCE_NATURE', 'ORIGINAL', NULL,
+        'What do bees collect from flowers to make honey?', NULL,
+        'Nectar', ARRAY['Pollen', 'Sap', 'Dew', 'Wax', 'Seeds'], 100);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SCIENCE_NATURE', 'ORIGINAL', NULL,
+        'What do we call the preserved remains or traces of ancient life found in rock?', NULL,
+        'Fossils', ARRAY['Minerals', 'Crystals', 'Sediments', 'Artifacts', 'Geodes'], 100);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SCIENCE_NATURE', 'ORIGINAL', NULL,
+        'How many legs does an insect have?', NULL,
+        'Six', ARRAY['Eight', 'Four', 'Ten', 'Twelve', 'Five'], 100);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SCIENCE_NATURE', 'ORIGINAL', NULL,
+        'At sea level, water boils at how many degrees Fahrenheit?', NULL,
+        '212', ARRAY['100', '180', '200', '250', '32'], 100);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SCIENCE_NATURE', 'ORIGINAL', NULL,
+        'What do we call animals that eat only plants?', NULL,
+        'Herbivores', ARRAY['Carnivores', 'Omnivores', 'Insectivores', 'Scavengers', 'Predators'], 100);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SCIENCE_NATURE', 'ORIGINAL', NULL,
+        'What is a baby frog called?', NULL,
+        'A tadpole', ARRAY['A kit', 'A fry', 'A cub', 'A joey', 'A calf'], 100);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SCIENCE_NATURE', 'ORIGINAL', NULL,
+        'What is a group of lions called?', NULL,
+        'A pride', ARRAY['A pack', 'A herd', 'A flock', 'A school', 'A troop'], 100);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SCIENCE_NATURE', 'ORIGINAL', NULL,
+        'Which of these metals sticks to a magnet?', NULL,
+        'Iron', ARRAY['Aluminum', 'Copper', 'Gold', 'Silver', 'Tin'], 100);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SCIENCE_NATURE', 'ORIGINAL', NULL,
+        'Which scientist is famous for the theory of relativity?', NULL,
+        'Albert Einstein', ARRAY['Isaac Newton', 'Nikola Tesla', 'Galileo Galilei', 'Stephen Hawking', 'Marie Curie'], 100);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SCIENCE_NATURE', 'ORIGINAL', NULL,
+        'Which founding father flew a kite in a thunderstorm to show that lightning is electricity?', NULL,
+        'Benjamin Franklin', ARRAY['Thomas Jefferson', 'George Washington', 'John Adams', 'Alexander Hamilton', 'Thomas Edison'], 100);
 
 -- 200 points
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
@@ -176,6 +216,46 @@ INSERT INTO questions (question_number, game_mode, category, subcategory, factio
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SCIENCE_NATURE', 'SCIENCE_NATURE_BATCH_1', NULL,
         'Which Russian scientist trained dogs to drool at a signal that meant food was coming?', NULL,
         'Ivan Pavlov', ARRAY['Sigmund Freud', 'B.F. Skinner', 'Carl Jung', 'Dmitri Mendeleev', 'Louis Pasteur', 'Wilhelm Wundt'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SCIENCE_NATURE', 'ORIGINAL', NULL,
+        'What is the hardest substance in the human body?', NULL,
+        'Tooth enamel', ARRAY['Bone', 'Fingernail', 'Cartilage', 'Skull', 'Hair'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SCIENCE_NATURE', 'ORIGINAL', NULL,
+        'Which layer high in the atmosphere shields us from most of the Sun''s ultraviolet rays?', NULL,
+        'The ozone layer', ARRAY['The ionosphere', 'The troposphere', 'The magnetosphere', 'The cloud layer', 'The jet stream'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SCIENCE_NATURE', 'ORIGINAL', NULL,
+        'What kind of energy is stored in a stretched rubber band?', NULL,
+        'Potential energy', ARRAY['Kinetic energy', 'Thermal energy', 'Nuclear energy', 'Sound energy', 'Light energy'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SCIENCE_NATURE', 'ORIGINAL', NULL,
+        'Water droplets forming on a cold glass are an example of what?', NULL,
+        'Condensation', ARRAY['Evaporation', 'Sublimation', 'Precipitation', 'Melting', 'Freezing'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SCIENCE_NATURE', 'ORIGINAL', NULL,
+        'What do we call a basic unit of heredity, passed from parent to child?', NULL,
+        'A gene', ARRAY['A cell', 'An atom', 'A protein', 'An enzyme', 'A hormone'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SCIENCE_NATURE', 'ORIGINAL', NULL,
+        'How many chambers does the human heart have?', NULL,
+        'Four', ARRAY['Two', 'Three', 'Five', 'Six', 'Eight'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SCIENCE_NATURE', 'ORIGINAL', NULL,
+        'Which part of a flower makes pollen?', NULL,
+        'The stamen', ARRAY['The pistil', 'The petal', 'The sepal', 'The stem', 'The ovary'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SCIENCE_NATURE', 'ORIGINAL', NULL,
+        'Sound travels fastest through which of these?', NULL,
+        'Steel', ARRAY['Water', 'Air', 'Wood', 'A vacuum'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SCIENCE_NATURE', 'ORIGINAL', NULL,
+        'Which egg-laying mammal has a duck-like bill and venomous spurs on its back legs?', NULL,
+        'The platypus', ARRAY['The echidna', 'The otter', 'The beaver', 'The mole', 'The opossum'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SCIENCE_NATURE', 'ORIGINAL', NULL,
+        'Which layer of the Earth lies just beneath the crust?', NULL,
+        'The mantle', ARRAY['The outer core', 'The inner core', 'The lithosphere', 'The bedrock', 'The magma chamber'], 200);
 
 -- 300 points
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
@@ -258,6 +338,46 @@ INSERT INTO questions (question_number, game_mode, category, subcategory, factio
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SCIENCE_NATURE', 'SCIENCE_NATURE_BATCH_1', NULL,
         'Whose famous thought experiment imagines a cat in a box that is both alive and dead?', NULL,
         'Erwin Schrödinger', ARRAY['Werner Heisenberg', 'Albert Einstein', 'Niels Bohr', 'Max Planck', 'Richard Feynman', 'Stephen Hawking'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SCIENCE_NATURE', 'ORIGINAL', NULL,
+        'What is the study of earthquakes called?', NULL,
+        'Seismology', ARRAY['Volcanology', 'Meteorology', 'Paleontology', 'Oceanography', 'Mineralogy'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SCIENCE_NATURE', 'ORIGINAL', NULL,
+        'Sandstone and limestone, formed in layers from pressed-together grains, are which type of rock?', NULL,
+        'Sedimentary', ARRAY['Igneous', 'Metamorphic', 'Volcanic', 'Magmatic', 'Crystalline'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SCIENCE_NATURE', 'ORIGINAL', NULL,
+        'What is the metric unit of force, named for a famous English scientist?', NULL,
+        'The newton', ARRAY['The joule', 'The watt', 'The pascal', 'The volt', 'The kelvin'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SCIENCE_NATURE', 'ORIGINAL', NULL,
+        'What is the chemical symbol for iron?', NULL,
+        'Fe', ARRAY['Ir', 'In', 'I', 'Fr', 'F'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SCIENCE_NATURE', 'ORIGINAL', NULL,
+        'What is the largest muscle in the human body?', NULL,
+        'Gluteus maximus', ARRAY['Quadriceps', 'Latissimus dorsi', 'Biceps', 'Hamstring', 'Deltoid'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SCIENCE_NATURE', 'ORIGINAL', NULL,
+        'What is the scientific name for the kneecap?', NULL,
+        'Patella', ARRAY['Tibia', 'Fibula', 'Clavicle', 'Scapula', 'Sternum'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SCIENCE_NATURE', 'ORIGINAL', NULL,
+        'In which part of a plant cell does photosynthesis take place?', NULL,
+        'The chloroplast', ARRAY['The mitochondrion', 'The nucleus', 'The vacuole', 'The cell wall', 'The ribosome'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SCIENCE_NATURE', 'ORIGINAL', NULL,
+        'Which kind of cell division makes two identical copies of a cell?', NULL,
+        'Mitosis', ARRAY['Meiosis', 'Osmosis', 'Fermentation', 'Respiration', 'Diffusion'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SCIENCE_NATURE', 'ORIGINAL', NULL,
+        'What is the point on the surface directly above where an earthquake starts called?', NULL,
+        'The epicenter', ARRAY['The fault line', 'The hypocenter', 'The aftershock', 'The seismograph', 'The tremor zone'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SCIENCE_NATURE', 'ORIGINAL', NULL,
+        'What was the name of the supercontinent that began breaking apart about 200 million years ago?', NULL,
+        'Pangaea', ARRAY['Gondwana', 'Laurasia', 'Rodinia', 'Atlantis', 'Lemuria'], 300);
 
 -- 400 points
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
@@ -340,8 +460,48 @@ INSERT INTO questions (question_number, game_mode, category, subcategory, factio
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SCIENCE_NATURE', 'SCIENCE_NATURE_BATCH_1', NULL,
         'Bamboo, which can grow almost a meter in a day, is a giant type of what?', NULL,
         'Grass', ARRAY['Tree', 'Shrub', 'Fern', 'Palm', 'Vine', 'Moss'], 400);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SCIENCE_NATURE', 'ORIGINAL', NULL,
+        'Who first described cells, after looking at a slice of cork in 1665?', NULL,
+        'Robert Hooke', ARRAY['Antonie van Leeuwenhoek', 'Robert Boyle', 'Isaac Newton', 'Louis Pasteur', 'Galileo Galilei'], 400);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SCIENCE_NATURE', 'ORIGINAL', NULL,
+        'To the nearest degree, what is absolute zero on the Celsius scale?', NULL,
+        '-273', ARRAY['-100', '-196', '-212', '-300', '-459'], 400);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SCIENCE_NATURE', 'ORIGINAL', NULL,
+        'What type of chemical bond forms when two atoms share electrons?', NULL,
+        'Covalent', ARRAY['Ionic', 'Metallic', 'Hydrogen', 'Magnetic', 'Nuclear'], 400);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SCIENCE_NATURE', 'ORIGINAL', NULL,
+        'What does DNA stand for?', NULL,
+        'Deoxyribonucleic acid', ARRAY['Dinitrogen acid', 'Deoxyribose nitrate', 'Dual nucleic acid', 'Dextronucleic acid', 'Diribonucleic acid'], 400);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SCIENCE_NATURE', 'ORIGINAL', NULL,
+        'Which body system includes the thyroid, the pituitary and the adrenal glands?', NULL,
+        'The endocrine system', ARRAY['The lymphatic system', 'The nervous system', 'The digestive system', 'The immune system', 'The circulatory system'], 400);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SCIENCE_NATURE', 'ORIGINAL', NULL,
+        'Which German scientist proposed continental drift in 1912?', NULL,
+        'Alfred Wegener', ARRAY['Charles Lyell', 'James Hutton', 'Alexander von Humboldt', 'Max Planck', 'Charles Richter'], 400);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SCIENCE_NATURE', 'ORIGINAL', NULL,
+        'Water moving through a membrane toward the side with more dissolved salt or sugar is called what?', NULL,
+        'Osmosis', ARRAY['Diffusion', 'Filtration', 'Transpiration', 'Capillary action', 'Active transport'], 400);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SCIENCE_NATURE', 'ORIGINAL', NULL,
+        'Which scale, created in 1812, ranks minerals'' hardness from talc at 1 to diamond at 10?', NULL,
+        'The Mohs scale', ARRAY['The Richter scale', 'The Beaufort scale', 'The Kelvin scale', 'The pH scale', 'The Fujita scale'], 400);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SCIENCE_NATURE', 'ORIGINAL', NULL,
+        'What is the only bird known to be able to fly backwards?', NULL,
+        'The hummingbird', ARRAY['The swift', 'The kingfisher', 'The kestrel', 'The swallow', 'The dragonfly'], 400);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SCIENCE_NATURE', 'ORIGINAL', NULL,
+        'What do we call an animal that keeps a steady body temperature from the inside, like mammals and birds?', NULL,
+        'Endotherm', ARRAY['Ectotherm', 'Poikilotherm', 'Thermophile', 'Exotherm', 'Isotherm'], 400);
 
 COMMIT;
 
--- Check: should return 80.
+-- Check: should return 120.
 SELECT COUNT(*) FROM questions WHERE game_mode = 'TRIVI_YEAH_II' AND category = 'SCIENCE_NATURE';
