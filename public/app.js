@@ -222,6 +222,22 @@ if (btnSubmitSpectate) {
             if (noteEl && notes.length > 1) venueBreakNotesTimer = setInterval(showNote, 10000);
         }
 
+
+        // The clock (Randy, Nov 2026): informational, so a quiet denim gray,
+        // smaller than the wordmark, and just the number (no "s" -- a number
+        // counting down says it). It brightens to cream for the last 3
+        // seconds, with the TV's warning tone, when the room scrambles.
+        // Never red: red means wrong. Its slot is a fixed size (styles.css),
+        // so it appearing or clearing never moves the screen.
+        function setClock(value) {
+            const el = document.getElementById('lobby-countdown');
+            if (!el) return;
+            const text = String(value ?? '').replace(/\s*s$/i, '').trim();
+            const number = /^\d+$/.test(text) ? Number(text) : null;
+            el.innerText = number === null ? '' : String(number);
+            el.classList.toggle('clock-final', number !== null && number > 0 && number <= 3);
+        }
+
         // ---------- The TV's connection to the room ----------
         // Normally a live connection (WebSocket). If it never opens (some
         // hotel, school and library networks block them) or drops (a Wi-Fi
@@ -331,12 +347,12 @@ if (btnSubmitSpectate) {
 
                     if (data.gameState === 'CATEGORY_VOTE') {
                         document.getElementById('room-status-text').innerText = "Category Selection";
-                        document.getElementById('lobby-countdown').innerText = data.categorySecondsLeft + " s";
+                        setClock(data.categorySecondsLeft + " s");
                         switchToCategoryVotingUI(data.winningGameMode, data.categories);
                         playCategoryMusic();
                     } else if (data.gameState === 'GAME_ROUND' && data.activeQuestionData) {
                         document.getElementById('room-status-text').innerText = "Gameplay Phase";
-                        document.getElementById('lobby-countdown').innerText = data.gameSecondsLeft + " s";
+                        setClock(data.gameSecondsLeft + " s");
                         const q = data.activeQuestionData;
                         switchToQuestionUI(q.categoryLabel, q.questionText, q.choiceA, q.choiceB, q.choiceC, q.choiceD, q.questionNumber, q.totalQuestions, q.visualAsset, q.brand);
                         stopCategoryMusic();
@@ -393,16 +409,16 @@ if (btnSubmitSpectate) {
                     updateLeaderboardUI(cachedPlayersSnapshot);
                 }
                 if (data.type === 'LOBBY_TIMER_TICK') {
-                    document.getElementById('lobby-countdown').innerText = data.secondsLeft;
+                    setClock(data.secondsLeft);
                 }
                 if (data.type === 'CATEGORY_TIMER_TICK') {
-                    document.getElementById('lobby-countdown').innerText = data.secondsLeft;
+                    setClock(data.secondsLeft);
                 }
                 // Listen for Phase 3 active question clock ticks to drive the round countdown banner!
                 if (data.type === 'GAME_TIMER_TICK') {
                     // "TIME'S UP!" from the server shows as 0: the countdown says it
                     // (Randy, Nov 2026 -- it took two lines and made the top bar jump).
-                    document.getElementById('lobby-countdown').innerText = /^\d/.test(String(data.secondsLeft)) ? data.secondsLeft : '0 s';
+                    setClock(/^\d/.test(String(data.secondsLeft)) ? data.secondsLeft : '0 s');
                     // The family asked for NO music through a Trivi-Yeah II tile's
                     // countdown -- just a light three-tone cue near the end so the
                     // room still knows the question is live. Only on a genuine
@@ -432,7 +448,7 @@ if (btnSubmitSpectate) {
                 }
                 if (data.type === 'REVEAL_CORRECT_ANSWER') {
                     document.getElementById('room-status-text').innerText = "Round Evaluation";
-                    document.getElementById('lobby-countdown').innerText = "0 s";
+                    setClock("0 s");
                     highlightCorrectAnswerOnTV(data.correctLetter);
                     // Mark each player's status-indicator green (correct) or back to
                     // invisible (wrong/no answer) -- the next LEADERBOARD_UPDATE (sent
@@ -459,7 +475,7 @@ if (btnSubmitSpectate) {
                 // Listen for the server's Category Phase expiration signal to draw the question canvas
                 if (data.type === 'TRANSITION_TO_QUESTION') {
                     document.getElementById('room-status-text').innerText = "Gameplay Phase";
-                    document.getElementById('lobby-countdown').innerText = "30 s"; // Reset banner clock visually
+                    setClock("30 s"); // Reset banner clock visually
                     switchToQuestionUI(data.categoryLabel, data.questionText, data.choiceA, data.choiceB, data.choiceC, data.choiceD, data.questionNumber, data.totalQuestions, data.visualAsset, data.brand);
                     preloadQuestionImage(data.preloadAsset); // the next question's picture
                     // Fresh question: every player's status-indicator goes back to invisible.
@@ -494,7 +510,7 @@ if (btnSubmitSpectate) {
                 if (data.type === 'GAME_OVER') {
                     profilerCountdownActive = false;
                     document.getElementById('room-status-text').innerText = "Game Over";
-                    document.getElementById('lobby-countdown').innerText = '';
+                    setClock('');
                     stopCategoryMusic();
                     stopCountdownMusic();
                     stopAudioTrack('final-wager-timer-sound');
@@ -516,7 +532,7 @@ if (btnSubmitSpectate) {
                 if (data.type === 'RETURN_TO_LOBBY') {
                     profilerCountdownActive = false;
                     document.getElementById('room-status-text').innerText = "Live";
-                    document.getElementById('lobby-countdown').innerText = "60s";
+                    setClock("60s");
                     stopCategoryMusic();
                     stopCountdownMusic();
                     switchToLobbyVoteUI();
@@ -531,7 +547,7 @@ if (btnSubmitSpectate) {
                 // reusing the exact choice-row markup/ids classic Trivi-yeah! already
                 // uses -- highlightCorrectAnswerOnTV works unmodified on either.
                 if (data.type === 'TRANSITION_TO_TRIVI_YEAH_II') {
-                    document.getElementById('lobby-countdown').innerText = '';
+                    setClock('');
                     switchToTriviYeahIIBoardUI(data.grid, data.currentPicker, data.round, data.totalRounds);
                     playerAnswerStatus = {};
                     updateLeaderboardUI(cachedPlayersSnapshot);
@@ -552,7 +568,7 @@ if (btnSubmitSpectate) {
                 }
                 if (data.type === 'TRIVI_YEAH_II_TRAP_REVEAL') {
                     activeTrapTV = data;
-                    document.getElementById('lobby-countdown').innerText = ''; // the setting clock's last tick
+                    setClock(''); // the setting clock's last tick
                     showTriviYeahIITrapRevealUI(data);
                 }
                 if (data.type === 'TRIVI_YEAH_II_QUESTION_REVEAL') {
@@ -568,7 +584,7 @@ if (btnSubmitSpectate) {
                 }
                 if (data.type === 'TRIVI_YEAH_II_ROUND_REVEAL') {
                     document.getElementById('room-status-text').innerText = "Thinking Pants — Round Evaluation";
-                    document.getElementById('lobby-countdown').innerText = "0 s";
+                    setClock("0 s");
                     highlightCorrectAnswerOnTV(data.correctLetter);
                     if (data.answers) {
                         Object.keys(data.answers).forEach(name => {
@@ -588,7 +604,7 @@ if (btnSubmitSpectate) {
                     document.getElementById('room-status-text').innerText = `Time's up, ${data.picker}! Random tile...`;
                 }
                 if (data.type === 'TRIVI_YEAH_II_PICK_TURN') {
-                    document.getElementById('lobby-countdown').innerText = '';
+                    setClock('');
                     switchToTriviYeahIIBoardUI(data.grid, data.currentPicker);
                     playerAnswerStatus = {};
                     updateLeaderboardUI(cachedPlayersSnapshot);
@@ -599,7 +615,7 @@ if (btnSubmitSpectate) {
                 // the room's informed side bets (placed only once the wager is
                 // visible), then back into the shared question/answers staging.
                 if (data.type === 'TRIVI_YEAH_II_DOUBLER_REVEAL') {
-                    document.getElementById('lobby-countdown').innerText = '';
+                    setClock('');
                     showTriviYeahIIDoublerRevealUI(data.picker, data.points, data.categoryLabel, data.multiplier);
                     stopCountdownMusic();
                     playAudioTrack('doubler-reveal-sound');
@@ -612,7 +628,7 @@ if (btnSubmitSpectate) {
                 }
                 if (data.type === 'TRIVI_YEAH_II_DOUBLER_RESULT') {
                     document.getElementById('room-status-text').innerText = "Thinking Pants — Doubler Result";
-                    document.getElementById('lobby-countdown').innerText = "0 s";
+                    setClock("0 s");
                     playAudioTrack(data.pickerCorrect ? 'doubler-correct-sound' : 'doubler-wrong-sound');
                     showTriviYeahIIDoublerResultUI(data);
                     updateLeaderboardUI(cachedPlayersSnapshot);
@@ -625,7 +641,7 @@ if (btnSubmitSpectate) {
                 // Wagers stay hidden the whole way through -- the TV never learns
                 // any player's wager amount until their own reveal step.
                 if (data.type === 'TRIVI_YEAH_II_FINAL_CATEGORY_REVEAL') {
-                    document.getElementById('lobby-countdown').innerText = '';
+                    setClock('');
                     finalWagerModeLabel = data.modeLabel || 'Thinking Pants';
                     setStatusMessage(''); // e.g. Country Monkey's last "Question 12 / 12"
                     showTriviYeahIIFinalCategoryRevealUI(data.topicLabel);
@@ -650,7 +666,7 @@ if (btnSubmitSpectate) {
                 }
                 if (data.type === 'TRIVI_YEAH_II_FINAL_REVEAL_START') {
                     stopAudioTrack('final-wager-timer-sound');
-                    document.getElementById('lobby-countdown').innerText = "0 s";
+                    setClock("0 s");
                     showTriviYeahIIFinalRevealStartUI(data.correctAnswer);
                 }
                 if (data.type === 'TRIVI_YEAH_II_FINAL_REVEAL_STEP') {
@@ -666,7 +682,7 @@ if (btnSubmitSpectate) {
                 // name -- which is self-outing anyway, see EMPOSSDURR_DECLARE.
                 if (data.type === 'EMPOSSDURR_ROUND_START') {
                     document.getElementById('room-status-text').innerText = "EmpossDurr — Open Discussion";
-                    document.getElementById('lobby-countdown').innerText = '';
+                    setClock('');
                     switchToEmpossDurrDiscussionUI(data.round, data.totalRounds, data.starter);
                     playerAnswerStatus = {};
                     updateLeaderboardUI(cachedPlayersSnapshot);
@@ -684,7 +700,7 @@ if (btnSubmitSpectate) {
                 }
                 if (data.type === 'EMPOSSDURR_ACCUSE_VOTE_START') {
                     document.getElementById('room-status-text').innerText = "EmpossDurr — Accuse Vote";
-                    document.getElementById('lobby-countdown').innerText = data.secondsLeft + " s";
+                    setClock(data.secondsLeft + " s");
                     switchToEmpossDurrAccuseVoteUI(data.votedCount, data.totalNeeded, data.secondsLeft);
                     playerAnswerStatus = {};
                     updateLeaderboardUI(cachedPlayersSnapshot);
@@ -697,7 +713,7 @@ if (btnSubmitSpectate) {
                     playAudioTrack('vote-sound');
                 }
                 if (data.type === 'EMPOSSDURR_ACCUSE_TIMER_TICK') {
-                    document.getElementById('lobby-countdown').innerText = data.secondsLeft + " s";
+                    setClock(data.secondsLeft + " s");
                     const t = document.getElementById('ed-tv-timer');
                     if (t) t.innerText = data.secondsLeft + " s";
                 }
@@ -713,7 +729,7 @@ if (btnSubmitSpectate) {
                 }
                 if (data.type === 'EMPOSSDURR_RESUME_DISCUSSION') {
                     document.getElementById('room-status-text').innerText = "EmpossDurr — Open Discussion";
-                    document.getElementById('lobby-countdown').innerText = '';
+                    setClock('');
                     switchToEmpossDurrDiscussionUI(currentEmpossDurrRound, currentEmpossDurrTotalRounds);
                     playerAnswerStatus = {};
                     updateLeaderboardUI(cachedPlayersSnapshot);
@@ -729,7 +745,7 @@ if (btnSubmitSpectate) {
                 }
                 if (data.type === 'EMPOSSDURR_DECLARE') {
                     document.getElementById('room-status-text').innerText = "EmpossDurr — Declaration!";
-                    document.getElementById('lobby-countdown').innerText = data.secondsLeft + " s";
+                    setClock(data.secondsLeft + " s");
                     switchToEmpossDurrDeclareSplashUI(data.impostorName, data.votedCount, data.totalNeeded, data.secondsLeft);
                     stopCategoryMusic();
                     stopCountdownMusic();
@@ -738,7 +754,7 @@ if (btnSubmitSpectate) {
                     updateLeaderboardUI(cachedPlayersSnapshot);
                 }
                 if (data.type === 'EMPOSSDURR_DECLARE_TIMER_TICK') {
-                    document.getElementById('lobby-countdown').innerText = data.secondsLeft + " s";
+                    setClock(data.secondsLeft + " s");
                     const t = document.getElementById('ed-tv-timer');
                     if (t) t.innerText = data.secondsLeft + " s";
                 }
@@ -756,7 +772,7 @@ if (btnSubmitSpectate) {
                 // hidden until every guess is locked in.
                 if (data.type === 'ON_THE_SPECTRUM_ROUND_START') {
                     document.getElementById('room-status-text').innerText = "On the Spectrum";
-                    document.getElementById('lobby-countdown').innerText = '';
+                    setClock('');
                     switchToOnTheSpectrumSetTargetUI(data.namedPlayerName, data.statementText, data.roundNumber, data.totalRounds);
                     playerAnswerStatus = {};
                     updateLeaderboardUI(cachedPlayersSnapshot);
@@ -773,7 +789,7 @@ if (btnSubmitSpectate) {
                 }
                 if (data.type === 'ON_THE_SPECTRUM_REVEAL') {
                     document.getElementById('room-status-text').innerText = "On the Spectrum — Reveal";
-                    document.getElementById('lobby-countdown').innerText = data.secondsLeft + " s";
+                    setClock(data.secondsLeft + " s");
                     switchToOnTheSpectrumRevealUI(data.namedPlayerName, data.statementText, data.targetValue, data.results, data.tvLimit, data.secondsLeft);
                     playerAnswerStatus = {};
                     updateLeaderboardUI(cachedPlayersSnapshot);
@@ -782,7 +798,7 @@ if (btnSubmitSpectate) {
                     updateOnTheSpectrumContinueTallyTV(data.votedCount, data.totalNeeded);
                 }
                 if (data.type === 'ON_THE_SPECTRUM_CONTINUE_TIMER_TICK') {
-                    document.getElementById('lobby-countdown').innerText = data.secondsLeft + " s";
+                    setClock(data.secondsLeft + " s");
                     const t = document.getElementById('ots-tv-timer');
                     if (t) t.innerText = data.secondsLeft + " s";
                 }
@@ -794,7 +810,7 @@ if (btnSubmitSpectate) {
                 if (data.type === 'FLAG_ME_DOWN_ROUND') {
                     currentGamePhase = 'FLAG_ME_DOWN'; // before the standings refresh below, or it re-posts the lobby's "Press Start" line
                     document.getElementById('room-status-text').innerText = `Flag Me Down — Flag ${data.round}/${data.totalRounds}`;
-                    document.getElementById('lobby-countdown').innerText = '';
+                    setClock('');
                     setStatusMessage('');
                     playerAnswerStatus = {};
                     updateLeaderboardUI(cachedPlayersSnapshot);
@@ -822,7 +838,7 @@ if (btnSubmitSpectate) {
 
                 if (data.type === 'PROFILER_QUESTION') {
                     document.getElementById('room-status-text').innerText = "Profiler";
-                    document.getElementById('lobby-countdown').innerText = '';
+                    setClock('');
                     playerAnswerStatus = {};
                     updateLeaderboardUI(cachedPlayersSnapshot);
                     switchToProfilerQuestionUI(data);
@@ -851,16 +867,16 @@ if (btnSubmitSpectate) {
                 }
                 if (data.type === 'PROFILER_UNANIMOUS') {
                     profilerCountdownActive = false;
-                    document.getElementById('lobby-countdown').innerText = '';
+                    setClock('');
                     switchToProfilerUnanimousUI(data);
                 }
                 if (data.type === 'PROFILER_REVEAL') {
                     profilerCountdownActive = false;
                     document.getElementById('room-status-text').innerText = "Profiler — Reveal";
-                    document.getElementById('lobby-countdown').innerText = '';
+                    setClock('');
                     playerAnswerStatus = {};
                     switchToProfilerRevealUI(data);
-                    document.getElementById('lobby-countdown').innerText = (data.secondsLeft || 60) + ' s';
+                    setClock((data.secondsLeft || 60) + ' s');
                 }
                 if (data.type === 'PROFILER_CONTINUE_UPDATE') {
                     updateProfilerContinueTally(data.votedCount, data.totalNeeded);
@@ -868,7 +884,7 @@ if (btnSubmitSpectate) {
                 if (data.type === 'PROFILER_AWARDS') {
                     profilerCountdownActive = false;
                     document.getElementById('room-status-text').innerText = "Profiler — Results";
-                    document.getElementById('lobby-countdown').innerText = '';
+                    setClock('');
                     switchToProfilerAwardsUI(data);
                     playAudioTrack('win-music');
                 }
@@ -2112,7 +2128,7 @@ function switchToGameOverUI(players, brand) {
         <div class="panel-box" style="padding: 40px; flex: 1; display: flex; flex-direction: column; justify-content: center;">
             ${brand && brand.logoUrl ? `<img src="${brand.logoUrl}" alt="" style="display: block; height: 120px; width: auto; max-width: 70%; object-fit: contain; margin: 0 auto 20px;" onerror="this.remove()">` : ''}
             <h2 class="panel-title" style="margin-bottom: 8px;">Final scores</h2>
-            <p style="color: var(--rm-text-muted); font-size: 0.95rem; margin: 0 0 32px 0; font-weight: 500;">${brand ? `Thanks for playing at ${escapeHtml(brand.name)}!${brand.tagline ? ` <span style="color: var(--rm-text-soft);">${escapeHtml(brand.tagline)}</span>` : ''}` : 'Thanks for playing!'}</p>
+            ${brand ? `<p style="color: var(--rm-text-soft); font-size: 0.95rem; margin: 0 0 32px 0; font-weight: 600;">${escapeHtml(brand.name)}${brand.tagline ? ` <span style="color: var(--rm-text-muted); font-weight: 500;">&middot; ${escapeHtml(brand.tagline)}</span>` : ''}</p>` : ''}
             <div style="display: flex; flex-direction: column; gap: 36px;">${rows}</div>
             <div id="return-vote-tally" style="color: var(--rm-text-muted); font-size: 0.85rem; text-align: center; margin-top: 28px;"></div>
         </div>

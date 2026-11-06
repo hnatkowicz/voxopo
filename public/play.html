@@ -731,7 +731,7 @@
     <div id="game-over-screen" class="card" style="display: none;">
         <h1>Game Over</h1>
         <div id="game-over-content">
-            <p class="subtitle" style="margin-bottom: 0;">Thanks for playing! Swipe left for the final scores.</p>
+            <p class="subtitle" style="margin-bottom: 0;">Swipe left for the final scores.</p>
         </div>
         <!-- Outside #game-over-content on purpose -- renderGameOver() replaces that
              div's innerHTML every time, which would wipe these buttons out with it.
@@ -3223,9 +3223,11 @@
             const modeName = MODE_DISPLAY_NAMES[data.winningGameMode];
             document.getElementById('btn-play-again').innerText = modeName ? `Play ${modeName} Again` : 'Play Again';
 
-            const thanks = data.brand ? `Thanks for playing at ${escapeFmd(data.brand.name)}!` : 'Thanks for playing!';
+            // No generic "Thanks for playing!" (Randy, Nov 2026: too cute); a
+            // venue's name stays -- that's branding the venue pays for.
+            const thanks = data.brand ? escapeFmd(data.brand.name) : '';
             if (!rank) {
-                container.innerHTML = `<p class="subtitle" style="margin-bottom: 0;">${thanks} Swipe left for the final scores.</p>`;
+                container.innerHTML = `<p class="subtitle" style="margin-bottom: 0;">${thanks ? `${thanks} · ` : ''}Swipe left for the final scores.</p>`;
                 return;
             }
 
