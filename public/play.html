@@ -387,11 +387,9 @@
             </div>
         </div>
 
-        <!-- MODULE CHOICE ROWS (CLEAN - NO DECORATIVE EMOJIS!) -->
-        <div class="input-group" id="mode-join-group">
-            <label>Pick a game</label>
-            <div class="module-list mode-pick-grid" id="mode-join-list"></div>
-        </div>
+        <!-- No game choice here any more (Randy, Nov 2026): joining and
+             voting are separate. You join with your name and emoji, then pick
+             a game in the lobby, where a tap is your vote. -->
 
         <button class="btn" onclick="executeRoomOnboarding()">Join</button>
         <div id="login-feedback" class="feedback"></div>
@@ -421,12 +419,11 @@
              screen only makes sense while genuinely sitting in LOBBY_PHASE. -->
         <div id="game-lobby-content">
             <div class="input-group" id="mode-revote-group">
-                <label>1. Playing again? Confirm or change the mode</label>
+                <label>Pick a game</label>
                 <div class="module-list mode-pick-grid" id="mode-revote-list"></div>
             </div>
 
             <div class="input-group">
-                <label>2. Vote to start</label>
                 <button class="btn" onclick="submitStartVote()">Start</button>
             </div>
         </div>
@@ -759,12 +756,9 @@
         // One mode on offer = nothing to choose: it's picked for you and the
         // list is hidden.
         function renderJoinModeList() {
-            document.getElementById('mode-join-list').innerHTML = window.renderModePickerTiles('selectModule', joinAllowedModes);
-            const only = joinAllowedModes && joinAllowedModes.length === 1 ? joinAllowedModes[0] : null;
-            document.getElementById('mode-join-group').style.display = only ? 'none' : '';
-            if (only) chosenModule = only;
-            else if (joinAllowedModes && !joinAllowedModes.includes(chosenModule)) chosenModule = '';
-            document.querySelectorAll('#mode-join-list .module-row').forEach(r => r.classList.toggle('selected', r.dataset.modeKey === chosenModule));
+            // Nothing to draw: the game is picked in the lobby. One game on
+            // offer is still sent as the vote (the server does the same).
+            chosenModule = joinAllowedModes && joinAllowedModes.length === 1 ? joinAllowedModes[0] : '';
         }
 
         let joinInfoRequestedFor = null;
@@ -1330,16 +1324,13 @@
                 showFeedback(feedback, "⚠️ Add the room code and your name.", "rgba(var(--rm-orange-rgb),0.15)", "var(--rm-orange)", "rgba(var(--rm-orange-rgb),0.1)");
                 return;
             }
-            if (!chosenModule) {
-                showFeedback(feedback, "⚠️ Pick a game first.", "rgba(var(--rm-orange-rgb),0.15)", "var(--rm-orange)", "rgba(var(--rm-orange-rgb),0.1)");
-                return;
-            }
 
             localStorage.setItem('randomania_nickname', name);
             showFeedback(feedback, "Joining...", "rgba(var(--rm-orange-rgb),0.06)", "var(--rm-orange)", "rgba(var(--rm-orange-rgb),0.1)");
 
             try {
-                const completeBodyText = `${room} ${name} ${chosenAvatar} ${chosenModule}`;
+                // NONE = no vote yet; it's cast in the lobby.
+                const completeBodyText = `${room} ${name} ${chosenAvatar} ${chosenModule || 'NONE'}`;
                 const response = await fetch('/api/message', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
