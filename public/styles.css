@@ -683,3 +683,35 @@ body.tp-layout #venue-hud-name { overflow: hidden; text-overflow: ellipsis; min-
 #game-screen .status-pill, #hud-players { display: none !important; }
 .tp-split .tp-answers { width: 100%; }
 body.tp-layout .tp-stage { padding: 0 calc(var(--u) * 2); }
+
+/* ---------- The lobby, in the new layout (Nov 2026) ----------
+   Same rules as Thinking Pants: no boxes, sized to the screen, airy. On
+   Randy's Fire Stick the old lobby overflowed; on a laptop over HDMI it
+   filled half the TV. The QR code is bigger here -- joining is the point. */
+.lobby-stage { flex: 1; display: flex; flex-direction: column; justify-content: center; gap: calc(var(--u) * 2); min-height: 0; padding: 0 calc(var(--u) * 2); }
+.lobby-title { margin: 0; font-family: var(--rm-font-display); font-weight: 800; font-size: calc(var(--u) * 2.6); color: var(--rm-text); letter-spacing: -0.01em; }
+.lobby-modes { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: calc(var(--u) * 1.1) calc(var(--u) * 1.4); width: 88%; }
+.lobby-mode { background: var(--rm-surface); border-radius: calc(var(--u) * 1.1); padding: calc(var(--u) * 0.9) calc(var(--u) * 1.2) calc(var(--u) * 0.8); display: flex; flex-direction: column; gap: calc(var(--u) * 0.7); min-width: 0; }
+.lobby-mode-head { display: flex; align-items: center; gap: calc(var(--u) * 1.1); min-width: 0; }
+.lobby-mode-icon { width: calc(var(--u) * 3.6); display: flex; justify-content: center; flex-shrink: 0; }
+.lobby-mode-icon img { height: calc(var(--u) * 3.4) !important; max-width: calc(var(--u) * 7) !important; }
+.lobby-mode-icon span { font-size: calc(var(--u) * 2.6) !important; }
+.lobby-mode-name { font-family: var(--rm-font-display); font-weight: 800; font-size: calc(var(--u) * 1.7); line-height: 1.1; color: var(--rm-text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.lobby-mode-name .mode-tile-tag { font-family: var(--rm-font-body); font-size: 0.5em; vertical-align: middle; }
+.lobby-mode-blurb { font-size: calc(var(--u) * 1.2); color: var(--rm-text-soft); margin-top: calc(var(--u) * 0.2); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.lobby-mode-count { font-family: var(--rm-font-display); font-weight: 800; font-size: calc(var(--u) * 2); color: var(--rm-text); font-variant-numeric: tabular-nums; flex-shrink: 0; }
+.lobby-mode-track { height: calc(var(--u) * 0.45); background: var(--rm-surface-2); border-radius: 99px; overflow: hidden; }
+/* Pubs: the venue's logo, name and tagline open the lobby, without a box. */
+body.tp-layout.pub-profile.tv-lobby .venue-banner { background: transparent; border: none; padding: 0 calc(var(--u) * 2); margin-bottom: calc(var(--u) * 1); gap: calc(var(--u) * 2); }
+body.tp-layout #venue-banner-logo { width: calc(var(--u) * 12); height: calc(var(--u) * 6); }
+body.tp-layout .venue-banner-name { font-family: var(--rm-font-display); font-size: calc(var(--u) * 3.2); }
+body.tp-layout .venue-banner-tagline { font-size: calc(var(--u) * 1.5); }
+/* With a venue banner, its name already says where you are. */
+body.tp-layout.pub-profile .lobby-title { display: none; }
+/* The QR code: bigger in the lobby (joining is the point), biggest at a pub
+   (scanned from a table). */
+body.tp-layout.tv-lobby #room-qr-box { width: calc(var(--u) * 10) !important; height: calc(var(--u) * 10) !important; }
+body.tp-layout.pub-profile.tv-lobby #room-qr-box { width: calc(var(--u) * 13) !important; height: calc(var(--u) * 13) !important; padding: 4px !important; }
+body.tp-layout.tv-lobby #onboarding-text-slot > div:first-child, body.tp-layout.pub-profile.tv-lobby #onboarding-text-slot > div:first-child { font-size: calc(var(--u) * 2.2) !important; }
+body.tp-layout.tv-lobby #onboarding-text-slot > div:last-child, body.tp-layout.pub-profile.tv-lobby #onboarding-text-slot > div:last-child { font-size: calc(var(--u) * 1.8) !important; }
+body.tp-layout.pub-profile.tv-lobby #onboarding-text-slot { flex: 1 !important; }

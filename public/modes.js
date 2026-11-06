@@ -49,28 +49,30 @@ window.modeForVenue = function (mode) {
 };
 
 window.renderModeElectionTiles = function (allowedKeys) {
+    // TV lobby (Nov 2026): no boxes, sized to the screen (lobby-* in
+    // styles.css). Votes show as each tile's bar plus a plain number --
+    // the bar already says the share, so no "(50%)".
     return `
-        <div class="panel-box">
-            <h2 class="panel-title">What should we play?</h2>
-            <div class="mode-grid">
+        <div class="lobby-stage">
+            <h2 class="lobby-title">What should we play?</h2>
+            <div class="lobby-modes">
                 ${window.modesShown(allowedKeys).map(m => `
-                    <div class="mode-tile">
-                        <div class="mode-tile-head">
-                            ${window.modeIconHtml(m, 34)}
+                    <div class="lobby-mode">
+                        <div class="lobby-mode-head">
+                            <span class="lobby-mode-icon">${window.modeIconHtml(m, 64)}</span>
                             <div style="min-width: 0; flex: 1;">
-                                <div class="mode-tile-name">${m.name}${m.tag ? ` <span class="mode-tile-tag">${m.tag}</span>` : ''}</div>
-                                <div class="mode-tile-blurb">${m.blurb}</div>
+                                <div class="lobby-mode-name">${m.name}${m.tag ? ` <span class="mode-tile-tag">${m.tag}</span>` : ''}</div>
+                                <div class="lobby-mode-blurb">${m.blurb}</div>
                             </div>
-                            <div id="vcount-${m.key}" class="mode-tile-count">0 votes (0%)</div>
+                            <div id="vcount-${m.key}" class="lobby-mode-count"></div>
                         </div>
-                        <div class="progress-track" style="height: 6px;"><div id="vbar-${m.key}" class="progress-fill" style="background: ${m.color};"></div></div>
+                        <div class="lobby-mode-track"><div id="vbar-${m.key}" class="progress-fill" style="background: ${m.color};"></div></div>
                     </div>
                 `).join('')}
             </div>
         </div>
     `;
 };
-
 // Phone: a 2-column grid of tappable tiles. onTap is the name of the page's
 // handler, called as onTap(this, '<KEY>').
 window.renderModePickerTiles = function (onTap, allowedKeys) {

@@ -933,11 +933,14 @@ if (btnSubmitSpectate) {
         // that starts something else. The Final Wager's broadcasts are
         // shared with Country Monkey and Flag Me Down, so they leave the
         // layout as it was.
-        const TP_LAYOUT_OFF = new Set(['ROOM_CLOSED', 'RETURN_TO_LOBBY', 'TRANSITION_TO_CATEGORY_VOTE', 'TRANSITION_TO_QUESTION',
+        // The lobby uses it too (Nov 2026): a TV joining a room hears
+        // ROOM_VENUE first, and a mid-game join's STATE_CATCH_UP follows.
+        const TP_LAYOUT_ON = new Set(['ROOM_VENUE', 'RETURN_TO_LOBBY']);
+        const TP_LAYOUT_OFF = new Set(['ROOM_CLOSED', 'TRANSITION_TO_CATEGORY_VOTE', 'TRANSITION_TO_QUESTION',
             'EMPOSSDURR_ROUND_START', 'ON_THE_SPECTRUM_ROUND_START', 'FLAG_ME_DOWN_ROUND', 'PROFILER_QUESTION']);
         function updateTpLayout(data) {
             let on = null;
-            if (data.type === 'TRANSITION_TO_TRIVI_YEAH_II' || /^TRIVI_YEAH_II_(?!FINAL_)/.test(data.type)) on = true;
+            if (data.type === 'TRANSITION_TO_TRIVI_YEAH_II' || /^TRIVI_YEAH_II_(?!FINAL_)/.test(data.type) || TP_LAYOUT_ON.has(data.type)) on = true;
             else if (TP_LAYOUT_OFF.has(data.type)) on = false;
             else if (data.type === 'STATE_CATCH_UP') on = data.gameState === 'TRIVI_YEAH_II_ROUND';
             if (on === null || on === document.body.classList.contains('tp-layout')) return;
@@ -1012,11 +1015,8 @@ if (btnSubmitSpectate) {
             // Gated to LOBBY specifically -- this fires on every LEADERBOARD_UPDATE,
             // including the ones broadcast after every reveal once the game is live,
             // and would otherwise stomp the in-game/game-over status message.
-            if (currentGamePhase === 'LOBBY' && !currentStatusHtml.includes('START')) {
-                setStatusMessage(`
-                    <div style="font-weight: 600; color: var(--rm-periwinkle); margin-bottom: 2px;">EVERYONE IN? PRESS START</div>
-                    <div style="font-size: 0.8rem; color: var(--rm-text-muted);">Skips the countdown once everyone's in</div>
-                `);
+            if (currentGamePhase === 'LOBBY' && !currentStatusHtml.includes('Press Start')) {
+                setStatusMessage(`<div style="font-weight: 600; color: var(--rm-periwinkle);">Everyone in? Press Start</div>`);
             }
 
             tbody.innerHTML = '';
@@ -1051,7 +1051,7 @@ if (btnSubmitSpectate) {
                 const count = votes[key] || 0;
                 const percentage = Math.round((count / totalVotes) * 100);
                 bar.style.width = `${percentage}%`;
-                document.getElementById(`vcount-${key}`).innerText = `${count} ${count === 1 ? 'vote' : 'votes'} (${percentage}%)`;
+                document.getElementById(`vcount-${key}`).innerText = count ? String(count) : ''; // the bar shows the share
             });
         }
 

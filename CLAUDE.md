@@ -128,9 +128,16 @@ event, for a small fee. That's why hosting is gated behind access codes.
   in `styles.css`; `updateTpLayout` in `app.js` turns the layout on for
   Thinking Pants' broadcasts and off for anything else. The Final Wager
   is shared, so in Country Monkey and Flag Me Down it uses the same
-  pieces inside the old boxed layout. Next: **Phase 3**, the other
-  modes' TV screens, starting with the lobby (on the Fire Stick it
-  overflows; on a laptop over HDMI it fills half the TV).
+  pieces inside the old boxed layout. **Phase 3** (the other screens)
+  started with **the lobby** (Nov 2026): on Randy's Fire Stick the old one
+  overflowed, and on a laptop over HDMI it filled half the TV. Now it uses
+  the same layout (`ROOM_VENUE` and `RETURN_TO_LOBBY` turn it on): no
+  boxes, the mode tiles (`lobby-*`, built by `renderModeElectionTiles` in
+  `modes.js`; the phones' tiles are separate) with a vote bar and a plain
+  vote count (the bar shows the share), the scoreboard rail, and a bigger
+  QR code (10u, 13u at a pub, where the venue's banner replaces "What
+  should we play?"). Checked at 960x540 and 1080p, home and pub. Still in
+  the old layout: the TV's start screen and every mode but Thinking Pants.
 - **TV design rules (Randy, Nov 2026, after the Fire Stick test) -- apply
   to every TV screen from here on:**
   1. **Say it once.** Don't add information: where something sits, how
