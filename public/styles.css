@@ -725,3 +725,30 @@ body.tp-layout #return-vote-tally { margin-top: calc(var(--u) * 1.2) !important;
    to play gets room to breathe). */
 .tp-split > .tp-pic { flex: 1.4; }
 .tp-pic img { max-height: calc(var(--u) * 32); }
+
+/* ---------- Flag Me Down, in the new layout (Nov 2026) ----------
+   The flag, map, clues and answers are crucial, so they get the room;
+   the round count and points ladder are informative, so they share one
+   small line. Sized to fit a Fire Stick's 960x540 with nothing cut off. */
+.fmd-stage { gap: calc(var(--u) * 1.1); }
+.fmd-top { display: flex; align-items: center; justify-content: space-between; gap: calc(var(--u) * 2); }
+.fmd-ladder { display: flex; gap: calc(var(--u) * 0.5); }
+.fmd-step { font-size: calc(var(--u) * 1.05); font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--rm-text-muted);
+    padding: calc(var(--u) * 0.25) calc(var(--u) * 0.7); border-radius: 99px; white-space: nowrap; }
+.fmd-step b { color: var(--rm-text-soft); margin-left: 0.2em; }
+.fmd-step.now { background: rgba(var(--rm-brand-rgb), 0.16); color: var(--rm-brand); }
+.fmd-step.now b { color: var(--rm-brand); }
+.fmd-step.past { opacity: 0.45; }
+.fmd-pics { display: flex; gap: calc(var(--u) * 1.4); justify-content: center; }
+.fmd-pic { width: calc(var(--u) * 22); height: calc(var(--u) * 16.5); object-fit: contain; border-radius: calc(var(--u) * 0.8); box-sizing: border-box; }
+.fmd-pic-waiting { border: calc(var(--u) * 0.15) dashed var(--rm-border-3); display: flex; align-items: center; justify-content: center; font-size: calc(var(--u) * 3); opacity: 0.35; }
+.fmd-clues { display: flex; gap: calc(var(--u) * 1.1); width: 84%; }
+.fmd-clue { flex: 1; min-width: 0; background: var(--rm-surface); border-radius: calc(var(--u) * 0.9); padding: calc(var(--u) * 0.6) calc(var(--u) * 1.2); }
+.fmd-clue-label { font-size: calc(var(--u) * 1); font-weight: 700; color: var(--rm-text-muted); text-transform: uppercase; letter-spacing: 0.08em; }
+.fmd-clue-value { font-size: calc(var(--u) * 1.6); font-weight: 700; color: var(--rm-text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.fmd-clue-value.empty { color: var(--rm-slate-600); }
+.fmd-answers .tp-ans { padding: calc(var(--u) * 0.75) calc(var(--u) * 1.3); }
+.fmd-results { display: flex; flex-wrap: wrap; gap: calc(var(--u) * 0.6); min-height: calc(var(--u) * 2.4); align-items: center; }
+.fmd-tally { font-size: calc(var(--u) * 1.3); font-weight: 600; color: var(--rm-text-soft); }
+.fmd-result { font-size: calc(var(--u) * 1.3); font-weight: 600; color: var(--rm-text-soft); background: var(--rm-surface); border-radius: 99px; padding: calc(var(--u) * 0.3) calc(var(--u) * 1); }
+.fmd-result.right { color: var(--rm-green); }
