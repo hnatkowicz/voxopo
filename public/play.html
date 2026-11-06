@@ -1821,7 +1821,9 @@
             spectatorText.style.display = 'none';
 
             document.getElementById('ty2-status-line').innerText = data.triviYeahIIPhase === 'ANSWERING' ? 'Pick your answer!' : 'Resolved! Next pick coming up...';
-            choicesList.style.display = 'block';
+            // 'flex', not 'block': .module-list spaces its rows with a flex gap,
+            // and 'block' made Thinking Pants' answers touch (Randy, Nov 2026).
+            choicesList.style.display = 'flex';
             ['A', 'B', 'C', 'D'].forEach(letter => {
                 const textEl = document.getElementById(`ty2-choice-text-${letter}`);
                 if (data.choices) textEl.innerText = data.choices[letter] || '-';
@@ -1940,7 +1942,7 @@
             }
 
             document.getElementById('ty2-status-line').innerText = 'Place your side bet!';
-            buttons.style.display = 'block';
+            buttons.style.display = 'flex'; // flex keeps .module-list's gap
             waitingText.style.display = 'none';
             ['FOR', 'AGAINST', 'PASS'].forEach(choice => {
                 const row = document.getElementById(`ty2-bet-row-${choice}`);
