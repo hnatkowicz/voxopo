@@ -762,3 +762,42 @@ body.tp-layout #return-vote-tally { margin-top: calc(var(--u) * 1.2) !important;
 .fmd-tally { font-size: calc(var(--u) * 1.3); font-weight: 600; color: var(--rm-text-soft); }
 .fmd-result { font-size: calc(var(--u) * 1.3); font-weight: 600; color: var(--rm-text-soft); background: var(--rm-surface); border-radius: 99px; padding: calc(var(--u) * 0.3) calc(var(--u) * 1); }
 .fmd-result.right { color: var(--rm-green); }
+
+/* ---------- The TV's start screen, in the new layout (Nov 2026) ----------
+   Sized to the screen like the rest, and built for a TV remote: a big code
+   box and a big Show button (the Fire Stick's on-screen keyboard's Go/Done
+   presses Show too). */
+body.tp-layout[data-view="gateway"] #gateway-screen { display: flex !important; flex-direction: column; flex: 1; min-height: 0; }
+.gateway-main { flex: 1 !important; min-width: 0; display: flex; flex-direction: column; }
+.gateway-stage { flex: 1; display: flex; flex-direction: column; justify-content: center; gap: calc(var(--u) * 1.4); padding: 0 calc(var(--u) * 2); }
+.gateway-title { margin: 0; font-family: var(--rm-font-display); font-weight: 800; font-size: calc(var(--u) * 4); color: var(--rm-text); letter-spacing: -0.01em; }
+.gateway-sub { font-size: calc(var(--u) * 1.6); color: var(--rm-text-soft); margin-top: calc(var(--u) * -0.6); }
+.gateway-form { display: flex; gap: calc(var(--u) * 1.2); width: 70%; }
+.gateway-form input {
+    flex: 1; min-width: 0; background: var(--rm-surface); border: calc(var(--u) * 0.2) solid var(--rm-border); border-radius: calc(var(--u) * 1.2);
+    color: var(--rm-text); padding: calc(var(--u) * 1) calc(var(--u) * 1.4); font-family: var(--rm-font-display); font-weight: 800;
+    font-size: calc(var(--u) * 3.4); text-align: center; letter-spacing: 0.3em; font-variant-numeric: tabular-nums; box-sizing: border-box;
+}
+.gateway-form input::placeholder { color: var(--rm-slate-600); }
+.gateway-form input:focus { outline: none; border-color: var(--rm-brand); }
+.gateway-form button { padding: 0 calc(var(--u) * 3) !important; font-size: calc(var(--u) * 2) !important; border-radius: calc(var(--u) * 1.2) !important; }
+.gateway-form button:focus-visible { outline: calc(var(--u) * 0.25) solid var(--rm-text); outline-offset: calc(var(--u) * 0.2); }
+.gateway-host { font-size: calc(var(--u) * 1.3); color: var(--rm-text-muted); text-decoration: none; }
+.gateway-foot { display: flex; align-items: center; gap: calc(var(--u) * 1.4); margin-top: calc(var(--u) * 1.4); }
+.gateway-qr { width: calc(var(--u) * 6); height: calc(var(--u) * 6); background: var(--rm-white); border-radius: calc(var(--u) * 0.6); padding: 2px; box-sizing: border-box; flex-shrink: 0; }
+.gateway-qr img { width: 100%; height: 100%; object-fit: contain; display: block; }
+.gateway-foot-title { font-size: calc(var(--u) * 1.3); font-weight: 600; color: var(--rm-text); }
+.gateway-foot-url { font-size: calc(var(--u) * 1.2); font-weight: 600; color: var(--rm-brand); }
+
+/* ---------- Venue break, in the new layout (Nov 2026) ----------
+   What a pub's room watches for up to 10 minutes: the venue's logo, the
+   notes big and rotating, the "back in 30" heads-up. "Who's back" is
+   informational, so it stays small; the phones show the I'm back button. */
+.break-stage { gap: calc(var(--u) * 1.4); }
+.break-logo { height: calc(var(--u) * 11); width: auto; max-width: 80%; object-fit: contain; }
+.break-note { font-family: var(--rm-font-display); font-weight: 800; font-size: calc(var(--u) * 3.4); line-height: 1.2; color: var(--rm-brand);
+    min-height: 2.4em; max-width: 80%; display: flex; align-items: center; justify-content: center; text-wrap: balance; transition: opacity 0.4s; }
+/* A toast waiting off-screen hid its card but not its glow, which showed as
+   a faint gold blur at the left edge of the TV. Hidden until it slides in. */
+.toast-card { visibility: hidden; transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), visibility 0s linear 0.4s; }
+.toast-card.active { visibility: visible; transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), visibility 0s; }

@@ -159,8 +159,20 @@ event, for a small fee. That's why hosting is gated behind access codes.
   "Flag 3 / 15" and the points ladder share one small line on top; no
   "Whose flag is this?" or "Lock in on your phone" (said once). The clock
   stays blank during the clues, as before (a countdown after the map clue
-  is parked -- Randy, Nov 2026). Still in the old layout: the TV's start
-  screen, EmpossDurr, On the Spectrum and Profiler.
+  is parked -- Randy, Nov 2026). **The TV's start screen** and **the venue
+  break** followed (Nov 2026): the start screen uses the same top bar,
+  footer and right-hand rail (live counts) as the game, with a big code
+  box and Show button for a remote (Enter/Go on the stick's keyboard
+  presses Show), and the page starts in the new layout (`class="tp-layout"`
+  on `<body>`; `ROOM_CLOSED` keeps it on). The break shows the venue's
+  logo, "Break time" (the venue's name is already in the top bar), the
+  notes big and gold, the heads-up, and a small "x of n are back".
+  **Next up (Randy, Nov 2026: pivoting to the streaming device in the
+  living room):** the home modes in the new layout -- Profiler,
+  EmpossDurr and On the Spectrum, the last screens still in the old one.
+  Then a full pass on the phone screens. Waiting: a forced test of the
+  trap screens (Randy said wait), the scoreboard width (Randy is still
+  playing), the Flag Me Down countdown, and Randy's avatar SVGs.
 - **TV design rules (Randy, Nov 2026, after the Fire Stick test) -- apply
   to every TV screen from here on:**
   1. **Say it once.** Don't add information: where something sits, how
