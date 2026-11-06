@@ -400,7 +400,9 @@ if (btnSubmitSpectate) {
                 }
                 // Listen for Phase 3 active question clock ticks to drive the round countdown banner!
                 if (data.type === 'GAME_TIMER_TICK') {
-                    document.getElementById('lobby-countdown').innerText = data.secondsLeft;
+                    // "TIME'S UP!" from the server shows as 0: the countdown says it
+                    // (Randy, Nov 2026 -- it took two lines and made the top bar jump).
+                    document.getElementById('lobby-countdown').innerText = /^\d/.test(String(data.secondsLeft)) ? data.secondsLeft : '0 s';
                     // The family asked for NO music through a Trivi-Yeah II tile's
                     // countdown -- just a light three-tone cue near the end so the
                     // room still knows the question is live. Only on a genuine
@@ -492,7 +494,7 @@ if (btnSubmitSpectate) {
                 if (data.type === 'GAME_OVER') {
                     profilerCountdownActive = false;
                     document.getElementById('room-status-text').innerText = "Game Over";
-                    document.getElementById('lobby-countdown').innerText = "FINAL";
+                    document.getElementById('lobby-countdown').innerText = '';
                     stopCategoryMusic();
                     stopCountdownMusic();
                     stopAudioTrack('final-wager-timer-sound');
@@ -1537,11 +1539,10 @@ function showTriviYeahIIDoublerRevealUI(picker, points, categoryLabel, multiplie
     document.getElementById('room-status-text').innerText = "Thinking Pants — Doubler!";
     panel.innerHTML = tpStage('tp-center', `
         ${doublerCategoryBadge(categoryLabel)}
-        <div class="tp-kicker">Surprise tile</div>
         <div class="tp-big" style="color: var(--rm-orange); text-shadow: 0 0 20px rgba(var(--rm-orange-rgb), 0.4);">DOUBLER!</div>
         <div class="tp-mid">${picker} is on the hook for this one.</div>
-        <div class="tp-small">Tile value: ${points} points</div>
-        ${doublerMultiplier > 1 ? `<div class="tp-mid" style="color: var(--rm-orange-hot);">🔥 Final round: side bets are DOUBLED, win or lose!</div>` : ''}
+        <div class="tp-small">${points} points</div>
+        ${doublerMultiplier > 1 ? `<div class="tp-mid" style="color: var(--rm-orange-hot);">🔥 Side bets are doubled</div>` : ''}
     `);
 }
 
@@ -1552,8 +1553,7 @@ function showTriviYeahIIWagerPromptUI(picker, maxWager, tileValue, categoryLabel
     panel.innerHTML = tpStage('tp-center', `
         ${doublerCategoryBadge(categoryLabel)}
         <div class="tp-kicker">Waiting on the wager</div>
-        <div class="tp-mid" style="font-size: calc(var(--u) * 3.4);">${picker} is deciding how much to risk&hellip;</div>
-        <div class="tp-small">Anywhere from 0 to ${maxWager} points (tile is worth ${tileValue})</div>
+        <div class="tp-mid">${picker} is deciding how much to risk&hellip;</div>
     `);
 }
 
@@ -1568,8 +1568,6 @@ function showTriviYeahIISideBetsOpenUI(picker, wagerAmount, tileValue, categoryL
         ${doublerCategoryBadge(categoryLabel)}
         <div class="tp-kicker">${picker}'s wager</div>
         <div class="tp-big" style="color: var(--rm-orange);">${wagerAmount} points</div>
-        <div class="tp-mid">Will ${picker} get it right?</div>
-        <div class="tp-small">Place your side bet -- For, Against, or Pass -- at ${tileValue * doublerMultiplier} points${doublerMultiplier > 1 ? ` <strong style="color: var(--rm-orange-hot);">(doubled!)</strong>` : ''}</div>
     `);
 }
 
@@ -1579,19 +1577,21 @@ function showTriviYeahIISideBetsOpenUI(picker, wagerAmount, tileValue, categoryL
 function showTriviYeahIIDoublerResultUI(data) {
     const panel = document.getElementById('active-content-stage');
 
+    // Say it once (Randy, Nov 2026): no "-0 points", and no "passed" lines --
+    // only side bets that won or lost are news.
     const pickerLine = data.pickerCorrect
-        ? `<span style="color: var(--rm-green);">${data.picker} got it right -- +${data.wagerAmount} points!</span>`
-        : `<span style="color: var(--rm-red-soft);">${data.picker} missed it -- &minus;${data.wagerAmount} points.</span>`;
+        ? `<span style="color: var(--rm-green);">${data.picker} got it right${data.wagerAmount ? ` -- +${data.wagerAmount} points!` : '!'}</span>`
+        : `<span style="color: var(--rm-red-soft);">${data.picker} missed it${data.wagerAmount ? ` -- &minus;${data.wagerAmount} points.` : '.'}</span>`;
 
     const sideBetRows = Object.entries(data.sideBetResults || {}).map(([name, delta]) => {
-        if (delta === 0) return `<div class="tp-small" style="color: var(--rm-text-muted);">${name} passed.</div>`;
+        if (delta === 0) return '';
         const won = delta > 0;
         return `<div class="tp-small" style="color: ${won ? 'var(--rm-green)' : 'var(--rm-red-soft)'};">${name} ${won ? 'won' : 'lost'} ${Math.abs(delta)} points.</div>`;
     }).join('');
 
     panel.innerHTML = tpStage('tp-center', `
         <div class="tp-kicker">Correct answer was ${data.correctLetter}</div>
-        <div class="tp-mid" style="font-size: calc(var(--u) * 3.2);">${pickerLine}</div>
+        <div class="tp-mid">${pickerLine}</div>
         <div style="display: flex; flex-direction: column; gap: calc(var(--u) * 0.4);">${sideBetRows}</div>
     `);
 }
@@ -1620,15 +1620,14 @@ function showTriviYeahIIFinalWagerOpenUI() {
     const panel = document.getElementById('active-content-stage');
     panel.innerHTML = tpStage('tp-center', `
         <div class="tp-kicker">Wagering now</div>
-        <div class="tp-mid" style="font-size: calc(var(--u) * 3.4);">Everyone's deciding how much to risk&hellip;</div>
-        <div class="tp-small">Every wager stays secret until the big reveal.</div>
+        <div class="tp-mid">Everyone's deciding how much to risk&hellip;</div>
     `);
 }
 
 function showTriviYeahIIFinalAnswerOpenUI(topicLabel, questionText, visualAsset) {
     const panel = document.getElementById('active-content-stage');
     const eyebrow = `<div class="tp-eyebrow">Final Wager &middot; ${topicLabel}</div>`;
-    const typeLine = `<div class="tp-small">Type your answer on your phone. Close spellings count.</div>`;
+    const typeLine = ''; // the phone says how to answer
     if (visualAsset) {
         // A picture question: the picture on the left, same as the board's.
         panel.innerHTML = tpStage('tp-split', `
@@ -1645,7 +1644,7 @@ function showTriviYeahIIFinalRevealStartUI(correctAnswer) {
     const panel = document.getElementById('active-content-stage');
     panel.innerHTML = tpStage('', `
         <div style="text-align: center; display: flex; flex-direction: column; gap: calc(var(--u) * 0.6);">
-            <div class="tp-kicker">Time's up! The correct answer was</div>
+            <div class="tp-kicker">The answer</div>
             <div class="tp-big" style="color: var(--rm-green); font-size: calc(var(--u) * 4.2);">${correctAnswer}</div>
         </div>
         <div id="final-wager-reveal-log" class="tp-reveal-log"></div>

@@ -119,17 +119,36 @@ event, for a small fee. That's why hosting is gated behind access codes.
   (Randy: "we all wear glasses begrudgingly"). While a Thinking Pants
   game is on, `body.tp-layout` sizes everything to the screen (`--u` =
   1% of the width, or of a 16:9 frame on taller screens), drops the
-  boxes, and makes the question ~3x its old size (69px on a 1080p TV,
-  was 22px). The scoreboard is a 30%-wide rail that's always on screen:
-  emojis and every badge kept (badges right after the name), ▲▼ after a
-  score change, top 8 + "+N more playing", and the name is the only
-  thing that shortens. Pub rooms drop "Players joined" from the top bar
-  (the venue's name takes its place). The screens use the `tp-*` pieces
+  boxes, and makes the question about 2.3x its old size (2.6u, 50px on a
+  1080p TV; was 22px; the first build's 3.6u was "about 30% too big" on
+  Randy's Fire Stick test). The scoreboard is a 30%-wide rail that's
+  always on screen: emojis and every badge kept (badges right after the
+  name), ▲▼ after a score change, top 8 + "+N more playing", and the
+  name is the only thing that shortens. The screens use the `tp-*` pieces
   in `styles.css`; `updateTpLayout` in `app.js` turns the layout on for
   Thinking Pants' broadcasts and off for anything else. The Final Wager
   is shared, so in Country Monkey and Flag Me Down it uses the same
   pieces inside the old boxed layout. Next: **Phase 3**, the other
-  modes' TV screens.
+  modes' TV screens, starting with the lobby (on the Fire Stick it
+  overflows; on a laptop over HDMI it fills half the TV).
+- **TV design rules (Randy, Nov 2026, after the Fire Stick test) -- apply
+  to every TV screen from here on:**
+  1. **Say it once.** Don't add information: where something sits, how
+     it looks and the data itself say what it is. So the top bar is just
+     the logo (plus a pub's name), "Room 1234" (not "Room code") and the
+     clock. There's no "Players joined", no game/state pill (the phones'
+     side pages have that) and no "Time's up" (the clock at 0 says it).
+     The footer is "Scan to join / randomania.tv/play". On the Doubler,
+     the wager screen ends at the amount, nobody's "passed", and there's
+     no "-0 points".
+  2. **Airy.** Text takes no more than ~70% of its container; pictures and
+     the board no more than ~70% of the space they have (the board is 84%
+     wide and centered, pictures max 28u tall).
+  3. **Two sizes of moment.** Splash moments ("Up next / Art &
+     Architecture", "Starting Round 2 of 3", DOUBLER!) stay big (5.2u):
+     "clean, bold, right-sized". Reading moments are calmer: question
+     2.6u, answers 1.7u, tile values 2.5u, scoreboard rows 1.55u.
+  4. **Nothing jumps.** The top bar never wraps or shifts.
 - **Env vars:** `DATABASE_URL`, `ADMIN_PASSWORD`, `PORT`.
 
 ### The three devices
