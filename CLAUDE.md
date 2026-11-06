@@ -194,9 +194,16 @@ event, for a small fee. That's why hosting is gated behind access codes.
   the Spectrum, no "s" on phone countdowns, Country Monkey's vote says
   "Pick a region". Kept on purpose: the card frame around each phone
   screen (Randy: leave for now) and Flag Me Down's map below the clues
-  (Randy scrolls). Waiting: a forced test of the
+  (Randy scrolls). **Avatars** (Nov 2026): Randy's 18 drawings in
+  `public/avatars/` replaced the 24-emoji join grid ("my drawn avatars
+  only"; no tally of picks). The list is `AVATARS` in `public/avatars.js`
+  (add a file, add its name); a pick travels as `av:<name>` in the old
+  emoji slot, and `avatarHtml` draws it everywhere a player's emoji was
+  (TV scoreboard, join toast, Profiler names, the phone's strip, badge and
+  scores). Anything else in that slot shows as text, so an old phone
+  still sending an emoji works. Waiting: a forced test of the
   trap screens (Randy said wait), the scoreboard width (Randy is still
-  playing), the Flag Me Down countdown, and Randy's avatar SVGs.
+  playing) and the Flag Me Down countdown.
 - **TV design rules (Randy, Nov 2026, after the Fire Stick test) -- apply
   to every TV screen from here on:**
   1. **Say it once.** Don't add information: where something sits, how

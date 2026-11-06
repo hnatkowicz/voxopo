@@ -356,35 +356,11 @@
             <input type="text" id="player-name" placeholder="e.g., Randy" maxlength="30" autocomplete="off" autocorrect="off" spellcheck="false" autocapitalize="words">
         </div>
 
-        <!-- THE CURATED 24-AVATAR SELECTION GRID -->
+        <!-- Randy's drawn avatars (Nov 2026), built from AVATARS in
+             /avatars.js, replacing the old 24-emoji grid. -->
         <div class="input-group">
-            <label>Pick your emoji</label>
-            <div class="emoji-grid">
-                <button class="emoji-btn" onclick="selectAvatar(this, '👑')">👑</button>
-                <button class="emoji-btn" onclick="selectAvatar(this, '🚀')">🚀</button>
-                <button class="emoji-btn" onclick="selectAvatar(this, '⭐')">⭐</button>
-                <button class="emoji-btn" onclick="selectAvatar(this, '💎')">💎</button>
-                <button class="emoji-btn" onclick="selectAvatar(this, '🎈')">🎈</button>
-                <button class="emoji-btn" onclick="selectAvatar(this, '🔥')">🔥</button>
-                <button class="emoji-btn" onclick="selectAvatar(this, '🐨')">🐨</button>
-                <button class="emoji-btn" onclick="selectAvatar(this, '🐢')">🐢</button>
-                <button class="emoji-btn" onclick="selectAvatar(this, '🐸')">🐸</button>
-                <button class="emoji-btn" onclick="selectAvatar(this, '🐧')">🐧</button>
-                <button class="emoji-btn" onclick="selectAvatar(this, '🐯')">🐯</button>
-                <button class="emoji-btn" onclick="selectAvatar(this, '🐬')">🐬</button>
-                <button class="emoji-btn" onclick="selectAvatar(this, '🎯')">🎯</button>
-                <button class="emoji-btn" onclick="selectAvatar(this, '🎲')">🎲</button>
-                <button class="emoji-btn" onclick="selectAvatar(this, '🎱')">🎱</button>
-                <button class="emoji-btn" onclick="selectAvatar(this, '🏆')">🏆</button>
-                <button class="emoji-btn" onclick="selectAvatar(this, '⚽')">⚽</button>
-                <button class="emoji-btn" onclick="selectAvatar(this, '🎨')">🎨</button>
-                <button class="emoji-btn" onclick="selectAvatar(this, '⛵')">⛵</button>
-                <button class="emoji-btn" onclick="selectAvatar(this, '⚓')">⚓</button>
-                <button class="emoji-btn" onclick="selectAvatar(this, '🔑')">🔑</button>
-                <button class="emoji-btn" onclick="selectAvatar(this, '🔔')">🔔</button>
-                <button class="emoji-btn" onclick="selectAvatar(this, '🍀')">🍀</button>
-                <button class="emoji-btn" onclick="selectAvatar(this, '🍄')">🍄</button>
-            </div>
+            <label>Pick your avatar</label>
+            <div class="emoji-grid" id="avatar-grid"></div>
         </div>
 
         <!-- No game choice here any more (Randy, Nov 2026): joining and
@@ -743,6 +719,7 @@
     </div>
 
     <script src="/modes.js"></script>
+    <script src="/avatars.js"></script>
     <script>
         // Mode tiles come from public/modes.js -- the same list the TV uses.
         // A venue's rooms can offer only some modes (a pub shows a few), so
@@ -995,7 +972,7 @@
             document.getElementById('scores-list').innerHTML = standings.length
                 ? standings.map((p, i) => `<div class="scores-row rank-${i + 1}${p.name === myName ? ' me' : ''}">
                         <span class="scores-rank">${i + 1}</span>
-                        <span>${esc(p.emoji || '👤')}</span>
+                        ${avatarHtml(p.emoji)}
                         <span class="scores-name">${esc(p.name)}</span>
                         <span class="scores-points">${p.score}</span>
                     </div>`).join('')
@@ -1198,7 +1175,7 @@
             // Only an active player gets the side pages (not the "you left" screen).
             setInRoom(data.myLeft === false);
             document.getElementById('strip-name').innerText = myName;
-            if (data.myEmoji) document.getElementById('strip-emoji').innerText = data.myEmoji;
+            if (data.myEmoji) document.getElementById('strip-emoji').innerHTML = avatarHtml(data.myEmoji);
             if (data.myScore !== null && data.myScore !== undefined) document.getElementById('strip-score').innerText = data.myScore;
             renderRoomPage(roomCode);
             if (Array.isArray(data.standings)) renderScoresPanel(data.standings, myName);
@@ -1281,7 +1258,7 @@
                     chosenAvatar = data.myEmoji || chosenAvatar;
                     document.getElementById('badge-name').innerText = storedName;
                     document.getElementById('badge-room').innerText = storedRoom;
-                    document.getElementById('badge-emoji').innerText = chosenAvatar;
+                    document.getElementById('badge-emoji').innerHTML = avatarHtml(chosenAvatar);
                     document.getElementById('game-lobby-content').style.display = 'none';
                     document.getElementById('game-left-content').style.display = 'block';
                     document.getElementById('btn-leave-game-screen').style.display = 'none';
@@ -1292,7 +1269,7 @@
                 // Still an active player -- resume straight into the game, no
                 // form, no re-picking an avatar or a mode vote.
                 chosenAvatar = data.myEmoji || chosenAvatar;
-                document.getElementById('badge-emoji').innerText = chosenAvatar;
+                document.getElementById('badge-emoji').innerHTML = avatarHtml(chosenAvatar);
                 document.getElementById('badge-name').innerText = storedName;
                 document.getElementById('badge-room').innerText = storedRoom;
                 showOnlyPlayScreen('game-screen');
@@ -1301,6 +1278,11 @@
                 console.error("Auto-resume check failed:", e);
             }
         })();
+
+        // The join screen's avatar grid, from AVATARS (/avatars.js).
+        document.getElementById('avatar-grid').innerHTML = AVATARS.map(name =>
+            `<button type="button" class="emoji-btn" aria-label="${name}" onclick="selectAvatar(this, 'av:${name}')">${avatarHtml('av:' + name, 1.6)}</button>`
+        ).join('');
 
         function selectAvatar(element, avatarChar) {
             const btns = document.getElementsByClassName("emoji-btn");
@@ -1353,7 +1335,7 @@
 
                 document.getElementById('badge-name').innerText = name;
                 document.getElementById('badge-room').innerText = room;
-                document.getElementById('badge-emoji').innerText = chosenAvatar;
+                document.getElementById('badge-emoji').innerHTML = avatarHtml(chosenAvatar);
                 
                 showOnlyPlayScreen('game-screen');
 
@@ -3290,7 +3272,7 @@
 
             document.getElementById('badge-name').innerText = registeredName;
             document.getElementById('badge-room').innerText = roomCode || '';
-            document.getElementById('badge-emoji').innerText = chosenAvatar;
+            document.getElementById('badge-emoji').innerHTML = avatarHtml(chosenAvatar);
             document.getElementById('game-lobby-content').style.display = 'none';
             document.getElementById('game-left-content').style.display = 'block';
             document.getElementById('btn-leave-game-screen').style.display = 'none';

@@ -1013,7 +1013,7 @@ if (btnSubmitSpectate) {
                     <tr class="rail-row${index === 0 && (player.score || 0) > 0 ? ' lead' : ''}">
                         <td class="rail-rank"><span class="status-indicator ${indicatorClass}"></span>${index + 1}</td>
                         <td class="rail-id"><span class="rail-wrap">
-                            <span class="rail-emoji">${player.emoji || '👤'}</span>
+                            <span class="rail-emoji">${avatarHtml(player.emoji, 1.15)}</span>
                             <span class="rail-name">${escapeHtml(player.name)}</span>
                             <span class="rail-badges">${renderAwardBadges(player.awards)}</span>
                             ${move ? `<span class="rail-move ${move}">${move === 'up' ? '▲' : '▼'}</span>` : ''}
@@ -1065,7 +1065,7 @@ if (btnSubmitSpectate) {
                     <td class="indicator-col"><span class="status-indicator ${indicatorClass}"></span></td>
                     <td class="rank-col">${index + 1}</td>
                     <td class="awards-col">${renderAwardBadges(player.awards)}</td>
-                    <td class="identity-col"><span class="identity-wrap"><span class="player-emoji">${player.emoji || '👤'}</span><span class="player-name">${player.name}</span></span></td>
+                    <td class="identity-col"><span class="identity-wrap"><span class="player-emoji">${avatarHtml(player.emoji)}</span><span class="player-name">${player.name}</span></span></td>
                     <td class="score-col">${player.score || 0}</td>
                 `;
                 tbody.appendChild(row);
@@ -1182,7 +1182,7 @@ if (btnSubmitSpectate) {
                             <div style="font-size: 0.85rem; font-weight: 600; color: var(--rm-brand); letter-spacing: -0.01em;">New player joined</div>
                             <div style="font-size: 0.85rem; color: var(--rm-text-muted);">${nextPlayer.name}</div>
                         </div>
-                        <span style="font-size: 1.1rem;">${nextPlayer.emoji || '👤'}</span>
+                        <span style="font-size: 1.1rem;">${avatarHtml(nextPlayer.emoji)}</span>
                     </div>
                 `;
 
@@ -1851,7 +1851,7 @@ let profilerTallyVerb = 'answered';
 
 function profilerEmojiFor(name) {
     const p = (cachedPlayersSnapshot || []).find(player => player.name === name);
-    return p && p.emoji ? p.emoji : '👤';
+    return avatarHtml(p && p.emoji);
 }
 
 // ---------- Flag Me Down ----------
