@@ -179,6 +179,19 @@ event, for a small fee. That's why hosting is gated behind access codes.
      "clean, bold, right-sized". Reading moments are calmer: question
      2.6u, answers 1.7u, tile values 2.5u, scoreboard rows 1.55u.
   4. **Nothing jumps.** The top bar never wraps or shifts.
+  5. **The clock is informational** (Randy, Nov 2026): a number only (no
+     "s"), about 80% of the wordmark's height, quiet denim gray
+     (`--rm-text-soft`), turning cream for the last 3 seconds with the TV's
+     warning tone (never red). One function sets it (`setClock` in
+     `app.js`), and its slot is a fixed size, so it appearing or clearing
+     never moves the screen (it used to push Country Monkey down).
+  6. **No cute filler.** No generic "Thanks for playing!" (TV or phones); a
+     venue's Game Over keeps its name and tagline, since that's branding
+     the venue pays for. Emojis outside players' own are being reviewed
+     one by one with Randy: clean, not frivolous, except the silly moments
+     that are designed on purpose (EmpossDurr's dummy-button replies).
+  7. **One centered column** when a screen stacks pictures over answers
+     (Flag Me Down): every row shares the same edges.
 - **Env vars:** `DATABASE_URL`, `ADMIN_PASSWORD`, `PORT`.
 
 ### The three devices
