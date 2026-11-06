@@ -273,7 +273,16 @@ The TV's start screen shows live counts (rooms open, people playing) from
 only lock on a room (Randy chose counts over a list of lobbies).
 
 The flow: access code → host's phone → room code → typed into the TV → players
-join on their phones via the TV's QR code or `/play`. The in-room QR code is
+join on their phones via the TV's QR code or `/play`. **Joining and voting
+are separate** (Randy, Nov 2026): the join screen is just room code, name,
+emoji and Join (the phone sends `NONE` as its vote); the lobby is "Pick a
+game" (a tap is your vote, shown on the TV right away) and Start. One game
+on offer is still picked for you. **Nobody picks, nothing starts:** if the
+60s lobby clock runs out with no votes, the room waits (`lobbyWaitingForVote`,
+the TV says "Pick a game on your phone"), and the first vote restarts a
+15s clock so others can weigh in (`lobbyVoteCast`); Start with no votes
+answers "Pick a game first." Before this, a room with no votes started
+whichever game came first in the list. The in-room QR code is
 drawn on the TV for that room (`/play?room=1234`), which fills the room code
 in on the phone (still editable). It's drawn by `public/vendor/qrcode.js`
 (qrcode-generator 1.4.4, MIT -- keep `public/vendor/qrcode-LICENSE.txt`;

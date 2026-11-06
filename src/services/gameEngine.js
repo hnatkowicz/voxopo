@@ -294,11 +294,12 @@ function broadcastContentUnavailable(roomCode, deckLabel) {
 // ==========================================
 // PHASE 1: LOBBY MACHINERY
 // ==========================================
-function startLobbyCountdown(roomCode) {
+function startLobbyCountdown(roomCode, seconds = 60) {
     const room = activeRooms[roomCode];
     if (!room) return;
+    if (room.lobbyWaitingForVote) return; // see executeLobbyPhaseExpiration
 
-    room.lobbySecondsLeft = 60;
+    room.lobbySecondsLeft = seconds;
     if (room.lobbyTimerInterval) return;
 
     room.lobbyTimerInterval = setInterval(() => {
@@ -321,7 +322,31 @@ function executeLobbyPhaseExpiration(roomCode) {
         room.lobbyTimerInterval = null;
     }
 
+    // Nobody has picked a game (Randy, Nov 2026): the room waits rather than
+    // starting whichever game is first in the list -- no game leader, so the
+    // room decides. The first vote restarts a short clock (lobbyVoteCast).
+    if (!lobbyHasAVote(room)) {
+        room.lobbyWaitingForVote = true;
+        broadcastToRoom(roomCode, { type: 'LOBBY_WAITING_FOR_VOTE' });
+        return;
+    }
+    room.lobbyWaitingForVote = false;
     startGameForMode(roomCode, calculateElectionWinner(room));
+}
+
+function lobbyHasAVote(room) {
+    return Object.values(room.players).some(p => !p.left && p.vote && room.votes && room.votes[p.vote] !== undefined);
+}
+
+// After the clock ran out with no votes, the first vote gives everyone else
+// 15 seconds to weigh in before the game starts.
+const LOBBY_SECONDS_AFTER_FIRST_VOTE = 15;
+function lobbyVoteCast(roomCode) {
+    const room = activeRooms[roomCode];
+    if (!room || !room.lobbyWaitingForVote || !lobbyHasAVote(room)) return;
+    room.lobbyWaitingForVote = false;
+    startLobbyCountdown(roomCode, LOBBY_SECONDS_AFTER_FIRST_VOTE);
+    broadcastToRoom(roomCode, { type: 'LOBBY_TIMER_TICK', secondsLeft: `${LOBBY_SECONDS_AFTER_FIRST_VOTE} s` });
 }
 
 // Everything that happens once a mode has been chosen -- shared by the lobby
@@ -3675,6 +3700,7 @@ function resetRoomToLobby(roomCode) {
     broadcastToRoom(roomCode, { type: 'VOTE_UPDATE', votes: room.votes, totalVotes: activePlayers.length });
     broadcastToRoom(roomCode, { type: 'LEADERBOARD_UPDATE', players: activePlayers });
 
+    room.lobbyWaitingForVote = false;
     startLobbyCountdown(roomCode);
     broadcastToRoom(roomCode, { type: 'LOBBY_TIMER_TICK', secondsLeft: "60 s" });
 }
@@ -4712,11 +4738,15 @@ export function handleIncomingMessage(fromPhone, bodyText, explicitRoomCode, pre
 
             parts.shift(); // Evacuate code segment
             let votedModule = parts.pop();
-            // A phone showing a stale (unfiltered) mode list can't vote for a
-            // mode this venue's rooms don't offer -- it lands on the first one
-            // that is offered instead.
+            // Joining no longer carries a vote (Randy, Nov 2026): the phone
+            // sends NONE and the player picks a game in the lobby, where a tap
+            // is the vote. One game on offer is still picked for you. A phone
+            // still showing an old page sends a real key; a key this venue
+            // doesn't offer lands on the first one that is offered, as before.
             const allowedModes = allowedModesFor(currentRoom);
-            if (!allowedModes.includes(votedModule)) votedModule = allowedModes[0];
+            if (allowedModes.length === 1) votedModule = allowedModes[0];
+            else if (votedModule === 'NONE') votedModule = null;
+            else if (!allowedModes.includes(votedModule)) votedModule = allowedModes[0];
             const playerEmoji = parts.pop() || '👤';
             const playerNickname = parts.join(' ').trim();
 
@@ -4775,7 +4805,7 @@ export function handleIncomingMessage(fromPhone, bodyText, explicitRoomCode, pre
                 existingPlayer.lastSeen = Date.now();
                 existingPlayer.phoneHandle = fromPhone;
                 existingPlayer.emoji = playerEmoji;
-                existingPlayer.vote = votedModule;
+                if (votedModule) existingPlayer.vote = votedModule; // a rejoin keeps the vote it had
                 sessionToken = existingPlayer.sessionToken;
             } else {
                 sessionToken = randomUUID();
@@ -4816,8 +4846,11 @@ export function handleIncomingMessage(fromPhone, bodyText, explicitRoomCode, pre
                 });
                 broadcastToRoom(roomCode, { type: 'VOTE_UPDATE', votes: currentRoom.votes, totalVotes: playersArray.length });
 
-                startLobbyCountdown(roomCode);
-                broadcastToRoom(roomCode, { type: 'LOBBY_TIMER_TICK', secondsLeft: "60 s" });
+                if (currentRoom.lobbyWaitingForVote) lobbyVoteCast(roomCode);
+                else {
+                    startLobbyCountdown(roomCode);
+                    broadcastToRoom(roomCode, { type: 'LOBBY_TIMER_TICK', secondsLeft: "60 s" });
+                }
 
                 return { reply: `Welcome to RandoMania, ${playerNickname}! Entry logged live.`, sessionToken };
             }
@@ -5046,8 +5079,9 @@ export function handleIncomingMessage(fromPhone, bodyText, explicitRoomCode, pre
             activePlayers.forEach(p => { if (currentRoom.votes[p.vote] !== undefined) currentRoom.votes[p.vote]++; });
 
             broadcastToRoom(associatedRoomCode, { type: 'VOTE_UPDATE', votes: currentRoom.votes, totalVotes: activePlayers.length });
+            lobbyVoteCast(associatedRoomCode);
 
-            return `Vote switched to ${modeChoice}, ${player.name}!`;
+            return 'Vote counted.';
         }
     }
 
@@ -5060,6 +5094,9 @@ export function handleIncomingMessage(fromPhone, bodyText, explicitRoomCode, pre
         }
 
         player.requestedStart = true;
+        // No game picked yet: the press is remembered, but nothing starts
+        // until someone votes (Randy, Nov 2026 -- the room decides).
+        if (currentRoom.gameState === 'LOBBY' && !lobbyHasAVote(currentRoom)) return "⚠️ Pick a game first.";
 
         const playersList = Object.values(currentRoom.players).filter(p => !p.left);
         const startRequestsCount = playersList.filter(p => p.requestedStart === true).length;

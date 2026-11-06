@@ -396,6 +396,15 @@ if (btnSubmitSpectate) {
                     detectNewPlayerArrival(data.players);
                     updateLeaderboardUI(data.players);
                 }
+                // The lobby clock ran out with no game picked: the room waits
+                // for a vote (Randy, Nov 2026), and the TV says what's needed.
+                if (data.type === 'LOBBY_WAITING_FOR_VOTE') {
+                    setClock('');
+                    setStatusMessage(`<div style="font-weight: 600; color: var(--rm-periwinkle);">Pick a game on your phone</div>`);
+                }
+                if (data.type === 'VOTE_UPDATE' && currentGamePhase === 'LOBBY' && currentStatusHtml.includes('Pick a game')) {
+                    setStatusMessage(`<div style="font-weight: 600; color: var(--rm-periwinkle);">Everyone in? Press Start</div>`);
+                }
                 if (data.type === 'VOTE_UPDATE') {
                     updateModuleElectionUI(data.votes, data.totalVotes);
                 }
@@ -1035,7 +1044,7 @@ if (btnSubmitSpectate) {
             // Gated to LOBBY specifically -- this fires on every LEADERBOARD_UPDATE,
             // including the ones broadcast after every reveal once the game is live,
             // and would otherwise stomp the in-game/game-over status message.
-            if (currentGamePhase === 'LOBBY' && !currentStatusHtml.includes('Press Start')) {
+            if (currentGamePhase === 'LOBBY' && !currentStatusHtml.includes('Press Start') && !currentStatusHtml.includes('Pick a game')) {
                 setStatusMessage(`<div style="font-weight: 600; color: var(--rm-periwinkle);">Everyone in? Press Start</div>`);
             }
 
