@@ -44,7 +44,15 @@ event, for a small fee. That's why hosting is gated behind access codes.
   (with each code's venue profile).
 - **Access control:** `src/services/accessControl.js` provides host access
   codes, an admin password (`ADMIN_PASSWORD`), cookie sessions, and per-IP rate
-  limits.
+  limits. **Revoking** a code on /admin switches it off but keeps its whole
+  setup (venue, house column, breaks, category dial), so a returning venue
+  is one click from back; revoked codes sit in a closed "Revoked (n)"
+  section, and a search box appears past 10 codes (Randy, Nov 2026: the
+  list would grow forever). There's **no delete button** on purpose (it
+  can't be undone, and /admin is often used from a phone): permanent
+  deletion is `delete_access_code.sql`, run by hand in Neon. A code's
+  category settings go with it (`ON DELETE CASCADE`); its house questions
+  don't, since they have their own SQL file.
 - **Venue profiles:** an access code can be HOME (the living-room version)
   or PUB, with a venue name, tagline, logo (`public/venues/`, 2:1, see its
   README) and a list of allowed modes, all set on `/admin`

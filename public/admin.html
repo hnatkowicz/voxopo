@@ -58,6 +58,12 @@
         .add-code-form input { flex: 1; min-width: 140px; }
         .add-code-form button { flex-shrink: 0; }
         #codes-list { margin-top: 20px; }
+        /* Revoked codes keep their whole setup (venue, house set, categories,
+           breaks) so a returning venue is one click from back -- they just
+           sit out of the way, closed by default (Randy, Nov 2026). */
+        .revoked-section { margin-top: 18px; }
+        .revoked-section > summary { cursor: pointer; color: var(--rm-text-soft); font-weight: 600; font-size: 0.9rem; padding: 8px 0; list-style-position: inside; }
+        .revoked-section .code-row { opacity: 0.8; }
         .empty-state { color: var(--rm-text-muted); text-align: center; padding: 20px; font-size: 0.9rem; }
         .code-venue-tag { font-size: 0.7rem; font-weight: 700; color: var(--rm-yellow); border: 1px solid rgba(var(--rm-yellow-rgb), 0.35); border-radius: 4px; padding: 1px 6px; margin-left: 6px; text-transform: uppercase; letter-spacing: 0.04em; }
         .venue-editor { background: var(--rm-surface); border: 1px solid var(--rm-border); border-radius: 8px; padding: 16px; margin: -4px 0 12px 0; text-align: left; }
@@ -122,6 +128,7 @@
         <div class="feedback" id="manage-feedback"></div>
 
         <div id="venue-notice" class="venue-notice" style="display: none;">Venue profiles (pub name, logo, which modes show) turn on once you run <strong>access_codes_venue_profiles.sql</strong> in Neon.</div>
+        <input type="search" id="code-search" placeholder="Find a code, label or venue" oninput="renderCodes(loadedCodes)" style="display: none; width: 100%; margin-top: 16px;">
         <div id="codes-list"></div>
 
         <div style="border-top: 1px solid var(--rm-border); margin: 28px 0 20px 0;"></div>
@@ -287,15 +294,13 @@
                 </div>`;
         }
 
-        function renderCodes(codes) {
-            loadedCodes = codes;
-            const list = document.getElementById('codes-list');
-            document.getElementById('venue-notice').style.display = venueProfilesOn ? 'none' : 'block';
-            if (!codes.length) {
-                list.innerHTML = '<div class="empty-state">No access codes yet. Add one above.</div>';
-                return;
-            }
-            list.innerHTML = codes.map(c => `
+        // Active codes first (newest first, as the server sends them); revoked
+        // ones in a closed "Revoked (n)" section, by name. A search box shows
+        // up once the list is long enough to need one.
+        const CODE_SEARCH_AFTER = 10;
+        let revokedOpen = false;
+        function codeRowHtml(c) {
+            return `
                 <div class="code-row">
                     <span class="code-text">${esc(c.code)}</span>
                     <span class="code-label">${esc(c.label)}${venueSummary(c)}</span>
@@ -306,7 +311,33 @@
                 </div>
                 ${openVenueEditor === c.code ? venueEditorHtml(c) : ''}
                 ${openVenueDial === c.code ? venueDialHtml(c.code) : ''}
-            `).join('');
+            `;
+        }
+        function renderCodes(codes) {
+            loadedCodes = codes;
+            const list = document.getElementById('codes-list');
+            const search = document.getElementById('code-search');
+            document.getElementById('venue-notice').style.display = venueProfilesOn ? 'none' : 'block';
+            if (!codes.length) {
+                search.style.display = 'none';
+                list.innerHTML = '<div class="empty-state">No access codes yet. Add one above.</div>';
+                return;
+            }
+            search.style.display = codes.length > CODE_SEARCH_AFTER ? 'block' : 'none';
+            const term = search.style.display === 'none' ? '' : search.value.trim().toLowerCase();
+            const matches = term
+                ? codes.filter(c => [c.code, c.label, c.venue_name].some(v => (v || '').toLowerCase().includes(term)))
+                : codes;
+            const active = matches.filter(c => c.active);
+            const revoked = matches.filter(c => !c.active).sort((a, b) => a.code.localeCompare(b.code));
+            // A search opens the revoked section so a match there isn't hidden.
+            const open = revokedOpen || (term && revoked.length);
+            list.innerHTML = (active.length ? active.map(codeRowHtml).join('') : `<div class="empty-state">${term ? 'No active codes match.' : 'No active codes.'}</div>`)
+                + (revoked.length ? `
+                    <details class="revoked-section" ${open ? 'open' : ''} ontoggle="revokedOpen = this.open">
+                        <summary>Revoked (${revoked.length})</summary>
+                        ${revoked.map(codeRowHtml).join('')}
+                    </details>` : '');
         }
 
         // ---- Per-venue category dial (Randy, Nov 2026) ----
