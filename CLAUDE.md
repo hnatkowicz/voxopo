@@ -174,8 +174,15 @@ event, for a small fee. That's why hosting is gated behind access codes.
   round and the answered/locked-in/ready counts stay small; the phones'
   instructions aren't repeated, except "nobody sees it yet" (that promise
   is what gets honest answers). Awards sit in one row so 8 players fit at
-  960x540. Still to do: EmpossDurr and On the Spectrum, the last screens
-  in the old layout.
+  960x540. **EmpossDurr** done (Nov 2026): who starts the clues (big),
+  the accuse vote and the declaration (Randy's vote/declare art kept --
+  families missed the switch into a vote before it had its own icon and
+  sound), results; the ready/skip counts small and blank until the first
+  real count; the clock only in the top bar; no "Active Deck", no how-to
+  lines. Also: join announcements ("New player joined") used to queue up
+  and run well into a game; now anything over 10s old in the lobby, or
+  over 2s old once a game is running, is dropped. Still to do: On the
+  Spectrum, the last screens in the old layout.
   Then a full pass on the phone screens. Waiting: a forced test of the
   trap screens (Randy said wait), the scoreboard width (Randy is still
   playing), the Flag Me Down countdown, and Randy's avatar SVGs.

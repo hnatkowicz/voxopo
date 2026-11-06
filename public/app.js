@@ -703,7 +703,7 @@ if (btnSubmitSpectate) {
                 if (data.type === 'EMPOSSDURR_ACCUSE_VOTE_START') {
                     document.getElementById('room-status-text').innerText = "EmpossDurr — Accuse Vote";
                     setClock(data.secondsLeft + " s");
-                    switchToEmpossDurrAccuseVoteUI(data.votedCount, data.totalNeeded, data.secondsLeft);
+                    switchToEmpossDurrAccuseVoteUI(data.votedCount, data.totalNeeded);
                     playerAnswerStatus = {};
                     updateLeaderboardUI(cachedPlayersSnapshot);
                     // The ready-to-accuse mechanic itself tested well, but its
@@ -748,7 +748,7 @@ if (btnSubmitSpectate) {
                 if (data.type === 'EMPOSSDURR_DECLARE') {
                     document.getElementById('room-status-text').innerText = "EmpossDurr — Declaration!";
                     setClock(data.secondsLeft + " s");
-                    switchToEmpossDurrDeclareSplashUI(data.impostorName, data.votedCount, data.totalNeeded, data.secondsLeft);
+                    switchToEmpossDurrDeclareSplashUI(data.impostorName, data.votedCount, data.totalNeeded);
                     stopCategoryMusic();
                     stopCountdownMusic();
                     playAudioTrack('declare-music');
@@ -955,14 +955,14 @@ if (btnSubmitSpectate) {
         // ROOM_VENUE first, and a mid-game join's STATE_CATCH_UP follows.
         // Country Monkey and Trivi-yeah! too (Nov 2026): their region/deck
         // vote and their questions.
-        const TP_LAYOUT_ON = new Set(['ROOM_CLOSED', 'ROOM_VENUE', 'RETURN_TO_LOBBY', 'TRANSITION_TO_CATEGORY_VOTE', 'TRANSITION_TO_QUESTION', 'FLAG_ME_DOWN_ROUND', 'PROFILER_QUESTION']);
+        const TP_LAYOUT_ON = new Set(['ROOM_CLOSED', 'ROOM_VENUE', 'RETURN_TO_LOBBY', 'TRANSITION_TO_CATEGORY_VOTE', 'TRANSITION_TO_QUESTION', 'FLAG_ME_DOWN_ROUND', 'PROFILER_QUESTION', 'EMPOSSDURR_ROUND_START']);
         const TP_LAYOUT_OFF = new Set([
-            'EMPOSSDURR_ROUND_START', 'ON_THE_SPECTRUM_ROUND_START']);
+            'ON_THE_SPECTRUM_ROUND_START']);
         function updateTpLayout(data) {
             let on = null;
             if (data.type === 'TRANSITION_TO_TRIVI_YEAH_II' || /^TRIVI_YEAH_II_(?!FINAL_)/.test(data.type) || TP_LAYOUT_ON.has(data.type)) on = true;
             else if (TP_LAYOUT_OFF.has(data.type)) on = false;
-            else if (data.type === 'STATE_CATCH_UP') on = ['TRIVI_YEAH_II_ROUND', 'CATEGORY_VOTE', 'GAME_ROUND', 'ROUND_REVEAL', 'FLAG_ME_DOWN_ROUND', 'PROFILER_ROUND'].includes(data.gameState);
+            else if (data.type === 'STATE_CATCH_UP') on = ['TRIVI_YEAH_II_ROUND', 'CATEGORY_VOTE', 'GAME_ROUND', 'ROUND_REVEAL', 'FLAG_ME_DOWN_ROUND', 'PROFILER_ROUND', 'EMPOSSDURR_ROUND'].includes(data.gameState);
             if (on === null || on === document.body.classList.contains('tp-layout')) return;
             document.body.classList.toggle('tp-layout', on);
             railMoves = {};
@@ -1086,13 +1086,13 @@ if (btnSubmitSpectate) {
             freshPlayersList.forEach(player => {
                 const exists = cachedPlayersSnapshot.some(p => p.name === player.name);
                 if (!exists && !wasEmpty) {
-                    toastQueue.push(player);
+                    toastQueue.push({ ...player, queuedAt: Date.now() });
                     processToastQueuePipeline();
                 }
             });
             cachedPlayersSnapshot = [...freshPlayersList];
             if (wasEmpty && freshPlayersList.length > 0) {
-                toastQueue.push(freshPlayersList[0]); // Welcome the very first player into an empty room
+                toastQueue.push({ ...freshPlayersList[0], queuedAt: Date.now() }); // Welcome the very first player into an empty room
                 processToastQueuePipeline();
             }
         }
@@ -1142,6 +1142,13 @@ if (btnSubmitSpectate) {
         }
 
         function processToastQueuePipeline() {
+            // Join announcements queue up one after another; when several people
+            // join together the backlog used to run well into the game ("New
+            // player joined -- Dee" during round 2). Anything over 10 seconds
+            // old is stale news, so it's dropped (say it once, Nov 2026).
+            // Once a game is running, only a fresh join (a mid-game arrival) is news.
+            const staleAfter = currentGamePhase === 'LOBBY' ? 10000 : 2000;
+            while (toastQueue.length && Date.now() - (toastQueue[0].queuedAt || 0) > staleAfter) toastQueue.shift();
             if (isToastPlaying || toastQueue.length === 0) return;
             // A notice is using the slot -- join announcements wait their
             // turn instead of overwriting it.
@@ -1647,11 +1654,12 @@ function showTriviYeahIIFinalRevealStepUI(data) {
 }
 
 // ---------- EmpossDurr ----------
-// Deliberately sparse -- there's no question text or visual asset to show
-// (the secret word/clue is private, phone-only), so the panel is mostly a
-// calm round counter and a live ready-tally instead of dense content. See
-// design chat: reusing the same panel chrome as every other mode rather
-// than building new layout, just with leaner content dropped into it.
+// In the new TV layout (Nov 2026). There's no question to show (the secret
+// word is phone-only), so the screen is about the room: who starts the
+// clues, the vote, the declaration. The ready/skip counts are informational
+// and stay small; the clock lives only in the top bar (said once); the
+// phones carry the how-to. Randy's vote/declare art stays: real families
+// missed the switch into a vote before it had its own icon and sound.
 function switchToEmpossDurrDiscussionUI(round, totalRounds, starterName) {
     currentEmpossDurrRound = round;
     currentEmpossDurrTotalRounds = totalRounds;
@@ -1661,22 +1669,16 @@ function switchToEmpossDurrDiscussionUI(round, totalRounds, starterName) {
     if (starterName) currentEmpossDurrStarterName = starterName;
     const panel = document.getElementById('active-content-stage');
     currentGamePhase = 'EMPOSSDURR_ROUND';
-    setStatusMessage(`
-        <div style="font-weight: 600; color: var(--rm-text-muted);">Round ${round} / ${totalRounds}</div>
-    `);
-    panel.innerHTML = `
-        <div class="panel-box" style="padding: 40px; flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; min-height: 400px; box-sizing: border-box;">
-            <div style="font-size: 0.85rem; font-weight: 600; color: var(--rm-text-muted); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 8px;">
-                Active Deck: EmpossDurr
-            </div>
-            <div style="font-size: 1.6rem; font-weight: 700; color: var(--rm-white); letter-spacing: -0.02em; margin-bottom: 20px;">
-                ${currentEmpossDurrStarterName || 'Someone'}, start the round of one-word clues.
-            </div>
-            <div style="font-size: 1rem; color: var(--rm-text-soft); margin-bottom: 6px;">Round ${round} of ${totalRounds}</div>
-            <div id="ed-tv-ready-tally" style="font-size: 1.1rem; font-weight: 600; color: var(--rm-orange);">0 / 0 ready to vote</div>
-            <div id="ed-tv-skip-tally" style="font-size: 0.9rem; font-weight: 600; color: var(--rm-text-muted); margin-top: 6px;">0 / 0 want to skip</div>
+    setStatusMessage('');
+    panel.innerHTML = tpStage('tp-center ed-stage', `
+        <div class="tp-eyebrow">Round <span class="tp-pts">${round} / ${totalRounds}</span></div>
+        <div class="tp-big">${escapeHtml(currentEmpossDurrStarterName || 'Someone')}</div>
+        <div class="tp-mid">starts the round of one-word clues</div>
+        <div class="ed-tallies">
+            <span id="ed-tv-ready-tally"></span>
+            <span id="ed-tv-skip-tally"></span>
         </div>
-    `;
+    `);
 }
 
 function updateEmpossDurrReadyTally(readyNames, totalActive) {
@@ -1684,90 +1686,68 @@ function updateEmpossDurrReadyTally(readyNames, totalActive) {
     if (el) el.innerText = `${(readyNames || []).length} / ${totalActive || 0} ready to vote`;
 }
 
-// Resolves the instant everyone required has submitted, or at
-// secondsLeft with whoever has voted so far -- votedCount/totalNeeded show
-// real progress, secondsLeft is the backstop clock (real family feedback:
-// no timer at all let a vote hang forever on one distracted player).
-function switchToEmpossDurrAccuseVoteUI(votedCount, totalNeeded, secondsLeft) {
+// Resolves the instant everyone required has submitted, or when the clock
+// (top bar) runs out -- real family feedback: no timer at all let a vote
+// hang forever on one distracted player.
+function switchToEmpossDurrAccuseVoteUI(votedCount, totalNeeded) {
     const panel = document.getElementById('active-content-stage');
-    panel.innerHTML = `
-        <div class="panel-box" style="padding: 40px; flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; min-height: 400px; box-sizing: border-box;">
-            <img src="/vote.svg" alt="" style="width: 56px; height: 56px; margin-bottom: 12px;">
-            <div style="font-size: 0.85rem; font-weight: 600; color: var(--rm-text-muted); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 8px;">
-                Accuse Vote In Progress
-            </div>
-            <div id="ed-tv-tally" style="font-size: 3rem; font-weight: 700; color: var(--rm-white);">${votedCount ?? 0} / ${totalNeeded ?? 0}</div>
-            <div id="ed-tv-timer" style="font-size: 1.3rem; font-weight: 600; color: var(--rm-orange); margin-top: 8px;">${secondsLeft ?? ''} s</div>
-            <div style="font-size: 1rem; color: var(--rm-text-soft); margin-top: 12px;">Votes are secret -- resolves once everyone's in, or when time runs out. Watch names light up below as they lock in.</div>
-        </div>
-    `;
+    panel.innerHTML = tpStage('tp-center ed-stage', `
+        <img class="ed-icon" src="/vote.svg" alt="">
+        <div class="tp-kicker">Accuse vote</div>
+        <div id="ed-tv-tally" class="tp-big">${votedCount ?? 0} / ${totalNeeded ?? 0}</div>
+        <div class="tp-small">Votes are secret.</div>
+    `);
 }
 
 function switchToEmpossDurrAccuseResultUI(resolution, impostorName) {
     const panel = document.getElementById('active-content-stage');
     let headline, sub;
     if (resolution.type === 'accuse') {
-        headline = `${resolution.targetName} was accused!`;
+        headline = `${escapeHtml(resolution.targetName)} was accused!`;
         sub = resolution.targetName === impostorName
             ? "They WERE the impostor. Round over."
-            : "They were NOT the impostor -- the real one escapes with a bonus.";
+            : "They were NOT the impostor. The real one escapes with a bonus.";
     } else {
         headline = "The group couldn't agree.";
-        sub = "Back to discussion -- the impostor survives this vote.";
+        sub = "Back to discussion. The impostor survives this vote.";
     }
-    panel.innerHTML = `
-        <div class="panel-box" style="padding: 40px; flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; min-height: 400px; box-sizing: border-box;">
-            <div style="font-size: 1.6rem; font-weight: 700; color: var(--rm-white); letter-spacing: -0.02em; margin-bottom: 12px;">${headline}</div>
-            <div style="font-size: 1rem; color: var(--rm-text-soft);">${sub}</div>
-        </div>
-    `;
+    panel.innerHTML = tpStage('tp-center ed-stage', `
+        <div class="tp-big" style="font-size: calc(var(--u) * 4);">${headline}</div>
+        <div class="tp-mid">${sub}</div>
+    `);
 }
 
-// The one moment allowed to interrupt everything else -- a near-full-panel
-// takeover naming the impostor. Not a secret leak: declaring is inherently
-// self-outing in person (everyone watches them speak up), same as the
-// phone's splash.
-function switchToEmpossDurrDeclareSplashUI(impostorName, votedCount, totalNeeded, secondsLeft) {
+// The one moment allowed to interrupt everything else -- a takeover naming
+// the impostor. Not a secret leak: declaring is inherently self-outing in
+// person (everyone watches them speak up), same as the phone's splash.
+function switchToEmpossDurrDeclareSplashUI(impostorName, votedCount, totalNeeded) {
     const panel = document.getElementById('active-content-stage');
-    panel.innerHTML = `
-        <div class="panel-box" style="padding: 40px; flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; min-height: 400px; box-sizing: border-box; background: rgba(var(--rm-orange-rgb), 0.06); border-color: rgba(var(--rm-orange-rgb), 0.4);">
-            <img src="/exclaim.svg" alt="" style="width: 56px; height: 56px; margin-bottom: 12px;">
-            <div style="font-size: 2rem; font-weight: 700; color: var(--rm-orange); letter-spacing: -0.02em; margin-bottom: 12px;">${impostorName} DECLARES!</div>
-            <div style="font-size: 1rem; color: var(--rm-text-soft); margin-bottom: 20px;">Everyone but the impostor is voting: was their guess correct? Resolves once every juror's in, or when time runs out.</div>
-            <div id="ed-tv-tally" style="font-size: 2.2rem; font-weight: 700; color: var(--rm-white);">${votedCount ?? 0} / ${totalNeeded ?? 0}</div>
-            <div id="ed-tv-timer" style="font-size: 1.2rem; font-weight: 600; color: var(--rm-orange); margin-top: 8px;">${secondsLeft ?? ''} s</div>
-        </div>
-    `;
+    panel.innerHTML = tpStage('tp-center ed-stage', `
+        <img class="ed-icon" src="/exclaim.svg" alt="">
+        <div class="tp-big" style="color: var(--rm-orange);">${escapeHtml(impostorName)} declares!</div>
+        <div class="tp-mid">Was their guess right?</div>
+        <div id="ed-tv-tally" class="tp-big" style="font-size: calc(var(--u) * 3.4);">${votedCount ?? 0} / ${totalNeeded ?? 0}</div>
+    `);
 }
 
 function switchToEmpossDurrSkippedUI() {
     const panel = document.getElementById('active-content-stage');
-    panel.innerHTML = `
-        <div class="panel-box" style="padding: 40px; flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; min-height: 400px; box-sizing: border-box;">
-            <div style="font-size: 1.6rem; font-weight: 700; color: var(--rm-white); letter-spacing: -0.02em; margin-bottom: 12px;">Round skipped by group vote!</div>
-            <div style="font-size: 1rem; color: var(--rm-text-soft);">A fresh word is coming up -- no scores changed.</div>
-        </div>
-    `;
+    panel.innerHTML = tpStage('tp-center ed-stage', `
+        <div class="tp-big" style="font-size: calc(var(--u) * 4);">Round skipped</div>
+        <div class="tp-mid">No scores changed.</div>
+    `);
 }
 
 function switchToEmpossDurrDeclareResultUI(correct, impostorName) {
     const panel = document.getElementById('active-content-stage');
-    // The correct-guess splash already got its moment (the ED_DECLARE
-    // overlay's exclaim.svg); a wrong guess used to resolve into plain text
-    // with no visual beat of its own. Same reasoning as every other
-    // declare-inspired icon: nothing secret is at stake here (the impostor
-    // already self-outed by declaring), so there's no peek-leak risk to
-    // weigh against giving this its own payoff.
-    const wrongGuessIcon = correct ? '' : `<img src="/impostor-no.svg" alt="" style="width: 56px; height: 56px; margin-bottom: 12px;">`;
-    panel.innerHTML = `
-        <div class="panel-box" style="padding: 40px; flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; min-height: 400px; box-sizing: border-box;">
-            ${wrongGuessIcon}
-            <div style="font-size: 1.6rem; font-weight: 700; color: var(--rm-white); letter-spacing: -0.02em; margin-bottom: 12px;">
-                ${correct ? `${impostorName} guessed correctly!` : `${impostorName} guessed wrong!`}
-            </div>
-            <div style="font-size: 1rem; color: var(--rm-text-soft);">Round over -- next round starting shortly.</div>
-        </div>
-    `;
+    // The correct-guess splash already got its moment (the declare
+    // takeover's exclaim.svg); a wrong guess gets its own beat. Nothing
+    // secret is at stake here: the impostor already self-outed by declaring.
+    const wrongGuessIcon = correct ? '' : `<img class="ed-icon" src="/impostor-no.svg" alt="">`;
+    panel.innerHTML = tpStage('tp-center ed-stage', `
+        ${wrongGuessIcon}
+        <div class="tp-big" style="font-size: calc(var(--u) * 4);">${correct ? `${escapeHtml(impostorName)} guessed right!` : `${escapeHtml(impostorName)} guessed wrong!`}</div>
+    `);
 }
 
 // ==========================================

@@ -835,3 +835,8 @@ body.tp-layout[data-view="gateway"] #gateway-screen { display: flex !important; 
 .pf-award-detail { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .pf-bars { gap: calc(var(--u) * 0.35); }
 .pf-bar { font-size: calc(var(--u) * 1.3); }
+
+/* ---------- EmpossDurr, in the new layout (Nov 2026) ---------- */
+.ed-stage { gap: calc(var(--u) * 1.2); }
+.ed-icon { width: calc(var(--u) * 6); height: calc(var(--u) * 6); }
+.ed-tallies { display: flex; gap: calc(var(--u) * 2.4); font-size: calc(var(--u) * 1.4); font-weight: 600; color: var(--rm-text-soft); margin-top: calc(var(--u) * 1); }
