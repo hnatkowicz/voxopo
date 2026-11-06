@@ -188,7 +188,7 @@ if (btnSubmitSpectate) {
                 banner.style.cssText = 'position: fixed; top: 14px; left: 50%; transform: translateX(-50%); z-index: 50; background: var(--rm-surface-2); border: 1px solid var(--rm-slate-700); border-radius: 999px; padding: 8px 18px; color: var(--rm-text-light); font-size: 0.95rem; font-weight: 600;';
                 document.body.appendChild(banner);
             }
-            banner.innerText = `🚪 ${votes} of ${needed} needed to end this game`;
+            banner.innerText = `${votes} of ${needed} needed to end this game`;
         }
 
         let venueBreakNotesTimer = null;
@@ -203,9 +203,9 @@ if (btnSubmitSpectate) {
             document.getElementById('active-content-stage').innerHTML = `
                 <div class="panel-box" style="padding: 32px 40px; flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; min-height: 400px; box-sizing: border-box; gap: 12px;">
                     ${venue.logoUrl ? `<img src="${venue.logoUrl}" alt="" style="height: 140px; width: auto; max-width: 80%; object-fit: contain;" onerror="this.remove()">` : ''}
-                    <div style="font-size: 2.2rem; font-weight: 800; color: var(--rm-white);">☕ Break time${venue.name ? ` <span style="color: var(--rm-text-soft); font-weight: 600;">at ${escapeHtml(venue.name)}</span>` : ''}</div>
+                    <div style="font-size: 2.2rem; font-weight: 800; color: var(--rm-white);">Break time${venue.name ? ` <span style="color: var(--rm-text-soft); font-weight: 600;">at ${escapeHtml(venue.name)}</span>` : ''}</div>
                     ${notes.length ? `<div id="venue-break-note" style="font-size: 2.8rem; font-weight: 700; line-height: 1.25; color: var(--rm-yellow); min-height: 2.5em; max-width: 92%; display: flex; align-items: center; justify-content: center; transition: opacity 0.4s;"></div>` : ''}
-                    <div id="venue-break-headsup" style="display: none; font-size: 1.6rem; font-weight: 800; color: var(--rm-brand);">⏰ Back in 30 seconds!</div>
+                    <div id="venue-break-headsup" style="display: none; font-size: 1.6rem; font-weight: 800; color: var(--rm-brand);">Back in 30 seconds!</div>
                     <div id="venue-break-tally" style="color: var(--rm-text-soft); font-size: 1rem;">${data.backCount || 0} of ${data.totalPlayers || 0} are back</div>
                     <div style="color: var(--rm-text-muted); font-size: 0.9rem;">Tap "I'm back" on your phone -- we pick up when everyone has, or when the clock runs out.</div>
                 </div>
@@ -1102,7 +1102,7 @@ if (btnSubmitSpectate) {
             const slot = document.getElementById('onboarding-status-slot');
             if (!slot) return;
             contentWarningHtml = `
-                <div style="font-weight: 700; color: var(--rm-orange); margin-bottom: 2px;">⚠️ Heads up</div>
+                <div style="font-weight: 700; color: var(--rm-orange); margin-bottom: 2px;">Heads up</div>
                 <div style="font-size: 0.85rem; color: var(--rm-text-2);">${escapeHtml(message)}</div>
             `;
             slot.innerHTML = contentWarningHtml;
@@ -1484,14 +1484,14 @@ function showTriviYeahIITrapOutcome(trap) {
     let line;
     if (trap.type === 'WEDGIE') {
         line = trap.collected
-            ? `🩲 Wedgie! ${escapeHtml(trap.picker)} missed -- ${escapeHtml(trap.setter)} collects ${trap.collected}.`
-            : `🩲 ${escapeHtml(trap.picker)} dodged the Wedgie!`;
+            ? `Wedgie! ${escapeHtml(trap.picker)} missed -- ${escapeHtml(trap.setter)} collects ${trap.collected}.`
+            : `${escapeHtml(trap.picker)} dodged the Wedgie!`;
     } else if (trap.type === 'HOT_SEAT') {
         line = trap.pickerCorrect
-            ? `🪑 ${escapeHtml(trap.picker)} survived the Hot Seat: +${Math.abs(trap.delta)}!`
-            : `🪑 ${escapeHtml(trap.picker)} got burned in the Hot Seat: -${Math.abs(trap.delta)}.`;
+            ? `${escapeHtml(trap.picker)} survived the Hot Seat: +${Math.abs(trap.delta)}!`
+            : `${escapeHtml(trap.picker)} got burned in the Hot Seat: -${Math.abs(trap.delta)}.`;
     } else {
-        line = `🔥 Pants on Fire! Wrong answers cost double.`;
+        line = `Pants on Fire! Wrong answers cost double.`;
     }
     setStatusMessage(`<div style="font-weight: 700; color: var(--rm-red-soft);">${line}</div>`);
 }
@@ -1507,7 +1507,7 @@ function showTriviYeahIIDoublerRevealUI(picker, points, categoryLabel, multiplie
         <div class="tp-big" style="color: var(--rm-orange); text-shadow: 0 0 20px rgba(var(--rm-orange-rgb), 0.4);">DOUBLER!</div>
         <div class="tp-mid">${picker} is on the hook for this one.</div>
         <div class="tp-small">${points} points</div>
-        ${doublerMultiplier > 1 ? `<div class="tp-mid" style="color: var(--rm-orange-hot);">🔥 Side bets are doubled</div>` : ''}
+        ${doublerMultiplier > 1 ? `<div class="tp-mid" style="color: var(--rm-orange-hot);">Side bets are doubled</div>` : ''}
     `);
 }
 
@@ -1914,7 +1914,7 @@ function renderFlagMeDownTV() {
     const showMap = t.mapUrl && (t.stage >= 3 || reveal);
     const mapBox = showMap
         ? `<img class="fmd-pic" src="${t.mapUrl}" alt="">`
-        : `<div class="fmd-pic fmd-pic-waiting">🗺️</div>`;
+        : `<div class="fmd-pic fmd-pic-waiting"></div>`;
     panel.innerHTML = tpStage('fmd-stage', `
         <div class="fmd-top">
             <div class="tp-eyebrow">Flag <span class="tp-pts">${t.round} / ${t.totalRounds}</span></div>
