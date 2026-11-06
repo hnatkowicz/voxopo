@@ -187,7 +187,14 @@ event, for a small fee. That's why hosting is gated behind access codes.
   outlined, on top, up to 6 guesses and "+N more"); the round and the
   locked-in/ready counts small, blank until the first count; the clock
   only in the top bar. **Every TV screen is now in the new layout.**
-  Next: a full pass on the phone screens. Waiting: a forced test of the
+  **The phone pass** (Nov 2026) found the phones holding up at 360x740:
+  Thinking Pants' answers had lost their gap (fixed), and the copy got
+  tidied -- no "--" in anything players read (a period instead, Randy's
+  pick), no "+0" on a Flag Me Down miss, "ready" on both screens for On
+  the Spectrum, no "s" on phone countdowns, Country Monkey's vote says
+  "Pick a region". Kept on purpose: the card frame around each phone
+  screen (Randy: leave for now) and Flag Me Down's map below the clues
+  (Randy scrolls). Waiting: a forced test of the
   trap screens (Randy said wait), the scoreboard width (Randy is still
   playing), the Flag Me Down countdown, and Randy's avatar SVGs.
 - **TV design rules (Randy, Nov 2026, after the Fire Stick test) -- apply
@@ -523,7 +530,12 @@ Mode keys are used in room votes and in `gameEngine.js`:
   database, so a category's code can ship before its SQL is run.
 - **EMPOSSDURR**: impostor social deduction. Impostor selection is
   *intentionally* pure random every round, not a rotation. Don't "fix" it.
-- **ON_THE_SPECTRUM**: guess where a player landed on a slider.
+- **ON_THE_SPECTRUM**: guess where a player landed on a slider. Its
+  judgment-call statements include political ones ("Ronald Reagan was a
+  good president", "Labor unions are good for workers") **on purpose**
+  (Randy, Nov 2026): in families they've been funny and informative, part
+  of healthy conversation. Unlike Profiler, there's no no-politics rule
+  here, so don't retire them. It's a home mode, not a pub one.
 - **PROFILER**: home mode, 4+ players. Each round everyone privately answers
   a question about themselves, the TV posts the rarest answer given ("2 of
   you said X"), and everyone picks who said it. Questions live in their own
