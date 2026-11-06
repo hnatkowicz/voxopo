@@ -153,8 +153,14 @@ event, for a small fee. That's why hosting is gated behind access codes.
   (Randy: what's crucial to play gets room to breathe; what's only
   informative, like the top bar and scores, stays minimal). Game Over and
   the Final Wager reveal were trimmed to fit 960x540 (no "Game over" line,
-  no "-0"). Still in the old layout: the TV's start screen, Flag Me Down,
-  EmpossDurr, On the Spectrum and Profiler.
+  no "-0"). **Flag Me Down** next (Nov 2026): the flag and map in two
+  same-size boxes side by side (the map's box holds its place until the
+  last clue), the region and capital clues, and the answers get the room;
+  "Flag 3 / 15" and the points ladder share one small line on top; no
+  "Whose flag is this?" or "Lock in on your phone" (said once). The clock
+  stays blank during the clues, as before (a countdown after the map clue
+  is parked -- Randy, Nov 2026). Still in the old layout: the TV's start
+  screen, EmpossDurr, On the Spectrum and Profiler.
 - **TV design rules (Randy, Nov 2026, after the Fire Stick test) -- apply
   to every TV screen from here on:**
   1. **Say it once.** Don't add information: where something sits, how

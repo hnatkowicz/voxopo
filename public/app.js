@@ -813,7 +813,7 @@ if (btnSubmitSpectate) {
                 if (data.type === 'ANSWER_SUBMITTED' && flagMeDownTV && !flagMeDownTV.reveal && currentGamePhase === 'FLAG_ME_DOWN') {
                     flagMeDownTV.locked += 1;
                     const tally = document.getElementById('fmd-tv-tally');
-                    if (tally) tally.innerText = `${flagMeDownTV.locked} locked in`;
+                    if (tally) tally.innerText = `${flagMeDownTV.locked} locked in`; // informative: stays small
                 }
                 if (data.type === 'FLAG_ME_DOWN_REVEAL' && flagMeDownTV) {
                     Object.assign(flagMeDownTV, { region: data.region, capital: data.capital, mapUrl: data.mapUrl, stage: 3, reveal: data });
@@ -937,14 +937,14 @@ if (btnSubmitSpectate) {
         // ROOM_VENUE first, and a mid-game join's STATE_CATCH_UP follows.
         // Country Monkey and Trivi-yeah! too (Nov 2026): their region/deck
         // vote and their questions.
-        const TP_LAYOUT_ON = new Set(['ROOM_VENUE', 'RETURN_TO_LOBBY', 'TRANSITION_TO_CATEGORY_VOTE', 'TRANSITION_TO_QUESTION']);
+        const TP_LAYOUT_ON = new Set(['ROOM_VENUE', 'RETURN_TO_LOBBY', 'TRANSITION_TO_CATEGORY_VOTE', 'TRANSITION_TO_QUESTION', 'FLAG_ME_DOWN_ROUND']);
         const TP_LAYOUT_OFF = new Set(['ROOM_CLOSED',
-            'EMPOSSDURR_ROUND_START', 'ON_THE_SPECTRUM_ROUND_START', 'FLAG_ME_DOWN_ROUND', 'PROFILER_QUESTION']);
+            'EMPOSSDURR_ROUND_START', 'ON_THE_SPECTRUM_ROUND_START', 'PROFILER_QUESTION']);
         function updateTpLayout(data) {
             let on = null;
             if (data.type === 'TRANSITION_TO_TRIVI_YEAH_II' || /^TRIVI_YEAH_II_(?!FINAL_)/.test(data.type) || TP_LAYOUT_ON.has(data.type)) on = true;
             else if (TP_LAYOUT_OFF.has(data.type)) on = false;
-            else if (data.type === 'STATE_CATCH_UP') on = ['TRIVI_YEAH_II_ROUND', 'CATEGORY_VOTE', 'GAME_ROUND', 'ROUND_REVEAL'].includes(data.gameState);
+            else if (data.type === 'STATE_CATCH_UP') on = ['TRIVI_YEAH_II_ROUND', 'CATEGORY_VOTE', 'GAME_ROUND', 'ROUND_REVEAL', 'FLAG_ME_DOWN_ROUND'].includes(data.gameState);
             if (on === null || on === document.body.classList.contains('tp-layout')) return;
             document.body.classList.toggle('tp-layout', on);
             railMoves = {};
@@ -1861,6 +1861,13 @@ let flagMeDownTV = null;
 const FMD_COLOR = 'var(--rm-yellow)';
 const FMD_STAGES = [['Flag', 400], ['Region', 300], ['Capital', 200], ['Map', 100]];
 
+// Flag Me Down in the new TV layout (Nov 2026). What's crucial to play gets
+// the room: the flag and the map (same-size boxes, side by side; the map's
+// box holds its place until the last clue, so nothing jumps), the region
+// and capital clues, and the four answers. What's only informative --
+// "Flag 3 / 15" and the points ladder -- shares one small line on top.
+// Said once: no "Whose flag is this?" (a flag and four countries say it),
+// no "Lock in on your phone" (the phone says it).
 function renderFlagMeDownTV() {
     const t = flagMeDownTV;
     const panel = document.getElementById('active-content-stage');
@@ -1868,17 +1875,12 @@ function renderFlagMeDownTV() {
     const reveal = t.reveal;
     const ladder = FMD_STAGES.map(([label, pts], i) => {
         const now = !reveal && i === t.stage, past = i < t.stage || reveal;
-        return `<div style="flex: 1; text-align: center; padding: 8px 4px; border-radius: 8px; background: ${now ? 'rgba(var(--rm-yellow-rgb), 0.15)' : 'var(--rm-surface)'}; border: 1px solid ${now ? FMD_COLOR : 'var(--rm-border)'}; opacity: ${past && !now ? 0.45 : 1};">
-            <div style="font-size: 0.75rem; font-weight: 700; color: var(--rm-text-soft); text-transform: uppercase; letter-spacing: 0.06em;">${label}</div>
-            <div style="font-size: 1.15rem; font-weight: 800; color: ${now ? FMD_COLOR : 'var(--rm-text)'};">${pts}</div>
-        </div>`;
+        return `<span class="fmd-step${now ? ' now' : ''}${past && !now ? ' past' : ''}">${label} <b>${pts}</b></span>`;
     }).join('');
-    // Two clue cells side by side; the value space is always there, so
-    // nothing shifts when a clue lands.
     const clueCell = (label, value) => `
-        <div style="flex: 1; min-width: 0; background: var(--rm-surface); border: 1px solid var(--rm-border); border-radius: 8px; padding: 8px 14px;">
-            <div style="font-size: 0.75rem; font-weight: 700; color: var(--rm-text-muted); text-transform: uppercase; letter-spacing: 0.06em;">${label}</div>
-            <div style="font-size: 1.1rem; font-weight: 600; color: ${value ? 'var(--rm-white)' : 'var(--rm-slate-600)'}; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${value ? escapeHtml(value) : '&middot; &middot; &middot;'}</div>
+        <div class="fmd-clue">
+            <div class="fmd-clue-label">${label}</div>
+            <div class="fmd-clue-value${value ? '' : ' empty'}">${value ? escapeHtml(value) : '&middot; &middot; &middot;'}</div>
         </div>`;
     const spread = t.spread;
     const choices = t.choices.map((name, i) => {
@@ -1887,43 +1889,26 @@ function renderFlagMeDownTV() {
         // How the room split (drawAnswerSpread): grows in once, then stays.
         const pct = spread ? Math.round(100 * (spread.counts[letter] || 0) / Math.max(1, spread.total)) : 0;
         const fill = spread ? `<div class="spread-fill" data-pct="${pct}" style="position: absolute; left: 0; top: 0; bottom: 0; width: ${t.spreadDrawn ? pct : 0}%; background: ${isAnswer ? SPREAD_FILL_RIGHT : SPREAD_FILL}; z-index: -1; transition: width 0.6s ease;"></div>` : '';
-        return `<div style="position: relative; overflow: hidden; z-index: 0; background: ${isAnswer ? 'rgba(var(--rm-green-rgb), 0.15)' : 'var(--rm-surface-2)'}; border: 1px solid ${isAnswer ? 'var(--rm-green)' : 'var(--rm-border)'}; border-radius: 8px; padding: 10px 14px; display: flex; align-items: center; gap: 10px; opacity: ${reveal && !isAnswer ? 0.45 : 1};">${fill}
-            <span style="background: rgba(var(--rm-yellow-rgb), 0.12); color: ${FMD_COLOR}; font-weight: 700; padding: 3px 9px; border-radius: 4px; font-size: 0.85rem;">${letter}</span>
-            <span style="font-size: 1.05rem; font-weight: 600; color: var(--rm-text);">${escapeHtml(name)}</span>
-        </div>`;
+        return `<div class="tp-ans" style="position: relative; overflow: hidden; z-index: 0;${isAnswer ? ' background: rgba(var(--rm-green-rgb), 0.12); border-color: var(--rm-green);' : ''} opacity: ${reveal && !isAnswer ? 0.45 : 1};">${fill}<b>${letter}</b><span>${escapeHtml(name)}</span></div>`;
     }).join('');
-    const results = reveal ? `<div style="display: flex; flex-wrap: wrap; gap: 8px; min-height: 32px;">${reveal.results.map(r => `
-        <div style="background: var(--rm-surface); border: 1px solid ${r.correct ? 'var(--rm-green)' : 'var(--rm-border)'}; border-radius: 999px; padding: 5px 12px; font-size: 0.95rem; color: ${r.correct ? 'var(--rm-green)' : 'var(--rm-text-soft)'};">
-            ${escapeHtml(r.name)} ${r.correct ? `+${r.points} <span style="color: var(--rm-text-muted);">(${r.stageLabel})</span>` : (r.choice ? '&#10007;' : '&ndash;')}
-        </div>`).join('')}</div>`
-        : `<div style="display: flex; justify-content: space-between; align-items: center; min-height: 32px;">
-            <div id="fmd-tv-tally" style="font-size: 1rem; font-weight: 600; color: var(--rm-orange);">${t.locked} locked in</div>
-            <div style="font-size: 0.9rem; color: var(--rm-text-soft);">Lock in on your phone -- the sooner you're sure, the more it's worth.</div>
-        </div>`;
-    // Flag and map side by side in two same-size boxes (Randy: it got
-    // crowded once the map arrived, and they're on the phones too). The map
-    // box holds its space until the map clue, so nothing jumps around.
-    const box = 'flex: 1; min-width: 0; height: 210px; border-radius: 8px; box-sizing: border-box;';
+    const footer = reveal
+        ? `<div class="fmd-results">${reveal.results.map(r => `
+            <span class="fmd-result${r.correct ? ' right' : ''}">${escapeHtml(r.name)} ${r.correct ? `+${r.points}` : (r.choice ? '&#10007;' : '&ndash;')}</span>`).join('')}</div>`
+        : `<div class="fmd-results"><span id="fmd-tv-tally" class="fmd-tally">${t.locked ? `${t.locked} locked in` : ''}</span></div>`;
     const showMap = t.mapUrl && (t.stage >= 3 || reveal);
     const mapBox = showMap
-        ? `<img src="${t.mapUrl}" alt="" style="${box} object-fit: contain; background: var(--rm-surface);">`
-        : `<div style="${box} border: 1px dashed var(--rm-border-3); display: flex; align-items: center; justify-content: center; color: var(--rm-slate-600); font-weight: 600; font-size: 1rem;">🗺️ Map &middot; last clue</div>`;
-    panel.innerHTML = `
-        <div class="panel-box" style="padding: 24px 32px; flex: 1; display: flex; flex-direction: column; gap: 12px; min-height: 400px; box-sizing: border-box; text-align: left;">
-            <div style="display: flex; align-items: baseline; justify-content: space-between; gap: 16px;">
-                <div style="font-size: 1.5rem; font-weight: 700; color: var(--rm-white);">${reveal ? `It's ${escapeHtml(reveal.answer)}!` : 'Whose flag is this?'}</div>
-                <div style="font-size: 0.85rem; font-weight: 600; color: var(--rm-text-muted); text-transform: uppercase; letter-spacing: 0.08em; white-space: nowrap;">Flag ${t.round} of ${t.totalRounds}</div>
-            </div>
-            <div style="display: flex; gap: 16px;">
-                <img src="${t.flagUrl}" alt="" style="${box} object-fit: contain;">
-                ${mapBox}
-            </div>
-            <div style="display: flex; gap: 6px;">${ladder}</div>
-            <div style="display: flex; gap: 10px;">${clueCell('Region', t.region)}${clueCell('Capital', t.capital)}</div>
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">${choices}</div>
-            ${results}
+        ? `<img class="fmd-pic" src="${t.mapUrl}" alt="">`
+        : `<div class="fmd-pic fmd-pic-waiting">🗺️</div>`;
+    panel.innerHTML = tpStage('fmd-stage', `
+        <div class="fmd-top">
+            <div class="tp-eyebrow">Flag <span class="tp-pts">${t.round} / ${t.totalRounds}</span></div>
+            <div class="fmd-ladder">${ladder}</div>
         </div>
-    `;
+        <div class="fmd-pics"><img class="fmd-pic" src="${t.flagUrl}" alt="">${mapBox}</div>
+        <div class="fmd-clues">${clueCell('Region', t.region)}${clueCell('Capital', t.capital)}</div>
+        <div class="tp-answers fmd-answers">${choices}</div>
+        ${footer}
+    `);
     // The spread grows in the first time it's drawn; redraws (the reveal) keep it.
     if (t.spread && !t.spreadDrawn) {
         t.spreadDrawn = true;
