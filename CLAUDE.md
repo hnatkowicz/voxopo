@@ -187,9 +187,18 @@ event, for a small fee. That's why hosting is gated behind access codes.
      never moves the screen (it used to push Country Monkey down).
   6. **No cute filler.** No generic "Thanks for playing!" (TV or phones); a
      venue's Game Over keeps its name and tagline, since that's branding
-     the venue pays for. Emojis outside players' own are being reviewed
-     one by one with Randy: clean, not frivolous, except the silly moments
-     that are designed on purpose (EmpossDurr's dummy-button replies).
+     the venue pays for. **Emojis** (Randy went through the list, Nov 2026):
+     clean, not frivolous. Cut from labels, buttons and status lines
+     (end-vote pill, break, sweep and warning toasts, trap result lines
+     and the phone's trap banner, Flag Me Down's lock/region/capital
+     lines, the Info card's fastest/best, the pun buttons' decorations --
+     the puns themselves stay). **Kept:** players' own emojis (and 👤),
+     🤫 Shhh while a trap is set, 📍 before a venue's name on phones, the
+     sound buttons' speaker icons, Profiler's award emojis (🎯 🔍 📖 🌀
+     💞), the Game Over medals 🥇🥈🥉, ⚠️/❌ on error messages (the phone
+     also uses ⚠️ to spot an error reply), EmpossDurr's designed silly
+     moments, and emoji fallbacks that show only when an SVG is missing.
+     New emojis need a reason to exist.
   7. **One centered column** when a screen stacks pictures over answers
      (Flag Me Down): every row shares the same edges.
 - **Env vars:** `DATABASE_URL`, `ADMIN_PASSWORD`, `PORT`.

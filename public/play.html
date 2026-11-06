@@ -332,7 +332,7 @@
             <div id="info-where" class="info-where"></div>
             <div id="info-recap"></div>
             <div id="info-stats" class="info-stats" style="display: none;"></div>
-            <label class="info-heading">🏆 Scores</label>
+            <label class="info-heading">Scores</label>
             <div id="scores-list" class="scores-list"></div>
             <button type="button" class="btn" style="margin-top: 20px;" onclick="showSidePage('game')">‹ Back to the game</button>
             <p class="scores-hint">The scores update after each answer is revealed.</p>
@@ -401,7 +401,7 @@
     <div id="game-screen" class="card">
         <h1>RandoMania!</h1>
         <div class="player-badge">
-            <span class="player-badge-identity">🟢 <span id="badge-emoji">-</span> <span id="badge-name" class="player-badge-name">-</span></span>
+            <span class="player-badge-identity"><span id="badge-emoji">-</span> <span id="badge-name" class="player-badge-name">-</span></span>
             <span class="player-badge-room">Room <strong id="badge-room">-</strong> · Score <strong id="badge-score">0</strong></span>
         </div>
         <!-- Only meaningful reason to revisit this screen after the first game
@@ -581,7 +581,7 @@
                     <input type="number" id="ty2-wager-input" min="0" inputmode="numeric" pattern="[0-9]*" placeholder="0" oninput="updateMaxBet()" style="width: 100%; padding: 12px; font-size: 1.1rem; border-radius: 8px; border: 1px solid var(--rm-border); background: var(--rm-surface); color: var(--rm-white); margin-bottom: 10px; box-sizing: border-box; transition: box-shadow 0.2s, border-color 0.2s;" />
                     <!-- Max Bet (Randy, Oct 2026): fills in the most you can wager;
                          you still press Lock In, and can type over it. -->
-                    <button type="button" class="btn btn-risk" id="ty2-max-btn" onclick="maxBet()">🔥 👖 Pants on the Line! 🔥</button>
+                    <button type="button" class="btn btn-risk" id="ty2-max-btn" onclick="maxBet()">Pants on the Line!</button>
                     <div id="ty2-max-quip" style="min-height: 1.2em; margin-top: 8px; font-size: 0.85rem; font-weight: 600; color: var(--rm-orange-soft); text-align: center;"></div>
                     <div id="ty2-stakes" style="margin-top: 4px; font-size: 0.85rem; color: var(--rm-text-soft); text-align: center;"></div>
                     <button class="btn" style="margin-top: 14px;" onclick="submitTriviYeahIIWager()">Lock In Wager</button>
@@ -707,7 +707,7 @@
 
         <!-- REVEAL: all the drama happens on the TV from here. -->
         <div id="fw-reveal-box" style="display: none; margin-top: 10px; text-align: center; color: var(--rm-text-soft); padding: 30px 0;">
-            👀 Watch the TV for the results!
+            Watch the TV for the results!
         </div>
 
         <button class="btn btn-leave leave-room-btn" onclick="leaveRoom()">Leave Room</button>
@@ -719,7 +719,7 @@
          "I'm back" button -- everyone back ends the break early. -->
     <div id="break-screen" class="card" style="display: none;">
         <img id="break-logo" alt="" style="display: none; max-width: 70%; max-height: 90px; margin: 0 auto 14px;">
-        <h1>☕ Break time</h1>
+        <h1>Break time</h1>
         <p class="subtitle" id="break-venue" style="margin-bottom: 18px;"></p>
         <div id="break-clock" style="font-size: 3rem; font-weight: 800; color: var(--rm-white); letter-spacing: 0.04em;">0:00</div>
         <p class="subtitle" id="break-clock-label" style="margin: 4px 0 20px 0;">until the game picks up again</p>
@@ -962,8 +962,8 @@
                 if (r.picker === myName) you = r.pickerCorrect ? ['right', '✓ You got it'] : ['wrong', '✗ You missed it'];
             } else {
                 summary = `${r.right.length} of ${r.playerCount} got it`;
-                if (r.fastest) summary += ` · ⚡ fastest: ${r.fastest}`;
-                else if (r.best) summary += ` · 🏅 ${r.best.name}, ${r.best.points} points`;
+                if (r.fastest) summary += ` · fastest: ${r.fastest}`;
+                else if (r.best) summary += ` · ${r.best.name}, ${r.best.points} points`;
                 you = r.right.includes(myName) ? ['right', '✓ You got it']
                     : r.answered.includes(myName) ? ['wrong', '✗ You missed it']
                     : ['none', '– You sat this one out'];
@@ -1176,13 +1176,13 @@
             area.style.display = 'block';
             const tally = endVote.votes ? `${endVote.votes} of ${endVote.needed} needed so far.` : '';
             area.innerHTML = endVote.mine
-                ? `<p class="subtitle" style="margin: 20px 0 0 0; color: var(--rm-text-2);">🚪 You voted to end this game. ${tally}</p>
+                ? `<p class="subtitle" style="margin: 20px 0 0 0; color: var(--rm-text-2);">You voted to end this game. ${tally}</p>
                    <button type="button" class="btn btn-leave" style="margin-top: 10px;" onclick="sendEndVote(false)">Take my vote back</button>`
                 : endVoteConfirming
                     ? `<p class="subtitle" style="margin: 20px 0 0 0; color: var(--rm-text-2);">End this game for everyone? It ends once more than half the room agrees (${endVote.needed} of ${endVote.total}), and everyone goes back to the lobby. ${tally}</p>
                        <button type="button" class="btn btn-danger" style="margin-top: 10px;" onclick="sendEndVote(true)">Yes, vote to end it</button>
                        <button type="button" class="btn" style="margin-top: 10px;" onclick="endVoteConfirming = false; renderEndVote(lastEndVote)">Never mind</button>`
-                    : `<button type="button" class="btn btn-leave" style="margin-top: 20px;" onclick="endVoteConfirming = true; renderEndVote(lastEndVote)">🚪 Vote to end this game</button>
+                    : `<button type="button" class="btn btn-leave" style="margin-top: 20px;" onclick="endVoteConfirming = true; renderEndVote(lastEndVote)">Vote to end this game</button>
                        ${tally ? `<p class="subtitle" style="margin: 8px 0 0 0;">${tally}</p>` : ''}`;
         }
         async function sendEndVote(wantsEnd) {
@@ -1792,7 +1792,7 @@
             // Traps: a banner over the question; Hot Seat is picker-only.
             const trap = data.trap;
             const trapLine = document.getElementById('ty2-category-meta');
-            if (trap) trapLine.innerText = `${trap.emoji} ${trap.label.toUpperCase()} · ${cell ? cell.categoryLabel + ' · ' + cell.points + ' pts' : ''}`;
+            if (trap) trapLine.innerText = `${trap.label.toUpperCase()} · ${cell ? cell.categoryLabel + ' · ' + cell.points + ' pts' : ''}`;
             if (trap && trap.type === 'HOT_SEAT' && nickname !== trap.picker) {
                 document.getElementById('ty2-status-line').innerText = data.triviYeahIIPhase === 'ANSWERING'
                     ? `${trap.picker} is in the Hot Seat...`
@@ -1975,11 +1975,11 @@
 
         function trapOutcomeLine(outcome, nickname) {
             if (outcome.type === 'HOT_SEAT' && outcome.picker === nickname) {
-                return outcome.pickerCorrect ? `🪑 You survived the Hot Seat: +${outcome.delta}!` : `🪑 Burned in the Hot Seat: ${outcome.delta}.`;
+                return outcome.pickerCorrect ? `You survived the Hot Seat: +${outcome.delta}!` : `Burned in the Hot Seat: ${outcome.delta}.`;
             }
             if (outcome.type === 'WEDGIE' && outcome.collected) {
-                if (outcome.setter === nickname) return `🩲 Wedgie! You collected ${outcome.collected} from ${outcome.picker}.`;
-                if (outcome.picker === nickname) return `🩲 Wedgie! ${outcome.setter} collected your ${outcome.collected}.`;
+                if (outcome.setter === nickname) return `Wedgie! You collected ${outcome.collected} from ${outcome.picker}.`;
+                if (outcome.picker === nickname) return `Wedgie! ${outcome.setter} collected your ${outcome.collected}.`;
             }
             return null;
         }
@@ -2168,12 +2168,12 @@
 
             const worth = document.getElementById('fmd-worth');
             if (revealed) worth.innerText = data.myResult && data.myResult.correct ? `+${data.myResult.points}` : '+0';
-            else if (data.myLock) worth.innerText = `🔒 Locked · ${data.myLock.points} if right`;
+            else if (data.myLock) worth.innerText = `Locked · ${data.myLock.points} if right`;
             else worth.innerText = `Worth ${data.stagePoints} now`;
 
             const clues = [];
-            if (data.region) clues.push(`🧭 Region: <strong>${escapeFmd(data.region)}</strong>`);
-            if (data.capital) clues.push(`🏛️ Capital: <strong>${escapeFmd(data.capital)}</strong>`);
+            if (data.region) clues.push(`Region: <strong>${escapeFmd(data.region)}</strong>`);
+            if (data.capital) clues.push(`Capital: <strong>${escapeFmd(data.capital)}</strong>`);
             document.getElementById('fmd-clues').innerHTML = clues.join('<br>');
             // The map is the last clue (stage 3) and is always shown on the reveal.
             showQuestionPicture('fmd-map-container', 'fmd-map-image', (data.stage >= 3 || revealed) ? data.mapUrl : null);
@@ -2303,7 +2303,7 @@
                    <div style="color: var(--rm-white); font-size: 1.4rem; font-weight: 800; margin: 4px 0 16px;">${escapeFmd(r.correctAnswer)}</div>
                    ${r.played ? `<div style="color: var(--rm-text-soft);">Your answer: <strong style="color: var(--rm-text-2);">${r.answerText ? escapeFmd(r.answerText) : '(none)'}</strong></div>` : ''}
                    <div style="margin-top: 10px;">${finalWagerResultLine(r)}</div>`
-                : '👀 Watch the TV for the results!';
+                : 'Watch the TV for the results!';
         }
 
         function finalWagerResultLine(r) {
@@ -2311,7 +2311,7 @@
             if (!r.shown) return '<span style="color: var(--rm-text-soft);">Your result is coming up on the TV…</span>';
             if (r.correct) {
                 const won = r.delta > 0 ? `+${r.delta}${r.clueUsed ? ' (after your clue)' : ''}` : '(you wagered 0)';
-                return `<span style="color: var(--rm-green); font-weight: 700;">${r.allIn ? '🔥 ALL IN and it paid off!' : '✓ It counted!'} ${won}</span>`;
+                return `<span style="color: var(--rm-green); font-weight: 700;">${r.allIn ? 'ALL IN and it paid off!' : '✓ It counted!'} ${won}</span>`;
             }
             if (r.allIn) return `<span style="color: var(--rm-red); font-weight: 700;">✗ All in… and all gone. −${r.wager}</span>`;
             const lost = r.wager > 0 ? `−${r.wager}` : '(you wagered 0, nothing lost)';
@@ -2345,7 +2345,7 @@
                         : `<div class="module-row" style="flex: 1; text-align: center; font-weight: 700; padding: 10px 4px;" onclick="openFinalWagerHint(this, '${h.kind}')">${single ? 'Get a clue: ' : ''}${escapeFmd(h.label)}<br><span style="font-size: 0.75rem; color: var(--rm-red-soft);">-${Math.round(100 * h.cost)}%</span></div>`
                 ).join('') : '';
             }
-            const lines = mine.opened.filter(h => h.text).map(h => `${h.icon || '💡'} ${escapeFmd(h.label)}: <strong>${escapeFmd(h.text)}</strong>`);
+            const lines = mine.opened.filter(h => h.text).map(h => `${escapeFmd(h.label)}: <strong>${escapeFmd(h.text)}</strong>`);
             document.getElementById('fw-hints-opened').innerHTML = lines.join('<br>');
             const picture = mine.opened.find(h => h.imageUrl);
             showQuestionPicture('fw-hint-map-container', 'fw-hint-map-image', picture ? picture.imageUrl : null);
@@ -2375,7 +2375,7 @@
             if (data.logoUrl && logo.dataset.src !== data.logoUrl) { logo.dataset.src = data.logoUrl; logo.src = data.logoUrl; logo.onerror = () => { logo.style.display = 'none'; }; }
             logo.style.display = data.logoUrl ? 'block' : 'none';
             document.getElementById('break-clock').style.color = s <= 30 ? 'var(--rm-brand)' : 'var(--rm-white)';
-            document.getElementById('break-clock-label').innerText = s <= 30 ? '⏰ Back in 30 seconds -- find your seat!' : 'until the game picks up again';
+            document.getElementById('break-clock-label').innerText = s <= 30 ? 'Back in 30 seconds -- find your seat!' : 'until the game picks up again';
             const button = document.getElementById('break-back-btn');
             button.style.display = data.iAmBack ? 'none' : '';
             document.getElementById('break-tally').innerText = data.iAmBack
@@ -2420,7 +2420,7 @@
         // ---- Risk It All (Randy's son's idea, Oct 2026) ----
         // Fills the wager box with your whole score -- it never submits, so
         // you can still type over it before Lock In. A pun per mode.
-        const RISK_IT_ALL_LABELS = { TRIVI_YEAH_II: '👖 Bet Your Pants!', COUNTRY_MONKEY: '🍌 Go Bananas!', FLAG_ME_DOWN: '🚩 All Flags Flying!' };
+        const RISK_IT_ALL_LABELS = { TRIVI_YEAH_II: 'Bet Your Pants!', COUNTRY_MONKEY: 'Go Bananas!', FLAG_ME_DOWN: 'All Flags Flying!' };
         const riskItAllState = { max: 0, score: 0, mode: null, tapped: false };
 
         function riskItAll() {
@@ -2437,14 +2437,14 @@
             const quip = document.getElementById('fw-risk-quip');
             const stakes = document.getElementById('fw-stakes');
             if (max <= 0) {
-                button.innerText = '🪙 Nothing to risk! (Bold of you to ask.)';
+                button.innerText = 'Nothing to risk! (Bold of you to ask.)';
                 button.classList.add('nothing');
                 quip.innerText = ''; stakes.innerText = '';
                 input.classList.remove('all-in');
                 return;
             }
             button.classList.remove('nothing');
-            button.innerText = `🔥 ${RISK_IT_ALL_LABELS[mode] || 'Risk It All!!'} 🔥`;
+            button.innerText = RISK_IT_ALL_LABELS[mode] || 'Risk It All!!';
             const raw = input.value.trim();
             const wager = Math.min(Math.max(0, parseInt(raw, 10) || 0), max);
             const allIn = raw !== '' && wager === max;
@@ -2861,7 +2861,7 @@
             }
 
             if (data.profilerPhase === 'AWARDS') {
-                container.innerHTML = `<p class="ed-status-line">👀 Results are on the TV!</p>${profilerPersonalHtml(data.personal)}`;
+                container.innerHTML = `<p class="ed-status-line">Results are on the TV!</p>${profilerPersonalHtml(data.personal)}`;
                 return;
             }
 
@@ -3240,7 +3240,7 @@
             const headlines = { 1: 'Champion!', 2: 'So Close!', 3: 'Podium Finish!' };
 
             const cardClass = rankClasses[rank] || '';
-            const medal = medals[rank] || '🎮';
+            const medal = medals[rank] || '';
             const headline = headlines[rank] || 'Nice Game!';
             const subline = rank <= 3
                 ? `${score} pts &middot; ${correct} correct`
@@ -3251,7 +3251,7 @@
 
             container.innerHTML = `
                 <div class="leaderboard-btn ${cardClass}">
-                    <span class="leaderboard-btn-name">${medal} ${nickname}</span>
+                    <span class="leaderboard-btn-name">${medal ? `${medal} ` : ''}${nickname}</span>
                     <span class="leaderboard-btn-score">${score} pts</span>
                 </div>
                 <p class="subtitle" style="margin: 14px 0 0 0;">${headline}</p>
