@@ -433,7 +433,7 @@
              interactive mode-revote/START controls would either do nothing
              or produce a confusing "not available" reply if left active. -->
         <div id="game-left-content" style="display: none;">
-            <p class="subtitle" style="margin: 8px 0 20px 0;">You've left the room. Rejoin any time -- your score is right where you left it.</p>
+            <p class="subtitle" style="margin: 8px 0 20px 0;">You've left the room. Rejoin any time. Your score is right where you left it.</p>
             <button class="btn" onclick="rejoinRoom()">Rejoin Room</button>
             <button class="btn btn-leave" style="margin-top: 10px;" onclick="switchToDifferentRoom()">Join a Different Room</button>
         </div>
@@ -449,10 +449,11 @@
 
     <!-- SCREEN 3: CATEGORY VOTING GAMEPAD (CLEAN - NO DECORATIVE EMOJIS!) -->
     <div id="category-screen" class="card">
-        <h1>Pick a category</h1>
-        <p class="subtitle" style="margin-bottom: 24px;">Cast your family sub-deck preference now</p>
+        <!-- Only Country Monkey votes here now (Trivi-yeah! plays the venue's
+             set, the other modes start straight away), so it says region. -->
+        <h1 style="margin-bottom: 20px;">Pick a region</h1>
         <div class="input-group">
-            <label>1. Pick a category</label>
+            <label>1. Pick a region</label>
             <div class="module-list" id="category-vote-list"></div>
         </div>
         <!-- Same as the lobby: once everyone taps Start the vote closes early;
@@ -591,7 +592,7 @@
                 <div class="module-list" id="ty2-sidebet-buttons" style="display: none;">
                     <div class="module-row" id="ty2-bet-row-FOR" onclick="submitTriviYeahIISideBet(this, 'FOR')" style="text-align: center; font-weight: 700; color: var(--rm-green);">For &mdash; they'll get it right</div>
                     <div class="module-row" id="ty2-bet-row-AGAINST" onclick="submitTriviYeahIISideBet(this, 'AGAINST')" style="text-align: center; font-weight: 700; color: var(--rm-red-soft);">Against &mdash; they'll miss it</div>
-                    <div class="module-row" id="ty2-bet-row-PASS" onclick="submitTriviYeahIISideBet(this, 'PASS')" style="margin-top: 10px; border-style: dashed; color: var(--rm-text-soft); text-align: center; font-weight: 600;">Pass -- sit this one out</div>
+                    <div class="module-row" id="ty2-bet-row-PASS" onclick="submitTriviYeahIISideBet(this, 'PASS')" style="margin-top: 10px; border-style: dashed; color: var(--rm-text-soft); text-align: center; font-weight: 600;">Pass. Sit this one out</div>
                 </div>
                 <div id="ty2-sidebet-waiting-text" style="color: var(--rm-text-soft); display: none;"></div>
             </div>
@@ -623,7 +624,7 @@
                      opt-out from the wrong-answer penalty, not a 5th choice,
                      and shouldn't read as one at a glance. Hidden entirely
                      for a Doubler question -- see renderTriviYeahII. -->
-                <div class="module-row" id="ty2-choice-row-PASS" onclick="submitTriviYeahIIAnswer(this, 'PASS')" style="margin-top: 10px; border-style: dashed; color: var(--rm-text-soft); text-align: center; font-weight: 600;">Pass -- no points, no penalty</div>
+                <div class="module-row" id="ty2-choice-row-PASS" onclick="submitTriviYeahIIAnswer(this, 'PASS')" style="margin-top: 10px; border-style: dashed; color: var(--rm-text-soft); text-align: center; font-weight: 600;">Pass. No points, no penalty</div>
             </div>
             <!-- Non-picker view of a Doubler's ANSWERING phase -- they already
                  placed their side bet, so there's nothing left to tap. -->
@@ -1847,7 +1848,7 @@
             if (data.doubler && data.triviYeahIIPhase === 'ROUND_REVEAL' && data.doubler.resolved) {
                 const won = data.doubler.pickerCorrect;
                 const payout = data.doubler.wagerAmount;
-                showFeedback(feedback, won ? `Correct! You won ${payout} points.` : `Missed it -- you lost ${payout} points.`,
+                showFeedback(feedback, won ? `Correct! You won ${payout} points.` : `Missed it. You lost ${payout} points.`,
                     won ? "rgba(var(--rm-green-rgb),0.06)" : "rgba(var(--rm-red-rgb),0.06)", won ? "var(--rm-green)" : "var(--rm-red)", won ? "rgba(var(--rm-green-rgb),0.15)" : "rgba(var(--rm-red-rgb),0.1)");
             } else if (data.trapOutcome && data.triviYeahIIPhase === 'ROUND_REVEAL' && trapOutcomeLine(data.trapOutcome, nickname)) {
                 showFeedback(feedback, trapOutcomeLine(data.trapOutcome, nickname), "rgba(var(--rm-red-soft-rgb),0.06)", "var(--rm-red-soft)", "rgba(var(--rm-red-soft-rgb),0.15)");
@@ -1984,7 +1985,7 @@
                 status.innerText = "It's a trap!";
                 const t = data.trap;
                 const rule = t.type === 'HOT_SEAT'
-                    ? (t.picker === localStorage.getItem('randomania_nickname') ? "You answer alone -- no passing. Right or wrong, it's double." : `${t.picker} answers alone. Right or wrong, double.`)
+                    ? (t.picker === localStorage.getItem('randomania_nickname') ? "You answer alone. No passing. Right or wrong, it's double." : `${t.picker} answers alone. Right or wrong, double.`)
                     : t.type === 'WEDGIE' ? `If ${t.picker} misses it, ${t.setter} collects the points.` : t.rule;
                 box.innerHTML = `
                     <div>${phoneTrapIcon(t.type, 90)}</div>
@@ -2019,7 +2020,7 @@
                     }
                 }
                 box.innerHTML = `
-                    <p class="ed-status-line" style="margin-top: 0;">Pick a tile. Nobody else will know -- not even whether you set one.</p>
+                    <p class="ed-status-line" style="margin-top: 0;">Pick a tile. Nobody else will know. Not even whether you set one.</p>
                     <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px;">${html}</div>
                     <button class="btn btn-leave" style="margin-top: 16px; color: var(--rm-text-soft); border-color: var(--rm-border);" onclick="sendTrapCommand('TRAP_SKIP')">No trap</button>`;
                 return;
@@ -2160,7 +2161,7 @@
             showQuestionPicture('fmd-flag-container', 'fmd-flag-image', data.flagUrl);
 
             const worth = document.getElementById('fmd-worth');
-            if (revealed) worth.innerText = data.myResult && data.myResult.correct ? `+${data.myResult.points}` : '+0';
+            if (revealed) worth.innerText = data.myResult && data.myResult.correct ? `+${data.myResult.points}` : '\u00a0'; // a miss shows nothing, not "+0" (Randy, Nov 2026); the space keeps the line's height
             else if (data.myLock) worth.innerText = `Locked · ${data.myLock.points} if right`;
             else worth.innerText = `Worth ${data.stagePoints} now`;
 
@@ -2278,7 +2279,7 @@
                 document.getElementById('fw-question-text').innerText = data.questionText || '';
                 const feedback = document.getElementById('fw-answer-feedback');
                 if (data.myAnswer) {
-                    showFeedback(feedback, `LOCKED IN: "${data.myAnswer}" -- you can still change it before time's up.`, "rgba(var(--rm-white-rgb),0.06)", "var(--rm-text-2)", "rgba(var(--rm-white-rgb),0.15)");
+                    showFeedback(feedback, `LOCKED IN: "${data.myAnswer}". You can still change it before time's up.`, "rgba(var(--rm-white-rgb),0.06)", "var(--rm-text-2)", "rgba(var(--rm-white-rgb),0.15)");
                 } else {
                     feedback.style.display = 'none';
                 }
@@ -2368,11 +2369,11 @@
             if (data.logoUrl && logo.dataset.src !== data.logoUrl) { logo.dataset.src = data.logoUrl; logo.src = data.logoUrl; logo.onerror = () => { logo.style.display = 'none'; }; }
             logo.style.display = data.logoUrl ? 'block' : 'none';
             document.getElementById('break-clock').style.color = s <= 30 ? 'var(--rm-brand)' : 'var(--rm-white)';
-            document.getElementById('break-clock-label').innerText = s <= 30 ? 'Back in 30 seconds -- find your seat!' : 'until the game picks up again';
+            document.getElementById('break-clock-label').innerText = s <= 30 ? 'Back in 30 seconds. Find your seat!' : 'until the game picks up again';
             const button = document.getElementById('break-back-btn');
             button.style.display = data.iAmBack ? 'none' : '';
             document.getElementById('break-tally').innerText = data.iAmBack
-                ? `You're back! ${data.backCount} of ${data.totalPlayers} ready -- it starts when everyone is, or when the clock runs out.`
+                ? `You're back! ${data.backCount} of ${data.totalPlayers} ready. It starts when everyone is, or when the clock runs out.`
                 : `${data.backCount} of ${data.totalPlayers} back`;
         }
 
@@ -2480,7 +2481,7 @@
                     body: JSON.stringify({ From: registeredName, Body: `FANSWER ${answerText}`, roomCode: localStorage.getItem('randomania_roomcode') })
                 });
                 fwLastRenderKey = null;
-                showFeedback(feedback, `LOCKED IN: "${answerText}" -- you can still change it before time's up.`, "rgba(var(--rm-white-rgb),0.06)", "var(--rm-text-2)", "rgba(var(--rm-white-rgb),0.15)");
+                showFeedback(feedback, `LOCKED IN: "${answerText}". You can still change it before time's up.`, "rgba(var(--rm-white-rgb),0.06)", "var(--rm-text-2)", "rgba(var(--rm-white-rgb),0.15)");
             } catch (error) {
                 showFeedback(feedback, "❌ That didn't go through. Try again.", "rgba(var(--rm-red-rgb),0.06)", "var(--rm-red)", "rgba(var(--rm-red-rgb),0.1)");
             }
@@ -2641,7 +2642,7 @@
                     : '';
                 container.innerHTML = `
                     <div class="ed-status-line" id="ed-vote-tally">${data.votedCount ?? 0} / ${data.totalNeeded ?? 0} voted</div>
-                    <div class="ed-timer" id="ed-timer">${data.accuseSecondsLeft ?? ''}s</div>
+                    <div class="ed-timer" id="ed-timer">${data.accuseSecondsLeft ?? ''}</div>
                     <p class="ed-status-line">Vote is secret. Pick who to accuse, or abstain, then submit. Resolves once everyone's in, or when time runs out.</p>
                     <div class="module-list">
                         ${targetRows}
@@ -2656,12 +2657,12 @@
 
             if (data.empossdurrPhase === 'DECLARE_VERDICT') {
                 if (data.isImpostor) {
-                    container.innerHTML = `<p class="ed-status-line">You've declared -- the group is deciding now.</p>`;
+                    container.innerHTML = `<p class="ed-status-line">You've declared. The group is deciding now.</p>`;
                 } else {
                     edPendingChoice = null;
                     container.innerHTML = `
                         <div class="ed-status-line" id="ed-vote-tally">${data.votedCount ?? 0} / ${data.totalNeeded ?? 0} voted</div>
-                        <div class="ed-timer" id="ed-timer">${data.declareSecondsLeft ?? ''}s</div>
+                        <div class="ed-timer" id="ed-timer">${data.declareSecondsLeft ?? ''}</div>
                         <p class="ed-status-line">Was their spoken guess actually correct? Resolves once every juror's in, or when time runs out.</p>
                         <div class="module-list">
                             <div class="module-row" onclick="selectEmpossDurrChoice('DECLARE_YES', this)">Yes, that's it!</div>
@@ -2710,7 +2711,7 @@
                 const tally = document.getElementById('ed-vote-tally');
                 if (tally) tally.innerText = `${data.votedCount ?? 0} / ${data.totalNeeded ?? 0} voted`;
                 const timer = document.getElementById('ed-timer');
-                if (timer) timer.innerText = `${data.accuseSecondsLeft ?? 0}s`;
+                if (timer) timer.innerText = `${data.accuseSecondsLeft ?? 0}`;
                 if (data.iHaveVoted) {
                     // The declare button is deliberately exempt -- submitting
                     // an accuse vote doesn't cost the impostor their one
@@ -2722,7 +2723,7 @@
                 const tally = document.getElementById('ed-vote-tally');
                 if (tally) tally.innerText = `${data.votedCount ?? 0} / ${data.totalNeeded ?? 0} voted`;
                 const timer = document.getElementById('ed-timer');
-                if (timer) timer.innerText = `${data.declareSecondsLeft ?? 0}s`;
+                if (timer) timer.innerText = `${data.declareSecondsLeft ?? 0}`;
                 if (data.iHaveVoted) {
                     document.querySelectorAll('#ed-phase-content .btn').forEach(el => el.classList.add('btn-locked'));
                 }
@@ -2787,7 +2788,7 @@
                         `<div class="module-row" onclick="submitProfilerAnswer('${o.key}')">${pfEscape(o.text)}</div>`
                     ).join('');
                     container.innerHTML = `${q}
-                        <p class="ed-status-line">Answer honestly -- nobody sees it yet.</p>
+                        <p class="ed-status-line">Answer honestly. Nobody sees it yet.</p>
                         <div class="module-list">${rows}</div>
                         <div class="ed-status-line" id="pf-tally">${data.answeredCount} / ${data.rosterCount} answered</div>`;
                 }
@@ -2849,7 +2850,7 @@
             }
 
             if (data.profilerPhase === 'UNANIMOUS') {
-                container.innerHTML = `${q}<p class="ed-status-line">Unanimous! Nothing to guess -- new question coming up.</p>`;
+                container.innerHTML = `${q}<p class="ed-status-line">Unanimous! Nothing to guess. New question coming up.</p>`;
                 return;
             }
 
@@ -3020,7 +3021,7 @@
                 container.innerHTML = `
                     <div class="ots-statement">${data.statementText}</div>
                     <div class="ots-results-list">${namedRow}${rows}</div>
-                    <div class="ed-status-line" id="ots-continue-tally">${data.continueVotedCount ?? 0} / ${data.continueTotalNeeded ?? 0} want to continue</div>
+                    <div class="ed-status-line" id="ots-continue-tally">${data.continueVotedCount ?? 0} / ${data.continueTotalNeeded ?? 0} ready</div>
                     <button class="btn" id="ots-continue-btn" onclick="submitOtsContinue()" ${data.iHaveVotedContinue ? 'disabled' : ''}>${data.iHaveVotedContinue ? "Waiting on the room..." : "Continue"}</button>
                 `;
                 return;
@@ -3038,7 +3039,7 @@
                 if (tally) tally.innerText = `${(data.lockedInNames || []).length} / ${data.totalGuessersNeeded ?? 0} locked in`;
             } else if (data.otsPhase === 'REVEAL') {
                 const tally = document.getElementById('ots-continue-tally');
-                if (tally) tally.innerText = `${data.continueVotedCount ?? 0} / ${data.continueTotalNeeded ?? 0} want to continue`;
+                if (tally) tally.innerText = `${data.continueVotedCount ?? 0} / ${data.continueTotalNeeded ?? 0} ready`;
             }
         }
 

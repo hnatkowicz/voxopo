@@ -287,7 +287,7 @@ export function tvIsConnected(room) {
 function broadcastContentUnavailable(roomCode, deckLabel) {
     broadcastToRoom(roomCode, {
         type: 'CONTENT_UNAVAILABLE',
-        message: `${deckLabel} isn't ready yet -- back to module selection.`
+        message: `${deckLabel} isn't ready yet. Back to module selection.`
     });
 }
 
@@ -1114,9 +1114,9 @@ const TRIVI_YEAH_II_PICK_SECONDS = 30;
 const TRIVI_YEAH_II_TRAP_SET_SECONDS = 30; // then no trap -- an idle setter can't freeze the board
 const TRIVI_YEAH_II_TRAP_REVEAL_MS = 3500; // "TRAP! Set by Jake" beat before the question
 const TRIVI_YEAH_II_TRAPS = {
-    PANTS_ON_FIRE: { label: 'Pants on Fire', emoji: '🔥', rule: 'Everyone must answer -- no passing. Wrong answers lose double.' },
-    HOT_SEAT: { label: 'Hot Seat', emoji: '🪑', rule: 'The picker answers alone -- no passing. Right or wrong, it counts double.' },
-    WEDGIE: { label: 'Wedgie', emoji: '🩲', rule: "Normal question -- but if the picker misses it, the trap setter collects the points." }
+    PANTS_ON_FIRE: { label: 'Pants on Fire', emoji: '🔥', rule: 'Everyone must answer. No passing. Wrong answers lose double.' },
+    HOT_SEAT: { label: 'Hot Seat', emoji: '🪑', rule: 'The picker answers alone. No passing. Right or wrong, it counts double.' },
+    WEDGIE: { label: 'Wedgie', emoji: '🩲', rule: "Normal question. But if the picker misses it, the trap setter collects the points." }
 };
 // Column sweep: every tile in a category right -- speed doesn't matter.
 // Paid to EVERY sweeper; only a lone sweeper also earns a trap. Was 200 for
@@ -1775,7 +1775,7 @@ function scheduleTriviYeahIINextStep(roomCode) {
                     console.error(`❌ [Trivi-Yeah II] Failed to start Final Wager for Room ${roomCode}:`, error.message);
                     broadcastToRoom(roomCode, {
                         type: 'CONTENT_UNAVAILABLE',
-                        message: `The Final Wager question couldn't load -- here are the final standings.`
+                        message: `The Final Wager question couldn't load. Here are the final standings.`
                     });
                     endGame(roomCode);
                 });
@@ -2836,8 +2836,8 @@ function handleFlagMeDownAction(roomCode, room, playerName, cleanText) {
     const fmd = room.flagMeDown;
     const match = /^FLAGLOCK\s+([A-D])$/i.exec(cleanText);
     if (!match) return `⚠️ That action isn't available right now.`;
-    if (fmd.phase !== 'CLUES' || room.answerSpread) return `⚠️ Too late -- this one's already revealed.`;
-    if (playerName in fmd.lockIns) return `⚠️ Already locked in -- no changing it.`;
+    if (fmd.phase !== 'CLUES' || room.answerSpread) return `⚠️ Too late. This one's already revealed.`;
+    if (playerName in fmd.lockIns) return `⚠️ Already locked in. No changing it.`;
     const choice = fmd.choices['ABCD'.indexOf(match[1].toUpperCase())];
     if (!choice) return `⚠️ That's not one of the choices.`;
     fmd.lockIns[playerName] = { choice, stage: fmd.stage };
@@ -3526,7 +3526,7 @@ function markBackFromBreak(roomCode, playerName) {
     broadcastToRoom(roomCode, { type: 'VENUE_BREAK_UPDATE', ...tally });
     if (tally.backCount >= tally.totalPlayers) {
         endVenueBreak(roomCode);
-        return `Everyone's back -- let's go!`;
+        return `Everyone's back. Let's go!`;
     }
     return `Welcome back! (${tally.backCount}/${tally.totalPlayers} back)`;
 }
@@ -3556,7 +3556,7 @@ function castEndGameVote(roomCode, playerName, wantsEnd) {
     if (tally.votes >= tally.needed) {
         console.log(`[Room Engine] Room ${roomCode}: ${tally.votes} of ${tally.total} voted to end the game -- back to the lobby.`);
         resetRoomToLobby(roomCode);
-        return `The room voted to end the game -- back to the lobby!`;
+        return `The room voted to end the game. Back to the lobby!`;
     }
     return wantsEnd ? `Vote counted (${tally.votes} of ${tally.needed} needed).` : `Vote taken back.`;
 }
@@ -3576,13 +3576,13 @@ function castReturnToLobbyVote(roomCode, playerName, action) {
 
     if (activePlayers.every(p => room.returnVotes.has(p.name))) {
         resolveReturnToLobbyVote(roomCode);
-        return `Everyone's in -- moving on!`;
+        return `Everyone's in. Moving on!`;
     }
 
     if (!room.returnVoteTimeout) {
         room.returnVoteTimeout = setTimeout(() => resolveReturnToLobbyVote(roomCode), GAME_OVER_RETURN_VOTE_SECONDS * 1000);
     }
-    return `Vote recorded (${room.returnVotes.size}/${activePlayers.length}) -- moves on once everyone's voted, or ${GAME_OVER_RETURN_VOTE_SECONDS}s after the first vote.`;
+    return `Vote recorded (${room.returnVotes.size}/${activePlayers.length}). Moves on once everyone's voted, or ${GAME_OVER_RETURN_VOTE_SECONDS}s after the first vote.`;
 }
 
 // Play Again needs STRICTLY more votes than Main Menu; a tie goes to the
@@ -4505,7 +4505,7 @@ function castOnTheSpectrumContinueVote(roomCode, playerName) {
     const neededForMajority = Math.floor(activePlayers.length / 2) + 1;
     if (ots.continueVotes.size >= neededForMajority) {
         startOnTheSpectrumRound(roomCode);
-        return "Majority's in -- next topic!";
+        return "Majority's in. Next topic!";
     }
 
     if (!ots.continueVoteTimeout) {
@@ -4516,7 +4516,7 @@ function castOnTheSpectrumContinueVote(roomCode, playerName) {
             startOnTheSpectrumRound(roomCode);
         }, ON_THE_SPECTRUM_CONTINUE_SECONDS * 1000);
     }
-    return `Vote recorded (${ots.continueVotes.size}/${activePlayers.length}) -- resolves once a majority agrees, or in ${ON_THE_SPECTRUM_CONTINUE_SECONDS}s.`;
+    return `Vote recorded (${ots.continueVotes.size}/${activePlayers.length}). Resolves once a majority agrees, or in ${ON_THE_SPECTRUM_CONTINUE_SECONDS}s.`;
 }
 
 function calculateCategoryWinner(room) {
@@ -5170,7 +5170,7 @@ export function handleIncomingMessage(fromPhone, bodyText, explicitRoomCode, pre
     // 5. Handle Live Active Choice Submissions (Phase 3)
     if (currentRoom.gameState === 'GAME_ROUND') {
         const answerChoice = cleanText.toUpperCase();
-        if (currentRoom.answerSpread) return `⚠️ Time's up -- answers are locked.`;
+        if (currentRoom.answerSpread) return `⚠️ Time's up. Answers are locked.`;
         if (['A', 'B', 'C', 'D'].includes(answerChoice)) {
             if (!(actingPlayerName in currentRoom.answers)) {
                 currentRoom.answerOrder = currentRoom.answerOrder || [];
@@ -5200,7 +5200,7 @@ export function handleIncomingMessage(fromPhone, bodyText, explicitRoomCode, pre
         if (pickMatch) {
             const ty2 = currentRoom.triviYeahII;
             if (actingPlayerName !== ty2.currentPicker) {
-                return `⚠️ Not your pick -- waiting on ${ty2.currentPicker}.`;
+                return `⚠️ Not your pick. Waiting on ${ty2.currentPicker}.`;
             }
             const cellIndex = parseInt(pickMatch[1], 10);
             const cell = ty2.grid[cellIndex];
@@ -5253,11 +5253,11 @@ export function handleIncomingMessage(fromPhone, bodyText, explicitRoomCode, pre
         if (noPass && answerChoice === 'PASS') return `⚠️ No passing on this one!`;
 
         if (validChoices.includes(answerChoice)) {
-            if (currentRoom.answerSpread) return `⚠️ Time's up -- answers are locked.`;
+            if (currentRoom.answerSpread) return `⚠️ Time's up. Answers are locked.`;
             if (isDoublerQuestion && actingPlayerName !== ty2.currentPicker) {
                 return trapType === 'HOT_SEAT'
-                    ? `⚠️ Only ${ty2.currentPicker} answers this one -- they're in the Hot Seat.`
-                    : `⚠️ Only ${ty2.currentPicker} answers this one -- it's their Doubler.`;
+                    ? `⚠️ Only ${ty2.currentPicker} answers this one. They're in the Hot Seat.`
+                    : `⚠️ Only ${ty2.currentPicker} answers this one. It's their Doubler.`;
             }
             if (!(actingPlayerName in ty2.answers)) {
                 ty2.answerOrder.push(actingPlayerName);
@@ -5276,7 +5276,7 @@ export function handleIncomingMessage(fromPhone, bodyText, explicitRoomCode, pre
                     fastForwardTriviYeahIIReveal(associatedRoomCode);
                 }
             }
-            return answerChoice === 'PASS' ? `Got it, ${player.name} -- passing this one.` : `Got it, ${player.name}! Option ${answerChoice} logged.`;
+            return answerChoice === 'PASS' ? `Got it, ${player.name}. Passing this one.` : `Got it, ${player.name}! Option ${answerChoice} logged.`;
         }
     }
 
@@ -5307,7 +5307,7 @@ export function handleIncomingMessage(fromPhone, bodyText, explicitRoomCode, pre
         if (['FOR', 'AGAINST', 'PASS'].includes(betChoice) || betChoice === 'BET_FOR' || betChoice === 'BET_AGAINST' || betChoice === 'BET_PASS') {
             const ty2 = currentRoom.triviYeahII;
             if (actingPlayerName === ty2.currentPicker) {
-                return `⚠️ You're the one on the hook this time -- no side bet for you.`;
+                return `⚠️ You're the one on the hook this time. No side bet for you.`;
             }
             const choice = betChoice.replace('BET_', '');
             // The last round's side bets stake 2x the tile (see revealTriviYeahIIDoubler).
@@ -5320,7 +5320,7 @@ export function handleIncomingMessage(fromPhone, bodyText, explicitRoomCode, pre
             if (betsLogged === eligibleBettors.length) {
                 fastForwardTriviYeahIISideBets(associatedRoomCode);
             }
-            return choice === 'PASS' ? `Got it, ${player.name} -- sitting this bet out.` : `Got it, ${player.name}! Betting ${amount} points ${choice}.`;
+            return choice === 'PASS' ? `Got it, ${player.name}. Sitting this bet out.` : `Got it, ${player.name}! Betting ${amount} points ${choice}.`;
         }
     }
 
@@ -5332,7 +5332,7 @@ export function handleIncomingMessage(fromPhone, bodyText, explicitRoomCode, pre
         if (wagerMatch) {
             const fw = currentRoom.finalWager;
             if (actingPlayerName in fw.wagers) {
-                return `⚠️ Wager already locked in -- no changing it now.`;
+                return `⚠️ Wager already locked in. No changing it now.`;
             }
             const amount = Math.min(Math.max(0, parseInt(wagerMatch[1], 10)), Math.max(player.score, 0));
             fw.wagers[actingPlayerName] = amount;
@@ -5348,7 +5348,7 @@ export function handleIncomingMessage(fromPhone, bodyText, explicitRoomCode, pre
             if (activePlayers.every(p => p.name in fw.wagers)) {
                 openTriviYeahIIFinalAnswerPhase(associatedRoomCode);
             }
-            return `Wager locked in, ${player.name} -- keep it secret!`;
+            return `Wager locked in, ${player.name}. Keep it secret!`;
         }
     }
 
@@ -5373,7 +5373,7 @@ export function handleIncomingMessage(fromPhone, bodyText, explicitRoomCode, pre
             const kind = hintMatch[1].toUpperCase();
             fw.hintsUsed[actingPlayerName] = fw.hintsUsed[actingPlayerName] || [];
             if (!fw.hintsUsed[actingPlayerName].includes(kind)) fw.hintsUsed[actingPlayerName].push(kind);
-            return `Clue opened -- your winnings drop to ${Math.round(100 * finalWagerWinShare(fw, actingPlayerName))}%.`;
+            return `Clue opened. Your winnings drop to ${Math.round(100 * finalWagerWinShare(fw, actingPlayerName))}%.`;
         }
     }
 
@@ -5410,7 +5410,7 @@ export function handleIncomingMessage(fromPhone, bodyText, explicitRoomCode, pre
             const neededForMajority = Math.floor(activePlayers.length / 2) + 1;
             if (ed.readyToAccuse.size >= neededForMajority) {
                 startEmpossDurrAccuseVote(associatedRoomCode);
-                return "Majority's ready -- vote is on!";
+                return "Majority's ready. Vote is on!";
             }
             return ed.readyToAccuse.has(actingPlayerName)
                 ? "You're marked ready to accuse."
@@ -5433,7 +5433,7 @@ export function handleIncomingMessage(fromPhone, bodyText, explicitRoomCode, pre
             const neededForMajority = Math.floor(activePlayers.length / 2) + 1;
             if (ed.skipVotes.size >= neededForMajority) {
                 skipEmpossDurrRound(associatedRoomCode);
-                return "Majority wants to skip -- new word coming up!";
+                return "Majority wants to skip. New word coming up!";
             }
             return ed.skipVotes.has(actingPlayerName)
                 ? "You've flagged this round to skip."
@@ -5543,12 +5543,12 @@ export function handleIncomingMessage(fromPhone, bodyText, explicitRoomCode, pre
                 statementText: ots.statementText
             });
             broadcastOnTheSpectrumLockInUpdate(associatedRoomCode);
-            return "Target locked in -- let the guessing begin!";
+            return "Target locked in. Let the guessing begin!";
         }
 
         if (command.startsWith('GUESS:') && ots.phase === 'GUESSING') {
             if (actingPlayerName === ots.namedPlayerName) {
-                return "⚠️ You're the named player this round -- nothing to guess.";
+                return "⚠️ You're the named player this round. Nothing to guess.";
             }
             if (actingPlayerName in ots.guesses) {
                 return "Guess already locked in for this round.";
