@@ -60,6 +60,9 @@ document.addEventListener("DOMContentLoaded", () => {
 // 1. SUBMIT MANUALLY ENTERED LOBBY CODE -- the only way into a game from the
 // TV now. Room creation lives exclusively on /host, gated by an access code;
 // the TV only ever joins a lobby that already exists.
+if (inputRoomCode && btnSubmitSpectate) {
+    inputRoomCode.addEventListener('keydown', e => { if (e.key === 'Enter') btnSubmitSpectate.click(); });
+}
 if (btnSubmitSpectate) {
     btnSubmitSpectate.addEventListener('click', () => {
         unlockAllAudio(); // real user gesture right here -- primes playback for later WebSocket-triggered calls
@@ -200,16 +203,14 @@ if (btnSubmitSpectate) {
             // No notes set in /admin? The venue's tagline fills the slot, and
             // with neither the slot closes up (Randy's first test: a big gap).
             const notes = (data.notes && data.notes.length) ? data.notes : (venue.tagline ? [venue.tagline] : []);
-            document.getElementById('active-content-stage').innerHTML = `
-                <div class="panel-box" style="padding: 32px 40px; flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; min-height: 400px; box-sizing: border-box; gap: 12px;">
-                    ${venue.logoUrl ? `<img src="${venue.logoUrl}" alt="" style="height: 140px; width: auto; max-width: 80%; object-fit: contain;" onerror="this.remove()">` : ''}
-                    <div style="font-size: 2.2rem; font-weight: 800; color: var(--rm-white);">Break time${venue.name ? ` <span style="color: var(--rm-text-soft); font-weight: 600;">at ${escapeHtml(venue.name)}</span>` : ''}</div>
-                    ${notes.length ? `<div id="venue-break-note" style="font-size: 2.8rem; font-weight: 700; line-height: 1.25; color: var(--rm-yellow); min-height: 2.5em; max-width: 92%; display: flex; align-items: center; justify-content: center; transition: opacity 0.4s;"></div>` : ''}
-                    <div id="venue-break-headsup" style="display: none; font-size: 1.6rem; font-weight: 800; color: var(--rm-brand);">Back in 30 seconds!</div>
-                    <div id="venue-break-tally" style="color: var(--rm-text-soft); font-size: 1rem;">${data.backCount || 0} of ${data.totalPlayers || 0} are back</div>
-                    <div style="color: var(--rm-text-muted); font-size: 0.9rem;">Tap "I'm back" on your phone -- we pick up when everyone has, or when the clock runs out.</div>
-                </div>
-            `;
+            // Same pieces as the game screens (Nov 2026), sized to the screen.
+            document.getElementById('active-content-stage').innerHTML = tpStage('tp-center break-stage', `
+                ${venue.logoUrl ? `<img class="break-logo" src="${venue.logoUrl}" alt="" onerror="this.remove()">` : ''}
+                <div class="tp-big" style="font-size: calc(var(--u) * 4);">Break time</div>
+                ${notes.length ? `<div id="venue-break-note" class="break-note"></div>` : ''}
+                <div id="venue-break-headsup" class="tp-mid" style="display: none; color: var(--rm-brand);">Back in 30 seconds!</div>
+                <div id="venue-break-tally" class="tp-small">${data.backCount || 0} of ${data.totalPlayers || 0} are back</div>
+            `);
             // The venue's notes, one at a time, every 10 seconds.
             const noteEl = document.getElementById('venue-break-note');
             let index = 0;
@@ -489,6 +490,7 @@ if (btnSubmitSpectate) {
                 // join QR code, a countdown and the venue's notes in rotation.
                 if (data.type === 'VENUE_BREAK_START') {
                     document.getElementById('room-status-text').innerText = "Break Time";
+                    setStatusMessage(''); // the last tile's "Ben's pick!" isn't news during a break
                     stopCountdownMusic();
                     showVenueBreakUI(data);
                 }
@@ -953,8 +955,8 @@ if (btnSubmitSpectate) {
         // ROOM_VENUE first, and a mid-game join's STATE_CATCH_UP follows.
         // Country Monkey and Trivi-yeah! too (Nov 2026): their region/deck
         // vote and their questions.
-        const TP_LAYOUT_ON = new Set(['ROOM_VENUE', 'RETURN_TO_LOBBY', 'TRANSITION_TO_CATEGORY_VOTE', 'TRANSITION_TO_QUESTION', 'FLAG_ME_DOWN_ROUND']);
-        const TP_LAYOUT_OFF = new Set(['ROOM_CLOSED',
+        const TP_LAYOUT_ON = new Set(['ROOM_CLOSED', 'ROOM_VENUE', 'RETURN_TO_LOBBY', 'TRANSITION_TO_CATEGORY_VOTE', 'TRANSITION_TO_QUESTION', 'FLAG_ME_DOWN_ROUND']);
+        const TP_LAYOUT_OFF = new Set([
             'EMPOSSDURR_ROUND_START', 'ON_THE_SPECTRUM_ROUND_START', 'PROFILER_QUESTION']);
         function updateTpLayout(data) {
             let on = null;

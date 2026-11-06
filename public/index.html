@@ -17,66 +17,51 @@
     <meta name="theme-color" content="#0b1424">
     <link rel="stylesheet" href="/styles.css">
 </head>
-<body data-view="gateway">
+<body data-view="gateway" class="tp-layout">
     <!-- ========================================== -->
     <!--  VIEWPORT 1: THE WELCOME ENTRY GATEWAY     -->
     <!-- ========================================== -->
     <div id="gateway-screen">
+        <!-- The TV's start screen in the new layout (Nov 2026): the same top
+             bar, footer and right-hand rail as the game screens, so it looks
+             like the same product from the first second. -->
         <div class="hud-banner">
             <div style="display: flex; align-items: center; gap: 24px;">
                 <a href="/" style="height: 28px; display: flex; align-items: center;">
                     <img src="/randomania-logo.svg" alt="RandoMania!" style="height: 100%; width: auto;" />
                 </a>
-                <div class="status-pill">
-                    <div class="status-dot"></div>
-                    <div class="status-text">Live</div>
-                </div>
             </div>
-            <div class="hud-metric" style="color: var(--rm-text-muted); font-weight: 600; letter-spacing: 0.05em;">TV SCREEN</div>
         </div>
 
         <div class="split-container">
-            <!-- LEFT PANEL: Dynamic Control Forms -->
-            <div class="left-column" style="flex: 65; display: flex; flex-direction: column;">
-                <div class="panel-box" style="flex: 1; display: flex; flex-direction: column; justify-content: center; gap: 24px; padding: 40px;">
-                    <h2 class="panel-title" style="margin-bottom: 8px;">Join a room</h2>
-                    <p style="color: var(--rm-text-muted); font-size: 0.9rem; margin: -12px 0 0 0;">Type the room code from the host's phone.</p>
-
-                    <div style="display: flex; gap: 12px;">
-                        <input type="text" id="input-room-code" placeholder="Room code" maxlength="4" inputmode="numeric" pattern="[0-9]*" autocomplete="off" style="flex: 1; background: var(--rm-surface); border: 1px solid var(--rm-border); border-radius: 8px; color: var(--rm-white); padding: 14px; font-family: var(--rm-font-body); font-variant-numeric: tabular-nums; font-size: 1.2rem; text-align: center; letter-spacing: 4px;">
-                        <button id="btn-submit-spectate" class="action-btn-primary" style="padding: 0 24px; font-size: 1rem;">Show</button>
+            <div class="left-column gateway-main">
+                <div class="gateway-stage">
+                    <h1 class="gateway-title">Join a room</h1>
+                    <div class="gateway-sub">Type the room code from the host's phone.</div>
+                    <div class="gateway-form">
+                        <input type="text" id="input-room-code" placeholder="1234" maxlength="4" inputmode="numeric" pattern="[0-9]*" autocomplete="off">
+                        <button id="btn-submit-spectate" class="action-btn-primary">Show</button>
                     </div>
-                    <a href="/host" style="color: var(--rm-text-muted); font-size: 0.85rem; text-decoration: none;">Need to host a new game instead? &rarr;</a>
+                    <a href="/host" class="gateway-host">Hosting? Open a room at randomania.tv/host</a>
                 </div>
-
-                <!-- PERSISTENT QR BLOCK (Stays visible exactly as specified) -->
-                <div style="background: var(--rm-surface); border: 1px solid var(--rm-border); border-radius: 12px; padding: 20px 24px; margin-top: 24px; display: flex; align-items: center; gap: 20px; box-sizing: border-box; position: relative; min-height: 114px; flex-shrink: 0;">
-                    <div style="background: var(--rm-white); padding: 2px; border-radius: 8px; display: flex; justify-content: center; align-items: center; width: 96px; height: 96px; box-sizing: border-box; flex-shrink: 0; z-index: 10; margin-right: 12px;">
-                        <img src="qr.png" alt="Scan to Play" style="width: 100%; height: 100%; object-fit: contain;">
-                    </div>
-                    <div style="text-align: left; flex: 1;">
-                        <div style="font-size: 1rem; font-weight: 600; color: var(--rm-white); margin-bottom: 4px; letter-spacing: -0.01em;">Scan to join</div>
-                        <div style="font-size: 0.85rem; color: var(--rm-text-muted); font-weight: 500;"><span style="color: var(--rm-brand); font-weight: 600;">randomania.tv/play</span></div>
+                <div class="gateway-foot">
+                    <div class="gateway-qr"><img src="qr.png" alt="Scan to play"></div>
+                    <div>
+                        <div class="gateway-foot-title">Scan to join</div>
+                        <div class="gateway-foot-url">randomania.tv/play</div>
                     </div>
                 </div>
             </div>
 
-            <!-- RIGHT PANEL: High-Level System Telemetry -->
-            <div class="right-column" style="flex: 35;">
-                <h2 class="board-title">Right Now</h2>
-                <div style="flex: 1; display: flex; flex-direction: column; gap: 20px; padding: 12px 0;">
-                    <p style="color: var(--rm-text-muted); font-size: 0.9rem; line-height: 1.5; margin: 0 0 12px 0;">Live across RandoMania! right now.</p>
-                    
-                    <div style="background: var(--rm-surface); border: 1px solid var(--rm-border); border-radius: 8px; padding: 16px 20px; display: flex; justify-content: space-between; align-items: center;">
-                        <span style="color: var(--rm-text-soft); font-weight: 500;">Rooms open</span>
-                        <span id="global-active-rooms" style="color: var(--rm-brand); font-size: 1.4rem; font-weight: 700; font-family: var(--rm-font-body); font-variant-numeric: tabular-nums;">--</span>
-                    </div>
-
-                    <div style="background: var(--rm-surface); border: 1px solid var(--rm-border); border-radius: 8px; padding: 16px 20px; display: flex; justify-content: space-between; align-items: center;">
-                        <span style="color: var(--rm-text-soft); font-weight: 500;">People playing</span>
-                        <span id="global-players-count" style="color: var(--rm-blue); font-size: 1.4rem; font-weight: 700; font-family: var(--rm-font-body); font-variant-numeric: tabular-nums;">--</span>
-                    </div>
-                </div>
+            <!-- Live counts only, never room codes: a code is the only lock on a room. -->
+            <div class="right-column">
+                <h2 class="board-title">Right now</h2>
+                <table class="leaderboard-table">
+                    <tbody>
+                        <tr class="rail-row"><td class="rail-id">Rooms open</td><td class="rail-score" id="global-active-rooms">--</td></tr>
+                        <tr class="rail-row"><td class="rail-id">People playing</td><td class="rail-score" id="global-players-count">--</td></tr>
+                    </tbody>
+                </table>
             </div>
         </div>
     </div>
