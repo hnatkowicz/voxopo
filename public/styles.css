@@ -639,11 +639,11 @@ body.tp-layout .toast-card { padding: calc(var(--u) * 1.1) calc(var(--u) * 1.8);
 body.tp-layout .toast-text { font-size: calc(var(--u) * 1.8); }
 body.tp-layout .toast-celebration-icon, body.tp-layout .toast-warning-icon { font-size: calc(var(--u) * 2.4); }
 /* Game Over is shared by every mode; in this layout it grows like the rest. */
-body.tp-layout #active-content-stage .panel-title { font-size: calc(var(--u) * 4.4); margin-bottom: calc(var(--u) * 0.6) !important; }
-body.tp-layout #active-content-stage .panel-box > p { font-size: calc(var(--u) * 1.9) !important; margin-bottom: calc(var(--u) * 2.4) !important; }
-body.tp-layout #active-content-stage .panel-box > div { gap: calc(var(--u) * 1.4) !important; }
-body.tp-layout .leaderboard-btn { padding: calc(var(--u) * 1.4) calc(var(--u) * 2); border-radius: calc(var(--u) * 1); }
-body.tp-layout .leaderboard-btn-name, body.tp-layout .leaderboard-btn-score { font-size: calc(var(--u) * 2.6); }
+body.tp-layout #active-content-stage .panel-title { font-size: calc(var(--u) * 3.4); margin-bottom: calc(var(--u) * 0.4) !important; }
+body.tp-layout #active-content-stage .panel-box > p { font-size: calc(var(--u) * 1.6) !important; margin-bottom: calc(var(--u) * 1.6) !important; }
+body.tp-layout #active-content-stage .panel-box > div { gap: calc(var(--u) * 1) !important; }
+body.tp-layout .leaderboard-btn { padding: calc(var(--u) * 0.9) calc(var(--u) * 1.8); border-radius: calc(var(--u) * 1); width: 84%; box-sizing: border-box; }
+body.tp-layout .leaderboard-btn-name, body.tp-layout .leaderboard-btn-score { font-size: calc(var(--u) * 2.1); }
 body.tp-layout #return-vote-tally { font-size: calc(var(--u) * 1.6) !important; }
 /* The top bar stays one line, even with a venue's name in it (720p pub test). */
 body.tp-layout .hud-metric { white-space: nowrap; }
@@ -715,3 +715,13 @@ body.tp-layout.pub-profile.tv-lobby #room-qr-box { width: calc(var(--u) * 13) !i
 body.tp-layout.tv-lobby #onboarding-text-slot > div:first-child, body.tp-layout.pub-profile.tv-lobby #onboarding-text-slot > div:first-child { font-size: calc(var(--u) * 2.2) !important; }
 body.tp-layout.tv-lobby #onboarding-text-slot > div:last-child, body.tp-layout.pub-profile.tv-lobby #onboarding-text-slot > div:last-child { font-size: calc(var(--u) * 1.8) !important; }
 body.tp-layout.pub-profile.tv-lobby #onboarding-text-slot { flex: 1 !important; }
+
+/* Game Over: the venue's logo (Trivi-yeah! at a venue) and the return-vote
+   line shrink with the screen too, so the QR strip never gets pushed off. */
+body.tp-layout #active-content-stage .panel-box > img { height: calc(var(--u) * 8) !important; margin-bottom: calc(var(--u) * 1) !important; }
+body.tp-layout #return-vote-tally { margin-top: calc(var(--u) * 1.2) !important; }
+/* Picture questions: the picture is the crucial part (a map, flag, landmark),
+   so it gets the larger share of the stage (Randy, Nov 2026: what's crucial
+   to play gets room to breathe). */
+.tp-split > .tp-pic { flex: 1.4; }
+.tp-pic img { max-height: calc(var(--u) * 32); }

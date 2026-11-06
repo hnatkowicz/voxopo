@@ -935,14 +935,16 @@ if (btnSubmitSpectate) {
         // layout as it was.
         // The lobby uses it too (Nov 2026): a TV joining a room hears
         // ROOM_VENUE first, and a mid-game join's STATE_CATCH_UP follows.
-        const TP_LAYOUT_ON = new Set(['ROOM_VENUE', 'RETURN_TO_LOBBY']);
-        const TP_LAYOUT_OFF = new Set(['ROOM_CLOSED', 'TRANSITION_TO_CATEGORY_VOTE', 'TRANSITION_TO_QUESTION',
+        // Country Monkey and Trivi-yeah! too (Nov 2026): their region/deck
+        // vote and their questions.
+        const TP_LAYOUT_ON = new Set(['ROOM_VENUE', 'RETURN_TO_LOBBY', 'TRANSITION_TO_CATEGORY_VOTE', 'TRANSITION_TO_QUESTION']);
+        const TP_LAYOUT_OFF = new Set(['ROOM_CLOSED',
             'EMPOSSDURR_ROUND_START', 'ON_THE_SPECTRUM_ROUND_START', 'FLAG_ME_DOWN_ROUND', 'PROFILER_QUESTION']);
         function updateTpLayout(data) {
             let on = null;
             if (data.type === 'TRANSITION_TO_TRIVI_YEAH_II' || /^TRIVI_YEAH_II_(?!FINAL_)/.test(data.type) || TP_LAYOUT_ON.has(data.type)) on = true;
             else if (TP_LAYOUT_OFF.has(data.type)) on = false;
-            else if (data.type === 'STATE_CATCH_UP') on = data.gameState === 'TRIVI_YEAH_II_ROUND';
+            else if (data.type === 'STATE_CATCH_UP') on = ['TRIVI_YEAH_II_ROUND', 'CATEGORY_VOTE', 'GAME_ROUND', 'ROUND_REVEAL'].includes(data.gameState);
             if (on === null || on === document.body.classList.contains('tp-layout')) return;
             document.body.classList.toggle('tp-layout', on);
             railMoves = {};
@@ -1198,29 +1200,24 @@ if (btnSubmitSpectate) {
 
             currentGamePhase = 'CATEGORY_VOTE';
             // Phones have a Start button here too now, same as the lobby.
-            setStatusMessage(`
-                <div style="font-weight: 600; color: var(--rm-periwinkle); margin-bottom: 2px;">EVERYONE IN? PRESS START</div>
-                <div style="font-size: 0.8rem; color: var(--rm-text-muted);">Skips the countdown once everyone's in</div>
-            `);
+            setStatusMessage(`<div style="font-weight: 600; color: var(--rm-periwinkle);">Everyone in? Press Start</div>`);
 
-            const rows = categoryList.map((c, index) => `
-                <div class="vote-row">
-                    <div class="vote-meta">
-                        <span id="lbl-${c.key}" style="font-weight: 500; color: var(--rm-white);">${c.label}</span>
-                        <span id="ccount-${c.key}" style="color: var(--rm-text-muted); font-weight: 500;">0 votes (0%)</span>
+            // Same tiles as the lobby's modes (Nov 2026): the name, a vote bar
+            // and a plain count. The phones say what to do, so no instructions.
+            const tiles = categoryList.map((c, index) => `
+                <div class="lobby-mode">
+                    <div class="lobby-mode-head">
+                        <div id="lbl-${c.key}" class="lobby-mode-name" style="flex: 1;">${c.label}</div>
+                        <div id="ccount-${c.key}" class="lobby-mode-count"></div>
                     </div>
-                    <div class="progress-track"><div id="cbar-${c.key}" class="progress-fill" style="background: ${CATEGORY_BAR_COLORS[index % CATEGORY_BAR_COLORS.length]};"></div></div>
+                    <div class="lobby-mode-track"><div id="cbar-${c.key}" class="progress-fill" style="background: ${CATEGORY_BAR_COLORS[index % CATEGORY_BAR_COLORS.length]};"></div></div>
                 </div>
             `).join('');
 
             panel.innerHTML = `
-                <div class="panel-box" style="padding: 40px; flex: 1; display: flex; flex-direction: column; justify-content: center;">
-                    <h2 class="panel-title" style="margin-bottom: 8px;">Winner: ${displayGameName}</h2>
-                    <p style="color: var(--rm-text-muted); font-size: 0.95rem; margin: 0 0 32px 0; font-weight: 500;">Select your sub-deck preference on your phone now</p>
-
-                    <div style="display: flex; flex-direction: column;">
-                        ${rows}
-                    </div>
+                <div class="lobby-stage">
+                    <h2 class="lobby-title">${displayGameName}</h2>
+                    <div class="lobby-modes">${tiles}</div>
                 </div>
             `;
         }
@@ -1239,90 +1236,42 @@ if (btnSubmitSpectate) {
                 const barNode = document.getElementById(`cbar-${key}`);
                 if (barNode) barNode.style.width = `${percentage}%`;
                 const countNode = document.getElementById(`ccount-${key}`);
-                if (countNode) countNode.innerText = `${count} ${count === 1 ? 'vote' : 'votes'} (${percentage}%)`;
+                if (countNode) countNode.innerText = count ? String(count) : ''; // the bar shows the share
             });
         }
 
+        // Country Monkey and Trivi-yeah! questions, in the new layout (Nov
+        // 2026): the same pieces as Thinking Pants. The deck (or the venue's
+        // logo and name) and "3 / 20" sit in the small line above the question.
         function switchToQuestionUI(categoryLabel, questionText, choiceA, choiceB, choiceC, choiceD, questionNumber, totalQuestions, visualAsset, brand) {
             const panel = document.getElementById('active-content-stage');
-            // The venue's Trivi-yeah! carries its logo and name instead of a deck name.
-            const deckLine = brand
-                ? `<span style="display: inline-flex; align-items: center; gap: 12px;">${brand.logoUrl ? `<img src="${brand.logoUrl}" alt="" style="height: 34px; width: auto; max-width: 90px; object-fit: contain;" onerror="this.remove()">` : ''}<span>Trivi-yeah! <span style="color: var(--rm-text-soft);">at ${escapeHtml(brand.name)}</span></span></span>`
-                : `Active Deck: ${categoryLabel}`;
+            const where = brand
+                ? `<span style="display: inline-flex; align-items: center; gap: calc(var(--u) * 0.8); vertical-align: middle;">${brand.logoUrl ? `<img src="${brand.logoUrl}" alt="" style="height: calc(var(--u) * 2.4); width: auto; max-width: calc(var(--u) * 6); object-fit: contain;" onerror="this.remove()">` : ''}Trivi-yeah! at ${escapeHtml(brand.name)}</span>`
+                : (categoryLabel || '');
+            const progress = questionNumber && totalQuestions ? ` &middot; <span class="tp-pts">${questionNumber} / ${totalQuestions}</span>` : '';
+            const eyebrow = `<div class="tp-eyebrow">${where}${progress}</div>`;
 
             currentGamePhase = 'GAME_ROUND';
-            // QR + join instructions stay put -- only the muted status slot changes. The
-            // correct answer is already shown by highlighting the choice buttons below, so
-            // repeating it here as text would just be redundant -- this stays as progress
-            // (Question X/Y) through both the waiting and reveal states of the round.
-            setStatusMessage(`
-                <div style="font-weight: 600; color: var(--rm-text-muted);">Question ${questionNumber || '?'} / ${totalQuestions || '?'}</div>
-            `);
+            setStatusMessage('');
 
-            // Choice-row markup is identical whether or not there's a visual_asset --
-            // reveal always works by highlighting the correct row (highlightCorrectAnswerOnTV),
-            // so this stays the single source of truth for what "the choices" look like.
-            const choiceGrid = `
-                <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; width: 100%;">
-                    <div id="choice-row-A" style="background: var(--rm-surface-2); border: 1px solid var(--rm-border); border-radius: 8px; padding: 16px; display: flex; align-items: center; gap: 12px; transition: all 0.3s ease;">
-                        <span style="background: rgba(var(--rm-brand-rgb), 0.1); color: var(--rm-brand); font-weight: 700; padding: 4px 10px; border-radius: 4px; font-size: 0.85rem;">A</span>
-                        <span style="font-size: 1rem; font-weight: 500; color: var(--rm-text-2);">${choiceA}</span>
-                    </div>
-                    <div id="choice-row-B" style="background: var(--rm-surface-2); border: 1px solid var(--rm-border); border-radius: 8px; padding: 16px; display: flex; align-items: center; gap: 12px; transition: all 0.3s ease;">
-                        <span style="background: rgba(var(--rm-brand-rgb), 0.1); color: var(--rm-brand); font-weight: 700; padding: 4px 10px; border-radius: 4px; font-size: 0.85rem;">B</span>
-                        <span style="font-size: 1rem; font-weight: 500; color: var(--rm-text-2);">${choiceB}</span>
-                    </div>
-                    <div id="choice-row-C" style="background: var(--rm-surface-2); border: 1px solid var(--rm-border); border-radius: 8px; padding: 16px; display: flex; align-items: center; gap: 12px; transition: all 0.3s ease;">
-                        <span style="background: rgba(var(--rm-brand-rgb), 0.1); color: var(--rm-brand); font-weight: 700; padding: 4px 10px; border-radius: 4px; font-size: 0.85rem;">C</span>
-                        <span style="font-size: 1rem; font-weight: 500; color: var(--rm-text-2);">${choiceC}</span>
-                    </div>
-                    <div id="choice-row-D" style="background: var(--rm-surface-2); border: 1px solid var(--rm-border); border-radius: 8px; padding: 16px; display: flex; align-items: center; gap: 12px; transition: all 0.3s ease;">
-                        <span style="background: rgba(var(--rm-brand-rgb), 0.1); color: var(--rm-brand); font-weight: 700; padding: 4px 10px; border-radius: 4px; font-size: 0.85rem;">D</span>
-                        <span style="font-size: 1rem; font-weight: 500; color: var(--rm-text-2);">${choiceD}</span>
-                    </div>
-                </div>
-            `;
+            // The choice rows keep their choice-row-X ids, so the answer spread
+            // and highlightCorrectAnswerOnTV work on them unchanged.
+            const answers = `
+                <div class="tp-answers">
+                    ${[['A', choiceA], ['B', choiceB], ['C', choiceC], ['D', choiceD]].map(([letter, text]) =>
+                        `<div id="choice-row-${letter}" class="tp-ans"><b>${letter}</b><span>${text}</span></div>`).join('')}
+                </div>`;
 
-            // Pictures (maps, flags, water -- all 4:3) fill a 4:3 frame:
-            // flag SVGs carry no size of their own and would otherwise render tiny.
-            // Visual questions (Country Monkey's highlighted-map SVGs, etc.) put the
-            // image on the left and the choice buttons on the right, instead of
-            // stacking the choices under a full-width question block -- naming the
-            // country in text next to its own map was redundant with the buttons.
+            // Pictures (maps, flags, water, landmarks): the picture on the left,
+            // the words and answers on the right.
             if (visualAsset) {
-                panel.innerHTML = `
-                    <div class="panel-box" style="padding: 40px; flex: 1; display: flex; flex-direction: row; align-items: center; gap: 32px; box-sizing: border-box; min-height: 400px;">
-                        <div style="flex: 1; text-align: center;">
-                            <img src="${visualAsset}" alt="" style="width: 100%; aspect-ratio: 4 / 3; max-height: 340px; object-fit: contain; border-radius: 8px;">
-                        </div>
-                        <div style="flex: 1; text-align: left; display: flex; flex-direction: column; gap: 16px;">
-                            <div style="font-size: 0.85rem; font-weight: 600; color: var(--rm-text-muted); text-transform: uppercase; letter-spacing: 0.08em;">
-                                ${deckLine}
-                            </div>
-                            <div style="font-size: 1.2rem; font-weight: 600; color: var(--rm-white); line-height: 1.3; letter-spacing: -0.01em;">
-                                ${questionText}
-                            </div>
-                            ${choiceGrid}
-                        </div>
-                    </div>
-                `;
+                panel.innerHTML = tpStage('tp-split', `
+                    <div class="tp-pic"><img src="${visualAsset}" alt=""></div>
+                    <div class="tp-words">${eyebrow}${tpQuestion(questionText, true)}${answers}</div>
+                `);
                 return;
             }
-
-            panel.innerHTML = `
-                <div class="panel-box" style="padding: 40px; flex: 1; display: flex; flex-direction: column; justify-content: space-between; text-align: left; min-height: 400px; box-sizing: border-box;">
-
-                    <div style="font-size: 0.85rem; font-weight: 600; color: var(--rm-text-muted); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 16px;">
-                        ${deckLine}
-                    </div>
-
-                    <div style="font-size: 1.4rem; font-weight: 600; color: var(--rm-white); line-height: 1.4; flex: 1; display: flex; align-items: center; margin-bottom: 24px; letter-spacing: -0.01em;">
-                        ${questionText}
-                    </div>
-
-                    ${choiceGrid}
-                </div>
-            `;
+            panel.innerHTML = tpStage('', `${eyebrow}${tpQuestion(questionText, false)}${answers}`);
         }
 
 // ---------- Trivi-Yeah II (Jeopardy-style grid, prototype) ----------
@@ -1667,7 +1616,7 @@ function showTriviYeahIIFinalRevealStepUI(data) {
                     <div class="tp-said">Answered: "${step.answerText ? escapeHtml(step.answerText) : '(no answer)'}"</div>
                 </div>
                 <div style="text-align: right; flex-shrink: 0;">
-                    <div class="tp-result" style="color: ${resultColor};">${step.correct ? 'Correct' : 'Incorrect'} &middot; ${sign}${step.correct && step.winAmount != null ? step.winAmount : step.wagerAmount}</div>
+                    <div class="tp-result" style="color: ${resultColor};">${step.correct ? 'Correct' : 'Incorrect'}${(step.correct && step.winAmount != null ? step.winAmount : step.wagerAmount) ? ` &middot; ${sign}${step.correct && step.winAmount != null ? step.winAmount : step.wagerAmount}` : ''}</div>
                     ${step.hintsUsed != null ? `<div class="tp-note">${step.hintsUsed === 0 ? 'no clues!' : `${step.hintsUsed} clue${step.hintsUsed > 1 ? 's' : ''} used`}</div>` : ''}
                     <div class="tp-note">New score: ${step.newScore}</div>
                 </div>
@@ -2185,7 +2134,7 @@ function switchToGameOverUI(players, brand) {
     `;
 
     currentGamePhase = 'GAME_OVER';
-    setStatusMessage(`<div style="font-weight: 600; color: var(--rm-periwinkle);">Game over</div>`);
+    setStatusMessage(''); // "Final scores" says it (say it once)
 }
 
 // How the room split, as a fill on each answer button (Randy, Oct 2026:
