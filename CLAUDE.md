@@ -144,8 +144,17 @@ event, for a small fee. That's why hosting is gated behind access codes.
   `modes.js`; the phones' tiles are separate) with a vote bar and a plain
   vote count (the bar shows the share), the scoreboard rail, and a bigger
   QR code (10u, 13u at a pub, where the venue's banner replaces "What
-  should we play?"). Checked at 960x540 and 1080p, home and pub. Still in
-  the old layout: the TV's start screen and every mode but Thinking Pants.
+  should we play?"). Checked at 960x540 and 1080p, home and pub. **Country
+  Monkey** followed (Nov 2026), and with it **Trivi-yeah!**, which shares
+  its screens (`switchToQuestionUI`, `switchToCategoryVotingUI`): the
+  region vote uses the lobby's tiles; questions use the `tp-*` pieces, with
+  the deck (or the venue's logo and name) and "3 / 20" in the small line
+  above the question; the picture gets the larger share of the stage
+  (Randy: what's crucial to play gets room to breathe; what's only
+  informative, like the top bar and scores, stays minimal). Game Over and
+  the Final Wager reveal were trimmed to fit 960x540 (no "Game over" line,
+  no "-0"). Still in the old layout: the TV's start screen, Flag Me Down,
+  EmpossDurr, On the Spectrum and Profiler.
 - **TV design rules (Randy, Nov 2026, after the Fire Stick test) -- apply
   to every TV screen from here on:**
   1. **Say it once.** Don't add information: where something sits, how
