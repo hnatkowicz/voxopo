@@ -955,14 +955,14 @@ if (btnSubmitSpectate) {
         // ROOM_VENUE first, and a mid-game join's STATE_CATCH_UP follows.
         // Country Monkey and Trivi-yeah! too (Nov 2026): their region/deck
         // vote and their questions.
-        const TP_LAYOUT_ON = new Set(['ROOM_CLOSED', 'ROOM_VENUE', 'RETURN_TO_LOBBY', 'TRANSITION_TO_CATEGORY_VOTE', 'TRANSITION_TO_QUESTION', 'FLAG_ME_DOWN_ROUND']);
+        const TP_LAYOUT_ON = new Set(['ROOM_CLOSED', 'ROOM_VENUE', 'RETURN_TO_LOBBY', 'TRANSITION_TO_CATEGORY_VOTE', 'TRANSITION_TO_QUESTION', 'FLAG_ME_DOWN_ROUND', 'PROFILER_QUESTION']);
         const TP_LAYOUT_OFF = new Set([
-            'EMPOSSDURR_ROUND_START', 'ON_THE_SPECTRUM_ROUND_START', 'PROFILER_QUESTION']);
+            'EMPOSSDURR_ROUND_START', 'ON_THE_SPECTRUM_ROUND_START']);
         function updateTpLayout(data) {
             let on = null;
             if (data.type === 'TRANSITION_TO_TRIVI_YEAH_II' || /^TRIVI_YEAH_II_(?!FINAL_)/.test(data.type) || TP_LAYOUT_ON.has(data.type)) on = true;
             else if (TP_LAYOUT_OFF.has(data.type)) on = false;
-            else if (data.type === 'STATE_CATCH_UP') on = ['TRIVI_YEAH_II_ROUND', 'CATEGORY_VOTE', 'GAME_ROUND', 'ROUND_REVEAL', 'FLAG_ME_DOWN_ROUND'].includes(data.gameState);
+            else if (data.type === 'STATE_CATCH_UP') on = ['TRIVI_YEAH_II_ROUND', 'CATEGORY_VOTE', 'GAME_ROUND', 'ROUND_REVEAL', 'FLAG_ME_DOWN_ROUND', 'PROFILER_ROUND'].includes(data.gameState);
             if (on === null || on === document.body.classList.contains('tp-layout')) return;
             document.body.classList.toggle('tp-layout', on);
             railMoves = {};
@@ -1866,11 +1866,6 @@ function profilerEmojiFor(name) {
     return p && p.emoji ? p.emoji : '👤';
 }
 
-function profilerHeader(round, totalRounds) {
-    setStatusMessage(`<div style="font-weight: 600; color: var(--rm-text-muted);">Round ${round} / ${totalRounds}</div>`);
-    return `<div style="font-size: 0.85rem; font-weight: 600; color: var(--rm-text-muted); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 10px;">Profiler · Round ${round} of ${totalRounds}</div>`;
-}
-
 // ---------- Flag Me Down ----------
 // One screen that fills in as clues unlock: the flag on the left; on the
 // right the value ladder (400 -> 100), the clues so far, and the four
@@ -1935,6 +1930,16 @@ function renderFlagMeDownTV() {
     }
 }
 
+// Profiler in the new TV layout (Nov 2026), same rules as the rest: what's
+// crucial (the question, the posted answer, who said it, the awards) gets
+// the room; what's informational (the round, the "3 / 5 answered" counts)
+// stays small; instructions the phones already give are said once, there.
+// "Nobody sees it yet" stays: that promise is what gets honest answers.
+function profilerHeader(round, totalRounds) {
+    setStatusMessage('');
+    return `<div class="tp-eyebrow">Round <span class="tp-pts">${round} / ${totalRounds}</span></div>`;
+}
+
 function updateProfilerTally() {
     const el = document.getElementById('pf-tv-tally');
     if (!el) return;
@@ -1944,19 +1949,15 @@ function updateProfilerTally() {
 
 function switchToProfilerQuestionUI(data) {
     const panel = document.getElementById('active-content-stage');
-    const options = (data.options || []).map(o => `
-        <div style="background: var(--rm-surface); border: 1px solid var(--rm-border); border-radius: 10px; padding: 12px 18px; font-size: 1.15rem; font-weight: 600; color: var(--rm-text);">${escapeHtml(o.text)}</div>
-    `).join('');
-    panel.innerHTML = `
-        <div class="panel-box" style="padding: 40px; flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; min-height: 400px; box-sizing: border-box;">
-            ${profilerHeader(data.round, data.totalRounds)}
-            ${data.isReplacement ? `<div style="color: ${PROFILER_COLOR}; font-weight: 700; margin-bottom: 10px;">New question!</div>` : ''}
-            <div style="font-size: 1.9rem; font-weight: 700; color: var(--rm-white); letter-spacing: -0.02em; margin-bottom: 28px; max-width: 760px;">${escapeHtml(data.questionText)}</div>
-            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; width: 100%; max-width: 760px; margin-bottom: 24px;">${options}</div>
-            <div style="font-size: 0.95rem; color: var(--rm-text-soft); margin-bottom: 8px;">Answer honestly on your phone -- nobody sees it yet.</div>
-            <div id="pf-tv-tally" style="font-size: 1.1rem; font-weight: 600; color: var(--rm-orange);"></div>
-        </div>
-    `;
+    const options = (data.options || []).map(o => `<div class="pf-option">${escapeHtml(o.text)}</div>`).join('');
+    panel.innerHTML = tpStage('tp-center pf-stage', `
+        ${profilerHeader(data.round, data.totalRounds)}
+        ${data.isReplacement ? `<div class="tp-kicker" style="color: ${PROFILER_COLOR};">New question</div>` : ''}
+        ${tpQuestion(escapeHtml(data.questionText), false)}
+        <div class="pf-options">${options}</div>
+        <div class="tp-small">Answer honestly on your phone -- nobody sees it yet.</div>
+        <div id="pf-tv-tally" class="pf-tally"></div>
+    `);
     currentGamePhase = 'PROFILER_ANSWER';
     profilerTallyTotal = data.rosterCount || 0;
     profilerTallyVerb = 'answered';
@@ -1966,17 +1967,13 @@ function switchToProfilerQuestionUI(data) {
 function switchToProfilerPostUI(data) {
     const panel = document.getElementById('active-content-stage');
     const who = data.count === 1 ? '1 of you said' : `${data.count} of you said`;
-    const pickLine = data.count === 1 ? 'Who was it? Pick them on your phone.' : `Who were they? Pick ${data.count} people on your phone.`;
-    panel.innerHTML = `
-        <div class="panel-box" style="padding: 40px; flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; min-height: 400px; box-sizing: border-box;">
-            ${profilerHeader(data.round, data.totalRounds)}
-            <div style="font-size: 1.1rem; color: var(--rm-text-soft); margin-bottom: 22px; max-width: 760px;">${escapeHtml(data.questionText)}</div>
-            <div style="font-size: 1.3rem; font-weight: 600; color: ${PROFILER_COLOR}; margin-bottom: 6px;">${who}</div>
-            <div style="font-size: 2.6rem; font-weight: 800; color: var(--rm-white); letter-spacing: -0.02em; margin-bottom: 26px; max-width: 760px;">“${escapeHtml(data.answerText)}”</div>
-            <div style="font-size: 1rem; color: var(--rm-text-soft); margin-bottom: 8px;">${pickLine}</div>
-            <div id="pf-tv-tally" style="font-size: 1.1rem; font-weight: 600; color: var(--rm-orange);"></div>
-        </div>
-    `;
+    panel.innerHTML = tpStage('tp-center pf-stage', `
+        ${profilerHeader(data.round, data.totalRounds)}
+        <div class="tp-small">${escapeHtml(data.questionText)}</div>
+        <div class="tp-kicker" style="color: ${PROFILER_COLOR};">${who}</div>
+        <div class="tp-big pf-answer">“${escapeHtml(data.answerText)}”</div>
+        <div id="pf-tv-tally" class="pf-tally"></div>
+    `);
     currentGamePhase = 'PROFILER_GUESS';
     profilerTallyTotal = data.guessersNeeded || 0;
     profilerTallyVerb = 'locked in';
@@ -1985,15 +1982,10 @@ function switchToProfilerPostUI(data) {
 
 function switchToProfilerUnanimousUI(data) {
     const panel = document.getElementById('active-content-stage');
-    panel.innerHTML = `
-        <div class="panel-box" style="padding: 40px; flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; min-height: 400px; box-sizing: border-box;">
-            <div style="font-size: 3rem; font-weight: 800; color: ${PROFILER_COLOR}; margin-bottom: 12px;">Unanimous!</div>
-            ${data.answerText
-                ? `<div style="font-size: 1.3rem; color: var(--rm-text-2); margin-bottom: 18px;">Everyone said “${escapeHtml(data.answerText)}”</div>`
-                : `<div style="font-size: 1.3rem; color: var(--rm-text-2); margin-bottom: 18px;">Not enough answers to play this one.</div>`}
-            <div style="font-size: 1rem; color: var(--rm-text-muted);">Nothing to guess -- here comes a new question.</div>
-        </div>
-    `;
+    panel.innerHTML = tpStage('tp-center pf-stage', `
+        <div class="tp-big" style="color: ${PROFILER_COLOR};">Unanimous!</div>
+        <div class="tp-mid">${data.answerText ? `Everyone said “${escapeHtml(data.answerText)}”` : 'Not enough answers to play this one.'}</div>
+    `);
     currentGamePhase = 'PROFILER_UNANIMOUS';
 }
 
@@ -2002,66 +1994,58 @@ function switchToProfilerRevealUI(data) {
     const choosers = (data.choosers || []).map(name => {
         const finders = (data.foundBy && data.foundBy[name]) || [];
         return `
-            <div style="background: rgba(var(--rm-pink-rgb), 0.08); border: 1px solid ${PROFILER_COLOR}; border-radius: 12px; padding: 16px 22px; min-width: 200px;">
-                <div style="font-size: 1.7rem; font-weight: 800; color: var(--rm-white);">${profilerEmojiFor(name)} ${escapeHtml(name)}</div>
-                <div style="font-size: 0.95rem; color: var(--rm-text-soft); margin-top: 4px;">${finders.length ? `Found by ${finders.map(escapeHtml).join(', ')}` : 'Nobody found them!'}</div>
-                ${data.openBook && data.openBook[name] ? `<div style="font-weight: 700; color: ${PROFILER_COLOR}; margin-top: 4px;">+${data.openBook[name]} open book</div>` : ''}
+            <div class="pf-person">
+                <div class="pf-person-name">${profilerEmojiFor(name)} ${escapeHtml(name)}</div>
+                <div class="pf-person-note">${finders.length ? `Found by ${finders.map(escapeHtml).join(', ')}` : 'Nobody found them!'}</div>
+                ${data.openBook && data.openBook[name] ? `<div class="pf-person-note" style="color: var(--rm-brand); font-weight: 700;">+${data.openBook[name]} open book</div>` : ''}
             </div>
         `;
     }).join('');
     const scorers = (data.results || []).filter(r => r.points > 0).map(r => `
-        <span style="background: var(--rm-surface); border: 1px solid var(--rm-border); border-radius: 20px; padding: 6px 14px; font-weight: 600; color: var(--rm-text);">
-            ${escapeHtml(r.name)} <span style="color: var(--rm-green);">+${r.points}</span>${r.perfect && r.needed >= 2 ? ' 🎯' : ''}
-        </span>
+        <span class="fmd-result right">${escapeHtml(r.name)} +${r.points}${r.perfect && r.needed >= 2 ? ' 🎯' : ''}</span>
     `).join('');
-    panel.innerHTML = `
-        <div class="panel-box" style="padding: 40px; flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; min-height: 400px; box-sizing: border-box;">
-            ${profilerHeader(data.round, data.totalRounds)}
-            <div style="font-size: 1.1rem; color: var(--rm-text-soft); margin-bottom: 6px;">${escapeHtml(data.questionText)}</div>
-            <div style="font-size: 1.6rem; font-weight: 700; color: var(--rm-white); margin-bottom: 24px;">“${escapeHtml(data.answerText)}” was...</div>
-            <div style="display: flex; flex-wrap: wrap; gap: 14px; justify-content: center; margin-bottom: 24px;">${choosers}</div>
-            <div style="display: flex; flex-wrap: wrap; gap: 8px; justify-content: center;">${scorers || '<span style="color: var(--rm-text-muted);">Nobody read this one right.</span>'}</div>
-            <div style="margin-top: 26px; font-size: 0.95rem; color: var(--rm-text-soft);">Talk it over -- tap <strong style="color: var(--rm-text);">Continue</strong> on your phone when you're ready.</div>
-            <div id="pf-tv-continue-tally" style="font-size: 1.05rem; font-weight: 600; color: var(--rm-orange); margin-top: 6px;"></div>
-        </div>
-    `;
+    panel.innerHTML = tpStage('tp-center pf-stage', `
+        ${profilerHeader(data.round, data.totalRounds)}
+        <div class="tp-small">${escapeHtml(data.questionText)}</div>
+        <div class="tp-mid">“${escapeHtml(data.answerText)}” was...</div>
+        <div class="pf-people">${choosers}</div>
+        <div class="fmd-results" style="justify-content: center;">${scorers || '<span class="fmd-tally">Nobody read this one right.</span>'}</div>
+        <div id="pf-tv-continue-tally" class="pf-tally"></div>
+    `);
     currentGamePhase = 'PROFILER_REVEAL';
     updateProfilerContinueTally(data.continueVotedCount || 0, data.continueTotalNeeded || 0);
 }
 
 function updateProfilerContinueTally(votedCount, totalNeeded) {
     const el = document.getElementById('pf-tv-continue-tally');
-    if (el) el.innerText = `${votedCount} / ${totalNeeded} ready for the next question`;
+    if (el) el.innerText = `${votedCount} / ${totalNeeded} ready`;
 }
 
 function switchToProfilerAwardsUI(data) {
     const panel = document.getElementById('active-content-stage');
     const awards = (data.awards || []).map(a => `
-        <div style="background: var(--rm-surface); border: 1px solid var(--rm-border); border-radius: 12px; padding: 14px 18px; text-align: center; flex: 1 1 160px;">
-            <div style="font-size: 1.8rem;">${a.emoji}</div>
-            <div style="font-size: 0.75rem; font-weight: 700; color: ${PROFILER_COLOR}; text-transform: uppercase; letter-spacing: 0.06em; margin-top: 4px;">${escapeHtml(a.title)}</div>
-            <div style="font-size: 1.15rem; font-weight: 700; color: var(--rm-white); margin-top: 4px;">${a.names.map(escapeHtml).join(' & ')}</div>
-            <div style="font-size: 0.8rem; color: var(--rm-text-muted); margin-top: 2px;">${escapeHtml(a.detail || '')}</div>
+        <div class="pf-award">
+            <div class="pf-award-emoji">${a.emoji}</div>
+            <div class="pf-award-title">${escapeHtml(a.title)}</div>
+            <div class="pf-award-names">${a.names.map(escapeHtml).join(' & ')}</div>
+            <div class="pf-award-detail">${escapeHtml(a.detail || '')}</div>
         </div>
     `).join('');
     const bars = (data.bars || []).map(b => `
-        <div style="display: flex; align-items: center; gap: 14px;">
-            <span style="font-weight: 600; color: var(--rm-text); min-width: 150px; text-align: left; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${profilerEmojiFor(b.name)} ${escapeHtml(b.name)}</span>
-            <div class="progress-track" style="flex: 1;"><div class="progress-fill" style="background: ${PROFILER_COLOR}; width: ${Math.max(0, Math.min(100, b.accuracy))}%;"></div></div>
-            <span style="font-weight: 700; color: var(--rm-text); min-width: 48px; text-align: right;">${b.accuracy}%</span>
+        <div class="pf-bar">
+            <span class="pf-bar-name">${profilerEmojiFor(b.name)} ${escapeHtml(b.name)}</span>
+            <div class="lobby-mode-track" style="flex: 1;"><div class="progress-fill" style="background: ${PROFILER_COLOR}; width: ${Math.max(0, Math.min(100, b.accuracy))}%;"></div></div>
+            <span class="pf-bar-pct">${b.accuracy}%</span>
         </div>
     `).join('');
-    panel.innerHTML = `
-        <div class="panel-box" style="padding: 36px; flex: 1; display: flex; flex-direction: column; justify-content: center; box-sizing: border-box;">
-            <h2 class="panel-title" style="margin-bottom: 18px; text-align: center;">Who Knows Who</h2>
-            <div style="display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 26px;">${awards}</div>
-            <div style="font-size: 0.8rem; font-weight: 600; color: var(--rm-text-muted); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 10px;">How well you read the room</div>
-            <div style="display: flex; flex-direction: column; gap: 10px;">${bars}</div>
-            <div style="text-align: center; color: var(--rm-text-muted); margin-top: 20px; font-size: 0.9rem;">Check your phone for who you know best.</div>
-        </div>
-    `;
+    panel.innerHTML = tpStage('pf-stage pf-awards-stage', `
+        <div class="tp-big" style="font-size: calc(var(--u) * 3); text-align: center;">Who Knows Who</div>
+        <div class="pf-awards">${awards}</div>
+        <div class="tp-eyebrow" style="color: var(--rm-text-muted);">How well you read the room</div>
+        <div class="pf-bars">${bars}</div>
+    `);
     currentGamePhase = 'PROFILER_AWARDS';
-    setStatusMessage(`<div style="font-weight: 600; color: var(--rm-periwinkle);">Final results</div>`);
+    setStatusMessage('');
 }
 
 // A reloaded TV gets a full snapshot of the current phase (see

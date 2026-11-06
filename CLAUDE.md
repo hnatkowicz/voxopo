@@ -168,8 +168,14 @@ event, for a small fee. That's why hosting is gated behind access codes.
   logo, "Break time" (the venue's name is already in the top bar), the
   notes big and gold, the heads-up, and a small "x of n are back".
   **Next up (Randy, Nov 2026: pivoting to the streaming device in the
-  living room):** the home modes in the new layout -- Profiler,
-  EmpossDurr and On the Spectrum, the last screens still in the old one.
+  living room):** the home modes in the new layout. **Profiler** is done
+  (Nov 2026): the question and its options, the posted answer ("2 of you
+  said"), who said it and the "Who Knows Who" awards get the room; the
+  round and the answered/locked-in/ready counts stay small; the phones'
+  instructions aren't repeated, except "nobody sees it yet" (that promise
+  is what gets honest answers). Awards sit in one row so 8 players fit at
+  960x540. Still to do: EmpossDurr and On the Spectrum, the last screens
+  in the old layout.
   Then a full pass on the phone screens. Waiting: a forced test of the
   trap screens (Randy said wait), the scoreboard width (Randy is still
   playing), the Flag Me Down countdown, and Randy's avatar SVGs.

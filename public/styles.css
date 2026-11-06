@@ -801,3 +801,37 @@ body.tp-layout[data-view="gateway"] #gateway-screen { display: flex !important; 
    a faint gold blur at the left edge of the TV. Hidden until it slides in. */
 .toast-card { visibility: hidden; transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), visibility 0s linear 0.4s; }
 .toast-card.active { visibility: visible; transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), visibility 0s; }
+
+/* ---------- Profiler, in the new layout (Nov 2026) ---------- */
+.pf-stage { gap: calc(var(--u) * 1.2); }
+.pf-options { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: calc(var(--u) * 0.9); width: 84%; }
+.pf-option { background: var(--rm-surface); border: calc(var(--u) * 0.2) solid var(--rm-border); border-radius: calc(var(--u) * 1.1);
+    padding: calc(var(--u) * 0.9) calc(var(--u) * 1.3); font-size: calc(var(--u) * 1.6); font-weight: 600; color: var(--rm-text); line-height: 1.2; }
+.pf-tally { font-size: calc(var(--u) * 1.3); font-weight: 600; color: var(--rm-text-soft); min-height: 1.3em; }
+.pf-answer { font-size: calc(var(--u) * 4.4); max-width: 90%; }
+.pf-people { display: flex; flex-wrap: wrap; gap: calc(var(--u) * 1.2); justify-content: center; }
+.pf-person { background: rgba(var(--rm-pink-rgb), 0.08); border: calc(var(--u) * 0.18) solid var(--rm-pink); border-radius: calc(var(--u) * 1.2);
+    padding: calc(var(--u) * 1) calc(var(--u) * 1.8); min-width: calc(var(--u) * 16); }
+.pf-person-name { font-family: var(--rm-font-display); font-weight: 800; font-size: calc(var(--u) * 2.6); color: var(--rm-text); }
+.pf-person-note { font-size: calc(var(--u) * 1.3); color: var(--rm-text-soft); margin-top: calc(var(--u) * 0.3); }
+.pf-awards-stage { gap: calc(var(--u) * 1.4); }
+.pf-awards { display: flex; flex-wrap: wrap; gap: calc(var(--u) * 1); justify-content: center; }
+.pf-award { background: var(--rm-surface); border-radius: calc(var(--u) * 1.1); padding: calc(var(--u) * 0.9) calc(var(--u) * 1.2); text-align: center; flex: 1 1 calc(var(--u) * 13); max-width: calc(var(--u) * 18); }
+.pf-award-emoji { font-size: calc(var(--u) * 2.6); line-height: 1.1; }
+.pf-award-title { font-size: calc(var(--u) * 1); font-weight: 700; color: var(--rm-pink); text-transform: uppercase; letter-spacing: 0.08em; margin-top: calc(var(--u) * 0.3); }
+.pf-award-names { font-family: var(--rm-font-display); font-weight: 800; font-size: calc(var(--u) * 1.8); color: var(--rm-text); margin-top: calc(var(--u) * 0.2); }
+.pf-award-detail { font-size: calc(var(--u) * 1.1); color: var(--rm-text-muted); margin-top: calc(var(--u) * 0.2); }
+.pf-bars { display: flex; flex-direction: column; gap: calc(var(--u) * 0.6); }
+.pf-bar { display: flex; align-items: center; gap: calc(var(--u) * 1.2); font-size: calc(var(--u) * 1.5); }
+.pf-bar-name { font-weight: 600; color: var(--rm-text); width: calc(var(--u) * 14); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.pf-bar-pct { font-weight: 700; color: var(--rm-text); width: 3.5ch; text-align: right; font-variant-numeric: tabular-nums; }
+/* Who Knows Who: the awards sit in one row (up to five) so the screen fits
+   a Fire Stick's 960x540 with the QR strip in view. */
+.pf-awards-stage { gap: calc(var(--u) * 1); }
+.pf-awards { flex-wrap: nowrap; width: 100%; }
+.pf-award { flex: 1 1 0; min-width: 0; max-width: calc(var(--u) * 16); padding: calc(var(--u) * 0.7) calc(var(--u) * 0.8); }
+.pf-award-emoji { font-size: calc(var(--u) * 2.2); }
+.pf-award-names { font-size: calc(var(--u) * 1.5); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.pf-award-detail { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.pf-bars { gap: calc(var(--u) * 0.35); }
+.pf-bar { font-size: calc(var(--u) * 1.3); }
