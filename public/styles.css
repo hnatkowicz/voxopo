@@ -840,3 +840,13 @@ body.tp-layout[data-view="gateway"] #gateway-screen { display: flex !important; 
 .ed-stage { gap: calc(var(--u) * 1.2); }
 .ed-icon { width: calc(var(--u) * 6); height: calc(var(--u) * 6); }
 .ed-tallies { display: flex; gap: calc(var(--u) * 2.4); font-size: calc(var(--u) * 1.4); font-weight: 600; color: var(--rm-text-soft); margin-top: calc(var(--u) * 1); }
+
+/* ---------- On the Spectrum, in the new layout (Nov 2026) ---------- */
+.ots-stage { gap: calc(var(--u) * 1.2); }
+.ots-rows { display: flex; flex-direction: column; gap: calc(var(--u) * 0.6); width: 88%; margin: 0 auto; }
+.ots-row { display: flex; align-items: center; gap: calc(var(--u) * 1.4); border: calc(var(--u) * 0.15) solid transparent;
+    border-radius: calc(var(--u) * 0.9); padding: calc(var(--u) * 0.6) calc(var(--u) * 1.4); font-size: calc(var(--u) * 1.6); }
+.ots-row.actual { border-color: var(--rm-purple); }
+.ots-name { font-weight: 700; color: var(--rm-text); width: calc(var(--u) * 15); flex-shrink: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.ots-actual { color: var(--rm-purple); font-size: 0.6em; text-transform: uppercase; letter-spacing: 0.08em; margin-left: 0.4em; }
+.ots-value { font-family: var(--rm-font-display); font-weight: 800; color: var(--rm-text); width: 3ch; text-align: right; font-variant-numeric: tabular-nums; }

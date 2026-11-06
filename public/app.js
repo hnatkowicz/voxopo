@@ -801,7 +801,7 @@ if (btnSubmitSpectate) {
                 if (data.type === 'ON_THE_SPECTRUM_REVEAL') {
                     document.getElementById('room-status-text').innerText = "On the Spectrum — Reveal";
                     setClock(data.secondsLeft + " s");
-                    switchToOnTheSpectrumRevealUI(data.namedPlayerName, data.statementText, data.targetValue, data.results, data.tvLimit, data.secondsLeft);
+                    switchToOnTheSpectrumRevealUI(data.namedPlayerName, data.statementText, data.targetValue, data.results, data.tvLimit);
                     playerAnswerStatus = {};
                     updateLeaderboardUI(cachedPlayersSnapshot);
                 }
@@ -964,14 +964,15 @@ if (btnSubmitSpectate) {
         // ROOM_VENUE first, and a mid-game join's STATE_CATCH_UP follows.
         // Country Monkey and Trivi-yeah! too (Nov 2026): their region/deck
         // vote and their questions.
-        const TP_LAYOUT_ON = new Set(['ROOM_CLOSED', 'ROOM_VENUE', 'RETURN_TO_LOBBY', 'TRANSITION_TO_CATEGORY_VOTE', 'TRANSITION_TO_QUESTION', 'FLAG_ME_DOWN_ROUND', 'PROFILER_QUESTION', 'EMPOSSDURR_ROUND_START']);
-        const TP_LAYOUT_OFF = new Set([
-            'ON_THE_SPECTRUM_ROUND_START']);
+        const TP_LAYOUT_ON = new Set(['ROOM_CLOSED', 'ROOM_VENUE', 'RETURN_TO_LOBBY', 'TRANSITION_TO_CATEGORY_VOTE', 'TRANSITION_TO_QUESTION', 'FLAG_ME_DOWN_ROUND', 'PROFILER_QUESTION', 'EMPOSSDURR_ROUND_START', 'ON_THE_SPECTRUM_ROUND_START']);
+        // Every screen uses the new layout now (Nov 2026); kept for any
+        // future screen that isn't ready for it.
+        const TP_LAYOUT_OFF = new Set([]);
         function updateTpLayout(data) {
             let on = null;
             if (data.type === 'TRANSITION_TO_TRIVI_YEAH_II' || /^TRIVI_YEAH_II_(?!FINAL_)/.test(data.type) || TP_LAYOUT_ON.has(data.type)) on = true;
             else if (TP_LAYOUT_OFF.has(data.type)) on = false;
-            else if (data.type === 'STATE_CATCH_UP') on = ['TRIVI_YEAH_II_ROUND', 'CATEGORY_VOTE', 'GAME_ROUND', 'ROUND_REVEAL', 'FLAG_ME_DOWN_ROUND', 'PROFILER_ROUND', 'EMPOSSDURR_ROUND'].includes(data.gameState);
+            else if (data.type === 'STATE_CATCH_UP') on = ['TRIVI_YEAH_II_ROUND', 'CATEGORY_VOTE', 'GAME_ROUND', 'ROUND_REVEAL', 'FLAG_ME_DOWN_ROUND', 'PROFILER_ROUND', 'EMPOSSDURR_ROUND', 'ON_THE_SPECTRUM_ROUND'].includes(data.gameState);
             if (on === null || on === document.body.classList.contains('tp-layout')) return;
             document.body.classList.toggle('tp-layout', on);
             railMoves = {};
@@ -1762,29 +1763,33 @@ function switchToEmpossDurrDeclareResultUI(correct, impostorName) {
 // ==========================================
 // ON THE SPECTRUM TV UI
 // ==========================================
+// In the new TV layout (Nov 2026): whose answer it is, the statement and
+// the reveal bars get the room; the round and the locked-in/continue
+// counts stay small (blank until the first real count); the clock lives
+// only in the top bar; the phones carry the how-to.
 
 function switchToOnTheSpectrumSetTargetUI(namedPlayerName, statementText, round, totalRounds) {
     const panel = document.getElementById('active-content-stage');
-    setStatusMessage(`<div style="font-weight: 600; color: var(--rm-text-muted);">Round ${round} / ${totalRounds}</div>`);
-    panel.innerHTML = `
-        <div class="panel-box" style="padding: 40px; flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; min-height: 400px; box-sizing: border-box;">
-            <div style="font-size: 0.85rem; font-weight: 600; color: var(--rm-text-muted); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 8px;">Active Deck: On the Spectrum</div>
-            <div style="font-size: 1.6rem; font-weight: 700; color: var(--rm-white); letter-spacing: -0.02em; margin-bottom: 20px;">${namedPlayerName}, set your true answer.</div>
-            <div style="font-size: 1.1rem; color: var(--rm-text-2); margin-bottom: 6px; max-width: 640px;">${statementText}</div>
-            <div style="font-size: 0.9rem; color: var(--rm-text-muted); margin-top: 12px;">Everyone else, get ready to guess.</div>
-        </div>
-    `;
+    // Set before the standings refresh, or it re-posts the lobby's "Press
+    // Start" line beside the QR code mid-game.
+    currentGamePhase = 'ON_THE_SPECTRUM';
+    setStatusMessage('');
+    panel.innerHTML = tpStage('tp-center ots-stage', `
+        <div class="tp-eyebrow">Round <span class="tp-pts">${round} / ${totalRounds}</span></div>
+        <div class="tp-big">${escapeHtml(namedPlayerName)}</div>
+        <div class="tp-mid">sets their true answer</div>
+        ${tpQuestion(statementText, false)}
+    `);
 }
 
 function switchToOnTheSpectrumGuessingUI(namedPlayerName, statementText) {
+    currentGamePhase = 'ON_THE_SPECTRUM';
     const panel = document.getElementById('active-content-stage');
-    panel.innerHTML = `
-        <div class="panel-box" style="padding: 40px; flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; min-height: 400px; box-sizing: border-box;">
-            <div style="font-size: 0.85rem; font-weight: 600; color: var(--rm-text-muted); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 8px;">Guessing ${namedPlayerName}'s answer</div>
-            <div style="font-size: 1.3rem; font-weight: 700; color: var(--rm-white); letter-spacing: -0.02em; margin-bottom: 24px; max-width: 640px;">${statementText}</div>
-            <div id="ots-tv-lockin-tally" style="font-size: 1.1rem; font-weight: 600; color: var(--rm-orange);">0 / 0 locked in</div>
-        </div>
-    `;
+    panel.innerHTML = tpStage('tp-center ots-stage', `
+        <div class="tp-kicker">Guessing ${escapeHtml(namedPlayerName)}'s answer</div>
+        ${tpQuestion(statementText, false)}
+        <div id="ots-tv-lockin-tally" class="pf-tally"></div>
+    `);
 }
 
 function updateOnTheSpectrumLockInTallyTV(lockedInNames, totalGuessersNeeded) {
@@ -1800,14 +1805,11 @@ const ON_THE_SPECTRUM_BAR_COLOR = 'var(--rm-purple)';
 
 function otsBarRow(name, value, isNamed) {
     const pct = Math.max(0, Math.min(100, value));
-    const nameLabel = isNamed
-        ? `${name} <span style="color: ${ON_THE_SPECTRUM_BAR_COLOR}; font-weight: 700; font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.06em; margin-left: 6px;">actual</span>`
-        : name;
     return `
-        <div style="display: flex; align-items: center; gap: 16px; background: var(--rm-surface); border: 1px solid ${isNamed ? ON_THE_SPECTRUM_BAR_COLOR : 'var(--rm-border)'}; border-radius: 8px; padding: 10px 18px;">
-            <span style="font-weight: 600; color: var(--rm-text); min-width: 160px; flex-shrink: 0;">${nameLabel}</span>
-            <div class="progress-track" style="flex: 1;"><div class="progress-fill" style="background: ${ON_THE_SPECTRUM_BAR_COLOR}; width: ${pct}%;"></div></div>
-            <span style="font-weight: 700; color: var(--rm-text); min-width: 32px; text-align: right;">${value}</span>
+        <div class="ots-row${isNamed ? ' actual' : ''}">
+            <span class="ots-name">${escapeHtml(name)}${isNamed ? ' <span class="ots-actual">actual</span>' : ''}</span>
+            <div class="lobby-mode-track" style="flex: 1;"><div class="progress-fill" style="background: ${ON_THE_SPECTRUM_BAR_COLOR}; width: ${pct}%;"></div></div>
+            <span class="ots-value">${value}</span>
         </div>
     `;
 }
@@ -1816,28 +1818,25 @@ function otsBarRow(name, value, isNamed) {
 // handful the rows get too thin to read from across a room) -- the complete
 // sorted list still goes to every phone via /api/room-status. The named
 // player's own row always shows, on top, uncounted against that limit.
-function switchToOnTheSpectrumRevealUI(namedPlayerName, statementText, targetValue, results, tvLimit, secondsLeft) {
+function switchToOnTheSpectrumRevealUI(namedPlayerName, statementText, targetValue, results, tvLimit) {
+    currentGamePhase = 'ON_THE_SPECTRUM';
     const panel = document.getElementById('active-content-stage');
     const shown = (results || []).slice(0, tvLimit || 6);
     const remaining = (results || []).length - shown.length;
     const rows = [otsBarRow(namedPlayerName, targetValue, true)]
         .concat(shown.map(r => otsBarRow(r.name, r.value, false)))
         .join('');
-
-    panel.innerHTML = `
-        <div class="panel-box" style="padding: 40px; flex: 1; display: flex; flex-direction: column; justify-content: center;">
-            <div style="font-size: 1rem; color: var(--rm-text-soft); margin-bottom: 20px; text-align: center;">${statementText}</div>
-            <div style="display: flex; flex-direction: column; gap: 10px;">${rows}</div>
-            ${remaining > 0 ? `<div style="text-align: center; color: var(--rm-text-muted); margin-top: 12px; font-size: 0.9rem;">+${remaining} more -- check your phone for the full list</div>` : ''}
-            <div id="ots-tv-continue-tally" style="text-align: center; color: var(--rm-text-muted); margin-top: 20px; font-size: 0.9rem;">0 / 0 want to continue</div>
-            <div id="ots-tv-timer" style="text-align: center; font-size: 1.2rem; font-weight: 600; color: var(--rm-orange); margin-top: 8px;">${secondsLeft ?? ''} s</div>
-        </div>
-    `;
+    panel.innerHTML = tpStage('ots-stage', `
+        <div class="tp-small" style="text-align: center; max-width: none;">${statementText}</div>
+        <div class="ots-rows">${rows}</div>
+        ${remaining > 0 ? `<div class="pf-tally" style="text-align: center;">+${remaining} more</div>` : ''}
+        <div id="ots-tv-continue-tally" class="pf-tally" style="text-align: center;"></div>
+    `);
 }
 
 function updateOnTheSpectrumContinueTallyTV(votedCount, totalNeeded) {
     const el = document.getElementById('ots-tv-continue-tally');
-    if (el) el.innerText = `${votedCount ?? 0} / ${totalNeeded ?? 0} want to continue`;
+    if (el) el.innerText = `${votedCount ?? 0} / ${totalNeeded ?? 0} ready`;
 }
 
 // ==========================================

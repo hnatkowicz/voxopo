@@ -181,9 +181,13 @@ event, for a small fee. That's why hosting is gated behind access codes.
   real count; the clock only in the top bar; no "Active Deck", no how-to
   lines. Also: join announcements ("New player joined") used to queue up
   and run well into a game; now anything over 10s old in the lobby, or
-  over 2s old once a game is running, is dropped. Still to do: On the
-  Spectrum, the last screens in the old layout.
-  Then a full pass on the phone screens. Waiting: a forced test of the
+  over 2s old once a game is running, is dropped. **On the Spectrum**
+  done (Nov 2026), the last mode: whose answer it is (big) and the
+  statement; on the reveal, the bars without boxes (the real answer
+  outlined, on top, up to 6 guesses and "+N more"); the round and the
+  locked-in/ready counts small, blank until the first count; the clock
+  only in the top bar. **Every TV screen is now in the new layout.**
+  Next: a full pass on the phone screens. Waiting: a forced test of the
   trap screens (Randy said wait), the scoreboard width (Randy is still
   playing), the Flag Me Down countdown, and Randy's avatar SVGs.
 - **TV design rules (Randy, Nov 2026, after the Fire Stick test) -- apply
