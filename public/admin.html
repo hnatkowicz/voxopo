@@ -171,6 +171,9 @@
         let houseColumnOn = false;
         let boardRulesOn = false;
         let breaksOn = false;
+        let themeOn = false;
+        // TV themes: [key, what /admin calls it]. Art lives in public/themes/<key in lowercase>/.
+        const THEME_CHOICES = [['OFF', 'Off'], ['CHRISTMAS', 'Christmas']];
         let houseSets = []; // [{ key, total, tiers, complete }] from the database
 
         // "HOUSE_PICKLES_PINS: 16 questions" -- or why the board won't use it.
@@ -209,6 +212,11 @@
             if (c.allowed_modes && c.allowed_modes.length) parts.push(`${c.allowed_modes.length} modes`);
             if (c.board_rules === 'PLAIN') parts.push('Plain rules');
             if (c.break_minutes) parts.push(`Breaks: ${c.break_minutes} min`);
+            if (c.theme && c.theme !== 'OFF') {
+                const name = (THEME_CHOICES.find(t => t[0] === c.theme) || [c.theme, c.theme])[1];
+                const dates = c.theme_starts || c.theme_ends ? ` ${esc(c.theme_starts || '…')} to ${esc(c.theme_ends || '…')}` : '';
+                parts.push(`${esc(name)} theme${dates}`);
+            }
             if (c.house_category) {
                 const set = houseSets.find(h => h.key === c.house_category);
                 parts.push(set ? `Trivi-yeah! (${set.total})` : 'Trivi-yeah! &#9888; set not found');
@@ -285,6 +293,24 @@
                         <div class="hint">Deals, event news, fun facts about the guest of honor. Each line shows for 10 seconds. Gray text is only an example; with no notes, the TV shows the venue's tagline.</div>
                     </div>
                     ` : `<div class="hint" style="margin-bottom: 12px;">Venue breaks turn on once you run <strong>access_codes_breaks.sql</strong> in Neon.</div>`}
+                    ${themeOn ? `
+                    <div class="row">
+                        <label>TV theme</label>
+                        <select id="venue-theme">
+                            ${THEME_CHOICES.map(([key, name]) => `<option value="${key}" ${(c.theme || 'OFF') === key ? 'selected' : ''}>${name}</option>`).join('')}
+                        </select>
+                        <div class="hint">Decorations on the TV (lights, ornaments, icicles...). The game itself looks the same.</div>
+                    </div>
+                    <div class="row">
+                        <label>Theme dates (optional)</label>
+                        <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
+                            <input type="date" id="venue-theme-starts" value="${esc(c.theme_starts || '')}" style="width: auto;">
+                            <span class="hint" style="margin: 0;">to</span>
+                            <input type="date" id="venue-theme-ends" value="${esc(c.theme_ends || '')}" style="width: auto;">
+                        </div>
+                        <div class="hint">Leave both blank to show it until you switch it Off. With dates, it shows from the first day through the last, by the TV's own calendar.</div>
+                    </div>
+                    ` : `<div class="hint" style="margin-bottom: 12px;">TV themes turn on once you run <strong>access_codes_theme.sql</strong> in Neon.</div>`}
                     <div style="display: flex; gap: 10px;">
                         <button class="btn" style="width: auto; padding: 10px 18px;" onclick="saveVenue('${esc(c.code)}')">Save</button>
                         <button class="btn btn-secondary" style="width: auto; padding: 10px 18px;" onclick="toggleVenueEditor(null)">Cancel</button>
@@ -420,6 +446,14 @@
                 allowedModes: [...document.querySelectorAll('#venue-modes input:checked')].map(b => b.value)
             };
             if (boardRulesOn) body.boardRules = document.getElementById('venue-board-rules').value;
+            if (themeOn) {
+                body.theme = document.getElementById('venue-theme').value;
+                body.themeStarts = document.getElementById('venue-theme-starts').value;
+                body.themeEnds = document.getElementById('venue-theme-ends').value;
+                if (body.themeStarts && body.themeEnds && body.themeEnds < body.themeStarts) {
+                    return showFeedback(feedback, 'The theme ends before it starts. Check the dates.');
+                }
+            }
             if (breaksOn) {
                 body.breakMinutes = Number(document.getElementById('venue-break-minutes').value);
                 body.breakNotes = document.getElementById('venue-break-notes').value;
@@ -463,6 +497,7 @@
                 houseSets = data.houseSets || [];
                 boardRulesOn = !!data.boardRules;
                 breaksOn = !!data.breaks;
+                themeOn = !!data.theme;
                 renderCodes(data.codes);
                 loadCategories();
                 startHealth();

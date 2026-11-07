@@ -11,8 +11,10 @@ time. Names can change -- just tell Claude.
 
 | File | What it is | Hangs from |
 |---|---|---|
-| `lights.svg` | The string of lights across the top | Just under the wordmark, draped across the top bar (Randy: hugging the wordmark draws the eye to it) |
-| `ornament-1.svg`, `ornament-2.svg`, ... | Ornaments of different colors (replacing the single blue ball) | Along the string of lights, and one from the room code |
+| `garland.svg` | Tinsel | Over "Rando" only, hanging from the top of the "R" and the crook of the "M" (Randy) |
+| `lights.svg` | The string of lights | Along the top bar after the wordmark (at a pub, after the venue's name, shortened to stop before "Room") |
+| `ornament-2.svg` | Glass ornament | Just past "Mania!" (at a pub, past the venue's name) |
+| `ornament-1.svg` | Blue ornament | Under the room code |
 | `icicles-scores.svg` | Icicles | The scoreboard's top-right corner |
 | `icicles-scan.svg` | Icicles | "Scan to join" (**never over the QR code**) |
 | `frost-scores.svg` | Frost | Across the bottom of the scoreboard, **on top** of it (Randy: "such a cool winter vibe"). Drawn at 30% opacity; it can go lower in code, no redraw needed, if names get hard to read with a full room |

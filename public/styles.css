@@ -880,3 +880,9 @@ body.tp-layout[data-view="gateway"] #gateway-screen { display: flex !important; 
     from { filter: drop-shadow(0 0 calc(var(--u) * 0.8) rgba(var(--rm-medal-gold-rgb), 0.35)); }
     to { filter: drop-shadow(0 0 calc(var(--u) * 2.4) rgba(var(--rm-medal-gold-rgb), 0.75)); }
 }
+
+/* ---------- TV themes (public/tv-theme.js; Randy, Nov 2026) ----------
+   The string of lights' bulb glows (the blurred shapes Randy drew around
+   each bulb) twinkle slowly, each at its own pace, a few at a time. */
+.tv-theme-glow { animation-name: tv-theme-twinkle; animation-timing-function: ease-in-out; animation-iteration-count: infinite; animation-direction: alternate; }
+@keyframes tv-theme-twinkle { from { opacity: 0.12; } to { opacity: 0.85; } }

@@ -332,6 +332,7 @@ if (btnSubmitSpectate) {
                 // there's nothing left on the other end to stay wired to.
                 if (data.type === 'ROOM_CLOSED') {
                     document.body.setAttribute('data-view', 'gateway');
+                    if (window.clearTvTheme) window.clearTvTheme();
                     tvClosed = true;
                     stopTvFallback();
                     if (socket) socket.close();
@@ -391,6 +392,9 @@ if (btnSubmitSpectate) {
                 }
                 if (data.type === 'ROOM_VENUE') {
                     applyRoomVenue(data.venue, data.allowedModes);
+                    // The venue's TV theme (Christmas...), if it has one on
+                    // today; see public/tv-theme.js.
+                    if (window.applyTvTheme) window.applyTvTheme(data.venue && data.venue.theme);
                 }
                 if (data.type === 'LEADERBOARD_UPDATE') {
                     detectNewPlayerArrival(data.players);

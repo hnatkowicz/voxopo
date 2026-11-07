@@ -811,8 +811,15 @@ and forth until we both agree the idea is good **and** worth the effort. So:
   too, Randy's call -- with taps passing through. Never over the QR code;
   never recolors the game (green/red rule); no licensed characters (no
   Frosty); peekers only in calm moments. Falling snow dropped (costly on
-  the Fire Stick, and not needed). See `public/themes/README.md`. Code not
-  built yet; Randy is exporting the Christmas art.
+  the Fire Stick, and not needed). See `public/themes/README.md`. **Built**
+  (Nov 2026): `access_codes_theme.sql` (theme, theme_starts, theme_ends),
+  /admin's TV theme dropdown and dates, the theme riding to the TV with
+  the venue (`ROOM_VENUE`), and `public/tv-theme.js`, which loads the art
+  and pins it (its list says where each piece hangs) and twinkles the
+  lights' bulb glows. The TV checks the dates by its own calendar. At a
+  pub, the lights start after the venue's name in the top bar and shorten
+  to fit, never covering it. Randy's first art is pictures inside SVGs
+  (about 3 MB for Christmas, loaded only when the theme is on).
 - **Mind Field:** a name saved for a future mode built around hidden traps
   on a board.
 - **Final Wager clues elsewhere:** the bought-clue mechanic now runs in
