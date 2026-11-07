@@ -63,6 +63,32 @@
             color: var(--rm-brand); 
             font-weight: 600;
         }
+        /* Letter Rip (Randy, Nov 2026) */
+        .lr-head { font-size: 0.8rem; font-weight: 600; color: var(--rm-text-muted); text-align: center; letter-spacing: 0.04em; }
+        .lr-category { font-size: 1.15rem; font-weight: 800; color: var(--rm-brand); text-align: center; margin: 4px 0 12px; }
+        .lr-board { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px 12px; margin-bottom: 14px; }
+        .lr-word { display: inline-flex; gap: 2px; }
+        .lr-tile { width: 20px; height: 26px; display: inline-flex; align-items: center; justify-content: center; border-radius: 3px; background: var(--rm-surface-2); border: 1px solid var(--rm-border); font-weight: 800; font-size: 15px; color: var(--rm-bg); box-sizing: border-box; }
+        .lr-tile.lit { background: var(--rm-text); border-color: var(--rm-text); }
+        .lr-tile.punct { background: transparent; border-color: transparent; color: var(--rm-text); width: 10px; }
+        .lr-status { min-height: 1.5em; text-align: center; font-weight: 600; font-size: 0.95rem; color: var(--rm-text-2); margin-bottom: 12px; }
+        .lr-status .hit { color: var(--rm-green); }
+        .lr-status .miss { color: var(--rm-red-soft); }
+        .lr-keys { display: flex; flex-direction: column; gap: 6px; align-items: center; }
+        .lr-key-row { display: flex; gap: 5px; justify-content: center; }
+        .lr-key { position: relative; width: 28px; height: 40px; border-radius: 6px; border: 1px solid var(--rm-border); background: var(--rm-surface-2); color: var(--rm-white); font-weight: 700; font-size: 16px; padding: 0; cursor: pointer; }
+        .lr-key:disabled { cursor: default; }
+        .lr-key.hit { background: rgba(var(--rm-green-rgb), 0.18); border-color: var(--rm-green); color: var(--rm-green); }
+        .lr-key.miss { background: rgba(var(--rm-red-rgb), 0.12); border-color: var(--rm-red-soft); color: var(--rm-red-soft); }
+        .lr-key.shown { border: 2px solid var(--rm-brand); color: var(--rm-brand); background: transparent; }
+        .lr-key.mine { background: var(--rm-white); color: var(--rm-bg); border-color: var(--rm-white); }
+        .lr-key.idle { opacity: 0.45; }
+        .lr-key-count { position: absolute; top: -7px; right: -7px; background: var(--rm-green); color: var(--rm-bg); border-radius: 8px; font-size: 10px; font-weight: 800; padding: 1px 4px; line-height: 1.2; }
+        .lr-solve-input { width: 100%; box-sizing: border-box; padding: 14px; background: var(--rm-surface-2); border: 1px solid var(--rm-border); border-radius: 8px; color: var(--rm-white); font-size: 1.05rem; text-transform: uppercase; margin-top: 16px; }
+        /* Gold outline, not red: red means wrong (design rule). */
+        .lr-solve-btn { background: transparent; color: var(--rm-brand); border: 1px solid var(--rm-brand); margin-top: 16px; }
+        .lr-confirm { margin-top: 14px; text-align: center; font-weight: 600; color: var(--rm-text-2); }
+        .lr-confirm strong { color: var(--rm-white); display: block; font-size: 1.1rem; margin-top: 4px; }
         /* Your answer before the reveal: white, not green, so it doesn't look
            "right" before anyone knows (Randy, Oct 2026). The reveal paints
            the real answer green and a wrong pick red. Votes keep .selected. */
@@ -637,6 +663,19 @@
         <button class="btn btn-leave leave-room-btn" onclick="leaveRoom()">Leave Room</button>
     </div>
 
+    <!-- Letter Rip (Randy, Nov 2026): the letter race. The board, your own
+         letters (green = in it, red = not, gold outline = on the TV), one
+         pick a round, and one solve per puzzle, spelled exactly. -->
+    <div id="letter-rip-screen" class="card" style="display: none;">
+        <div id="lr-head" class="lr-head"></div>
+        <div id="lr-category" class="lr-category"></div>
+        <div id="lr-board" class="lr-board"></div>
+        <div id="lr-status" class="lr-status"></div>
+        <div id="lr-keys" class="lr-keys"></div>
+        <div id="lr-solve-area"></div>
+        <div id="lr-feedback" class="feedback" style="margin-top: 12px; font-weight: 600; text-align: left; padding: 14px 20px; display: none;"></div>
+    </div>
+
     <!-- SCREEN 4.6: TRIVI-YEAH II FINAL WAGER (Final-Jeopardy-style closer) -->
     <div id="trivi-yeah-ii-final-wager-screen" class="card" style="display: none;">
         <h1>Final Wager</h1>
@@ -787,7 +826,7 @@
         // both missed a spot). Hiding every known screen and showing only
         // the requested one makes that whole bug class impossible going
         // forward -- a future new screen just needs adding here once.
-        const ALL_PLAY_SCREENS = ['login-screen', 'game-screen', 'category-screen', 'empossdurr-screen', 'on-the-spectrum-screen', 'profiler-screen', 'question-screen', 'trivi-yeah-ii-screen', 'trivi-yeah-ii-final-wager-screen', 'flag-me-down-screen', 'break-screen', 'game-over-screen'];
+        const ALL_PLAY_SCREENS = ['login-screen', 'game-screen', 'category-screen', 'empossdurr-screen', 'on-the-spectrum-screen', 'profiler-screen', 'question-screen', 'trivi-yeah-ii-screen', 'trivi-yeah-ii-final-wager-screen', 'flag-me-down-screen', 'letter-rip-screen', 'break-screen', 'game-over-screen'];
         function showOnlyPlayScreen(idToShow) {
             ALL_PLAY_SCREENS.forEach(id => {
                 document.getElementById(id).style.display = (id === idToShow) ? 'block' : 'none';
@@ -890,6 +929,7 @@
                 }
                 case 'TRIVI_YEAH_II_FINAL_WAGER_PHASE': return ['Final Wager', data.topicLabel].filter(Boolean).join(' · ');
                 case 'FLAG_ME_DOWN_PHASE': return `Flag ${data.round} of ${data.totalRounds}`;
+                case 'LETTER_RIP_PHASE': return `Puzzle ${data.puzzle} of ${data.total}`;
                 case 'EMPOSSDURR_ROUND_PHASE': return `Round ${data.round} of ${data.totalRounds}`;
                 case 'ON_THE_SPECTRUM_ROUND_PHASE': return `Round ${data.roundNumber} of ${data.totalRounds}`;
                 case 'PROFILER_ROUND_PHASE':
@@ -1008,6 +1048,8 @@
                     if (data.otsPhase === 'GUESSING' && !data.isNamedPlayer) return `ots-guess-${data.roundNumber}`;
                     return null;
                 case 'FLAG_ME_DOWN_PHASE': return data.fmdPhase === 'CLUES' ? `fmd-${data.round}` : null;
+                // A new pick round is something to do; the side pages step aside.
+                case 'LETTER_RIP_PHASE': return data.lrPhase === 'PICK' && !data.myPick ? `lr-${data.puzzle}-${data.round}` : null;
                 case 'PROFILER_ROUND_PHASE':
                     return data.profilerPhase === 'ANSWER' || data.profilerPhase === 'GUESS' ? `pf-${data.profilerPhase}-${data.round}` : null;
                 default: return null;
@@ -1455,6 +1497,12 @@
                         if (data.phase === 'TRIVI_YEAH_II_FINAL_WAGER_PHASE') {
                             showOnlyPlayScreen('trivi-yeah-ii-final-wager-screen');
                             renderTriviYeahIIFinalWager(data, nickname, roomCode);
+                        }
+
+                        // Letter Rip: the board, your letters, one pick a round.
+                        if (data.phase === 'LETTER_RIP_PHASE') {
+                            showOnlyPlayScreen('letter-rip-screen');
+                            renderLetterRip(data);
                         }
 
                         // Flag Me Down: the flag, the clues so far, one lock-in.
@@ -2202,6 +2250,154 @@
                 showFeedback(feedback, "❌ That didn't go through. Try again.", "rgba(var(--rm-red-rgb),0.06)", "var(--rm-red)", "rgba(var(--rm-red-rgb),0.1)");
             }
             fmdLastRenderKey = null;
+        }
+
+        // ---------- Letter Rip (Randy, Nov 2026) ----------
+        // Your own letters stay on your phone: green = in the phrase (x2 if
+        // twice), red = not in it, gold outline = already on the TV. One
+        // pick a round; one solve a puzzle, spelled exactly (capitals,
+        // spaces and punctuation don't matter), with a confirm step since
+        // there's no typo forgiveness.
+        const LR_KEY_ROWS = ['QWERTYUIOP', 'ASDFGHJKL', 'ZXCVBNM'];
+        let lrLastKey = null;
+        let lrSolveStep = null;   // null | 'typing' | 'confirm'
+        let lrSolveText = '';
+        let lrSolvePuzzle = null;
+
+        function lrEsc(text) {
+            return String(text == null ? '' : text).replace(/[&<>"']/g, ch => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[ch]));
+        }
+
+        async function lrSend(body) {
+            const registeredName = localStorage.getItem('randomania_nickname') || 'test-handset';
+            const response = await fetch('/api/message', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ From: registeredName, Body: body, roomCode: localStorage.getItem('randomania_roomcode') })
+            });
+            return response.json();
+        }
+
+        function lrFeedback(text, good) {
+            const feedback = document.getElementById('lr-feedback');
+            if (!text) { feedback.style.display = 'none'; return; }
+            if (good) showFeedback(feedback, text, "rgba(var(--rm-green-rgb),0.08)", "var(--rm-green)", "rgba(var(--rm-green-rgb),0.15)");
+            else showFeedback(feedback, text, "rgba(var(--rm-red-rgb),0.06)", "var(--rm-red)", "rgba(var(--rm-red-rgb),0.1)");
+        }
+
+        async function lrPick(letter) {
+            document.querySelectorAll('#lr-keys .lr-key').forEach(k => { k.disabled = true; });
+            try {
+                const data = await lrSend(`LRPICK ${letter}`);
+                if (data.reply && data.reply.startsWith('⚠️')) lrFeedback(data.reply, false);
+            } catch (e) {
+                lrFeedback("❌ That didn't go through. Try again.", false);
+            }
+            lrLastKey = null;
+        }
+
+        function lrRenderSolve(data) {
+            const area = document.getElementById('lr-solve-area');
+            if (lrSolvePuzzle !== data.puzzle || data.lrPhase === 'DONE' || !data.canSolve) { lrSolveStep = null; lrSolveText = ''; }
+            lrSolvePuzzle = data.puzzle;
+            if (data.lrPhase === 'DONE') { area.innerHTML = ''; return; }
+            if (!data.canSolve) {
+                area.innerHTML = `<p class="subtitle" style="margin: 16px 0 0; text-align: center;">${data.triedSolve ? "You've had your solve. Keep picking letters." : ''}</p>`;
+                return;
+            }
+            if (lrSolveStep === 'typing') {
+                if (document.getElementById('lr-solve-input')) return; // don't wipe what's being typed
+                area.innerHTML = `
+                    <input type="text" id="lr-solve-input" class="lr-solve-input" placeholder="Type the whole phrase" autocomplete="off" autocorrect="off" spellcheck="false" autocapitalize="characters" value="${lrEsc(lrSolveText)}" oninput="lrSolveText = this.value">
+                    <button class="btn" style="margin-top: 12px;" onclick="lrSolveReview()">Lock in</button>
+                    <button class="btn btn-skip" style="margin-top: 10px;" onclick="lrSolveCancel()">Cancel</button>`;
+                document.getElementById('lr-solve-input').focus();
+                return;
+            }
+            if (lrSolveStep === 'confirm') {
+                area.innerHTML = `
+                    <div class="lr-confirm">Lock this in? One try, spelled exactly.<strong>${lrEsc(lrSolveText.toUpperCase())}</strong></div>
+                    <button class="btn" style="margin-top: 12px;" onclick="lrSolveSubmit()">Yes, solve it</button>
+                    <button class="btn btn-skip" style="margin-top: 10px;" onclick="lrSolveEdit()">Edit</button>`;
+                return;
+            }
+            area.innerHTML = `<button class="btn lr-solve-btn" onclick="lrSolveOpen()">Solve the puzzle</button>`;
+        }
+
+        function lrSolveOpen() { lrSolveStep = 'typing'; lrFeedback(''); lrLastKey = null; document.getElementById('lr-solve-area').innerHTML = ''; lrRenderFromLast(); }
+        function lrSolveCancel() { lrSolveStep = null; lrSolveText = ''; document.getElementById('lr-solve-area').innerHTML = ''; lrRenderFromLast(); }
+        function lrSolveEdit() { lrSolveStep = 'typing'; document.getElementById('lr-solve-area').innerHTML = ''; lrRenderFromLast(); }
+        function lrSolveReview() {
+            const input = document.getElementById('lr-solve-input');
+            lrSolveText = input ? input.value : lrSolveText;
+            if (!lrSolveText.replace(/[^A-Za-z]/g, '')) return;
+            lrSolveStep = 'confirm';
+            lrRenderFromLast();
+        }
+        async function lrSolveSubmit() {
+            const text = lrSolveText;
+            lrSolveStep = null; lrSolveText = '';
+            document.getElementById('lr-solve-area').innerHTML = '';
+            try {
+                const data = await lrSend(`LRSOLVE ${text}`);
+                lrFeedback(data.reply || '', !!(data.reply && data.reply.startsWith('Solved')));
+            } catch (e) {
+                lrFeedback("❌ That didn't go through. Try again.", false);
+            }
+            lrLastKey = null;
+        }
+
+        let lrLastData = null;
+        function lrRenderFromLast() { if (lrLastData) { lrLastKey = null; renderLetterRip(lrLastData); } }
+
+        function renderLetterRip(data) {
+            lrLastData = data;
+            const key = JSON.stringify([data.puzzle, data.round, data.lrPhase, data.tiles, data.bank, data.myPick, data.myLastPick, data.canSolve, data.solver, data.pot, lrSolveStep]);
+            if (key === lrLastKey) return;
+            lrLastKey = key;
+            if (lrSolvePuzzle !== null && lrSolvePuzzle !== data.puzzle) lrFeedback('');
+
+            document.getElementById('lr-head').innerHTML = `Puzzle ${data.puzzle} of ${data.total}${data.lrPhase !== 'DONE' ? ` &middot; Worth ${Number(data.pot).toLocaleString('en-US')}` : ''}`;
+            document.getElementById('lr-category').innerText = data.category || '';
+            document.getElementById('lr-board').innerHTML = (data.tiles || []).map(word => `<span class="lr-word">${word.map(ch =>
+                ch === '' ? '<span class="lr-tile"></span>'
+                : /[A-Z]/.test(ch) ? `<span class="lr-tile lit">${ch}</span>`
+                : `<span class="lr-tile punct">${lrEsc(ch)}</span>`).join('')}</span>`).join('');
+
+            // What you know right now.
+            const status = document.getElementById('lr-status');
+            const me = localStorage.getItem('randomania_nickname');
+            if (data.lrPhase === 'DONE') {
+                status.innerHTML = data.solver
+                    ? (data.solver.name === me ? `<span class="hit">You solved it! +${data.solver.points}</span>` : `${lrEsc(data.solver.name)} solved it.`)
+                    : 'Nobody solved it.';
+            } else if (data.lrPhase === 'REVEAL') {
+                const p = data.myLastPick;
+                status.innerHTML = !p ? 'You didn\'t pick a letter.'
+                    : p.count ? `<span class="hit">Your ${p.letter} is in it${p.count > 1 ? ` &times;${p.count}` : ''}! +${p.points}</span>`
+                    : `<span class="miss">No ${p.letter}.</span>`;
+            } else {
+                status.innerHTML = data.myPick ? `You picked ${data.myPick}. Wait for the reveal.` : 'Pick a letter';
+            }
+
+            // The keyboard: your letters, the TV's letters, and this round's pick.
+            const revealed = new Set(data.revealed || []);
+            const bank = data.bank || {};
+            const canPick = data.lrPhase === 'PICK' && !data.myPick && lrSolveStep === null;
+            document.getElementById('lr-keys').innerHTML = LR_KEY_ROWS.map(row => `<div class="lr-key-row">${[...row].map(letter => {
+                const tried = letter in bank;
+                let cls = 'lr-key';
+                let badge = '';
+                if (revealed.has(letter)) cls += ' shown';
+                else if (data.myPick === letter) cls += ' mine';
+                else if (tried && bank[letter] > 0) { cls += ' hit'; if (bank[letter] > 1) badge = `<span class="lr-key-count">&times;${bank[letter]}</span>`; }
+                else if (tried) cls += ' miss';
+                const usable = canPick && !revealed.has(letter) && !tried;
+                if (!usable && !revealed.has(letter) && !tried && data.myPick !== letter) cls += ' idle';
+                return `<button type="button" class="${cls}" ${usable ? `onclick="lrPick('${letter}')"` : 'disabled'}>${letter}${badge}</button>`;
+            }).join('')}</div>`).join('');
+
+            lrRenderSolve(data);
         }
 
         // ---------- Trivi-Yeah II: Final Wager ----------

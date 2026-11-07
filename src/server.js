@@ -4,7 +4,7 @@ import dotenv from 'dotenv';
 import path from 'path';
 import { WebSocketServer } from 'ws';
 import pool from './config/database.js';
-import { handleIncomingMessage, activeRooms, getCategoriesForMode, resolveRequestedQuestionCount, compareByRank, closeRoom, profilerStatusFor, profilerTvSnapshot, triviYeahIITrapInfo, emptyModeVotes, finalWagerWinShare, resolveDisguisedAsset, flagMeDownStatusFor, GAME_MODE_KEYS, allowedModesFor, finalWagerRevealFor, venueBrand, endGameVoteFor, thinkingPantsCategoryOverview, setThinkingPantsCategorySetting, venueCategoryOverview, setVenueCategorySetting, tvMessagesSince, tvIsConnected } from './services/gameEngine.js';
+import { handleIncomingMessage, activeRooms, getCategoriesForMode, resolveRequestedQuestionCount, compareByRank, closeRoom, profilerStatusFor, profilerTvSnapshot, triviYeahIITrapInfo, emptyModeVotes, finalWagerWinShare, resolveDisguisedAsset, flagMeDownStatusFor, GAME_MODE_KEYS, allowedModesFor, finalWagerRevealFor, venueBrand, endGameVoteFor, thinkingPantsCategoryOverview, setThinkingPantsCategorySetting, venueCategoryOverview, setVenueCategorySetting, tvMessagesSince, tvIsConnected , letterRipStatusFor, letterRipTvState } from './services/gameEngine.js';
 import {
     isHostAuthorized, grantHostSession, isAccessCodeActive,
     isAdminAuthorized, grantAdminSession,
@@ -617,6 +617,13 @@ app.post('/api/room-status', (req, res) => {
                 myScore, myCorrectAnswers, myLeft, myEmoji
             });
         }
+        if (targetRoom && targetRoom.gameState === 'LETTER_RIP_ROUND' && targetRoom.letterRip) {
+            return res.json({
+                phase: 'LETTER_RIP_PHASE',
+                ...letterRipStatusFor(targetRoom, playerName),
+                myScore, myCorrectAnswers, myLeft, myEmoji
+            });
+        }
         if (targetRoom && targetRoom.gameState === 'FLAG_ME_DOWN_ROUND' && targetRoom.flagMeDown) {
             return res.json({
                 phase: 'FLAG_ME_DOWN_PHASE',
@@ -729,6 +736,8 @@ function tvSnapshotMessages(room) {
             empossdurrTotalRounds: room.empossdurr ? room.empossdurr.totalRounds : null,
             profiler: room.gameState === 'PROFILER_ROUND' ? profilerTvSnapshot(room) : null
         });
+        // Letter Rip's board in full, so a reconnecting TV redraws it.
+        if (room.gameState === 'LETTER_RIP_ROUND' && room.letterRip) messages.push(letterRipTvState(room));
     }
     return messages.map(m => JSON.stringify({ ...m, ...tag }));
 }
