@@ -4,8 +4,8 @@
 -- Thinking Pants category ASTRONOMY_SPACE. To change a question, change the
 -- spreadsheet and rebuild.
 --
--- Replaces the WHOLE category with the spreadsheet's 120 live questions
--- (100: 30, 200: 30, 300: 30, 400: 30), inside a transaction. Safe to re-run.
+-- Replaces the WHOLE category with the spreadsheet's 200 live questions
+-- (100: 50, 200: 50, 300: 50, 400: 50), inside a transaction. Safe to re-run.
 -- ============================================================================
 
 BEGIN;
@@ -134,6 +134,86 @@ INSERT INTO questions (question_number, game_mode, category, subcategory, factio
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'ASTRONOMY_SPACE', 'ORIGINAL', NULL,
         'What force keeps the planets in orbit around the Sun?', NULL,
         'Gravity', ARRAY['Magnetism', 'Friction', 'Solar wind', 'Static electricity', 'Centrifugal force'], 100);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'ASTRONOMY_SPACE', 'ORIGINAL', NULL,
+        'When the Moon sits between Earth and the Sun and we can''t see it at all, what phase is it?', NULL,
+        'A new moon', ARRAY['A full moon', 'A crescent moon', 'A gibbous moon', 'A blue moon', 'A harvest moon', 'A quarter moon'], 100);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'ASTRONOMY_SPACE', 'ORIGINAL', NULL,
+        'What does NASA call a person trained to fly into space?', NULL,
+        'An astronaut', ARRAY['A cosmonaut', 'An astronomer', 'An aviator', 'A rocketeer', 'A spacewalker', 'A starfarer'], 100);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'ASTRONOMY_SPACE', 'ORIGINAL', NULL,
+        'Which NASA spacecraft, flown from 1981 to 2011, launched like a rocket and landed like a plane?', NULL,
+        'The space shuttle', ARRAY['The Saturn V', 'The Apollo capsule', 'Soyuz', 'The Gemini capsule', 'The Mercury capsule', 'Skylab'], 100);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'ASTRONOMY_SPACE', 'ORIGINAL', NULL,
+        'What do we call a rocky or metal space object, smaller than a planet, that orbits the Sun mostly between Mars and Jupiter?', NULL,
+        'An asteroid', ARRAY['A comet', 'A meteor', 'A moon', 'A nebula', 'A quasar', 'A star'], 100);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'ASTRONOMY_SPACE', 'ORIGINAL', NULL,
+        'Roughly how long does the Moon take to go through all its phases?', NULL,
+        'About a month', ARRAY['About a day', 'About a week', 'About two weeks', 'About six months', 'About a year', 'About 100 days'], 100);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'ASTRONOMY_SPACE', 'ORIGINAL', NULL,
+        'NASA is the space agency of which country?', NULL,
+        'The United States', ARRAY['Russia', 'China', 'Canada', 'The United Kingdom', 'France', 'Japan'], 100);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'ASTRONOMY_SPACE', 'ORIGINAL', NULL,
+        'What do we call a place in space where gravity is so strong that not even light can escape?', NULL,
+        'A black hole', ARRAY['A neutron star', 'A wormhole', 'A white dwarf', 'A quasar', 'A nebula', 'A red giant'], 100);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'ASTRONOMY_SPACE', 'ORIGINAL', NULL,
+        'Where does moonlight actually come from?', NULL,
+        'Sunlight bouncing off the Moon', ARRAY['The Moon''s own glow', 'Light from Earth''s cities', 'Burning gas on the Moon', 'Light from other stars', 'Glowing lava on the Moon', 'Lightning on the Moon'], 100);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'ASTRONOMY_SPACE', 'ORIGINAL', NULL,
+        'In which direction does the Sun rise?', NULL,
+        'The east', ARRAY['The west', 'The north', 'The south', 'Straight overhead'], 100);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'ASTRONOMY_SPACE', 'ORIGINAL', NULL,
+        'What do we call the machines circling Earth that send us GPS signals, TV and weather pictures?', NULL,
+        'Satellites', ARRAY['Comets', 'Meteors', 'Asteroids', 'Planets', 'Stars', 'Moons'], 100);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'ASTRONOMY_SPACE', 'ORIGINAL', NULL,
+        'What happens during a lunar eclipse?', NULL,
+        'Earth''s shadow falls on the Moon', ARRAY['The Moon blocks the Sun', 'The Moon passes behind the Sun', 'A cloud of dust covers the Moon', 'The Moon stops reflecting light', 'Jupiter blocks the Moon', 'The Sun goes dark'], 100);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'ASTRONOMY_SPACE', 'ORIGINAL', NULL,
+        'How many moons does Earth have?', NULL,
+        'One', ARRAY['None', 'Two', 'Three', 'Four', 'Seven', 'Twelve'], 100);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'ASTRONOMY_SPACE', 'ORIGINAL', NULL,
+        'What do we call the imaginary line that Earth spins around?', NULL,
+        'Its axis', ARRAY['Its orbit', 'The equator', 'The prime meridian', 'The horizon', 'The ecliptic', 'The tropic'], 100);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'ASTRONOMY_SPACE', 'ORIGINAL', NULL,
+        'NASA is the National Aeronautics and S___ Administration. What is the S?', NULL,
+        'Space', ARRAY['Science', 'Satellite', 'Shuttle', 'Systems', 'Solar', 'Station'], 100);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'ASTRONOMY_SPACE', 'ORIGINAL', NULL,
+        'Jupiter and Saturn are what kind of planets?', NULL,
+        'Gas giants', ARRAY['Ice giants', 'Rocky planets', 'Dwarf planets', 'Exoplanets', 'Super-Earths', 'Lava worlds'], 100);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'ASTRONOMY_SPACE', 'ORIGINAL', NULL,
+        'What is the brightest object in the night sky?', NULL,
+        'The Moon', ARRAY['Venus', 'Sirius', 'Jupiter', 'The North Star', 'Mars', 'Saturn'], 100);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'ASTRONOMY_SPACE', 'ORIGINAL', NULL,
+        'What do astronauts feel floating around inside a spacecraft in orbit?', NULL,
+        'Weightlessness', ARRAY['Vertigo', 'Jet lag', 'Turbulence', 'Hypoxia', 'G-force', 'Seasickness'], 100);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'ASTRONOMY_SPACE', 'ORIGINAL', NULL,
+        'About how long does Earth take to spin around once?', NULL,
+        'About 24 hours', ARRAY['About 1 hour', 'About 12 hours', 'About 48 hours', 'About 7 days', 'About 30 days', 'About 100 days'], 100);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'ASTRONOMY_SPACE', 'ORIGINAL', NULL,
+        'What kind of theater shows the night sky on a domed ceiling?', NULL,
+        'A planetarium', ARRAY['An observatory', 'An aquarium', 'An arboretum', 'A conservatory', 'An auditorium', 'A solarium'], 100);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'ASTRONOMY_SPACE', 'ORIGINAL', NULL,
+        'What do we call a robot spacecraft sent to explore other worlds without people aboard?', NULL,
+        'A space probe', ARRAY['A space station', 'A space shuttle', 'A capsule', 'A rocket', 'A space tug', 'A telescope'], 100);
 
 -- 200 points
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
@@ -256,6 +336,86 @@ INSERT INTO questions (question_number, game_mode, category, subcategory, factio
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'ASTRONOMY_SPACE', 'ORIGINAL', NULL,
         'What is the name of NASA''s program to send astronauts back to the Moon, named for Apollo''s twin sister?', NULL,
         'Artemis', ARRAY['Athena', 'Gemini', 'Orion', 'Hermes', 'Selene'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'ASTRONOMY_SPACE', 'ORIGINAL', NULL,
+        'What do we call a giant cloud of gas and dust in space, where new stars are born?', NULL,
+        'A nebula', ARRAY['A galaxy', 'A black hole', 'A quasar', 'A comet', 'A constellation', 'A pulsar'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'ASTRONOMY_SPACE', 'ORIGINAL', NULL,
+        'What do we call the two days each year, in March and September, when day and night are about the same length?', NULL,
+        'The equinoxes', ARRAY['The solstices', 'The eclipses', 'The perihelions', 'The leap days', 'The aphelions', 'The zeniths'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'ASTRONOMY_SPACE', 'ORIGINAL', NULL,
+        'Why do stars seem to twinkle?', NULL,
+        'Earth''s moving air bends their light', ARRAY['They flicker on and off', 'They spin very fast', 'They''re burning out', 'Satellites pass in front of them', 'Their light bounces off the Moon', 'They pulse like a heartbeat'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'ASTRONOMY_SPACE', 'ORIGINAL', NULL,
+        'Which giant rocket launched the Apollo astronauts to the Moon?', NULL,
+        'The Saturn V', ARRAY['Falcon 9', 'Titan II', 'Atlas V', 'The Space Launch System', 'Delta IV', 'Ariane 5'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'ASTRONOMY_SPACE', 'ORIGINAL', NULL,
+        'When exactly half of the Moon''s face is lit, what is the phase officially called?', NULL,
+        'A quarter moon', ARRAY['A crescent moon', 'A gibbous moon', 'A blue moon', 'A harvest moon', 'A new moon', 'A full moon'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'ASTRONOMY_SPACE', 'ORIGINAL', NULL,
+        'Seen from space, what color is the Sun really?', NULL,
+        'White', ARRAY['Yellow', 'Orange', 'Red', 'Blue', 'Green', 'Gold'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'ASTRONOMY_SPACE', 'ORIGINAL', NULL,
+        'What was the first American human spaceflight program, which flew one astronaut at a time?', NULL,
+        'Project Mercury', ARRAY['Project Gemini', 'Project Apollo', 'Project Vanguard', 'Project Skylab', 'Project Orion', 'Project Artemis'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'ASTRONOMY_SPACE', 'ORIGINAL', NULL,
+        'Which rocket company did Elon Musk found in 2002?', NULL,
+        'SpaceX', ARRAY['Blue Origin', 'Virgin Galactic', 'Rocket Lab', 'Boeing', 'Lockheed Martin', 'United Launch Alliance'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'ASTRONOMY_SPACE', 'ORIGINAL', NULL,
+        'A "blood moon" happens during what event?', NULL,
+        'A total lunar eclipse', ARRAY['A total solar eclipse', 'A supermoon', 'A blue moon', 'A harvest moon', 'A meteor shower', 'An equinox'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'ASTRONOMY_SPACE', 'ORIGINAL', NULL,
+        'What is the "Goldilocks zone" around a star?', NULL,
+        'Where a planet could have liquid water', ARRAY['Where gold forms', 'Where comets are born', 'Where stars are coldest', 'Where asteroids collect', 'Where light can''t reach', 'Where planets spin fastest'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'ASTRONOMY_SPACE', 'ORIGINAL', NULL,
+        'About how long did the Apollo 11 astronauts take to fly from Earth to the Moon?', NULL,
+        'About three days', ARRAY['About three hours', 'About twelve hours', 'About ten days', 'About three weeks', 'About three months', 'About a year'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'ASTRONOMY_SPACE', 'ORIGINAL', NULL,
+        'The Perseids, seen every August, are what?', NULL,
+        'A meteor shower', ARRAY['A comet', 'An eclipse', 'An aurora', 'A star cluster', 'A supernova', 'A planetary alignment'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'ASTRONOMY_SPACE', 'ORIGINAL', NULL,
+        'What is the day with the most daylight of the year called?', NULL,
+        'The summer solstice', ARRAY['The spring equinox', 'The autumn equinox', 'The winter solstice', 'Midsummer''s Eve', 'The perihelion', 'Leap day'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'ASTRONOMY_SPACE', 'ORIGINAL', NULL,
+        'What mainly causes the ocean''s tides?', NULL,
+        'The Moon''s gravity', ARRAY['Wind', 'Earth''s spin alone', 'The Sun''s heat', 'Underwater volcanoes', 'Earthquakes', 'Ocean currents'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'ASTRONOMY_SPACE', 'ORIGINAL', NULL,
+        'The far side of the Moon is often wrongly called what?', NULL,
+        'The dark side', ARRAY['The cold side', 'The night side', 'The shadow side', 'The hidden face', 'The empty side', 'The lost side'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'ASTRONOMY_SPACE', 'ORIGINAL', NULL,
+        'Voyager 1''s 1990 "Pale Blue Dot" photo, taken from about 6 billion km away, shows which planet?', NULL,
+        'Earth', ARRAY['Neptune', 'Uranus', 'Venus', 'Mars', 'Saturn', 'Pluto'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'ASTRONOMY_SPACE', 'ORIGINAL', NULL,
+        'Roughly how far is the Moon from Earth?', NULL,
+        'About 384,000 kilometers', ARRAY['About 3,840 kilometers', 'About 38,400 kilometers', 'About 1 million kilometers', 'About 3.8 million kilometers', 'About 40 million kilometers', 'About 150 million kilometers'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'ASTRONOMY_SPACE', 'ORIGINAL', NULL,
+        'Compared to Earth, how much would you weigh on the Moon?', NULL,
+        'About one-sixth as much', ARRAY['About half as much', 'About one-third as much', 'About one-tenth as much', 'About one-hundredth as much', 'The same', 'About twice as much'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'ASTRONOMY_SPACE', 'ORIGINAL', NULL,
+        'What is a "supermoon"?', NULL,
+        'A full moon near its closest point to Earth', ARRAY['A moon bigger than Earth', 'Two full moons in one month', 'A moon with rings', 'A moon seen during the day', 'A full moon during an eclipse', 'The largest moon of Jupiter'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'ASTRONOMY_SPACE', 'ORIGINAL', NULL,
+        'What do we call a huge group of galaxies held together by gravity?', NULL,
+        'A galaxy cluster', ARRAY['A constellation', 'A nebula', 'A star cluster', 'A solar system', 'An asteroid belt', 'A quasar'], 200);
 
 -- 300 points
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
@@ -378,6 +538,86 @@ INSERT INTO questions (question_number, game_mode, category, subcategory, factio
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'ASTRONOMY_SPACE', 'ORIGINAL', NULL,
         'Which mission first carried people around the Moon, at Christmas 1968?', NULL,
         'Apollo 8', ARRAY['Apollo 1', 'Apollo 7', 'Apollo 10', 'Gemini 4', 'Mercury 7'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'ASTRONOMY_SPACE', 'ORIGINAL', NULL,
+        'What kind of solar eclipse leaves a glowing "ring of fire" because the Moon is too far away to cover the Sun?', NULL,
+        'An annular eclipse', ARRAY['A total eclipse', 'A partial eclipse', 'A lunar eclipse', 'A penumbral eclipse', 'A hybrid eclipse', 'A blood moon'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'ASTRONOMY_SPACE', 'ORIGINAL', NULL,
+        'What does "blue moon" most often mean today?', NULL,
+        'A second full moon in one calendar month', ARRAY['A moon that looks blue', 'A full moon during an eclipse', 'The first full moon of winter', 'A moon seen in daylight', 'A moon at its farthest from Earth', 'A new moon on a holiday'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'ASTRONOMY_SPACE', 'ORIGINAL', NULL,
+        'What are Jupiter''s four biggest moons together called, after the astronomer who spotted them in 1610?', NULL,
+        'The Galilean moons', ARRAY['The Keplerian moons', 'The Copernican moons', 'The Herschel moons', 'The Newtonian moons', 'The Ptolemaic moons', 'The Cassini moons'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'ASTRONOMY_SPACE', 'ORIGINAL', NULL,
+        'The dark patches on the Moon are vast old lava plains. What are they called?', NULL,
+        'Maria, or "seas"', ARRAY['Craters', 'Highlands', 'Rilles', 'Canyons', 'Lakes', 'Rays'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'ASTRONOMY_SPACE', 'ORIGINAL', NULL,
+        'Project Gemini flew two astronauts at a time. What does its name refer to?', NULL,
+        'The twins of the zodiac', ARRAY['A Greek war god', 'A famous ship', 'Two moons of Mars', 'A NASA director', 'A Roman emperor', 'Two stars in Orion'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'ASTRONOMY_SPACE', 'ORIGINAL', NULL,
+        'In 2003, which country became the third to send a person into space on its own rocket?', NULL,
+        'China', ARRAY['India', 'Japan', 'France', 'The United Kingdom', 'Canada', 'Germany'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'ASTRONOMY_SPACE', 'ORIGINAL', NULL,
+        'In 1976, which NASA lander became the first to work successfully on the surface of Mars?', NULL,
+        'Viking 1', ARRAY['Mariner 4', 'Pathfinder', 'Spirit', 'Phoenix', 'Pioneer 10', 'Surveyor 1'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'ASTRONOMY_SPACE', 'ORIGINAL', NULL,
+        'What do scientists call the point of infinite density thought to lie at the center of a black hole?', NULL,
+        'A singularity', ARRAY['An event horizon', 'A wormhole', 'A quasar', 'A pulsar', 'A nucleus', 'A vortex'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'ASTRONOMY_SPACE', 'ORIGINAL', NULL,
+        'Which NASA probe, named for Jupiter''s wife in Roman myth, arrived at Jupiter in 2016?', NULL,
+        'Juno', ARRAY['Galileo', 'Cassini', 'Pioneer', 'Ulysses', 'Minerva', 'Diana'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'ASTRONOMY_SPACE', 'ORIGINAL', NULL,
+        'Pluto orbits in which icy region beyond Neptune?', NULL,
+        'The Kuiper Belt', ARRAY['The Oort cloud', 'The asteroid belt', 'The Van Allen belts', 'The Orion Arm', 'The heliosphere', 'The Milky Way''s core'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'ASTRONOMY_SPACE', 'ORIGINAL', NULL,
+        'Astronomers classify our Sun as what kind of star?', NULL,
+        'A yellow dwarf', ARRAY['A red giant', 'A white dwarf', 'A blue giant', 'A red dwarf', 'A neutron star', 'A brown dwarf'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'ASTRONOMY_SPACE', 'ORIGINAL', NULL,
+        'About how old is the Sun?', NULL,
+        'About 4.6 billion years', ARRAY['About 10,000 years', 'About 500 million years', 'About 1 billion years', 'About 13.8 billion years', 'About 40 billion years', 'About 100 billion years'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'ASTRONOMY_SPACE', 'ORIGINAL', NULL,
+        'Who discovered Pluto, in 1930?', NULL,
+        'Clyde Tombaugh', ARRAY['Percival Lowell', 'William Herschel', 'Edwin Hubble', 'Gerard Kuiper', 'Carl Sagan', 'Johann Galle'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'ASTRONOMY_SPACE', 'ORIGINAL', NULL,
+        'Which astronomer showed in 1929 that distant galaxies are rushing away from us, meaning the universe is expanding?', NULL,
+        'Edwin Hubble', ARRAY['Albert Einstein', 'Carl Sagan', 'Annie Jump Cannon', 'Arthur Eddington', 'Stephen Hawking', 'Harlow Shapley'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'ASTRONOMY_SPACE', 'ORIGINAL', NULL,
+        'About how many Earths could fit inside the Sun?', NULL,
+        'About 1.3 million', ARRAY['About 100', 'About 1,000', 'About 13,000', 'About 130,000', 'About 10 million', 'About 1 billion'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'ASTRONOMY_SPACE', 'ORIGINAL', NULL,
+        'What are Saturn''s rings made of, mostly?', NULL,
+        'Chunks of ice', ARRAY['Gas', 'Molten rock', 'Metal', 'Liquid water', 'Sand', 'Light'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'ASTRONOMY_SPACE', 'ORIGINAL', NULL,
+        'Light from distant galaxies is "redshifted." What does that tell us?', NULL,
+        'They''re moving away from us', ARRAY['They''re moving toward us', 'They''re very hot', 'They''re very old stars', 'They''re made of iron', 'They''re about to explode', 'They''re spinning backwards'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'ASTRONOMY_SPACE', 'ORIGINAL', NULL,
+        'What kind of telescope, an early one built by Isaac Newton, uses a curved mirror instead of lenses?', NULL,
+        'A reflecting telescope', ARRAY['A refracting telescope', 'A radio telescope', 'An infrared telescope', 'An X-ray telescope', 'A Galilean telescope', 'A Keplerian telescope'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'ASTRONOMY_SPACE', 'ORIGINAL', NULL,
+        'Mars rovers Spirit and which twin landed in 2004?', NULL,
+        'Opportunity', ARRAY['Curiosity', 'Perseverance', 'Sojourner', 'Ingenuity', 'Endeavour', 'Discovery'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'ASTRONOMY_SPACE', 'ORIGINAL', NULL,
+        'What was the first American satellite, launched in 1958?', NULL,
+        'Explorer 1', ARRAY['Vanguard 1', 'Sputnik 2', 'Telstar', 'Echo 1', 'Pioneer 1', 'Mercury 1'], 300);
 
 -- 400 points
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
@@ -500,8 +740,88 @@ INSERT INTO questions (question_number, game_mode, category, subcategory, factio
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'ASTRONOMY_SPACE', 'ORIGINAL', NULL,
         'How many people have walked on the Moon?', NULL,
         '12', ARRAY['6', '9', '18', '24', '27'], 400);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'ASTRONOMY_SPACE', 'ORIGINAL', NULL,
+        'Space is often said to begin about 100 km up, at a boundary named for a Hungarian-American engineer. What is it called?', NULL,
+        'The Kármán line', ARRAY['The Van Allen line', 'The Armstrong limit', 'The Roche limit', 'The Goddard line', 'The Tsiolkovsky line', 'The ozone line'], 400);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'ASTRONOMY_SPACE', 'ORIGINAL', NULL,
+        'Which Soviet probe made the first soft landing on Venus, in 1970, and radioed back from the surface?', NULL,
+        'Venera 7', ARRAY['Luna 9', 'Mars 3', 'Vega 1', 'Sputnik 3', 'Zond 5', 'Lunokhod 1'], 400);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'ASTRONOMY_SPACE', 'ORIGINAL', NULL,
+        'Who was the last astronaut to step off the Moon, in 1972?', NULL,
+        'Gene Cernan', ARRAY['Harrison Schmitt', 'Charlie Duke', 'John Young', 'David Scott', 'Jim Irwin', 'Alan Bean'], 400);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'ASTRONOMY_SPACE', 'ORIGINAL', NULL,
+        'What do astronomers call the line between day and night on the Moon or a planet?', NULL,
+        'The terminator', ARRAY['The meridian', 'The horizon', 'The equator', 'The limb', 'The ecliptic', 'The zenith'], 400);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'ASTRONOMY_SPACE', 'ORIGINAL', NULL,
+        'Which probe, launched in 1972, was the first to fly past Jupiter?', NULL,
+        'Pioneer 10', ARRAY['Voyager 1', 'Voyager 2', 'Galileo', 'Mariner 10', 'Juno', 'Cassini'], 400);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'ASTRONOMY_SPACE', 'ORIGINAL', NULL,
+        'Who was the first woman to walk in space, in 1984?', NULL,
+        'Svetlana Savitskaya', ARRAY['Sally Ride', 'Kathryn Sullivan', 'Peggy Whitson', 'Eileen Collins', 'Mae Jemison', 'Helen Sharman'], 400);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'ASTRONOMY_SPACE', 'ORIGINAL', NULL,
+        'What is China''s space station called? Its name means "Heavenly Palace."', NULL,
+        'Tiangong', ARRAY['Shenzhou', 'Chang''e', 'Tianwen', 'Mir', 'Long March', 'Yutu'], 400);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'ASTRONOMY_SPACE', 'ORIGINAL', NULL,
+        'What was the name of the little helicopter that made the first powered flight on another planet, on Mars in 2021?', NULL,
+        'Ingenuity', ARRAY['Dragonfly', 'Opportunity', 'Perseverance', 'Sojourner', 'Spirit', 'Phoenix'], 400);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'ASTRONOMY_SPACE', 'ORIGINAL', NULL,
+        'What are the two doughnut-shaped zones of radiation trapped by Earth''s magnetic field called?', NULL,
+        'The Van Allen belts', ARRAY['The Kuiper belts', 'The Oort belts', 'The ozone belts', 'The auroral belts', 'The Hubble belts', 'The Sagan belts'], 400);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'ASTRONOMY_SPACE', 'ORIGINAL', NULL,
+        'What do astronomers call the glowing shell of gas puffed off by a dying Sun-like star, like the Ring Nebula?', NULL,
+        'A planetary nebula', ARRAY['A supernova remnant', 'A dark nebula', 'A protostar', 'A globular cluster', 'A quasar', 'A brown dwarf'], 400);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'ASTRONOMY_SPACE', 'ORIGINAL', NULL,
+        'What do we call the steady stream of charged particles blowing out from the Sun?', NULL,
+        'The solar wind', ARRAY['A solar flare', 'A coronal mass ejection', 'Cosmic rays', 'A solar prominence', 'The ion tail', 'The jet stream'], 400);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'ASTRONOMY_SPACE', 'ORIGINAL', NULL,
+        'Which French astronomer cataloged about 110 fuzzy sky objects, like M31, so comet hunters wouldn''t be fooled?', NULL,
+        'Charles Messier', ARRAY['Pierre-Simon Laplace', 'Edmond Halley', 'William Herschel', 'Tycho Brahe', 'Christiaan Huygens', 'Urbain Le Verrier'], 400);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'ASTRONOMY_SPACE', 'ORIGINAL', NULL,
+        'The James Webb Space Telescope sits near a spot where gravity from the Sun and Earth balances out. What is that kind of spot called?', NULL,
+        'A Lagrange point', ARRAY['A Roche limit', 'An event horizon', 'A barycenter', 'An apogee', 'A geosynchronous orbit', 'A perigee'], 400);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'ASTRONOMY_SPACE', 'ORIGINAL', NULL,
+        'Because Earth''s axis slowly wobbles, which bright star will be our "North Star" in about 12,000 years?', NULL,
+        'Vega', ARRAY['Sirius', 'Betelgeuse', 'Arcturus', 'Rigel', 'Altair', 'Capella'], 400);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'ASTRONOMY_SPACE', 'ORIGINAL', NULL,
+        'Which NASA mission brought a sample of asteroid Bennu back to Earth in 2023?', NULL,
+        'OSIRIS-REx', ARRAY['Hayabusa2', 'DART', 'Lucy', 'Psyche', 'Stardust', 'Dawn'], 400);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'ASTRONOMY_SPACE', 'ORIGINAL', NULL,
+        'What is the name of the boundary where the Sun''s wind finally gives way to interstellar space?', NULL,
+        'The heliopause', ARRAY['The Kármán line', 'The event horizon', 'The Kuiper cliff', 'The Oort edge', 'The termination wall', 'The photosphere'], 400);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'ASTRONOMY_SPACE', 'ORIGINAL', NULL,
+        'Who was the first woman to command a space shuttle mission, in 1999?', NULL,
+        'Eileen Collins', ARRAY['Sally Ride', 'Mae Jemison', 'Peggy Whitson', 'Shannon Lucid', 'Kathryn Sullivan', 'Judith Resnik'], 400);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'ASTRONOMY_SPACE', 'ORIGINAL', NULL,
+        'NASA''s DART spacecraft deliberately crashed into which small asteroid in 2022, to test nudging one off course?', NULL,
+        'Dimorphos', ARRAY['Didymos', 'Bennu', 'Ryugu', 'Itokawa', 'Vesta', 'Apophis'], 400);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'ASTRONOMY_SPACE', 'ORIGINAL', NULL,
+        'Mission teams call a Martian day by what short name?', NULL,
+        'A sol', ARRAY['A mar', 'A rev', 'A lun', 'A cycle', 'A turn', 'A spin'], 400);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'ASTRONOMY_SPACE', 'ORIGINAL', NULL,
+        'What was the name of the giant radio telescope dish in Puerto Rico that collapsed in 2020?', NULL,
+        'Arecibo', ARRAY['Green Bank', 'Jodrell Bank', 'Parkes', 'FAST', 'Very Large Array', 'Effelsberg'], 400);
 
 COMMIT;
 
--- Check: should return 120.
+-- Check: should return 200.
 SELECT COUNT(*) FROM questions WHERE game_mode = 'TRIVI_YEAH_II' AND category = 'ASTRONOMY_SPACE';
