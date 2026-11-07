@@ -964,7 +964,7 @@ if (btnSubmitSpectate) {
         // ROOM_VENUE first, and a mid-game join's STATE_CATCH_UP follows.
         // Country Monkey and Trivi-yeah! too (Nov 2026): their region/deck
         // vote and their questions.
-        const TP_LAYOUT_ON = new Set(['ROOM_CLOSED', 'ROOM_VENUE', 'RETURN_TO_LOBBY', 'TRANSITION_TO_CATEGORY_VOTE', 'TRANSITION_TO_QUESTION', 'FLAG_ME_DOWN_ROUND', 'PROFILER_QUESTION', 'EMPOSSDURR_ROUND_START', 'ON_THE_SPECTRUM_ROUND_START']);
+        const TP_LAYOUT_ON = new Set(['ROOM_CLOSED', 'ROOM_VENUE', 'RETURN_TO_LOBBY', 'TRANSITION_TO_CATEGORY_VOTE', 'TRANSITION_TO_QUESTION', 'FLAG_ME_DOWN_ROUND', 'PROFILER_QUESTION', 'EMPOSSDURR_ROUND_START', 'ON_THE_SPECTRUM_ROUND_START', 'GAME_OVER']);
         // Every screen uses the new layout now (Nov 2026); kept for any
         // future screen that isn't ready for it.
         const TP_LAYOUT_OFF = new Set([]);
@@ -2086,30 +2086,40 @@ function switchToLobbyVoteUI() {
     currentGamePhase = 'LOBBY';
 }
 
+// The podium (Randy, Nov 2026: "If you win, your avatar wins"). The winner's
+// avatar big in the middle with a gold glow, second and third smaller on
+// either side, each name on a gold/silver/bronze plate like the old buttons.
+// No "Final scores" title and no list: the rail already has every score.
+// Ties can't happen here -- compareByRank breaks them (bullseyes, right
+// answers, fastest, then who joined first).
 function switchToGameOverUI(players, brand) {
     const panel = document.getElementById('active-content-stage');
     const topThree = [...(players || [])].sort(compareByRank).slice(0, 3);
-    const rankClasses = ['rank-gold', 'rank-silver', 'rank-bronze'];
+    const medals = ['gold', 'silver', 'bronze'];
+    const place = (player, index) => player ? `
+        <div class="go-place go-p${index + 1}">
+            <div class="go-avatar">${avatarHtml(player.emoji, 1)}</div>
+            <div class="go-plate go-${medals[index]}">
+                <span class="go-name">${escapeHtml(player.name)}</span>
+                <span class="go-score">${(player.score || 0).toLocaleString("en-US")}</span>
+            </div>
+        </div>` : '';
+    // Second, first, third: the winner stands in the middle.
+    const podium = [place(topThree[1], 1), place(topThree[0], 0), place(topThree[2], 2)].join('');
+    const venue = brand ? `
+        <div class="go-venue">
+            ${brand.logoUrl ? `<img src="${brand.logoUrl}" alt="" onerror="this.remove()">` : ''}
+            <span>Thanks for playing at ${escapeHtml(brand.name)}${brand.tagline ? ` <span class="go-tagline">&middot; ${escapeHtml(brand.tagline)}</span>` : ''}</span>
+        </div>` : '';
 
-    const rows = topThree.map((player, index) => `
-        <div class="leaderboard-btn ${rankClasses[index]}">
-            <span class="leaderboard-btn-name">${player.name}</span>
-            <span class="leaderboard-btn-score">${player.score || 0} pts</span>
-        </div>
-    `).join('');
-
-    panel.innerHTML = `
-        <div class="panel-box" style="padding: 40px; flex: 1; display: flex; flex-direction: column; justify-content: center;">
-            ${brand && brand.logoUrl ? `<img src="${brand.logoUrl}" alt="" style="display: block; height: 120px; width: auto; max-width: 70%; object-fit: contain; margin: 0 auto 20px;" onerror="this.remove()">` : ''}
-            <h2 class="panel-title" style="margin-bottom: 8px;">Final scores</h2>
-            ${brand ? `<p style="color: var(--rm-text-soft); font-size: 0.95rem; margin: 0 0 32px 0; font-weight: 600;">${escapeHtml(brand.name)}${brand.tagline ? ` <span style="color: var(--rm-text-muted); font-weight: 500;">&middot; ${escapeHtml(brand.tagline)}</span>` : ''}</p>` : ''}
-            <div style="display: flex; flex-direction: column; gap: 36px;">${rows}</div>
-            <div id="return-vote-tally" style="color: var(--rm-text-muted); font-size: 0.85rem; text-align: center; margin-top: 28px;"></div>
-        </div>
-    `;
+    panel.innerHTML = tpStage('go-stage', `
+        <div class="go-podium">${podium}</div>
+        ${venue}
+        <div id="return-vote-tally" class="pf-tally" style="text-align: center;"></div>
+    `);
 
     currentGamePhase = 'GAME_OVER';
-    setStatusMessage(''); // "Final scores" says it (say it once)
+    setStatusMessage('');
 }
 
 // How the room split, as a fill on each answer button (Randy, Oct 2026:

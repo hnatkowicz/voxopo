@@ -850,3 +850,33 @@ body.tp-layout[data-view="gateway"] #gateway-screen { display: flex !important; 
 .ots-name { font-weight: 700; color: var(--rm-text); width: calc(var(--u) * 15); flex-shrink: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .ots-actual { color: var(--rm-purple); font-size: 0.6em; text-transform: uppercase; letter-spacing: 0.08em; margin-left: 0.4em; }
 .ots-value { font-family: var(--rm-font-display); font-weight: 800; color: var(--rm-text); width: 3ch; text-align: right; font-variant-numeric: tabular-nums; }
+
+/* ---------- Game Over: the podium (Randy, Nov 2026: "If you win, your
+   avatar wins"). The winner's avatar is a splash moment; second and third
+   stand smaller on either side. Avatars are sized by font-size (avatarHtml
+   draws them 1em), so a player still on an emoji gets a giant emoji. ---------- */
+.go-stage { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: calc(var(--u) * 2.4); }
+.go-podium { display: flex; align-items: flex-end; justify-content: center; gap: calc(var(--u) * 4); width: 100%; }
+.go-place { display: flex; flex-direction: column; align-items: center; gap: calc(var(--u) * 1.4); min-width: 0; }
+.go-avatar { line-height: 1; display: flex; align-items: center; justify-content: center; }
+.go-p1 .go-avatar { font-size: calc(var(--u) * 21); animation: go-rise 0.9s cubic-bezier(.2, 1.4, .4, 1) both, go-glow 2.6s ease-in-out 0.9s infinite alternate; }
+.go-p2 .go-avatar, .go-p3 .go-avatar { font-size: calc(var(--u) * 9); animation: go-rise 0.7s ease-out 0.5s both; }
+.go-plate { display: flex; flex-direction: column; align-items: center; border: calc(var(--u) * 0.2) solid; border-radius: calc(var(--u) * 1); padding: calc(var(--u) * 0.7) calc(var(--u) * 2); }
+.go-gold { border-color: var(--rm-medal-gold); background: rgba(var(--rm-medal-gold-rgb), 0.1); }
+.go-silver { border-color: var(--rm-medal-silver); background: rgba(var(--rm-medal-silver-rgb), 0.08); }
+.go-bronze { border-color: var(--rm-medal-bronze); background: rgba(var(--rm-medal-bronze-rgb), 0.08); }
+.go-name { font-family: var(--rm-font-display); font-weight: 800; color: var(--rm-text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.go-p1 .go-name { font-size: calc(var(--u) * 3.6); max-width: calc(var(--u) * 28); }
+.go-p2 .go-name, .go-p3 .go-name { font-size: calc(var(--u) * 1.8); max-width: calc(var(--u) * 15); }
+.go-score { font-weight: 700; font-variant-numeric: tabular-nums; }
+.go-p1 .go-score { font-size: calc(var(--u) * 1.8); color: var(--rm-medal-gold); }
+.go-p2 .go-score { font-size: calc(var(--u) * 1.3); color: var(--rm-medal-silver); }
+.go-p3 .go-score { font-size: calc(var(--u) * 1.3); color: var(--rm-medal-bronze); }
+.go-venue { display: flex; align-items: center; gap: calc(var(--u) * 1.2); font-size: calc(var(--u) * 1.4); font-weight: 600; color: var(--rm-text-soft); }
+.go-venue img { height: calc(var(--u) * 4); width: auto; max-width: calc(var(--u) * 10); object-fit: contain; }
+.go-tagline { color: var(--rm-text-muted); font-weight: 500; }
+@keyframes go-rise { from { transform: scale(0.4) translateY(20%); opacity: 0; } to { transform: none; opacity: 1; } }
+@keyframes go-glow {
+    from { filter: drop-shadow(0 0 calc(var(--u) * 0.8) rgba(var(--rm-medal-gold-rgb), 0.35)); }
+    to { filter: drop-shadow(0 0 calc(var(--u) * 2.4) rgba(var(--rm-medal-gold-rgb), 0.75)); }
+}

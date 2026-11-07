@@ -260,6 +260,9 @@
         .sound-options button.active { border-color: var(--rm-text-2); color: var(--rm-white); background: rgba(var(--rm-white-rgb), 0.08); }
         .room-code-big { font-size: 2.4rem; font-weight: 800; letter-spacing: 0.15em; color: var(--rm-white); margin-bottom: 8px; }
         .scores-list { display: flex; flex-direction: column; gap: 8px; margin-top: 8px; }
+        /* The winner's avatar on the Game Over card (sized by font-size: avatarHtml draws 1em). */
+        .go-phone-avatar { font-size: 120px; line-height: 1; display: flex; justify-content: center; margin: 4px 0 18px; animation: go-phone-rise 0.8s cubic-bezier(.2, 1.4, .4, 1) both; filter: drop-shadow(0 0 14px rgba(var(--rm-medal-gold-rgb), 0.6)); }
+        @keyframes go-phone-rise { from { transform: scale(0.4); opacity: 0; } to { transform: none; opacity: 1; } }
         .scores-row { display: flex; align-items: center; gap: 12px; background: var(--rm-surface-2); border: 1px solid var(--rm-border); border-radius: 8px; padding: 12px 16px; text-align: left; }
         .scores-row.me { border-color: var(--rm-brand); background: rgba(var(--rm-brand-rgb), 0.06); }
         .scores-rank { width: 1.6em; color: var(--rm-text-muted); font-weight: 700; }
@@ -3225,7 +3228,13 @@
                 ? `<button class="btn btn-horn" onclick="playHorn()">Blast the Air Horn</button>`
                 : '';
 
+            // The winner's own avatar, big (Randy, Nov 2026: "If you win,
+            // your avatar wins"), the same moment the TV's podium shows.
+            const winnerAvatar = rank === 1
+                ? `<div class="go-phone-avatar">${avatarHtml(data.myEmoji || chosenAvatar, 1)}</div>`
+                : '';
             container.innerHTML = `
+                ${winnerAvatar}
                 <div class="leaderboard-btn ${cardClass}">
                     <span class="leaderboard-btn-name">${medal ? `${medal} ` : ''}${nickname}</span>
                     <span class="leaderboard-btn-score">${score} pts</span>

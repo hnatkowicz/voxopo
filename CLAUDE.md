@@ -201,7 +201,15 @@ event, for a small fee. That's why hosting is gated behind access codes.
   emoji slot, and `avatarHtml` draws it everywhere a player's emoji was
   (TV scoreboard, join toast, Profiler names, the phone's strip, badge and
   scores). Anything else in that slot shows as text, so an old phone
-  still sending an emoji works. Waiting: a forced test of the
+  still sending an emoji works. **The podium** (Nov 2026, Randy: "If you
+  win, your avatar wins"): the TV's Game Over is the winner's avatar big in
+  the middle with a gold glow and their name on a gold plate, second and
+  third smaller on either side on silver and bronze plates (the old
+  gold/silver/bronze buttons became the nameplates). No "Final scores"
+  title or list; the rail has every score. A venue keeps its logo and
+  "Thanks for playing at..." line under the podium. No ties: the ranking
+  breaks them. The winner's phone shows their avatar big above the
+  Champion card. Waiting: a forced test of the
   trap screens (Randy said wait), the scoreboard width (Randy is still
   playing) and the Flag Me Down countdown.
 - **TV design rules (Randy, Nov 2026, after the Fire Stick test) -- apply
