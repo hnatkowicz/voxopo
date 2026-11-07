@@ -2700,9 +2700,16 @@ function letterRipPot(lr) {
 
 // The board as words of tiles: a letter shows once revealed (or at the end),
 // punctuation shows from the start, '' is a hidden tile.
+// In The Spotlight a flip shows one square (by its position in the phrase).
 function letterRipTiles(lr) {
-    const showAll = lr.phase === 'DONE';
-    return lr.phrase.split(' ').map(word => [...word].map(ch => /[A-Z]/.test(ch) ? (showAll || lr.revealed.has(ch) ? ch : '') : ch));
+    const showAll = lr.phase === 'DONE' || lr.phase === 'SPOT_REVEAL';
+    const flipped = lr.spot ? lr.spot.flipped : null;
+    let at = 0;
+    return lr.phrase.split(' ').map(word => {
+        const tiles = [...word].map((ch, k) => /[A-Z]/.test(ch) ? (showAll || lr.revealed.has(ch) || (flipped && flipped.has(at + k)) ? ch : '') : ch);
+        at += word.length + 1;
+        return tiles;
+    });
 }
 
 async function startLetterRipGame(roomCode) {
@@ -2725,8 +2732,12 @@ async function startLetterRipGame(roomCode) {
         puzzles.push(p);
     }
     if (puzzles.length < LETTER_RIP_PUZZLES_PER_GAME) throw new Error(`Letter Rip needs ${LETTER_RIP_PUZZLES_PER_GAME} puzzles from different categories, found ${puzzles.length}.`);
+    // The Spotlight's phrase: a long one from a 7th category (no final if none qualifies).
+    const longEnough = p => letterRipLetters(p.phrase).length >= SPOTLIGHT_MIN_LETTERS && p.phrase.split(' ').length >= SPOTLIGHT_MIN_WORDS;
+    const finalPool = fresh.filter(p => longEnough(p) && !usedCategories.has(p.category));
+    const spotlightPuzzle = shuffleArray(finalPool.length ? finalPool : all.filter(p => longEnough(p) && !usedCategories.has(p.category)))[0] || null;
     room.gameState = 'LETTER_RIP_ROUND';
-    room.letterRip = { puzzles, index: -1, total: puzzles.length };
+    room.letterRip = { puzzles, index: -1, total: puzzles.length, spotlightPuzzle, spot: null };
     console.log(`[Letter Rip] Room ${roomCode} starting ${puzzles.length} puzzles.`);
     startLetterRipPuzzle(roomCode);
 }
@@ -2736,7 +2747,7 @@ function startLetterRipPuzzle(roomCode) {
     if (!room || !room.letterRip) return;
     const lr = room.letterRip;
     lr.index++;
-    if (lr.index >= lr.total) { endGame(roomCode); return; }
+    if (lr.index >= lr.total) { startSpotlight(roomCode); return; }
     const puzzle = lr.puzzles[lr.index];
     room.letterRipPlayed.add(puzzle.phrase);
     Object.assign(lr, {
@@ -2861,6 +2872,7 @@ function finishLetterRipPuzzle(roomCode, solverName) {
 // LRPICK <letter> or LRSOLVE <phrase>, from a phone.
 function handleLetterRipAction(roomCode, room, playerName, cleanText) {
     const lr = room.letterRip;
+    if (lr.spot) return handleSpotlightAction(roomCode, room, playerName, cleanText);
     const pick = /^LRPICK\s+([A-Za-z])$/.exec(cleanText);
     if (pick) {
         const letter = pick[1].toUpperCase();
@@ -2910,6 +2922,290 @@ function checkLetterRipAllPicked(roomCode) {
     }
 }
 
+// ---------- The Spotlight: Letter Rip's wager final (Randy, Nov 2026) ----------
+// A 7th puzzle after the six. Everyone wagers, then each tap round everyone
+// taps a hidden tile on their phone and their avatar jumps onto it on the TV
+// (tap, not drag: phones poll, and a tap reaches the TV at once). Every
+// spotlighted tile flips, up to 3 a round (in a big room the most popular
+// 3; ties at random), so 2-3 players each get their own pick and a crowd has
+// to agree. A flip shows that one square, not every copy of the letter.
+// Lock in a solve whenever you like; the earlier, the more it pays. Answers
+// stay secret until the results, which run lowest score first.
+const SPOTLIGHT_WAGER_MS = 30000; // backstop, like the Final Wager's; ends early once everyone wagers
+const SPOTLIGHT_TAP_SECONDS = 10;
+const SPOTLIGHT_ROUNDS = 4;
+const SPOTLIGHT_MAX_FLIPS = 3; // per round
+const SPOTLIGHT_FLIP_MS = 3000;
+const SPOTLIGHT_ALL_PLACED_MS = 2000; // a beat to move once everyone has a spotlight down
+const SPOTLIGHT_LAST_SECONDS = 10; // last call to lock in after the final flip
+const SPOTLIGHT_RESULT_MS = 2500; // per player in the results
+// Right pays wager x this, by flips already done: before any 2x, after one 1.5x, then 1x.
+const SPOTLIGHT_PAYOUT = [2, 1.5, 1];
+// The final's phrase is long enough that 4 rounds of flips can't give it away.
+const SPOTLIGHT_MIN_LETTERS = 14, SPOTLIGHT_MIN_WORDS = 3;
+
+const spotlightPays = flips => SPOTLIGHT_PAYOUT[Math.min(flips, SPOTLIGHT_PAYOUT.length - 1)];
+
+// Randy, Nov 2026: a player at 0 shouldn't sit out, and a flat stake isn't
+// fair, so everyone may wager up to their own score or the room's floor --
+// half the average score, to the nearest hundred, at least 100 -- whichever
+// is bigger. A wrong answer never takes anyone below 0.
+function spotlightFloor(room) {
+    const active = Object.values(room.players).filter(p => !p.left);
+    const avg = active.length ? active.reduce((s, p) => s + (p.score || 0), 0) / active.length : 0;
+    return Math.max(100, Math.round(avg / 2 / 100) * 100);
+}
+
+function startSpotlight(roomCode) {
+    const room = activeRooms[roomCode];
+    const lr = room && room.letterRip;
+    if (!lr || !lr.spotlightPuzzle) { endGame(roomCode); return; }
+    if (room.timerInterval) { clearInterval(room.timerInterval); room.timerInterval = null; }
+    if (room.revealTimeout) { clearTimeout(room.revealTimeout); room.revealTimeout = null; }
+    room.letterRipPlayed.add(lr.spotlightPuzzle.phrase);
+    const floor = spotlightFloor(room);
+    const startScores = {};
+    Object.values(room.players).filter(p => !p.left).forEach(p => { startScores[p.name] = p.score || 0; });
+    Object.assign(lr, {
+        phrase: lr.spotlightPuzzle.phrase,
+        category: lr.spotlightPuzzle.category,
+        revealed: new Set(),
+        solver: null,
+        wrong: null,
+        picks: {},
+        lastPicks: {},
+        lastReveal: [],
+        freeLetter: null,
+        solveTried: new Set(),
+        round: 0,
+        phase: 'SPOT_WAGER',
+        spot: {
+            floor,
+            startScores,
+            wagers: {},
+            spots: {},          // name -> tile index (a position in the phrase)
+            flipped: new Set(), // tile indexes showing
+            flips: 0,           // flip rounds done (sets the payout)
+            lastFlipped: [],
+            answers: {},        // name -> { text, pays } -- secret until the results
+            results: [],
+            resultIndex: -1
+        }
+    });
+    room.gameSecondsLeft = null;
+    console.log(`[Letter Rip] Room ${roomCode}: The Spotlight (floor ${floor}).`);
+    broadcastLetterRipState(roomCode);
+    room.revealTimeout = setTimeout(() => {
+        room.revealTimeout = null;
+        Object.values(room.players).filter(p => !p.left).forEach(p => { if (!(p.name in lr.spot.wagers)) lr.spot.wagers[p.name] = 0; });
+        startSpotlightTapRound(roomCode);
+    }, SPOTLIGHT_WAGER_MS);
+}
+
+const spotlightMaxWager = (lr, name, player) => Math.max(lr.spot.startScores[name] ?? (player ? player.score : 0), lr.spot.floor);
+
+function startSpotlightTapRound(roomCode) {
+    const room = activeRooms[roomCode];
+    const lr = room && room.letterRip;
+    if (!lr || !lr.spot || !['SPOT_WAGER', 'SPOT_FLIP'].includes(lr.phase)) return;
+    if (room.revealTimeout) { clearTimeout(room.revealTimeout); room.revealTimeout = null; }
+    lr.phase = 'SPOT_TAP';
+    lr.round++;
+    lr.spot.spots = {};
+    lr.spot.lastFlipped = [];
+    room.gameSecondsLeft = SPOTLIGHT_TAP_SECONDS;
+    broadcastLetterRipState(roomCode);
+    if (room.timerInterval) clearInterval(room.timerInterval);
+    const roundAtStart = lr.round;
+    room.timerInterval = setInterval(() => {
+        if (room.letterRip !== lr || lr.phase !== 'SPOT_TAP' || lr.round !== roundAtStart) { clearInterval(room.timerInterval); room.timerInterval = null; return; }
+        room.gameSecondsLeft = Math.max(0, room.gameSecondsLeft - 1);
+        broadcastToRoom(roomCode, { type: 'LETTER_RIP_TICK', secondsLeft: room.gameSecondsLeft });
+        if (room.gameSecondsLeft <= 0) flipSpotlightRound(roomCode);
+    }, 1000);
+}
+
+function flipSpotlightRound(roomCode) {
+    const room = activeRooms[roomCode];
+    const lr = room && room.letterRip;
+    if (!lr || lr.phase !== 'SPOT_TAP') return;
+    if (room.timerInterval) { clearInterval(room.timerInterval); room.timerInterval = null; }
+    if (room.revealTimeout) { clearTimeout(room.revealTimeout); room.revealTimeout = null; }
+    room.gameSecondsLeft = null;
+    const counts = {};
+    Object.values(lr.spot.spots).forEach(i => { if (!lr.spot.flipped.has(i)) counts[i] = (counts[i] || 0) + 1; });
+    let flip = shuffleArray(Object.keys(counts)).sort((a, b) => counts[b] - counts[a]).slice(0, SPOTLIGHT_MAX_FLIPS).map(Number);
+    // Nobody tapped: one hidden tile flips anyway, so every round moves (like the free letter).
+    if (!flip.length) {
+        const hidden = [...lr.phrase].map((ch, i) => i).filter(i => /[A-Z]/.test(lr.phrase[i]) && !lr.spot.flipped.has(i));
+        if (hidden.length) flip = [shuffleArray(hidden)[0]];
+    }
+    flip.forEach(i => lr.spot.flipped.add(i));
+    lr.spot.lastFlipped = flip;
+    lr.spot.flips++;
+    lr.phase = 'SPOT_FLIP';
+    broadcastLetterRipState(roomCode);
+    const hiddenLeft = [...lr.phrase].some((ch, i) => /[A-Z]/.test(ch) && !lr.spot.flipped.has(i));
+    const roundAtFlip = lr.round;
+    room.revealTimeout = setTimeout(() => {
+        room.revealTimeout = null;
+        if (room.letterRip !== lr || lr.phase !== 'SPOT_FLIP' || lr.round !== roundAtFlip) return;
+        if (lr.round >= SPOTLIGHT_ROUNDS || !hiddenLeft) startSpotlightLastCall(roomCode);
+        else startSpotlightTapRound(roomCode);
+    }, SPOTLIGHT_FLIP_MS);
+}
+
+function startSpotlightLastCall(roomCode) {
+    const room = activeRooms[roomCode];
+    const lr = room && room.letterRip;
+    if (!lr || !lr.spot || lr.phase === 'SPOT_LAST' || lr.phase === 'SPOT_REVEAL') return;
+    if (room.revealTimeout) { clearTimeout(room.revealTimeout); room.revealTimeout = null; }
+    lr.phase = 'SPOT_LAST';
+    lr.spot.spots = {};
+    room.gameSecondsLeft = SPOTLIGHT_LAST_SECONDS;
+    broadcastLetterRipState(roomCode);
+    if (checkSpotlightAllLocked(roomCode)) return;
+    if (room.timerInterval) clearInterval(room.timerInterval);
+    room.timerInterval = setInterval(() => {
+        if (room.letterRip !== lr || lr.phase !== 'SPOT_LAST') { clearInterval(room.timerInterval); room.timerInterval = null; return; }
+        room.gameSecondsLeft = Math.max(0, room.gameSecondsLeft - 1);
+        broadcastToRoom(roomCode, { type: 'LETTER_RIP_TICK', secondsLeft: room.gameSecondsLeft });
+        if (room.gameSecondsLeft <= 0) revealSpotlight(roomCode);
+    }, 1000);
+}
+
+// Last call ends as soon as everyone still here has locked in.
+function checkSpotlightAllLocked(roomCode) {
+    const room = activeRooms[roomCode];
+    const lr = room && room.letterRip;
+    if (!lr || lr.phase !== 'SPOT_LAST') return false;
+    const active = Object.values(room.players).filter(p => !p.left);
+    if (active.length && active.every(p => p.name in lr.spot.answers)) { revealSpotlight(roomCode); return true; }
+    return false;
+}
+
+// A tap round ends early (after a short beat to move) once everyone who
+// hasn't locked in has a spotlight down.
+function checkSpotlightAllPlaced(roomCode) {
+    const room = activeRooms[roomCode];
+    const lr = room && room.letterRip;
+    if (!lr || lr.phase !== 'SPOT_TAP') return;
+    const waiting = Object.values(room.players).filter(p => !p.left && !(p.name in lr.spot.answers));
+    // Everyone has locked in: nothing left to play for, straight to the results.
+    if (!waiting.length) { revealSpotlight(roomCode); return; }
+    if (waiting.length && waiting.every(p => p.name in lr.spot.spots) && !room.revealTimeout) {
+        room.revealTimeout = setTimeout(() => { room.revealTimeout = null; flipSpotlightRound(roomCode); }, SPOTLIGHT_ALL_PLACED_MS);
+    }
+}
+
+function revealSpotlight(roomCode) {
+    const room = activeRooms[roomCode];
+    const lr = room && room.letterRip;
+    if (!lr || !lr.spot || lr.phase === 'SPOT_REVEAL') return;
+    if (room.timerInterval) { clearInterval(room.timerInterval); room.timerInterval = null; }
+    if (room.revealTimeout) { clearTimeout(room.revealTimeout); room.revealTimeout = null; }
+    room.gameSecondsLeft = null;
+    lr.phase = 'SPOT_REVEAL';
+    const target = letterRipLetters(lr.phrase);
+    // Lowest score first, so the leader is revealed last (Randy: "always fun that way").
+    const players = Object.values(room.players).filter(p => !p.left && ((lr.spot.wagers[p.name] || 0) > 0 || p.name in lr.spot.answers))
+        .sort((a, b) => (a.score || 0) - (b.score || 0) || a.name.localeCompare(b.name));
+    lr.spot.results = players.map(p => {
+        const ans = lr.spot.answers[p.name] || null;
+        const wager = lr.spot.wagers[p.name] || 0;
+        const right = !!ans && ans.text.toUpperCase().replace(/[^A-Z]/g, '') === target;
+        const delta = right ? Math.round(wager * ans.pays) : -Math.min(wager, p.score || 0);
+        return { name: p.name, emoji: p.emoji || null, answer: ans ? ans.text.toUpperCase() : null, wager, pays: ans ? ans.pays : null, right, delta, shown: false };
+    });
+    lr.spot.resultIndex = -1;
+    setPhoneRecap(room, {
+        label: 'The Spotlight',
+        answer: lr.phrase,
+        answered: lr.spot.results.filter(r => r.answer).map(r => r.name),
+        right: lr.spot.results.filter(r => r.right).map(r => r.name),
+        best: null
+    });
+    stepSpotlightResults(roomCode);
+}
+
+function stepSpotlightResults(roomCode) {
+    const room = activeRooms[roomCode];
+    const lr = room && room.letterRip;
+    if (!lr || lr.phase !== 'SPOT_REVEAL') return;
+    const spot = lr.spot;
+    if (spot.resultIndex >= spot.results.length - 1) {
+        room.revealTimeout = setTimeout(() => { room.revealTimeout = null; if (room.letterRip === lr) endGame(roomCode); }, SPOTLIGHT_RESULT_MS * 2);
+        return;
+    }
+    spot.resultIndex++;
+    const r = spot.results[spot.resultIndex];
+    r.shown = true;
+    const player = room.players[r.name];
+    if (player) {
+        player.score = Math.max(0, (player.score || 0) + r.delta);
+        if (r.right) player.correctAnswers = (player.correctAnswers || 0) + 1;
+    }
+    broadcastLetterRipState(roomCode);
+    broadcastToRoom(roomCode, { type: 'LEADERBOARD_UPDATE', players: Object.values(room.players).filter(p => !p.left) });
+    room.revealTimeout = setTimeout(() => { room.revealTimeout = null; stepSpotlightResults(roomCode); }, SPOTLIGHT_RESULT_MS);
+}
+
+// LRWAGER <n>, LRSPOT <tile>, LRSOLVE <phrase> during The Spotlight.
+function handleSpotlightAction(roomCode, room, playerName, cleanText) {
+    const lr = room.letterRip;
+    const spot = lr.spot;
+    const player = room.players[playerName];
+    const wager = /^LRWAGER\s+(\d+)$/.exec(cleanText);
+    if (wager) {
+        if (lr.phase !== 'SPOT_WAGER') return `⚠️ Wagers are closed.`;
+        if (playerName in spot.wagers) return `⚠️ Your wager is already in.`;
+        const max = spotlightMaxWager(lr, playerName, player);
+        const amount = Number(wager[1]);
+        if (amount > max) return `⚠️ The most you can wager is ${max.toLocaleString('en-US')}.`;
+        spot.wagers[playerName] = amount;
+        broadcastToRoom(roomCode, { type: 'ANSWER_SUBMITTED', playerName });
+        broadcastLetterRipState(roomCode);
+        const active = Object.values(room.players).filter(p => !p.left);
+        if (active.every(p => p.name in spot.wagers)) startSpotlightTapRound(roomCode);
+        return `Wager locked: ${amount.toLocaleString('en-US')}.`;
+    }
+    const tap = /^LRSPOT\s+(\d+)$/.exec(cleanText);
+    if (tap) {
+        if (lr.phase !== 'SPOT_TAP') return `⚠️ Wait for the next round.`;
+        const i = Number(tap[1]);
+        if (!/[A-Z]/.test(lr.phrase[i] || '') || spot.flipped.has(i)) return `⚠️ Pick a hidden tile.`;
+        spot.spots[playerName] = i;
+        broadcastLetterRipState(roomCode);
+        checkSpotlightAllPlaced(roomCode);
+        return `Spotlight on.`;
+    }
+    const solve = /^LRSOLVE\s+(.+)$/s.exec(cleanText);
+    if (solve) {
+        if (!['SPOT_TAP', 'SPOT_FLIP', 'SPOT_LAST'].includes(lr.phase)) return `⚠️ Not yet.`;
+        if (playerName in spot.answers) return `⚠️ You've locked in already.`;
+        if (!solve[1].replace(/[^A-Za-z]/g, '')) return `⚠️ Type the phrase first.`;
+        const pays = spotlightPays(spot.flips);
+        spot.answers[playerName] = { text: solve[1].trim(), pays };
+        broadcastToRoom(roomCode, { type: 'ANSWER_SUBMITTED', playerName });
+        broadcastLetterRipState(roomCode);
+        if (lr.phase === 'SPOT_LAST') checkSpotlightAllLocked(roomCode);
+        else checkSpotlightAllPlaced(roomCode);
+        return `Locked in. Right pays ${pays}x.`;
+    }
+    return `⚠️ That action isn't available right now.`;
+}
+
+// Someone left mid-Spotlight: don't wait on them.
+function checkSpotlightAfterLeave(roomCode) {
+    const room = activeRooms[roomCode];
+    const lr = room && room.letterRip;
+    if (!lr || !lr.spot) return;
+    const active = Object.values(room.players).filter(p => !p.left);
+    if (lr.phase === 'SPOT_WAGER' && active.length && active.every(p => p.name in lr.spot.wagers)) startSpotlightTapRound(roomCode);
+    else if (lr.phase === 'SPOT_TAP') checkSpotlightAllPlaced(roomCode);
+    else if (lr.phase === 'SPOT_LAST') checkSpotlightAllLocked(roomCode);
+}
+
 // What the TV shows: the board, never a hidden letter or anyone's pick.
 export function letterRipTvState(room) {
     const lr = room.letterRip;
@@ -2930,7 +3226,28 @@ export function letterRipTvState(room) {
         lastReveal: lr.phase === 'REVEAL' ? lr.lastReveal : [],
         freeLetter: lr.phase === 'REVEAL' ? lr.freeLetter : null,
         solver: lr.solver,
-        wrong: lr.wrong
+        wrong: lr.wrong,
+        spotlight: lr.spot ? spotlightTvState(room, lr) : null
+    };
+}
+
+// The Spotlight's public side: who's on which tile (taps are public, that's
+// the point), how many wagered or locked in, the payout now, and the results
+// shown so far. Never anyone's wager or answer before their result.
+function spotlightTvState(room, lr) {
+    const spot = lr.spot;
+    const active = Object.values(room.players).filter(p => !p.left);
+    return {
+        floor: spot.floor,
+        round: lr.round,
+        rounds: SPOTLIGHT_ROUNDS,
+        pays: spotlightPays(spot.flips),
+        wageredCount: Object.keys(spot.wagers).filter(n => active.some(p => p.name === n)).length,
+        lockedCount: Object.keys(spot.answers).filter(n => active.some(p => p.name === n)).length,
+        spots: Object.entries(spot.spots).map(([name, tile]) => ({ name, emoji: room.players[name] ? room.players[name].emoji || null : null, tile })),
+        lastFlipped: lr.phase === 'SPOT_FLIP' ? spot.lastFlipped : [],
+        results: spot.results.filter(r => r.shown).map(({ shown, ...r }) => r),
+        resultsTotal: spot.results.length
     };
 }
 
@@ -2951,9 +3268,19 @@ export function letterRipStatusFor(room, playerName) {
         bank: lr.banks[playerName] || {},
         myPick: lr.picks[playerName] || null,
         myLastPick: lr.phase === 'REVEAL' ? (lr.lastPicks[playerName] || null) : null,
-        canSolve: lr.phase !== 'DONE' && !lr.solveTried.has(playerName),
+        canSolve: lr.spot
+            ? ['SPOT_TAP', 'SPOT_FLIP', 'SPOT_LAST'].includes(lr.phase) && !(playerName in lr.spot.answers)
+            : lr.phase !== 'DONE' && !lr.solveTried.has(playerName),
         triedSolve: lr.solveTried.has(playerName),
-        phrase: lr.phase === 'DONE' ? lr.phrase : null
+        phrase: lr.phase === 'DONE' || lr.phase === 'SPOT_REVEAL' ? lr.phrase : null,
+        mySpotlight: lr.spot ? {
+            maxWager: spotlightMaxWager(lr, playerName, room.players[playerName]),
+            wager: playerName in lr.spot.wagers ? lr.spot.wagers[playerName] : null,
+            spot: playerName in lr.spot.spots ? lr.spot.spots[playerName] : null,
+            answer: lr.spot.answers[playerName] ? lr.spot.answers[playerName].text.toUpperCase() : null,
+            answerPays: lr.spot.answers[playerName] ? lr.spot.answers[playerName].pays : null,
+            result: (lr.spot.results.find(r => r.name === playerName && r.shown) || null)
+        } : null
     };
 }
 
@@ -5320,6 +5647,7 @@ export function handleIncomingMessage(fromPhone, bodyText, explicitRoomCode, pre
                 checkFlagMeDownAllLocked(associatedRoomCode);
             } else if (currentRoom.gameState === 'LETTER_RIP_ROUND' && currentRoom.letterRip) {
                 checkLetterRipAllPicked(associatedRoomCode);
+                checkSpotlightAfterLeave(associatedRoomCode);
             } else if (currentRoom.gameState === 'TRIVI_YEAH_II_ROUND' && currentRoom.triviYeahII) {
                 handleTriviYeahIILeave(associatedRoomCode, actingPlayerName);
             } else if (currentRoom.gameState === 'ON_THE_SPECTRUM_ROUND' && currentRoom.onTheSpectrum) {

@@ -592,10 +592,32 @@ Mode keys are used in room votes and in `gameEngine.js`:
   TV says who guessed wrong. The game doesn't pause while someone types,
   since a pause would hand one player control of the room. Pot and letter
   points stay as built (Randy: no bigger pots per puzzle, and no target
-  for total points; the pub tally will use placements). **Next: The
-  Spotlight**, a 7th wager round where phones tap to move their avatar's
-  spotlight onto hidden tiles on the TV (tap, not drag, so phones don't
-  need a live connection). Its rules are still being talked through.
+  for total points; the pub tally will use placements).
+  **The Spotlight** (built Nov 2026; answers Randy's wish for "an input
+  mechanic to move something on the screen") is a 7th, wager puzzle after
+  the six. Its phrase is a long one (14+ letters, 3+ words) from a category
+  the game hasn't used.
+  - **Wager:** everyone wagers up to their own score or the room's
+    **floor**, whichever is bigger. The floor is half the average score,
+    to the nearest hundred, at least 100 (Randy: "Let them play!"). It
+    counts for everyone, so a player at 100 is never worse off than one at
+    0, and a wrong answer never drops anyone below 0.
+  - **Tap rounds:** 4 rounds of 10s. Each phone taps a hidden tile, and
+    that player's avatar jumps onto it on the TV. A tap, not a drag, so
+    phones still poll and nothing new is needed. You can move until the
+    clock ends.
+  - **Flips:** every spotlighted tile flips, up to 3 a round, the most
+    popular first (ties at random). With 2-3 players everyone gets their
+    own pick; a crowd has to agree. A flip shows that one square, not
+    every copy of the letter. If nobody taps, one random tile flips.
+  - **Payout:** lock in a solve any time. Right pays 2x the wager before
+    any flip, 1.5x after one, 1x after that. Wrong (or no answer) loses
+    the wager. Answers stay secret until the results, which run lowest
+    score first (the leader last), then Game Over.
+  - **Pace:** a round ends early once everyone who hasn't locked in has a
+    tile down (after a 2s beat to move). A 10s last call follows the
+    flips; it's skipped once everyone has locked in.
+  - The numbers are `SPOTLIGHT_*` in `gameEngine.js`, first guesses.
 - **FLAG_ME_DOWN** (also a standalone mode, after the family asked where it
   went): 15 flags, 5 easy -> 5 medium -> 5 hard, each with 4 country choices
   (1 wrong answer from the same local region, 2 from the same continent).
