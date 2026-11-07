@@ -130,9 +130,111 @@ SELECT COUNT(*) FROM questions WHERE game_mode = 'TRIVI_YEAH_II' AND category = 
     return out.join('\n');
 }
 
+
+// ---------------------------------------------------------------------------
+// Letter Rip's puzzles (Randy, Nov 2026: "This one has legs"). One sheet,
+// content/letter_rip.csv: category, phrase, added, retired, notes. Builds
+// content/sql/letter_rip.sql, which replaces every puzzle. Not a Thinking
+// Pants category, so it stays out of ALL_CATEGORIES.sql.
+export const LETTER_RIP_FILE = 'letter_rip.csv';
+const LR_COLUMNS = ['category', 'phrase', 'added', 'retired', 'notes'];
+const LR_MIN_CATEGORIES = 7; // a game draws each puzzle from a different category
+// The TV board keeps each word whole on one line. A word wider than about 13
+// letter tiles (punctuation tiles are half width) runs off a 960x540 TV.
+const LR_MAX_WORD = 13, LR_MAX_LENGTH = 30;
+// Small words a phrase may share with its category ("On the Road").
+const LR_SMALL = new Set(['A', 'AN', 'THE', 'OF', 'ON', 'IN', 'AT', 'TO', 'AND', 'OR', 'IS', 'OUT', 'BY', 'FOR', 'UP', 'ONE']);
+const lrStem = w => w.replace(/'S$/, '').replace(/(IES)$/, 'Y').replace(/(ES|S)$/, '');
+
+export function checkLetterRip(file, rows) {
+    const problems = [], warnings = [];
+    const [header, ...body] = rows;
+    const missing = LR_COLUMNS.filter(c => !header.map(h => h.trim().toLowerCase()).includes(c));
+    if (missing.length) return { problems: [`${file}: missing columns: ${missing.join(', ')}`], warnings, puzzles: [] };
+    const col = Object.fromEntries(header.map((h, i) => [h.trim().toLowerCase(), i]));
+    const get = (r, c) => (r[col[c]] || '').trim();
+    const puzzles = [], seen = new Map();
+    body.forEach((r, i) => {
+        const line = i + 2;
+        const where = `${file} row ${line}`;
+        const category = get(r, 'category');
+        // Typed in any case; the board is capitals. Curly apostrophes become straight ones.
+        const phrase = get(r, 'phrase').toUpperCase().replace(/[’‘]/g, "'").replace(/\s+/g, ' ');
+        if (!category) problems.push(`${where}: no category`);
+        if (!phrase) { problems.push(`${where}: no phrase`); return; }
+        if (!/^[A-Z' -]+$/.test(phrase)) problems.push(`${where}: "${phrase}" can only use letters, spaces, apostrophes and hyphens (no numbers -- spell them out)`);
+        if (phrase.length > LR_MAX_LENGTH) problems.push(`${where}: "${phrase}" is ${phrase.length} characters; the most that fits the TV is ${LR_MAX_LENGTH}`);
+        phrase.split(' ').forEach(w => {
+            const width = w.replace(/[^A-Z]/g, '').length + w.replace(/[A-Z]/g, '').length / 2;
+            if (width > LR_MAX_WORD) problems.push(`${where}: "${w}" is too long to fit on one line of the TV board (${LR_MAX_WORD} letters at most)`);
+        });
+        // The category is the clue, so a phrase never repeats one of its real words.
+        const catWords = new Set(category.toUpperCase().replace(/[^A-Z ]/g, '').split(' ').filter(w => w && !LR_SMALL.has(w)).map(lrStem));
+        const shared = phrase.replace(/[^A-Z' ]/g, ' ').split(' ').filter(w => catWords.has(lrStem(w)));
+        if (shared.length) problems.push(`${where}: "${phrase}" repeats "${shared[0]}" from its category "${category}"`);
+        const key = phrase.replace(/[^A-Z]/g, '');
+        if (seen.has(key)) problems.push(`${where}: "${phrase}" is already on row ${seen.get(key)}`);
+        seen.set(key, line);
+        if (isRetired(get(r, 'retired'))) return;
+        puzzles.push({ category, phrase });
+    });
+    const counts = new Map();
+    puzzles.forEach(p => counts.set(p.category, (counts.get(p.category) || 0) + 1));
+    if (counts.size < LR_MIN_CATEGORIES) problems.push(`${file}: a game needs at least ${LR_MIN_CATEGORIES} categories with live puzzles (has ${counts.size})`);
+    return { problems, warnings, puzzles, counts };
+}
+
+export function letterRipSql(file, puzzles, counts) {
+    const out = [`-- ============================================================================
+-- content/sql/letter_rip.sql -- GENERATED, don't edit by hand.
+-- Made by content/build.mjs from content/${file}, the master copy of Letter
+-- Rip's puzzles. To change a puzzle, change the spreadsheet and rebuild.
+--
+-- Replaces EVERY Letter Rip puzzle with the spreadsheet's ${puzzles.length} live ones
+-- (${counts.size} categories), inside a transaction. Creates the table if needed.
+-- Safe to re-run. Touches nothing else.
+-- ============================================================================
+
+BEGIN;
+
+CREATE TABLE IF NOT EXISTS letter_rip_puzzles (
+    id        SERIAL PRIMARY KEY,
+    category  TEXT NOT NULL,
+    phrase    TEXT NOT NULL UNIQUE
+);
+
+DELETE FROM letter_rip_puzzles;
+`];
+    let cat = null;
+    puzzles.forEach(p => {
+        if (p.category !== cat) { out.push(`\n-- ${p.category} (${counts.get(p.category)})`); cat = p.category; }
+        out.push(`INSERT INTO letter_rip_puzzles (category, phrase) VALUES (${sq(p.category)}, ${sq(p.phrase)});`);
+    });
+    out.push(`
+COMMIT;
+
+-- Check: should return ${puzzles.length}.
+SELECT COUNT(*) FROM letter_rip_puzzles;
+`);
+    return out.join('\n');
+}
+
 if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
-    const files = fs.readdirSync(DIR).filter(f => f.endsWith('.csv')).sort();
+    const files = fs.readdirSync(DIR).filter(f => f.endsWith('.csv') && f !== LETTER_RIP_FILE).sort();
     let failed = false;
+    if (fs.existsSync(path.join(DIR, LETTER_RIP_FILE))) {
+        const { problems, warnings, puzzles, counts } = checkLetterRip(LETTER_RIP_FILE, parseCsv(fs.readFileSync(path.join(DIR, LETTER_RIP_FILE), 'utf8')));
+        warnings.forEach(w => console.log(`  note: ${w}`));
+        if (problems.length) {
+            failed = true;
+            problems.forEach(p => console.log(`  PROBLEM: ${p}`));
+            console.log(`${LETTER_RIP_FILE}: NOT built -- fix the problems above.`);
+        } else {
+            fs.mkdirSync(path.join(DIR, 'sql'), { recursive: true });
+            fs.writeFileSync(path.join(DIR, 'sql', 'letter_rip.sql'), letterRipSql(LETTER_RIP_FILE, puzzles, counts));
+            console.log(`${LETTER_RIP_FILE}: ${puzzles.length} live puzzles in ${counts.size} categories -> content/sql/letter_rip.sql`);
+        }
+    }
     for (const file of files) {
         const category = path.basename(file, '.csv').toUpperCase();
         const { problems, warnings, questions } = checkCategory(file, parseCsv(fs.readFileSync(path.join(DIR, file), 'utf8')));

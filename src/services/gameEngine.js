@@ -2677,15 +2677,15 @@ async function countryMonkeyFinalWagerClue(type, row) {
 // pot, which shrinks as the board fills. One try per puzzle; a wrong solve
 // costs the current pot (never below zero). No typo forgiveness (Randy: a
 // "close enough" would anger the room) -- only capitals, spaces and
-// punctuation are ignored. Puzzles: letter_rip_puzzles.sql. A wheel was
+// punctuation are ignored. Puzzles: content/letter_rip.csv. A wheel was
 // dropped on purpose: wheel + letter board + phrase is a TV show's format.
 const LETTER_RIP_PUZZLES_PER_GAME = 6; // about 10 minutes (Randy, Nov 2026)
-const LETTER_RIP_PICK_SECONDS = 12; // Randy, Nov 2026
+const LETTER_RIP_PICK_SECONDS = 15; // was 12; Randy, after the first family game: "pace is VERY fast"
 const LETTER_RIP_REVEALS_PER_ROUND = 2; // the room's top 2 correct letters; try 3 if long phrases drag
 const LETTER_RIP_LETTER_POINTS = 100; // per time the letter appears, split among its pickers
 const LETTER_RIP_POT_START = 1000; // shrinks with how much of the phrase is showing
 const LETTER_RIP_POT_MIN = 100;
-const LETTER_RIP_REVEAL_MS = 4000; // the reveal stays up this long before the next pick
+const LETTER_RIP_REVEAL_MS = 6000; // was 4s; the reveal is when people study the board and think about solving (Randy, Nov 2026)
 const LETTER_RIP_ALL_PICKED_MS = 1000; // short beat once everyone's picked
 const LETTER_RIP_DONE_MS = 7000; // the solved (or unsolved) board stays up this long
 

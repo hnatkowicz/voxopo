@@ -87,8 +87,6 @@
         .lr-solve-input { width: 100%; box-sizing: border-box; padding: 14px; background: var(--rm-surface-2); border: 1px solid var(--rm-border); border-radius: 8px; color: var(--rm-white); font-size: 1.05rem; text-transform: uppercase; margin-top: 16px; }
         /* Gold outline, not red: red means wrong (design rule). */
         .lr-solve-btn { background: transparent; color: var(--rm-brand); border: 1px solid var(--rm-brand); margin-top: 16px; }
-        .lr-confirm { margin-top: 14px; text-align: center; font-weight: 600; color: var(--rm-text-2); }
-        .lr-confirm strong { color: var(--rm-white); display: block; font-size: 1.1rem; margin-top: 4px; }
         /* Your answer before the reveal: white, not green, so it doesn't look
            "right" before anyone knows (Randy, Oct 2026). The reveal paints
            the real answer green and a wrong pick red. Votes keep .selected. */
@@ -2256,11 +2254,12 @@
         // Your own letters stay on your phone: green = in the phrase (x2 if
         // twice), red = not in it, gold outline = already on the TV. One
         // pick a round; one solve a puzzle, spelled exactly (capitals,
-        // spaces and punctuation don't matter), with a confirm step since
-        // there's no typo forgiveness.
+        // spaces and punctuation don't matter). No confirm step: Randy cut it
+        // after the first family game ("an extra step in a FAST game"); the
+        // box shows what you typed in big letters before you press Lock in.
         const LR_KEY_ROWS = ['QWERTYUIOP', 'ASDFGHJKL', 'ZXCVBNM'];
         let lrLastKey = null;
-        let lrSolveStep = null;   // null | 'typing' | 'confirm'
+        let lrSolveStep = null;   // null | 'typing'
         let lrSolveText = '';
         let lrSolvePuzzle = null;
 
@@ -2308,17 +2307,10 @@
             if (lrSolveStep === 'typing') {
                 if (document.getElementById('lr-solve-input')) return; // don't wipe what's being typed
                 area.innerHTML = `
-                    <input type="text" id="lr-solve-input" class="lr-solve-input" placeholder="Type the whole phrase" autocomplete="off" autocorrect="off" spellcheck="false" autocapitalize="characters" value="${lrEsc(lrSolveText)}" oninput="lrSolveText = this.value">
+                    <input type="text" id="lr-solve-input" class="lr-solve-input" placeholder="Type the whole phrase" autocomplete="off" autocorrect="off" spellcheck="false" autocapitalize="characters" value="${lrEsc(lrSolveText)}" oninput="lrSolveText = this.value" onkeydown="if (event.key === 'Enter') lrSolveReview()">
                     <button class="btn" style="margin-top: 12px;" onclick="lrSolveReview()">Lock in</button>
                     <button class="btn btn-skip" style="margin-top: 10px;" onclick="lrSolveCancel()">Cancel</button>`;
                 document.getElementById('lr-solve-input').focus();
-                return;
-            }
-            if (lrSolveStep === 'confirm') {
-                area.innerHTML = `
-                    <div class="lr-confirm">Lock this in? One try, spelled exactly.<strong>${lrEsc(lrSolveText.toUpperCase())}</strong></div>
-                    <button class="btn" style="margin-top: 12px;" onclick="lrSolveSubmit()">Yes, solve it</button>
-                    <button class="btn btn-skip" style="margin-top: 10px;" onclick="lrSolveEdit()">Edit</button>`;
                 return;
             }
             area.innerHTML = `<button class="btn lr-solve-btn" onclick="lrSolveOpen()">Solve the puzzle</button>`;
@@ -2326,13 +2318,11 @@
 
         function lrSolveOpen() { lrSolveStep = 'typing'; lrFeedback(''); lrLastKey = null; document.getElementById('lr-solve-area').innerHTML = ''; lrRenderFromLast(); }
         function lrSolveCancel() { lrSolveStep = null; lrSolveText = ''; document.getElementById('lr-solve-area').innerHTML = ''; lrRenderFromLast(); }
-        function lrSolveEdit() { lrSolveStep = 'typing'; document.getElementById('lr-solve-area').innerHTML = ''; lrRenderFromLast(); }
         function lrSolveReview() {
             const input = document.getElementById('lr-solve-input');
             lrSolveText = input ? input.value : lrSolveText;
             if (!lrSolveText.replace(/[^A-Za-z]/g, '')) return;
-            lrSolveStep = 'confirm';
-            lrRenderFromLast();
+            lrSolveSubmit();
         }
         async function lrSolveSubmit() {
             const text = lrSolveText;

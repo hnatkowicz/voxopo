@@ -10,3 +10,8 @@ Thinking Pants question, including Country Monkey, Flag Me Down, Wet Pants,
 the Final Wager and the venues' house sets.
 
 They're kept only as history.
+
+`letter_rip_puzzles.sql` is Letter Rip's first 102 puzzles (Nov 2026). They
+moved to `content/letter_rip.csv`, and its SQL is now
+`content/sql/letter_rip.sql`. Running the old file would bring back only
+the first 102 puzzles.
