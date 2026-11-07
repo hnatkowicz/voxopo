@@ -736,7 +736,11 @@ and forth until we both agree the idea is good **and** worth the effort. So:
   likenesses are off the table for a paid pub game.
 - **Category depth (Randy, Oct 2026):** every text category has at least
   20 questions per tier. Science & Nature and Astronomy & Space are at 30
-  per tier (Nov 2026: "we're nerds"). The family's favorites are school subjects
+  per tier (Nov 2026: "we're nerds"). **New bar (Randy, Nov 2026): 200
+  per category, 50 per tier**, except the niche four that stay at 80.
+  Science & Nature reached it first (Nov 2026: +80, leaning on earth
+  science, weather, chemistry, physics and plants, since Cell Mates has
+  the animals and the body). The family's favorites are school subjects
   (biology, astronomy, the World Wars, US history) and pop culture; new
   categories get pun names. Next, separate pop-culture categories (**Video
   Games**, **Cartoons & Kids' TV**, **Pop Culture**: celebrities, viral
