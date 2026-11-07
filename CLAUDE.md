@@ -573,8 +573,10 @@ Mode keys are used in room votes and in `gameEngine.js`:
   board + phrase is that show's format) and a **shrinking pot** replaced
   it. 6 puzzles a game, one per category. Puzzles live in a spreadsheet,
   `content/letter_rip.csv` (Randy: "This one has legs"). `build.mjs` checks
-  it and writes `content/sql/letter_rip.sql` (its own table): 600 puzzles
-  in 30 categories (Nov 2026), and more are welcome. Play Again avoids
+  it and writes `content/sql/letter_rip.sql` (its own table): 1,200 puzzles,
+  40 in each of 30 categories (Nov 2026: 102, then 600, then 1,200 after
+  the family played four games in a row). The aim is 1,500-2,000 or
+  more. Play Again avoids
   puzzles this room has played (`room.letterRipPlayed`). Each round,
   everyone secretly picks one letter on their phone at once. The pick
   clock is 15s and the reveal holds 6s (Randy: "pace is VERY fast" at
@@ -621,7 +623,7 @@ Mode keys are used in room votes and in `gameEngine.js`:
   - **First family verdict (Nov 2026):** four games in a row; Randy's wife
     "said it's everything she'd want in a game." Randy's icon
     (`mode-letter-rip.svg`) is staying. **Top content need: many more
-    phrases.** **To look into:** Randy saw the phrase tiles "jumping a
+    phrases** (1,200 so far). **To look into:** Randy saw the phrase tiles "jumping a
     little" (too fast to tell when or why; he'll watch again). Claude's
     guess: the stage is centered top to bottom, so when the line under
     the board changes height ("3 / 4 picked", then the letter chips, then
