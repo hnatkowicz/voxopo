@@ -89,6 +89,7 @@ if (btnSubmitSpectate) {
         // question (TRANSITION_TO_QUESTION); 'answered' set on ANSWER_SUBMITTED;
         // resolved to 'correct' or deleted on REVEAL_CORRECT_ANSWER.
         let playerAnswerStatus = {};
+        let letterRipRoundKey = null; // which Letter Rip pick round the "picked" dots belong to
         let currentStatusHtml = ''; // Whatever the status slot should show at rest for the current phase (toasts restore to this)
         let contentWarningHideTimer = null; // set while a notice is showing in the status slot
         let contentWarningHtml = '';
@@ -821,6 +822,24 @@ if (btnSubmitSpectate) {
                 // ---------- Profiler ----------
                 // Lock-in dots: ANSWER_SUBMITTED (shared with every mode, above)
                 // marks answers; PROFILER_GUESS_SUBMITTED marks picks.
+                // ---------- Letter Rip ----------
+                // One message carries the whole public board; each new pick
+                // round clears the scoreboard's "picked" dots.
+                if (data.type === 'LETTER_RIP_STATE') {
+                    const roundKey = `${data.puzzle}-${data.round}-${data.lrPhase}`;
+                    if (data.lrPhase === 'PICK' && letterRipRoundKey !== roundKey && !data.pickedCount) {
+                        playerAnswerStatus = {};
+                        updateLeaderboardUI(cachedPlayersSnapshot);
+                    }
+                    letterRipRoundKey = roundKey;
+                    renderLetterRipTV(data);
+                }
+                if (data.type === 'LETTER_RIP_TICK') {
+                    setClock(data.secondsLeft);
+                    // The TV's usual last-seconds cue (design rule 5).
+                    if (Number(data.secondsLeft) === 3) playAudioTrack('answer-warning-sound');
+                }
+
                 // ---------- Flag Me Down ----------
                 if (data.type === 'FLAG_ME_DOWN_ROUND') {
                     currentGamePhase = 'FLAG_ME_DOWN'; // before the standings refresh below, or it re-posts the lobby's "Press Start" line
@@ -968,7 +987,7 @@ if (btnSubmitSpectate) {
         // ROOM_VENUE first, and a mid-game join's STATE_CATCH_UP follows.
         // Country Monkey and Trivi-yeah! too (Nov 2026): their region/deck
         // vote and their questions.
-        const TP_LAYOUT_ON = new Set(['ROOM_CLOSED', 'ROOM_VENUE', 'RETURN_TO_LOBBY', 'TRANSITION_TO_CATEGORY_VOTE', 'TRANSITION_TO_QUESTION', 'FLAG_ME_DOWN_ROUND', 'PROFILER_QUESTION', 'EMPOSSDURR_ROUND_START', 'ON_THE_SPECTRUM_ROUND_START', 'GAME_OVER']);
+        const TP_LAYOUT_ON = new Set(['ROOM_CLOSED', 'ROOM_VENUE', 'RETURN_TO_LOBBY', 'TRANSITION_TO_CATEGORY_VOTE', 'TRANSITION_TO_QUESTION', 'FLAG_ME_DOWN_ROUND', 'PROFILER_QUESTION', 'EMPOSSDURR_ROUND_START', 'ON_THE_SPECTRUM_ROUND_START', 'LETTER_RIP_STATE', 'GAME_OVER']);
         // Every screen uses the new layout now (Nov 2026); kept for any
         // future screen that isn't ready for it.
         const TP_LAYOUT_OFF = new Set([]);
@@ -976,7 +995,7 @@ if (btnSubmitSpectate) {
             let on = null;
             if (data.type === 'TRANSITION_TO_TRIVI_YEAH_II' || /^TRIVI_YEAH_II_(?!FINAL_)/.test(data.type) || TP_LAYOUT_ON.has(data.type)) on = true;
             else if (TP_LAYOUT_OFF.has(data.type)) on = false;
-            else if (data.type === 'STATE_CATCH_UP') on = ['TRIVI_YEAH_II_ROUND', 'CATEGORY_VOTE', 'GAME_ROUND', 'ROUND_REVEAL', 'FLAG_ME_DOWN_ROUND', 'PROFILER_ROUND', 'EMPOSSDURR_ROUND', 'ON_THE_SPECTRUM_ROUND'].includes(data.gameState);
+            else if (data.type === 'STATE_CATCH_UP') on = ['TRIVI_YEAH_II_ROUND', 'CATEGORY_VOTE', 'GAME_ROUND', 'ROUND_REVEAL', 'FLAG_ME_DOWN_ROUND', 'PROFILER_ROUND', 'EMPOSSDURR_ROUND', 'ON_THE_SPECTRUM_ROUND', 'LETTER_RIP_ROUND'].includes(data.gameState);
             if (on === null || on === document.body.classList.contains('tp-layout')) return;
             document.body.classList.toggle('tp-layout', on);
             railMoves = {};
@@ -1841,6 +1860,60 @@ function switchToOnTheSpectrumRevealUI(namedPlayerName, statementText, targetVal
 function updateOnTheSpectrumContinueTallyTV(votedCount, totalNeeded) {
     const el = document.getElementById('ots-tv-continue-tally');
     if (el) el.innerText = `${votedCount ?? 0} / ${totalNeeded ?? 0} ready`;
+}
+
+// ==========================================
+// LETTER RIP TV UI (Randy, Nov 2026)
+// ==========================================
+// The board gets the room: the category (the clue) and the phrase as tiles,
+// each word kept whole on its line. What a solve is worth and how many have
+// picked stay small underneath, and the clock lives in the top bar. Picks
+// are secret, so the TV only ever shows what the room has earned: the
+// letters it lit, how many picked each, and who solved it.
+let letterRipShown = { puzzle: null, letters: new Set() };
+
+function letterRipTilesHtml(tiles, fresh) {
+    return tiles.map(word => `<span class="lr-word">${word.map(ch => {
+        if (ch === '') return '<span class="lr-tile"></span>';
+        if (!/[A-Z]/.test(ch)) return `<span class="lr-tile lr-punct">${escapeHtml(ch)}</span>`;
+        return `<span class="lr-tile lr-lit${fresh.has(ch) ? ' lr-new' : ''}">${ch}</span>`;
+    }).join('')}</span>`).join('');
+}
+
+function renderLetterRipTV(data) {
+    const panel = document.getElementById('active-content-stage');
+    currentGamePhase = 'LETTER_RIP';
+    setStatusMessage('');
+    if (letterRipShown.puzzle !== data.puzzle) letterRipShown = { puzzle: data.puzzle, letters: new Set() };
+    // Letters showing now that weren't a moment ago flip in.
+    const showing = new Set(data.tiles.flat().filter(ch => /[A-Z]/.test(ch)));
+    const fresh = new Set([...showing].filter(ch => !letterRipShown.letters.has(ch)));
+    letterRipShown.letters = showing;
+
+    let foot = '';
+    if (data.lrPhase === 'DONE') {
+        foot = data.solver
+            ? `<div class="lr-solver">${avatarHtml(data.solver.emoji, 1)}<span class="lr-solver-name">${escapeHtml(data.solver.name)}</span><span class="lr-solver-points">+${data.solver.points.toLocaleString('en-US')}</span></div>`
+            : `<div class="lr-note">Nobody solved it</div>`;
+    } else if (data.lrPhase === 'REVEAL') {
+        const lit = (data.lastReveal || []).map(r => `<span class="lr-chip">${r.letter}<span class="lr-chip-count">${r.pickers} picked</span></span>`).join('');
+        const free = data.freeLetter ? `<span class="lr-chip lr-chip-free">${data.freeLetter}<span class="lr-chip-count">no hits, a free letter</span></span>` : '';
+        foot = `<div class="lr-chips">${lit}${free}</div>`;
+    } else {
+        foot = `<div class="lr-note">${data.pickedCount ? `${data.pickedCount} / ${data.playerCount} picked` : '&nbsp;'}</div>`;
+    }
+    const wrong = data.wrong && data.lrPhase !== 'DONE'
+        ? `<div class="lr-wrong">${avatarHtml(data.wrong.emoji, 1)} ${escapeHtml(data.wrong.name)} guessed wrong</div>` : '';
+
+    panel.innerHTML = tpStage('tp-center lr-stage', `
+        <div class="tp-eyebrow">Puzzle <span class="tp-pts">${data.puzzle} / ${data.total}</span>${data.lrPhase !== 'DONE' ? ` &middot; Worth <span class="tp-pts">${data.pot.toLocaleString('en-US')}</span>` : ''}</div>
+        <div class="lr-category">${escapeHtml(data.category)}</div>
+        <div class="lr-board">${letterRipTilesHtml(data.tiles, fresh)}</div>
+        ${foot}
+        ${wrong}
+    `);
+    if (data.lrPhase === 'PICK') setClock(data.secondsLeft);
+    else setClock('');
 }
 
 // ==========================================

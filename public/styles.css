@@ -886,3 +886,25 @@ body.tp-layout[data-view="gateway"] #gateway-screen { display: flex !important; 
    each bulb) twinkle slowly, each at its own pace, a few at a time. */
 .tv-theme-glow { animation-name: tv-theme-twinkle; animation-timing-function: ease-in-out; animation-iteration-count: infinite; animation-direction: alternate; }
 @keyframes tv-theme-twinkle { from { opacity: 0.12; } to { opacity: 0.85; } }
+
+/* ---------- Letter Rip, the letter race (Randy, Nov 2026) ----------
+   The board is the reading moment: tiles about 4u, words kept whole. */
+.lr-stage { gap: calc(var(--u) * 1.6); }
+.lr-category { font-family: var(--rm-font-display); font-weight: 800; font-size: calc(var(--u) * 2.6); color: var(--rm-brand); text-align: center; }
+.lr-board { display: flex; flex-wrap: wrap; justify-content: center; gap: calc(var(--u) * 1.2) calc(var(--u) * 2.4); max-width: 92%; margin: 0 auto; }
+.lr-word { display: inline-flex; gap: calc(var(--u) * 0.45); white-space: nowrap; }
+.lr-tile { width: calc(var(--u) * 4); height: calc(var(--u) * 5); display: inline-flex; align-items: center; justify-content: center;
+    border-radius: calc(var(--u) * 0.5); background: var(--rm-surface); border: calc(var(--u) * 0.15) solid var(--rm-border);
+    font-family: var(--rm-font-display); font-weight: 800; font-size: calc(var(--u) * 2.8); color: var(--rm-bg); box-sizing: border-box; }
+.lr-tile.lr-lit { background: var(--rm-text); border-color: var(--rm-text); }
+.lr-tile.lr-punct { background: transparent; border-color: transparent; color: var(--rm-text); width: calc(var(--u) * 1.8); }
+.lr-tile.lr-new { animation: lr-flip 0.7s ease-out both; box-shadow: 0 0 calc(var(--u) * 1.2) rgba(var(--rm-brand-rgb), 0.7); }
+@keyframes lr-flip { from { transform: rotateX(90deg); background: var(--rm-brand); } to { transform: none; } }
+.lr-note { font-size: calc(var(--u) * 1.3); font-weight: 600; color: var(--rm-text-soft); min-height: 1.4em; text-align: center; }
+.lr-chips { display: flex; justify-content: center; gap: calc(var(--u) * 2); min-height: calc(var(--u) * 3); }
+.lr-chip { display: inline-flex; align-items: baseline; gap: calc(var(--u) * 0.7); font-family: var(--rm-font-display); font-weight: 800; font-size: calc(var(--u) * 2.2); color: var(--rm-brand); }
+.lr-chip-count { font-family: var(--rm-font-body); font-weight: 600; font-size: calc(var(--u) * 1.2); color: var(--rm-text-soft); }
+.lr-solver { display: flex; align-items: center; justify-content: center; gap: calc(var(--u) * 1.2); font-size: calc(var(--u) * 4); }
+.lr-solver-name { font-family: var(--rm-font-display); font-weight: 800; font-size: calc(var(--u) * 3); color: var(--rm-text); }
+.lr-solver-points { font-weight: 800; font-size: calc(var(--u) * 2.4); color: var(--rm-brand); }
+.lr-wrong { display: flex; align-items: center; justify-content: center; gap: calc(var(--u) * 0.6); font-size: calc(var(--u) * 1.3); color: var(--rm-text-soft); }

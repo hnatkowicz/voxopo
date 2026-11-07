@@ -5,7 +5,7 @@ export const activeRooms = {};
 
 // Every votable game mode. The display side (names, blurbs, icons) lives in
 // public/modes.js -- keep the keys in step when adding a mode.
-export const GAME_MODE_KEYS = ['TRIVI_YEAH', 'TRIVI_YEAH_II', 'COUNTRY_MONKEY', 'FLAG_ME_DOWN', 'EMPOSSDURR', 'ON_THE_SPECTRUM', 'PROFILER'];
+export const GAME_MODE_KEYS = ['TRIVI_YEAH', 'TRIVI_YEAH_II', 'COUNTRY_MONKEY', 'FLAG_ME_DOWN', 'LETTER_RIP', 'EMPOSSDURR', 'ON_THE_SPECTRUM', 'PROFILER'];
 // A venue's access code can limit which modes its rooms offer (a pub shows
 // only a few) -- the vote tally only ever has those keys, so a vote for any
 // other mode simply never counts.
@@ -386,6 +386,15 @@ function startGameForMode(roomCode, winningModule) {
         startProfilerGame(roomCode).catch(error => {
             console.error(`❌ [Profiler] Failed to start Room ${roomCode}:`, error.message);
             broadcastContentUnavailable(roomCode, 'Profiler');
+            resetRoomToLobby(roomCode);
+        });
+        return;
+    }
+
+    if (winningModule === 'LETTER_RIP') {
+        startLetterRipGame(roomCode).catch(error => {
+            console.error(`❌ [Letter Rip] Failed to start Room ${roomCode}:`, error.message);
+            broadcastContentUnavailable(roomCode, 'Letter Rip');
             resetRoomToLobby(roomCode);
         });
         return;
@@ -885,6 +894,8 @@ function endGame(roomCode) {
             ? `${room.profiler ? Math.min(room.profiler.round, room.profiler.totalRounds) : 0} rounds`
         : room.winningGameMode === 'FLAG_ME_DOWN'
             ? `${room.flagMeDown ? Math.min(room.flagMeDown.roundIndex + 1, room.flagMeDown.totalRounds) : 0} flags`
+        : room.winningGameMode === 'LETTER_RIP'
+            ? `${room.letterRip ? Math.min(room.letterRip.index + 1, room.letterRip.total) : 0} puzzles`
             : `${room.questionBank.length} questions`;
     console.log(`🏁 [Game Engine] Room ${roomCode} finished ${roundsPlayedDescription}. Broadcasting final leaderboard.`);
 
@@ -2652,6 +2663,300 @@ async function countryMonkeyFinalWagerClue(type, row) {
 // Final Wager where you can buy the same clues privately on your phone.
 // Content: flag_me_down_countries (flag_me_down_countries.sql) -- countries
 // only, each with a flag, a map, a local region and a capital.
+// ==========================================
+// LETTER RIP (working name; Randy, Nov 2026)
+// ==========================================
+// A letter race: a hidden phrase and its category, everyone playing at once.
+// Each 12-second round, every player secretly picks a letter on their phone
+// and learns privately whether it's in the phrase (and how many times). The
+// TV then reveals only the room's two most-picked letters that are in it, so
+// the board fills at the same pace for 3 players or 30. A correct letter is
+// worth points per time it appears, split among everyone who picked it -- so
+// a lone bold pick keeps it all and a vowel everyone picked pays little.
+// Anyone can solve at any time by typing: the first right answer wins the
+// pot, which shrinks as the board fills. One try per puzzle; a wrong solve
+// costs the current pot (never below zero). No typo forgiveness (Randy: a
+// "close enough" would anger the room) -- only capitals, spaces and
+// punctuation are ignored. Puzzles: letter_rip_puzzles.sql. A wheel was
+// dropped on purpose: wheel + letter board + phrase is a TV show's format.
+const LETTER_RIP_PUZZLES_PER_GAME = 6; // about 10 minutes (Randy, Nov 2026)
+const LETTER_RIP_PICK_SECONDS = 12; // Randy, Nov 2026
+const LETTER_RIP_REVEALS_PER_ROUND = 2; // the room's top 2 correct letters; try 3 if long phrases drag
+const LETTER_RIP_LETTER_POINTS = 100; // per time the letter appears, split among its pickers
+const LETTER_RIP_POT_START = 1000; // shrinks with how much of the phrase is showing
+const LETTER_RIP_POT_MIN = 100;
+const LETTER_RIP_REVEAL_MS = 4000; // the reveal stays up this long before the next pick
+const LETTER_RIP_ALL_PICKED_MS = 1000; // short beat once everyone's picked
+const LETTER_RIP_DONE_MS = 7000; // the solved (or unsolved) board stays up this long
+
+const letterRipLetters = phrase => phrase.replace(/[^A-Z]/g, '');
+
+function letterRipPot(lr) {
+    const all = letterRipLetters(lr.phrase);
+    const hidden = [...all].filter(ch => !lr.revealed.has(ch)).length;
+    const pot = Math.round((LETTER_RIP_POT_START * hidden / Math.max(1, all.length)) / 50) * 50;
+    return Math.max(LETTER_RIP_POT_MIN, pot);
+}
+
+// The board as words of tiles: a letter shows once revealed (or at the end),
+// punctuation shows from the start, '' is a hidden tile.
+function letterRipTiles(lr) {
+    const showAll = lr.phase === 'DONE';
+    return lr.phrase.split(' ').map(word => [...word].map(ch => /[A-Z]/.test(ch) ? (showAll || lr.revealed.has(ch) ? ch : '') : ch));
+}
+
+async function startLetterRipGame(roomCode) {
+    const room = activeRooms[roomCode];
+    if (!room) return;
+    const result = await pool.query('SELECT category, phrase FROM letter_rip_puzzles');
+    const all = result.rows.map(r => ({ category: r.category, phrase: String(r.phrase).toUpperCase().trim() }));
+    // Puzzles this room hasn't played yet (room memory only); start over once
+    // it has played them all.
+    room.letterRipPlayed = room.letterRipPlayed || new Set();
+    let fresh = all.filter(p => !room.letterRipPlayed.has(p.phrase));
+    if (fresh.length < LETTER_RIP_PUZZLES_PER_GAME) { room.letterRipPlayed.clear(); fresh = all; }
+    // One puzzle per category, so a game is six different clues.
+    const puzzles = [];
+    const usedCategories = new Set();
+    for (const p of shuffleArray(fresh)) {
+        if (puzzles.length >= LETTER_RIP_PUZZLES_PER_GAME) break;
+        if (usedCategories.has(p.category)) continue;
+        usedCategories.add(p.category);
+        puzzles.push(p);
+    }
+    if (puzzles.length < LETTER_RIP_PUZZLES_PER_GAME) throw new Error(`Letter Rip needs ${LETTER_RIP_PUZZLES_PER_GAME} puzzles from different categories, found ${puzzles.length}.`);
+    room.gameState = 'LETTER_RIP_ROUND';
+    room.letterRip = { puzzles, index: -1, total: puzzles.length };
+    console.log(`[Letter Rip] Room ${roomCode} starting ${puzzles.length} puzzles.`);
+    startLetterRipPuzzle(roomCode);
+}
+
+function startLetterRipPuzzle(roomCode) {
+    const room = activeRooms[roomCode];
+    if (!room || !room.letterRip) return;
+    const lr = room.letterRip;
+    lr.index++;
+    if (lr.index >= lr.total) { endGame(roomCode); return; }
+    const puzzle = lr.puzzles[lr.index];
+    room.letterRipPlayed.add(puzzle.phrase);
+    Object.assign(lr, {
+        phrase: puzzle.phrase,
+        category: puzzle.category,
+        revealed: new Set(),
+        banks: {},          // name -> { LETTER: times it appears (0 = not in it) }, private
+        solveTried: new Set(),
+        round: 0,
+        picks: {},
+        lastPicks: {},      // name -> { letter, count, points } from the last reveal
+        lastReveal: [],     // [{ letter, pickers }] the TV just lit
+        freeLetter: null,   // a letter shown when no pick hit, so every round moves
+        solver: null,
+        wrong: null,        // the latest wrong solve, for a short TV note
+        phase: 'PICK'
+    });
+    Object.values(room.players).filter(p => !p.left).forEach(p => { p.questionsFaced = (p.questionsFaced || 0) + 1; });
+    startLetterRipPickRound(roomCode);
+}
+
+function startLetterRipPickRound(roomCode) {
+    const room = activeRooms[roomCode];
+    const lr = room && room.letterRip;
+    if (!lr) return;
+    lr.phase = 'PICK';
+    lr.round++;
+    lr.picks = {};
+    lr.wrong = null;
+    room.gameSecondsLeft = LETTER_RIP_PICK_SECONDS;
+    if (room.timerInterval) clearInterval(room.timerInterval);
+    broadcastLetterRipState(roomCode);
+    const puzzleAtStart = lr.index;
+    room.timerInterval = setInterval(() => {
+        if (room.letterRip !== lr || lr.index !== puzzleAtStart || lr.phase !== 'PICK') { clearInterval(room.timerInterval); room.timerInterval = null; return; }
+        room.gameSecondsLeft = Math.max(0, room.gameSecondsLeft - 1);
+        broadcastToRoom(roomCode, { type: 'LETTER_RIP_TICK', secondsLeft: room.gameSecondsLeft });
+        if (room.gameSecondsLeft <= 0) revealLetterRipRound(roomCode);
+    }, 1000);
+}
+
+function revealLetterRipRound(roomCode) {
+    const room = activeRooms[roomCode];
+    const lr = room && room.letterRip;
+    if (!lr || lr.phase !== 'PICK') return;
+    if (room.timerInterval) { clearInterval(room.timerInterval); room.timerInterval = null; }
+    if (room.revealTimeout) { clearTimeout(room.revealTimeout); room.revealTimeout = null; }
+    room.gameSecondsLeft = null;
+    lr.phase = 'REVEAL';
+    const letters = letterRipLetters(lr.phrase);
+    const occurrences = letter => [...letters].filter(ch => ch === letter).length;
+    // Who picked what this round.
+    const pickers = {};
+    Object.entries(lr.picks).forEach(([name, letter]) => { (pickers[letter] = pickers[letter] || []).push(name); });
+    // Points: each correct letter's worth, split among its pickers.
+    lr.lastPicks = {};
+    Object.entries(pickers).forEach(([letter, names]) => {
+        const count = occurrences(letter);
+        const share = count ? Math.round(LETTER_RIP_LETTER_POINTS * count / names.length) : 0;
+        names.forEach(name => {
+            const player = room.players[name];
+            (lr.banks[name] = lr.banks[name] || {})[letter] = count;
+            lr.lastPicks[name] = { letter, count, points: share };
+            if (player && share) player.score += share;
+        });
+    });
+    // The TV lights the room's most-picked correct letters (ties at random).
+    const correct = shuffleArray(Object.keys(pickers).filter(l => occurrences(l) && !lr.revealed.has(l)))
+        .sort((a, b) => pickers[b].length - pickers[a].length)
+        .slice(0, LETTER_RIP_REVEALS_PER_ROUND);
+    lr.lastReveal = correct.map(letter => ({ letter, pickers: pickers[letter].length }));
+    correct.forEach(l => lr.revealed.add(l));
+    // Nobody hit: one hidden letter shows anyway, so every round moves on.
+    lr.freeLetter = null;
+    if (!correct.length) {
+        const hidden = [...new Set(letters)].filter(l => !lr.revealed.has(l));
+        if (hidden.length) { lr.freeLetter = shuffleArray(hidden)[0]; lr.revealed.add(lr.freeLetter); }
+    }
+    broadcastLetterRipState(roomCode);
+    broadcastToRoom(roomCode, { type: 'LEADERBOARD_UPDATE', players: Object.values(room.players).filter(p => !p.left) });
+    const allShowing = [...letters].every(l => lr.revealed.has(l));
+    const puzzleAtReveal = lr.index;
+    room.revealTimeout = setTimeout(() => {
+        room.revealTimeout = null;
+        if (room.letterRip !== lr || lr.index !== puzzleAtReveal || lr.phase !== 'REVEAL') return;
+        if (allShowing) finishLetterRipPuzzle(roomCode, null);
+        else startLetterRipPickRound(roomCode);
+    }, LETTER_RIP_REVEAL_MS);
+}
+
+function finishLetterRipPuzzle(roomCode, solverName) {
+    const room = activeRooms[roomCode];
+    const lr = room && room.letterRip;
+    if (!lr || lr.phase === 'DONE') return;
+    if (room.timerInterval) { clearInterval(room.timerInterval); room.timerInterval = null; }
+    if (room.revealTimeout) { clearTimeout(room.revealTimeout); room.revealTimeout = null; }
+    room.gameSecondsLeft = null;
+    const pot = letterRipPot(lr);
+    if (solverName && room.players[solverName]) {
+        const solver = room.players[solverName];
+        solver.score += pot;
+        solver.correctAnswers = (solver.correctAnswers || 0) + 1;
+        lr.solver = { name: solverName, emoji: solver.emoji || null, points: pot };
+    }
+    lr.phase = 'DONE';
+    setPhoneRecap(room, {
+        label: `Puzzle ${lr.index + 1}`,
+        answer: lr.phrase,
+        answered: lr.solver ? [lr.solver.name] : [],
+        right: lr.solver ? [lr.solver.name] : [],
+        best: lr.solver ? { name: lr.solver.name, points: lr.solver.points } : null
+    });
+    broadcastLetterRipState(roomCode);
+    broadcastToRoom(roomCode, { type: 'LEADERBOARD_UPDATE', players: Object.values(room.players).filter(p => !p.left) });
+    const puzzleAtDone = lr.index;
+    room.revealTimeout = setTimeout(() => {
+        room.revealTimeout = null;
+        if (room.letterRip === lr && lr.index === puzzleAtDone) startLetterRipPuzzle(roomCode);
+    }, LETTER_RIP_DONE_MS);
+}
+
+// LRPICK <letter> or LRSOLVE <phrase>, from a phone.
+function handleLetterRipAction(roomCode, room, playerName, cleanText) {
+    const lr = room.letterRip;
+    const pick = /^LRPICK\s+([A-Za-z])$/.exec(cleanText);
+    if (pick) {
+        const letter = pick[1].toUpperCase();
+        if (lr.phase !== 'PICK') return `⚠️ Wait for the next round to pick.`;
+        if (playerName in lr.picks) return `⚠️ You already picked ${lr.picks[playerName]} this round.`;
+        if (lr.revealed.has(letter)) return `⚠️ ${letter} is already on the board.`;
+        if (lr.banks[playerName] && letter in lr.banks[playerName]) return `⚠️ You already tried ${letter}.`;
+        lr.picks[playerName] = letter;
+        broadcastToRoom(roomCode, { type: 'ANSWER_SUBMITTED', playerName });
+        broadcastLetterRipState(roomCode);
+        checkLetterRipAllPicked(roomCode);
+        return `Picked ${letter}.`;
+    }
+    const solve = /^LRSOLVE\s+(.+)$/s.exec(cleanText);
+    if (solve) {
+        if (lr.phase === 'DONE') return `⚠️ This puzzle is over.`;
+        if (lr.solveTried.has(playerName)) return `⚠️ You've had your one try on this puzzle.`;
+        lr.solveTried.add(playerName);
+        // Only capitals, spaces and punctuation are ignored; spelling must be exact.
+        const guess = solve[1].toUpperCase().replace(/[^A-Z]/g, '');
+        if (guess && guess === letterRipLetters(lr.phrase)) {
+            finishLetterRipPuzzle(roomCode, playerName);
+            return `Solved! +${room.letterRip.solver ? room.letterRip.solver.points : 0}`;
+        }
+        const pot = letterRipPot(lr);
+        const player = room.players[playerName];
+        const lost = player ? Math.min(player.score, pot) : 0;
+        if (player) player.score -= lost;
+        lr.wrong = { name: playerName, emoji: player ? player.emoji || null : null };
+        broadcastLetterRipState(roomCode);
+        broadcastToRoom(roomCode, { type: 'LEADERBOARD_UPDATE', players: Object.values(room.players).filter(p => !p.left) });
+        return lost ? `⚠️ Not it. -${lost} points. Keep picking letters.` : `⚠️ Not it. Keep picking letters.`;
+    }
+    return `⚠️ That action isn't available right now.`;
+}
+
+// Everyone still here has picked (after a pick, or someone leaving): reveal
+// after a short beat instead of waiting out the clock.
+function checkLetterRipAllPicked(roomCode) {
+    const room = activeRooms[roomCode];
+    const lr = room && room.letterRip;
+    if (!lr || lr.phase !== 'PICK') return;
+    const active = Object.values(room.players).filter(p => !p.left);
+    if (active.length && active.every(p => p.name in lr.picks)) {
+        if (room.revealTimeout) clearTimeout(room.revealTimeout);
+        room.revealTimeout = setTimeout(() => { room.revealTimeout = null; revealLetterRipRound(roomCode); }, LETTER_RIP_ALL_PICKED_MS);
+    }
+}
+
+// What the TV shows: the board, never a hidden letter or anyone's pick.
+export function letterRipTvState(room) {
+    const lr = room.letterRip;
+    if (!lr) return null;
+    const active = Object.values(room.players).filter(p => !p.left);
+    return {
+        type: 'LETTER_RIP_STATE',
+        puzzle: lr.index + 1,
+        total: lr.total,
+        category: lr.category,
+        tiles: letterRipTiles(lr),
+        lrPhase: lr.phase,
+        round: lr.round,
+        pot: letterRipPot(lr),
+        secondsLeft: lr.phase === 'PICK' ? room.gameSecondsLeft : null,
+        pickedCount: Object.keys(lr.picks).length,
+        playerCount: active.length,
+        lastReveal: lr.phase === 'REVEAL' ? lr.lastReveal : [],
+        freeLetter: lr.phase === 'REVEAL' ? lr.freeLetter : null,
+        solver: lr.solver,
+        wrong: lr.wrong
+    };
+}
+
+function broadcastLetterRipState(roomCode) {
+    const room = activeRooms[roomCode];
+    if (room && room.letterRip) broadcastToRoom(roomCode, letterRipTvState(room));
+}
+
+// What one phone sees: the public board plus that player's private letters.
+export function letterRipStatusFor(room, playerName) {
+    const lr = room.letterRip;
+    if (!lr) return null;
+    const pub = letterRipTvState(room);
+    return {
+        ...pub,
+        type: undefined,
+        revealed: [...lr.revealed],
+        bank: lr.banks[playerName] || {},
+        myPick: lr.picks[playerName] || null,
+        myLastPick: lr.phase === 'REVEAL' ? (lr.lastPicks[playerName] || null) : null,
+        canSolve: lr.phase !== 'DONE' && !lr.solveTried.has(playerName),
+        triedSolve: lr.solveTried.has(playerName),
+        phrase: lr.phase === 'DONE' ? lr.phrase : null
+    };
+}
+
 const FLAG_ME_DOWN_ROUNDS_PER_DIFFICULTY = 5; // x3 difficulties = 15, matching Country Monkey
 // How long each stage shows before the next clue: flag only, +region,
 // +capital, +map. First guesses -- tune by feel in play.
@@ -3663,6 +3968,7 @@ function clearRoomForFreshGame(room) {
     room.profiler = null;
     room.profilerOnExpire = null;
     room.flagMeDown = null;
+    room.letterRip = null;
 
     const activePlayers = Object.values(room.players).filter(p => !p.left);
     // Bumping this marks "a fresh game started" -- a player who left before
@@ -5012,6 +5318,8 @@ export function handleIncomingMessage(fromPhone, bodyText, explicitRoomCode, pre
                 handleProfilerLeave(associatedRoomCode);
             } else if (currentRoom.gameState === 'FLAG_ME_DOWN_ROUND' && currentRoom.flagMeDown) {
                 checkFlagMeDownAllLocked(associatedRoomCode);
+            } else if (currentRoom.gameState === 'LETTER_RIP_ROUND' && currentRoom.letterRip) {
+                checkLetterRipAllPicked(associatedRoomCode);
             } else if (currentRoom.gameState === 'TRIVI_YEAH_II_ROUND' && currentRoom.triviYeahII) {
                 handleTriviYeahIILeave(associatedRoomCode, actingPlayerName);
             } else if (currentRoom.gameState === 'ON_THE_SPECTRUM_ROUND' && currentRoom.onTheSpectrum) {
@@ -5516,6 +5824,11 @@ export function handleIncomingMessage(fromPhone, bodyText, explicitRoomCode, pre
     // 5.55. Profiler round messages
     if (currentRoom.gameState === 'PROFILER_ROUND') {
         return handleProfilerAction(associatedRoomCode, currentRoom, actingPlayerName, cleanText);
+    }
+
+    // 5.555. Letter Rip round messages
+    if (currentRoom.gameState === 'LETTER_RIP_ROUND' && currentRoom.letterRip) {
+        return handleLetterRipAction(associatedRoomCode, currentRoom, actingPlayerName, cleanText);
     }
 
     // 5.56. Flag Me Down round messages

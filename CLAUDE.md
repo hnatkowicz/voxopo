@@ -567,6 +567,26 @@ Mode keys are used in room votes and in `gameEngine.js`:
   (water, `trivi_yeah_ii_wet_pants.sql`, 103) and **Wish You Were Here**
   (landmarks, `content/landmarks.csv`, 132; a postcard name because it has
   natural wonders too) -- the cross-play with Country Monkey is deliberate.
+- **LETTER_RIP** (Letter Rip, a working name -- Randy to rename; built
+  Nov 2026): a phrase-solving race. Randy wanted Wheel of Fortune,
+  RandoMania!-style; the wheel was dropped on purpose (wheel + letter
+  board + phrase is that show's format) and a **shrinking pot** replaced
+  it. 6 puzzles a game, one per category (`letter_rip_puzzles.sql`, its own
+  table, 102 puzzles in 17 categories; Play Again avoids ones this room
+  has played, `room.letterRipPlayed`). Each round everyone secretly picks
+  one letter on their phone at once (12s, ends early once all have
+  picked). Every hit scores 100 per time it appears, **split among
+  everyone who picked it**. Only the **2 most-picked hits** light on the TV
+  each round (more players would empty the board too fast), with "E 3
+  picked"; if nobody hits, one free letter. Your own picks stay on your
+  phone as a bank: green (with x2 for repeats), red, gold outline once on
+  the TV. The pot starts at 1000 and shrinks with the share of the phrase
+  still hidden (rounded to 50, min 100). **One solve a puzzle**, typed,
+  spelled exactly (no typo forgiveness; capitals, spaces and punctuation
+  don't matter), with a confirm step; a wrong solve costs the current pot
+  (never below 0) and the TV says who guessed wrong. All the numbers are
+  first guesses (`LETTER_RIP_*` in `gameEngine.js`). Randy still wants an
+  input that moves something on the screen; an idea is pending.
 - **FLAG_ME_DOWN** (also a standalone mode, after the family asked where it
   went): 15 flags, 5 easy -> 5 medium -> 5 hard, each with 4 country choices
   (1 wrong answer from the same local region, 2 from the same continent).

@@ -12,6 +12,8 @@ window.RANDOMANIA_MODES = [
     { key: 'TRIVI_YEAH_II',   name: 'Thinking Pants',  blurb: 'Board trivia, bet big',          tag: null,         color: 'var(--rm-cyan)', emoji: '👖', icon: 'mode-thinking-pants' },
     { key: 'COUNTRY_MONKEY',  name: 'Country Monkey',  blurb: 'Find it on the map',             tag: null,         color: 'var(--rm-orange)', emoji: '🐒', icon: 'mode-country-monkey' },
     { key: 'FLAG_ME_DOWN',    name: 'Flag Me Down',    blurb: 'Name it before the clues do',    tag: 'New',        color: 'var(--rm-yellow)', emoji: '🚩', icon: 'mode-flag-me-down' },
+    // The letter race (Randy, Nov 2026). "Letter Rip" is a working name.
+    { key: 'LETTER_RIP',      name: 'Letter Rip',      blurb: 'Solve the phrase first',         tag: 'New',        color: 'var(--rm-periwinkle)', emoji: '🔤', icon: 'mode-letter-rip' },
     { key: 'EMPOSSDURR',      name: 'EmpossDurr',      blurb: 'Find the impostor',              tag: null,         color: 'var(--rm-orange-hot)', emoji: '🕵️', icon: 'mode-empossdurr' },
     { key: 'ON_THE_SPECTRUM', name: 'On The Spectrum', blurb: 'Guess where friends land',       tag: null,         color: 'var(--rm-purple)', emoji: '🎚️', icon: 'mode-on-the-spectrum' },
     { key: 'PROFILER',        name: 'Profiler',        blurb: 'Who said that?',                 tag: '4+ players', color: 'var(--rm-pink)', emoji: '🔍', icon: 'mode-profiler' }
