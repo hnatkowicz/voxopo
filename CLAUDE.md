@@ -441,13 +441,13 @@ Mode keys are used in room votes and in `gameEngine.js`:
   the picker's wager, a misunderstanding).
   The answer clock is 40s (Randy: "needs 10 more seconds"), music over the
   last 30. **Final Wager questions** (`trivi_yeah_ii_final_wager_content.sql`,
-  87): typed answers, each with a **"second-cousin" clue** -- one that
+  133; 46 added Nov 2026): typed answers, each with a **"second-cousin" clue** -- one that
   takes knowledge and reasoning to turn into the answer, never the answer
   itself (Randy, Nov 2026: "...also names the top bone of your spine" for
   Atlas, "the same Latin word as the chemical symbol Ag" for Argentina).
   Aim for 250-350 difficulty on average; a famous fact alone (the painter
   who cut off his ear) is too easy, and a capital city is never the clue
-  unless it's the point. 11 of them (about 1 in 8) are **picture
+  unless it's the point. 17 of them (about 1 in 8) are **picture
   questions** -- a flag, landmark, painting or logo (`visual_asset`),
   shown once answering opens, still with a knowledge clue. No guard
   against a picture that was on the board earlier (Randy: rare by
