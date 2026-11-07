@@ -740,7 +740,10 @@ and forth until we both agree the idea is good **and** worth the effort. So:
   per category, 50 per tier**, except the niche four that stay at 80.
   Science & Nature reached it first (Nov 2026: +80, leaning on earth
   science, weather, chemistry, physics and plants, since Cell Mates has
-  the animals and the body). The family's favorites are school subjects
+  the animals and the body), then Astronomy & Space (+80: the Moon and
+  eclipses, how the sky works, missions and probes, women pioneers; the
+  space "firsts" Famous Firsts already asks -- Gagarin, Tereshkova,
+  Laika, Leonov -- stay there). The family's favorites are school subjects
   (biology, astronomy, the World Wars, US history) and pop culture; new
   categories get pun names. Next, separate pop-culture categories (**Video
   Games**, **Cartoons & Kids' TV**, **Pop Culture**: celebrities, viral
