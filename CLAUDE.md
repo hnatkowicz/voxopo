@@ -801,6 +801,18 @@ and forth until we both agree the idea is good **and** worth the effort. So:
   and, if pubs want it, a venue-chosen display name later.
 - **Standalone states quiz page** (Randy, Nov 2026, "another time"): his
   100 state pictures as a phone quiz anyone can run.
+- **TV themes** (Randy, Nov 2026; designing): seasonal and event
+  decorations on the TV, Christmas first (then Halloween, 4th of July,
+  bridal, a cinema night with theater things and no studio branding, St.
+  Patrick's...). Per venue on /admin, with optional start/end dates (blank
+  = on until switched off). Pieces are Randy's SVGs in
+  `public/themes/<theme>/`, pinned to the screen's fixed parts (wordmark,
+  room code, scoreboard, "Scan to join") and always on top -- the frost
+  too, Randy's call -- with taps passing through. Never over the QR code;
+  never recolors the game (green/red rule); no licensed characters (no
+  Frosty); peekers only in calm moments. Falling snow dropped (costly on
+  the Fire Stick, and not needed). See `public/themes/README.md`. Code not
+  built yet; Randy is exporting the Christmas art.
 - **Mind Field:** a name saved for a future mode built around hidden traps
   on a board.
 - **Final Wager clues elsewhere:** the bought-clue mechanic now runs in
