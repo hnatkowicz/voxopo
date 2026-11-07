@@ -1,16 +1,19 @@
 // Randy's drawn avatars (public/avatars/), the only picks on the join screen
 // since Nov 2026 -- they replaced the 24-emoji grid (Randy: "my drawn
 // avatars only"). Add one: upload <name>.svg to public/avatars/ and add
-// its name here. Keep a name once people are using it.
+// its name here. To retire one, take it off this list but keep its file,
+// so anyone already playing as it still shows (pants came off when the
+// list grew from 18 to 24, Randy, Nov 2026).
 //
 // A player's pick travels as "av:<name>" in the same slot the emoji used
 // (the join message, player.emoji, every scoreboard). Anything else in that
 // slot (an old phone still sending an emoji) is shown as plain text, so
 // nothing breaks mid-rollout.
 const AVATARS = [
-    'boy', 'girl', 'monkey', 'owl', 'pants', 'crown',
+    'boy', 'girl', 'monkey', 'owl', 'rubber-ducky', 'crown',
     'book', 'brain', 'lightbulb', 'microscope', 'compass', 'lighthouse',
-    'bicycle', 'motorcycle', 'hat', 'clarinet', 'drum', 'strat'
+    'bicycle', 'motorcycle', 'hat', 'boot', 'tulips', 'coffee',
+    'clarinet', 'drum', 'drum-kit', 'strat', 'palette', 'theater-masks'
 ];
 
 const AVATAR_PATTERN = /^av:([a-z0-9-]+)$/;
