@@ -6,8 +6,10 @@ theme is a folder of Randy's art (`public/themes/<theme>/`). The game code
 places the pieces; it doesn't care which holiday it is, so a new theme is
 new drawings, not new code.
 
-**Not built yet** (Nov 2026). This folder is ready for art; the code that
-shows a theme comes next. The plan (agreed with Randy):
+**Built** (Nov 2026): `access_codes_theme.sql` adds the setting,
+`public/tv-theme.js` places the pieces (where each hangs is a short list at
+its top, tuned by eye), and `THEMES` in `src/services/accessControl.js`
+lists the themes /admin offers. How it works:
 
 - **Per venue, on /admin.** Each access code gets a Theme setting (Off,
   Christmas, ...) with optional start and end dates. Blank dates mean

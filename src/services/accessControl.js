@@ -162,6 +162,11 @@ export const BOARD_RULES = ['CLASSIC', 'PLAIN'];
 // Venue breaks (access_codes_breaks.sql): minutes per break, 0 = Off.
 export const BREAK_MINUTES = [0, 2, 5, 10]; // 10 for pubs, where people wander to the bar (Randy, Oct 2026)
 const MAX_BREAK_NOTES = 10;
+// TV themes (access_codes_theme.sql; Randy, Nov 2026): seasonal and event
+// decorations, Randy's art in public/themes/<theme>/. A new theme is a new
+// name here plus its folder of art.
+export const THEMES = ['OFF', 'CHRISTMAS'];
+const THEME_DATE_PATTERN = /^\d{4}-\d{2}-\d{2}$/;
 // House sets are named HOUSE_<something> so a code can never point its
 // house column at an ordinary category.
 const HOUSE_CATEGORY_PATTERN = /^HOUSE_[A-Z0-9_]{1,40}$/;
@@ -189,6 +194,9 @@ export function sanitizeVenue(input, knownModes) {
         houseRounds: houseValid && HOUSE_ROUNDS.includes(v.houseRounds) ? v.houseRounds : 'OFF',
         boardRules: BOARD_RULES.includes(v.boardRules) ? v.boardRules : 'CLASSIC',
         breakMinutes: BREAK_MINUTES.includes(Number(v.breakMinutes)) ? Number(v.breakMinutes) : 0,
+        theme: THEMES.includes(v.theme) ? v.theme : 'OFF',
+        themeStarts: THEME_DATE_PATTERN.test(v.themeStarts || '') ? v.themeStarts : null,
+        themeEnds: THEME_DATE_PATTERN.test(v.themeEnds || '') ? v.themeEnds : null,
         // One note per line in /admin; short, and only a handful.
         breakNotes: (Array.isArray(v.breakNotes) ? v.breakNotes : String(v.breakNotes || '').split('\n'))
             .map(line => String(line).trim().slice(0, 120)).filter(Boolean).slice(0, MAX_BREAK_NOTES)
@@ -211,6 +219,34 @@ async function readBreakSettings(pool, code) {
         const result = await pool.query('SELECT break_minutes, break_notes FROM access_codes WHERE code = $1', [code]);
         const row = result.rows[0];
         return row ? { minutes: row.break_minutes || 0, notes: row.break_notes || [] } : null;
+    } catch (e) {
+        if (e.code === UNDEFINED_COLUMN) return null;
+        throw e;
+    }
+}
+
+export async function themeInstalled(pool) {
+    try {
+        await pool.query('SELECT theme FROM access_codes LIMIT 1');
+        return true;
+    } catch (e) {
+        if (e.code === UNDEFINED_COLUMN) return false;
+        throw e;
+    }
+}
+
+// A code's theme with its dates as plain YYYY-MM-DD text, or null when it's
+// Off or before access_codes_theme.sql is run. The TV checks the dates
+// against its own calendar, so "December 1" means the venue's December 1.
+async function readThemeSettings(pool, code) {
+    try {
+        const result = await pool.query(
+            "SELECT theme, to_char(theme_starts, 'YYYY-MM-DD') AS starts, to_char(theme_ends, 'YYYY-MM-DD') AS ends FROM access_codes WHERE code = $1",
+            [code]
+        );
+        const row = result.rows[0];
+        if (!row || !row.theme || row.theme === 'OFF' || !THEMES.includes(row.theme)) return null;
+        return { key: row.theme, starts: row.starts || null, ends: row.ends || null };
     } catch (e) {
         if (e.code === UNDEFINED_COLUMN) return null;
         throw e;
@@ -292,7 +328,8 @@ export async function getAccessCodeVenue(pool, rawCode) {
             const boardRules = row.board_rules === 'PLAIN' ? 'PLAIN' : 'CLASSIC';
             const breaks = await readBreakSettings(pool, code);
             const breakMinutes = breaks ? breaks.minutes : 0;
-            if (row.profile !== 'PUB' && !allowedModes.length && !house && !houseSet && boardRules === 'CLASSIC' && !breakMinutes) return null;
+            const theme = await readThemeSettings(pool, code);
+            if (row.profile !== 'PUB' && !allowedModes.length && !house && !houseSet && boardRules === 'CLASSIC' && !breakMinutes && !theme) return null;
             return {
                 profile: row.profile === 'PUB' ? 'PUB' : 'HOME',
                 name: row.venue_name || null,
@@ -303,7 +340,8 @@ export async function getAccessCodeVenue(pool, rawCode) {
                 houseSet,
                 boardRules,
                 breakMinutes,
-                breakNotes: breaks ? breaks.notes : []
+                breakNotes: breaks ? breaks.notes : [],
+                theme
             };
         } catch (e) {
             if (e.code !== UNDEFINED_COLUMN) throw e;
@@ -327,6 +365,14 @@ export async function listAccessCodes(pool) {
             } catch (e) {
                 if (e.code !== UNDEFINED_COLUMN) throw e;
             }
+            // ...and the theme once access_codes_theme.sql is run.
+            try {
+                const themes = await pool.query("SELECT code, theme, to_char(theme_starts, 'YYYY-MM-DD') AS theme_starts, to_char(theme_ends, 'YYYY-MM-DD') AS theme_ends FROM access_codes");
+                const byCode = Object.fromEntries(themes.rows.map(r => [r.code, r]));
+                result.rows.forEach(r => { const t = byCode[r.code] || {}; r.theme = t.theme || 'OFF'; r.theme_starts = t.theme_starts || null; r.theme_ends = t.theme_ends || null; });
+            } catch (e) {
+                if (e.code !== UNDEFINED_COLUMN) throw e;
+            }
             return result.rows;
         } catch (e) {
             if (e.code !== UNDEFINED_COLUMN) throw e;
@@ -342,7 +388,7 @@ export async function addAccessCode(pool, rawCode, label) {
 
 // venue is already sanitized (sanitizeVenue). Returns false if no such code.
 // The house settings are only written once their columns exist.
-export async function updateAccessCodeVenue(pool, rawCode, venue, withHouse, withRules, withBreaks) {
+export async function updateAccessCodeVenue(pool, rawCode, venue, withHouse, withRules, withBreaks, withTheme) {
     const code = normalizeCode(rawCode);
     const params = [code, venue.profile, venue.name, venue.tagline, venue.logo, venue.allowedModes.length ? venue.allowedModes : null];
     let sql = 'UPDATE access_codes SET profile = $2, venue_name = $3, venue_tagline = $4, venue_logo = $5, allowed_modes = $6';
@@ -359,6 +405,14 @@ export async function updateAccessCodeVenue(pool, rawCode, venue, withHouse, wit
         sql += `, break_minutes = $${params.length}`;
         params.push(venue.breakNotes.length ? venue.breakNotes : null);
         sql += `, break_notes = $${params.length}`;
+    }
+    if (withTheme) {
+        params.push(venue.theme);
+        sql += `, theme = $${params.length}`;
+        params.push(venue.themeStarts);
+        sql += `, theme_starts = $${params.length}`;
+        params.push(venue.themeEnds);
+        sql += `, theme_ends = $${params.length}`;
     }
     const result = await pool.query(`${sql} WHERE code = $1`, params);
     return result.rowCount > 0;

@@ -11,7 +11,7 @@ import {
     isAdminLoginRateLimited, recordFailedAdminLogin, clearAdminLoginAttempts,
     isRoomCreateRateLimited, recordFailedRoomCreateAttempt, clearRoomCreateAttempts,
     listAccessCodes, addAccessCode, setAccessCodeActive, normalizeCode,
-    hostSessionCode, getAccessCodeVenue, venueProfilesInstalled, sanitizeVenue, updateAccessCodeVenue, houseColumnInstalled, listHouseSets, boardRulesInstalled, breaksInstalled
+    hostSessionCode, getAccessCodeVenue, venueProfilesInstalled, sanitizeVenue, updateAccessCodeVenue, houseColumnInstalled, listHouseSets, boardRulesInstalled, breaksInstalled, themeInstalled
 } from './services/accessControl.js';
 import { healthMiddleware, attachHealthTracking, healthSnapshot } from './services/serverHealth.js';
 import { fileURLToPath } from 'url';
@@ -218,7 +218,7 @@ app.get('/api/admin/codes', requireAdmin, async (req, res) => {
         const codes = await listAccessCodes(pool);
         // venueProfiles: false until access_codes_venue_profiles.sql is run.
         const houseColumn = await houseColumnInstalled(pool);
-        return res.json({ success: true, codes, venueProfiles: await venueProfilesInstalled(pool), houseColumn, houseSets: houseColumn ? await listHouseSets(pool) : [], boardRules: await boardRulesInstalled(pool), breaks: await breaksInstalled(pool), modes: GAME_MODE_KEYS });
+        return res.json({ success: true, codes, venueProfiles: await venueProfilesInstalled(pool), houseColumn, houseSets: houseColumn ? await listHouseSets(pool) : [], boardRules: await boardRulesInstalled(pool), breaks: await breaksInstalled(pool), theme: await themeInstalled(pool), modes: GAME_MODE_KEYS });
     } catch (e) {
         return res.status(500).json({ success: false, error: 'Failed to load codes.' });
     }
@@ -254,7 +254,7 @@ app.post('/api/admin/codes/:code/venue', requireAdmin, async (req, res) => {
             return res.status(409).json({ success: false, error: 'Run access_codes_venue_profiles.sql in Neon first.' });
         }
         const venue = sanitizeVenue(req.body, GAME_MODE_KEYS);
-        const found = await updateAccessCodeVenue(pool, req.params.code, venue, await houseColumnInstalled(pool), await boardRulesInstalled(pool), await breaksInstalled(pool));
+        const found = await updateAccessCodeVenue(pool, req.params.code, venue, await houseColumnInstalled(pool), await boardRulesInstalled(pool), await breaksInstalled(pool), await themeInstalled(pool));
         if (!found) return res.status(404).json({ success: false, error: 'No such code.' });
         return res.json({ success: true, venue });
     } catch (e) {
