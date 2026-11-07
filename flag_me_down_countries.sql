@@ -1,5 +1,5 @@
 -- ============================================================================
--- Flag Me Down (the standalone mode): 179 countries, each with its flag, its
+-- Flag Me Down (the standalone mode): 180 countries, each with its flag, its
 -- local region, its capital and its map -- the four clues that unlock one by
 -- one each round. Countries only (Randy's call; territories, regional flags
 -- and organizations stay in Country Monkey and the Thinking Pants category).
@@ -15,7 +15,7 @@
 --                  which would give the answer away
 --   accepted_answers  alternate names for the typed final round (Burma, ...)
 --   difficulty     1 easy / 2 medium / 3 hard -- a game plays 5 of each, in
---                  that order. Rows: 53 easy, 54 medium, 72 hard.
+--                  that order. Rows: 53 easy, 55 medium, 72 hard.
 --
 -- Safe to re-run: creates the table if needed, then deletes and re-inserts
 -- every row, in a transaction. Touches nothing else.
@@ -113,6 +113,7 @@ VALUES
 ('Ethiopia',                'AFRICA',            'Eastern Africa',              'Addis Ababa',                           'Addis Ababa',                           '/flags/et.svg',     '/maps/ethiopia.webp',               NULL::text[], 2),
 ('Georgia',                 'MIDDLE_EAST_ASIA',  'the Caucasus',                'Tbilisi',                               'Tbilisi',                               '/flags/ge.svg',     '/maps/georgia.webp',                NULL::text[], 2),
 ('Ghana',                   'AFRICA',            'Western Africa',              'Accra',                                 'Accra',                                 '/flags/gh.svg',     '/maps/ghana.webp',                  NULL::text[], 2),
+('Guatemala',               'AMERICAS',          'Central America',             'Guatemala City',                        'The capital shares the country''s name', '/flags/gt.svg',    '/maps/guatemala.webp',              NULL::text[], 2),
 ('Haiti',                   'AMERICAS',          'the Caribbean',               'Port-au-Prince',                        'Port-au-Prince',                        '/flags/ht.svg',     '/maps/haiti.webp',                  NULL::text[], 2),
 ('Honduras',                'AMERICAS',          'Central America',             'Tegucigalpa',                           'Tegucigalpa',                           '/flags/hn.svg',     '/maps/honduras.webp',               NULL::text[], 2),
 ('Iran',                    'MIDDLE_EAST_ASIA',  'the Middle East',             'Tehran',                                'Tehran',                                '/flags/ir.svg',     '/maps/iran.webp',                   NULL::text[], 2),
@@ -224,5 +225,5 @@ VALUES
 
 COMMIT;
 
--- Check: should return 179.
+-- Check: should return 180.
 SELECT COUNT(*) FROM flag_me_down_countries;
