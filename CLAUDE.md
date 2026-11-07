@@ -751,7 +751,11 @@ and forth until we both agree the idea is good **and** worth the effort. So:
   the animals and the body), then Astronomy & Space (+80: the Moon and
   eclipses, how the sky works, missions and probes, women pioneers; the
   space "firsts" Famous Firsts already asks -- Gagarin, Tereshkova,
-  Laika, Leonov -- stay there). The family's favorites are school subjects
+  Laika, Leonov -- stay there), then Food & Drink (+120 from 80: kitchen
+  basics, regional American food, coffee and tea, techniques, and more of
+  the world's kitchens at the hard end; brands stay in Logo My Eggo, and
+  the Final Wager's food answers -- tiramisu, Caesar salad, cheddar --
+  aren't reused). The family's favorites are school subjects
   (biology, astronomy, the World Wars, US history) and pop culture; new
   categories get pun names. Next, separate pop-culture categories (**Video
   Games**, **Cartoons & Kids' TV**, **Pop Culture**: celebrities, viral

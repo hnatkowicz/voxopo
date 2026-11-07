@@ -3958,8 +3958,8 @@ SELECT COUNT(*) FROM questions WHERE game_mode = 'TRIVI_YEAH_II' AND category = 
 -- Thinking Pants category FOOD_AND_DRINK. To change a question, change the
 -- spreadsheet and rebuild.
 --
--- Replaces the WHOLE category with the spreadsheet's 80 live questions
--- (100: 20, 200: 20, 300: 20, 400: 20), inside a transaction. Safe to re-run.
+-- Replaces the WHOLE category with the spreadsheet's 200 live questions
+-- (100: 50, 200: 50, 300: 50, 400: 50), inside a transaction. Safe to re-run.
 -- ============================================================================
 
 BEGIN;
@@ -4048,6 +4048,126 @@ INSERT INTO questions (question_number, game_mode, category, subcategory, factio
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'FOOD_AND_DRINK', 'ORIGINAL', NULL,
         'Which country produces most of the world''s maple syrup?', NULL,
         'Canada', ARRAY['The United States', 'Sweden', 'Norway', 'Finland', 'Russia', 'Switzerland'], 100);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'FOOD_AND_DRINK', 'ORIGINAL', NULL,
+        'Raisins are dried what?', NULL,
+        'Grapes', ARRAY['Plums', 'Figs', 'Cherries', 'Dates', 'Cranberries', 'Apricots'], 100);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'FOOD_AND_DRINK', 'ORIGINAL', NULL,
+        'Which Italian city gave the world the classic pizza?', NULL,
+        'Naples', ARRAY['Rome', 'Milan', 'Venice', 'Florence', 'Turin', 'Bologna'], 100);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'FOOD_AND_DRINK', 'ORIGINAL', NULL,
+        'Tofu is made from which beans?', NULL,
+        'Soybeans', ARRAY['Chickpeas', 'Lentils', 'Black beans', 'Kidney beans', 'Fava beans', 'Peanuts'], 100);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'FOOD_AND_DRINK', 'ORIGINAL', NULL,
+        'Which leafy green vegetable makes the cartoon sailor Popeye strong?', NULL,
+        'Spinach', ARRAY['Kale', 'Broccoli', 'Lettuce', 'Cabbage', 'Collard greens', 'Peas'], 100);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'FOOD_AND_DRINK', 'ORIGINAL', NULL,
+        'What kind of food is a Granny Smith?', NULL,
+        'An apple', ARRAY['A pear', 'A plum', 'A grape', 'A potato', 'A peach', 'A tomato'], 100);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'FOOD_AND_DRINK', 'ORIGINAL', NULL,
+        'Which yellow hot dog topping is made from the crushed seeds of a plant in the cabbage family?', NULL,
+        'Mustard', ARRAY['Relish', 'Ketchup', 'Mayonnaise', 'Horseradish', 'Wasabi', 'Aioli'], 100);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'FOOD_AND_DRINK', 'ORIGINAL', NULL,
+        'Which crop failed when blight struck Ireland in the 1840s, causing the Great Famine?', NULL,
+        'The potato', ARRAY['Wheat', 'Cabbage', 'The turnip', 'Corn', 'Oats', 'The carrot'], 100);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'FOOD_AND_DRINK', 'ORIGINAL', NULL,
+        'Besides coconut, which fruit goes into a classic piña colada?', NULL,
+        'Pineapple', ARRAY['Mango', 'Banana', 'Lime', 'Orange', 'Papaya', 'Strawberry'], 100);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'FOOD_AND_DRINK', 'ORIGINAL', NULL,
+        'Which baked breakfast treat, often studded with blueberries, rises in a cup-shaped pan?', NULL,
+        'A muffin', ARRAY['A scone', 'A crumpet', 'A bagel', 'A croissant', 'A doughnut', 'A biscuit'], 100);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'FOOD_AND_DRINK', 'ORIGINAL', NULL,
+        'Hot cocoa and chocolate are made from the beans of which plant?', NULL,
+        'Cacao', ARRAY['Coffee', 'Vanilla', 'Carob', 'Coconut', 'Kola', 'Chicory'], 100);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'FOOD_AND_DRINK', 'ORIGINAL', NULL,
+        'What does a baker add to bread dough to make it rise?', NULL,
+        'Yeast', ARRAY['Salt', 'Sugar', 'Flour', 'Vinegar', 'Gelatin', 'Cornstarch'], 100);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'FOOD_AND_DRINK', 'ORIGINAL', NULL,
+        'What do you get when you churn cream long enough?', NULL,
+        'Butter', ARRAY['Cheese', 'Yogurt', 'Whey', 'Ice cream', 'Sour cream', 'Milk'], 100);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'FOOD_AND_DRINK', 'ORIGINAL', NULL,
+        'Which Mexican dish is a folded tortilla wrapped around a filling, sometimes in a crunchy shell?', NULL,
+        'A taco', ARRAY['A burrito', 'An enchilada', 'A tamale', 'A tostada', 'A fajita', 'A chimichanga'], 100);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'FOOD_AND_DRINK', 'ORIGINAL', NULL,
+        'Which deep-red root vegetable gives the soup borscht its color?', NULL,
+        'Beets', ARRAY['Red cabbage', 'Eggplant', 'Red onion', 'Radishes', 'Purple carrots', 'Turnips'], 100);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'FOOD_AND_DRINK', 'ORIGINAL', NULL,
+        'What color is the flesh of a ripe cantaloupe?', NULL,
+        'Orange', ARRAY['Green', 'Red', 'Yellow', 'White', 'Pink', 'Purple'], 100);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'FOOD_AND_DRINK', 'ORIGINAL', NULL,
+        'The burger takes its full name from which German port city?', NULL,
+        'Hamburg', ARRAY['Frankfurt', 'Berlin', 'Munich', 'Cologne', 'Dresden', 'Bremen'], 100);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'FOOD_AND_DRINK', 'ORIGINAL', NULL,
+        'How many cups are in a quart?', NULL,
+        'Four', ARRAY['Two', 'Three', 'Six', 'Eight', 'Ten', 'Sixteen'], 100);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'FOOD_AND_DRINK', 'ORIGINAL', NULL,
+        'Which orange squash fills a classic Thanksgiving pie?', NULL,
+        'Pumpkin', ARRAY['Butternut squash', 'Acorn squash', 'Carrot', 'Spaghetti squash', 'Apricot', 'Cantaloupe'], 100);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'FOOD_AND_DRINK', 'ORIGINAL', NULL,
+        'What do the French call a very thin pancake?', NULL,
+        'A crêpe', ARRAY['A blini', 'A waffle', 'A beignet', 'A soufflé', 'A brioche', 'A flapjack'], 100);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'FOOD_AND_DRINK', 'ORIGINAL', NULL,
+        'Which sour yellow fruit goes into a classic meringue pie?', NULL,
+        'Lemon', ARRAY['Lime', 'Banana', 'Pineapple', 'Mango', 'Grapefruit', 'Orange'], 100);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'FOOD_AND_DRINK', 'ORIGINAL', NULL,
+        'Granola is mostly made from toasted what?', NULL,
+        'Oats', ARRAY['Wheat', 'Rice', 'Barley', 'Corn', 'Quinoa', 'Rye'], 100);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'FOOD_AND_DRINK', 'ORIGINAL', NULL,
+        'Lox, served on bagels with cream cheese, is cured what?', NULL,
+        'Salmon', ARRAY['Tuna', 'Cod', 'Trout', 'Herring', 'Mackerel', 'Halibut'], 100);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'FOOD_AND_DRINK', 'ORIGINAL', NULL,
+        'What do you get when you heat sugar until it melts and turns golden brown?', NULL,
+        'Caramel', ARRAY['Fudge', 'Nougat', 'Marshmallow', 'Licorice', 'Gumdrops', 'Taffy'], 100);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'FOOD_AND_DRINK', 'ORIGINAL', NULL,
+        'Which green vegetable looks like a little tree?', NULL,
+        'Broccoli', ARRAY['Cauliflower', 'Asparagus', 'Kale', 'Brussels sprouts', 'Artichoke', 'Celery'], 100);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'FOOD_AND_DRINK', 'ORIGINAL', NULL,
+        'Which rich holiday drink is made with milk, cream, sugar and beaten eggs?', NULL,
+        'Eggnog', ARRAY['Hot toddy', 'Wassail', 'Mulled wine', 'Cider', 'Hot chocolate', 'Glogg'], 100);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'FOOD_AND_DRINK', 'ORIGINAL', NULL,
+        'Which shellfish is Maine famous for, served with melted butter?', NULL,
+        'Lobster', ARRAY['Crab', 'Shrimp', 'Clams', 'Oysters', 'Scallops', 'Crawfish'], 100);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'FOOD_AND_DRINK', 'ORIGINAL', NULL,
+        'Which Japanese soup is made with a fermented soybean paste?', NULL,
+        'Miso soup', ARRAY['Ramen', 'Udon', 'Pho', 'Tom yum', 'Wonton soup', 'Egg drop soup'], 100);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'FOOD_AND_DRINK', 'ORIGINAL', NULL,
+        'What is the main ingredient in ketchup?', NULL,
+        'Tomatoes', ARRAY['Red peppers', 'Beets', 'Carrots', 'Strawberries', 'Cranberries', 'Paprika'], 100);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'FOOD_AND_DRINK', 'ORIGINAL', NULL,
+        'Which spicy dried sausage is America''s favorite pizza topping?', NULL,
+        'Pepperoni', ARRAY['Salami', 'Chorizo', 'Bacon', 'Ham', 'Italian sausage', 'Kielbasa'], 100);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'FOOD_AND_DRINK', 'ORIGINAL', NULL,
+        'Which fruit has fuzzy brown skin and bright green flesh dotted with tiny black seeds?', NULL,
+        'Kiwi', ARRAY['Passion fruit', 'Fig', 'Guava', 'Avocado', 'Lime', 'Gooseberry'], 100);
 
 -- 200 points
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
@@ -4130,6 +4250,126 @@ INSERT INTO questions (question_number, game_mode, category, subcategory, factio
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'FOOD_AND_DRINK', 'ORIGINAL', NULL,
         'Which creamy Italian rice dish is made by stirring in hot broth a ladle at a time?', NULL,
         'Risotto', ARRAY['Paella', 'Pilaf', 'Biryani', 'Arancini', 'Jambalaya', 'Congee'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'FOOD_AND_DRINK', 'ORIGINAL', NULL,
+        'Which popular "nut" is actually a legume, related to beans and peas?', NULL,
+        'The peanut', ARRAY['The almond', 'The cashew', 'The walnut', 'The pecan', 'The pistachio', 'The hazelnut'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'FOOD_AND_DRINK', 'ORIGINAL', NULL,
+        'Which bread is boiled before it''s baked, giving it a chewy crust and a hole in the middle?', NULL,
+        'A bagel', ARRAY['A doughnut', 'A pretzel', 'A croissant', 'An English muffin', 'A bialy', 'A kaiser roll'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'FOOD_AND_DRINK', 'ORIGINAL', NULL,
+        'Which soda flavor is named for a caffeine-rich nut from West Africa?', NULL,
+        'Cola', ARRAY['Root beer', 'Ginger ale', 'Cream soda', 'Sarsaparilla', 'Birch beer', 'Orange soda'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'FOOD_AND_DRINK', 'ORIGINAL', NULL,
+        'What is the colorful outer layer of citrus peel, grated for flavor, called?', NULL,
+        'Zest', ARRAY['Pith', 'Pulp', 'Juice', 'Segment', 'Seed', 'Membrane'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'FOOD_AND_DRINK', 'ORIGINAL', NULL,
+        'Which coffee is made from roughly equal parts espresso, steamed milk and milk foam?', NULL,
+        'A cappuccino', ARRAY['A latte', 'An americano', 'A mocha', 'A flat white', 'A cortado', 'An affogato'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'FOOD_AND_DRINK', 'ORIGINAL', NULL,
+        'Greek tzatziki is made mainly from cucumber, garlic and what?', NULL,
+        'Yogurt', ARRAY['Feta', 'Sour cream', 'Mayonnaise', 'Olive oil', 'Tahini', 'Cream cheese'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'FOOD_AND_DRINK', 'ORIGINAL', NULL,
+        'Which spiky Southeast Asian fruit is so smelly it''s banned on Singapore''s trains?', NULL,
+        'Durian', ARRAY['Jackfruit', 'Rambutan', 'Lychee', 'Mangosteen', 'Dragon fruit', 'Breadfruit'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'FOOD_AND_DRINK', 'ORIGINAL', NULL,
+        'Which Mexican sauce gets its deep color from chilies and chocolate?', NULL,
+        'Mole', ARRAY['Salsa verde', 'Pico de gallo', 'Adobo', 'Enchilada sauce', 'Chimichurri', 'Sofrito'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'FOOD_AND_DRINK', 'ORIGINAL', NULL,
+        'Which Vietnamese noodle soup''s name sounds roughly like "fuh"?', NULL,
+        'Pho', ARRAY['Ramen', 'Udon', 'Laksa', 'Bun cha', 'Banh mi', 'Soba'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'FOOD_AND_DRINK', 'ORIGINAL', NULL,
+        'Which Indian yogurt drink is often blended with mango?', NULL,
+        'Lassi', ARRAY['Chai', 'Kulfi', 'Raita', 'Kefir', 'Ayran', 'Horchata'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'FOOD_AND_DRINK', 'ORIGINAL', NULL,
+        'Which Middle Eastern fried balls are made from ground chickpeas or fava beans?', NULL,
+        'Falafel', ARRAY['Hummus', 'Kibbeh', 'Kofta', 'Dolma', 'Shawarma', 'Baba ganoush'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'FOOD_AND_DRINK', 'ORIGINAL', NULL,
+        'Which cut of beef, the most tender of all, gives us filet mignon?', NULL,
+        'Tenderloin', ARRAY['Sirloin', 'Ribeye', 'Brisket', 'Flank', 'Chuck', 'Round'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'FOOD_AND_DRINK', 'ORIGINAL', NULL,
+        'What is the Japanese name for seafood and vegetables dipped in light batter and deep-fried?', NULL,
+        'Tempura', ARRAY['Teriyaki', 'Tonkatsu', 'Yakitori', 'Gyoza', 'Sashimi', 'Karaage'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'FOOD_AND_DRINK', 'ORIGINAL', NULL,
+        'Which Greek dish layers eggplant and spiced meat under a creamy white sauce?', NULL,
+        'Moussaka', ARRAY['Lasagna', 'Spanakopita', 'Souvlaki', 'Pastitsio', 'Gyro', 'Dolmades'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'FOOD_AND_DRINK', 'ORIGINAL', NULL,
+        'Which Swiss dish is a shared pot of melted cheese that you dip bread into?', NULL,
+        'Fondue', ARRAY['Raclette', 'Rösti', 'Gratin', 'Welsh rarebit', 'Queso', 'Soufflé'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'FOOD_AND_DRINK', 'ORIGINAL', NULL,
+        'What do we call cooking food quickly in a little hot fat in a shallow pan?', NULL,
+        'Sautéing', ARRAY['Braising', 'Poaching', 'Steaming', 'Broiling', 'Blanching', 'Roasting'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'FOOD_AND_DRINK', 'ORIGINAL', NULL,
+        'Which "king of cheeses" must come from a set zone around Parma and Reggio Emilia?', NULL,
+        'Parmigiano-Reggiano', ARRAY['Pecorino Romano', 'Grana Padano', 'Asiago', 'Gorgonzola', 'Provolone', 'Fontina'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'FOOD_AND_DRINK', 'ORIGINAL', NULL,
+        'A mimosa is sparkling wine mixed with which juice?', NULL,
+        'Orange juice', ARRAY['Cranberry juice', 'Grapefruit juice', 'Pineapple juice', 'Peach juice', 'Apple juice', 'Tomato juice'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'FOOD_AND_DRINK', 'ORIGINAL', NULL,
+        'Which spice of dried, ground red peppers is a staple of Hungarian cooking?', NULL,
+        'Paprika', ARRAY['Cayenne', 'Chili powder', 'Turmeric', 'Sumac', 'Cumin', 'Allspice'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'FOOD_AND_DRINK', 'ORIGINAL', NULL,
+        'Japanese mochi is made from pounded what?', NULL,
+        'Rice', ARRAY['Wheat', 'Potato', 'Tapioca', 'Barley', 'Millet', 'Soybeans'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'FOOD_AND_DRINK', 'ORIGINAL', NULL,
+        'Which fizzy fermented tea is brewed with a rubbery culture called a SCOBY?', NULL,
+        'Kombucha', ARRAY['Kefir', 'Matcha', 'Chai', 'Kvass', 'Boba', 'Yerba mate'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'FOOD_AND_DRINK', 'ORIGINAL', NULL,
+        'Which long, thin French bread earned its own UNESCO listing in 2022?', NULL,
+        'The baguette', ARRAY['Brioche', 'Ciabatta', 'Focaccia', 'The boule', 'The croissant', 'Pain de mie'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'FOOD_AND_DRINK', 'ORIGINAL', NULL,
+        'Which Japanese green tea is ground into a fine, bright powder?', NULL,
+        'Matcha', ARRAY['Sencha', 'Gyokuro', 'Genmaicha', 'Oolong', 'Hojicha', 'Earl Grey'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'FOOD_AND_DRINK', 'ORIGINAL', NULL,
+        'Which country became the world''s biggest coffee grower in the 1800s, on vast plantations around São Paulo and Rio?', NULL,
+        'Brazil', ARRAY['Colombia', 'Vietnam', 'Ethiopia', 'Indonesia', 'Kenya', 'Costa Rica'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'FOOD_AND_DRINK', 'ORIGINAL', NULL,
+        'In the U.S., what do we call the leaves of the coriander plant?', NULL,
+        'Cilantro', ARRAY['Parsley', 'Basil', 'Dill', 'Chervil', 'Tarragon', 'Mint'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'FOOD_AND_DRINK', 'ORIGINAL', NULL,
+        'Which American city is famous for deep-dish pizza?', NULL,
+        'Chicago', ARRAY['New York', 'Detroit', 'St. Louis', 'Philadelphia', 'Boston', 'New Haven'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'FOOD_AND_DRINK', 'ORIGINAL', NULL,
+        'Which city is home to the cheesesteak, thin-sliced beef and melted cheese on a long roll?', NULL,
+        'Philadelphia', ARRAY['Pittsburgh', 'Baltimore', 'Boston', 'Chicago', 'New York', 'Cleveland'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'FOOD_AND_DRINK', 'ORIGINAL', NULL,
+        'Key lime pie is the official pie of which state?', NULL,
+        'Florida', ARRAY['California', 'Hawaii', 'Georgia', 'Texas', 'Louisiana', 'Arizona'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'FOOD_AND_DRINK', 'ORIGINAL', NULL,
+        'Gumbo and jambalaya are signature dishes of which state?', NULL,
+        'Louisiana', ARRAY['Mississippi', 'Texas', 'Georgia', 'Alabama', 'South Carolina', 'Florida'], 200);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'FOOD_AND_DRINK', 'ORIGINAL', NULL,
+        'What kind of food is mascarpone?', NULL,
+        'A soft Italian cream cheese', ARRAY['A cured sausage', 'A pasta shape', 'A sweet wine', 'A pastry', 'A coffee drink', 'A biscuit'], 200);
 
 -- 300 points
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
@@ -4212,6 +4452,126 @@ INSERT INTO questions (question_number, game_mode, category, subcategory, factio
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'FOOD_AND_DRINK', 'ORIGINAL', NULL,
         'What is the name of the cylindrical clay oven in which naan is traditionally baked?', NULL,
         'Tandoor', ARRAY['Tawa', 'Karahi', 'Handi', 'Chulha', 'Sigri', 'Degchi'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'FOOD_AND_DRINK', 'ORIGINAL', NULL,
+        'Which Argentine green sauce of parsley, garlic, oil and vinegar is spooned over grilled steak?', NULL,
+        'Chimichurri', ARRAY['Pesto', 'Salsa verde', 'Gremolata', 'Mojo', 'Sofrito', 'Pistou'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'FOOD_AND_DRINK', 'ORIGINAL', NULL,
+        'Which Vietnamese sandwich is served on a crusty French-style roll with pickled vegetables?', NULL,
+        'Banh mi', ARRAY['Pho', 'Bun cha', 'Cubano', 'Torta', 'Gyro', 'Muffuletta'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'FOOD_AND_DRINK', 'ORIGINAL', NULL,
+        'Which South American drink is sipped through a metal straw from a hollow gourd?', NULL,
+        'Yerba mate', ARRAY['Horchata', 'Chicha', 'Guarana', 'Rooibos', 'Pisco', 'Cascara'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'FOOD_AND_DRINK', 'ORIGINAL', NULL,
+        'Briefly boiling vegetables, then plunging them into ice water, is called what?', NULL,
+        'Blanching', ARRAY['Poaching', 'Searing', 'Braising', 'Steaming', 'Scalding', 'Basting'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'FOOD_AND_DRINK', 'ORIGINAL', NULL,
+        'Which nuts are now a standard part of the Waldorf salad, first served at a New York hotel?', NULL,
+        'Walnuts', ARRAY['Pecans', 'Almonds', 'Cashews', 'Pine nuts', 'Pistachios', 'Hazelnuts'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'FOOD_AND_DRINK', 'ORIGINAL', NULL,
+        'Legend says a goat herder named Kaldi discovered coffee in which country?', NULL,
+        'Ethiopia', ARRAY['Yemen', 'Brazil', 'Colombia', 'Turkey', 'Kenya', 'Egypt'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'FOOD_AND_DRINK', 'ORIGINAL', NULL,
+        'Boston baked beans are traditionally made with which small white bean?', NULL,
+        'Navy beans', ARRAY['Kidney beans', 'Pinto beans', 'Black beans', 'Lima beans', 'Garbanzo beans', 'Fava beans'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'FOOD_AND_DRINK', 'ORIGINAL', NULL,
+        'What do the Japanese call thin slices of raw fish served without rice?', NULL,
+        'Sashimi', ARRAY['Sushi', 'Nigiri', 'Maki', 'Temaki', 'Tataki', 'Poke'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'FOOD_AND_DRINK', 'ORIGINAL', NULL,
+        'Which meringue dessert topped with cream and fruit is named after a Russian ballerina?', NULL,
+        'Pavlova', ARRAY['Eton mess', 'Baked Alaska', 'Peach Melba', 'Charlotte russe', 'Floating island', 'Vacherin'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'FOOD_AND_DRINK', 'ORIGINAL', NULL,
+        'Which Indian spice blend''s name means "warm mixture"?', NULL,
+        'Garam masala', ARRAY['Curry powder', 'Ras el hanout', 'Za''atar', 'Tandoori masala', 'Chaat masala', 'Five-spice'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'FOOD_AND_DRINK', 'ORIGINAL', NULL,
+        'Which Dutch cheese is famous for its ball shape and red wax coat?', NULL,
+        'Edam', ARRAY['Gouda', 'Gruyère', 'Leerdammer', 'Havarti', 'Muenster', 'Brie'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'FOOD_AND_DRINK', 'ORIGINAL', NULL,
+        'Which Australian spread is made from leftover brewer''s yeast?', NULL,
+        'Vegemite', ARRAY['Marmite', 'Nutella', 'Bovril', 'Kaya', 'Dulce de leche', 'Lemon curd'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'FOOD_AND_DRINK', 'ORIGINAL', NULL,
+        'Which Hungarian beef stew takes its name from the word for cattle herdsmen?', NULL,
+        'Goulash', ARRAY['Borscht', 'Stroganoff', 'Bigos', 'Cassoulet', 'Stifado', 'Pörkölt'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'FOOD_AND_DRINK', 'ORIGINAL', NULL,
+        'Beef Stroganoff is named after a noble family from which country?', NULL,
+        'Russia', ARRAY['France', 'Germany', 'Austria', 'Poland', 'Hungary', 'Sweden'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'FOOD_AND_DRINK', 'ORIGINAL', NULL,
+        'Which French vegetable stew of eggplant, zucchini and tomatoes shares its name with a 2007 Pixar film?', NULL,
+        'Ratatouille', ARRAY['Bouillabaisse', 'Cassoulet', 'Pot-au-feu', 'Coq au vin', 'Niçoise', 'Tian'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'FOOD_AND_DRINK', 'ORIGINAL', NULL,
+        'What are the thick, chewy Japanese noodles made from wheat flour called?', NULL,
+        'Udon', ARRAY['Ramen', 'Somen', 'Glass noodles', 'Rice noodles', 'Shirataki', 'Lo mein'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'FOOD_AND_DRINK', 'ORIGINAL', NULL,
+        'Which Italian treat is a scoop of ice cream "drowned" in a shot of hot espresso?', NULL,
+        'Affogato', ARRAY['Frappé', 'Cortado', 'Macchiato', 'Granita', 'Gelato', 'Semifreddo'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'FOOD_AND_DRINK', 'ORIGINAL', NULL,
+        'Which part of a chili pepper holds most of its heat?', NULL,
+        'The pale inner ribs', ARRAY['The seeds', 'The tip', 'The stem', 'The skin', 'The juice', 'The leaves'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'FOOD_AND_DRINK', 'ORIGINAL', NULL,
+        'Which compound makes chili peppers taste hot?', NULL,
+        'Capsaicin', ARRAY['Caffeine', 'Piperine', 'Allicin', 'Menthol', 'Gingerol', 'Tannin'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'FOOD_AND_DRINK', 'ORIGINAL', NULL,
+        'Which scale measures how hot a chili pepper is?', NULL,
+        'The Scoville scale', ARRAY['The Brix scale', 'The Richter scale', 'The Beaufort scale', 'The Kelvin scale', 'The Mohs scale', 'The pH scale'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'FOOD_AND_DRINK', 'ORIGINAL', NULL,
+        'Which fortified wine comes from the area around Jerez, in southern Spain?', NULL,
+        'Sherry', ARRAY['Port', 'Madeira', 'Marsala', 'Vermouth', 'Muscat', 'Cava'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'FOOD_AND_DRINK', 'ORIGINAL', NULL,
+        'Which Indian bread is deep-fried until it puffs up like a balloon?', NULL,
+        'Puri', ARRAY['Naan', 'Chapati', 'Paratha', 'Roti', 'Dosa', 'Papadum'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'FOOD_AND_DRINK', 'ORIGINAL', NULL,
+        'Which thin, crispy South Indian crepe is made from a fermented rice and lentil batter?', NULL,
+        'Dosa', ARRAY['Naan', 'Uttapam', 'Paratha', 'Appam', 'Chapati', 'Puri'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'FOOD_AND_DRINK', 'ORIGINAL', NULL,
+        'Which Korean barbecue dish''s name means "fire meat"?', NULL,
+        'Bulgogi', ARRAY['Galbi', 'Japchae', 'Tteokbokki', 'Samgyeopsal', 'Kimbap', 'Jjigae'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'FOOD_AND_DRINK', 'ORIGINAL', NULL,
+        'Which spicy Spanish pork sausage gets its deep red color from pimentón?', NULL,
+        'Chorizo', ARRAY['Salami', 'Kielbasa', 'Andouille', 'Bratwurst', 'Morcilla', 'Linguica'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'FOOD_AND_DRINK', 'ORIGINAL', NULL,
+        'Which Italian cured pork comes from the belly, like an unsmoked bacon?', NULL,
+        'Pancetta', ARRAY['Prosciutto', 'Guanciale', 'Salami', 'Mortadella', 'Speck', 'Coppa'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'FOOD_AND_DRINK', 'ORIGINAL', NULL,
+        'Which layered French pastry has a name meaning "a thousand leaves"?', NULL,
+        'Mille-feuille', ARRAY['Croissant', 'Éclair', 'Profiterole', 'Palmier', 'Madeleine', 'Pain au chocolat'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'FOOD_AND_DRINK', 'ORIGINAL', NULL,
+        'Tahini is a paste made from which seeds?', NULL,
+        'Sesame seeds', ARRAY['Sunflower seeds', 'Pumpkin seeds', 'Chia seeds', 'Flax seeds', 'Poppy seeds', 'Hemp seeds'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'FOOD_AND_DRINK', 'ORIGINAL', NULL,
+        'Which vodka cocktail with ginger beer and lime is served in a copper mug?', NULL,
+        'Moscow Mule', ARRAY['Dark ''n'' Stormy', 'Cosmopolitan', 'Screwdriver', 'Bloody Mary', 'Gimlet', 'Sea Breeze'], 300);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'FOOD_AND_DRINK', 'ORIGINAL', NULL,
+        'A chipotle is a smoked, dried version of which pepper?', NULL,
+        'The jalapeño', ARRAY['The habanero', 'The poblano', 'The serrano', 'The cayenne', 'The bell pepper', 'The Anaheim'], 300);
 
 -- 400 points
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
@@ -4294,10 +4654,130 @@ INSERT INTO questions (question_number, game_mode, category, subcategory, factio
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'FOOD_AND_DRINK', 'ORIGINAL', NULL,
         'Which Scottish soup is made from smoked haddock, potatoes and onions?', NULL,
         'Cullen skink', ARRAY['Cock-a-leekie', 'Scotch broth', 'Partan bree', 'Bouillabaisse', 'Clam chowder', 'Mulligatawny'], 400);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'FOOD_AND_DRINK', 'ORIGINAL', NULL,
+        'Which Moroccan spice blend''s name means "head of the shop"?', NULL,
+        'Ras el hanout', ARRAY['Harissa', 'Za''atar', 'Baharat', 'Dukkah', 'Berbere', 'Chermoula'], 400);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'FOOD_AND_DRINK', 'ORIGINAL', NULL,
+        'Which Middle Eastern spice blend mixes dried thyme, sumac and sesame seeds?', NULL,
+        'Za''atar', ARRAY['Ras el hanout', 'Baharat', 'Dukkah', 'Harissa', 'Garam masala', 'Berbere'], 400);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'FOOD_AND_DRINK', 'ORIGINAL', NULL,
+        'Chianti is made mostly from which red grape?', NULL,
+        'Sangiovese', ARRAY['Nebbiolo', 'Barbera', 'Merlot', 'Montepulciano', 'Primitivo', 'Tempranillo'], 400);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'FOOD_AND_DRINK', 'ORIGINAL', NULL,
+        'Which slow-cooked stew of white beans, sausage and duck comes from southwest France?', NULL,
+        'Cassoulet', ARRAY['Bouillabaisse', 'Pot-au-feu', 'Coq au vin', 'Ratatouille', 'Daube', 'Garbure'], 400);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'FOOD_AND_DRINK', 'ORIGINAL', NULL,
+        'What does "macchiato" mean in Italian?', NULL,
+        'Stained', ARRAY['Small', 'Strong', 'Foamy', 'Morning', 'Sweet', 'Short'], 400);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'FOOD_AND_DRINK', 'ORIGINAL', NULL,
+        'Which Japanese dipping sauce is made with citrus juice, often blended with soy sauce?', NULL,
+        'Ponzu', ARRAY['Teriyaki', 'Tare', 'Mirin', 'Tsuyu', 'Yuzu kosho', 'Tonkatsu sauce'], 400);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'FOOD_AND_DRINK', 'ORIGINAL', NULL,
+        'The sweet orange is a cross between a pomelo and which other citrus fruit?', NULL,
+        'The mandarin', ARRAY['The lemon', 'The lime', 'The grapefruit', 'The citron', 'The kumquat', 'The tangelo'], 400);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'FOOD_AND_DRINK', 'ORIGINAL', NULL,
+        'Which cured pork cheek is the traditional meat in a Roman carbonara?', NULL,
+        'Guanciale', ARRAY['Pancetta', 'Prosciutto', 'Speck', 'Lardo', 'Coppa', 'Bresaola'], 400);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'FOOD_AND_DRINK', 'ORIGINAL', NULL,
+        'Which upside-down caramelized apple tart is named for the two French sisters who served it at their hotel?', NULL,
+        'Tarte Tatin', ARRAY['Clafoutis', 'Galette des rois', 'Tarte au citron', 'Far breton', 'Kouign-amann', 'Pithivier'], 400);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'FOOD_AND_DRINK', 'ORIGINAL', NULL,
+        'Which little shell-shaped sponge cake, dipped in tea, set off Marcel Proust''s flood of memories?', NULL,
+        'The madeleine', ARRAY['The financier', 'The macaron', 'The canelé', 'The palmier', 'The éclair', 'The petit four'], 400);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'FOOD_AND_DRINK', 'ORIGINAL', NULL,
+        'Japanese dashi broth is made from kombu seaweed and flakes of which dried, smoked fish?', NULL,
+        'Bonito', ARRAY['Mackerel', 'Sardine', 'Tuna belly', 'Eel', 'Salmon', 'Anchovy'], 400);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'FOOD_AND_DRINK', 'ORIGINAL', NULL,
+        'Which creamy soup of leeks and potatoes is traditionally served cold?', NULL,
+        'Vichyssoise', ARRAY['Bisque', 'Gazpacho', 'Velouté', 'Chowder', 'Borscht', 'Consommé'], 400);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'FOOD_AND_DRINK', 'ORIGINAL', NULL,
+        'Which spice is the seed of a tree whose lacy red seed covering is sold separately as mace?', NULL,
+        'Nutmeg', ARRAY['Allspice', 'Cloves', 'Cardamom', 'Star anise', 'Cinnamon', 'Coriander'], 400);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'FOOD_AND_DRINK', 'ORIGINAL', NULL,
+        'Brazil''s national dish is a stew of black beans and pork called what?', NULL,
+        'Feijoada', ARRAY['Moqueca', 'Churrasco', 'Vatapá', 'Coxinha', 'Acarajé', 'Picanha'], 400);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'FOOD_AND_DRINK', 'ORIGINAL', NULL,
+        'Which Filipino dish braises meat in vinegar, soy sauce, garlic and bay leaves?', NULL,
+        'Adobo', ARRAY['Sinigang', 'Kare-kare', 'Sisig', 'Lechon', 'Pancit', 'Lumpia'], 400);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'FOOD_AND_DRINK', 'ORIGINAL', NULL,
+        'Which Indonesian dish''s name simply means "fried rice"?', NULL,
+        'Nasi goreng', ARRAY['Mie goreng', 'Nasi lemak', 'Rendang', 'Satay', 'Gado-gado', 'Soto'], 400);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'FOOD_AND_DRINK', 'ORIGINAL', NULL,
+        'Which spicy coconut noodle soup is a favorite in Malaysia and Singapore?', NULL,
+        'Laksa', ARRAY['Tom kha', 'Pho', 'Ramen', 'Khao soi', 'Mohinga', 'Mee goreng'], 400);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'FOOD_AND_DRINK', 'ORIGINAL', NULL,
+        'Which pastry of phyllo, chopped nuts and syrup did Ottoman sultans send to their soldiers in a Ramadan parade?', NULL,
+        'Baklava', ARRAY['Kunafa', 'Halva', 'Lokum', 'Börek', 'Basbousa', 'Revani'], 400);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'FOOD_AND_DRINK', 'ORIGINAL', NULL,
+        'Which salty Italian sheep''s-milk cheese was part of the rations of Roman legionaries?', NULL,
+        'Pecorino Romano', ARRAY['Parmigiano-Reggiano', 'Grana Padano', 'Asiago', 'Ricotta salata', 'Provolone', 'Manchego'], 400);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'FOOD_AND_DRINK', 'ORIGINAL', NULL,
+        'Which sheep''s-milk cheese comes from La Mancha, the land of Don Quixote?', NULL,
+        'Manchego', ARRAY['Pecorino', 'Idiazabal', 'Mahón', 'Cabrales', 'Roncal', 'Feta'], 400);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'FOOD_AND_DRINK', 'ORIGINAL', NULL,
+        'Which red grape became Argentina''s signature wine after arriving from France?', NULL,
+        'Malbec', ARRAY['Carménère', 'Tannat', 'Merlot', 'Syrah', 'Bonarda', 'Grenache'], 400);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'FOOD_AND_DRINK', 'ORIGINAL', NULL,
+        'Which white grape is Germany''s most famous wine?', NULL,
+        'Riesling', ARRAY['Chardonnay', 'Grüner Veltliner', 'Gewürztraminer', 'Sauvignon Blanc', 'Pinot Grigio', 'Chenin Blanc'], 400);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'FOOD_AND_DRINK', 'ORIGINAL', NULL,
+        'Which fortified wine from a Portuguese island is deliberately heated as it ages?', NULL,
+        'Madeira', ARRAY['Port', 'Sherry', 'Marsala', 'Vin santo', 'Malaga', 'Commandaria'], 400);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'FOOD_AND_DRINK', 'ORIGINAL', NULL,
+        'Which anise-flavored spirit, nicknamed "the green fairy," was banned in much of Europe in the early 1900s?', NULL,
+        'Absinthe', ARRAY['Ouzo', 'Pastis', 'Sambuca', 'Chartreuse', 'Arak', 'Pernod'], 400);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'FOOD_AND_DRINK', 'ORIGINAL', NULL,
+        'In French cooking, what is mirepoix?', NULL,
+        'Diced onion, carrot and celery', ARRAY['A thick tomato paste', 'Butter mixed with flour', 'Chopped parsley and garlic', 'A bundle of herbs', 'Slow-cooked onions', 'A clear stock'], 400);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'FOOD_AND_DRINK', 'ORIGINAL', NULL,
+        'Cajun cooking''s "holy trinity" is onion, celery and what?', NULL,
+        'Bell pepper', ARRAY['Garlic', 'Carrot', 'Okra', 'Tomato', 'Cayenne', 'Green onion'], 400);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'FOOD_AND_DRINK', 'ORIGINAL', NULL,
+        'Which nut grows hanging beneath a fleshy fruit called an "apple," inside a shell holding a skin-burning oil?', NULL,
+        'The cashew', ARRAY['The almond', 'The pistachio', 'The macadamia', 'The Brazil nut', 'The pecan', 'The walnut'], 400);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'FOOD_AND_DRINK', 'ORIGINAL', NULL,
+        'Which spice, the dried berry of a Caribbean tree, tastes like cinnamon, nutmeg and cloves at once?', NULL,
+        'Allspice', ARRAY['Juniper', 'Pink peppercorn', 'Star anise', 'Cardamom', 'Mace', 'Sumac'], 400);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'FOOD_AND_DRINK', 'ORIGINAL', NULL,
+        'Which ancient Andean seed did the Incas call the "mother grain"?', NULL,
+        'Quinoa', ARRAY['Amaranth', 'Chia', 'Millet', 'Barley', 'Teff', 'Buckwheat'], 400);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'FOOD_AND_DRINK', 'ORIGINAL', NULL,
+        'What is the French term for a dish set on fire with liquor at the table, like cherries jubilee?', NULL,
+        'Flambé', ARRAY['Brûlée', 'Glacé', 'Sauté', 'Gratiné', 'Confit', 'Poêlé'], 400);
 
 COMMIT;
 
--- Check: should return 80.
+-- Check: should return 200.
 SELECT COUNT(*) FROM questions WHERE game_mode = 'TRIVI_YEAH_II' AND category = 'FOOD_AND_DRINK';
 
 -- ============================================================================
