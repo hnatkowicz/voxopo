@@ -827,7 +827,11 @@ if (btnSubmitSpectate) {
                 // round clears the scoreboard's "picked" dots.
                 if (data.type === 'LETTER_RIP_STATE') {
                     const roundKey = `${data.puzzle}-${data.round}-${data.lrPhase}`;
-                    if (data.lrPhase === 'PICK' && letterRipRoundKey !== roundKey && !data.pickedCount) {
+                    // New pick round, or The Spotlight's wager / first tap round (dots then mean "locked in").
+                    const freshRound = (data.lrPhase === 'PICK' && !data.pickedCount)
+                        || (data.lrPhase === 'SPOT_WAGER' && data.spotlight && !data.spotlight.wageredCount)
+                        || (data.lrPhase === 'SPOT_TAP' && data.round === 1 && data.spotlight && !data.spotlight.lockedCount);
+                    if (freshRound && letterRipRoundKey !== roundKey) {
                         playerAnswerStatus = {};
                         updateLeaderboardUI(cachedPlayersSnapshot);
                     }
@@ -1870,25 +1874,48 @@ function updateOnTheSpectrumContinueTallyTV(votedCount, totalNeeded) {
 // picked stay small underneath, and the clock lives in the top bar. Picks
 // are secret, so the TV only ever shows what the room has earned: the
 // letters it lit, how many picked each, and who solved it.
-let letterRipShown = { puzzle: null, letters: new Set() };
+let letterRipShown = { puzzle: null, keys: new Set() };
 
-function letterRipTilesHtml(tiles, fresh) {
-    return tiles.map(word => `<span class="lr-word">${word.map(ch => {
-        if (ch === '') return '<span class="lr-tile"></span>';
-        if (!/[A-Z]/.test(ch)) return `<span class="lr-tile lr-punct">${escapeHtml(ch)}</span>`;
-        return `<span class="lr-tile lr-lit${fresh.has(ch) ? ' lr-new' : ''}">${ch}</span>`;
-    }).join('')}</span>`).join('');
+// Tiles that weren't showing a moment ago flip in. Tracked by position, so
+// a Spotlight flip (one square) and a letter (every copy) both work.
+function letterRipTilesHtml(tiles, fresh, spots) {
+    let at = 0;
+    return tiles.map(word => {
+        const html = `<span class="lr-word">${word.map((ch, k) => {
+            const i = at + k;
+            let tile;
+            if (ch === '') tile = '<span class="lr-tile"></span>';
+            else if (!/[A-Z]/.test(ch)) tile = `<span class="lr-tile lr-punct">${escapeHtml(ch)}</span>`;
+            else tile = `<span class="lr-tile lr-lit${fresh.has(i) ? ' lr-new' : ''}">${ch}</span>`;
+            if (!spots) return tile;
+            // The Spotlight: whoever is on this tile, under it (3 avatars, then +N).
+            const here = spots.filter(s => s.tile === i);
+            const lit = here.length ? ' lr-spotlit' : '';
+            const faces = here.slice(0, 3).map(s => avatarHtml(s.emoji, 1)).join('') + (here.length > 3 ? `<span class="lr-spot-more">+${here.length - 3}</span>` : '');
+            return `<span class="lr-cell${lit}">${tile}<span class="lr-spots">${faces}</span></span>`;
+        }).join('')}</span>`;
+        at += word.length + 1;
+        return html;
+    }).join('');
+}
+
+function letterRipFreshKeys(data) {
+    const key = data.spotlight ? 'spotlight' : data.puzzle;
+    if (letterRipShown.puzzle !== key) letterRipShown = { puzzle: key, keys: new Set() };
+    const showing = new Set();
+    let at = 0;
+    data.tiles.forEach(word => { word.forEach((ch, k) => { if (/[A-Z]/.test(ch)) showing.add(at + k); }); at += word.length + 1; });
+    const fresh = new Set([...showing].filter(i => !letterRipShown.keys.has(i)));
+    letterRipShown.keys = showing;
+    return fresh;
 }
 
 function renderLetterRipTV(data) {
+    if (data.spotlight) return renderSpotlightTV(data);
     const panel = document.getElementById('active-content-stage');
     currentGamePhase = 'LETTER_RIP';
     setStatusMessage('');
-    if (letterRipShown.puzzle !== data.puzzle) letterRipShown = { puzzle: data.puzzle, letters: new Set() };
-    // Letters showing now that weren't a moment ago flip in.
-    const showing = new Set(data.tiles.flat().filter(ch => /[A-Z]/.test(ch)));
-    const fresh = new Set([...showing].filter(ch => !letterRipShown.letters.has(ch)));
-    letterRipShown.letters = showing;
+    const fresh = letterRipFreshKeys(data);
 
     let foot = '';
     if (data.lrPhase === 'DONE') {
@@ -1913,6 +1940,44 @@ function renderLetterRipTV(data) {
         ${wrong}
     `);
     if (data.lrPhase === 'PICK') setClock(data.secondsLeft);
+    else setClock('');
+}
+
+// The Spotlight (Letter Rip's wager final). The board and the avatars on
+// it get the room; the round and what a right answer pays stay small on
+// top. Wagers and answers stay secret until each player's result.
+function renderSpotlightTV(data) {
+    const panel = document.getElementById('active-content-stage');
+    currentGamePhase = 'LETTER_RIP';
+    setStatusMessage('');
+    const sp = data.spotlight;
+    const fresh = letterRipFreshKeys(data);
+    const pays = x => `${String(x).replace('.5', '&frac12;')}&times;`;
+    let eyebrow = '', foot = '';
+    if (data.lrPhase === 'SPOT_WAGER') {
+        foot = `<div class="lr-note">${sp.wageredCount ? `${sp.wageredCount} / ${data.playerCount} wagered` : '&nbsp;'}</div>`;
+    } else if (data.lrPhase === 'SPOT_REVEAL') {
+        eyebrow = `<div class="tp-eyebrow">The Spotlight</div>`;
+        const rows = sp.results.slice(-6).map(r => `
+            <div class="lr-result">
+                ${avatarHtml(r.emoji, 1)}<span class="lr-result-name">${escapeHtml(r.name)}</span>
+                <span class="lr-result-answer">${r.answer ? escapeHtml(r.answer) : 'No answer'}</span>
+                <span class="lr-result-delta ${r.right ? 'lr-right' : r.delta ? 'lr-miss' : ''}">${r.delta > 0 ? '+' : ''}${r.delta ? r.delta.toLocaleString('en-US') : ''}${r.right && r.pays > 1 ? ` <span class="lr-result-pays">${pays(r.pays)}</span>` : ''}</span>
+            </div>`).join('');
+        foot = `<div class="lr-results">${rows}</div>`;
+    } else {
+        const what = data.lrPhase === 'SPOT_LAST' ? 'Last call' : `Round <span class="tp-pts">${sp.round} / ${sp.rounds}</span>`;
+        eyebrow = `<div class="tp-eyebrow">The Spotlight &middot; ${what} &middot; Right pays <span class="tp-pts">${pays(sp.pays)}</span></div>`;
+        foot = `<div class="lr-note">${sp.lockedCount ? `${sp.lockedCount} / ${data.playerCount} locked in` : '&nbsp;'}</div>`;
+    }
+    const title = data.lrPhase === 'SPOT_WAGER' ? `<div class="lr-splash">The Spotlight</div>` : '';
+    panel.innerHTML = tpStage('tp-center lr-stage', `
+        ${eyebrow}${title}
+        <div class="lr-category">${escapeHtml(data.category)}</div>
+        <div class="lr-board lr-board-spot">${letterRipTilesHtml(data.tiles, fresh, data.lrPhase === 'SPOT_TAP' ? sp.spots : [])}</div>
+        ${foot}
+    `);
+    if (data.lrPhase === 'SPOT_TAP' || data.lrPhase === 'SPOT_LAST') setClock(data.secondsLeft);
     else setClock('');
 }
 

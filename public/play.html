@@ -70,6 +70,8 @@
         .lr-word { display: inline-flex; gap: 2px; }
         .lr-tile { width: 20px; height: 26px; display: inline-flex; align-items: center; justify-content: center; border-radius: 3px; background: var(--rm-surface-2); border: 1px solid var(--rm-border); font-weight: 800; font-size: 15px; color: var(--rm-bg); box-sizing: border-box; }
         .lr-tile.lit { background: var(--rm-text); border-color: var(--rm-text); }
+        button.lr-tile.lr-tap { cursor: pointer; padding: 0; border-color: rgba(var(--rm-brand-rgb), 0.45); }
+        .lr-tile.mine { border: 2px solid var(--rm-brand); background: rgba(var(--rm-brand-rgb), 0.35); box-shadow: 0 0 10px rgba(var(--rm-brand-rgb), 0.6); }
         .lr-tile.punct { background: transparent; border-color: transparent; color: var(--rm-text); width: 10px; }
         .lr-status { min-height: 1.5em; text-align: center; font-weight: 600; font-size: 0.95rem; color: var(--rm-text-2); margin-bottom: 12px; }
         .lr-status .hit { color: var(--rm-green); }
@@ -927,7 +929,7 @@
                 }
                 case 'TRIVI_YEAH_II_FINAL_WAGER_PHASE': return ['Final Wager', data.topicLabel].filter(Boolean).join(' · ');
                 case 'FLAG_ME_DOWN_PHASE': return `Flag ${data.round} of ${data.totalRounds}`;
-                case 'LETTER_RIP_PHASE': return `Puzzle ${data.puzzle} of ${data.total}`;
+                case 'LETTER_RIP_PHASE': return data.mySpotlight ? 'The Spotlight' : `Puzzle ${data.puzzle} of ${data.total}`;
                 case 'EMPOSSDURR_ROUND_PHASE': return `Round ${data.round} of ${data.totalRounds}`;
                 case 'ON_THE_SPECTRUM_ROUND_PHASE': return `Round ${data.roundNumber} of ${data.totalRounds}`;
                 case 'PROFILER_ROUND_PHASE':
@@ -1047,7 +1049,14 @@
                     return null;
                 case 'FLAG_ME_DOWN_PHASE': return data.fmdPhase === 'CLUES' ? `fmd-${data.round}` : null;
                 // A new pick round is something to do; the side pages step aside.
-                case 'LETTER_RIP_PHASE': return data.lrPhase === 'PICK' && !data.myPick ? `lr-${data.puzzle}-${data.round}` : null;
+                case 'LETTER_RIP_PHASE':
+                    if (data.mySpotlight) {
+                        if (data.lrPhase === 'SPOT_WAGER' && data.mySpotlight.wager === null) return 'lrs-wager';
+                        if (data.lrPhase === 'SPOT_TAP' && data.mySpotlight.spot === null && !data.mySpotlight.answer) return `lrs-${data.round}`;
+                        if (data.lrPhase === 'SPOT_LAST' && !data.mySpotlight.answer) return 'lrs-last';
+                        return null;
+                    }
+                    return data.lrPhase === 'PICK' && !data.myPick ? `lr-${data.puzzle}-${data.round}` : null;
                 case 'PROFILER_ROUND_PHASE':
                     return data.profilerPhase === 'ANSWER' || data.profilerPhase === 'GUESS' ? `pf-${data.profilerPhase}-${data.round}` : null;
                 default: return null;
@@ -2330,11 +2339,83 @@
             document.getElementById('lr-solve-area').innerHTML = '';
             try {
                 const data = await lrSend(`LRSOLVE ${text}`);
-                lrFeedback(data.reply || '', !!(data.reply && data.reply.startsWith('Solved')));
+                // A Spotlight lock-in is already on the status line; don't say it twice.
+                if (data.reply && data.reply.startsWith('Locked in')) lrFeedback('');
+                else lrFeedback(data.reply || '', !!(data.reply && !data.reply.startsWith('⚠️')));
             } catch (e) {
                 lrFeedback("❌ That didn't go through. Try again.", false);
             }
             lrLastKey = null;
+        }
+
+        // ---------- The Spotlight (Letter Rip's wager final) ----------
+        // Wager, then tap a hidden tile each round: your avatar jumps onto it
+        // on the TV. Lock in a solve whenever you like (earlier pays more);
+        // your answer stays secret until your result.
+        const lrPays = x => `${String(x).replace('.5', '½')}×`;
+        function lrSpotWager(all) {
+            const input = document.getElementById('lr-wager-input');
+            const max = lrLastData && lrLastData.mySpotlight ? lrLastData.mySpotlight.maxWager : 0;
+            if (all) { input.value = max; return; }
+            const amount = Math.floor(Number(input.value));
+            if (!Number.isFinite(amount) || amount < 0 || input.value === '') { lrFeedback('⚠️ Type a number first.', false); return; }
+            if (amount > max) { lrFeedback(`⚠️ The most you can wager is ${max.toLocaleString('en-US')}.`, false); return; }
+            lrSend(`LRWAGER ${amount}`).then(d => { if (d.reply && d.reply.startsWith('⚠️')) lrFeedback(d.reply, false); else lrFeedback(''); lrLastKey = null; })
+                .catch(() => lrFeedback("❌ That didn't go through. Try again.", false));
+        }
+        function lrSpotTap(i) {
+            lrSend(`LRSPOT ${i}`).then(d => { if (d.reply && d.reply.startsWith('⚠️')) lrFeedback(d.reply, false); lrLastKey = null; })
+                .catch(() => lrFeedback("❌ That didn't go through. Try again.", false));
+        }
+
+        function renderSpotlightPhone(data) {
+            const me = data.mySpotlight, sp = data.spotlight;
+            document.getElementById('lr-head').innerHTML = data.lrPhase === 'SPOT_WAGER' || data.lrPhase === 'SPOT_REVEAL' ? 'The Spotlight'
+                : `The Spotlight &middot; ${data.lrPhase === 'SPOT_LAST' ? 'Last call' : `Round ${sp.round} of ${sp.rounds}`} &middot; Pays ${lrPays(sp.pays)}`;
+            document.getElementById('lr-category').innerText = data.category || '';
+            // Big enough tiles to tap; the longest word sets the size.
+            const longest = Math.max(...(data.tiles || [[]]).map(w => w.length));
+            const size = Math.max(18, Math.min(30, Math.floor(300 / Math.max(1, longest)) - 3));
+            const canTap = data.lrPhase === 'SPOT_TAP';
+            let at = 0;
+            document.getElementById('lr-board').innerHTML = (data.tiles || []).map(word => {
+                const html = `<span class="lr-word">${word.map((ch, k) => {
+                    const i = at + k, style = `style="width:${size}px;height:${Math.round(size * 1.3)}px;font-size:${Math.round(size * 0.6)}px"`;
+                    if (ch === '' && canTap) return `<button type="button" class="lr-tile lr-tap${me.spot === i ? ' mine' : ''}" ${style} onclick="lrSpotTap(${i})"></button>`;
+                    if (ch === '') return `<span class="lr-tile${me.spot === i ? ' mine' : ''}" ${style}></span>`;
+                    if (/[A-Z]/.test(ch)) return `<span class="lr-tile lit" ${style}>${ch}</span>`;
+                    return `<span class="lr-tile punct" ${style}>${lrEsc(ch)}</span>`;
+                }).join('')}</span>`;
+                at += word.length + 1;
+                return html;
+            }).join('');
+
+            const status = document.getElementById('lr-status');
+            const locked = me.answer ? `Locked in: <strong>${lrEsc(me.answer)}</strong>. Right pays ${lrPays(me.answerPays)}.` : '';
+            if (data.lrPhase === 'SPOT_WAGER') {
+                status.innerHTML = me.wager === null
+                    ? `Wager up to ${me.maxWager.toLocaleString('en-US')}. Right pays 2× before any tile flips, 1½× after one, 1× after that.`
+                    : `Wager locked: ${me.wager.toLocaleString('en-US')}.`;
+            } else if (data.lrPhase === 'SPOT_REVEAL') {
+                const r = me.result;
+                status.innerHTML = r ? (r.right ? `<span class="hit">Right! +${r.delta.toLocaleString('en-US')}</span>` : `<span class="miss">${r.answer ? 'Not it.' : 'No answer.'}${r.delta ? ` ${r.delta.toLocaleString('en-US')}` : ''}</span>`)
+                    : (me.answer || me.wager ? 'Your result is coming.' : '');
+            } else if (data.lrPhase === 'SPOT_TAP') {
+                status.innerHTML = locked || (me.spot === null ? 'Tap a tile to light it' : 'Your spotlight is on. Tap to move it.');
+                if (locked) status.innerHTML += '<br><span style="font-weight:400">You can still light tiles for the room.</span>';
+            } else {
+                status.innerHTML = locked || (data.lrPhase === 'SPOT_LAST' ? 'Last call. Lock in your answer.' : '&nbsp;');
+            }
+
+            // The wager box (kept while you type: a redraw would wipe it).
+            const keys = document.getElementById('lr-keys');
+            if (data.lrPhase === 'SPOT_WAGER' && me.wager === null) {
+                if (!document.getElementById('lr-wager-input')) keys.innerHTML = `
+                    <input type="number" id="lr-wager-input" class="lr-solve-input" inputmode="numeric" min="0" max="${me.maxWager}" placeholder="0 to ${me.maxWager.toLocaleString('en-US')}" style="margin-top:0;text-transform:none;">
+                    <button class="btn lr-solve-btn" style="margin-top:10px;" onclick="lrSpotWager(true)">All in</button>
+                    <button class="btn" style="margin-top:10px;" onclick="lrSpotWager(false)">Lock in wager</button>`;
+            } else keys.innerHTML = '';
+            lrRenderSolve(data);
         }
 
         let lrLastData = null;
@@ -2342,10 +2423,11 @@
 
         function renderLetterRip(data) {
             lrLastData = data;
-            const key = JSON.stringify([data.puzzle, data.round, data.lrPhase, data.tiles, data.bank, data.myPick, data.myLastPick, data.canSolve, data.solver, data.pot, lrSolveStep]);
+            const key = JSON.stringify([data.puzzle, data.round, data.lrPhase, data.tiles, data.bank, data.myPick, data.myLastPick, data.canSolve, data.solver, data.pot, lrSolveStep, data.spotlight, data.mySpotlight]);
             if (key === lrLastKey) return;
             lrLastKey = key;
             if (lrSolvePuzzle !== null && lrSolvePuzzle !== data.puzzle) lrFeedback('');
+            if (data.mySpotlight) return renderSpotlightPhone(data);
 
             document.getElementById('lr-head').innerHTML = `Puzzle ${data.puzzle} of ${data.total}${data.lrPhase !== 'DONE' ? ` &middot; Worth ${Number(data.pot).toLocaleString('en-US')}` : ''}`;
             document.getElementById('lr-category').innerText = data.category || '';

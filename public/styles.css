@@ -908,3 +908,22 @@ body.tp-layout[data-view="gateway"] #gateway-screen { display: flex !important; 
 .lr-solver-name { font-family: var(--rm-font-display); font-weight: 800; font-size: calc(var(--u) * 3); color: var(--rm-text); }
 .lr-solver-points { font-weight: 800; font-size: calc(var(--u) * 2.4); color: var(--rm-brand); }
 .lr-wrong { display: flex; align-items: center; justify-content: center; gap: calc(var(--u) * 0.6); font-size: calc(var(--u) * 1.3); color: var(--rm-text-soft); }
+
+/* The Spotlight (Letter Rip's wager final): avatars sit under the tile they lit. */
+.lr-splash { font-family: var(--rm-font-display); font-weight: 800; font-size: calc(var(--u) * 5.2); color: var(--rm-brand); line-height: 1; }
+.lr-board-spot { row-gap: calc(var(--u) * 3.4); padding-bottom: calc(var(--u) * 2.6); }
+.lr-cell { position: relative; display: inline-flex; }
+.lr-cell.lr-spotlit .lr-tile { border-color: var(--rm-brand); box-shadow: 0 0 calc(var(--u) * 1.4) rgba(var(--rm-brand-rgb), 0.75); }
+.lr-spots { position: absolute; top: 100%; left: 50%; transform: translateX(-50%); display: flex; align-items: center; margin-top: calc(var(--u) * 0.3);
+    font-size: calc(var(--u) * 1.8); white-space: nowrap; }
+.lr-spots > * + * { margin-left: calc(var(--u) * -0.6); }
+.lr-spot-more { font-size: calc(var(--u) * 1.1); font-weight: 700; color: var(--rm-text-soft); margin-left: calc(var(--u) * 0.3); }
+.lr-results { display: flex; flex-direction: column; gap: calc(var(--u) * 0.5); width: 70%; margin: 0 auto; }
+.lr-result { display: flex; align-items: center; gap: calc(var(--u) * 0.8); font-size: calc(var(--u) * 1.55); animation: lr-rise 0.4s ease-out both; }
+.lr-result-name { font-weight: 700; color: var(--rm-text); }
+.lr-result-answer { flex: 1; text-align: right; color: var(--rm-text-soft); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.lr-result-delta { min-width: 22%; text-align: right; font-weight: 800; color: var(--rm-text-soft); }
+.lr-result-delta.lr-right { color: var(--rm-green); }
+.lr-result-delta.lr-miss { color: var(--rm-red-soft); }
+.lr-result-pays { font-size: 0.75em; color: var(--rm-brand); }
+@keyframes lr-rise { from { opacity: 0; transform: translateY(calc(var(--u) * 1)); } to { opacity: 1; transform: none; } }
