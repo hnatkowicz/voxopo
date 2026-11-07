@@ -618,6 +618,14 @@ Mode keys are used in room votes and in `gameEngine.js`:
     tile down (after a 2s beat to move). A 10s last call follows the
     flips; it's skipped once everyone has locked in.
   - The numbers are `SPOTLIGHT_*` in `gameEngine.js`, first guesses.
+  - **First family verdict (Nov 2026):** four games in a row; Randy's wife
+    "said it's everything she'd want in a game." Randy's icon
+    (`mode-letter-rip.svg`) is staying. **Top content need: many more
+    phrases.** **To look into:** Randy saw the phrase tiles "jumping a
+    little" (too fast to tell when or why; he'll watch again). Claude's
+    guess: the stage is centered top to bottom, so when the line under
+    the board changes height ("3 / 4 picked", then the letter chips, then
+    the solver's avatar), the whole board shifts up or down.
 - **FLAG_ME_DOWN** (also a standalone mode, after the family asked where it
   went): 15 flags, 5 easy -> 5 medium -> 5 hard, each with 4 country choices
   (1 wrong answer from the same local region, 2 from the same continent).
