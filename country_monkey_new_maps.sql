@@ -4,8 +4,8 @@
 -- REPLACES Country Monkey's map questions (subcategory 'COUNTRY'): the DELETE
 -- below removes them, then one row is inserted per map file per region it
 -- belongs to. Flags and water live in their own files
--- (country_monkey_flags.sql, country_monkey_water.sql) and aren't touched -- 237 rows from
--- 228 map files covering 173 countries/territories.
+-- (country_monkey_flags.sql, country_monkey_water.sql) and aren't touched -- 247 rows from
+-- 237 map files covering 182 countries/territories.
 --
 -- Safe to re-run: it always deletes and re-inserts the same set. Wrapped in a
 -- transaction, so if anything fails nothing changes (the old questions stay).
@@ -31,7 +31,7 @@
 -- Wager that closes every Country Monkey game (Swaziland = Eswatini,
 -- Burma = Myanmar, ...). NULL means just the name itself; accents, "The",
 -- hyphens and small typos are forgiven anyway.
--- Rows per region: AFRICA 60, EUROPE 53, ASIA 43, MIDDLE_EAST_ASIA 39, AMERICAS 42.
+-- Rows per region: AFRICA 63, EUROPE 56, ASIA 45, MIDDLE_EAST_ASIA 41, AMERICAS 42.
 -- ============================================================================
 
 BEGIN;
@@ -51,6 +51,7 @@ FROM (VALUES
 ('AFRICA',            '/maps/angola.webp',                     'Angola',                  ARRAY['Zambia', 'Namibia', 'DR Congo', 'Botswana', 'Mozambique', 'Gabon'], NULL::text[], 200),
 ('AFRICA',            '/maps/benin.webp',                      'Benin',                   ARRAY['Togo', 'Ghana', 'Burkina Faso', 'Nigeria', 'Niger', 'Liberia'], NULL::text[], 250),
 ('AFRICA',            '/maps/botswana.webp',                   'Botswana',                ARRAY['Namibia', 'Zimbabwe', 'Zambia', 'South Africa', 'Lesotho', 'Malawi'], NULL::text[], 250),
+('AFRICA',            '/maps/burkina-faso.webp',               'Burkina Faso',            ARRAY['Mali', 'Niger', 'Ghana', 'Togo', 'Benin', 'Ivory Coast'], NULL::text[], 200),
 ('AFRICA',            '/maps/burundi.webp',                    'Burundi',                 ARRAY['Rwanda', 'Uganda', 'Malawi', 'Tanzania', 'Eswatini', 'Lesotho'], NULL::text[], 300),
 ('AFRICA',            '/maps/cabo-verde-2.webp',               'Cabo Verde',              ARRAY['São Tomé and Príncipe', 'Comoros', 'Mauritius', 'Seychelles', 'Maldives', 'The Gambia'], ARRAY['Cape Verde'], 300),
 ('AFRICA',            '/maps/cabo-verde.webp',                 'Cabo Verde',              ARRAY['São Tomé and Príncipe', 'Comoros', 'Mauritius', 'Seychelles', 'Maldives', 'The Gambia'], ARRAY['Cape Verde'], 300),
@@ -59,6 +60,7 @@ FROM (VALUES
 ('AFRICA',            '/maps/chad.webp',                       'Chad',                    ARRAY['Niger', 'Sudan', 'Central African Republic', 'Mali', 'Libya', 'Cameroon'], NULL::text[], 200),
 ('AFRICA',            '/maps/comoros.webp',                    'Comoros',                 ARRAY['Mauritius', 'Seychelles', 'Madagascar', 'São Tomé and Príncipe', 'Cabo Verde', 'Maldives'], NULL::text[], 300),
 ('AFRICA',            '/maps/cote-divoire.webp',               'Ivory Coast',             ARRAY['Ghana', 'Liberia', 'Guinea', 'Burkina Faso', 'Sierra Leone', 'Togo'], ARRAY['Côte d''Ivoire'], 200),
+('AFRICA',            '/maps/djibouti.webp',                   'Djibouti',                ARRAY['Eritrea', 'Somalia', 'Ethiopia', 'Yemen', 'South Sudan', 'Rwanda'], NULL::text[], 250),
 ('AFRICA',            '/maps/drc.webp',                        'DR Congo',                ARRAY['Rep. of Congo', 'Angola', 'Central African Republic', 'Zambia', 'Tanzania', 'Gabon'], ARRAY['Democratic Republic of the Congo', 'DRC', 'Congo-Kinshasa', 'Zaire'], 150),
 ('AFRICA',            '/maps/egypt-2.webp',                    'Egypt',                   ARRAY['Libya', 'Sudan', 'Saudi Arabia', 'Jordan', 'Israel', 'Chad'], NULL::text[], 100),
 ('AFRICA',            '/maps/egypt.webp',                      'Egypt',                   ARRAY['Libya', 'Sudan', 'Saudi Arabia', 'Jordan', 'Israel', 'Chad'], NULL::text[], 100),
@@ -105,6 +107,7 @@ FROM (VALUES
 ('AFRICA',            '/maps/tunisia.webp',                    'Tunisia',                 ARRAY['Libya', 'Algeria', 'Morocco', 'Malta', 'Egypt', 'Mauritania'], NULL::text[], 200),
 ('AFRICA',            '/maps/uganda.webp',                     'Uganda',                  ARRAY['Kenya', 'Rwanda', 'Tanzania', 'South Sudan', 'Burundi', 'Malawi'], NULL::text[], 200),
 ('AFRICA',            '/maps/western-sahara.webp',             'Western Sahara',          ARRAY['Mauritania', 'Morocco', 'Algeria', 'Mali', 'Senegal', 'Tunisia'], NULL::text[], 250),
+('AFRICA',            '/maps/zambia.webp',                     'Zambia',                  ARRAY['Zimbabwe', 'Malawi', 'Angola', 'Mozambique', 'Botswana', 'Tanzania'], NULL::text[], 200),
 ('AFRICA',            '/maps/zimbabwe.webp',                   'Zimbabwe',                ARRAY['Zambia', 'Botswana', 'Mozambique', 'Malawi', 'Namibia', 'South Africa'], NULL::text[], 200),
 -- EUROPE
 ('EUROPE',            '/maps/albania.webp',                    'Albania',                 ARRAY['North Macedonia', 'Montenegro', 'Kosovo', 'Greece', 'Armenia', 'Bosnia and Herzegovina'], NULL::text[], 250),
@@ -135,10 +138,12 @@ FROM (VALUES
 ('EUROPE',            '/maps/liechtenstein-2.webp',            'Liechtenstein',           ARRAY['Luxembourg', 'Andorra', 'Monaco', 'San Marino', 'Switzerland', 'Malta'], NULL::text[], 300),
 ('EUROPE',            '/maps/liechtenstein.webp',              'Liechtenstein',           ARRAY['Luxembourg', 'Andorra', 'Monaco', 'San Marino', 'Switzerland', 'Malta'], NULL::text[], 300),
 ('EUROPE',            '/maps/lithuania.webp',                  'Lithuania',               ARRAY['Latvia', 'Estonia', 'Belarus', 'Poland', 'Moldova', 'Slovakia'], NULL::text[], 200),
+('EUROPE',            '/maps/luxembourg.webp',                 'Luxembourg',              ARRAY['Liechtenstein', 'Belgium', 'Andorra', 'Monaco', 'San Marino', 'Netherlands'], NULL::text[], 250),
 ('EUROPE',            '/maps/macedonia.webp',                  'North Macedonia',         ARRAY['Albania', 'Kosovo', 'Bulgaria', 'Montenegro', 'Serbia', 'Greece'], ARRAY['Macedonia'], 250),
 ('EUROPE',            '/maps/malta-2.webp',                    'Malta',                   ARRAY['Cyprus', 'San Marino', 'Monaco', 'Andorra', 'Liechtenstein', 'Tunisia'], NULL::text[], 250),
 ('EUROPE',            '/maps/malta.webp',                      'Malta',                   ARRAY['Cyprus', 'San Marino', 'Monaco', 'Andorra', 'Liechtenstein', 'Tunisia'], NULL::text[], 250),
 ('EUROPE',            '/maps/moldova.webp',                    'Moldova',                 ARRAY['Romania', 'Ukraine', 'Belarus', 'Bulgaria', 'Slovakia', 'Montenegro'], NULL::text[], 300),
+('EUROPE',            '/maps/monaco.webp',                     'Monaco',                  ARRAY['Andorra', 'San Marino', 'Liechtenstein', 'Luxembourg', 'Malta', 'Vatican City'], NULL::text[], 300),
 ('EUROPE',            '/maps/montenegro.webp',                 'Montenegro',              ARRAY['Albania', 'Bosnia and Herzegovina', 'Kosovo', 'North Macedonia', 'Serbia', 'Croatia'], NULL::text[], 300),
 ('EUROPE',            '/maps/netherlands.webp',                'Netherlands',             ARRAY['Belgium', 'Luxembourg', 'Denmark', 'Germany', 'Switzerland', 'Austria'], ARRAY['Holland'], 150),
 ('EUROPE',            '/maps/norway-2.webp',                   'Norway',                  ARRAY['Sweden', 'Finland', 'Denmark', 'Iceland', 'Estonia', 'Latvia'], NULL::text[], 150),
@@ -147,6 +152,7 @@ FROM (VALUES
 ('EUROPE',            '/maps/portugal.webp',                   'Portugal',                ARRAY['Spain', 'Andorra', 'Morocco', 'Ireland', 'France', 'Italy'], NULL::text[], 150),
 ('EUROPE',            '/maps/romania.webp',                    'Romania',                 ARRAY['Bulgaria', 'Moldova', 'Hungary', 'Ukraine', 'Serbia', 'Slovakia'], NULL::text[], 150),
 ('EUROPE',            '/maps/russia.webp',                     'Russia',                  ARRAY['Kazakhstan', 'China', 'Mongolia', 'Ukraine', 'Canada', 'Belarus'], ARRAY['Russian Federation'], 100),
+('EUROPE',            '/maps/san-marino.webp',                 'San Marino',              ARRAY['Vatican City', 'Monaco', 'Andorra', 'Malta', 'Liechtenstein', 'Luxembourg'], NULL::text[], 300),
 ('EUROPE',            '/maps/serbia.webp',                     'Serbia',                  ARRAY['Bosnia and Herzegovina', 'Croatia', 'Montenegro', 'Bulgaria', 'Hungary', 'Kosovo'], NULL::text[], 200),
 ('EUROPE',            '/maps/slovakia.webp',                   'Slovakia',                ARRAY['Slovenia', 'Czech Republic', 'Hungary', 'Austria', 'Poland', 'Croatia'], NULL::text[], 250),
 ('EUROPE',            '/maps/slovenia.webp',                   'Slovenia',                ARRAY['Slovakia', 'Croatia', 'Austria', 'Hungary', 'Montenegro', 'Switzerland'], NULL::text[], 250),
@@ -180,6 +186,7 @@ FROM (VALUES
 ('ASIA',              '/maps/laos.webp',                       'Laos',                    ARRAY['Cambodia', 'Vietnam', 'Thailand', 'Myanmar', 'Bhutan', 'Nepal'], NULL::text[], 250),
 ('ASIA',              '/maps/malaysia-2.webp',                 'Malaysia',                ARRAY['Indonesia', 'Thailand', 'Brunei', 'Singapore', 'Philippines', 'Myanmar'], NULL::text[], 150),
 ('ASIA',              '/maps/malaysia.webp',                   'Malaysia',                ARRAY['Indonesia', 'Thailand', 'Brunei', 'Singapore', 'Philippines', 'Myanmar'], NULL::text[], 150),
+('ASIA',              '/maps/maldives.webp',                   'Maldives',                ARRAY['Sri Lanka', 'Seychelles', 'Mauritius', 'Comoros', 'Bangladesh', 'Bhutan'], NULL::text[], 250),
 ('ASIA',              '/maps/mongolia.webp',                   'Mongolia',                ARRAY['Kazakhstan', 'China', 'Kyrgyzstan', 'Russia', 'Uzbekistan', 'Turkmenistan'], NULL::text[], 200),
 ('ASIA',              '/maps/myanmar-2.webp',                  'Myanmar',                 ARRAY['Thailand', 'Laos', 'Bangladesh', 'Cambodia', 'Bhutan', 'Vietnam'], ARRAY['Burma'], 200),
 ('ASIA',              '/maps/myanmar.webp',                    'Myanmar',                 ARRAY['Thailand', 'Laos', 'Bangladesh', 'Cambodia', 'Bhutan', 'Vietnam'], ARRAY['Burma'], 200),
@@ -201,6 +208,7 @@ FROM (VALUES
 ('ASIA',              '/maps/sri-lanka.webp',                  'Sri Lanka',               ARRAY['Maldives', 'Bangladesh', 'Madagascar', 'Taiwan', 'Nepal', 'Bhutan'], NULL::text[], 150),
 ('ASIA',              '/maps/thailand-2.webp',                 'Thailand',                ARRAY['Myanmar', 'Laos', 'Cambodia', 'Vietnam', 'Malaysia', 'Taiwan'], NULL::text[], 100),
 ('ASIA',              '/maps/thailand.webp',                   'Thailand',                ARRAY['Myanmar', 'Laos', 'Cambodia', 'Vietnam', 'Malaysia', 'Taiwan'], NULL::text[], 100),
+('ASIA',              '/maps/timor-leste.webp',                'Timor-Leste',             ARRAY['Indonesia', 'Papua New Guinea', 'Brunei', 'Philippines', 'Solomon Islands', 'Malaysia'], ARRAY['East Timor'], 250),
 ('ASIA',              '/maps/tonga.webp',                      'Tonga',                   ARRAY['Samoa', 'Fiji', 'Tuvalu', 'Vanuatu', 'Kiribati', 'Togo'], NULL::text[], 250),
 ('ASIA',              '/maps/vanuatu.webp',                    'Vanuatu',                 ARRAY['Solomon Islands', 'Fiji', 'Kiribati', 'Tonga', 'Samoa', 'Tuvalu'], NULL::text[], 300),
 ('ASIA',              '/maps/vietnam.webp',                    'Vietnam',                 ARRAY['Laos', 'Cambodia', 'Thailand', 'Myanmar', 'Malaysia', 'Philippines'], NULL::text[], 100),
@@ -211,6 +219,7 @@ FROM (VALUES
 ('MIDDLE_EAST_ASIA',  '/maps/azerbaijan.webp',                 'Azerbaijan',              ARRAY['Armenia', 'Georgia', 'Turkmenistan', 'Uzbekistan', 'Kazakhstan', 'Afghanistan'], NULL::text[], 250),
 ('MIDDLE_EAST_ASIA',  '/maps/bahrain.webp',                    'Bahrain',                 ARRAY['Qatar', 'Kuwait', 'United Arab Emirates', 'Oman', 'Brunei', 'Lebanon'], NULL::text[], 300),
 ('MIDDLE_EAST_ASIA',  '/maps/cyprus.webp',                     'Cyprus',                  ARRAY['Malta', 'Lebanon', 'Israel', 'Syria', 'Jordan', 'Bahrain'], NULL::text[], 250),
+('MIDDLE_EAST_ASIA',  '/maps/djibouti.webp',                   'Djibouti',                ARRAY['Eritrea', 'Somalia', 'Ethiopia', 'Yemen', 'Oman', 'Sudan'], NULL::text[], 250),
 ('MIDDLE_EAST_ASIA',  '/maps/egypt-2.webp',                    'Egypt',                   ARRAY['Libya', 'Sudan', 'Saudi Arabia', 'Jordan', 'Israel', 'Chad'], NULL::text[], 100),
 ('MIDDLE_EAST_ASIA',  '/maps/egypt.webp',                      'Egypt',                   ARRAY['Libya', 'Sudan', 'Saudi Arabia', 'Jordan', 'Israel', 'Chad'], NULL::text[], 100),
 ('MIDDLE_EAST_ASIA',  '/maps/eritrea-2.webp',                  'Eritrea',                 ARRAY['Djibouti', 'Ethiopia', 'Yemen', 'Sudan', 'Somalia', 'South Sudan'], NULL::text[], 250),
@@ -237,6 +246,7 @@ FROM (VALUES
 ('MIDDLE_EAST_ASIA',  '/maps/saudi-arabia.webp',               'Saudi Arabia',            ARRAY['Yemen', 'Oman', 'Iraq', 'Jordan', 'United Arab Emirates', 'Egypt'], NULL::text[], 100),
 ('MIDDLE_EAST_ASIA',  '/maps/sudan.webp',                      'Sudan',                   ARRAY['South Sudan', 'Chad', 'Egypt', 'Ethiopia', 'Eritrea', 'Libya'], NULL::text[], 200),
 ('MIDDLE_EAST_ASIA',  '/maps/syria.webp',                      'Syria',                   ARRAY['Iraq', 'Jordan', 'Lebanon', 'Turkiye', 'Israel', 'Saudi Arabia'], NULL::text[], 200),
+('MIDDLE_EAST_ASIA',  '/maps/tajikistan.webp',                 'Tajikistan',              ARRAY['Kyrgyzstan', 'Uzbekistan', 'Turkmenistan', 'Afghanistan', 'Kazakhstan', 'Pakistan'], NULL::text[], 300),
 ('MIDDLE_EAST_ASIA',  '/maps/turkiye-2.webp',                  'Turkiye',                 ARRAY['Greece', 'Syria', 'Iran', 'Georgia', 'Bulgaria', 'Iraq'], ARRAY['Turkey'], 150),
 ('MIDDLE_EAST_ASIA',  '/maps/turkiye.webp',                    'Turkiye',                 ARRAY['Greece', 'Syria', 'Iran', 'Georgia', 'Bulgaria', 'Iraq'], ARRAY['Turkey'], 150),
 ('MIDDLE_EAST_ASIA',  '/maps/turkmenistan.webp',               'Turkmenistan',            ARRAY['Uzbekistan', 'Kazakhstan', 'Tajikistan', 'Afghanistan', 'Kyrgyzstan', 'Azerbaijan'], NULL::text[], 300),
@@ -291,5 +301,5 @@ FROM (VALUES
 
 COMMIT;
 
--- Check: should return 237.
+-- Check: should return 247.
 SELECT COUNT(*) FROM questions WHERE game_mode = 'COUNTRY_MONKEY' AND subcategory = 'COUNTRY';

@@ -1,5 +1,5 @@
 -- ============================================================================
--- Flag Me Down (the standalone mode): 170 countries, each with its flag, its
+-- Flag Me Down (the standalone mode): 179 countries, each with its flag, its
 -- local region, its capital and its map -- the four clues that unlock one by
 -- one each round. Countries only (Randy's call; territories, regional flags
 -- and organizations stay in Country Monkey and the Thinking Pants category).
@@ -15,7 +15,7 @@
 --                  which would give the answer away
 --   accepted_answers  alternate names for the typed final round (Burma, ...)
 --   difficulty     1 easy / 2 medium / 3 hard -- a game plays 5 of each, in
---                  that order. Rows: 53 easy, 52 medium, 65 hard.
+--                  that order. Rows: 53 easy, 54 medium, 72 hard.
 --
 -- Safe to re-run: creates the table if needed, then deletes and re-inserts
 -- every row, in a transaction. Touches nothing else.
@@ -123,6 +123,7 @@ VALUES
 ('Liberia',                 'AFRICA',            'Western Africa',              'Monrovia',                              'Monrovia',                              '/flags/lr.svg',     '/maps/liberia.webp',                NULL::text[], 2),
 ('Lithuania',               'EUROPE',            'Northern Europe',             'Vilnius',                               'Vilnius',                               '/flags/lt.svg',     '/maps/lithuania.webp',              NULL::text[], 2),
 ('Malaysia',                'ASIA',              'Southeast Asia',              'Kuala Lumpur',                          'Kuala Lumpur',                          '/flags/my.svg',     '/maps/malaysia.webp',               NULL::text[], 2),
+('Maldives',                'ASIA',              'South Asia',                  'Malé',                                  'Malé',                                  '/flags/mv.svg',     '/maps/maldives.webp',               NULL::text[], 2),
 ('Malta',                   'EUROPE',            'Southern Europe',             'Valletta',                              'Valletta',                              '/flags/mt.svg',     '/maps/malta.webp',                  NULL::text[], 2),
 ('Morocco',                 'AFRICA',            'Northern Africa',             'Rabat',                                 'Rabat',                                 '/flags/ma.svg',     '/maps/morocco.webp',                NULL::text[], 2),
 ('North Korea',             'ASIA',              'East Asia',                   'Pyongyang',                             'Pyongyang',                             '/flags/kp.svg',     '/maps/north-korea.webp',            ARRAY['DPRK'], 2),
@@ -145,6 +146,7 @@ VALUES
 ('United Arab Emirates',    'MIDDLE_EAST_ASIA',  'the Middle East',             'Abu Dhabi',                             'Abu Dhabi',                             '/flags/ae.svg',     '/maps/uae.webp',                    ARRAY['UAE', 'Emirates'], 2),
 ('Uruguay',                 'AMERICAS',          'South America',               'Montevideo',                            'Montevideo',                            '/flags/uy.svg',     '/maps/uruguay.webp',                NULL::text[], 2),
 ('Venezuela',               'AMERICAS',          'South America',               'Caracas',                               'Caracas',                               '/flags/ve.svg',     '/maps/venezuela.webp',              NULL::text[], 2),
+('Zambia',                  'AFRICA',            'Southern Africa',             'Lusaka',                                'Lusaka',                                '/flags/zm.svg',     '/maps/zambia.webp',                 NULL::text[], 2),
 ('Zimbabwe',                'AFRICA',            'Southern Africa',             'Harare',                                'Harare',                                '/flags/zw.svg',     '/maps/zimbabwe.webp',               NULL::text[], 2),
 -- difficulty 3 (hard)
 ('Afghanistan',             'MIDDLE_EAST_ASIA',  'South Asia',                  'Kabul',                                 'Kabul',                                 '/flags/af.svg',     '/maps/afghanistan.webp',            NULL::text[], 3),
@@ -156,11 +158,13 @@ VALUES
 ('Benin',                   'AFRICA',            'Western Africa',              'Porto-Novo',                            'Porto-Novo',                            '/flags/bj.svg',     '/maps/benin.webp',                  NULL::text[], 3),
 ('Botswana',                'AFRICA',            'Southern Africa',             'Gaborone',                              'Gaborone',                              '/flags/bw.svg',     '/maps/botswana.webp',               NULL::text[], 3),
 ('Brunei',                  'ASIA',              'Southeast Asia',              'Bandar Seri Begawan',                   'Bandar Seri Begawan',                   '/flags/bn.svg',     '/maps/brunei.webp',                 NULL::text[], 3),
+('Burkina Faso',            'AFRICA',            'Western Africa',              'Ouagadougou',                           'Ouagadougou',                           '/flags/bf.svg',     '/maps/burkina-faso.webp',           NULL::text[], 3),
 ('Burundi',                 'AFRICA',            'Eastern Africa',              'Gitega',                                'Gitega',                                '/flags/bi.svg',     '/maps/burundi.webp',                NULL::text[], 3),
 ('Cabo Verde',              'AFRICA',            'Western Africa',              'Praia',                                 'Praia',                                 '/flags/cv.svg',     '/maps/cabo-verde.webp',             ARRAY['Cape Verde'], 3),
 ('Central African Republic', 'AFRICA',            'Central Africa',              'Bangui',                                'Bangui',                                '/flags/cf.svg',     '/maps/car.webp',                    ARRAY['CAR'], 3),
 ('Chad',                    'AFRICA',            'Central Africa',              'N''Djamena',                            'N''Djamena',                            '/flags/td.svg',     '/maps/chad.webp',                   NULL::text[], 3),
 ('Comoros',                 'AFRICA',            'Eastern Africa',              'Moroni',                                'Moroni',                                '/flags/km.svg',     '/maps/comoros.webp',                NULL::text[], 3),
+('Djibouti',                'AFRICA',            'Eastern Africa',              'Djibouti City',                         'The capital shares the country''s name', '/flags/dj.svg',    '/maps/djibouti.webp',               NULL::text[], 3),
 ('El Salvador',             'AMERICAS',          'Central America',             'San Salvador',                          'The capital shares the country''s name', '/flags/sv.svg',     '/maps/el-salvador.webp',            NULL::text[], 3),
 ('Equatorial Guinea',       'AFRICA',            'Central Africa',              'Malabo',                                'Malabo',                                '/flags/gq.svg',     '/maps/equatorial-guinea.webp',      NULL::text[], 3),
 ('Eritrea',                 'AFRICA',            'Eastern Africa',              'Asmara',                                'Asmara',                                '/flags/er.svg',     '/maps/eritrea.webp',                NULL::text[], 3),
@@ -177,12 +181,14 @@ VALUES
 ('Lesotho',                 'AFRICA',            'Southern Africa',             'Maseru',                                'Maseru',                                '/flags/ls.svg',     '/maps/lesotho.webp',                NULL::text[], 3),
 ('Libya',                   'AFRICA',            'Northern Africa',             'Tripoli',                               'Tripoli',                               '/flags/ly.svg',     '/maps/libya.webp',                  NULL::text[], 3),
 ('Liechtenstein',           'EUROPE',            'Central Europe',              'Vaduz',                                 'Vaduz',                                 '/flags/li.svg',     '/maps/liechtenstein.webp',          NULL::text[], 3),
+('Luxembourg',              'EUROPE',            'Western Europe',              'Luxembourg City',                       'The capital shares the country''s name', '/flags/lu.svg',    '/maps/luxembourg.webp',             NULL::text[], 3),
 ('Madagascar',              'AFRICA',            'Eastern Africa',              'Antananarivo',                          'Antananarivo',                          '/flags/mg.svg',     '/maps/madagascar.webp',             NULL::text[], 3),
 ('Malawi',                  'AFRICA',            'Southern Africa',             'Lilongwe',                              'Lilongwe',                              '/flags/mw.svg',     '/maps/malawi.webp',                 NULL::text[], 3),
 ('Mali',                    'AFRICA',            'Western Africa',              'Bamako',                                'Bamako',                                '/flags/ml.svg',     '/maps/mali.webp',                   NULL::text[], 3),
 ('Mauritania',              'AFRICA',            'Western Africa',              'Nouakchott',                            'Nouakchott',                            '/flags/mr.svg',     '/maps/mauritania.webp',             NULL::text[], 3),
 ('Mauritius',               'AFRICA',            'Eastern Africa',              'Port Louis',                            'Port Louis',                            '/flags/mu.svg',     '/maps/mauritious.webp',             NULL::text[], 3),
 ('Moldova',                 'EUROPE',            'Eastern Europe',              'Chișinău',                              'Chișinău',                              '/flags/md.svg',     '/maps/moldova.webp',                NULL::text[], 3),
+('Monaco',                  'EUROPE',            'Western Europe',              'Monaco',                                'The capital shares the country''s name', '/flags/mc.svg',    '/maps/monaco.webp',                 NULL::text[], 3),
 ('Mongolia',                'ASIA',              'East Asia',                   'Ulaanbaatar',                           'Ulaanbaatar',                           '/flags/mn.svg',     '/maps/mongolia.webp',               NULL::text[], 3),
 ('Montenegro',              'EUROPE',            'the Balkans',                 'Podgorica',                             'Podgorica',                             '/flags/me.svg',     '/maps/montenegro.webp',             NULL::text[], 3),
 ('Mozambique',              'AFRICA',            'Southern Africa',             'Maputo',                                'Maputo',                                '/flags/mz.svg',     '/maps/mozambique.webp',             NULL::text[], 3),
@@ -195,6 +201,7 @@ VALUES
 ('Paraguay',                'AMERICAS',          'South America',               'Asunción',                              'Asunción',                              '/flags/py.svg',     '/maps/paraguay.webp',               NULL::text[], 3),
 ('Rep. of Congo',           'AFRICA',            'Central Africa',              'Brazzaville',                           'Brazzaville',                           '/flags/cg.svg',     '/maps/rep-of-congo.webp',           ARRAY['Republic of the Congo', 'Congo Republic', 'Congo-Brazzaville'], 3),
 ('Rwanda',                  'AFRICA',            'Eastern Africa',              'Kigali',                                'Kigali',                                '/flags/rw.svg',     '/maps/rwanda.webp',                 NULL::text[], 3),
+('San Marino',              'EUROPE',            'Southern Europe',             'City of San Marino',                    'The capital shares the country''s name', '/flags/sm.svg',    '/maps/san-marino.webp',             NULL::text[], 3),
 ('São Tomé and Príncipe',   'AFRICA',            'Central Africa',              'São Tomé',                              'The capital shares the country''s name', '/flags/st.svg',     '/maps/sao-tome-and-principe.webp',  ARRAY['Sao Tome'], 3),
 ('Senegal',                 'AFRICA',            'Western Africa',              'Dakar',                                 'Dakar',                                 '/flags/sn.svg',     '/maps/senegal.webp',                NULL::text[], 3),
 ('Sierra Leone',            'AFRICA',            'Western Africa',              'Freetown',                              'Freetown',                              '/flags/sl.svg',     '/maps/sierra-leone.webp',           NULL::text[], 3),
@@ -205,7 +212,9 @@ VALUES
 ('St. Kitts and Nevis',     'AMERICAS',          'the Caribbean',               'Basseterre',                            'Basseterre',                            '/flags/kn.svg',     '/maps/st-kitts.webp',               ARRAY['St Kitts'], 3),
 ('Sudan',                   'AFRICA',            'Northern Africa',             'Khartoum',                              'Khartoum',                              '/flags/sd.svg',     '/maps/sudan.webp',                  NULL::text[], 3),
 ('Suriname',                'AMERICAS',          'South America',               'Paramaribo',                            'Paramaribo',                            '/flags/sr.svg',     '/maps/suriname.webp',               NULL::text[], 3),
+('Tajikistan',              'MIDDLE_EAST_ASIA',  'Central Asia',                'Dushanbe',                              'Dushanbe',                              '/flags/tj.svg',     '/maps/tajikistan.webp',             NULL::text[], 3),
 ('The Gambia',              'AFRICA',            'Western Africa',              'Banjul',                                'Banjul',                                '/flags/gm.svg',     '/maps/the-gambia.webp',             NULL::text[], 3),
+('Timor-Leste',             'ASIA',              'Southeast Asia',              'Dili',                                  'Dili',                                  '/flags/tl.svg',     '/maps/timor-leste.webp',            ARRAY['East Timor'], 3),
 ('Togo',                    'AFRICA',            'Western Africa',              'Lomé',                                  'Lomé',                                  '/flags/tg.svg',     '/maps/togo.webp',                   NULL::text[], 3),
 ('Tonga',                   'ASIA',              'the Pacific Islands',         'Nukuʻalofa',                            'Nukuʻalofa',                            '/flags/to.svg',     '/maps/tonga.webp',                  NULL::text[], 3),
 ('Turkmenistan',            'MIDDLE_EAST_ASIA',  'Central Asia',                'Ashgabat',                              'Ashgabat',                              '/flags/tm.svg',     '/maps/turkmenistan.webp',           NULL::text[], 3),
@@ -215,5 +224,5 @@ VALUES
 
 COMMIT;
 
--- Check: should return 170.
+-- Check: should return 179.
 SELECT COUNT(*) FROM flag_me_down_countries;

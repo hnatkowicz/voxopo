@@ -567,9 +567,18 @@ Mode keys are used in room votes and in `gameEngine.js`:
   back"); wrong = 0, no penalty; once everyone's locked in it skips to the
   reveal. A capital that contains the country's name is shown as "The
   capital shares the country's name". Its own table,
-  `flag_me_down_countries` (`flag_me_down_countries.sql`, 170 countries
+  `flag_me_down_countries` (`flag_me_down_countries.sql`, 179 countries
   that have both a flag and a map; countries only for now -- US states and
-  Canadian/Mexican provinces maybe later). Final Wager: a medium unused
+  Canadian/Mexican provinces maybe later). Nov 2026: Randy drew the last
+  maps he felt were worth it (Burkina Faso, Djibouti, Luxembourg,
+  Maldives, Monaco, San Marino, Tajikistan, Timor-Leste, Zambia), which
+  also joined Country Monkey's map questions. UN members still without a
+  map, so not in Flag Me Down: Guatemala and 13 small island nations
+  (Antigua and Barbuda, Barbados, Dominica, Grenada, Kiribati, Marshall
+  Islands, Micronesia, Nauru, Saint Lucia, Saint Vincent and the
+  Grenadines, Samoa, Seychelles, Tuvalu). Monaco is "hard" on purpose:
+  its flag is Indonesia's, so it must never be a typed Final Wager
+  (those use medium flags). Final Wager: a medium unused
   flag, typed; region/capital/map clues open privately on your phone,
   costing 10% / 25% / 50% of the winnings (`FLAG_ME_DOWN_HINT_COSTS`; was
   a flat 25% each until Randy: "I use map almost exclusively, and it should
