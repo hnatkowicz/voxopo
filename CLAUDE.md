@@ -571,11 +571,15 @@ Mode keys are used in room votes and in `gameEngine.js`:
   Nov 2026): a phrase-solving race. Randy wanted Wheel of Fortune,
   RandoMania!-style; the wheel was dropped on purpose (wheel + letter
   board + phrase is that show's format) and a **shrinking pot** replaced
-  it. 6 puzzles a game, one per category (`letter_rip_puzzles.sql`, its own
-  table, 102 puzzles in 17 categories; Play Again avoids ones this room
-  has played, `room.letterRipPlayed`). Each round everyone secretly picks
-  one letter on their phone at once (12s, ends early once all have
-  picked). Every hit scores 100 per time it appears, **split among
+  it. 6 puzzles a game, one per category. Puzzles live in a spreadsheet,
+  `content/letter_rip.csv` (Randy: "This one has legs"). `build.mjs` checks
+  it and writes `content/sql/letter_rip.sql` (its own table): 600 puzzles
+  in 30 categories (Nov 2026), and more are welcome. Play Again avoids
+  puzzles this room has played (`room.letterRipPlayed`). Each round,
+  everyone secretly picks one letter on their phone at once. The pick
+  clock is 15s and the reveal holds 6s (Randy: "pace is VERY fast" at
+  12s/4s; the reveal is when people think about solving). A round ends
+  early once everyone has picked. Every hit scores 100 per time it appears, **split among
   everyone who picked it**. Only the **2 most-picked hits** light on the TV
   each round (more players would empty the board too fast), with "E 3
   picked"; if nobody hits, one free letter. Your own picks stay on your
@@ -583,10 +587,15 @@ Mode keys are used in room votes and in `gameEngine.js`:
   the TV. The pot starts at 1000 and shrinks with the share of the phrase
   still hidden (rounded to 50, min 100). **One solve a puzzle**, typed,
   spelled exactly (no typo forgiveness; capitals, spaces and punctuation
-  don't matter), with a confirm step; a wrong solve costs the current pot
-  (never below 0) and the TV says who guessed wrong. All the numbers are
-  first guesses (`LETTER_RIP_*` in `gameEngine.js`). Randy still wants an
-  input that moves something on the screen; an idea is pending.
+  don't matter). There's no confirm step (Randy cut it: "an extra step in a
+  FAST game"). A wrong solve costs the current pot (never below 0), and the
+  TV says who guessed wrong. The game doesn't pause while someone types,
+  since a pause would hand one player control of the room. Pot and letter
+  points stay as built (Randy: no bigger pots per puzzle, and no target
+  for total points; the pub tally will use placements). **Next: The
+  Spotlight**, a 7th wager round where phones tap to move their avatar's
+  spotlight onto hidden tiles on the TV (tap, not drag, so phones don't
+  need a live connection). Its rules are still being talked through.
 - **FLAG_ME_DOWN** (also a standalone mode, after the family asked where it
   went): 15 flags, 5 easy -> 5 medium -> 5 hard, each with 4 country choices
   (1 wrong answer from the same local region, 2 from the same continent).

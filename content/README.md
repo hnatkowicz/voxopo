@@ -84,6 +84,21 @@ also writes Country Monkey's landmark questions; new photos go there (run
 photos, so edits made in `landmarks.csv` stay. An edit to a wrong answer in
 the sheet doesn't reach Country Monkey; change `landmarks_source.py` for that.
 
+Plus **Letter Rip's puzzles** (`letter_rip.csv`, not a Thinking Pants
+category): one row per puzzle, with the columns `category, phrase, added,
+retired, notes`. Type phrases in any case; the build makes them capitals.
+The build checks that each phrase:
+- uses letters, spaces, apostrophes and hyphens only (spell numbers out);
+- is at most 30 characters, with no word over 13 letters (so it fits the TV);
+- never repeats a real word of its own category (the category is the clue: no
+  "PARTY HATS" under "Party Time");
+- isn't on another row already.
+
+The sheet also needs at least 7 categories. It builds
+`content/sql/letter_rip.sql`, which replaces every puzzle. That file isn't
+part of `ALL_CATEGORIES.sql`. Category names are our own, never a game
+show's.
+
 Not here (yet): the other picture categories (Country Monkey, Flag Me Down,
 Wet Pants), the Final Wager and the venues' house sets. They still come from
 their own SQL files at the repo root.
