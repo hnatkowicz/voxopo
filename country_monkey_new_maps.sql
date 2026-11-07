@@ -4,8 +4,8 @@
 -- REPLACES Country Monkey's map questions (subcategory 'COUNTRY'): the DELETE
 -- below removes them, then one row is inserted per map file per region it
 -- belongs to. Flags and water live in their own files
--- (country_monkey_flags.sql, country_monkey_water.sql) and aren't touched -- 247 rows from
--- 237 map files covering 182 countries/territories.
+-- (country_monkey_flags.sql, country_monkey_water.sql) and aren't touched -- 248 rows from
+-- 238 map files covering 183 countries/territories.
 --
 -- Safe to re-run: it always deletes and re-inserts the same set. Wrapped in a
 -- transaction, so if anything fails nothing changes (the old questions stay).
@@ -31,7 +31,7 @@
 -- Wager that closes every Country Monkey game (Swaziland = Eswatini,
 -- Burma = Myanmar, ...). NULL means just the name itself; accents, "The",
 -- hyphens and small typos are forgiven anyway.
--- Rows per region: AFRICA 63, EUROPE 56, ASIA 45, MIDDLE_EAST_ASIA 41, AMERICAS 42.
+-- Rows per region: AFRICA 63, EUROPE 56, ASIA 45, MIDDLE_EAST_ASIA 41, AMERICAS 43.
 -- ============================================================================
 
 BEGIN;
@@ -273,6 +273,7 @@ FROM (VALUES
 ('AMERICAS',          '/maps/dominican-republic.webp',         'Dominican Republic',      ARRAY['Haiti', 'Puerto Rico', 'Jamaica', 'Cuba', 'Dominica', 'The Bahamas'], NULL::text[], 200),
 ('AMERICAS',          '/maps/ecuador.webp',                    'Ecuador',                 ARRAY['Peru', 'Colombia', 'Bolivia', 'Venezuela', 'Panama', 'Paraguay'], NULL::text[], 200),
 ('AMERICAS',          '/maps/el-salvador.webp',                'El Salvador',             ARRAY['Honduras', 'Guatemala', 'Nicaragua', 'Belize', 'Costa Rica', 'Panama'], NULL::text[], 250),
+('AMERICAS',          '/maps/guatemala.webp',                  'Guatemala',               ARRAY['Honduras', 'Belize', 'El Salvador', 'Nicaragua', 'Mexico', 'Costa Rica'], NULL::text[], 200),
 ('AMERICAS',          '/maps/guyana-2.webp',                   'Guyana',                  ARRAY['Suriname', 'Venezuela', 'Ghana', 'Belize', 'Ecuador', 'Colombia'], NULL::text[], 250),
 ('AMERICAS',          '/maps/guyana.webp',                     'Guyana',                  ARRAY['Suriname', 'Venezuela', 'Ghana', 'Belize', 'Ecuador', 'Colombia'], NULL::text[], 250),
 ('AMERICAS',          '/maps/haiti.webp',                      'Haiti',                   ARRAY['Dominican Republic', 'Jamaica', 'Cuba', 'Puerto Rico', 'The Bahamas', 'Dominica'], NULL::text[], 200),
@@ -301,5 +302,5 @@ FROM (VALUES
 
 COMMIT;
 
--- Check: should return 247.
+-- Check: should return 248.
 SELECT COUNT(*) FROM questions WHERE game_mode = 'COUNTRY_MONKEY' AND subcategory = 'COUNTRY';
