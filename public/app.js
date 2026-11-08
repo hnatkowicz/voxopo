@@ -1119,7 +1119,6 @@ if (btnSubmitSpectate) {
                 const count = votes[key] || 0;
                 const percentage = Math.round((count / totalVotes) * 100);
                 bar.style.width = `${percentage}%`;
-                document.getElementById(`vcount-${key}`).innerText = count ? String(count) : ''; // the bar shows the share
             });
         }
 
@@ -1281,7 +1280,6 @@ if (btnSubmitSpectate) {
                 <div class="lobby-mode">
                     <div class="lobby-mode-head">
                         <div id="lbl-${c.key}" class="lobby-mode-name" style="flex: 1;">${c.label}</div>
-                        <div id="ccount-${c.key}" class="lobby-mode-count"></div>
                     </div>
                     <div class="lobby-mode-track"><div id="cbar-${c.key}" class="progress-fill" style="background: ${CATEGORY_BAR_COLORS[index % CATEGORY_BAR_COLORS.length]};"></div></div>
                 </div>
@@ -1308,8 +1306,6 @@ if (btnSubmitSpectate) {
 
                 const barNode = document.getElementById(`cbar-${key}`);
                 if (barNode) barNode.style.width = `${percentage}%`;
-                const countNode = document.getElementById(`ccount-${key}`);
-                if (countNode) countNode.innerText = count ? String(count) : ''; // the bar shows the share
             });
         }
 

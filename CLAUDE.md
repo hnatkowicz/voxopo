@@ -141,8 +141,8 @@ event, for a small fee. That's why hosting is gated behind access codes.
   overflowed, and on a laptop over HDMI it filled half the TV. Now it uses
   the same layout (`ROOM_VENUE` and `RETURN_TO_LOBBY` turn it on): no
   boxes, the mode tiles (`lobby-*`, built by `renderModeElectionTiles` in
-  `modes.js`; the phones' tiles are separate) with a vote bar and a plain
-  vote count (the bar shows the share), the scoreboard rail, and a bigger
+  `modes.js`; the phones' tiles are separate) with a vote bar and no vote
+  count (Randy, Nov 2026: the bar is enough), the scoreboard rail, and a bigger
   QR code (10u, 13u at a pub, where the venue's banner replaces "What
   should we play?"). Checked at 960x540 and 1080p, home and pub. **Country
   Monkey** followed (Nov 2026), and with it **Trivi-yeah!**, which shares

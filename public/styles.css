@@ -704,7 +704,6 @@ body.tp-layout .tp-stage { padding: 0 calc(var(--u) * 2); }
 .lobby-mode-name { font-family: var(--rm-font-display); font-weight: 800; font-size: calc(var(--u) * 1.7); line-height: 1.1; color: var(--rm-text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .lobby-mode-name .mode-tile-tag { font-family: var(--rm-font-body); font-size: 0.5em; vertical-align: middle; }
 .lobby-mode-blurb { font-size: calc(var(--u) * 1.2); color: var(--rm-text-soft); margin-top: calc(var(--u) * 0.2); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.lobby-mode-count { font-family: var(--rm-font-display); font-weight: 800; font-size: calc(var(--u) * 2); color: var(--rm-text); font-variant-numeric: tabular-nums; flex-shrink: 0; }
 .lobby-mode-track { height: calc(var(--u) * 0.45); background: var(--rm-surface-2); border-radius: 99px; overflow: hidden; }
 /* Pubs: the venue's logo, name and tagline open the lobby, without a box. */
 body.tp-layout.pub-profile.tv-lobby .venue-banner { background: transparent; border: none; padding: 0 calc(var(--u) * 2); margin-bottom: calc(var(--u) * 1); gap: calc(var(--u) * 2); }
