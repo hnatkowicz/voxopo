@@ -384,17 +384,36 @@ Mode keys are used in room votes and in `gameEngine.js`:
 - **Game length:** Trivi-yeah! is 12 questions, matching Profiler's 12
   rounds. Country Monkey is 20 (15 once flags and water joined, 20 once it
   grew into a standalone mode with 132 landmarks -- Randy, Oct 2026).
-- **TRIVI_YEAH** (Trivi-yeah!): **the venue's own game** (Randy, Oct 2026,
-  the "1.0" pub-test build). It plays the access code's **house set** (the
+- **TRIVI_YEAH** (Trivi-yeah!): **pick a topic, 12 questions** (Randy,
+  Nov 2026: "the module that started it all" had been lost; revived, with
+  the house set folded in). The topics are the Thinking Pants categories
+  with at least 3 questions at every tier and not switched Off (the
+  venue's dial wins, as on the board), so the mode grows with them. The
+  list, top to bottom: the venue's house set (if the code has one,
+  titled with the venue's name), **"Surprise me"** (Randy: "you surprise
+  me!"), then the rest. Phones pick from a list (20s, changeable; it
+  closes 2s after everyone has picked); the TV shows only the topics
+  someone picked, with gold bars, then "Up next: <topic>" big. Ties and
+  no votes are broken at random, and "Surprise me" lands on a random
+  topic. 12 questions, 3 per tier, easy to hard, never two with the same
+  answer or picture; no Final Wager (Randy: a quick round). **Play
+  Again keeps the topic** (`room.triviaReplayTopic`) with fresh
+  questions. A room remembers the Thinking Pants questions it has seen
+  (`room.seenQuestionIds`, shared with the Thinking Pants board), so a
+  topic game and a board don't repeat each other while fresh ones last.
+  Every room offers it, except a pub with a ticked list of modes, which
+  gets it only when the code has a house set (as before; /admin has no
+  Trivi-yeah! checkbox). **The house set as a topic** (the venue's own
+  game, Oct 2026's "1.0" pub-test build) keeps its own rules: the
   `HOUSE_<NAME>` category, the same questions as the Thinking Pants house
-  column) and appears in the lobby exactly when the code has one, whatever
-  is ticked in /admin (`allowedModesFor`; the admin checkbox is gone), even
-  with the house column Off. Easy to hard by tier, up to 20 a game
+  column, available even with the house column Off. Easy to hard by
+  tier, up to 20 a game
   (`HOUSE_TRIVIA_MAX_QUESTIONS`, about 8-10 minutes); Play Again picks up
   the questions this room hasn't played (`room.houseTriviaPlayed`, room
   memory only), then starts over. The Thinking Pants house column keeps its
   own count, so a question can come up in both (Randy: fun to watch someone
-  miss it twice). Branding (`venueBrand`): the venue's logo on its tile with
+  miss it twice). Branding (`venueBrand`, only when the house set is the
+  topic, `isHouseTopic`): the venue's logo on its tile with
   "at <venue>" as the byline, logo + "Trivi-yeah! at <venue>" atop each TV
   question, a big logo and "Thanks for playing at <venue>!" (+ tagline) on
   the TV's Game Over, and the thanks on the phones. No venue banner during
@@ -486,8 +505,8 @@ Mode keys are used in room votes and in `gameEngine.js`:
   rather than breaking the game. Main use is Off (no College Athletics at
   a library night).
   **Direction (Randy, Oct 2026):** new general trivia goes into Thinking
-  Pants categories. Trivi-yeah! is to become the house-questions-only mode
-  for one-off events (baby showers, etc.), so its general decks won't grow.
+  Pants categories, which Trivi-yeah!'s topics now draw on too. The old
+  general decks (`game_mode = 'TRIVIA'`) aren't played.
 - **COUNTRY_MONKEY**: a geography quiz for the geography nut, built from
   question *types* (the row's `subcategory`) mixed by `COUNTRY_MONKEY_MIX`
   in `gameEngine.js`: 12 maps (`COUNTRY`), 3 flags (`FLAG`), 2 landmarks

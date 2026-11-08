@@ -940,3 +940,9 @@ body.tp-layout[data-view="gateway"] #gateway-screen { display: flex !important; 
 .lr-board-small { row-gap: calc(var(--u) * 0.7); padding-bottom: 0; }
 .lr-board-small .lr-tile { width: calc(var(--u) * 2.8); height: calc(var(--u) * 3.4); font-size: calc(var(--u) * 2); }
 .lr-board-small .lr-tile.lr-punct { width: calc(var(--u) * 1.3); }
+
+/* Trivi-yeah!'s topic pick: only the topics someone picked, lobby-tile style. */
+.ty-picks { display: flex; flex-direction: column; gap: calc(var(--u) * 1); width: 60%; margin: 0 auto; }
+.ty-pick .lobby-mode-name { font-size: calc(var(--u) * 2); }
+.ty-picks-empty { text-align: center; font-size: calc(var(--u) * 1.6); color: var(--rm-text-soft); margin-top: calc(var(--u) * 4); }
+.ty-splash-logo { max-height: calc(var(--u) * 8); max-width: calc(var(--u) * 16); object-fit: contain; margin-bottom: calc(var(--u) * 1); }

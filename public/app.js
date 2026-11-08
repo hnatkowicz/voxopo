@@ -498,6 +498,17 @@ if (btnSubmitSpectate) {
                 if (data.type === 'CATEGORY_VOTE_UPDATE') {
                     updateCategorySubElectionUI(data.votes, data.totalVotes);
                 }
+                // Trivi-yeah!'s topic, big (a splash moment, design rule 3).
+                if (data.type === 'TRIVIA_TOPIC_CHOSEN') {
+                    triviaTopicPick = false;
+                    setClock('');
+                    const logo = data.brand && data.brand.logoUrl ? `<img src="${escapeHtml(data.brand.logoUrl)}" alt="" class="ty-splash-logo">` : '';
+                    document.getElementById('active-content-stage').innerHTML = tpStage('tp-center', `
+                        ${logo}
+                        <div class="tp-kicker">Up next</div>
+                        <div class="tp-big">${escapeHtml(data.label)}</div>
+                    `);
+                }
                 // Listen for the server's Category Phase expiration signal to draw the question canvas
                 if (data.type === 'TRANSITION_TO_QUESTION') {
                     document.getElementById('room-status-text').innerText = "Gameplay Phase";
@@ -1002,7 +1013,7 @@ if (btnSubmitSpectate) {
         // ROOM_VENUE first, and a mid-game join's STATE_CATCH_UP follows.
         // Country Monkey and Trivi-yeah! too (Nov 2026): their region/deck
         // vote and their questions.
-        const TP_LAYOUT_ON = new Set(['ROOM_CLOSED', 'ROOM_VENUE', 'RETURN_TO_LOBBY', 'TRANSITION_TO_CATEGORY_VOTE', 'TRANSITION_TO_QUESTION', 'FLAG_ME_DOWN_ROUND', 'PROFILER_QUESTION', 'EMPOSSDURR_ROUND_START', 'ON_THE_SPECTRUM_ROUND_START', 'LETTER_RIP_STATE', 'GAME_OVER']);
+        const TP_LAYOUT_ON = new Set(['ROOM_CLOSED', 'ROOM_VENUE', 'RETURN_TO_LOBBY', 'TRANSITION_TO_CATEGORY_VOTE', 'TRIVIA_TOPIC_CHOSEN', 'TRANSITION_TO_QUESTION', 'FLAG_ME_DOWN_ROUND', 'PROFILER_QUESTION', 'EMPOSSDURR_ROUND_START', 'ON_THE_SPECTRUM_ROUND_START', 'LETTER_RIP_STATE', 'GAME_OVER']);
         // Every screen uses the new layout now (Nov 2026); kept for any
         // future screen that isn't ready for it.
         const TP_LAYOUT_OFF = new Set([]);
@@ -1010,7 +1021,7 @@ if (btnSubmitSpectate) {
             let on = null;
             if (data.type === 'TRANSITION_TO_TRIVI_YEAH_II' || /^TRIVI_YEAH_II_(?!FINAL_)/.test(data.type) || TP_LAYOUT_ON.has(data.type)) on = true;
             else if (TP_LAYOUT_OFF.has(data.type)) on = false;
-            else if (data.type === 'STATE_CATCH_UP') on = ['TRIVI_YEAH_II_ROUND', 'CATEGORY_VOTE', 'GAME_ROUND', 'ROUND_REVEAL', 'FLAG_ME_DOWN_ROUND', 'PROFILER_ROUND', 'EMPOSSDURR_ROUND', 'ON_THE_SPECTRUM_ROUND', 'LETTER_RIP_ROUND'].includes(data.gameState);
+            else if (data.type === 'STATE_CATCH_UP') on = ['TRIVI_YEAH_II_ROUND', 'CATEGORY_VOTE', 'TRIVIA_TOPIC_SPLASH', 'GAME_ROUND', 'ROUND_REVEAL', 'FLAG_ME_DOWN_ROUND', 'PROFILER_ROUND', 'EMPOSSDURR_ROUND', 'ON_THE_SPECTRUM_ROUND', 'LETTER_RIP_ROUND'].includes(data.gameState);
             if (on === null || on === document.body.classList.contains('tp-layout')) return;
             document.body.classList.toggle('tp-layout', on);
             railMoves = {};
@@ -1253,7 +1264,9 @@ if (btnSubmitSpectate) {
         // button mashing, keyed by the category's real key (e.g. WWII_HISTORY) rather
         // than fixed cat1/2/3 slots -- supports any number of categories per mode.
         let activeCategoryLabels = {};
-        const CATEGORY_BAR_COLORS = ['var(--rm-orange)', 'var(--rm-green)', 'var(--rm-red)', 'var(--rm-blue)', 'var(--rm-purple)', 'var(--rm-yellow-soft)'];
+        let triviaTopicPick = false; // the TV is showing Trivi-yeah!'s topic pick
+        // No green or red: those mean right and wrong (Phase 1 rule).
+        const CATEGORY_BAR_COLORS = ['var(--rm-orange)', 'var(--rm-periwinkle)', 'var(--rm-pink)', 'var(--rm-blue)', 'var(--rm-purple)', 'var(--rm-yellow-soft)'];
 
         // Canonical display names, matching exactly what the lobby's own module
         // election rows show (index.html). A generic key.replace('_', ' ') +
@@ -1267,6 +1280,21 @@ if (btnSubmitSpectate) {
 
             activeCategoryLabels = {};
             categoryList.forEach(c => { activeCategoryLabels[c.key] = c.label; });
+
+            // Trivi-yeah!'s topic pick (Randy, Nov 2026): 30-odd topics would be a
+            // wall of tiles, so the TV shows only the ones someone picked, with
+            // bars -- the phones hold the full list.
+            triviaTopicPick = winnerModule === 'TRIVI_YEAH';
+            if (triviaTopicPick) {
+                currentGamePhase = 'CATEGORY_VOTE';
+                setStatusMessage('');
+                panel.innerHTML = `
+                    <div class="lobby-stage">
+                        <h2 class="lobby-title">Pick a topic</h2>
+                        <div id="ty-picks" class="ty-picks"><div class="ty-picks-empty">Pick a topic on your phone</div></div>
+                    </div>`;
+                return;
+            }
 
             const displayGameName = GAME_MODE_LABELS[winnerModule] || winnerModule;
 
@@ -1295,6 +1323,17 @@ if (btnSubmitSpectate) {
 
         function updateCategorySubElectionUI(votes, totalVotes) {
             if (!totalVotes || totalVotes === 0) return;
+            if (triviaTopicPick) {
+                const box = document.getElementById('ty-picks');
+                if (!box) return;
+                const picked = Object.entries(votes).filter(([, n]) => n > 0).sort((a, b) => b[1] - a[1]).slice(0, 6);
+                box.innerHTML = picked.map(([key, n], i) => `
+                    <div class="lobby-mode ty-pick">
+                        <div class="lobby-mode-head"><div class="lobby-mode-name" style="flex: 1;">${escapeHtml(activeCategoryLabels[key] || key)}</div></div>
+                        <div class="lobby-mode-track"><div class="progress-fill" style="width: ${Math.round(100 * n / totalVotes)}%; background: var(--rm-brand);"></div></div>
+                    </div>`).join('');
+                return;
+            }
 
             Object.keys(votes).forEach(key => {
                 const count = votes[key] || 0;

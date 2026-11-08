@@ -9,17 +9,16 @@ export const GAME_MODE_KEYS = ['TRIVI_YEAH', 'TRIVI_YEAH_II', 'COUNTRY_MONKEY', 
 // A venue's access code can limit which modes its rooms offer (a pub shows
 // only a few) -- the vote tally only ever has those keys, so a vote for any
 // other mode simply never counts.
-// Trivi-yeah! is the venue's own game (Randy, Oct 2026): it plays the access
-// code's house question set -- a pub night, a baby shower, a library quiz --
-// so it appears exactly when the room's code has a house set, whatever modes
-// are ticked in /admin, and never otherwise. A code with no modes ticked gets
-// every other mode.
-const DEFAULT_MODE_KEYS = GAME_MODE_KEYS.filter(key => key !== 'TRIVI_YEAH');
+// Trivi-yeah! is pick-a-topic trivia again (Randy, Nov 2026: "the module
+// that started it all"), and a venue's house set is the first topic on its
+// list. A code with no modes ticked gets every mode. A code with a ticked
+// list (a pub) gets Trivi-yeah! exactly when it has a house set, as before
+// (its /admin checkbox went when Trivi-yeah! became the venue's own game).
 export function allowedModesFor(room) {
     const venue = room && room.venue;
-    const ticked = venue && venue.allowedModes && venue.allowedModes.length ? venue.allowedModes : DEFAULT_MODE_KEYS;
-    const others = ticked.filter(key => key !== 'TRIVI_YEAH');
-    return venue && venue.houseSet ? ['TRIVI_YEAH', ...others] : others;
+    if (!(venue && venue.allowedModes && venue.allowedModes.length)) return [...GAME_MODE_KEYS];
+    const others = venue.allowedModes.filter(key => key !== 'TRIVI_YEAH');
+    return venue.houseSet ? ['TRIVI_YEAH', ...others] : others;
 }
 
 // How the venue's Trivi-yeah! is dressed: its logo and name (the byline).
@@ -184,7 +183,11 @@ function isRealCategoryKey(categoryKey) {
 // broadcasts never fall out of sync with each other. The other game modes
 // don't have real question content yet, so their categories are synthetic
 // placeholders (CAT_1/2/3 keys) that loadQuestionBank never filters on.
-export function getCategoriesForMode(winningGameMode) {
+export function getCategoriesForMode(winningGameMode, room = null) {
+    // Trivi-yeah!'s topics are worked out per room when the game opens
+    // (openTriviaTopicPick): the venue's house set, then every playable
+    // Thinking Pants category.
+    if (winningGameMode === 'TRIVI_YEAH') return (room && room.triviaTopics) || [];
     if (winningGameMode === 'COUNTRY_MONKEY') {
         return [
             // 5 regions + World Wide (Randy's call, Oct 2026): Southeast
@@ -433,19 +436,22 @@ function startGameForMode(roomCode, winningModule) {
         return;
     }
 
-    // Trivi-Yeah's categories are real and still filter the question bank --
-    // just picked automatically now instead of through a player vote, so the
-    // group lands straight on a question instead of a click-through screen.
+    // Trivi-yeah!: the room picks a topic on their phones first (Play Again
+    // keeps the same topic, Randy: "more of that" is the point).
     if (winningModule === 'TRIVI_YEAH') {
-        // The venue's own questions (see allowedModesFor); the general decks
-        // below only if a room somehow got here without a house set.
-        const houseSet = room.venue && room.venue.houseSet;
-        const categories = getCategoriesForMode('TRIVI_YEAH');
-        const picked = houseSet || categories[Math.floor(Math.random() * categories.length)];
-        room.activeCategoryKey = picked.key;
-        room.activeDeckName = picked.label;
-        console.log(`[Room Engine] Room ${roomCode} starting TRIVI_YEAH. Auto-picked deck: ${picked.label}`);
-        startQuestionBankGame(roomCode);
+        const replayTopic = room.triviaReplayTopic;
+        room.triviaReplayTopic = null;
+        if (replayTopic) {
+            room.activeCategoryKey = replayTopic.key;
+            room.activeDeckName = replayTopic.label;
+            startQuestionBankGame(roomCode);
+            return;
+        }
+        openTriviaTopicPick(roomCode).catch(error => {
+            console.error(`❌ [Trivi-yeah!] Failed to open the topic pick in Room ${roomCode}:`, error.message);
+            broadcastContentUnavailable(roomCode, 'Trivi-yeah!');
+            resetRoomToLobby(roomCode);
+        });
         return;
     }
 
@@ -504,11 +510,11 @@ function calculateElectionWinner(room) {
 // ==========================================
 // PHASE 2: CATEGORY MACHINERY
 // ==========================================
-function startCategoryCountdown(roomCode) {
+function startCategoryCountdown(roomCode, seconds = 30) {
     const room = activeRooms[roomCode];
     if (!room) return;
 
-    let count = 30;
+    let count = seconds;
     room.categorySecondsLeft = count;
 
     if (room.categoryTimerInterval) clearInterval(room.categoryTimerInterval);
@@ -534,9 +540,28 @@ async function executeCategoryPhaseExpiration(roomCode) {
         room.categoryTimerInterval = null;
     }
 
-    const winningCategoryKey = calculateCategoryWinner(room);
+    let winningCategoryKey = calculateCategoryWinner(room);
 
-    const categories = getCategoriesForMode(room.winningGameMode);
+    // Trivi-yeah!: "Surprise me" (or nobody picking) lands on a random topic.
+    if (room.winningGameMode === 'TRIVI_YEAH') {
+        if (room.categoryTimeout) { clearTimeout(room.categoryTimeout); room.categoryTimeout = null; }
+        const real = (room.triviaTopics || []).filter(t => t.key !== TRIVIA_SURPRISE_KEY);
+        const anyVotes = Object.values(room.categoryVotes || {}).some(n => n > 0);
+        if (!anyVotes || winningCategoryKey === TRIVIA_SURPRISE_KEY || !real.some(t => t.key === winningCategoryKey)) {
+            winningCategoryKey = real[Math.floor(Math.random() * real.length)].key;
+        }
+        const topic = real.find(t => t.key === winningCategoryKey);
+        room.activeCategoryKey = topic.key;
+        room.activeDeckName = topic.label;
+        room.triviaTopic = { key: topic.key, label: topic.label };
+        room.gameState = 'TRIVIA_TOPIC_SPLASH';
+        console.log(`[Trivi-yeah!] Room ${roomCode} topic: ${topic.label}`);
+        broadcastToRoom(roomCode, { type: 'TRIVIA_TOPIC_CHOSEN', label: topic.label, brand: isHouseTopic(room) ? venueBrand(room) : null });
+        room.revealTimeout = setTimeout(() => { room.revealTimeout = null; if (activeRooms[roomCode] === room) startQuestionBankGame(roomCode); }, TRIVIA_TOPIC_SPLASH_MS);
+        return;
+    }
+
+    const categories = getCategoriesForMode(room.winningGameMode, room);
     const matchedCategory = categories.find(c => c.key === winningCategoryKey);
     room.activeCategoryKey = winningCategoryKey;
     room.activeDeckName = matchedCategory ? matchedCategory.label : 'General Deck';
@@ -592,10 +617,10 @@ async function startQuestionBankGame(roomCode) {
 // if that group has enough peers to supply 3. Shuffled once per room so
 // question order (and which questions get asked at all) varies game to game.
 async function loadQuestionBank(room) {
-    // A venue's Trivi-yeah! plays its house set, which is stored as a
-    // Thinking Pants category (HOUSE_<NAME>, all four tiers).
-    const houseSet = room.winningGameMode === 'TRIVI_YEAH' && room.venue && room.venue.houseSet;
-    const dbGameMode = houseSet ? 'TRIVI_YEAH_II' : gameModeToDbValue(room.winningGameMode);
+    // Trivi-yeah!'s topics are Thinking Pants categories (and a venue's house
+    // set, stored the same way as HOUSE_<NAME>, all four tiers).
+    const houseSet = isHouseTopic(room);
+    const dbGameMode = room.winningGameMode === 'TRIVI_YEAH' ? 'TRIVI_YEAH_II' : gameModeToDbValue(room.winningGameMode);
     const params = [dbGameMode];
     let filters = '';
 
@@ -658,6 +683,12 @@ async function loadQuestionBank(room) {
         room.askedQuestionIds = new Set();
         return;
     }
+    if (room.winningGameMode === 'TRIVI_YEAH') {
+        room.questionBank = buildTopicTriviaBank(room, candidates);
+        room.currentQuestionIndex = -1;
+        room.askedQuestionIds = new Set();
+        return;
+    }
     const targetCount = Math.min(room.requestedQuestionCount || MAX_QUESTIONS_PER_GAME, candidates.length);
     room.questionBank = candidates.slice(0, targetCount);
     room.currentQuestionIndex = -1;
@@ -680,6 +711,99 @@ function buildHouseTriviaBank(room, shuffledRows) {
     }
     // Random picks first (so a big set mixes all four tiers), then easy to hard.
     return unplayed.slice(0, HOUSE_TRIVIA_MAX_QUESTIONS).sort((a, b) => (a.points || 0) - (b.points || 0));
+}
+
+// ---------- Trivi-yeah!: pick a topic (Randy, Nov 2026) ----------
+// "The module that started it all": open it, pick a topic, exercise the
+// brain on it. Topics are the Thinking Pants categories (the venue's house
+// set first), so it grows whenever a category does. The phones vote from a
+// list; the TV shows only the topics someone picked, then the winner big.
+// 12 questions, three from each tier, easy to hard; no finale (Randy: a
+// quick round -- Thinking Pants owns the big finish).
+const TRIVIA_SURPRISE_KEY = 'SURPRISE';
+const TRIVIA_TOPIC_PICK_SECONDS = 20;
+const TRIVIA_ALL_PICKED_MS = 2000; // a beat once everyone has picked, to change their mind
+const TRIVIA_TOPIC_SPLASH_MS = 3000; // "Up next: Science & Nature"
+const TRIVIA_PER_TIER = 3; // x 4 tiers = 12 questions (Randy, Nov 2026: "Twelve, please")
+
+export function isHouseTopic(room) {
+    const houseSet = room && room.venue && room.venue.houseSet;
+    return !!(room && room.winningGameMode === 'TRIVI_YEAH' && houseSet && room.activeCategoryKey === houseSet.key);
+}
+
+// Every Thinking Pants category with enough at each tier for a game and not
+// switched Off (the venue's dial wins over the global one, as on the board).
+async function triviaTopicsFor(room) {
+    const tierCounts = await pool.query(
+        `SELECT category, points, COUNT(*) AS n FROM questions
+         WHERE game_mode = 'TRIVI_YEAH_II' AND points = ANY($1::int[]) GROUP BY category, points`,
+        [TRIVI_YEAH_II_TIERS]
+    );
+    const tiers = {};
+    tierCounts.rows.forEach(r => { (tiers[r.category] = tiers[r.category] || {})[Number(r.points)] = Number(r.n); });
+    const deepEnough = key => TRIVI_YEAH_II_TIERS.every(t => ((tiers[key] || {})[t] || 0) >= TRIVIA_PER_TIER);
+    const dial = { ...(await readCategorySettings()), ...(await readVenueCategorySettings(room.accessCode || null)) };
+    const topics = TRIVI_YEAH_II_CATEGORIES.filter(c => deepEnough(c.key) && dial[c.key] !== 'OFF').map(c => ({ key: c.key, label: c.label }));
+    const house = room.venue && room.venue.houseSet;
+    if (house && Object.keys(tiers[house.key] || {}).length) {
+        topics.unshift({ key: house.key, label: (room.venue && room.venue.name) || house.label, house: true });
+    }
+    return topics;
+}
+
+async function openTriviaTopicPick(roomCode) {
+    const room = activeRooms[roomCode];
+    if (!room) return;
+    const topics = await triviaTopicsFor(room);
+    if (!topics.length) throw new Error('No Thinking Pants category is deep enough for a topic game.');
+    // The venue's house set heads the list, then "Surprise me", then the rest.
+    const house = topics.filter(t => t.house), rest = topics.filter(t => !t.house);
+    room.triviaTopics = [...house, { key: TRIVIA_SURPRISE_KEY, label: 'Surprise me' }, ...rest];
+    room.gameState = 'CATEGORY_VOTE';
+    room.categoryVotes = {};
+    room.triviaTopics.forEach(t => { room.categoryVotes[t.key] = 0; });
+    Object.values(room.players).forEach(p => { p.requestedStart = false; p.categoryVote = null; });
+    console.log(`[Trivi-yeah!] Room ${roomCode} picking from ${topics.length} topics.`);
+    broadcastToRoom(roomCode, { type: 'TRANSITION_TO_CATEGORY_VOTE', winner: 'TRIVI_YEAH', categories: room.triviaTopics });
+    startCategoryCountdown(roomCode, TRIVIA_TOPIC_PICK_SECONDS);
+}
+
+// Everyone still here has picked: close the pick after a short beat.
+function checkTriviaAllPicked(roomCode) {
+    const room = activeRooms[roomCode];
+    if (!room || room.gameState !== 'CATEGORY_VOTE' || room.winningGameMode !== 'TRIVI_YEAH' || room.categoryTimeout) return;
+    const active = Object.values(room.players).filter(p => !p.left);
+    if (active.length && active.every(p => p.categoryVote)) {
+        room.categoryTimeout = setTimeout(() => {
+            room.categoryTimeout = null;
+            if (activeRooms[roomCode] === room && room.gameState === 'CATEGORY_VOTE') executeCategoryPhaseExpiration(roomCode);
+        }, TRIVIA_ALL_PICKED_MS);
+    }
+}
+
+// Three from each tier, easy to hard, preferring questions this room
+// hasn't seen (here or on a Thinking Pants board), and never two with the
+// same answer or picture in one game.
+function buildTopicTriviaBank(room, shuffledRows) {
+    room.seenQuestionIds = room.seenQuestionIds || new Set();
+    const usedAnswers = new Set(), usedImages = new Set();
+    const bank = [];
+    TRIVI_YEAH_II_TIERS.forEach(tier => {
+        const tierRows = shuffledRows.filter(r => Number(r.points) === tier);
+        const ordered = [...tierRows.filter(r => !room.seenQuestionIds.has(r.id)), ...tierRows.filter(r => room.seenQuestionIds.has(r.id))];
+        let taken = 0;
+        for (const r of ordered) {
+            if (taken >= TRIVIA_PER_TIER) break;
+            const answer = String(r.correct_answer).trim().toLowerCase();
+            if (usedAnswers.has(answer) || (r.visual_asset && usedImages.has(r.visual_asset))) continue;
+            usedAnswers.add(answer);
+            if (r.visual_asset) usedImages.add(r.visual_asset);
+            room.seenQuestionIds.add(r.id);
+            bank.push(r);
+            taken++;
+        }
+    });
+    return bank;
 }
 
 // Country Monkey's question mix, by type (the row's subcategory). Randy's
@@ -843,7 +967,7 @@ function startNextQuestion(roomCode) {
         questionNumber: room.currentQuestionIndex + 1,
         totalQuestions: room.questionBank.length,
         // The venue's Trivi-yeah! wears its logo and name on the TV.
-        brand: room.winningGameMode === 'TRIVI_YEAH' ? venueBrand(room) : null,
+        brand: isHouseTopic(room) ? venueBrand(room) : null,
         // This mode starts the clock the moment a question appears, so the
         // NEXT question's picture is fetched in the background now -- nobody
         // should lose seconds to a slow download.
@@ -902,8 +1026,8 @@ function endGame(roomCode) {
     broadcastToRoom(roomCode, {
         type: 'GAME_OVER',
         players: finalStandings,
-        // "Thanks for playing at <venue>!" after the venue's Trivi-yeah!.
-        brand: room.winningGameMode === 'TRIVI_YEAH' ? venueBrand(room) : null
+        // "Thanks for playing at <venue>!" after the venue's own topic.
+        brand: isHouseTopic(room) ? venueBrand(room) : null
     });
 }
 
@@ -1193,7 +1317,7 @@ function publicTriviYeahIIGrid(room) {
 // House sets aren't in TRIVI_YEAH_II_CATEGORIES, so they never turn up on an
 // ordinary board. usedIds keeps a game's house rounds from repeating a
 // question; an incomplete house set just means a normal board.
-async function buildTriviYeahIIBoard(doublersCount, house = null, usedCategoryKeys = new Set(), accessCode = null) {
+async function buildTriviYeahIIBoard(doublersCount, house = null, usedCategoryKeys = new Set(), accessCode = null, seenIds = null) {
     // Only categories with a question at every tier in the database are
     // eligible -- so a category can ship in code before its .sql file has been
     // run in Neon (or be missing a tier) without ever breaking a game.
@@ -1266,6 +1390,11 @@ async function buildTriviYeahIIBoard(doublersCount, house = null, usedCategoryKe
             if (useHouse && cat.key === house.key) {
                 const fresh = tierRows.filter(r => !house.usedIds.has(r.id));
                 if (fresh.length) tierRows = fresh;
+            } else if (seenIds) {
+                // Not a question this room just had in Trivi-yeah! (or an
+                // earlier board), unless the tier has nothing else.
+                const fresh = tierRows.filter(r => !seenIds.has(r.id));
+                if (fresh.length) tierRows = fresh;
             }
             const shuffled = shuffleArray(tierRows);
             const row = shuffled.find(r => !clashes(r)) || shuffled[0];
@@ -1274,6 +1403,7 @@ async function buildTriviYeahIIBoard(doublersCount, house = null, usedCategoryKe
                 if (row.visual_asset) boardImages.add(row.visual_asset);
             }
             if (useHouse && cat.key === house.key && row) house.usedIds.add(row.id);
+            if (seenIds && row) seenIds.add(row.id);
             grid.push({
                 categoryKey: cat.key,
                 categoryLabel: cat.label,
@@ -1349,7 +1479,7 @@ async function startTriviYeahIIRound(roomCode) {
     ty2.usedCategoryKeys = ty2.usedCategoryKeys || new Set(); // no general category twice in one game
     const { grid, chosenCategories } = await buildTriviYeahIIBoard(doublersCount,
         houseThisRound ? { key: houseSetting.key, label: houseSetting.label, usedIds: ty2.usedHouseIds } : null,
-        ty2.usedCategoryKeys, room.accessCode || null);
+        ty2.usedCategoryKeys, room.accessCode || null, (room.seenQuestionIds = room.seenQuestionIds || new Set()));
     chosenCategories.forEach(c => ty2.usedCategoryKeys.add(c.key));
 
     ty2.grid = grid;
@@ -4099,7 +4229,10 @@ function resetRoomForReplay(roomCode) {
     if (!room) return;
 
     const mode = room.winningGameMode;
+    // Trivi-yeah!'s Play Again keeps the topic (startGameForMode reads it).
+    const replayTopic = mode === 'TRIVI_YEAH' ? room.triviaTopic : null;
     const activePlayers = clearRoomForFreshGame(room);
+    room.triviaReplayTopic = replayTopic || null;
 
     console.log(`[Room Engine] Room ${roomCode} playing ${mode} again -- roster kept, stats cleared.`);
 
@@ -4294,6 +4427,7 @@ export function closeRoom(roomCode) {
 function clearRoomForFreshGame(room) {
     if (room.timerInterval) { clearInterval(room.timerInterval); room.timerInterval = null; }
     if (room.categoryTimerInterval) { clearInterval(room.categoryTimerInterval); room.categoryTimerInterval = null; }
+    if (room.categoryTimeout) { clearTimeout(room.categoryTimeout); room.categoryTimeout = null; }
     if (room.revealTimeout) { clearTimeout(room.revealTimeout); room.revealTimeout = null; }
     if (room.returnVoteTimeout) { clearTimeout(room.returnVoteTimeout); room.returnVoteTimeout = null; }
     if (room.answerSpread) { clearTimeout(room.answerSpread.timeout); room.answerSpread = null; }
@@ -5615,6 +5749,8 @@ export function handleIncomingMessage(fromPhone, bodyText, explicitRoomCode, pre
             } else if (currentRoom.gameState === 'CATEGORY_VOTE' && remainingActivePlayers.every(p => p.requestedStart)) {
                 remainingActivePlayers.forEach(p => p.requestedStart = false);
                 executeCategoryPhaseExpiration(associatedRoomCode);
+            } else if (currentRoom.gameState === 'CATEGORY_VOTE') {
+                checkTriviaAllPicked(associatedRoomCode);
             } else if (currentRoom.gameState === 'GAME_ROUND') {
                 const totalAnswersLogged = remainingActivePlayers.filter(p => currentRoom.answers[p.name] !== undefined).length;
                 if (totalAnswersLogged === remainingActivePlayers.length) {
@@ -5829,6 +5965,7 @@ export function handleIncomingMessage(fromPhone, bodyText, explicitRoomCode, pre
                 votes: currentRoom.categoryVotes,
                 totalVotes: totalSubVotes
             });
+            checkTriviaAllPicked(associatedRoomCode);
 
             return `Got it, ${player.name}! Sub-vote recorded.`;
         }

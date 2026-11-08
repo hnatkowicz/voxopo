@@ -57,6 +57,7 @@
         .module-row.mode-pick { display: flex; flex-direction: column; align-items: center; text-align: center; gap: 6px; padding: 14px 10px; }
         .mode-pick-name { font-weight: 700; font-size: 0.95rem; line-height: 1.2; }
         .mode-pick-blurb { font-size: 0.72rem; color: var(--rm-text-soft); line-height: 1.25; font-weight: 400; }
+        .module-row.topic-surprise { font-style: italic; color: var(--rm-brand); }
         .module-row.selected { 
             border-color: var(--rm-brand); 
             background: rgba(var(--rm-brand-rgb), 0.04); 
@@ -454,16 +455,18 @@
 
     <!-- SCREEN 3: CATEGORY VOTING GAMEPAD (CLEAN - NO DECORATIVE EMOJIS!) -->
     <div id="category-screen" class="card">
-        <!-- Only Country Monkey votes here now (Trivi-yeah! plays the venue's
-             set, the other modes start straight away), so it says region. -->
-        <h1 style="margin-bottom: 20px;">Pick a region</h1>
-        <div class="input-group">
-            <label>1. Pick a region</label>
+        <!-- Country Monkey's region and Trivi-yeah!'s topic (Nov 2026). The
+             titles are set when the screen opens. -->
+        <h1 style="margin-bottom: 20px;" id="category-title">Pick a region</h1>
+        <div id="category-chosen" style="display: none; text-align: center;"></div>
+        <div class="input-group" id="category-pick-group">
+            <label id="category-pick-label">1. Pick a region</label>
             <div class="module-list" id="category-vote-list"></div>
         </div>
         <!-- Same as the lobby: once everyone taps Start the vote closes early;
-             otherwise the 30s clock decides (Randy, Oct 2026). -->
-        <div class="input-group">
+             otherwise the 30s clock decides (Randy, Oct 2026). Trivi-yeah!
+             closes on its own once everyone has picked, so no Start there. -->
+        <div class="input-group" id="category-start-group">
             <label>2. Vote to start</label>
             <button class="btn" id="category-start-btn" onclick="submitCategoryStartVote()">Start</button>
         </div>
@@ -1436,11 +1439,26 @@
                             document.getElementById('badge-score').innerText = data.myScore;
                         }
                         // PHASE 2 TRANSITION: Open category election cards
-                        if (data.phase === 'CATEGORY_VOTE_PHASE' && document.getElementById('category-screen').style.display !== "block") {
-
+                        // Trivi-yeah!'s topic is in: "Up next" until the first question.
+                        if (data.phase === 'CATEGORY_VOTE_PHASE' && data.chosen) {
+                            const chosenEl = document.getElementById('category-chosen');
+                            document.getElementById('category-title').innerText = 'Up next';
+                            chosenEl.innerHTML = `<div style="font-family: var(--rm-font-display); font-weight: 800; font-size: 1.6rem; color: var(--rm-brand);">${escapeFmd(data.chosen.label)}</div>`;
+                            chosenEl.style.display = 'block';
+                            document.getElementById('category-pick-group').style.display = 'none';
+                            document.getElementById('category-start-group').style.display = 'none';
+                            document.getElementById('category-feedback').style.display = 'none';
+                            showOnlyPlayScreen('category-screen');
+                        } else if (data.phase === 'CATEGORY_VOTE_PHASE' && (document.getElementById('category-screen').style.display !== "block" || document.getElementById('category-pick-group').style.display === 'none')) {
+                            const topics = data.mode === 'TRIVI_YEAH';
+                            document.getElementById('category-title').innerText = topics ? 'Pick a topic' : 'Pick a region';
+                            document.getElementById('category-pick-label').innerText = topics ? 'Tap one. You can change it until time runs out.' : '1. Pick a region';
+                            document.getElementById('category-chosen').style.display = 'none';
+                            document.getElementById('category-pick-group').style.display = '';
+                            document.getElementById('category-start-group').style.display = topics ? 'none' : '';
                             const listEl = document.getElementById('category-vote-list');
                             listEl.innerHTML = (data.categories || []).map(c =>
-                                `<div class="module-row" onclick="submitCategorySubVote(this, '${c.key}')">${c.label}</div>`
+                                `<div class="module-row${c.key === 'SURPRISE' ? ' topic-surprise' : ''}${c.key === data.myCategoryVote ? ' selected' : ''}" onclick="submitCategorySubVote(this, '${c.key}')">${escapeFmd(c.label)}</div>`
                             ).join('');
 
                             document.getElementById('category-start-btn').classList.remove('btn-locked');
@@ -1665,7 +1683,9 @@
                     body: JSON.stringify({ From: registeredName, Body: categoryKey, roomCode: localStorage.getItem('randomania_roomcode') })
                 });
                 const data = await response.json();
-                showFeedback(feedback, data.reply, "rgba(var(--rm-green-rgb),0.06)", "var(--rm-green)", "rgba(var(--rm-green-rgb),0.1)");
+                // Trivi-yeah!'s topic list: the highlighted row says it all.
+                if (document.getElementById('category-start-group').style.display === 'none' && !String(data.reply || '').startsWith('⚠️')) feedback.style.display = 'none';
+                else showFeedback(feedback, data.reply, "rgba(var(--rm-green-rgb),0.06)", "var(--rm-green)", "rgba(var(--rm-green-rgb),0.1)");
             } catch (error) {
                 showFeedback(feedback, "❌ That didn't go through. Try again.", "rgba(var(--rm-red-rgb),0.06)", "var(--rm-red)", "rgba(var(--rm-red-rgb),0.1)");
             }

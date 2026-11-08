@@ -4,7 +4,7 @@ import dotenv from 'dotenv';
 import path from 'path';
 import { WebSocketServer } from 'ws';
 import pool from './config/database.js';
-import { handleIncomingMessage, activeRooms, getCategoriesForMode, resolveRequestedQuestionCount, compareByRank, closeRoom, profilerStatusFor, profilerTvSnapshot, triviYeahIITrapInfo, emptyModeVotes, finalWagerWinShare, resolveDisguisedAsset, flagMeDownStatusFor, GAME_MODE_KEYS, allowedModesFor, finalWagerRevealFor, venueBrand, endGameVoteFor, thinkingPantsCategoryOverview, setThinkingPantsCategorySetting, venueCategoryOverview, setVenueCategorySetting, tvMessagesSince, tvIsConnected , letterRipStatusFor, letterRipTvState } from './services/gameEngine.js';
+import { handleIncomingMessage, activeRooms, getCategoriesForMode, resolveRequestedQuestionCount, compareByRank, closeRoom, profilerStatusFor, profilerTvSnapshot, triviYeahIITrapInfo, emptyModeVotes, finalWagerWinShare, resolveDisguisedAsset, flagMeDownStatusFor, GAME_MODE_KEYS, allowedModesFor, finalWagerRevealFor, venueBrand, isHouseTopic, endGameVoteFor, thinkingPantsCategoryOverview, setThinkingPantsCategorySetting, venueCategoryOverview, setVenueCategorySetting, tvMessagesSince, tvIsConnected , letterRipStatusFor, letterRipTvState } from './services/gameEngine.js';
 import {
     isHostAuthorized, grantHostSession, isAccessCodeActive,
     isAdminAuthorized, grantAdminSession,
@@ -401,8 +401,13 @@ app.post('/api/room-status', (req, res) => {
             return res.json({ phase: 'LOBBY_PHASE', myScore, myCorrectAnswers, myLeft, myEmoji, myVote, allowedModes: allowedModesFor(targetRoom), venue: targetRoom.venue || null });
         }
         if (targetRoom && targetRoom.gameState === 'CATEGORY_VOTE') {
-            const categories = getCategoriesForMode(targetRoom.winningGameMode);
-            return res.json({ phase: 'CATEGORY_VOTE_PHASE', categories, myScore, myCorrectAnswers, myLeft, myEmoji });
+            const categories = getCategoriesForMode(targetRoom.winningGameMode, targetRoom);
+            const myCategoryVote = myPlayer ? myPlayer.categoryVote || null : null;
+            return res.json({ phase: 'CATEGORY_VOTE_PHASE', mode: targetRoom.winningGameMode, categories, myCategoryVote, myScore, myCorrectAnswers, myLeft, myEmoji });
+        }
+        // Trivi-yeah!'s "Up next" beat: the phones show the chosen topic.
+        if (targetRoom && targetRoom.gameState === 'TRIVIA_TOPIC_SPLASH') {
+            return res.json({ phase: 'CATEGORY_VOTE_PHASE', mode: 'TRIVI_YEAH', categories: [], chosen: targetRoom.triviaTopic, myScore, myCorrectAnswers, myLeft, myEmoji });
         }
         // FIX: If the clock expired and moved to gameplay, shout the round phase back to the phone poller!
         // FIX ALIGNMENT: Flatten the object parameters so it matches Phase 2 perfectly!
@@ -673,8 +678,8 @@ app.post('/api/room-status', (req, res) => {
                 // (EmpossDurr, On the Spectrum) only when that's actually the
                 // mode that just finished.
                 winningGameMode: targetRoom.winningGameMode,
-                // "Thanks for playing at <venue>!" after the venue's Trivi-yeah!.
-                brand: targetRoom.winningGameMode === 'TRIVI_YEAH' ? venueBrand(targetRoom) : null,
+                // "Thanks for playing at <venue>!" after the venue's own topic.
+                brand: isHouseTopic(targetRoom) ? venueBrand(targetRoom) : null,
                 // Your Final Wager result, so the leader (revealed last, just
                 // before Game Over) still gets to read theirs.
                 myFinalWager: targetRoom.finalWager && targetRoom.finalWager.revealSteps
@@ -724,7 +729,7 @@ function tvSnapshotMessages(room) {
             winningGameMode: room.winningGameMode,
             // Recompute the same category list the CATEGORY_VOTE broadcast used,
             // so a reconnecting screen shows the real sub-deck names, not defaults.
-            categories: getCategoriesForMode(room.winningGameMode),
+            categories: getCategoriesForMode(room.winningGameMode, room),
             activeQuestionData: room.activeQuestionData, // Sends the live trivia question text!
             // Pass down whatever timer metrics are left on the clock
             lobbySecondsLeft: room.lobbySecondsLeft,
