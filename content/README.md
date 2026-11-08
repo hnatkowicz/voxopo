@@ -18,7 +18,8 @@ Open the `.csv` in Excel, Numbers or Google Sheets. One row is one question.
 | `source` | Where the question came from (`ORIGINAL`, `POP_CULTURE_FOLD_1`, ...). Saved as the row's `subcategory`. |
 | `added` | Date the row was added, `2026-10-18` |
 | `retired` | `yes` to take a question out of the game but keep it in the sheet |
-| `notes` | Anything worth remembering: why it was rewritten, a fact-check source |
+| `notes` | Anything worth remembering: why it was rewritten, a fact-check source. Players never see it. |
+| `facts` | Optional. One interesting sentence the TV shows under the revealed answer (and the phone's Info page), with the reveal held 3 seconds longer. Up to 140 characters. A rare bonus: only when it's genuinely interesting, never "currently" facts, and not a repeat of the answer. Blank for most rows. |
 
 - **Retire, don't delete.** A retired row stays as a record of what was
   tried and why it went.

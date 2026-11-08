@@ -272,7 +272,7 @@ def thinking_pants_csv():
     """content/landmarks.csv keeps rows Randy has added, retired or noted:
     only rows for photos it doesn't have yet are appended."""
     path = os.path.join(ROOT, 'content', 'landmarks.csv')
-    header = ['points', 'question', 'answer', 'wrong_1', 'wrong_2', 'wrong_3', 'wrong_4', 'wrong_5', 'wrong_6', 'image', 'source', 'added', 'retired', 'notes']
+    header = ['points', 'question', 'answer', 'wrong_1', 'wrong_2', 'wrong_3', 'wrong_4', 'wrong_5', 'wrong_6', 'image', 'source', 'added', 'retired', 'notes', 'facts']
     rows = []
     if os.path.exists(path):
         with open(path, encoding='utf-8-sig', newline='') as fh:
@@ -282,7 +282,7 @@ def thinking_pants_csv():
         img = '/structures/' + f + '.webp'
         if img in have:
             continue
-        rows.append([d * 100, 'What is this landmark?', ans, *wrong, img, 'LANDMARKS_BATCH_1', '2026-10-18', '', ''])
+        rows.append([d * 100, 'What is this landmark?', ans, *wrong, img, 'LANDMARKS_BATCH_1', '2026-10-18', '', '', ''])
     rows.sort(key=lambda r: (int(r[0]), r[2]))
     with open(path, 'w', encoding='utf-8-sig', newline='') as fh:
         w = csv.writer(fh, lineterminator='\r\n')

@@ -16,6 +16,10 @@ import { fileURLToPath } from 'url';
 const DIR = path.dirname(fileURLToPath(import.meta.url));
 const TIERS = [100, 200, 300, 400];
 const COLUMNS = ['points', 'question', 'answer', 'wrong_1', 'wrong_2', 'wrong_3', 'wrong_4', 'wrong_5', 'wrong_6', 'image', 'source', 'added', 'retired', 'notes'];
+// `facts` (Randy, Nov 2026): optional, the last column. One interesting
+// sentence the TV shows under the revealed answer ("a rare bonus" -- only
+// when it's genuinely interesting). Unlike `notes`, players see it.
+const FACTS_MAX = 140;
 
 // RFC 4180 CSV: quoted fields, doubled quotes, commas/newlines inside quotes.
 export function parseCsv(text) {
@@ -87,8 +91,11 @@ export function checkCategory(file, rows) {
         const key = core(question) + '|' + get(r, 'image').toLowerCase();
         if (seenQuestions.has(key)) problems.push(`${where}: same question as row ${seenQuestions.get(key)}`);
         seenQuestions.set(key, line);
+        const facts = 'facts' in col ? get(r, 'facts') : '';
+        if (facts.length > FACTS_MAX) problems.push(`${where}: the fact is ${facts.length} characters; keep it to ${FACTS_MAX} so the room can read it in a glance`);
+        if (facts && answer && core(answer).length > 2 && core(facts) === core(answer)) problems.push(`${where}: the fact just repeats the answer`);
         if (isRetired(get(r, 'retired'))) return;
-        questions.push({ points, question, answer, wrong, image: get(r, 'image') || null, source: get(r, 'source') || null });
+        questions.push({ points, question, answer, wrong, image: get(r, 'image') || null, source: get(r, 'source') || null, facts: facts || null });
     });
     TIERS.forEach(t => { if (!questions.some(q => q.points === t)) problems.push(`${file}: no live questions at ${t} points (the board needs every tier)`); });
     const answers = new Map();
@@ -109,6 +116,10 @@ export function categorySql(category, file, questions) {
 -- (${counts}), inside a transaction. Safe to re-run.
 -- ============================================================================
 
+-- The facts column (shown on the TV after the answer) is added the first
+-- time any category file runs; after that this line does nothing.
+ALTER TABLE questions ADD COLUMN IF NOT EXISTS facts TEXT;
+
 BEGIN;
 
 DELETE FROM questions WHERE game_mode = 'TRIVI_YEAH_II' AND category = '${category}';
@@ -116,10 +127,10 @@ DELETE FROM questions WHERE game_mode = 'TRIVI_YEAH_II' AND category = '${catego
     let tier = null;
     [...questions].sort((a, b) => a.points - b.points).forEach(q => {
         if (q.points !== tier) { out.push(`\n-- ${q.points} points`); tier = q.points; }
-        out.push(`INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points)
+        out.push(`INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', '${category}', ${q.source ? sq(q.source) : 'NULL'}, NULL,
         ${sq(q.question)}, ${q.image ? sq(q.image) : 'NULL'},
-        ${sq(q.answer)}, ARRAY[${q.wrong.map(sq).join(', ')}], ${q.points});`);
+        ${sq(q.answer)}, ARRAY[${q.wrong.map(sq).join(', ')}], ${q.points}, ${q.facts ? sq(q.facts) : 'NULL'});`);
     });
     out.push(`
 COMMIT;
