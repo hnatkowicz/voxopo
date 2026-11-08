@@ -2942,8 +2942,8 @@ const SPOTLIGHT_TAP_SECONDS = 10;
 const SPOTLIGHT_ROUNDS = 4;
 const SPOTLIGHT_MAX_FLIPS = 3; // per round
 const SPOTLIGHT_FLIP_MS = 3000;
-const SPOTLIGHT_ALL_PLACED_MS = 2000; // a beat to move once everyone has a spotlight down
-const SPOTLIGHT_LAST_SECONDS = 10; // last call to lock in after the final flip
+const SPOTLIGHT_ALL_PLACED_MS = 1000; // a short beat once everyone has a tile lit (was 2s, a beat to move; taps now lock)
+const SPOTLIGHT_LAST_SECONDS = 25; // last call to lock in after the final flip (was 10; Randy, Nov 2026)
 const SPOTLIGHT_RESULT_MS = 2500; // per player in the results
 // Right pays wager x this, by flips already done: before any 2x, after one 1.5x, then 1x.
 const SPOTLIGHT_PAYOUT = [2, 1.5, 1];
@@ -3191,6 +3191,9 @@ function handleSpotlightAction(roomCode, room, playerName, cleanText) {
     if (tap) {
         if (lr.phase !== 'SPOT_TAP') return `⚠️ Wait for the next round.`;
         const i = Number(tap[1]);
+        // One tap a round, and it locks (Randy, Nov 2026: with moving allowed,
+        // "everyone is just spamming tiles").
+        if (playerName in spot.spots) return `⚠️ Your tile is already lit this round.`;
         if (!/[A-Z]/.test(lr.phrase[i] || '') || spot.flipped.has(i)) return `⚠️ Pick a hidden tile.`;
         spot.spots[playerName] = i;
         broadcastLetterRipState(roomCode);
