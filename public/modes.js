@@ -6,7 +6,7 @@
 // Icons: Randy's art at public/modes/<icon>.svg. Until a file exists, the
 // tile shows the emoji instead -- uploading the SVG needs no code change.
 window.RANDOMANIA_MODES = [
-    { key: 'TRIVI_YEAH',      name: 'Trivi-yeah!',     blurb: 'Classic multiple-choice trivia', tag: null,         color: 'var(--rm-brand)', emoji: '❓', icon: 'mode-trivi-yeah' },
+    { key: 'TRIVI_YEAH',      name: 'Trivi-yeah!',     blurb: 'Pick a topic, 12 questions', tag: null,         color: 'var(--rm-brand)', emoji: '❓', icon: 'mode-trivi-yeah' },
     // Byline says "trivia" so a stranger at a pub knows what it is; the
     // "Beta" tag came off once it became the flagship (Randy, Nov 2026).
     { key: 'TRIVI_YEAH_II',   name: 'Thinking Pants',  blurb: 'Board trivia, bet big',          tag: null,         color: 'var(--rm-cyan)', emoji: '👖', icon: 'mode-thinking-pants' },
