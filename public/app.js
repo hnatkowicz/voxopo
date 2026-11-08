@@ -1581,7 +1581,7 @@ function showTriviYeahIITrapRevealUI(data) {
         ${doublerCategoryBadge(data.categoryLabel)}
         <div class="tp-kicker">It's a trap!</div>
         <div>${trapIconHtml(data.trapType, 10)}</div>
-        <div class="tp-big" style="color: var(--rm-red-soft); text-shadow: 0 0 20px rgba(var(--rm-red-soft-rgb), 0.35);">${escapeHtml(data.label).toUpperCase()}</div>
+        <div class="tp-big" style="color: var(--rm-brand); text-shadow: 0 0 20px rgba(var(--rm-brand-rgb), 0.35);">${escapeHtml(data.label).toUpperCase()}</div>
         <div class="tp-mid">${trapRuleFor(data)}</div>
         <div class="tp-small">Set by ${escapeHtml(data.setter)} · ${data.points} points</div>
     `);

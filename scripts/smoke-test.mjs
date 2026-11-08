@@ -97,7 +97,7 @@ for (const r of ROOMS) {
     const res = await api('/api/create-room', { code: r.code });
     if (!res.roomCode) { say(`✗ ${r.label}: couldn't open a room (${res.error})`); r.failed = 'no room'; continue; }
     r.roomCode = res.roomCode;
-    for (const n of BOTS) await api('/api/message', { From: n, Body: `${r.roomCode} ${n} av:fox ${r.mode}`, roomCode: r.roomCode });
+    for (const [k, n] of BOTS.entries()) await api('/api/message', { From: n, Body: `${r.roomCode} ${n} av:${['bicycle', 'book', 'boot', 'boy'][k]} ${r.mode}`, roomCode: r.roomCode });
     for (const n of BOTS) await api('/api/message', { From: n, Body: 'START', roomCode: r.roomCode });
     r.started = Date.now(); r.lastSig = ''; r.lastChange = Date.now(); r.seen = new Set(); r.traps = r.traps ? [] : null;
 }
@@ -170,12 +170,27 @@ function drive(r) {
     // Thinking Pants
     const ty2 = room.triviYeahII;
     // A trap's reveal is brief at test speed: note it the moment it shows.
-    if (fresh && ty2 && ty2.phase === 'TRAP_REVEAL' && r.traps) { r.sprung = r.sprung || []; r.sprung.push(ty2.trap && ty2.trap.type); }
+    if (fresh && ty2 && ty2.phase === 'TRAP_REVEAL' && r.traps) {
+        if (ty2.activeCellIndex === r.selfPickIndex && ty2.round === r.selfPickRound) r.selfPickSprung = true;
+        r.sprung = r.sprung || []; r.sprung.push(ty2.trap && ty2.trap.type);
+    }
     if (room.gameState === 'TRIVI_YEAH_II_ROUND' && ty2 && waited && !r.acted) {
         r.acted = true;
         if (ty2.phase === 'PICK_TILE' && live.includes(ty2.currentPicker)) {
             // Trapped tiles first, so every trap that was set gets sprung.
             let i = ty2.grid.findIndex(c => !c.cleared && c.trap);
+            const trap = i >= 0 && ty2.grid[i].trap;
+            if (trap && trap.setter === ty2.currentPicker) {
+                if (r.selfPickIndex === undefined) {
+                    // The first trap: its own setter picks it, and it must
+                    // fizzle (no trap screen for that tile).
+                    r.selfPickIndex = i; r.selfPickRound = ty2.round; // a new round is a new board
+                } else {
+                    // The rest go to someone else, so they spring. (Test
+                    // only: Ace is right so often the pick keeps coming back.)
+                    ty2.currentPicker = live.find(n => n !== trap.setter);
+                }
+            }
             if (i < 0) i = ty2.grid.findIndex(c => !c.cleared);
             if (i >= 0) act(room, code, ty2.currentPicker, `PICK ${i}`);
         }
@@ -319,6 +334,9 @@ if (ROOMS.some(r => r.traps)) {
     const tr = ROOMS.find(r => r.traps);
     const missing = TRAP_TYPES.filter(t => !(tr.sprung || []).includes(t));
     if (missing.length) { failed++; say(`✗ traps never sprung: ${missing.join(', ')}`); }
+    if (tr.selfPickIndex === undefined) { failed++; say('✗ no trap was picked by its own setter, so that rule went untested'); }
+    else if (tr.selfPickSprung) { failed++; say('✗ a setter picked their own trap and it sprang (it should fizzle)'); }
+    else say('✓ a setter who picked their own trap: it fizzled');
 }
 if (ROOMS.some(r => r.code === 'SMOKE-PUB' && r.mode === 'TRIVI_YEAH_II') && !ROOMS.find(r => r.code === 'SMOKE-PUB' && r.mode === 'TRIVI_YEAH_II').sawBreak) {
     say('  (no venue break seen: run access_codes_breaks.sql on the test database to cover it)');
