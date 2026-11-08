@@ -4,8 +4,8 @@
 -- Thinking Pants category MUSIC. To change a question, change the
 -- spreadsheet and rebuild.
 --
--- Replaces the WHOLE category with the spreadsheet's 124 live questions
--- (100: 30, 200: 32, 300: 32, 400: 30), inside a transaction. Safe to re-run.
+-- Replaces the WHOLE category with the spreadsheet's 200 live questions
+-- (100: 50, 200: 50, 300: 50, 400: 50), inside a transaction. Safe to re-run.
 -- ============================================================================
 
 -- The facts column (shown on the TV after the answer) is added the first
@@ -138,6 +138,86 @@ INSERT INTO questions (question_number, game_mode, category, subcategory, factio
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MUSIC', 'MUSIC_BATCH_1', NULL,
         'Which keyboard instrument with pipes is often played in churches?', NULL,
         'Organ', ARRAY['Piano', 'Harpsichord', 'Accordion', 'Harmonica', 'Bagpipes', 'Synthesizer'], 100, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MUSIC', 'DEPTH_NOV_2026', NULL,
+        'Which singer released "Firework" and "Roar"?', NULL,
+        'Katy Perry', ARRAY['Kesha', 'P!nk', 'Demi Lovato', 'Selena Gomez', 'Meghan Trainor', 'Avril Lavigne'], 100, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MUSIC', 'DEPTH_NOV_2026', NULL,
+        'Which singer released "Thank U, Next" and "7 Rings"?', NULL,
+        'Ariana Grande', ARRAY['Selena Gomez', 'Halsey', 'Camila Cabello', 'Doja Cat', 'Demi Lovato', 'Hailee Steinfeld'], 100, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MUSIC', 'DEPTH_NOV_2026', NULL,
+        'Which British boy band sang "What Makes You Beautiful"?', NULL,
+        'One Direction', ARRAY['The Wanted', 'Take That', 'Westlife', '5 Seconds of Summer', 'Big Time Rush', 'Union J'], 100, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MUSIC', 'DEPTH_NOV_2026', NULL,
+        'What do you call a gentle song sung to help a baby fall asleep?', NULL,
+        'A lullaby', ARRAY['A ballad', 'An anthem', 'A jingle', 'A hymn', 'A carol', 'A chant'], 100, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MUSIC', 'DEPTH_NOV_2026', NULL,
+        'A country''s official patriotic song is called its national what?', NULL,
+        'Anthem', ARRAY['Ballad', 'Jingle', 'Carol', 'Hymn', 'Chorus', 'March'], 100, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MUSIC', 'DEPTH_NOV_2026', NULL,
+        'How many musicians are in a trio?', NULL,
+        'Three', ARRAY['Two', 'Four', 'Five', 'Six', 'Seven', 'Eight'], 100, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MUSIC', 'DEPTH_NOV_2026', NULL,
+        'Which woodwind instrument is held sideways and played by blowing across a hole?', NULL,
+        'Flute', ARRAY['Clarinet', 'Oboe', 'Recorder', 'Saxophone', 'Bassoon', 'Harmonica'], 100, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MUSIC', 'DEPTH_NOV_2026', NULL,
+        'Which large brass instrument plays the lowest notes in a marching or concert band?', NULL,
+        'Tuba', ARRAY['Trumpet', 'French horn', 'Cornet', 'Bugle', 'Saxophone', 'Clarinet'], 100, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MUSIC', 'DEPTH_NOV_2026', NULL,
+        'Which large string instrument, plucked by hand, stands upright in a triangle-shaped frame?', NULL,
+        'Harp', ARRAY['Lyre', 'Lute', 'Zither', 'Cello', 'Dulcimer', 'Banjo'], 100, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MUSIC', 'DEPTH_NOV_2026', NULL,
+        'Which small, four-stringed instrument is closely linked with Hawaii?', NULL,
+        'Ukulele', ARRAY['Banjo', 'Mandolin', 'Lute', 'Sitar', 'Balalaika', 'Harp'], 100, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MUSIC', 'DEPTH_NOV_2026', NULL,
+        'What do you call the part of a song that repeats, often with the title in it?', NULL,
+        'The chorus', ARRAY['The verse', 'The bridge', 'The intro', 'The solo', 'The outro', 'The overture'], 100, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MUSIC', 'DEPTH_NOV_2026', NULL,
+        'Which singer played Hannah Montana on TV before releasing "Wrecking Ball"?', NULL,
+        'Miley Cyrus', ARRAY['Selena Gomez', 'Demi Lovato', 'Hilary Duff', 'Vanessa Hudgens', 'Ashley Tisdale', 'Lindsay Lohan'], 100, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MUSIC', 'DEPTH_NOV_2026', NULL,
+        'Which pop star released "Espresso" in 2024?', NULL,
+        'Sabrina Carpenter', ARRAY['Chappell Roan', 'Tate McRae', 'Doja Cat', 'Gracie Abrams', 'Halsey', 'Meghan Trainor'], 100, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MUSIC', 'DEPTH_NOV_2026', NULL,
+        'Which singer released "Levitating" and "Don''t Start Now"?', NULL,
+        'Dua Lipa', ARRAY['Rita Ora', 'Anne-Marie', 'Jessie J', 'Ellie Goulding', 'Zara Larsson', 'Charli XCX'], 100, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MUSIC', 'DEPTH_NOV_2026', NULL,
+        'What is a duet?', NULL,
+        'A piece for two performers', ARRAY['A piece for one performer', 'A song with no words', 'A song with two verses', 'A piece for four performers', 'A fast dance', 'A sad song'], 100, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MUSIC', 'DEPTH_NOV_2026', NULL,
+        'Which instrument do kids often learn in school, blowing in one end and covering holes with their fingers?', NULL,
+        'Recorder', ARRAY['Harmonica', 'Ocarina', 'Clarinet', 'Pan flute', 'Trumpet', 'Bagpipes'], 100, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MUSIC', 'DEPTH_NOV_2026', NULL,
+        'Which instrument do you play by humming into it, making a buzzing sound?', NULL,
+        'Kazoo', ARRAY['Harmonica', 'Ocarina', 'Tambourine', 'Whistle', 'Maracas', 'Jaw harp'], 100, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MUSIC', 'DEPTH_NOV_2026', NULL,
+        'Which singer released "Can''t Stop the Feeling!" from the movie "Trolls"?', NULL,
+        'Justin Timberlake', ARRAY['Bruno Mars', 'Nick Jonas', 'Shawn Mendes', 'Usher', 'Charlie Puth', 'Adam Levine'], 100, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MUSIC', 'DEPTH_NOV_2026', NULL,
+        'Which singer released "Blinding Lights"?', NULL,
+        'The Weeknd', ARRAY['Post Malone', 'Khalid', 'Frank Ocean', 'Bruno Mars', 'Shawn Mendes', 'Chris Brown'], 100, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MUSIC', 'DEPTH_NOV_2026', NULL,
+        'Which rattling instruments, usually shaken in pairs, are filled with beads or seeds?', NULL,
+        'Maracas', ARRAY['Castanets', 'Tambourine', 'Bongos', 'Claves', 'Triangle', 'Cowbell'], 100, NULL);
 
 -- 200 points
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
@@ -268,6 +348,78 @@ INSERT INTO questions (question_number, game_mode, category, subcategory, factio
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MUSIC', 'MUSIC_BATCH_1', NULL,
         'What is the name of the Memphis mansion where the "King of Rock and Roll" lived?', NULL,
         'Graceland', ARRAY['Neverland', 'Paisley Park', 'Dollywood', 'Sun Studio', 'Shady Acres', 'Heartbreak Hotel'], 200, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MUSIC', 'DEPTH_NOV_2026', NULL,
+        'Which string instrument is a little larger than a violin but smaller than a cello?', NULL,
+        'Viola', ARRAY['Double bass', 'Mandolin', 'Fiddle', 'Lute', 'Ukulele', 'Harp'], 200, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MUSIC', 'DEPTH_NOV_2026', NULL,
+        'Which band of brothers sang "Sucker" and "Burnin'' Up"?', NULL,
+        'Jonas Brothers', ARRAY['The Wanted', '''N Sync', 'Big Time Rush', 'Why Don''t We', 'Boyzone', '98 Degrees'], 200, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MUSIC', 'DEPTH_NOV_2026', NULL,
+        'Which band of three brothers sang "MMMBop" in 1997?', NULL,
+        'Hanson', ARRAY['''N Sync', '98 Degrees', 'The Moffatts', 'Five', 'Boyzone', 'The Osmonds'], 200, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MUSIC', 'DEPTH_NOV_2026', NULL,
+        'Which band sang "Good Vibrations" and "Surfin'' U.S.A."?', NULL,
+        'The Beach Boys', ARRAY['Jan and Dean', 'The Monkees', 'The Turtles', 'The Byrds', 'The Mamas & the Papas', 'The Four Seasons'], 200, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MUSIC', 'DEPTH_NOV_2026', NULL,
+        'Which Cuban-American singer led the Miami Sound Machine?', NULL,
+        'Gloria Estefan', ARRAY['Celia Cruz', 'Jennifer Lopez', 'Thalía', 'Paulina Rubio', 'Linda Ronstadt', 'Selena'], 200, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MUSIC', 'DEPTH_NOV_2026', NULL,
+        'Which Puerto Rican singer released "Livin'' la Vida Loca"?', NULL,
+        'Ricky Martin', ARRAY['Marc Anthony', 'Enrique Iglesias', 'Luis Fonsi', 'Chayanne', 'Daddy Yankee', 'Bad Bunny'], 200, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MUSIC', 'DEPTH_NOV_2026', NULL,
+        'Which 2017 song by Luis Fonsi and Daddy Yankee became a worldwide smash?', NULL,
+        '"Despacito"', ARRAY['"Gasolina"', '"Bailando"', '"Mi Gente"', '"La Bamba"', '"Macarena"', '"Danza Kuduro"'], 200, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MUSIC', 'DEPTH_NOV_2026', NULL,
+        'What is a group of eight musicians called?', NULL,
+        'An octet', ARRAY['A sextet', 'A septet', 'A nonet', 'A quintet', 'An octave', 'A decet'], 200, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MUSIC', 'DEPTH_NOV_2026', NULL,
+        'In "do, re, mi," which note comes right after "sol"?', NULL,
+        'La', ARRAY['Ti', 'Fa', 'Mi', 'Do', 'Re', 'Mo'], 200, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MUSIC', 'DEPTH_NOV_2026', NULL,
+        'Which rock band released the album "Back in Black"?', NULL,
+        'AC/DC', ARRAY['Def Leppard', 'Iron Maiden', 'Motörhead', 'Scorpions', 'Judas Priest', 'Thin Lizzy'], 200, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MUSIC', 'DEPTH_NOV_2026', NULL,
+        'Ozzy Osbourne first found fame singing for which heavy metal band?', NULL,
+        'Black Sabbath', ARRAY['Iron Maiden', 'Judas Priest', 'Deep Purple', 'Motörhead', 'Megadeth', 'Metallica'], 200, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MUSIC', 'DEPTH_NOV_2026', NULL,
+        'Which face-painted band sang "Rock and Roll All Nite"?', NULL,
+        'Kiss', ARRAY['Twisted Sister', 'Alice Cooper', 'Mötley Crüe', 'Poison', 'Ratt', 'Quiet Riot'], 200, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MUSIC', 'DEPTH_NOV_2026', NULL,
+        'Which country singer won "American Idol" and released "Before He Cheats"?', NULL,
+        'Carrie Underwood', ARRAY['Miranda Lambert', 'Faith Hill', 'Reba McEntire', 'Kelsea Ballerini', 'Martina McBride', 'Sara Evans'], 200, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MUSIC', 'DEPTH_NOV_2026', NULL,
+        'Which Motown group, led by Diana Ross, sang "Stop! In the Name of Love"?', NULL,
+        'The Supremes', ARRAY['The Marvelettes', 'Martha and the Vandellas', 'The Ronettes', 'The Shirelles', 'The Crystals', 'The Shangri-Las'], 200, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MUSIC', 'DEPTH_NOV_2026', NULL,
+        'Which singer released "Stay with Me" and "Too Good at Goodbyes"?', NULL,
+        'Sam Smith', ARRAY['Lewis Capaldi', 'James Arthur', 'Shawn Mendes', 'Tom Odell', 'George Ezra', 'Calum Scott'], 200, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MUSIC', 'DEPTH_NOV_2026', NULL,
+        'Which singer released "Watermelon Sugar" and "As It Was"?', NULL,
+        'Harry Styles', ARRAY['Niall Horan', 'Zayn Malik', 'Louis Tomlinson', 'Shawn Mendes', 'Charlie Puth', 'Conan Gray'], 200, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MUSIC', 'DEPTH_NOV_2026', NULL,
+        'Which singer released "Hello" (1984) and "All Night Long"?', NULL,
+        'Lionel Richie', ARRAY['Luther Vandross', 'Smokey Robinson', 'Kenny Rogers', 'Peabo Bryson', 'Billy Ocean', 'Barry White'], 200, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MUSIC', 'DEPTH_NOV_2026', NULL,
+        'With Phil Collins as drummer and singer, which band released "Invisible Touch"?', NULL,
+        'Genesis', ARRAY['Yes', 'Supertramp', 'Toto', 'Foreigner', 'The Alan Parsons Project', 'Asia'], 200, NULL);
 
 -- 300 points
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
@@ -398,6 +550,78 @@ INSERT INTO questions (question_number, game_mode, category, subcategory, factio
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MUSIC', 'MUSIC_BATCH_1', NULL,
         'What is the Italian musical term for gradually getting louder?', NULL,
         'Crescendo', ARRAY['Diminuendo', 'Fortissimo', 'Staccato', 'Allegro', 'Legato', 'Pianissimo'], 300, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MUSIC', 'DEPTH_NOV_2026', NULL,
+        'Which singer was known as "the Queen of Tejano music"?', NULL,
+        'Selena', ARRAY['Celia Cruz', 'Jennifer Lopez', 'Thalía', 'Paulina Rubio', 'Linda Ronstadt', 'Gloria Trevi'], 300, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MUSIC', 'DEPTH_NOV_2026', NULL,
+        'The steel drum (or steelpan) was invented in which country?', NULL,
+        'Trinidad and Tobago', ARRAY['Jamaica', 'Cuba', 'Barbados', 'Haiti', 'The Bahamas', 'Puerto Rico'], 300, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MUSIC', 'DEPTH_NOV_2026', NULL,
+        'Which rock singer was born Farrokh Bulsara?', NULL,
+        'Freddie Mercury', ARRAY['Robert Plant', 'George Michael', 'Rod Stewart', 'Brian May', 'Roger Daltrey', 'Steven Tyler'], 300, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MUSIC', 'DEPTH_NOV_2026', NULL,
+        'Which British punk band released "London Calling"?', NULL,
+        'The Clash', ARRAY['The Sex Pistols', 'The Ramones', 'The Jam', 'The Damned', 'Buzzcocks', 'The Specials'], 300, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MUSIC', 'DEPTH_NOV_2026', NULL,
+        'Which Seattle grunge band released "Black Hole Sun"?', NULL,
+        'Soundgarden', ARRAY['Alice in Chains', 'Stone Temple Pilots', 'Mudhoney', 'Screaming Trees', 'Temple of the Dog', 'Green River'], 300, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MUSIC', 'DEPTH_NOV_2026', NULL,
+        'Which band released "Sweet Child o'' Mine" and "Paradise City"?', NULL,
+        'Guns N'' Roses', ARRAY['Mötley Crüe', 'Def Leppard', 'Skid Row', 'Poison', 'Warrant', 'Cinderella'], 300, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MUSIC', 'DEPTH_NOV_2026', NULL,
+        'What is the lowest standard male singing voice?', NULL,
+        'Bass', ARRAY['Baritone', 'Tenor', 'Alto', 'Countertenor', 'Contralto', 'Mezzo-soprano'], 300, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MUSIC', 'DEPTH_NOV_2026', NULL,
+        'Which Italian marking tells a musician to play very softly?', NULL,
+        'Pianissimo', ARRAY['Fortissimo', 'Allegro', 'Staccato', 'Legato', 'Sforzando', 'Presto'], 300, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MUSIC', 'DEPTH_NOV_2026', NULL,
+        'Which tempo marking means "slow"?', NULL,
+        'Adagio', ARRAY['Allegro', 'Presto', 'Vivace', 'Allegretto', 'Prestissimo', 'Moderato'], 300, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MUSIC', 'DEPTH_NOV_2026', NULL,
+        'How many symphonies did Beethoven complete?', NULL,
+        'Nine', ARRAY['Five', 'Six', 'Seven', 'Twelve', 'Fifteen', 'Forty-one'], 300, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MUSIC', 'DEPTH_NOV_2026', NULL,
+        'Which jazz singer was called "the First Lady of Song"?', NULL,
+        'Ella Fitzgerald', ARRAY['Sarah Vaughan', 'Nina Simone', 'Etta James', 'Dinah Washington', 'Bessie Smith', 'Peggy Lee'], 300, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MUSIC', 'DEPTH_NOV_2026', NULL,
+        'Which Irish band sang "Linger" and "Zombie"?', NULL,
+        'The Cranberries', ARRAY['The Corrs', 'The Undertones', 'Snow Patrol', 'The Pogues', 'Thin Lizzy', 'Westlife'], 300, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MUSIC', 'DEPTH_NOV_2026', NULL,
+        'Which singer, nicknamed "the Genius," recorded "Georgia on My Mind"?', NULL,
+        'Ray Charles', ARRAY['Otis Redding', 'Sam Cooke', 'Lionel Richie', 'Smokey Robinson', 'Al Green', 'Bill Withers'], 300, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MUSIC', 'DEPTH_NOV_2026', NULL,
+        'Which British singer released the album "Back to Black"?', NULL,
+        'Amy Winehouse', ARRAY['Duffy', 'Lily Allen', 'Joss Stone', 'Florence Welch', 'Paloma Faith', 'Dido'], 300, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MUSIC', 'DEPTH_NOV_2026', NULL,
+        'Which Jamaican band did Bob Marley lead?', NULL,
+        'The Wailers', ARRAY['The Skatalites', 'Toots and the Maytals', 'The Melodians', 'Black Uhuru', 'Third World', 'Steel Pulse'], 300, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MUSIC', 'DEPTH_NOV_2026', NULL,
+        'What does "pizzicato" tell a string player to do?', NULL,
+        'Pluck the strings', ARRAY['Bow faster', 'Play softly', 'Slide between notes', 'Mute the strings', 'Tap the wood', 'Play an octave higher'], 300, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MUSIC', 'DEPTH_NOV_2026', NULL,
+        'What is the Italian term for short, detached notes?', NULL,
+        'Staccato', ARRAY['Legato', 'Tenuto', 'Fermata', 'Glissando', 'Vibrato', 'Ritardando'], 300, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MUSIC', 'DEPTH_NOV_2026', NULL,
+        'Which band was fronted by Sting?', NULL,
+        'The Police', ARRAY['The Cure', 'Duran Duran', 'Tears for Fears', 'Simple Minds', 'Spandau Ballet', 'UB40'], 300, NULL);
 
 -- 400 points
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
@@ -520,8 +744,88 @@ INSERT INTO questions (question_number, game_mode, category, subcategory, factio
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MUSIC', 'MUSIC_BATCH_1', NULL,
         'Which Puccini opera about poor artists in Paris inspired the musical "Rent"?', NULL,
         'La Bohème', ARRAY['Tosca', 'Madama Butterfly', 'Turandot', 'Carmen', 'La Traviata', 'Rigoletto'], 400, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MUSIC', 'DEPTH_NOV_2026', NULL,
+        'Which jazz singer, nicknamed "Lady Day," recorded "Strange Fruit"?', NULL,
+        'Billie Holiday', ARRAY['Sarah Vaughan', 'Etta James', 'Dinah Washington', 'Bessie Smith', 'Peggy Lee', 'Lena Horne'], 400, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MUSIC', 'DEPTH_NOV_2026', NULL,
+        'Which composer''s ballet "The Rite of Spring" caused an uproar at its 1913 Paris premiere?', NULL,
+        'Igor Stravinsky', ARRAY['Erik Satie', 'Sergei Rachmaninoff', 'Dmitri Shostakovich', 'Nikolai Rimsky-Korsakov', 'Alexander Scriabin', 'Gustav Mahler'], 400, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MUSIC', 'DEPTH_NOV_2026', NULL,
+        'Which composer wrote the piano piece "Clair de Lune"?', NULL,
+        'Claude Debussy', ARRAY['Erik Satie', 'Gabriel Fauré', 'Franz Liszt', 'Robert Schumann', 'Camille Saint-Saëns', 'Franz Schubert'], 400, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MUSIC', 'DEPTH_NOV_2026', NULL,
+        'Which English composer wrote "The Planets" suite?', NULL,
+        'Gustav Holst', ARRAY['Ralph Vaughan Williams', 'Benjamin Britten', 'Henry Purcell', 'Frederick Delius', 'Arthur Sullivan', 'William Walton'], 400, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MUSIC', 'DEPTH_NOV_2026', NULL,
+        'Which English composer wrote "Pomp and Circumstance," heard at many graduations?', NULL,
+        'Edward Elgar', ARRAY['Ralph Vaughan Williams', 'Benjamin Britten', 'Henry Purcell', 'Frederick Delius', 'Arthur Sullivan', 'William Walton'], 400, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MUSIC', 'DEPTH_NOV_2026', NULL,
+        'Which composer wrote "Ride of the Valkyries"?', NULL,
+        'Richard Wagner', ARRAY['Johannes Brahms', 'Richard Strauss', 'Anton Bruckner', 'Carl Maria von Weber', 'Franz Schubert', 'Robert Schumann'], 400, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MUSIC', 'DEPTH_NOV_2026', NULL,
+        'Which composer wrote the opera "Aida"?', NULL,
+        'Giuseppe Verdi', ARRAY['Giacomo Puccini', 'Gaetano Donizetti', 'Vincenzo Bellini', 'Claudio Monteverdi', 'Ruggero Leoncavallo', 'Pietro Mascagni'], 400, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MUSIC', 'DEPTH_NOV_2026', NULL,
+        'Which "Waltz King" composed "The Blue Danube"?', NULL,
+        'Johann Strauss II', ARRAY['Johann Strauss I', 'Richard Strauss', 'Franz Lehár', 'Joseph Haydn', 'Franz Schubert', 'Émile Waldteufel'], 400, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MUSIC', 'DEPTH_NOV_2026', NULL,
+        'Which composer wrote the opera "The Barber of Seville"?', NULL,
+        'Gioachino Rossini', ARRAY['Gaetano Donizetti', 'Vincenzo Bellini', 'Claudio Monteverdi', 'Ruggero Leoncavallo', 'Pietro Mascagni', 'Antonio Salieri'], 400, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MUSIC', 'DEPTH_NOV_2026', NULL,
+        'In music, what is a coda?', NULL,
+        'A closing section', ARRAY['An opening theme', 'A repeated chorus', 'A slow movement', 'A key change', 'A solo', 'A rest'], 400, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MUSIC', 'DEPTH_NOV_2026', NULL,
+        'What do you call a piece for a solo instrument with an orchestra?', NULL,
+        'A concerto', ARRAY['A symphony', 'A sonata', 'An overture', 'A suite', 'A requiem', 'An étude'], 400, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MUSIC', 'DEPTH_NOV_2026', NULL,
+        'Which jazz pianist wrote "''Round Midnight"?', NULL,
+        'Thelonious Monk', ARRAY['Bud Powell', 'Art Tatum', 'Oscar Peterson', 'Herbie Hancock', 'Bill Evans', 'Dave Brubeck'], 400, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MUSIC', 'DEPTH_NOV_2026', NULL,
+        'Which Dave Brubeck Quartet hit is famous for its unusual 5/4 time?', NULL,
+        '"Take Five"', ARRAY['"Blue Rondo à la Turk"', '"So What"', '"In a Sentimental Mood"', '"Take the ''A'' Train"', '"Moanin''"', '"Watermelon Man"'], 400, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MUSIC', 'DEPTH_NOV_2026', NULL,
+        'Which blues guitarist named his guitars "Lucille"?', NULL,
+        'B.B. King', ARRAY['Buddy Guy', 'John Lee Hooker', 'Howlin'' Wolf', 'Albert King', 'T-Bone Walker', 'Elmore James'], 400, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MUSIC', 'DEPTH_NOV_2026', NULL,
+        'Which bluesman, legend says, sold his soul to the devil at a crossroads?', NULL,
+        'Robert Johnson', ARRAY['Lead Belly', 'Son House', 'Charley Patton', 'Blind Lemon Jefferson', 'Skip James', 'Big Bill Broonzy'], 400, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MUSIC', 'DEPTH_NOV_2026', NULL,
+        'Which Chicago blues musician recorded "Hoochie Coochie Man" and "Mannish Boy"?', NULL,
+        'Muddy Waters', ARRAY['Buddy Guy', 'John Lee Hooker', 'Howlin'' Wolf', 'Albert King', 'T-Bone Walker', 'Elmore James'], 400, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MUSIC', 'DEPTH_NOV_2026', NULL,
+        'Which Motown group sang "My Girl" and "Ain''t Too Proud to Beg"?', NULL,
+        'The Temptations', ARRAY['The Four Tops', 'The Miracles', 'The Isley Brothers', 'The O''Jays', 'The Drifters', 'The Spinners'], 400, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MUSIC', 'DEPTH_NOV_2026', NULL,
+        'Which country singer had a hit with "Crazy," written by Willie Nelson?', NULL,
+        'Patsy Cline', ARRAY['Loretta Lynn', 'Tammy Wynette', 'Kitty Wells', 'Brenda Lee', 'Dottie West', 'Emmylou Harris'], 400, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MUSIC', 'DEPTH_NOV_2026', NULL,
+        'In which city is the Rock and Roll Hall of Fame?', NULL,
+        'Cleveland', ARRAY['Memphis', 'Detroit', 'New York', 'Chicago', 'Los Angeles', 'Seattle'], 400, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MUSIC', 'DEPTH_NOV_2026', NULL,
+        'Which composer wrote "Peter and the Wolf"?', NULL,
+        'Sergei Prokofiev', ARRAY['Dmitri Shostakovich', 'Sergei Rachmaninoff', 'Nikolai Rimsky-Korsakov', 'Modest Mussorgsky', 'Alexander Borodin', 'Alexander Scriabin'], 400, NULL);
 
 COMMIT;
 
--- Check: should return 124.
+-- Check: should return 200.
 SELECT COUNT(*) FROM questions WHERE game_mode = 'TRIVI_YEAH_II' AND category = 'MUSIC';
