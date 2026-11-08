@@ -896,7 +896,10 @@ and forth until we both agree the idea is good **and** worth the effort. So:
   and parts of speech for kids at the easy end, word roots and figures of
   speech in the middle, rare words and word origins at the hard end; no
   spelling, which is Spellbound's, and no animal words Cell Mates asks).
-  Next by Randy's priority: Music. The family's favorites are school subjects
+  Then **Music** (+76 from 124: today's pop and instruments at the
+  easy end, bands across the decades in the middle, classical, jazz and
+  blues at the hard end; no artist a Lyrics question names, like "Which
+  Journey song..."). Every general category Randy listed is at 200 now. The family's favorites are school subjects
   (biology, astronomy, the World Wars, US history) and pop culture; new
   categories get pun names. Next, separate pop-culture categories (**Video
   Games**, **Cartoons & Kids' TV**, **Pop Culture**: celebrities, viral
