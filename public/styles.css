@@ -927,3 +927,17 @@ body.tp-layout[data-view="gateway"] #gateway-screen { display: flex !important; 
 .lr-result-delta.lr-miss { color: var(--rm-red-soft); }
 .lr-result-pays { font-size: 0.75em; color: var(--rm-brand); }
 @keyframes lr-rise { from { opacity: 0; transform: translateY(calc(var(--u) * 1)); } to { opacity: 1; transform: none; } }
+
+/* Game Over: which way the room is leaning, Play again vs Main menu.
+   Gold vs plain, never green/red (those mean right/wrong). */
+.go-vote { display: flex; align-items: center; justify-content: center; gap: calc(var(--u) * 1); font-size: calc(var(--u) * 1.4); color: var(--rm-text-soft); }
+.go-vote strong { color: var(--rm-text); font-weight: 800; }
+.go-vote-bar { width: calc(var(--u) * 18); height: calc(var(--u) * 0.9); border-radius: calc(var(--u) * 0.45); background: rgba(var(--rm-text-soft-rgb), 0.35); overflow: hidden; display: inline-flex; }
+.go-vote-again { height: 100%; background: var(--rm-brand); transition: width 0.3s ease; }
+.go-vote-count { font-size: calc(var(--u) * 1.05); color: var(--rm-text-soft); margin-top: calc(var(--u) * 0.4); }
+
+/* The Spotlight's results: the solved board steps down so the result rows
+   fit under a three-line phrase on a 960x540 TV. */
+.lr-board-small { row-gap: calc(var(--u) * 0.7); padding-bottom: 0; }
+.lr-board-small .lr-tile { width: calc(var(--u) * 2.8); height: calc(var(--u) * 3.4); font-size: calc(var(--u) * 2); }
+.lr-board-small .lr-tile.lr-punct { width: calc(var(--u) * 1.3); }
