@@ -155,7 +155,8 @@ const LR_MIN_CATEGORIES = 7; // a game draws each puzzle from a different catego
 const LR_MAX_WORD = 13, LR_MAX_LENGTH = 30;
 // Small words a phrase may share with its category ("On the Road").
 const LR_SMALL = new Set(['A', 'AN', 'THE', 'OF', 'ON', 'IN', 'AT', 'TO', 'AND', 'OR', 'IS', 'OUT', 'BY', 'FOR', 'UP', 'ONE']);
-const lrStem = w => w.replace(/'S$/, '').replace(/(IES)$/, 'Y').replace(/(ES|S)$/, '');
+// Every plain form a word could be: TIMES -> TIMES, TIME, TIM; PARTIES -> PARTY.
+const lrForms = w => { const b = w.replace(/'S$/, ''); return [b, b.replace(/S$/, ''), b.replace(/ES$/, ''), b.replace(/IES$/, 'Y')]; };
 
 export function checkLetterRip(file, rows) {
     const problems = [], warnings = [];
@@ -180,8 +181,8 @@ export function checkLetterRip(file, rows) {
             if (width > LR_MAX_WORD) problems.push(`${where}: "${w}" is too long to fit on one line of the TV board (${LR_MAX_WORD} letters at most)`);
         });
         // The category is the clue, so a phrase never repeats one of its real words.
-        const catWords = new Set(category.toUpperCase().replace(/[^A-Z ]/g, '').split(' ').filter(w => w && !LR_SMALL.has(w)).map(lrStem));
-        const shared = phrase.replace(/[^A-Z' ]/g, ' ').split(' ').filter(w => catWords.has(lrStem(w)));
+        const catWords = new Set(category.toUpperCase().replace(/[^A-Z ]/g, '').split(' ').filter(w => w && !LR_SMALL.has(w)).flatMap(lrForms));
+        const shared = phrase.replace(/[^A-Z' ]/g, ' ').split(' ').filter(w => w && !LR_SMALL.has(w) && lrForms(w).some(f => catWords.has(f)));
         if (shared.length) problems.push(`${where}: "${phrase}" repeats "${shared[0]}" from its category "${category}"`);
         const key = phrase.replace(/[^A-Z]/g, '');
         if (seen.has(key)) problems.push(`${where}: "${phrase}" is already on row ${seen.get(key)}`);
