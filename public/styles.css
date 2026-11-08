@@ -889,6 +889,10 @@ body.tp-layout[data-view="gateway"] #gateway-screen { display: flex !important; 
 /* ---------- Letter Rip, the letter race (Randy, Nov 2026) ----------
    The board is the reading moment: tiles about 4u, words kept whole. */
 .lr-stage { gap: calc(var(--u) * 1.6); }
+/* The line under the board keeps one height whatever it shows ("3 / 4
+   picked", the letter chips, the solver's avatar, a wrong guess), so the
+   centered board never moves (Randy, Nov 2026: "Letters jumped"). */
+.lr-foot { min-height: calc(var(--u) * 7.5); display: flex; flex-direction: column; align-items: center; justify-content: flex-start; gap: calc(var(--u) * 0.8); }
 .lr-category { font-family: var(--rm-font-display); font-weight: 800; font-size: calc(var(--u) * 2.6); color: var(--rm-brand); text-align: center; }
 .lr-board { display: flex; flex-wrap: wrap; justify-content: center; gap: calc(var(--u) * 1.2) calc(var(--u) * 2.4); max-width: 92%; margin: 0 auto; }
 .lr-word { display: inline-flex; gap: calc(var(--u) * 0.45); white-space: nowrap; }

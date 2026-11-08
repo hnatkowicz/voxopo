@@ -14,11 +14,17 @@ export const GAME_MODE_KEYS = ['TRIVI_YEAH', 'TRIVI_YEAH_II', 'COUNTRY_MONKEY', 
 // list. A code with no modes ticked gets every mode. A code with a ticked
 // list (a pub) gets Trivi-yeah! exactly when it has a house set, as before
 // (its /admin checkbox went when Trivi-yeah! became the venue's own game).
+// A pub's Trivi-yeah! is only ever its own questions (Randy, Nov 2026:
+// "Pubs should only get topic Trivi-yeah! as their questions -- or special
+// occasions. Nothing more"), so a pub sees it only with a house set, and
+// then it plays that set with no topic pick.
+const isPubRoom = room => !!(room && room.venue && room.venue.profile === 'PUB');
 export function allowedModesFor(room) {
     const venue = room && room.venue;
-    if (!(venue && venue.allowedModes && venue.allowedModes.length)) return [...GAME_MODE_KEYS];
-    const others = venue.allowedModes.filter(key => key !== 'TRIVI_YEAH');
-    return venue.houseSet ? ['TRIVI_YEAH', ...others] : others;
+    const ticked = venue && venue.allowedModes && venue.allowedModes.length ? venue.allowedModes : null;
+    if (!ticked && !isPubRoom(room)) return [...GAME_MODE_KEYS];
+    const others = (ticked || GAME_MODE_KEYS).filter(key => key !== 'TRIVI_YEAH');
+    return venue && venue.houseSet ? ['TRIVI_YEAH', ...others] : others;
 }
 
 // How the venue's Trivi-yeah! is dressed: its logo and name (the byline).
@@ -769,11 +775,20 @@ async function triviaTopicsFor(room) {
 async function openTriviaTopicPick(roomCode) {
     const room = activeRooms[roomCode];
     if (!room) return;
+    // A pub plays its house set straight away (no topic pick; see isPubRoom).
+    const house = room.venue && room.venue.houseSet;
+    if (isPubRoom(room) && house) {
+        room.activeCategoryKey = house.key;
+        room.activeDeckName = room.venue.name || house.label;
+        room.triviaTopic = { key: house.key, label: room.activeDeckName };
+        startQuestionBankGame(roomCode);
+        return;
+    }
     const topics = await triviaTopicsFor(room);
     if (!topics.length) throw new Error('No Thinking Pants category is deep enough for a topic game.');
     // The venue's house set heads the list, then "Surprise me", then the rest.
-    const house = topics.filter(t => t.house), rest = topics.filter(t => !t.house);
-    room.triviaTopics = [...house, { key: TRIVIA_SURPRISE_KEY, label: 'Surprise me' }, ...rest];
+    const houseTopics = topics.filter(t => t.house), rest = topics.filter(t => !t.house);
+    room.triviaTopics = [...houseTopics, { key: TRIVIA_SURPRISE_KEY, label: 'Surprise me' }, ...rest];
     room.gameState = 'CATEGORY_VOTE';
     room.categoryVotes = {};
     room.triviaTopics.forEach(t => { room.categoryVotes[t.key] = 0; });

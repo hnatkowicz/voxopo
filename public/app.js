@@ -1999,8 +1999,7 @@ function renderLetterRipTV(data) {
         <div class="tp-eyebrow">Puzzle <span class="tp-pts">${data.puzzle} / ${data.total}</span>${data.lrPhase !== 'DONE' ? ` &middot; Worth <span class="tp-pts">${data.pot.toLocaleString('en-US')}</span>` : ''}</div>
         <div class="lr-category">${escapeHtml(data.category)}</div>
         <div class="lr-board">${letterRipTilesHtml(data.tiles, fresh)}</div>
-        ${foot}
-        ${wrong}
+        <div class="lr-foot">${foot}${wrong}</div>
     `);
     if (data.lrPhase === 'PICK') setClock(data.secondsLeft);
     else setClock('');
@@ -2038,7 +2037,7 @@ function renderSpotlightTV(data) {
         ${eyebrow}${title}
         <div class="lr-category">${escapeHtml(data.category)}</div>
         <div class="lr-board lr-board-spot${data.lrPhase === 'SPOT_REVEAL' ? ' lr-board-small' : ''}">${letterRipTilesHtml(data.tiles, fresh, data.lrPhase === 'SPOT_TAP' ? sp.spots : [])}</div>
-        ${foot}
+        ${data.lrPhase === 'SPOT_REVEAL' ? foot : `<div class="lr-foot">${foot}</div>`}
     `);
     if (data.lrPhase === 'SPOT_TAP' || data.lrPhase === 'SPOT_LAST') setClock(data.secondsLeft);
     else setClock('');
