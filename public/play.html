@@ -2304,7 +2304,28 @@
             lrLastKey = null;
         }
 
+        // The Spotlight keeps the answer box open from the first tap round
+        // (Randy, Nov 2026: answers seemed to get dropped, and it wasn't
+        // clear you could guess any time). What you type is saved as you go
+        // and counts if the clock runs out before you press Lock in.
+        let lrDraftTimer = null;
+        function lrDraftInput(value) {
+            lrSolveText = value;
+            if (lrDraftTimer) clearTimeout(lrDraftTimer);
+            lrDraftTimer = setTimeout(() => { lrSend(`LRDRAFT ${lrSolveText}`).catch(() => {}); }, 500);
+        }
+        function lrRenderSpotlightSolve(data) {
+            const area = document.getElementById('lr-solve-area');
+            if (!data.canSolve) { area.innerHTML = ''; lrSolveText = ''; return; }
+            if (document.getElementById('lr-solve-input')) return; // don't wipe what's being typed
+            area.innerHTML = `
+                <input type="text" id="lr-solve-input" class="lr-solve-input" placeholder="Type the phrase any time" autocomplete="off" autocorrect="off" spellcheck="false" autocapitalize="characters" value="${lrEsc(lrSolveText)}" oninput="lrDraftInput(this.value)" onkeydown="if (event.key === 'Enter') lrSolveReview()">
+                <button class="btn" style="margin-top: 12px;" onclick="lrSolveReview()">Lock in</button>
+                <p class="subtitle" style="margin: 10px 0 0; text-align: center;">Earlier pays more. If time runs out, what you've typed counts.</p>`;
+        }
+
         function lrRenderSolve(data) {
+            if (data.mySpotlight) return lrRenderSpotlightSolve(data);
             const area = document.getElementById('lr-solve-area');
             if (lrSolvePuzzle !== data.puzzle || data.lrPhase === 'DONE' || !data.canSolve) { lrSolveStep = null; lrSolveText = ''; }
             lrSolvePuzzle = data.puzzle;
@@ -2335,6 +2356,7 @@
         }
         async function lrSolveSubmit() {
             const text = lrSolveText;
+            if (lrDraftTimer) { clearTimeout(lrDraftTimer); lrDraftTimer = null; }
             lrSolveStep = null; lrSolveText = '';
             document.getElementById('lr-solve-area').innerHTML = '';
             try {

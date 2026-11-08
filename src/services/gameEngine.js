@@ -2691,10 +2691,14 @@ const LETTER_RIP_DONE_MS = 7000; // the solved (or unsolved) board stays up this
 
 const letterRipLetters = phrase => phrase.replace(/[^A-Z]/g, '');
 
+// The pot holds at full until the first letters drop (Randy, Nov 2026:
+// "No one can guess from blank tiles alone"), then shrinks with the share
+// of what was still hidden after that first reveal.
 function letterRipPot(lr) {
+    if (lr.potBase == null) return LETTER_RIP_POT_START;
     const all = letterRipLetters(lr.phrase);
     const hidden = [...all].filter(ch => !lr.revealed.has(ch)).length;
-    const pot = Math.round((LETTER_RIP_POT_START * hidden / Math.max(1, all.length)) / 50) * 50;
+    const pot = Math.round((LETTER_RIP_POT_START * hidden / Math.max(1, lr.potBase)) / 50) * 50;
     return Math.max(LETTER_RIP_POT_MIN, pot);
 }
 
@@ -2763,6 +2767,7 @@ function startLetterRipPuzzle(roomCode) {
         freeLetter: null,   // a letter shown when no pick hit, so every round moves
         solver: null,
         wrong: null,        // the latest wrong solve, for a short TV note
+        potBase: null,      // hidden letters after the first reveal (see letterRipPot)
         phase: 'PICK'
     });
     Object.values(room.players).filter(p => !p.left).forEach(p => { p.questionsFaced = (p.questionsFaced || 0) + 1; });
@@ -2826,6 +2831,7 @@ function revealLetterRipRound(roomCode) {
         const hidden = [...new Set(letters)].filter(l => !lr.revealed.has(l));
         if (hidden.length) { lr.freeLetter = shuffleArray(hidden)[0]; lr.revealed.add(lr.freeLetter); }
     }
+    if (lr.potBase == null) lr.potBase = [...letters].filter(l => !lr.revealed.has(l)).length;
     broadcastLetterRipState(roomCode);
     broadcastToRoom(roomCode, { type: 'LEADERBOARD_UPDATE', players: Object.values(room.players).filter(p => !p.left) });
     const allShowing = [...letters].every(l => lr.revealed.has(l));
@@ -2988,6 +2994,7 @@ function startSpotlight(roomCode) {
             flips: 0,           // flip rounds done (sets the payout)
             lastFlipped: [],
             answers: {},        // name -> { text, pays } -- secret until the results
+            drafts: {},         // name -> what they've typed so far (counts if time runs out)
             results: [],
             resultIndex: -1
         }
@@ -3107,6 +3114,12 @@ function revealSpotlight(roomCode) {
     room.gameSecondsLeft = null;
     lr.phase = 'SPOT_REVEAL';
     const target = letterRipLetters(lr.phrase);
+    // Typed but never locked in when the clock ran out (Randy, Nov 2026:
+    // answers seemed to get dropped): what's in the box counts, at 1x.
+    Object.entries(lr.spot.drafts).forEach(([name, text]) => {
+        const p = room.players[name];
+        if (p && !p.left && !(name in lr.spot.answers) && text.replace(/[^A-Za-z]/g, '')) lr.spot.answers[name] = { text, pays: 1 };
+    });
     // Lowest score first, so the leader is revealed last (Randy: "always fun that way").
     const players = Object.values(room.players).filter(p => !p.left && ((lr.spot.wagers[p.name] || 0) > 0 || p.name in lr.spot.answers))
         .sort((a, b) => (a.score || 0) - (b.score || 0) || a.name.localeCompare(b.name));
@@ -3168,6 +3181,11 @@ function handleSpotlightAction(roomCode, room, playerName, cleanText) {
         const active = Object.values(room.players).filter(p => !p.left);
         if (active.every(p => p.name in spot.wagers)) startSpotlightTapRound(roomCode);
         return `Wager locked: ${amount.toLocaleString('en-US')}.`;
+    }
+    const draft = /^LRDRAFT\s?(.*)$/s.exec(cleanText);
+    if (draft) {
+        if (['SPOT_TAP', 'SPOT_FLIP', 'SPOT_LAST'].includes(lr.phase) && !(playerName in spot.answers)) spot.drafts[playerName] = draft[1].slice(0, 80);
+        return 'ok';
     }
     const tap = /^LRSPOT\s+(\d+)$/.exec(cleanText);
     if (tap) {
@@ -4200,10 +4218,15 @@ function castReturnToLobbyVote(roomCode, playerName, action) {
     room.returnVotes.set(playerName, action);
 
     const activePlayers = Object.values(room.players).filter(p => !p.left);
+    // The split, not just a count (Randy, Nov 2026: in a bigger room people
+    // can't tell each other what they want, so the TV shows it).
+    const split = { playAgain: 0, mainMenu: 0 };
+    room.returnVotes.forEach(a => { if (a === 'PLAY_AGAIN') split.playAgain++; else split.mainMenu++; });
     broadcastToRoom(roomCode, {
         type: 'RETURN_VOTE_UPDATE',
         votedCount: room.returnVotes.size,
-        totalNeeded: activePlayers.length
+        totalNeeded: activePlayers.length,
+        ...split
     });
 
     if (activePlayers.every(p => room.returnVotes.has(p.name))) {
@@ -4919,13 +4942,11 @@ function handleProfilerLeave(roomCode) {
 // (agree/disagree slider-guessing mode)
 // ==========================================
 
-// Loaded once per process and cached, same reasoning as the EmpossDurr word
-// pool -- 35+ rows barely ever change mid-runtime, and re-querying every
-// single round would be wasteful. A server restart naturally picks up any
-// newly-added statements.
+// Read once per game start (not per round), so statements Randy adds in
+// Neon show up in the next game without a server restart. The rounds use
+// this copy.
 let onTheSpectrumStatementCache = null;
 async function loadOnTheSpectrumStatements() {
-    if (onTheSpectrumStatementCache) return onTheSpectrumStatementCache;
     const result = await pool.query('SELECT id, statement_text FROM on_the_spectrum_statements');
     onTheSpectrumStatementCache = result.rows;
     return onTheSpectrumStatementCache;
@@ -4995,8 +5016,15 @@ function startOnTheSpectrumRound(roomCode) {
         namedPlayerName = ots.rotation[ots.roundIndex];
     } while (!room.players[namedPlayerName] || room.players[namedPlayerName].left);
 
+    // No repeats (Randy, Nov 2026: "Seeing duplicates" -- picks used to be
+    // random every round): a statement isn't used again in this room until
+    // the room has seen them all (room memory only, like Letter Rip).
     const statementPool = onTheSpectrumStatementCache || [];
-    const pick = statementPool[Math.floor(Math.random() * statementPool.length)];
+    room.otsSeen = room.otsSeen || new Set();
+    let fresh = statementPool.filter(s => !room.otsSeen.has(s.id));
+    if (!fresh.length) { room.otsSeen.clear(); fresh = statementPool; }
+    const pick = fresh[Math.floor(Math.random() * fresh.length)];
+    room.otsSeen.add(pick.id);
 
     ots.namedPlayerName = namedPlayerName;
     ots.statementId = pick.id;

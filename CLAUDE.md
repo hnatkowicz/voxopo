@@ -341,7 +341,9 @@ to end is solid red (`.btn-danger`), unlike the outlined button that opens
 it (Randy, Nov 2026: the two looked alike). Vote to end (Randy, Oct 2026): no
 game leader, so ending early is a room vote -- more than half the players
 (`endGameVoteFor`), votes can be taken back, and it goes straight to the
-lobby; the TV shows a small "x of n needed" pill while votes are in. The game page keeps only what changes
+lobby. **After Game Over** the TV shows how the room is leaning, Play
+again vs Main menu, as a gold bar with both counts (Randy, Nov 2026: in a
+bigger room people can't tell each other what they want); the TV shows a small "x of n needed" pill while votes are in. The game page keeps only what changes
 what you'd tap; a thin strip on top keeps your emoji, name and score.
 Swipes starting within 30px of either edge are ignored (iPhone Safari's
 Back/Forward), and a side page closes itself whenever the player has
@@ -554,6 +556,11 @@ Mode keys are used in room votes and in `gameEngine.js`:
   (Randy, Nov 2026): in families they've been funny and informative, part
   of healthy conversation. Unlike Profiler, there's no no-politics rule
   here, so don't retire them. It's a home mode, not a pub one.
+  Statements: 80, then +119 (`on_the_spectrum_statements_batch_3.sql`,
+  Nov 2026, after Randy saw repeats). A room doesn't repeat a statement
+  until it has seen them all (`room.otsSeen`; picks used to be random
+  every round), and the list is re-read at each game start, so new rows
+  show up without a restart.
 - **PROFILER**: home mode, 4+ players. Each round everyone privately answers
   a question about themselves, the TV posts the rarest answer given ("2 of
   you said X"), and everyone picks who said it. Questions live in their own
@@ -589,8 +596,10 @@ Mode keys are used in room votes and in `gameEngine.js`:
   each round (more players would empty the board too fast), with "E 3
   picked"; if nobody hits, one free letter. Your own picks stay on your
   phone as a bank: green (with x2 for repeats), red, gold outline once on
-  the TV. The pot starts at 1000 and shrinks with the share of the phrase
-  still hidden (rounded to 50, min 100). **One solve a puzzle**, typed,
+  the TV. The pot starts at 1000 and **holds until the first letters
+  drop** (Randy, Nov 2026: "No one can guess from blank tiles alone"),
+  then shrinks with the share still hidden after that first reveal
+  (rounded to 50, min 100). **One solve a puzzle**, typed,
   spelled exactly (no typo forgiveness; capitals, spaces and punctuation
   don't matter). There's no confirm step (Randy cut it: "an extra step in a
   FAST game"). A wrong solve costs the current pot (never below 0), and the
@@ -615,7 +624,11 @@ Mode keys are used in room votes and in `gameEngine.js`:
     popular first (ties at random). With 2-3 players everyone gets their
     own pick; a crowd has to agree. A flip shows that one square, not
     every copy of the letter. If nobody taps, one random tile flips.
-  - **Payout:** lock in a solve any time. Right pays 2x the wager before
+  - **Payout:** lock in a solve any time. The phone's answer box stays
+    open from the first tap round, and what you've typed is saved as you
+    go: if the clock runs out before you press Lock in, it counts at 1x
+    (Randy, Nov 2026: answers seemed to get dropped, and it wasn't clear
+    you could guess any time). Right pays 2x the wager before
     any flip, 1.5x after one, 1x after that. Wrong (or no answer) loses
     the wager. Answers stay secret until the results, which run lowest
     score first (the leader last), then Game Over.

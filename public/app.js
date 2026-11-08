@@ -415,7 +415,18 @@ if (btnSubmitSpectate) {
                 }
                 if (data.type === 'RETURN_VOTE_UPDATE') {
                     const tally = document.getElementById('return-vote-tally');
-                    if (tally) tally.innerText = `${data.votedCount} / ${data.totalNeeded} have voted`;
+                    // Which way the room is leaning (Randy, Nov 2026: in a bigger room
+                    // people can't tell each other what they want).
+                    if (tally) {
+                        const again = data.playAgain || 0, menu = data.mainMenu || 0, total = Math.max(1, again + menu);
+                        tally.innerHTML = `
+                            <div class="go-vote">
+                                <span class="go-vote-label">Play again <strong>${again}</strong></span>
+                                <span class="go-vote-bar"><span class="go-vote-again" style="width:${Math.round(100 * again / total)}%"></span></span>
+                                <span class="go-vote-label"><strong>${menu}</strong> Main menu</span>
+                            </div>
+                            <div class="go-vote-count">${data.votedCount} of ${data.totalNeeded} voted</div>`;
+                    }
                 }
                 // A player just locked in an answer -- flip their status-indicator to
                 // "answered" (yellow) immediately, well before the round's reveal.
@@ -1974,7 +1985,7 @@ function renderSpotlightTV(data) {
     panel.innerHTML = tpStage('tp-center lr-stage', `
         ${eyebrow}${title}
         <div class="lr-category">${escapeHtml(data.category)}</div>
-        <div class="lr-board lr-board-spot">${letterRipTilesHtml(data.tiles, fresh, data.lrPhase === 'SPOT_TAP' ? sp.spots : [])}</div>
+        <div class="lr-board lr-board-spot${data.lrPhase === 'SPOT_REVEAL' ? ' lr-board-small' : ''}">${letterRipTilesHtml(data.tiles, fresh, data.lrPhase === 'SPOT_TAP' ? sp.spots : [])}</div>
         ${foot}
     `);
     if (data.lrPhase === 'SPOT_TAP' || data.lrPhase === 'SPOT_LAST') setClock(data.secondsLeft);
