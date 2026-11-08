@@ -892,7 +892,11 @@ and forth until we both agree the idea is good **and** worth the effort. So:
   for the kids at the easy end, sitcoms and blockbusters in the middle,
   classic Hollywood and Oscar history at the hard end; nothing another
   category asks, like Famous Firsts' Bigelow and Dr. No or Literature's
-  Frodo and Aslan). Next by Randy's priority: Word Nerd, Music. The family's favorites are school subjects
+  Frodo and Aslan), then **Word Nerd** (+84 from 116: everyday words
+  and parts of speech for kids at the easy end, word roots and figures of
+  speech in the middle, rare words and word origins at the hard end; no
+  spelling, which is Spellbound's, and no animal words Cell Mates asks).
+  Next by Randy's priority: Music. The family's favorites are school subjects
   (biology, astronomy, the World Wars, US history) and pop culture; new
   categories get pun names. Next, separate pop-culture categories (**Video
   Games**, **Cartoons & Kids' TV**, **Pop Culture**: celebrities, viral
