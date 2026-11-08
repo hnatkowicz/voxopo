@@ -29,7 +29,8 @@ window.modeIconHtml = function (mode, sizePx) {
 };
 
 // TV lobby: a 2-column grid of tiles, each with its own live vote bar
-// (ids vcount-<KEY> / vbar-<KEY>, filled in by app.js's updateModuleElectionUI).
+// (id vbar-<KEY>, filled in by app.js's updateModuleElectionUI). No vote
+// count on the tile: the bar says it (Randy, Nov 2026).
 // A venue's access code can limit which modes its rooms show (a pub shows
 // only a few); null/empty means all of them.
 window.modesShown = function (allowedKeys) {
@@ -66,7 +67,6 @@ window.renderModeElectionTiles = function (allowedKeys) {
                                 <div class="lobby-mode-name">${m.name}${m.tag ? ` <span class="mode-tile-tag">${m.tag}</span>` : ''}</div>
                                 <div class="lobby-mode-blurb">${m.blurb}</div>
                             </div>
-                            <div id="vcount-${m.key}" class="lobby-mode-count"></div>
                         </div>
                         <div class="lobby-mode-track"><div id="vbar-${m.key}" class="progress-fill" style="background: ${m.color};"></div></div>
                     </div>
