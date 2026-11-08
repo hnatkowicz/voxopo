@@ -616,13 +616,17 @@ Mode keys are used in room votes and in `gameEngine.js`:
   board + phrase is that show's format) and a **shrinking pot** replaced
   it. 6 puzzles a game, one per category. Puzzles live in a spreadsheet,
   `content/letter_rip.csv` (Randy: "This one has legs"). `build.mjs` checks
-  it and writes `content/sql/letter_rip.sql` (its own table): 1,500 puzzles
-  in 40 categories (Nov 2026: 102, then 600, then 1,200 after the family
+  it and writes `content/sql/letter_rip.sql` (its own table): 2,000 puzzles
+  in 55 categories (Nov 2026: 102, then 600, then 1,200 after the family
   played four games in a row, then +300 in 10 new categories -- Deep Blue
   Sea, Wild West, Under the Hood, Toolbox, Getting Dressed, Science Lab,
   Strike Up the Band, Pirate's Life, Farm Fresh, Prime Time; "Easily a
-  Mom favorite"). New categories freshen games most, since a game draws
-  7 different ones. The aim is 2,000 or more. Play Again avoids
+  Mom favorite" -- then +500: those 10 topped up to 40 and 15 more,
+  Creepy Crawlies, Head to Toe, Jet Set, Squeaky Clean, Lights Out, Rise
+  and Shine, Winter Wonderland, Castle Life, Shop Till You Drop, Dino
+  Mite at 30, Pet Shop, Bake Sale, Say Ahh, Movie Night, Money Talks at
+  20). New categories freshen games most, since a game draws 7 different
+  ones. 2,000 was the aim; more is always welcome. Play Again avoids
   puzzles this room has played (`room.letterRipPlayed`). Each round,
   everyone secretly picks one letter on their phone at once. The pick
   clock is 15s and the reveal holds 6s (Randy: "pace is VERY fast" at
@@ -676,7 +680,7 @@ Mode keys are used in room votes and in `gameEngine.js`:
   - **First family verdict (Nov 2026):** four games in a row; Randy's wife
     "said it's everything she'd want in a game." Randy's icon
     (`mode-letter-rip.svg`) is staying. **Top content need: many more
-    phrases** (1,500 so far). **Tiles jumping** (fixed Nov 2026): the
+    phrases** (2,000 so far). **Tiles jumping** (fixed Nov 2026): the
     stage is centered top to bottom, so the line under the board changing
     height ("3 / 4 picked", the letter chips, the solver) moved the whole
     board; that line (`.lr-foot`) now keeps one height. After one-tap
