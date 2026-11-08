@@ -1675,6 +1675,14 @@ function startTriviYeahIITileReveal(roomCode, cellIndex) {
     if (room.revealTimeout) clearTimeout(room.revealTimeout);
     room.revealTimeout = setTimeout(() => {
         room.revealTimeout = null;
+        // A setter who picks their own trap springs nothing: it fizzles
+        // silently, like one hidden on a Doubler (Randy, Nov 2026 -- the
+        // bot test caught it: Wedgie read "if Ace misses it, Ace collects
+        // the points"). Mostly the 30s auto-pick landing on it.
+        if (cell.trap && cell.trap.setter === ty2.currentPicker) {
+            console.log(`[Trivi-Yeah II] Room ${roomCode}: ${ty2.currentPicker} picked their own ${cell.trap.type} -- it fizzles.`);
+            cell.trap = null;
+        }
         if (cell.isDoubler) {
             revealTriviYeahIIDoubler(roomCode);
         } else if (cell.trap) {

@@ -483,7 +483,11 @@ Mode keys are used in room votes and in `gameEngine.js`:
   board, lets the sweeper secretly hide one trap (Pants on Fire / Hot Seat /
   Wedgie) or decline; 30s, then no trap. Secret by design: nobody learns
   whether or where until it's picked. No carry-over, and a trap on a
-  Doubler fizzles silently. Trap icons are Randy's art in `public/traps/`
+  Doubler fizzles silently, as does one picked by its own setter (Nov
+  2026, caught by the bot test: Wedgie read "if Ace misses it, Ace
+  collects the points"; mostly the 30s auto-pick landing on it). Trap
+  names and the setter's tile grid are gold, not red: a trap is a
+  twist, not a wrong answer. Trap icons are Randy's art in `public/traps/`
   (`trap-setting`, `trap-pants-on-fire`, `trap-hot-seat`, `trap-wedgie`
   .svg), used on the TV and phones, with emoji fallbacks if one's missing.
   **Risk It All** (Randy's son's idea, Oct 2026): the Final Wager's wager
