@@ -4,7 +4,7 @@ import dotenv from 'dotenv';
 import path from 'path';
 import { WebSocketServer } from 'ws';
 import pool from './config/database.js';
-import { handleIncomingMessage, activeRooms, getCategoriesForMode, resolveRequestedQuestionCount, compareByRank, closeRoom, profilerStatusFor, profilerTvSnapshot, triviYeahIITrapInfo, emptyModeVotes, finalWagerWinShare, resolveDisguisedAsset, flagMeDownStatusFor, GAME_MODE_KEYS, allowedModesFor, finalWagerRevealFor, venueBrand, isHouseTopic, endGameVoteFor, thinkingPantsCategoryOverview, setThinkingPantsCategorySetting, venueCategoryOverview, setVenueCategorySetting, tvMessagesSince, tvIsConnected , letterRipStatusFor, letterRipTvState } from './services/gameEngine.js';
+import { handleIncomingMessage, activeRooms, getCategoriesForMode, resolveRequestedQuestionCount, compareByRank, closeRoom, profilerStatusFor, profilerTvSnapshot, triviYeahIITrapInfo, emptyModeVotes, finalWagerWinShare, resolveDisguisedAsset, flagMeDownStatusFor, GAME_MODE_KEYS, allowedModesFor, finalWagerRevealFor, venueBrand, isHouseTopic, nightTallyMessage, nightTallyFor, endGameVoteFor, thinkingPantsCategoryOverview, setThinkingPantsCategorySetting, venueCategoryOverview, setVenueCategorySetting, tvMessagesSince, tvIsConnected , letterRipStatusFor, letterRipTvState } from './services/gameEngine.js';
 import {
     isHostAuthorized, grantHostSession, isAccessCodeActive,
     isAdminAuthorized, grantAdminSession,
@@ -362,6 +362,8 @@ app.post('/api/room-status', (req, res) => {
                 tvConnected: tvIsConnected(targetRoom),
                 // The Room page's "vote to end this game" (null outside a game).
                 endVote: endGameVoteFor(targetRoom, playerName),
+                // A pub night's running tally: this player's points and place.
+                tonight: nightTallyFor(targetRoom, playerName),
                 clock: targetRoom.gameSecondsLeft ?? null,
                 // The last question's answer and who got it, set at the TV's reveal.
                 recap: targetRoom.phoneRecap && targetRoom.phoneRecap.epoch === (targetRoom.gameEpoch || 0) ? targetRoom.phoneRecap : null
@@ -720,6 +722,7 @@ function tvSnapshotMessages(room) {
         // Pub look and which mode tiles to show -- sent first so the
         // TV draws the right lobby.
         { type: 'ROOM_VENUE', venue: room.venue || null, allowedModes: allowedModesFor(room) },
+        ...(room.nightTally ? [nightTallyMessage(room)] : []),
         { type: 'LEADERBOARD_UPDATE', players: Object.values(room.players) }
     ];
     if (room.gameState !== 'LOBBY') {

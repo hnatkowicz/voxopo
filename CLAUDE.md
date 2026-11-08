@@ -81,7 +81,16 @@ event, for a small fee. That's why hosting is gated behind access codes.
   traps; Doublers and the Final Wager stay). Plain came from a one-on-one
   family game: with two players a lone sweep, and the trap it earns, happens
   constantly and piles on the only other player (Randy's call: a per-code
-  setting rather than a rule tied to player count). Pickles & Pins is the test venue
+  setting rather than a rule tied to player count). **A pub night's running
+  tally** (Randy, Nov 2026: "That could differentiate this platform from
+  others"): at a PUB room, every game played to the end adds placement
+  points -- 10, 7, 5, 3, 2 for the top five, 1 for everyone else who
+  finished (`NIGHT_TALLY_POINTS`) -- since raw scores aren't comparable
+  across modes. A game ended early by the room's vote doesn't count.
+  Between games the TV's rail is titled "Tonight" and ranks by those
+  points; the phone's Info page says "Tonight: 17 points, 2nd of 9". Room
+  memory only (`room.nightTally`), gone when the room closes. Home rooms
+  keep each game a fresh start. Pickles & Pins is the test venue
   (Randy's logo `pickles-pins.svg`: the pickle-jar-and-pin mark, no
   lettering, since the banner prints the name beside it).
 - **Hosting:** Render (a paid plan, Nov 2026), which terminates TLS. That's

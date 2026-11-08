@@ -1037,6 +1037,7 @@ function endGame(roomCode) {
     // Players who left mid-game keep their score internally (in case they
     // rejoin before this fires) but don't appear in the final standings.
     const finalStandings = Object.values(room.players).filter(p => !p.left).sort(compareByRank);
+    addToNightTally(room, roomCode, finalStandings);
 
     const roundsPlayedDescription = room.winningGameMode === 'EMPOSSDURR'
         ? `${room.empossdurr ? room.empossdurr.currentRound : 0} rounds`
@@ -4434,6 +4435,36 @@ function resolveReturnToLobbyVote(roomCode) {
     // venue break (if the code has one) comes first.
     if (room.winningGameMode === 'TRIVI_YEAH') runVenueBreak(roomCode, next);
     else next();
+}
+
+// ---------- A pub night's running tally (Randy, Nov 2026) ----------
+// "That could differentiate this platform from others." Each game played to
+// the end at a pub adds placement points -- 10, 7, 5, 3, 2 for the top
+// five, 1 for everyone else who finished -- so the night has one standing
+// across different games (raw scores aren't comparable between modes). A
+// game ended early by the room's vote doesn't count (it never reaches
+// endGame). Room memory only, like everything else about players: it ends
+// with the room. Home rooms keep each game a fresh start.
+const NIGHT_TALLY_POINTS = [10, 7, 5, 3, 2];
+const NIGHT_TALLY_FINISHER_POINTS = 1;
+function addToNightTally(room, roomCode, finalStandings) {
+    if (!isPubRoom(room) || !finalStandings.length) return;
+    room.nightTally = room.nightTally || {};
+    finalStandings.forEach((p, i) => {
+        room.nightTally[p.name] = (room.nightTally[p.name] || 0) + (NIGHT_TALLY_POINTS[i] ?? NIGHT_TALLY_FINISHER_POINTS);
+    });
+    room.nightGames = (room.nightGames || 0) + 1;
+    broadcastToRoom(roomCode, nightTallyMessage(room));
+}
+export function nightTallyMessage(room) {
+    return { type: 'NIGHT_TALLY', tally: room.nightTally || {}, games: room.nightGames || 0 };
+}
+// One phone's place in tonight's tally (null when there isn't one).
+export function nightTallyFor(room, playerName) {
+    const tally = room && room.nightTally;
+    if (!tally || !(playerName in tally)) return null;
+    const ranked = Object.entries(tally).sort((a, b) => b[1] - a[1]);
+    return { points: tally[playerName], rank: ranked.findIndex(([n]) => n === playerName) + 1, of: ranked.length, games: room.nightGames || 0 };
 }
 
 // Releases a room entirely -- broadcasts the TV back to its gateway/lobby-code
