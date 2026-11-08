@@ -988,7 +988,7 @@ if (btnSubmitSpectate) {
             SPECTRUM_SHARPSHOOTER: { pulse: false, title: 'Within 3 on On the Spectrum', imageBadge: true, iconClass: 'badge-spectrum-sharpshooter' },
             // Just for laughs -- awarded to EVERY guesser 25+ off in the same
             // round, so a room full of wild misses is funnier, not penalized.
-            SPECTRUM_LOST_IN_SPACE: { pulse: false, title: 'Lost in Space -- 25+ off on On the Spectrum', imageBadge: true, iconClass: 'badge-spectrum-lost-in-space' }
+            SPECTRUM_LOST_IN_SPACE: { pulse: false, title: 'Lost in Space: 25+ off on On the Spectrum', imageBadge: true, iconClass: 'badge-spectrum-lost-in-space' }
         };
 
         function renderAwardBadges(awards) {
@@ -1201,7 +1201,7 @@ if (btnSubmitSpectate) {
             const who = names.length === 1 ? names[0]
                 : `${names.slice(0, -1).join(', ')} &amp; ${names[names.length - 1]}`;
             const each = names.length > 1 ? ' each' : '';
-            text.innerHTML = `${who} swept ${escapeHtml(categoryLabel)} -- +${bonusPoints || 400}${each}!`;
+            text.innerHTML = `${who} swept ${escapeHtml(categoryLabel)}. +${bonusPoints || 400}${each}!`;
             card.classList.add('active');
 
             if (columnBonusHideTimer) clearTimeout(columnBonusHideTimer);
@@ -1558,9 +1558,9 @@ function trapIconHtml(key, sizeU) {
 }
 
 function trapRuleFor(trap) {
-    if (trap.trapType === 'HOT_SEAT' || trap.type === 'HOT_SEAT') return `${escapeHtml(trap.picker)} answers alone -- no passing. Right or wrong, it counts double.`;
-    if (trap.trapType === 'WEDGIE' || trap.type === 'WEDGIE') return `Normal question -- but if ${escapeHtml(trap.picker)} misses it, ${escapeHtml(trap.setter)} collects the points.`;
-    return 'Everyone must answer -- no passing. Wrong answers lose double.';
+    if (trap.trapType === 'HOT_SEAT' || trap.type === 'HOT_SEAT') return `${escapeHtml(trap.picker)} answers alone. No passing. Right or wrong, it counts double.`;
+    if (trap.trapType === 'WEDGIE' || trap.type === 'WEDGIE') return `Normal question. But if ${escapeHtml(trap.picker)} misses it, ${escapeHtml(trap.setter)} collects the points.`;
+    return 'Everyone must answer. No passing. Wrong answers lose double.';
 }
 
 function showTriviYeahIITrapSettingUI(setter) {
@@ -1603,7 +1603,7 @@ function showTriviYeahIITrapOutcome(trap) {
     let line;
     if (trap.type === 'WEDGIE') {
         line = trap.collected
-            ? `Wedgie! ${escapeHtml(trap.picker)} missed -- ${escapeHtml(trap.setter)} collects ${trap.collected}.`
+            ? `Wedgie! ${escapeHtml(trap.picker)} missed. ${escapeHtml(trap.setter)} collects ${trap.collected}.`
             : `${escapeHtml(trap.picker)} dodged the Wedgie!`;
     } else if (trap.type === 'HOT_SEAT') {
         line = trap.pickerCorrect
@@ -1664,8 +1664,8 @@ function showTriviYeahIIDoublerResultUI(data) {
     // Say it once (Randy, Nov 2026): no "-0 points", and no "passed" lines --
     // only side bets that won or lost are news.
     const pickerLine = data.pickerCorrect
-        ? `<span style="color: var(--rm-green);">${data.picker} got it right${data.wagerAmount ? ` -- +${data.wagerAmount} points!` : '!'}</span>`
-        : `<span style="color: var(--rm-red-soft);">${data.picker} missed it${data.wagerAmount ? ` -- &minus;${data.wagerAmount} points.` : '.'}</span>`;
+        ? `<span style="color: var(--rm-green);">${data.picker} got it right${data.wagerAmount ? `. +${data.wagerAmount} points!` : '!'}</span>`
+        : `<span style="color: var(--rm-red-soft);">${data.picker} missed it${data.wagerAmount ? `. &minus;${data.wagerAmount} points.` : '.'}</span>`;
 
     const sideBetRows = Object.entries(data.sideBetResults || {}).map(([name, delta]) => {
         if (delta === 0) return '';
@@ -2157,7 +2157,7 @@ function switchToProfilerQuestionUI(data) {
         ${data.isReplacement ? `<div class="tp-kicker" style="color: ${PROFILER_COLOR};">New question</div>` : ''}
         ${tpQuestion(escapeHtml(data.questionText), false)}
         <div class="pf-options">${options}</div>
-        <div class="tp-small">Answer honestly on your phone -- nobody sees it yet.</div>
+        <div class="tp-small">Answer honestly on your phone. Nobody sees it yet.</div>
         <div id="pf-tv-tally" class="pf-tally"></div>
     `);
     currentGamePhase = 'PROFILER_ANSWER';

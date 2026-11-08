@@ -34,7 +34,17 @@ event, for a small fee. That's why hosting is gated behind access codes.
 ## How it fits together
 
 - **Server:** Node (ES modules) + Express + `ws`, entry point `src/server.js`.
-  Run with `npm start`. There's no build step, no framework, and no test suite.
+  Run with `npm start`. There's no build step, no framework, and no test suite,
+  but there is a **bot smoke test** (Nov 2026): `scripts/smoke-test.mjs`
+  plays one room per mode at once, sped up 8x, through the real server,
+  and fails if a room breaks, sticks for a minute, or never reaches Game
+  Over. It forces the rare screens too: all three Thinking Pants traps
+  (one bot answers everything right, so it sweeps alone), Doublers, the
+  Final Wagers with clues bought, the Spotlight, a pub room's break and
+  night tally, and a vote to end early. About 2 minutes. **Run it before
+  merging any engine change.** Local test database only (it refuses
+  anything but localhost); `SHOTS=folder` saves a TV screenshot of every
+  new screen, `MODES=` limits the rooms.
 - **Game logic:** almost all of it is in `src/services/gameEngine.js` (a large
   file). Live room state lives in the in-memory `activeRooms` object. Nothing
   about players or games is persisted. That's deliberate and is promised on the
