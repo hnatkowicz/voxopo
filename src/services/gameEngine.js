@@ -61,6 +61,21 @@ const GAME_OVER_RETURN_VOTE_SECONDS = 30;
 // scratch. Cancelled the moment anyone (re)joins -- see the join handler.
 const ROOM_EMPTY_GRACE_MS = 30 * 60 * 1000;
 const REVEAL_DURATION_MS = 5000;
+// A question with a fact (the sheets' `facts` column, Randy, Nov 2026: "a
+// rare bonus") holds its reveal this much longer, so the room can read it.
+const FACT_EXTRA_MS = 3000;
+const factOf = row => (row && row.facts ? String(row.facts).trim() : '') || null;
+
+// The questions table only has a facts column once a category's SQL with
+// facts has been run in Neon; until then, ask without it.
+async function selectQuestions(sql, params) {
+    try {
+        return await pool.query(sql.replace('visual_asset', 'visual_asset, facts'), params);
+    } catch (e) {
+        if (e.code === '42703') return pool.query(sql, params); // no such column yet
+        throw e;
+    }
+}
 const GAME_ROUND_DURATION_SECONDS = 30;
 const FAST_FORWARD_SECONDS = 3; // once everyone's answered, snap the clock down to this for a beat of suspense
 const MAX_NAME_LENGTH = 30; // matches the phone's input maxlength
@@ -639,7 +654,7 @@ async function loadQuestionBank(room) {
         filters += ` AND category = $${params.length}`;
     }
 
-    const result = await pool.query(
+    const result = await selectQuestions(
         `SELECT id, category, subcategory, faction, question_text, correct_answer, wrong_answers, points, visual_asset
          FROM questions
          WHERE game_mode = $1${filters}`,
@@ -959,7 +974,7 @@ function startNextQuestion(roomCode) {
     // stripped out — it's what gets broadcast, handed to reconnecting/refreshed
     // TV screens via STATE_CATCH_UP, and polled by phones via /api/room-status,
     // so the answer can't leak early through any of those paths.
-    const fullQuestionData = buildQuestionPayload(room, row, room.activeDeckName);
+    const fullQuestionData = { ...buildQuestionPayload(room, row, room.activeDeckName), fact: factOf(row) };
     const { correctLetter, ...publicQuestionData } = fullQuestionData;
     room.currentQuestionData = fullQuestionData;
     room.activeQuestionData = {
@@ -1370,7 +1385,7 @@ async function buildTriviYeahIIBoard(doublersCount, house = null, usedCategoryKe
         throw new Error(`Only ${chosenCategories.length} complete Trivi-Yeah II categories in the database`);
     }
 
-    const result = await pool.query(
+    const result = await selectQuestions(
         `SELECT id, category, question_text, correct_answer, wrong_answers, points, visual_asset
          FROM questions
          WHERE game_mode = 'TRIVI_YEAH_II' AND category = ANY($1::text[])`,
@@ -1960,7 +1975,7 @@ function scheduleTriviYeahIINextStep(roomCode) {
             return;
         }
         openTriviYeahIIPickTurn(roomCode);
-    }, REVEAL_DURATION_MS);
+    }, REVEAL_DURATION_MS + (ty2.activeCellIndex != null && ty2.grid[ty2.activeCellIndex] && factOf(ty2.grid[ty2.activeCellIndex].row) ? FACT_EXTRA_MS : 0));
 }
 
 function openTriviYeahIIPickTurn(roomCode) {
@@ -2090,7 +2105,8 @@ function evaluateTriviYeahIIHotSeat(room, roomCode, cell, correctLetter, pickerN
         picker: pickerName,
         pickerCorrect,
         answered: pickerName in ty2.answers ? [pickerName] : [],
-        right: pickerCorrect ? [pickerName] : []
+        right: pickerCorrect ? [pickerName] : [],
+        fact: factOf(cell.row)
     });
     finalizeTriviYeahIITileClear(room, roomCode, cell, {
         right: pickerCorrect ? [pickerName] : [],
@@ -2104,7 +2120,8 @@ function evaluateTriviYeahIIHotSeat(room, roomCode, cell, correctLetter, pickerN
         answers: ty2.answers,
         nextPicker,
         grid: publicTriviYeahIIGrid(room),
-        trap: trapOutcome
+        trap: trapOutcome,
+        fact: factOf(cell.row)
     });
     broadcastToRoom(roomCode, {
         type: 'LEADERBOARD_UPDATE',
@@ -2206,7 +2223,8 @@ function evaluateTriviYeahIIAnswers(roomCode) {
         answer: ty2.activeQuestionData[`choice${correctLetter}`],
         answered: Object.keys(ty2.answers).filter(name => ty2.answers[name] !== 'PASS'),
         right: Object.keys(ty2.answers).filter(name => ty2.answers[name] === correctLetter),
-        fastest: fastestCorrectName || null
+        fastest: fastestCorrectName || null,
+        fact: factOf(cell.row)
     });
     finalizeTriviYeahIITileClear(room, roomCode, cell, {
         right: Object.keys(ty2.answers).filter(name => ty2.answers[name] === correctLetter)
@@ -2219,7 +2237,8 @@ function evaluateTriviYeahIIAnswers(roomCode) {
         answers: ty2.answers,
         nextPicker,
         grid: publicTriviYeahIIGrid(room),
-        trap: trapOutcome
+        trap: trapOutcome,
+        fact: factOf(cell.row)
     });
     broadcastToRoom(roomCode, {
         type: 'LEADERBOARD_UPDATE',
@@ -2284,7 +2303,8 @@ function evaluateTriviYeahIIDoublerAnswer(room, roomCode, cell, correctLetter) {
         picker: pickerName,
         pickerCorrect,
         answered: pickerName in ty2.answers ? [pickerName] : [],
-        right: pickerCorrect ? [pickerName] : []
+        right: pickerCorrect ? [pickerName] : [],
+        fact: factOf(cell.row)
     });
     // A winning side bet counts toward a column sweep, same as a right answer.
     finalizeTriviYeahIITileClear(room, roomCode, cell, {
@@ -2295,6 +2315,7 @@ function evaluateTriviYeahIIDoublerAnswer(room, roomCode, cell, correctLetter) {
         type: 'TRIVI_YEAH_II_DOUBLER_RESULT',
         index: ty2.activeCellIndex,
         correctLetter,
+        fact: factOf(cell.row),
         picker: pickerName,
         pickerCorrect,
         wagerAmount,
@@ -5476,12 +5497,14 @@ function evaluateRoundAndRevealAnswer(roomCode) {
             answer: room.currentQuestionData[`choice${correctLetter}`],
             answered: Object.keys(answers),
             right: Object.keys(answers).filter(name => answers[name] === correctLetter),
-            fastest: (room.answerOrder || []).find(name => answers[name] === correctLetter) || null
+            fastest: (room.answerOrder || []).find(name => answers[name] === correctLetter) || null,
+            fact: room.currentQuestionData.fact || null
         });
     }
     broadcastToRoom(roomCode, {
         type: 'REVEAL_CORRECT_ANSWER',
         correctLetter,
+        fact: (room.currentQuestionData && room.currentQuestionData.fact) || null,
         // Lets the TV mark each player's per-round status indicator green
         // (correct) or back to invisible (wrong/no answer) after the reveal.
         answers: room.answers
@@ -5497,7 +5520,7 @@ function evaluateRoundAndRevealAnswer(roomCode) {
     room.revealTimeout = setTimeout(() => {
         room.revealTimeout = null;
         startNextQuestion(roomCode);
-    }, REVEAL_DURATION_MS);
+    }, REVEAL_DURATION_MS + (room.currentQuestionData && room.currentQuestionData.fact ? FACT_EXTRA_MS : 0));
 }
 
 // ==========================================

@@ -476,6 +476,7 @@ if (btnSubmitSpectate) {
                     document.getElementById('room-status-text').innerText = "Round Evaluation";
                     setClock("0 s");
                     highlightCorrectAnswerOnTV(data.correctLetter);
+                    showRevealFact(data.fact);
                     // Mark each player's status-indicator green (correct) or back to
                     // invisible (wrong/no answer) -- the next LEADERBOARD_UPDATE (sent
                     // right after this by the server) is what actually redraws the table.
@@ -624,6 +625,7 @@ if (btnSubmitSpectate) {
                     document.getElementById('room-status-text').innerText = "Thinking Pants — Round Evaluation";
                     setClock("0 s");
                     highlightCorrectAnswerOnTV(data.correctLetter);
+                    showRevealFact(data.fact);
                     if (data.answers) {
                         Object.keys(data.answers).forEach(name => {
                             playerAnswerStatus[name] = (data.answers[name] === data.correctLetter) ? 'correct' : undefined;
@@ -669,6 +671,7 @@ if (btnSubmitSpectate) {
                     setClock("0 s");
                     playAudioTrack(data.pickerCorrect ? 'doubler-correct-sound' : 'doubler-wrong-sound');
                     showTriviYeahIIDoublerResultUI(data);
+                    showRevealFact(data.fact);
                     updateLeaderboardUI(cachedPlayersSnapshot);
                     ty2AnswerCountdownActive = false;
                     stopCountdownMusic();
@@ -1400,6 +1403,20 @@ let triviYeahIITotalRounds = 3;
 // styles.css, sized to the screen (Phase 2, Randy, Nov 2026: the question
 // is ~3x its old size). They stay readable in the old boxed layout too,
 // since the Final Wager is shared with Country Monkey and Flag Me Down.
+// A question's fact (the sheets' `facts` column), under the revealed answer:
+// one quiet line, no "Did you know?" -- it speaks for itself (rule 1). The
+// reveal holds 3s longer when there's one (Randy, Nov 2026).
+function showRevealFact(fact) {
+    const stage = document.querySelector('#active-content-stage .tp-stage') || document.getElementById('active-content-stage');
+    if (!stage) return;
+    stage.querySelectorAll('.tp-fact').forEach(el => el.remove());
+    if (!fact) return;
+    const line = document.createElement('div');
+    line.className = 'tp-fact';
+    line.textContent = fact;
+    stage.appendChild(line);
+}
+
 function tpStage(classes, inner) {
     return `<div class="tp-stage ${classes || ''}">${inner}</div>`;
 }

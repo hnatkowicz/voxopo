@@ -705,7 +705,15 @@ Mode keys are used in room votes and in `gameEngine.js`:
   `main` that touches a sheet and commits the SQL back, so Randy can upload
   an edited `.csv` and get SQL without Claude; a red X lists the problems.
   Claude still commits rebuilt SQL with its own sheet changes. Rows are
-  retired, not deleted. See
+  retired, not deleted. **Facts** (Randy, Nov 2026: "a rare bonus"): the
+  sheets' last column, `facts`, is one sentence the TV shows under the
+  revealed answer in Thinking Pants and Trivi-yeah! (`showRevealFact`),
+  also on the phone's Info card; the reveal holds 3s longer when there is
+  one (`FACT_EXTRA_MS`). Up to 140 characters, only when genuinely
+  interesting ("henceforth, only when interesting" as categories grow);
+  `notes` stays private. The first category SQL run adds the column
+  (`ALTER TABLE ... ADD COLUMN IF NOT EXISTS facts`), and the engine reads
+  questions without it until then. 112 facts to start (about 3%). See
   `content/README.md` for the columns and which old SQL files a moved
   category supersedes. Every text category lives there now (Oct 2026);
   the old SQL that built them is in `retired_sql/`, never to be re-run

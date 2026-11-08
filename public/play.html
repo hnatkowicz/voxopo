@@ -310,6 +310,7 @@
         .recap { background: var(--rm-surface-2); border: 1px solid var(--rm-border); border-radius: 8px; padding: 12px 16px; text-align: left; margin: 8px 0 24px 0; }
         .recap-label { color: var(--rm-text-muted); font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; }
         .recap-answer { color: var(--rm-white); font-size: 1.15rem; font-weight: 700; margin: 4px 0; }
+        .recap-fact { color: var(--rm-text-2); font-size: 0.9rem; line-height: 1.4; margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--rm-border); }
         .recap-line { color: var(--rm-text-soft); font-size: 0.85rem; }
         .recap-you { font-size: 0.85rem; font-weight: 600; margin-top: 6px; }
         .recap-you.right { color: var(--rm-green); }
@@ -992,6 +993,7 @@
                     <div class="recap-answer">${escSidePage(r.answer)}</div>
                     <div class="recap-line">${escSidePage(summary)}</div>
                     ${you ? `<div class="recap-you ${you[0]}">${escSidePage(you[1])}</div>` : ''}
+                    ${r.fact ? `<div class="recap-fact">${escSidePage(r.fact)}</div>` : ''}
                 </div>`;
         }
 
