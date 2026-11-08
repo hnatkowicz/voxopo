@@ -329,7 +329,10 @@ credited on `/info`), copied into the repo so nothing is fetched from outside.
 
 **Phone side pages** (Randy, Oct 2026): kids on a school trip played with
 no TV at all, so the phone grew a page on each side of the game, in the
-order Room | Game | Info. Swipe left (or tap the dots in the top strip)
+order How to play | Room | Game | Info. **How to play** (Nov 2026, Randy:
+"Let's build this. I love it.") is past Room: three or four plain lines
+for the game on right now (the lobby gets "How RandoMania! works"),
+`HOW_TO_PLAY` in `play.html` -- a new mode needs its card there. Swipe left (or tap the dots in the top strip)
 for **Info**: where we are (mode, question/round/flag x of y, tiles left),
 a **last question** card in the quiz modes (the answer, "2 of 5 got it",
 who was fastest -- Flag Me Down names the earliest-clue scorer -- and how
@@ -364,8 +367,7 @@ tucked-away exception). **Final Wager on the phone** follows the TV's
 reveal: the answer when the TV shows it, your answer, and your own result
 once the TV reaches you (`finalWagerRevealFor`); the same line sits on the
 Game Over card (the leader is revealed last, just before Game Over) and the
-Info card gets the Final Wager once every result is out. Parked: a
-how-to-play card per mode on Room (Randy, Oct 2026). A full phone-only room
+Info card gets the Final Wager once every result is out. A full phone-only room
 (reveals on phones, no TV page) is not planned. Answer picks show white
 until the reveal paints them green/red, with no right/wrong text under
 them (`.picked`; votes keep green; Doubler and trap lines stay). **Phone
@@ -860,8 +862,14 @@ and forth until we both agree the idea is good **and** worth the effort. So:
   Randy re-exported it.) Geography's New York capital question was retired to avoid a
   repeat.
 - **Saturday Mornings** (cartoons and kids' TV) is parked (Randy, Nov
-  2026). Text-only if it happens: cartoon characters and real people's
-  likenesses are off the table for a paid pub game.
+  2026: no effort "until the pub version is bullet-proof", though his
+  youngest and his wife want it). Text-only if it happens: cartoon
+  characters and real people's likenesses are off the table for a paid
+  pub game; Claude's picture idea for later is Randy drawing props and
+  settings, never characters.
+- **More avatars than 24** (a bigger stable, 24 shown per room, a
+  player's last pick always included): later, once Randy has 30-35
+  drawings.
 - **Category depth (Randy, Oct 2026):** every text category has at least
   20 questions per tier. Science & Nature and Astronomy & Space are at 30
   per tier (Nov 2026: "we're nerds"). **New bar (Randy, Nov 2026): 200
@@ -944,8 +952,9 @@ and forth until we both agree the idea is good **and** worth the effort. So:
   (about 3 MB for Christmas, loaded only when the theme is on).
 - **Mind Field:** a name saved for a future mode built around hidden traps
   on a board.
-- **Final Wager clues elsewhere:** the bought-clue mechanic now runs in
-  Flag Me Down (3 clues) and Country Monkey (1). Thinking Pants' Final
-  Wager could get one too, but each of its questions would need a
-  hand-written hint; see how Country Monkey's plays first.
+- **Final Wager clues elsewhere: tabled** (Randy, Nov 2026: a clue that
+  doesn't match what the player needs, or is misunderstood, distracts;
+  "It works so well in Country Monkey, but maybe that's the limit of this
+  particular mechanic"). Flag Me Down (3 clues) and Country Monkey (1)
+  keep theirs.
 

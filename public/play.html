@@ -311,6 +311,8 @@
         .recap-label { color: var(--rm-text-muted); font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; }
         .recap-answer { color: var(--rm-white); font-size: 1.15rem; font-weight: 700; margin: 4px 0; }
         .info-tonight { color: var(--rm-brand); font-weight: 700; }
+        .howto-list { text-align: left; margin: 14px 0 0; padding-left: 20px; display: flex; flex-direction: column; gap: 12px; color: var(--rm-text-2); line-height: 1.45; }
+        .howto-list li::marker { color: var(--rm-brand); }
         .recap-fact { color: var(--rm-text-2); font-size: 0.9rem; line-height: 1.4; margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--rm-border); }
         .recap-line { color: var(--rm-text-soft); font-size: 0.85rem; }
         .recap-you { font-size: 0.85rem; font-weight: 600; margin-top: 6px; }
@@ -331,12 +333,25 @@
             <span class="top-strip-score">· <span id="strip-score">0</span></span>
         </div>
         <div class="page-dots">
+            <button type="button" class="page-dot" data-page="howto" aria-label="How to play" onclick="showSidePage('howto')"></button>
             <button type="button" class="page-dot" data-page="room" aria-label="Room: QR code and Leave Room" onclick="showSidePage('room')"></button>
             <button type="button" class="page-dot active" data-page="game" aria-label="The game" onclick="showSidePage('game')"></button>
             <button type="button" class="page-dot" data-page="info" aria-label="Scores" onclick="showSidePage('info')"></button>
         </div>
     </div>
-    <div id="page-hint" class="page-hint">Swipe left for scores, right for the room's QR code</div>
+    <div id="page-hint" class="page-hint">Swipe left for scores, right for the room and how to play</div>
+
+    <!-- How to play (Randy, Nov 2026: "Let's build this. I love it."): the
+         card for the game on right now, so a stranger at a pub gets it
+         without asking the next table. Past Room, so it's there when you
+         look for it and out of the way when you don't. -->
+    <div id="howto-page" class="side-page from-left" aria-hidden="true">
+        <div class="card">
+            <div id="howto-title" class="info-mode"></div>
+            <ul id="howto-list" class="howto-list"></ul>
+            <button type="button" class="btn" style="margin-top: 20px;" onclick="showSidePage('game')">Back to the game ›</button>
+        </div>
+    </div>
 
     <div id="room-page" class="side-page from-left" aria-hidden="true">
         <div class="card">
@@ -844,7 +859,7 @@
         // scores), Room on the left (swipe right; QR code, Leave Room). The
         // scores are the ones the TV last showed (see broadcastToRoom), so
         // they never give away who's right before the reveal.
-        const SIDE_PAGE_ORDER = ['room', 'game', 'info'];
+        const SIDE_PAGE_ORDER = ['howto', 'room', 'game', 'info'];
         let sidePage = 'game';
         let scoresActionKey = null;
         let roomPageCode = null;
@@ -852,7 +867,7 @@
         function showSidePage(page) {
             if (page !== 'game' && !document.body.classList.contains('in-room')) return;
             if (page === sidePage) return;
-            ['room', 'info'].forEach(name => {
+            ['howto', 'room', 'info'].forEach(name => {
                 const el = document.getElementById(`${name}-page`);
                 if (name === page) {
                     el.classList.remove('closing');
@@ -999,6 +1014,54 @@
         }
 
         let lastInfoHtml = null;
+        // ---------- How to play (Randy, Nov 2026) ----------
+        // Three or four short lines per game: what you do, how you score, the
+        // one twist. Plain words, no house jargon (the "two audiences" rule).
+        const HOW_TO_PLAY = {
+            LOBBY: ['Tap a game on this phone to vote for it. The TV shows how the room is voting.',
+                'Press Start when everyone is in. If nobody presses, the clock starts it.',
+                'Everyone plays at once: answer on your phone, watch the TV for the reveal.',
+                'Swipe left from the game for scores. Swipe right for the room\'s QR code, sound and Leave.'],
+            TRIVI_YEAH: ['Pick a topic (the most popular one wins), or play the venue\'s own questions.',
+                '12 questions, easy to hard. Tap your answer before the clock runs out.',
+                'A right answer scores the question\'s points. A wrong one costs nothing.'],
+            TRIVI_YEAH_II: ['Each turn, the picker chooses a tile from the board, and everyone answers it.',
+                'Right scores the tile\'s value; wrong loses it. Pass if you\'re not sure: it costs nothing.',
+                'The fastest right answer picks next. Get a whole column right for +400.',
+                'A Doubler lets the picker wager while everyone else bets on them. The game ends on a Final Wager: bet your points on one typed answer.'],
+            COUNTRY_MONKEY: ['Pick a region. Then 20 pictures: maps, flags, landmarks and water.',
+                'Tap the right name before the clock runs out. Wrong costs nothing.',
+                'It ends on a Final Wager: type the answer to win your bet. You can buy one clue for half the winnings.'],
+            FLAG_ME_DOWN: ['15 flags, easy to hard. Clues appear over time: the region, the capital, then the map.',
+                'Lock in early for more points (400 down to 100). One lock-in per flag, no changes.',
+                'Wrong costs nothing. It ends on a Final Wager: type the country; each clue you open costs part of the winnings.'],
+            LETTER_RIP: ['Each round, everyone picks one letter at once.',
+                'Every time your letter appears it scores 100, shared by everyone who picked it. The TV shows the room\'s top 2.',
+                'Solve when you\'re ready: one try, spelled exactly. Right wins the pot, which shrinks as the board fills; wrong costs the pot.',
+                'Last comes the Spotlight: wager, light a tile each round, and solve early for a bigger payout.'],
+            EMPOSSDURR: ['Everyone gets the secret word except one player: the impostor.',
+                'Take turns saying one clue word out loud. The TV shows who starts.',
+                'Vote to accuse the impostor: +2 if you\'re right, -1 if you\'re wrong.',
+                'The impostor can try to name the secret word to win the round.'],
+            ON_THE_SPECTRUM: ['One player secretly sets where they stand on a statement, from disagree to agree.',
+                'Everyone else guesses on the slider. The closer you are, the more you score.',
+                'Dead on is a bullseye: 7 points.'],
+            PROFILER: ['Answer a question about yourself. Nobody sees it yet.',
+                'The TV shows the rarest answer ("2 of you said..."). Pick who said it.',
+                'Finding them scores points, and so does being found.']
+        };
+        let lastHowTo = null;
+        function renderHowTo(data) {
+            const key = data.mode && HOW_TO_PLAY[data.mode] ? data.mode : 'LOBBY';
+            if (key === lastHowTo) return;
+            lastHowTo = key;
+            const mode = key !== 'LOBBY' && (window.RANDOMANIA_MODES || []).find(m => m.key === key);
+            document.getElementById('howto-title').innerHTML = mode
+                ? `${window.modeIconHtml(mode, 28)}<span>How to play ${escSidePage(mode.name)}</span>`
+                : '<span>How RandoMania! works</span>';
+            document.getElementById('howto-list').innerHTML = HOW_TO_PLAY[key].map(line => `<li>${escSidePage(line)}</li>`).join('');
+        }
+
         function renderInfoPage(data, myName) {
             const mode = data.mode && (window.RANDOMANIA_MODES || []).find(m => m.key === data.mode);
             const title = mode ? `${window.modeIconHtml(mode, 28)}<span>${escSidePage(mode.name)}</span>` : '<span>Lobby</span>';
@@ -1242,6 +1305,7 @@
             renderRoomPage(roomCode);
             if (Array.isArray(data.standings)) renderScoresPanel(data.standings, myName);
             renderInfoPage(data, myName);
+            renderHowTo(data);
             const key = scoresActionKeyFor(data);
             phoneSounds(data, myName, key);
             if (key && key !== scoresActionKey) showSidePage('game');
