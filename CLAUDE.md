@@ -888,7 +888,11 @@ and forth until we both agree the idea is good **and** worth the effort. So:
   pubs"; football, baseball, basketball, hockey, soccer, golf, tennis,
   the Olympics, racing; historical facts, no "current record" ones, and
   no "which sport?" tile whose answer another tile's wording would give
-  away). Next by Randy's priority: Movies & TV, Word Nerd, Music. The family's favorites are school subjects
+  away), then **Movies & TV** (+89 from 111, Nov 2026: Disney and Pixar
+  for the kids at the easy end, sitcoms and blockbusters in the middle,
+  classic Hollywood and Oscar history at the hard end; nothing another
+  category asks, like Famous Firsts' Bigelow and Dr. No or Literature's
+  Frodo and Aslan). Next by Randy's priority: Word Nerd, Music. The family's favorites are school subjects
   (biology, astronomy, the World Wars, US history) and pop culture; new
   categories get pun names. Next, separate pop-culture categories (**Video
   Games**, **Cartoons & Kids' TV**, **Pop Culture**: celebrities, viral
