@@ -212,9 +212,10 @@ event, for a small fee. That's why hosting is gated behind access codes.
   title or list; the rail has every score. A venue keeps its logo and
   "Thanks for playing at..." line under the podium. No ties: the ranking
   breaks them. The winner's phone shows their avatar big above the
-  Champion card. Waiting: a forced test of the
-  trap screens (Randy said wait), the scoreboard width (Randy is still
-  playing) and the Flag Me Down countdown.
+  Champion card. Waiting: a forced test of the trap screens (Randy hasn't
+  played them yet; keep it on the list). The scoreboard width is staying
+  as is (Randy, Nov 2026: "I wouldn't change a thing"), and the Flag Me
+  Down countdown is tabled ("doesn't seem to be necessary").
 - **TV design rules (Randy, Nov 2026, after the Fire Stick test) -- apply
   to every TV screen from here on:**
   1. **Say it once.** Don't add information: where something sits, how
@@ -401,9 +402,11 @@ Mode keys are used in room votes and in `gameEngine.js`:
   questions. A room remembers the Thinking Pants questions it has seen
   (`room.seenQuestionIds`, shared with the Thinking Pants board), so a
   topic game and a board don't repeat each other while fresh ones last.
-  Every room offers it, except a pub with a ticked list of modes, which
-  gets it only when the code has a house set (as before; /admin has no
-  Trivi-yeah! checkbox). **The house set as a topic** (the venue's own
+  **At a pub it's only ever the venue's own questions** (Randy, Nov 2026:
+  "Pubs should only get topic Trivi-yeah! as their questions -- or
+  special occasions. Nothing more"): a PUB code sees Trivi-yeah! only
+  with a house set, and it plays that set with no topic pick
+  (`isPubRoom`). HOME codes get the topic pick, house set first if any. **The house set as a topic** (the venue's own
   game, Oct 2026's "1.0" pub-test build) keeps its own rules: the
   `HOUSE_<NAME>` category, the same questions as the Thinking Pants house
   column, available even with the house column Off. Easy to hard by
@@ -596,8 +599,8 @@ Mode keys are used in room votes and in `gameEngine.js`:
   (water, `trivi_yeah_ii_wet_pants.sql`, 103) and **Wish You Were Here**
   (landmarks, `content/landmarks.csv`, 132; a postcard name because it has
   natural wonders too) -- the cross-play with Country Monkey is deliberate.
-- **LETTER_RIP** (Letter Rip, a working name -- Randy to rename; built
-  Nov 2026): a phrase-solving race. Randy wanted Wheel of Fortune,
+- **LETTER_RIP** (Letter Rip; the name is final -- Randy: "Oh, it's
+  perfect. Keep!"; built Nov 2026): a phrase-solving race. Randy wanted Wheel of Fortune,
   RandoMania!-style; the wheel was dropped on purpose (wheel + letter
   board + phrase is that show's format) and a **shrinking pot** replaced
   it. 6 puzzles a game, one per category. Puzzles live in a spreadsheet,
@@ -659,11 +662,11 @@ Mode keys are used in room votes and in `gameEngine.js`:
   - **First family verdict (Nov 2026):** four games in a row; Randy's wife
     "said it's everything she'd want in a game." Randy's icon
     (`mode-letter-rip.svg`) is staying. **Top content need: many more
-    phrases** (1,200 so far). **To look into:** Randy saw the phrase tiles "jumping a
-    little" (too fast to tell when or why; he'll watch again). Claude's
-    guess: the stage is centered top to bottom, so when the line under
-    the board changes height ("3 / 4 picked", then the letter chips, then
-    the solver's avatar), the whole board shifts up or down.
+    phrases** (1,200 so far). **Tiles jumping** (fixed Nov 2026): the
+    stage is centered top to bottom, so the line under the board changing
+    height ("3 / 4 picked", the letter chips, the solver) moved the whole
+    board; that line (`.lr-foot`) now keeps one height. After one-tap
+    locks, the Spotlight "played better. Much better" (Randy).
 - **FLAG_ME_DOWN** (also a standalone mode, after the family asked where it
   went): 15 flags, 5 easy -> 5 medium -> 5 hard, each with 4 country choices
   (1 wrong answer from the same local region, 2 from the same continent).
@@ -898,12 +901,9 @@ and forth until we both agree the idea is good **and** worth the effort. So:
   and phone tiles, `public/modes.js`): Thinking Pants reads "Board
   trivia, bet big" so strangers know it's trivia, its "Beta" tag is gone,
   and the gray was brightened for dim pubs (Randy, Nov 2026).
-- **Rename Thinking Pants to "Trivia Night"?** (Randy asked, Nov 2026;
-  undecided.) Claude's view: clearer for strangers, but generic, and the
-  pants jokes (Pants on Fire, Wet Pants, Bet Your Pants!, the Wedgie) lose
-  their anchor; it also sits awkwardly next to Trivi-yeah!. Suggested a
-  clearer tile byline instead ("Trivia night: a Jeopardy-style board...")
-  and, if pubs want it, a venue-chosen display name later.
+- **Thinking Pants keeps its name** (Randy, Nov 2026: the family agrees
+  it's "the right amount of silly, accurate, and inside joke"). "Trivia
+  Night" was considered and dropped.
 - **Standalone states quiz page** (Randy, Nov 2026, "another time"): his
   100 state pictures as a phone quiz anyone can run.
 - **TV themes** (Randy, Nov 2026; designing): seasonal and event
