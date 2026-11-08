@@ -2385,7 +2385,13 @@
             lrSend(`LRWAGER ${amount}`).then(d => { if (d.reply && d.reply.startsWith('⚠️')) lrFeedback(d.reply, false); else lrFeedback(''); lrLastKey = null; })
                 .catch(() => lrFeedback("❌ That didn't go through. Try again.", false));
         }
+        // One tap a round: the tile lights here at once and the rest go still,
+        // so there's nothing to spam while the server catches up.
         function lrSpotTap(i) {
+            document.querySelectorAll('#lr-board .lr-tap').forEach(b => { b.disabled = true; b.onclick = null; });
+            const tapped = document.querySelector(`#lr-board .lr-tap[data-i="${i}"]`);
+            if (tapped) tapped.classList.add('mine');
+            document.getElementById('lr-status').innerText = 'Your tile is lit. Watch the TV.';
             lrSend(`LRSPOT ${i}`).then(d => { if (d.reply && d.reply.startsWith('⚠️')) lrFeedback(d.reply, false); lrLastKey = null; })
                 .catch(() => lrFeedback("❌ That didn't go through. Try again.", false));
         }
@@ -2398,12 +2404,12 @@
             // Big enough tiles to tap; the longest word sets the size.
             const longest = Math.max(...(data.tiles || [[]]).map(w => w.length));
             const size = Math.max(18, Math.min(30, Math.floor(300 / Math.max(1, longest)) - 3));
-            const canTap = data.lrPhase === 'SPOT_TAP';
+            const canTap = data.lrPhase === 'SPOT_TAP' && me.spot === null;
             let at = 0;
             document.getElementById('lr-board').innerHTML = (data.tiles || []).map(word => {
                 const html = `<span class="lr-word">${word.map((ch, k) => {
                     const i = at + k, style = `style="width:${size}px;height:${Math.round(size * 1.3)}px;font-size:${Math.round(size * 0.6)}px"`;
-                    if (ch === '' && canTap) return `<button type="button" class="lr-tile lr-tap${me.spot === i ? ' mine' : ''}" ${style} onclick="lrSpotTap(${i})"></button>`;
+                    if (ch === '' && canTap) return `<button type="button" class="lr-tile lr-tap" data-i="${i}" ${style} onclick="lrSpotTap(${i})"></button>`;
                     if (ch === '') return `<span class="lr-tile${me.spot === i ? ' mine' : ''}" ${style}></span>`;
                     if (/[A-Z]/.test(ch)) return `<span class="lr-tile lit" ${style}>${ch}</span>`;
                     return `<span class="lr-tile punct" ${style}>${lrEsc(ch)}</span>`;
@@ -2423,7 +2429,7 @@
                 status.innerHTML = r ? (r.right ? `<span class="hit">Right! +${r.delta.toLocaleString('en-US')}</span>` : `<span class="miss">${r.answer ? 'Not it.' : 'No answer.'}${r.delta ? ` ${r.delta.toLocaleString('en-US')}` : ''}</span>`)
                     : (me.answer || me.wager ? 'Your result is coming.' : '');
             } else if (data.lrPhase === 'SPOT_TAP') {
-                status.innerHTML = locked || (me.spot === null ? 'Tap a tile to light it' : 'Your spotlight is on. Tap to move it.');
+                status.innerHTML = locked || (me.spot === null ? 'Tap one tile to light it' : 'Your tile is lit. Watch the TV.');
                 if (locked) status.innerHTML += '<br><span style="font-weight:400">You can still light tiles for the room.</span>';
             } else {
                 status.innerHTML = locked || (data.lrPhase === 'SPOT_LAST' ? 'Last call. Lock in your answer.' : '&nbsp;');

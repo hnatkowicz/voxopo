@@ -618,8 +618,9 @@ Mode keys are used in room votes and in `gameEngine.js`:
     0, and a wrong answer never drops anyone below 0.
   - **Tap rounds:** 4 rounds of 10s. Each phone taps a hidden tile, and
     that player's avatar jumps onto it on the TV. A tap, not a drag, so
-    phones still poll and nothing new is needed. You can move until the
-    clock ends.
+    phones still poll and nothing new is needed. **One tap a round, and
+    it locks** (Randy, Nov 2026: when moving was allowed, "everyone is just
+    spamming tiles").
   - **Flips:** every spotlighted tile flips, up to 3 a round, the most
     popular first (ties at random). With 2-3 players everyone gets their
     own pick; a crowd has to agree. A flip shows that one square, not
@@ -633,8 +634,8 @@ Mode keys are used in room votes and in `gameEngine.js`:
     the wager. Answers stay secret until the results, which run lowest
     score first (the leader last), then Game Over.
   - **Pace:** a round ends early once everyone who hasn't locked in has a
-    tile down (after a 2s beat to move). A 10s last call follows the
-    flips; it's skipped once everyone has locked in.
+    tile lit (after a 1s beat). A 25s last call follows the flips (was
+    10s; Randy, Nov 2026); it's skipped once everyone has locked in.
   - The numbers are `SPOTLIGHT_*` in `gameEngine.js`, first guesses.
   - **First family verdict (Nov 2026):** four games in a row; Randy's wife
     "said it's everything she'd want in a game." Randy's icon
