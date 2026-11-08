@@ -22,6 +22,20 @@ const __dirname = path.dirname(__filename);
 
 dotenv.config();
 
+// The last safety net (Nov 2026). Before this, any error that slipped past
+// everything else stopped the process, and with it every live room on the
+// site -- rooms live only in memory. The game's timers already contain
+// their own errors to one room (handleRoomCrash in gameEngine.js); this
+// catches whatever is left (a promise nobody waited on, a stray callback),
+// logs it and keeps the server up. The worst case is one room stuck on a
+// screen, which the room can leave by voting to end the game.
+process.on('uncaughtException', (error) => {
+    console.error('❌ [Uncaught] Server kept running:', error && error.stack || error);
+});
+process.on('unhandledRejection', (reason) => {
+    console.error('❌ [Unhandled promise] Server kept running:', reason && reason.stack || reason);
+});
+
 const app = express();
 const PORT = process.env.PORT || 3000;
 // Render terminates TLS and forwards over plain HTTP internally -- without this,

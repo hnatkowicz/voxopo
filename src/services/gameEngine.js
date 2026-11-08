@@ -1,7 +1,79 @@
 import pool from '../config/database.js';
 import { randomUUID } from 'node:crypto';
+import { AsyncLocalStorage } from 'node:async_hooks';
 
 export const activeRooms = {};
+
+// ==========================================
+// ONE ROOM'S BUG STAYS IN THAT ROOM (Nov 2026)
+// ==========================================
+// Rooms run on ~50 timers. An error thrown inside any timer used to crash
+// the whole server: Render restarts it in seconds, but every live room
+// everywhere -- scores, lobbies, a pub's running tally -- was gone. Now
+// every timer this file sets runs through guardTimer: an error is logged,
+// and only the room it belongs to goes back to its lobby (roster and the
+// night's tally kept), with a short notice on the TV. Everyone else keeps
+// playing.
+//
+// Which room? Each phone message runs inside roomContext (see
+// handleIncomingMessage), and Node carries that context into every timer
+// and promise it starts, however deep the chain goes.
+const roomContext = new AsyncLocalStorage();
+const nativeSetTimeout = globalThis.setTimeout;
+const nativeSetInterval = globalThis.setInterval;
+// A room that keeps breaking (the same bug every time it restarts) is
+// closed rather than looped forever.
+const ROOM_CRASH_LIMIT = 3;
+const ROOM_CRASH_WINDOW_MS = 10 * 60 * 1000;
+
+export function runInRoom(roomCode, fn) {
+    return roomContext.run(roomCode || null, fn);
+}
+
+export function handleRoomCrash(error, roomCode = roomContext.getStore()) {
+    console.error(`❌ [Room ${roomCode || '?'}] Error contained, server still running:`, error && error.stack || error);
+    const room = roomCode && activeRooms[roomCode];
+    if (!room || room.recoveringFromCrash) return;
+    const now = Date.now();
+    room.crashTimes = (room.crashTimes || []).filter(t => now - t < ROOM_CRASH_WINDOW_MS);
+    room.crashTimes.push(now);
+    room.recoveringFromCrash = true;
+    try {
+        if (room.crashTimes.length >= ROOM_CRASH_LIMIT) {
+            console.error(`❌ [Room ${roomCode}] Broke ${room.crashTimes.length} times in 10 minutes. Closing it.`);
+            closeRoom(roomCode);
+            return;
+        }
+        broadcastToRoom(roomCode, { type: 'CONTENT_UNAVAILABLE', message: "Something went wrong with that game. Back to the lobby." });
+        resetRoomToLobby(roomCode);
+    } catch (recoveryError) {
+        console.error(`❌ [Room ${roomCode}] Couldn't recover. Closing it:`, recoveryError && recoveryError.stack || recoveryError);
+        try { closeRoom(roomCode); } catch (e) { delete activeRooms[roomCode]; }
+    } finally {
+        if (activeRooms[roomCode]) activeRooms[roomCode].recoveringFromCrash = false;
+    }
+}
+
+function guardTimer(fn) {
+    if (typeof fn !== 'function') return fn;
+    return (...args) => {
+        try {
+            const result = fn(...args);
+            // An async callback's rejection is caught here too, when the
+            // callback hands its promise back.
+            if (result && typeof result.catch === 'function') result.catch(error => handleRoomCrash(error));
+        } catch (error) {
+            handleRoomCrash(error);
+        }
+    };
+}
+
+// Shadow the globals for this whole file, so every existing and future
+// setTimeout/setInterval here is guarded without touching each call.
+// eslint-disable-next-line no-shadow
+const setTimeout = (fn, ms, ...args) => nativeSetTimeout(guardTimer(fn), ms, ...args);
+// eslint-disable-next-line no-shadow
+const setInterval = (fn, ms, ...args) => nativeSetInterval(guardTimer(fn), ms, ...args);
 
 // Every votable game mode. The display side (names, blurbs, icons) lives in
 // public/modes.js -- keep the keys in step when adding a mode.
@@ -5572,7 +5644,22 @@ function evaluateRoundAndRevealAnswer(roomCode) {
 // ==========================================
 // MASTER PACKET DATA INTAKE GATEWAY
 // ==========================================
+// Runs each phone message inside its room's context (see roomContext at
+// the top), so a timer it starts that later breaks is pinned to the right
+// room. The room is the one named, or the 4-digit code a join starts with,
+// or the room this player is in.
 export function handleIncomingMessage(fromPhone, bodyText, explicitRoomCode, presentedToken) {
+    const firstWord = String(bodyText || '').trim().split(' ')[0];
+    let contextRoom = (explicitRoomCode && activeRooms[explicitRoomCode]) ? explicitRoomCode
+        : (/^\d{4}$/.test(firstWord) && activeRooms[firstWord]) ? firstWord : null;
+    if (!contextRoom) {
+        contextRoom = Object.keys(activeRooms).find(code =>
+            Object.values(activeRooms[code].players || {}).some(p => p.phoneHandle === fromPhone || p.name === fromPhone)) || null;
+    }
+    return runInRoom(contextRoom, () => handleIncomingMessageInRoom(fromPhone, bodyText, explicitRoomCode, presentedToken));
+}
+
+function handleIncomingMessageInRoom(fromPhone, bodyText, explicitRoomCode, presentedToken) {
     const cleanText = bodyText.trim();
     const parts = cleanText.split(' ');
     

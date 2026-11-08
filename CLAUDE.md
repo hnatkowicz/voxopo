@@ -93,6 +93,17 @@ event, for a small fee. That's why hosting is gated behind access codes.
   keep each game a fresh start. Pickles & Pins is the test venue
   (Randy's logo `pickles-pins.svg`: the pickle-jar-and-pin mark, no
   lettering, since the banner prints the name beside it).
+- **One room's bug stays in that room** (Nov 2026): every timer in
+  `gameEngine.js` runs through `guardTimer` (the file shadows
+  `setTimeout`/`setInterval`), and each phone message runs inside its
+  room's context (`runInRoom`, Node's AsyncLocalStorage), so an error is
+  pinned to its room: logged, and that room goes back to its lobby
+  (roster and pub tally kept) with "Something went wrong with that
+  game. Back to the lobby." on the TV (`handleRoomCrash`). Three breaks
+  in 10 minutes closes the room instead. `server.js` also catches any
+  leftover error or stray promise and keeps running. Before this, one
+  error crashed the server and ended every live room. Tested with a
+  booby-trapped room next to a healthy one.
 - **Hosting:** Render (a paid plan, Nov 2026), which terminates TLS. That's
   why `trust proxy` is set. **Every deploy restarts the server and ends
   every live game** (rooms live in memory), so nothing is merged during a
