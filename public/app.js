@@ -413,6 +413,9 @@ if (btnSubmitSpectate) {
                 if (data.type === 'VOTE_UPDATE') {
                     updateModuleElectionUI(data.votes, data.totalVotes);
                 }
+                if (data.type === 'NIGHT_TALLY') {
+                    nightTally = data.tally || null;
+                }
                 if (data.type === 'RETURN_VOTE_UPDATE') {
                     const tally = document.getElementById('return-vote-tally');
                     // Which way the room is leaning (Randy, Nov 2026: in a bigger room
@@ -1079,6 +1082,12 @@ if (btnSubmitSpectate) {
 
         function updateLeaderboardUI(playersList) {
             document.getElementById('lobby-player-count').innerText = playersList.length;
+            // A pub night's tally (Randy, Nov 2026): between games the rail is
+            // "Tonight", ranked by placement points across the night's games.
+            const showTonight = currentGamePhase === 'LOBBY' && nightTally && Object.keys(nightTally).length;
+            const railTitle = document.getElementById('rail-title');
+            if (railTitle) railTitle.textContent = showTonight ? 'Tonight' : 'Scores';
+            if (showTonight && playersList) playersList = playersList.map(p => ({ ...p, score: nightTally[p.name] || 0, awards: {}, correctAnswers: 0 }));
             const tbody = document.getElementById('leaderboard-rows');
 
             if (!playersList || playersList.length === 0) {
@@ -1267,6 +1276,7 @@ if (btnSubmitSpectate) {
         // button mashing, keyed by the category's real key (e.g. WWII_HISTORY) rather
         // than fixed cat1/2/3 slots -- supports any number of categories per mode.
         let activeCategoryLabels = {};
+        let nightTally = null; // a pub night's running tally (NIGHT_TALLY)
         let triviaTopicPick = false; // the TV is showing Trivi-yeah!'s topic pick
         // No green or red: those mean right and wrong (Phase 1 rule).
         const CATEGORY_BAR_COLORS = ['var(--rm-orange)', 'var(--rm-periwinkle)', 'var(--rm-pink)', 'var(--rm-blue)', 'var(--rm-purple)', 'var(--rm-yellow-soft)'];

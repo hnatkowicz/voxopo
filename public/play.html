@@ -310,6 +310,7 @@
         .recap { background: var(--rm-surface-2); border: 1px solid var(--rm-border); border-radius: 8px; padding: 12px 16px; text-align: left; margin: 8px 0 24px 0; }
         .recap-label { color: var(--rm-text-muted); font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; }
         .recap-answer { color: var(--rm-white); font-size: 1.15rem; font-weight: 700; margin: 4px 0; }
+        .info-tonight { color: var(--rm-brand); font-weight: 700; }
         .recap-fact { color: var(--rm-text-2); font-size: 0.9rem; line-height: 1.4; margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--rm-border); }
         .recap-line { color: var(--rm-text-soft); font-size: 0.85rem; }
         .recap-you { font-size: 0.85rem; font-weight: 600; margin-top: 6px; }
@@ -1002,7 +1003,11 @@
             const mode = data.mode && (window.RANDOMANIA_MODES || []).find(m => m.key === data.mode);
             const title = mode ? `${window.modeIconHtml(mode, 28)}<span>${escSidePage(mode.name)}</span>` : '<span>Lobby</span>';
             const stats = infoStats(data);
-            const html = `<div class="info-mode">${title}</div><div class="info-line">${escSidePage(infoWhereLine(data))}</div>`
+            // A pub night's running tally: your points and place across the night.
+            const t = data.tonight;
+            const ordinal = n => n + (['th', 'st', 'nd', 'rd'][(n % 100 >> 3 ^ 1) && n % 10] || 'th');
+            const tonight = t ? `<div class="info-line info-tonight">Tonight: ${t.points} ${t.points === 1 ? 'point' : 'points'} &middot; ${ordinal(t.rank)} of ${t.of}</div>` : '';
+            const html = `<div class="info-mode">${title}</div><div class="info-line">${escSidePage(infoWhereLine(data))}</div>${tonight}`
                 + '\u0000' + recapHtml(data, myName)
                 + '\u0000' + stats.map(st => `<div class="info-stat"><div class="info-stat-num">${escSidePage(st.num)}</div><div class="info-stat-label">${st.label}</div></div>`).join('');
             if (html === lastInfoHtml) return; // polled every second; don't redraw the icon each time
