@@ -866,7 +866,12 @@ and forth until we both agree the idea is good **and** worth the effort. So:
   basics, regional American food, coffee and tea, techniques, and more of
   the world's kitchens at the hard end; brands stay in Logo My Eggo, and
   the Final Wager's food answers -- tiramisu, Caesar salad, cheddar --
-  aren't reused). The family's favorites are school subjects
+  aren't reused), then **Sports** (+120 from 80, Nov 2026: pub-night
+  depth -- "we don't play this at home often (wrong crowd), but for
+  pubs"; football, baseball, basketball, hockey, soccer, golf, tennis,
+  the Olympics, racing; historical facts, no "current record" ones, and
+  no "which sport?" tile whose answer another tile's wording would give
+  away). Next by Randy's priority: Movies & TV, Word Nerd, Music. The family's favorites are school subjects
   (biology, astronomy, the World Wars, US history) and pop culture; new
   categories get pun names. Next, separate pop-culture categories (**Video
   Games**, **Cartoons & Kids' TV**, **Pop Culture**: celebrities, viral
@@ -897,7 +902,7 @@ and forth until we both agree the idea is good **and** worth the effort. So:
   Who?, War & Pieces and World History are at 120, and **Cell Mates**
   (biology, `content/cell_mates.csv`, 120) is built. World History's 13
   questions that duplicated Red, White & Who? and War & Pieces were
-  retired there. Next: Sports and Food & Drink. Niche pun
+  retired there. Sports and Food & Drink are at 200 now. Niche pun
   categories (Famous (K)nights, Fictional Locations, Just in Time,
   Lyrics) stay at 80 on purpose.
 - **Mode bylines** (the small gray line under each mode's name on the TV
