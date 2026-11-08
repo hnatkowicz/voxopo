@@ -3,8 +3,8 @@
 -- Made by content/build.mjs from content/letter_rip.csv, the master copy of Letter
 -- Rip's puzzles. To change a puzzle, change the spreadsheet and rebuild.
 --
--- Replaces EVERY Letter Rip puzzle with the spreadsheet's 1200 live ones
--- (30 categories), inside a transaction. Creates the table if needed.
+-- Replaces EVERY Letter Rip puzzle with the spreadsheet's 1500 live ones
+-- (40 categories), inside a transaction. Creates the table if needed.
 -- Safe to re-run. Touches nothing else.
 -- ============================================================================
 
@@ -313,6 +313,38 @@ INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Classic Movies', 'A C
 INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Classic Movies', 'THE GOONIES');
 INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Classic Movies', 'PLANET OF THE APES');
 
+-- Deep Blue Sea (30)
+INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Deep Blue Sea', 'CORAL REEF');
+INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Deep Blue Sea', 'GREAT WHITE SHARK');
+INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Deep Blue Sea', 'MANTA RAY');
+INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Deep Blue Sea', 'CLOWNFISH');
+INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Deep Blue Sea', 'GIANT SQUID');
+INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Deep Blue Sea', 'HUMPBACK WHALE');
+INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Deep Blue Sea', 'MORAY EEL');
+INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Deep Blue Sea', 'BARRACUDA');
+INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Deep Blue Sea', 'ANGLERFISH');
+INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Deep Blue Sea', 'LOGGERHEAD TURTLE');
+INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Deep Blue Sea', 'NARWHAL');
+INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Deep Blue Sea', 'KELP FOREST');
+INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Deep Blue Sea', 'OCTOPUS INK');
+INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Deep Blue Sea', 'LOBSTER TRAP');
+INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Deep Blue Sea', 'SCHOOL OF FISH');
+INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Deep Blue Sea', 'BELUGA WHALE');
+INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Deep Blue Sea', 'PUFFERFISH');
+INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Deep Blue Sea', 'SWORDFISH');
+INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Deep Blue Sea', 'SUNKEN SHIP');
+INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Deep Blue Sea', 'SCUBA DIVER');
+INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Deep Blue Sea', 'TIDAL WAVE');
+INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Deep Blue Sea', 'PEARL OYSTER');
+INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Deep Blue Sea', 'ORCA POD');
+INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Deep Blue Sea', 'PORTUGUESE MAN O'' WAR');
+INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Deep Blue Sea', 'ELECTRIC EEL');
+INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Deep Blue Sea', 'MARLIN');
+INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Deep Blue Sea', 'WALRUS TUSKS');
+INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Deep Blue Sea', 'KRILL');
+INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Deep Blue Sea', 'OCEAN FLOOR');
+INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Deep Blue Sea', 'FLYING FISH');
+
 -- Dinner Is Served (40)
 INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Dinner Is Served', 'POT ROAST');
 INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Dinner Is Served', 'SPAGHETTI AND MEATBALLS');
@@ -439,6 +471,38 @@ INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Famous Pairs', 'ODDS 
 INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Famous Pairs', 'NUTS AND BOLTS');
 INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Famous Pairs', 'KING AND QUEEN');
 
+-- Farm Fresh (30)
+INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Farm Fresh', 'RED BARN');
+INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Farm Fresh', 'HAY BALES');
+INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Farm Fresh', 'TRACTOR SEAT');
+INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Farm Fresh', 'CHICKEN COOP');
+INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Farm Fresh', 'PIG PEN');
+INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Farm Fresh', 'DAIRY COW');
+INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Farm Fresh', 'WEATHER VANE');
+INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Farm Fresh', 'CORNFIELD');
+INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Farm Fresh', 'SILO');
+INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Farm Fresh', 'ROOSTER CROWING');
+INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Farm Fresh', 'EGG BASKET');
+INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Farm Fresh', 'PITCHFORK');
+INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Farm Fresh', 'HAYLOFT');
+INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Farm Fresh', 'SHEEP DOG');
+INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Farm Fresh', 'HORSE STABLE');
+INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Farm Fresh', 'MORNING CHORES');
+INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Farm Fresh', 'APPLE ORCHARD');
+INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Farm Fresh', 'PUMPKIN PATCH');
+INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Farm Fresh', 'BILLY GOAT');
+INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Farm Fresh', 'FENCE POST');
+INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Farm Fresh', 'AMBER WAVES OF GRAIN');
+INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Farm Fresh', 'GRAIN ELEVATOR');
+INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Farm Fresh', 'BUTTER CHURN');
+INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Farm Fresh', 'STRAW HAT');
+INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Farm Fresh', 'GREEN PASTURE');
+INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Farm Fresh', 'BARN DANCE');
+INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Farm Fresh', 'BEEHIVE');
+INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Farm Fresh', 'HARVEST MOON');
+INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Farm Fresh', 'SOW AND PIGLETS');
+INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Farm Fresh', 'WATER TROUGH');
+
 -- Game Day (40)
 INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Game Day', 'TOUCHDOWN');
 INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Game Day', 'SLAM DUNK');
@@ -564,6 +628,38 @@ INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Garden Variety', 'SOA
 INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Garden Variety', 'GRAPEVINE');
 INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Garden Variety', 'FRESH BASIL');
 INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Garden Variety', 'CORN STALKS');
+
+-- Getting Dressed (30)
+INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Getting Dressed', 'TURTLENECK SWEATER');
+INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Getting Dressed', 'BLUE JEANS');
+INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Getting Dressed', 'NECKTIE');
+INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Getting Dressed', 'BOW TIE');
+INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Getting Dressed', 'CARDIGAN');
+INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Getting Dressed', 'HOODIE');
+INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Getting Dressed', 'RAIN BOOTS');
+INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Getting Dressed', 'OVERALLS');
+INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Getting Dressed', 'PEACOAT');
+INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Getting Dressed', 'SUSPENDERS');
+INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Getting Dressed', 'CUFF LINKS');
+INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Getting Dressed', 'POLO SHIRT');
+INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Getting Dressed', 'LEATHER JACKET');
+INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Getting Dressed', 'KNEE SOCKS');
+INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Getting Dressed', 'TANK TOP');
+INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Getting Dressed', 'BASEBALL CAP');
+INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Getting Dressed', 'BEANIE');
+INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Getting Dressed', 'SCARF AND MITTENS');
+INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Getting Dressed', 'BUTTON-DOWN SHIRT');
+INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Getting Dressed', 'CARGO SHORTS');
+INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Getting Dressed', 'SWEATPANTS');
+INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Getting Dressed', 'FLANNEL PAJAMAS');
+INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Getting Dressed', 'TUXEDO');
+INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Getting Dressed', 'SPORT COAT');
+INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Getting Dressed', 'HIGH HEELS');
+INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Getting Dressed', 'SNEAKERS');
+INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Getting Dressed', 'BELT BUCKLE');
+INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Getting Dressed', 'WINDBREAKER');
+INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Getting Dressed', 'LEG WARMERS');
+INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Getting Dressed', 'TRENCH COAT');
 
 -- Holiday Spirit (40)
 INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Holiday Spirit', 'TRICK OR TREAT');
@@ -985,6 +1081,102 @@ INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Party Time', 'MASQUER
 INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Party Time', 'GLOW STICKS');
 INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Party Time', 'RAISE A TOAST');
 
+-- Pirate's Life (30)
+INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Pirate''s Life', 'TREASURE CHEST');
+INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Pirate''s Life', 'WALK THE PLANK');
+INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Pirate''s Life', 'EYE PATCH');
+INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Pirate''s Life', 'PEG LEG');
+INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Pirate''s Life', 'PARROT ON THE SHOULDER');
+INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Pirate''s Life', 'JOLLY ROGER');
+INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Pirate''s Life', 'CROW''S NEST');
+INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Pirate''s Life', 'BURIED TREASURE');
+INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Pirate''s Life', 'X MARKS THE SPOT');
+INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Pirate''s Life', 'SKULL AND CROSSBONES');
+INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Pirate''s Life', 'CANNONBALL');
+INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Pirate''s Life', 'SPYGLASS');
+INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Pirate''s Life', 'SHIVER ME TIMBERS');
+INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Pirate''s Life', 'DAVY JONES'' LOCKER');
+INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Pirate''s Life', 'MESSAGE IN A BOTTLE');
+INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Pirate''s Life', 'HOOK HAND');
+INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Pirate''s Life', 'CUTLASS');
+INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Pirate''s Life', 'ANCHORS AWEIGH');
+INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Pirate''s Life', 'DOUBLOONS');
+INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Pirate''s Life', 'PIECES OF EIGHT');
+INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Pirate''s Life', 'SHIP''S WHEEL');
+INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Pirate''s Life', 'DESERTED ISLAND');
+INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Pirate''s Life', 'MUTINY');
+INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Pirate''s Life', 'CAPTAIN''S HAT');
+INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Pirate''s Life', 'STOWAWAY');
+INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Pirate''s Life', 'BLACKBEARD');
+INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Pirate''s Life', 'HIGH SEAS');
+INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Pirate''s Life', 'LANDLUBBER');
+INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Pirate''s Life', 'ALL HANDS ON DECK');
+INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Pirate''s Life', 'AHOY MATEY');
+
+-- Prime Time (30)
+INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Prime Time', 'I LOVE LUCY');
+INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Prime Time', 'THE BRADY BUNCH');
+INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Prime Time', 'HAPPY DAYS');
+INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Prime Time', 'GILLIGAN''S ISLAND');
+INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Prime Time', 'THE GOLDEN GIRLS');
+INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Prime Time', 'CHEERS');
+INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Prime Time', 'SEINFELD');
+INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Prime Time', 'FRIENDS');
+INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Prime Time', 'THE TWILIGHT ZONE');
+INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Prime Time', 'STAR TREK');
+INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Prime Time', 'BONANZA');
+INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Prime Time', 'THE ANDY GRIFFITH SHOW');
+INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Prime Time', 'LEAVE IT TO BEAVER');
+INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Prime Time', 'THE MUNSTERS');
+INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Prime Time', 'THE ADDAMS FAMILY');
+INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Prime Time', 'GREEN ACRES');
+INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Prime Time', 'THE JEFFERSONS');
+INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Prime Time', 'FAMILY TIES');
+INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Prime Time', 'THE OFFICE');
+INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Prime Time', 'HOME IMPROVEMENT');
+INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Prime Time', 'SAVED BY THE BELL');
+INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Prime Time', 'THE WONDER YEARS');
+INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Prime Time', 'LITTLE HOUSE ON THE PRAIRIE');
+INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Prime Time', 'THE WALTONS');
+INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Prime Time', 'THE CAROL BURNETT SHOW');
+INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Prime Time', 'TAXI');
+INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Prime Time', 'THE WEST WING');
+INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Prime Time', 'BEWITCHED');
+INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Prime Time', 'I DREAM OF JEANNIE');
+INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Prime Time', 'MURDER SHE WROTE');
+
+-- Science Lab (30)
+INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Science Lab', 'BUNSEN BURNER');
+INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Science Lab', 'PETRI DISH');
+INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Science Lab', 'TEST TUBE');
+INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Science Lab', 'PERIODIC TABLE');
+INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Science Lab', 'MICROSCOPE SLIDE');
+INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Science Lab', 'BEAKER');
+INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Science Lab', 'GRADUATED CYLINDER');
+INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Science Lab', 'LITMUS PAPER');
+INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Science Lab', 'EYEDROPPER');
+INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Science Lab', 'PIPETTE');
+INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Science Lab', 'HYPOTHESIS');
+INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Science Lab', 'CONTROL GROUP');
+INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Science Lab', 'CHEMICAL REACTION');
+INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Science Lab', 'BAKING SODA VOLCANO');
+INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Science Lab', 'MAGNIFYING GLASS');
+INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Science Lab', 'TWEEZERS');
+INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Science Lab', 'FLASK');
+INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Science Lab', 'EXPERIMENT');
+INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Science Lab', 'DATA TABLE');
+INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Science Lab', 'FIRE EXTINGUISHER');
+INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Science Lab', 'EYEWASH STATION');
+INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Science Lab', 'DISSECTION TRAY');
+INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Science Lab', 'MAGNETS AND IRON FILINGS');
+INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Science Lab', 'SIMPLE CIRCUIT');
+INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Science Lab', 'GLASS PRISM');
+INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Science Lab', 'HOT PLATE');
+INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Science Lab', 'STOPWATCH');
+INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Science Lab', 'THERMOMETER');
+INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Science Lab', 'SPECIMEN JAR');
+INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Science Lab', 'MAD SCIENTIST');
+
 -- Sing Along (40)
 INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Sing Along', 'TWINKLE TWINKLE LITTLE STAR');
 INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Sing Along', 'OLD MACDONALD HAD A FARM');
@@ -1068,6 +1260,38 @@ INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Snack Attack', 'PICKL
 INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Snack Attack', 'ROASTED CHICKPEAS');
 INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Snack Attack', 'MINI MUFFINS');
 INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Snack Attack', 'FRUIT KABOBS');
+
+-- Strike Up the Band (30)
+INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Strike Up the Band', 'FRENCH HORN');
+INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Strike Up the Band', 'BASS DRUM');
+INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Strike Up the Band', 'SNARE DRUM');
+INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Strike Up the Band', 'TRUMPET');
+INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Strike Up the Band', 'TROMBONE');
+INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Strike Up the Band', 'TUBA');
+INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Strike Up the Band', 'SAXOPHONE');
+INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Strike Up the Band', 'CLARINET');
+INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Strike Up the Band', 'FLUTE');
+INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Strike Up the Band', 'PICCOLO');
+INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Strike Up the Band', 'XYLOPHONE');
+INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Strike Up the Band', 'GLOCKENSPIEL');
+INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Strike Up the Band', 'CYMBALS');
+INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Strike Up the Band', 'TAMBOURINE');
+INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Strike Up the Band', 'DRUM MAJOR');
+INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Strike Up the Band', 'SOUSAPHONE');
+INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Strike Up the Band', 'BATON TWIRLER');
+INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Strike Up the Band', 'SHEET MUSIC');
+INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Strike Up the Band', 'UPRIGHT BASS');
+INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Strike Up the Band', 'BANJO');
+INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Strike Up the Band', 'HARMONICA');
+INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Strike Up the Band', 'ACCORDION');
+INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Strike Up the Band', 'VIOLIN BOW');
+INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Strike Up the Band', 'PIANO KEYS');
+INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Strike Up the Band', 'TRIANGLE');
+INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Strike Up the Band', 'COWBELL');
+INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Strike Up the Band', 'KAZOO');
+INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Strike Up the Band', 'OBOE');
+INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Strike Up the Band', 'BAGPIPES');
+INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Strike Up the Band', 'ELECTRIC GUITAR');
 
 -- Sweet Treats (40)
 INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Sweet Treats', 'CHOCOLATE CHIP COOKIE');
@@ -1195,6 +1419,38 @@ INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Things People Say', '
 INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Things People Say', 'JUMP ON THE BANDWAGON');
 INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Things People Say', 'A PENNY FOR YOUR THOUGHTS');
 
+-- Toolbox (30)
+INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Toolbox', 'CLAW HAMMER');
+INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Toolbox', 'PHILLIPS SCREWDRIVER');
+INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Toolbox', 'TAPE MEASURE');
+INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Toolbox', 'ADJUSTABLE WRENCH');
+INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Toolbox', 'NEEDLE-NOSE PLIERS');
+INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Toolbox', 'HACKSAW');
+INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Toolbox', 'POWER DRILL');
+INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Toolbox', 'SANDPAPER');
+INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Toolbox', 'BUBBLE LEVEL');
+INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Toolbox', 'DUCT TAPE');
+INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Toolbox', 'ALLEN WRENCH');
+INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Toolbox', 'STUD FINDER');
+INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Toolbox', 'UTILITY KNIFE');
+INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Toolbox', 'SOCKET SET');
+INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Toolbox', 'WOOD GLUE');
+INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Toolbox', 'NAILS AND SCREWS');
+INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Toolbox', 'CIRCULAR SAW');
+INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Toolbox', 'WORKBENCH');
+INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Toolbox', 'SAFETY GOGGLES');
+INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Toolbox', 'CAULK GUN');
+INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Toolbox', 'PAINT ROLLER');
+INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Toolbox', 'CROWBAR');
+INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Toolbox', 'C-CLAMP');
+INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Toolbox', 'CHISEL');
+INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Toolbox', 'STEP LADDER');
+INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Toolbox', 'ZIP TIES');
+INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Toolbox', 'WIRE CUTTERS');
+INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Toolbox', 'CARPENTER''S PENCIL');
+INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Toolbox', 'SLEDGEHAMMER');
+INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Toolbox', 'EXTENSION CORD');
+
 -- Under One Roof (40)
 INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Under One Roof', 'KITCHEN SINK');
 INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Under One Roof', 'LAUNDRY BASKET');
@@ -1236,6 +1492,38 @@ INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Under One Roof', 'MED
 INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Under One Roof', 'THERMOSTAT');
 INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Under One Roof', 'TOWEL RACK');
 INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Under One Roof', 'COAT RACK');
+
+-- Under the Hood (30)
+INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Under the Hood', 'SPARK PLUGS');
+INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Under the Hood', 'RADIATOR');
+INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Under the Hood', 'CAR BATTERY');
+INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Under the Hood', 'FAN BELT');
+INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Under the Hood', 'BRAKE PADS');
+INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Under the Hood', 'OIL FILTER');
+INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Under the Hood', 'TRANSMISSION');
+INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Under the Hood', 'ALTERNATOR');
+INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Under the Hood', 'DIPSTICK');
+INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Under the Hood', 'AIR FILTER');
+INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Under the Hood', 'CHECK ENGINE LIGHT');
+INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Under the Hood', 'SIX CYLINDERS');
+INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Under the Hood', 'MUFFLER');
+INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Under the Hood', 'EXHAUST PIPE');
+INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Under the Hood', 'GAS TANK');
+INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Under the Hood', 'STEERING WHEEL');
+INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Under the Hood', 'SHOCK ABSORBERS');
+INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Under the Hood', 'TIRE PRESSURE');
+INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Under the Hood', 'HORSEPOWER');
+INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Under the Hood', 'CRANKSHAFT');
+INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Under the Hood', 'PISTONS');
+INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Under the Hood', 'CARBURETOR');
+INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Under the Hood', 'MOTOR OIL');
+INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Under the Hood', 'COOLANT');
+INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Under the Hood', 'JUMP START');
+INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Under the Hood', 'TIMING BELT');
+INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Under the Hood', 'FUEL INJECTOR');
+INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Under the Hood', 'BRAKE FLUID');
+INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Under the Hood', 'AIR BAGS');
+INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Under the Hood', 'SPARE TIRE');
 
 -- Weather Report (40)
 INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Weather Report', 'PARTLY CLOUDY');
@@ -1279,7 +1567,39 @@ INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Weather Report', 'MUG
 INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Weather Report', 'RECORD HIGH');
 INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Weather Report', 'POLAR VORTEX');
 
+-- Wild West (30)
+INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Wild West', 'COWBOY BOOTS');
+INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Wild West', 'TEN-GALLON HAT');
+INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Wild West', 'SALOON DOORS');
+INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Wild West', 'STAGECOACH');
+INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Wild West', 'GOLD RUSH');
+INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Wild West', 'SHERIFF''S BADGE');
+INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Wild West', 'WANTED POSTER');
+INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Wild West', 'CATTLE DRIVE');
+INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Wild West', 'HORSESHOE');
+INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Wild West', 'RODEO CLOWN');
+INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Wild West', 'LASSO');
+INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Wild West', 'COVERED WAGON');
+INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Wild West', 'PONY EXPRESS');
+INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Wild West', 'HIGH NOON');
+INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Wild West', 'SADDLE UP');
+INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Wild West', 'GHOST TOWN');
+INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Wild West', 'BLACKSMITH');
+INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Wild West', 'SPURS');
+INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Wild West', 'CHUCK WAGON');
+INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Wild West', 'PROSPECTOR');
+INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Wild West', 'BOOMTOWN');
+INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Wild West', 'RANCH HAND');
+INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Wild West', 'BUCKING BRONCO');
+INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Wild West', 'TRAIL BOSS');
+INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Wild West', 'JAIL CELL');
+INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Wild West', 'QUICK DRAW');
+INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Wild West', 'OUTLAW GANG');
+INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Wild West', 'HITCHING POST');
+INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Wild West', 'PANNING FOR GOLD');
+INSERT INTO letter_rip_puzzles (category, phrase) VALUES ('Wild West', 'HOWDY PARTNER');
+
 COMMIT;
 
--- Check: should return 1200.
+-- Check: should return 1500.
 SELECT COUNT(*) FROM letter_rip_puzzles;
