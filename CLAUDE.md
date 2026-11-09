@@ -230,7 +230,19 @@ event, for a small fee. That's why hosting is gated behind access codes.
   18 with 7 new drawings, and pants came off the list but keeps its file).
   Randy: the big avatar on the podium "means a lot when it's yours up
   there", which is why the ones that are so-so small stay. The list is
-  `AVATARS` in `public/avatars.js` (add a file, add its name); a pick travels as `av:<name>` in the old
+  `AVATARS` in `public/avatars.js` (add a file, add its name). **A bigger
+  list** (Randy, Nov 2026: growing in sixes; one list for everyone, no
+  rotating sets, duplicates allowed since a venue may hope for 100+
+  players, and no changing your pick after joining): the join grid
+  scrolls in its own box (3.5 rows, so Join stays in view), and **tapping
+  an avatar picks it and grows it big** from its tile with the podium's
+  gold glow; any tap sends it back, outlined as your pick. Small
+  places (grid, scoreboards, strips) use a few-KB WebP from
+  `public/avatars/thumbs/` (24 drawings: 244 KB instead of 1.2 MB), made
+  by `scripts/avatar-thumbs.mjs` and a GitHub Action whenever an SVG is
+  uploaded; the full SVG loads only where an avatar is big (the enlarge,
+  the TV podium, the Champion card), and a missing thumb falls back to
+  it. A pick travels as `av:<name>` in the old
   emoji slot, and `avatarHtml` draws it everywhere a player's emoji was
   (TV scoreboard, join toast, Profiler names, the phone's strip, badge and
   scores). Anything else in that slot shows as text, so an old phone

@@ -2312,7 +2312,7 @@ function switchToGameOverUI(players, brand) {
     const medals = ['gold', 'silver', 'bronze'];
     const place = (player, index) => player ? `
         <div class="go-place go-p${index + 1}">
-            <div class="go-avatar">${avatarHtml(player.emoji, 1)}</div>
+            <div class="go-avatar">${avatarHtml(player.emoji, 1, { full: true })}</div>
             <div class="go-plate go-${medals[index]}">
                 <span class="go-name">${escapeHtml(player.name)}</span>
                 <span class="go-score">${(player.score || 0).toLocaleString("en-US")}</span>

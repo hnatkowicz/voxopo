@@ -1,9 +1,16 @@
 # Avatars
 
-Randy's avatars for players to pick when they join, alongside (or in place
-of) the emoji grid. Nothing uses this folder yet: once the files are here,
-Claude wires them into the join screen, the TV's scoreboard and the phones,
-with a test sheet showing every avatar at every size it's drawn.
+Randy's avatars for players to pick when they join. To add one: upload
+`<name>.svg` here and add its name to `AVATARS` in `public/avatars.js`
+(the order there is the order on the join screen; batches of 6 fill a
+row). The list scrolls on the phone, so there's no hard limit.
+
+**Small copies are automatic.** A GitHub Action (`avatar-thumbs.yml`)
+draws a few-KB WebP of each new or changed SVG into `thumbs/` and commits
+it. Phones and the TV's scoreboard use those, so a long list stays light
+on cell data; the full drawing only loads where an avatar is big (tap to
+enlarge on the join screen, the TV podium, the Champion card). Until the
+Action runs, the full drawing is used, so nothing ever shows blank.
 
 ## File names
 
