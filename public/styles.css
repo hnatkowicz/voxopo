@@ -959,3 +959,26 @@ body.tp-layout[data-view="gateway"] #gateway-screen { display: flex !important; 
 .tp-fact { max-width: 70%; margin-top: calc(var(--u) * 1.6); font-size: calc(var(--u) * 1.5); line-height: 1.35; color: var(--rm-text-soft); animation: tp-fact-in 0.6s ease-out both; }
 .tp-center .tp-fact { margin-left: auto; margin-right: auto; text-align: center; }
 @keyframes tp-fact-in { from { opacity: 0; transform: translateY(calc(var(--u) * 0.6)); } to { opacity: 1; transform: none; } }
+
+/* The entrance (Nov 2026): a new player's avatar, big, over the lobby's
+   stage -- never over the footer's QR code. See showBigEntrance in app.js. */
+#tv-entrance { position: fixed; z-index: 40; display: flex; align-items: center; justify-content: center;
+    background: rgba(var(--rm-bg-rgb), 0.9); border-radius: calc(var(--u) * 1); opacity: 0; pointer-events: none; transition: opacity 0.35s ease; }
+#tv-entrance.show { opacity: 1; }
+#tv-entrance .ent-row { display: flex; align-items: flex-end; justify-content: center; flex-wrap: wrap; gap: calc(var(--u) * 2.4); max-width: 92%; }
+#tv-entrance .ent-one { display: flex; flex-direction: column; align-items: center; gap: calc(var(--u) * 0.8);
+    transform: scale(0.6) translateY(calc(var(--u) * 2)); opacity: 0; transition: transform 0.5s cubic-bezier(0.2, 1.3, 0.4, 1), opacity 0.3s ease; }
+#tv-entrance.show .ent-one { transform: none; opacity: 1; }
+/* The podium's gold glow. */
+#tv-entrance .ent-pic img { filter: drop-shadow(0 0 calc(var(--u) * 1.8) rgba(var(--rm-brand-rgb), 0.5)); }
+#tv-entrance .ent-name { font-family: var(--rm-font-display); font-weight: 800; color: var(--rm-text); line-height: 1.1; max-width: 14ch; text-align: center; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+#tv-entrance.ent-solo .ent-pic { font-size: calc(var(--u) * 20); line-height: 0; }
+#tv-entrance.ent-solo .ent-name { font-size: calc(var(--u) * 4); }
+#tv-entrance.ent-few .ent-pic { font-size: calc(var(--u) * 9); line-height: 0; }
+#tv-entrance.ent-few .ent-name { font-size: calc(var(--u) * 2.2); }
+#tv-entrance.ent-many .ent-pic { font-size: calc(var(--u) * 6); line-height: 0; }
+#tv-entrance.ent-many .ent-name { font-size: calc(var(--u) * 1.6); }
+#tv-entrance .ent-more { align-self: center; font-family: var(--rm-font-display); font-weight: 800; font-size: calc(var(--u) * 3); color: var(--rm-brand); }
+.ent-compact { display: inline-flex; flex-direction: column; align-items: flex-end; gap: calc(var(--u) * 0.4); }
+.ent-compact-row { display: flex; gap: calc(var(--u) * 0.5); font-size: calc(var(--u) * 3.2); line-height: 0; }
+.ent-compact-names { font-size: calc(var(--u) * 1.4); color: var(--rm-text-muted); }
