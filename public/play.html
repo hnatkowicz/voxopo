@@ -38,6 +38,24 @@
         .emoji-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 8px; margin-bottom: 16px; }
         .emoji-btn { background: var(--rm-surface-2); border: 1px solid var(--rm-border); font-size: 1.3rem; padding: 12px 0; border-radius: 8px; cursor: pointer; transition: all 0.1s ease; }
         .emoji-btn.selected { background: rgba(var(--rm-brand-rgb), 0.06); border-color: var(--rm-brand); transform: scale(1.05); }
+        /* The avatar list grows in sixes (Randy, Nov 2026), so it scrolls in
+           its own box: the room code, name and Join stay put. Three and a half
+           rows show, so the cut-off row says "there's more"; Join stays in
+           view on a 360x740 phone. */
+        .avatar-grid-box { max-height: 236px; overflow-y: auto; overscroll-behavior: contain; padding: 4px; margin: -4px -4px 16px; }
+        .avatar-grid-box .emoji-grid { margin-bottom: 0; }
+        /* Tap an avatar: it's your pick, and it grows big from its spot in
+           the grid; tap anywhere to send it back (Randy, Nov 2026: "the
+           visual assets are becoming part of the brand"). */
+        #avatar-zoom { position: fixed; inset: 0; z-index: 60; display: none; cursor: pointer;
+            background: rgba(var(--rm-bg-rgb), 0); transition: background 0.3s ease; -webkit-tap-highlight-color: transparent; }
+        #avatar-zoom.open { display: block; }
+        #avatar-zoom.shown { background: rgba(var(--rm-bg-rgb), 0.9); }
+        #avatar-zoom img { position: fixed; object-fit: contain; will-change: left, top, width, height;
+            transition: left 0.35s cubic-bezier(0.2, 0.8, 0.2, 1), top 0.35s cubic-bezier(0.2, 0.8, 0.2, 1), width 0.35s cubic-bezier(0.2, 0.8, 0.2, 1), height 0.35s cubic-bezier(0.2, 0.8, 0.2, 1), filter 0.35s ease; }
+        /* The podium's gold glow, so your pick looks the way a win will. */
+        #avatar-zoom.shown img { filter: drop-shadow(0 0 28px rgba(var(--rm-brand-rgb), 0.45)); }
+        @media (prefers-reduced-motion: reduce) { #avatar-zoom, #avatar-zoom img { transition: none; } }
 
         .module-list { display: flex; flex-direction: column; gap: 10px; margin-top: 8px; }
         .module-row {
@@ -407,7 +425,7 @@
              /avatars.js, replacing the old 24-emoji grid. -->
         <div class="input-group">
             <label>Pick your avatar</label>
-            <div class="emoji-grid" id="avatar-grid"></div>
+            <div class="avatar-grid-box"><div class="emoji-grid" id="avatar-grid"></div></div>
         </div>
 
         <!-- No game choice here any more (Randy, Nov 2026): joining and
@@ -417,6 +435,7 @@
         <button class="btn" onclick="executeRoomOnboarding()">Join</button>
         <div id="login-feedback" class="feedback"></div>
     </div>
+    <div id="avatar-zoom" role="button" aria-label="Back to the avatars" onclick="closeAvatarZoom()"><img alt=""></div>
 
     <!-- SCREEN 2: GAMEPLAY INPUT CONTROLLER -->
     <div id="game-screen" class="card">
@@ -1415,7 +1434,53 @@
             for (let i = 0; i < btns.length; i++) { btns[i].classList.remove("selected"); }
             element.classList.add("selected");
             chosenAvatar = avatarChar;
+            openAvatarZoom(element, avatarChar);
         }
+
+        // Tap-to-enlarge (Randy, Nov 2026). The picture flies from its tile
+        // to the middle of the screen (the small copy first, swapped for the
+        // full drawing once it's loaded), and back to the tile on any tap.
+        let avatarZoomTile = null;
+        function placeAvatarZoom(img, rect) {
+            img.style.left = rect.left + 'px'; img.style.top = rect.top + 'px';
+            img.style.width = rect.width + 'px'; img.style.height = rect.height + 'px';
+        }
+        function avatarTileRect(tile) {
+            const inner = tile.querySelector('img') || tile;
+            return inner.getBoundingClientRect();
+        }
+        function openAvatarZoom(tile, value) {
+            const m = /^av:([a-z0-9-]+)$/.exec(value || '');
+            if (!m) return;
+            const zoom = document.getElementById('avatar-zoom');
+            const img = zoom.querySelector('img');
+            avatarZoomTile = tile;
+            img.style.transition = 'none';
+            img.src = avatarSrc(m[1], false);
+            placeAvatarZoom(img, avatarTileRect(tile));
+            zoom.classList.add('open');
+            const full = new Image();
+            full.onload = () => { if (avatarZoomTile === tile) img.src = full.src; };
+            full.src = avatarSrc(m[1], true);
+            const size = Math.min(window.innerWidth * 0.72, window.innerHeight * 0.5, 420);
+            void img.offsetWidth; // start from the tile, then animate
+            img.style.transition = '';
+            placeAvatarZoom(img, { left: (window.innerWidth - size) / 2, top: (window.innerHeight - size) / 2, width: size, height: size });
+            zoom.classList.add('shown');
+        }
+        function closeAvatarZoom() {
+            const zoom = document.getElementById('avatar-zoom');
+            if (!zoom.classList.contains('open')) return;
+            const img = zoom.querySelector('img');
+            zoom.classList.remove('shown');
+            if (avatarZoomTile) placeAvatarZoom(img, avatarTileRect(avatarZoomTile));
+            const tile = avatarZoomTile;
+            avatarZoomTile = null;
+            const reduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+            setTimeout(() => { if (!avatarZoomTile) zoom.classList.remove('open'); }, reduced ? 0 : 360);
+            if (tile && tile.focus) tile.focus({ preventScroll: true });
+        }
+        document.addEventListener('keydown', e => { if (e.key === 'Escape') closeAvatarZoom(); });
 
         function selectModule(element, moduleKey) {
             const rows = document.getElementsByClassName("module-row");
@@ -3618,7 +3683,7 @@
             // The winner's own avatar, big (Randy, Nov 2026: "If you win,
             // your avatar wins"), the same moment the TV's podium shows.
             const winnerAvatar = rank === 1
-                ? `<div class="go-phone-avatar">${avatarHtml(data.myEmoji || chosenAvatar, 1)}</div>`
+                ? `<div class="go-phone-avatar">${avatarHtml(data.myEmoji || chosenAvatar, 1, { full: true })}</div>`
                 : '';
             container.innerHTML = `
                 ${winnerAvatar}

@@ -305,6 +305,7 @@ for (;;) {
         if (r.lastSig !== before && SHOTS) await shoot(r, ((room.triviYeahII && room.gameState === 'TRIVI_YEAH_II_ROUND' && room.triviYeahII.phase) || room.gameState).toLowerCase());
         if (r.endVote && r.voted) { r.done = true; if (room.gameState !== 'LOBBY') r.failed = `vote to end left it in ${room.gameState}`; continue; }
         if (room.gameState === 'GAME_OVER') {
+            if (SHOTS) { await sleep(2500); await shoot(r, 'podium'); } // the podium draws a beat after Game Over
             r.done = true; r.took = Math.round((Date.now() - r.started) / 1000);
             if (r.code === 'SMOKE-PUB') r.tally = room.nightTally ? Object.keys(room.nightTally).length : 0;
             continue;
