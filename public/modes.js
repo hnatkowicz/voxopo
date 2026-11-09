@@ -11,7 +11,7 @@ window.RANDOMANIA_MODES = [
     // "Beta" tag came off once it became the flagship (Randy, Nov 2026).
     { key: 'TRIVI_YEAH_II',   name: 'Thinking Pants',  blurb: 'Board trivia, bet big',          tag: null,         color: 'var(--rm-cyan)', emoji: '👖', icon: 'mode-thinking-pants' },
     { key: 'COUNTRY_MONKEY',  name: 'Country Monkey',  blurb: 'Find it on the map',             tag: null,         color: 'var(--rm-orange)', emoji: '🐒', icon: 'mode-country-monkey' },
-    { key: 'FLAG_ME_DOWN',    name: 'Flag Me Down',    blurb: 'Name it before the clues do',    tag: 'New',        color: 'var(--rm-yellow)', emoji: '🚩', icon: 'mode-flag-me-down' },
+    { key: 'FLAG_ME_DOWN',    name: 'Flag Me Down',    blurb: 'Name it before the clues do',    tag: null,          color: 'var(--rm-yellow)', emoji: '🚩', icon: 'mode-flag-me-down' },
     // The letter race (Randy, Nov 2026). "Letter Rip" is a working name.
     { key: 'LETTER_RIP',      name: 'Letter Rip',      blurb: 'Solve the phrase first',         tag: 'New',        color: 'var(--rm-periwinkle)', emoji: '🔤', icon: 'mode-letter-rip' },
     { key: 'EMPOSSDURR',      name: 'EmpossDurr',      blurb: 'Find the impostor',              tag: null,         color: 'var(--rm-orange-hot)', emoji: '🕵️', icon: 'mode-empossdurr' },

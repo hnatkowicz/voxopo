@@ -85,9 +85,11 @@
         /* Letter Rip (Randy, Nov 2026) */
         .lr-head { font-size: 0.8rem; font-weight: 600; color: var(--rm-text-muted); text-align: center; letter-spacing: 0.04em; }
         .lr-category { font-size: 1.15rem; font-weight: 800; color: var(--rm-brand); text-align: center; margin: 4px 0 12px; }
-        .lr-board { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px 12px; margin-bottom: 14px; }
+        /* Lines come from lrLines (the TV's rule), so both boards match. */
+        .lr-board { display: flex; flex-direction: column; align-items: center; gap: 6px; margin-bottom: 14px; }
+        .lr-line { display: flex; justify-content: center; gap: 12px; }
         .lr-word { display: inline-flex; gap: 2px; }
-        .lr-tile { width: 20px; height: 26px; display: inline-flex; align-items: center; justify-content: center; border-radius: 3px; background: var(--rm-surface-2); border: 1px solid var(--rm-border); font-weight: 800; font-size: 15px; color: var(--rm-bg); box-sizing: border-box; }
+        .lr-tile { width: 20px; height: 26px; display: inline-flex; align-items: center; justify-content: center; border-radius: 3px; background: rgba(var(--rm-text-soft-rgb), 0.16); border: 1px solid rgba(var(--rm-text-soft-rgb), 0.5); font-weight: 800; font-size: 15px; color: var(--rm-bg); box-sizing: border-box; }
         .lr-tile.lit { background: var(--rm-text); border-color: var(--rm-text); }
         button.lr-tile.lr-tap { cursor: pointer; padding: 0; border-color: rgba(var(--rm-brand-rgb), 0.45); }
         .lr-tile.mine { border: 2px solid var(--rm-brand); background: rgba(var(--rm-brand-rgb), 0.35); box-shadow: 0 0 10px rgba(var(--rm-brand-rgb), 0.6); }
@@ -2442,6 +2444,42 @@
             return response.json();
         }
 
+        // The TV's line rule (letterRipLines in app.js), so the phone's board
+        // breaks exactly where the TV's does (family, Nov 2026). Keep
+        // LR_LINE_SLOTS in step with app.js.
+        const LR_LINE_SLOTS = 12;
+        function lrLines(words) {
+            const lines = [];
+            let line = [], used = 0;
+            words.forEach((w, i) => {
+                const need = (line.length ? 1 : 0) + w.length;
+                if (line.length && used + need > LR_LINE_SLOTS) { lines.push(line); line = []; used = 0; }
+                used += (line.length ? 1 : 0) + w.length;
+                line.push(i);
+            });
+            if (line.length) lines.push(line);
+            return lines;
+        }
+        function lrJoinLines(tiles, wordHtml) {
+            return lrLines(tiles).map(line => `<span class="lr-line">${line.map(i => wordHtml[i]).join('')}</span>`).join('');
+        }
+        // The tile size that fits the longest line in the card (about 270px),
+        // up to a cap: the normal board keeps its 20px unless a long line
+        // needs smaller; the Spotlight grows tiles to tap, up to 30px.
+        function lrTileSize(tiles, cap) {
+            let widest = 0; // tiles per pixel on the most crowded line
+            lrLines(tiles).forEach(line => {
+                const letters = line.reduce((n, i) => n + tiles[i].length, 0);
+                const room = 270 - (line.length - 1) * 12;
+                widest = Math.max(widest, letters / Math.max(1, room));
+            });
+            return widest ? Math.max(14, Math.min(cap, Math.floor(1 / widest) - 2)) : cap;
+        }
+        function lrTileFit(tiles, normal) {
+            const size = lrTileSize(tiles, normal);
+            return size < normal ? `style="width:${size}px;height:${Math.round(size * 1.3)}px;font-size:${Math.round(size * 0.75)}px"` : '';
+        }
+
         function lrFeedback(text, good) {
             const feedback = document.getElementById('lr-feedback');
             if (!text) { feedback.style.display = 'none'; return; }
@@ -2557,12 +2595,11 @@
             document.getElementById('lr-head').innerHTML = data.lrPhase === 'SPOT_WAGER' || data.lrPhase === 'SPOT_REVEAL' ? 'The Spotlight'
                 : `The Spotlight &middot; ${data.lrPhase === 'SPOT_LAST' ? 'Last call' : `Round ${sp.round} of ${sp.rounds}`} &middot; Pays ${lrPays(sp.pays)}`;
             document.getElementById('lr-category').innerText = data.category || '';
-            // Big enough tiles to tap; the longest word sets the size.
-            const longest = Math.max(...(data.tiles || [[]]).map(w => w.length));
-            const size = Math.max(18, Math.min(30, Math.floor(300 / Math.max(1, longest)) - 3));
+            // Big enough tiles to tap; the longest line sets the size.
+            const size = lrTileSize(data.tiles || [], 30);
             const canTap = data.lrPhase === 'SPOT_TAP' && me.spot === null;
             let at = 0;
-            document.getElementById('lr-board').innerHTML = (data.tiles || []).map(word => {
+            const spotWords = (data.tiles || []).map(word => {
                 const html = `<span class="lr-word">${word.map((ch, k) => {
                     const i = at + k, style = `style="width:${size}px;height:${Math.round(size * 1.3)}px;font-size:${Math.round(size * 0.6)}px"`;
                     if (ch === '' && canTap) return `<button type="button" class="lr-tile lr-tap" data-i="${i}" ${style} onclick="lrSpotTap(${i})"></button>`;
@@ -2572,7 +2609,8 @@
                 }).join('')}</span>`;
                 at += word.length + 1;
                 return html;
-            }).join('');
+            });
+            document.getElementById('lr-board').innerHTML = lrJoinLines(data.tiles || [], spotWords);
 
             const status = document.getElementById('lr-status');
             const locked = me.answer ? `Locked in: <strong>${lrEsc(me.answer)}</strong>. Right pays ${lrPays(me.answerPays)}.` : '';
@@ -2615,10 +2653,13 @@
 
             document.getElementById('lr-head').innerHTML = `Puzzle ${data.puzzle} of ${data.total}${data.lrPhase !== 'DONE' ? ` &middot; Worth ${Number(data.pot).toLocaleString('en-US')}` : ''}`;
             document.getElementById('lr-category').innerText = data.category || '';
-            document.getElementById('lr-board').innerHTML = (data.tiles || []).map(word => `<span class="lr-word">${word.map(ch =>
-                ch === '' ? '<span class="lr-tile"></span>'
-                : /[A-Z]/.test(ch) ? `<span class="lr-tile lit">${ch}</span>`
-                : `<span class="lr-tile punct">${lrEsc(ch)}</span>`).join('')}</span>`).join('');
+            const tiles = data.tiles || [];
+            const fit = lrTileFit(tiles, 20);
+            const words = tiles.map(word => `<span class="lr-word">${word.map(ch =>
+                ch === '' ? `<span class="lr-tile" ${fit}></span>`
+                : /[A-Z]/.test(ch) ? `<span class="lr-tile lit" ${fit}>${ch}</span>`
+                : `<span class="lr-tile punct">${lrEsc(ch)}</span>`).join('')}</span>`);
+            document.getElementById('lr-board').innerHTML = lrJoinLines(tiles, words);
 
             // What you know right now.
             const status = document.getElementById('lr-status');
@@ -2633,13 +2674,14 @@
                     : p.count ? `<span class="hit">Your ${p.letter} is in it${p.count > 1 ? ` &times;${p.count}` : ''}! +${p.points}</span>`
                     : `<span class="miss">No ${p.letter}.</span>`;
             } else {
-                status.innerHTML = data.myPick ? `You picked ${data.myPick}. Wait for the reveal.` : 'Pick a letter';
+                status.innerHTML = data.myPick ? `You picked ${data.myPick}. Tap another to change it.` : 'Pick a letter';
             }
 
             // The keyboard: your letters, the TV's letters, and this round's pick.
             const revealed = new Set(data.revealed || []);
             const bank = data.bank || {};
-            const canPick = data.lrPhase === 'PICK' && !data.myPick && lrSolveStep === null;
+            // Picks can change until the round closes (Randy's son, Nov 2026).
+            const canPick = data.lrPhase === 'PICK' && lrSolveStep === null;
             document.getElementById('lr-keys').innerHTML = LR_KEY_ROWS.map(row => `<div class="lr-key-row">${[...row].map(letter => {
                 const tried = letter in bank;
                 let cls = 'lr-key';
@@ -2648,7 +2690,7 @@
                 else if (data.myPick === letter) cls += ' mine';
                 else if (tried && bank[letter] > 0) { cls += ' hit'; if (bank[letter] > 1) badge = `<span class="lr-key-count">&times;${bank[letter]}</span>`; }
                 else if (tried) cls += ' miss';
-                const usable = canPick && !revealed.has(letter) && !tried;
+                const usable = canPick && !revealed.has(letter) && !tried && data.myPick !== letter;
                 if (!usable && !revealed.has(letter) && !tried && data.myPick !== letter) cls += ' idle';
                 return `<button type="button" class="${cls}" ${usable ? `onclick="lrPick('${letter}')"` : 'disabled'}>${letter}${badge}</button>`;
             }).join('')}</div>`).join('');

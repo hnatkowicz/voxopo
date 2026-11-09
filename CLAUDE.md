@@ -399,8 +399,10 @@ it (Randy, Nov 2026: the two looked alike). Vote to end (Randy, Oct 2026): no
 game leader, so ending early is a room vote -- more than half the players
 (`endGameVoteFor`), votes can be taken back, and it goes straight to the
 lobby. **After Game Over** the TV shows how the room is leaning, Play
-again vs Main menu, as a gold bar with both counts (Randy, Nov 2026: in a
-bigger room people can't tell each other what they want); the TV shows a small "x of n needed" pill while votes are in. The game page keeps only what changes
+again vs Main menu, as two gold bars stacked on one edge, each with its
+count, and "x of n voted" under them (Randy, Nov 2026: in a bigger room
+people can't tell each other what they want; stacked so they compare at a
+glance, and here the counts matter as much as the bars); the TV shows a small "x of n needed" pill while votes are in. The game page keeps only what changes
 what you'd tap; a thin strip on top keeps your emoji, name and score.
 Swipes starting within 30px of either edge are ignored (iPhone Safari's
 Back/Forward), and a side page closes itself whenever the player has
@@ -676,7 +678,13 @@ Mode keys are used in room votes and in `gameEngine.js`:
   20). New categories freshen games most, since a game draws 7 different
   ones. 2,000 was the aim; more is always welcome. Play Again avoids
   puzzles this room has played (`room.letterRipPlayed`). Each round,
-  everyone secretly picks one letter on their phone at once. The pick
+  everyone secretly picks one letter on their phone at once, and **can
+  change it until the round closes** (Randy's son, Nov 2026: a second
+  chance for a mis-key, no confirm step; a change in the 1s all-picked
+  beat restarts the beat). The phone and TV boards break lines by one
+  rule (12 letters and spaces a line, a longer word on its own;
+  `letterRipLines` in `app.js`, `lrLines` in `play.html`), so they always
+  match, and blank tiles were lifted a shade (family: "a touch dim"). The pick
   clock is 15s and the reveal holds 6s (Randy: "pace is VERY fast" at
   12s/4s; the reveal is when people think about solving). A round ends
   early once everyone has picked. Every hit scores 100 per time it appears, **split among
