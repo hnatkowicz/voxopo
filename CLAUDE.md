@@ -226,8 +226,10 @@ event, for a small fee. That's why hosting is gated behind access codes.
   screen (Randy: leave for now) and Flag Me Down's map below the clues
   (Randy scrolls). **Avatars** (Nov 2026): Randy's drawings in
   `public/avatars/` replaced the 24-emoji join grid ("my drawn avatars
-  only"; no tally of picks). 24 on the join screen (4 rows of 6; grew from
-  18 with 7 new drawings, and pants came off the list but keeps its file).
+  only"; no tally of picks). **How many: whatever Randy comes up with**
+  (Nov 2026: "the scrolling has emboldened me to continue creating"); he
+  adds them in sixes (24 so far; pants came off the list but keeps its
+  file).
   Randy: the big avatar on the podium "means a lot when it's yours up
   there", which is why the ones that are so-so small stay. The list is
   `AVATARS` in `public/avatars.js` (add a file, add its name). **A bigger
@@ -242,7 +244,15 @@ event, for a small fee. That's why hosting is gated behind access codes.
   by `scripts/avatar-thumbs.mjs` and a GitHub Action whenever an SVG is
   uploaded; the full SVG loads only where an avatar is big (the enlarge,
   the TV podium, the Champion card), and a missing thumb falls back to
-  it. A pick travels as `av:<name>` in the old
+  it. **The entrance** (Randy, Nov 2026: "you're making an entrance after
+  standing in front of the mirror... everyone will see your outfit"): in
+  the lobby the TV shows a new player's avatar big over the stage, gold
+  glow and name, then it settles into the rail (`showBigEntrance` in
+  `app.js`). Arrivals close together share one moment as a row (up to 8,
+  then "+N"); past 12 players (a pub filling up) entrances shrink to a
+  row beside the QR code, so they never keep hiding the tiles people are
+  voting on; mid-game it's the old quiet note. Never over the QR code.
+  A pick travels as `av:<name>` in the old
   emoji slot, and `avatarHtml` draws it everywhere a player's emoji was
   (TV scoreboard, join toast, Profiler names, the phone's strip, badge and
   scores). Anything else in that slot shows as text, so an old phone
@@ -908,9 +918,6 @@ and forth until we both agree the idea is good **and** worth the effort. So:
   characters and real people's likenesses are off the table for a paid
   pub game; Claude's picture idea for later is Randy drawing props and
   settings, never characters.
-- **More avatars than 24** (a bigger stable, 24 shown per room, a
-  player's last pick always included): later, once Randy has 30-35
-  drawings.
 - **Category depth (Randy, Oct 2026):** every text category has at least
   20 questions per tier. Science & Nature and Astronomy & Space are at 30
   per tier (Nov 2026: "we're nerds"). **New bar (Randy, Nov 2026): 200
