@@ -3140,14 +3140,19 @@ function handleLetterRipAction(roomCode, room, playerName, cleanText) {
     if (pick) {
         const letter = pick[1].toUpperCase();
         if (lr.phase !== 'PICK') return `⚠️ Wait for the next round to pick.`;
-        if (playerName in lr.picks) return `⚠️ You already picked ${lr.picks[playerName]} this round.`;
         if (lr.revealed.has(letter)) return `⚠️ ${letter} is already on the board.`;
         if (lr.banks[playerName] && letter in lr.banks[playerName]) return `⚠️ You already tried ${letter}.`;
+        // A pick can change until the round closes, as answers can in
+        // Thinking Pants and Trivi-yeah! (Randy's son, Nov 2026: a second
+        // chance for a mis-key, with no confirm step). A change during the
+        // all-picked beat restarts the beat.
+        const changed = playerName in lr.picks;
+        if (changed && lr.picks[playerName] === letter) return `Picked ${letter}.`;
         lr.picks[playerName] = letter;
-        broadcastToRoom(roomCode, { type: 'ANSWER_SUBMITTED', playerName });
+        if (!changed) broadcastToRoom(roomCode, { type: 'ANSWER_SUBMITTED', playerName });
         broadcastLetterRipState(roomCode);
         checkLetterRipAllPicked(roomCode);
-        return `Picked ${letter}.`;
+        return changed ? `Changed to ${letter}.` : `Picked ${letter}.`;
     }
     const solve = /^LRSOLVE\s+(.+)$/s.exec(cleanText);
     if (solve) {

@@ -421,13 +421,17 @@ if (btnSubmitSpectate) {
                     // Which way the room is leaning (Randy, Nov 2026: in a bigger room
                     // people can't tell each other what they want).
                     if (tally) {
-                        const again = data.playAgain || 0, menu = data.mainMenu || 0, total = Math.max(1, again + menu);
+                        // Two bars stacked on one edge, so they compare at a glance, each
+                        // with its count (Randy, Nov 2026: here the count matters as much
+                        // as the picture). Both are out of everyone in the room.
+                        const again = data.playAgain || 0, menu = data.mainMenu || 0;
+                        const scale = Math.max(1, data.totalNeeded || 0, again + menu);
+                        const row = (label, n) => `
+                            <span class="go-vote-label">${label}</span>
+                            <span class="go-vote-bar"><span class="go-vote-fill" style="width:${Math.round(100 * n / scale)}%"></span></span>
+                            <strong class="go-vote-n">${n}</strong>`;
                         tally.innerHTML = `
-                            <div class="go-vote">
-                                <span class="go-vote-label">Play again <strong>${again}</strong></span>
-                                <span class="go-vote-bar"><span class="go-vote-again" style="width:${Math.round(100 * again / total)}%"></span></span>
-                                <span class="go-vote-label"><strong>${menu}</strong> Main menu</span>
-                            </div>
+                            <div class="go-vote">${row('Play again', again)}${row('Main menu', menu)}</div>
                             <div class="go-vote-count">${data.votedCount} of ${data.totalNeeded} voted</div>`;
                     }
                 }
@@ -2057,9 +2061,27 @@ let letterRipShown = { puzzle: null, keys: new Set() };
 
 // Tiles that weren't showing a moment ago flip in. Tracked by position, so
 // a Spotlight flip (one square) and a letter (every copy) both work.
+// The phone and the TV break the phrase into lines with the same rule, so
+// the two boards always match (family, Nov 2026: the phone's lines didn't
+// match the TV's, since each wrapped to its own width). Keep in step with
+// LR_LINE_SLOTS in play.html.
+const LR_LINE_SLOTS = 12; // letters and spaces per line; a longer word gets a line to itself
+function letterRipLines(words) {
+    const lines = [];
+    let line = [], used = 0;
+    words.forEach((w, i) => {
+        const need = (line.length ? 1 : 0) + w.length;
+        if (line.length && used + need > LR_LINE_SLOTS) { lines.push(line); line = []; used = 0; }
+        used += (line.length ? 1 : 0) + w.length;
+        line.push(i);
+    });
+    if (line.length) lines.push(line);
+    return lines;
+}
+
 function letterRipTilesHtml(tiles, fresh, spots) {
     let at = 0;
-    return tiles.map(word => {
+    const wordHtml = tiles.map(word => {
         const html = `<span class="lr-word">${word.map((ch, k) => {
             const i = at + k;
             let tile;
@@ -2075,7 +2097,8 @@ function letterRipTilesHtml(tiles, fresh, spots) {
         }).join('')}</span>`;
         at += word.length + 1;
         return html;
-    }).join('');
+    });
+    return letterRipLines(tiles).map(line => `<span class="lr-line">${line.map(i => wordHtml[i]).join('')}</span>`).join('');
 }
 
 function letterRipFreshKeys(data) {

@@ -897,10 +897,12 @@ body.tp-layout[data-view="gateway"] #gateway-screen { display: flex !important; 
    centered board never moves (Randy, Nov 2026: "Letters jumped"). */
 .lr-foot { min-height: calc(var(--u) * 7.5); display: flex; flex-direction: column; align-items: center; justify-content: flex-start; gap: calc(var(--u) * 0.8); }
 .lr-category { font-family: var(--rm-font-display); font-weight: 800; font-size: calc(var(--u) * 2.6); color: var(--rm-brand); text-align: center; }
-.lr-board { display: flex; flex-wrap: wrap; justify-content: center; gap: calc(var(--u) * 1.2) calc(var(--u) * 2.4); max-width: 92%; margin: 0 auto; }
+.lr-board { display: flex; flex-direction: column; align-items: center; gap: calc(var(--u) * 1.2); max-width: 92%; margin: 0 auto; }
+/* One line of the phrase (letterRipLines in app.js decides the breaks). */
+.lr-line { display: flex; justify-content: center; gap: calc(var(--u) * 2.4); white-space: nowrap; }
 .lr-word { display: inline-flex; gap: calc(var(--u) * 0.45); white-space: nowrap; }
 .lr-tile { width: calc(var(--u) * 4); height: calc(var(--u) * 5); display: inline-flex; align-items: center; justify-content: center;
-    border-radius: calc(var(--u) * 0.5); background: var(--rm-surface); border: calc(var(--u) * 0.15) solid var(--rm-border);
+    border-radius: calc(var(--u) * 0.5); background: rgba(var(--rm-text-soft-rgb), 0.16); border: calc(var(--u) * 0.15) solid rgba(var(--rm-text-soft-rgb), 0.5); /* lifted Nov 2026: blank tiles read as dim */
     font-family: var(--rm-font-display); font-weight: 800; font-size: calc(var(--u) * 2.8); color: var(--rm-bg); box-sizing: border-box; }
 .lr-tile.lr-lit { background: var(--rm-text); border-color: var(--rm-text); }
 .lr-tile.lr-punct { background: transparent; border-color: transparent; color: var(--rm-text); width: calc(var(--u) * 1.8); }
@@ -936,11 +938,13 @@ body.tp-layout[data-view="gateway"] #gateway-screen { display: flex !important; 
 
 /* Game Over: which way the room is leaning, Play again vs Main menu.
    Gold vs plain, never green/red (those mean right/wrong). */
-.go-vote { display: flex; align-items: center; justify-content: center; gap: calc(var(--u) * 1); font-size: calc(var(--u) * 1.4); color: var(--rm-text-soft); }
+.go-vote { display: inline-grid; grid-template-columns: auto calc(var(--u) * 18) auto; align-items: center; column-gap: calc(var(--u) * 1); row-gap: calc(var(--u) * 0.6); font-size: calc(var(--u) * 1.4); color: var(--rm-text-soft); }
+.go-vote-label { text-align: right; }
 .go-vote strong { color: var(--rm-text); font-weight: 800; }
-.go-vote-bar { width: calc(var(--u) * 18); height: calc(var(--u) * 0.9); border-radius: calc(var(--u) * 0.45); background: rgba(var(--rm-text-soft-rgb), 0.35); overflow: hidden; display: inline-flex; }
-.go-vote-again { height: 100%; background: var(--rm-brand); transition: width 0.3s ease; }
-.go-vote-count { font-size: calc(var(--u) * 1.05); color: var(--rm-text-soft); margin-top: calc(var(--u) * 0.4); }
+.go-vote-n { min-width: 2ch; text-align: left; font-variant-numeric: tabular-nums; }
+.go-vote-bar { width: 100%; height: calc(var(--u) * 1.1); border-radius: calc(var(--u) * 0.55); background: rgba(var(--rm-text-soft-rgb), 0.25); overflow: hidden; display: flex; }
+.go-vote-fill { height: 100%; background: var(--rm-brand); transition: width 0.3s ease; }
+.go-vote-count { font-size: calc(var(--u) * 1.3); color: var(--rm-text-soft); margin-top: calc(var(--u) * 0.6); }
 
 /* The Spotlight's results: the solved board steps down so the result rows
    fit under a three-line phrase on a 960x540 TV. */
