@@ -950,9 +950,17 @@ and forth until we both agree the idea is good **and** worth the effort. So:
   blues at the hard end; no artist a Lyrics question names, like "Which
   Journey song..."). Every general category Randy listed is at 200 now. The family's favorites are school subjects
   (biology, astronomy, the World Wars, US history) and pop culture; new
-  categories get pun names. Next, separate pop-culture categories (**Video
-  Games**, **Cartoons & Kids' TV**, **Pop Culture**: celebrities, viral
-  moments, slogans, toys).
+  categories get pun names. **The pop-culture pair** (built Nov 2026, 120
+  each, 30 per tier; working titles, Randy decides): **Extra Lives**
+  (video games, `content/video_games.csv`, key `VIDEO_GAMES`: characters,
+  worlds, designers, arcade and indie classics; consoles, Pong, Pac-Man,
+  Tetris and Angry Birds stay with Technology and Logo My Eggo, and no
+  question names a brand another category's tile answers, like Nintendo,
+  Sega or Atari) and **Pop Quiz** (`content/pop_quiz.csv`, key `POP_QUIZ`
+  -- `POP_CULTURE` is the retired Trivi-yeah! deck's: toys and board
+  games, fads, viral moments and memes, ad slogans, celebrities and
+  royals; film, TV and music stay in their own categories). Both are
+  Trivi-yeah! topics too. Cartoons & Kids' TV stays parked.
 - **Water images:** Wet Pants is 103 (Oct 2026). Rivers are coming in
   batches from a list Claude gave Randy: batch 1 brought the Danube,
   Rhine, Volga, Euphrates, Ganges, Mekong, Yangtze, Niger and Rio Grande;

@@ -1204,7 +1204,17 @@ const TRIVI_YEAH_II_CATEGORIES = [
     { key: 'GREAT_STATE', label: 'The Great State of...' },
     // Biology (Randy, Nov 2026: "the family will love this"): cells, the
     // body, genetics, animals, plants, microbes. content/cell_mates.csv.
-    { key: 'CELL_MATES', label: 'Cell Mates' }
+    { key: 'CELL_MATES', label: 'Cell Mates' },
+    // The pop-culture pair Randy asked for (Nov 2026), working titles with
+    // pun names like the rest. Video games: the games themselves --
+    // characters, worlds, designers -- since Technology and Logo My Eggo
+    // already ask about consoles, Pong, Pac-Man and Tetris.
+    // content/video_games.csv. Pop culture: toys, fads, viral moments,
+    // slogans, celebrities and royals, leaving film, TV and music to their
+    // own categories. content/pop_quiz.csv (POP_QUIZ, not POP_CULTURE: that
+    // key belongs to the old, retired Trivi-yeah! deck).
+    { key: 'VIDEO_GAMES', label: 'Extra Lives' },
+    { key: 'POP_QUIZ', label: 'Pop Quiz' }
 ];
 const TRIVI_YEAH_II_CATEGORIES_PER_BOARD = 3;
 
