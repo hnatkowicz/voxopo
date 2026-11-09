@@ -13,7 +13,12 @@ const AVATARS = [
     'boy', 'girl', 'monkey', 'owl', 'rubber-ducky', 'crown',
     'book', 'brain', 'lightbulb', 'microscope', 'compass', 'lighthouse',
     'bicycle', 'motorcycle', 'hat', 'boot', 'tulips', 'coffee',
-    'clarinet', 'drum', 'drum-kit', 'strat', 'palette', 'theater-masks'
+    'clarinet', 'drum', 'drum-kit', 'strat', 'palette', 'theater-masks',
+    // Nov 2026, the first batch after the list began scrolling. 'genie' is
+    // drawn but held back: a blue genie with a goatee and topknot reads as
+    // Disney's, and licensed characters stay out of a paid pub game.
+    'camera', 'camp-fire', 'mountain', 'mustache-mask', 'peace', 'penguin',
+    'pie', 'radioactive', 'surf-wave', 'tape-measure', 'union-jack'
 ];
 
 const AVATAR_PATTERN = /^av:([a-z0-9-]+)$/;
