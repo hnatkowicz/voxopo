@@ -4,14 +4,15 @@ import dotenv from 'dotenv';
 import path from 'path';
 import { WebSocketServer } from 'ws';
 import pool from './config/database.js';
-import { handleIncomingMessage, activeRooms, getCategoriesForMode, resolveRequestedQuestionCount, compareByRank, closeRoom, profilerStatusFor, profilerTvSnapshot, triviYeahIITrapInfo, emptyModeVotes, finalWagerWinShare, resolveDisguisedAsset, flagMeDownStatusFor, GAME_MODE_KEYS, allowedModesFor, finalWagerRevealFor, venueBrand, isHouseTopic, nightTallyMessage, nightTallyFor, endGameVoteFor, thinkingPantsCategoryOverview, setThinkingPantsCategorySetting, venueCategoryOverview, setVenueCategorySetting, tvMessagesSince, tvIsConnected , letterRipStatusFor, letterRipTvState } from './services/gameEngine.js';
+import { handleIncomingMessage, activeRooms, getCategoriesForMode, resolveRequestedQuestionCount, compareByRank, closeRoom, profilerStatusFor, profilerTvSnapshot, triviYeahIITrapInfo, emptyModeVotes, finalWagerWinShare, resolveDisguisedAsset, flagMeDownStatusFor, GAME_MODE_KEYS, allowedModesFor, finalWagerRevealFor, venueBrand, isHouseTopic, nightTallyMessage, nightTallyFor, endGameVoteFor, thinkingPantsCategoryOverview, setThinkingPantsCategorySetting, venueCategoryOverview, setVenueCategorySetting, tvMessagesSince, tvIsConnected , letterRipStatusFor, letterRipTvState, announcementMessage, refreshAnnouncementForCode, clearAllRoomTimers } from './services/gameEngine.js';
 import {
     isHostAuthorized, grantHostSession, isAccessCodeActive,
     isAdminAuthorized, grantAdminSession,
     isAdminLoginRateLimited, recordFailedAdminLogin, clearAdminLoginAttempts,
     isRoomCreateRateLimited, recordFailedRoomCreateAttempt, clearRoomCreateAttempts,
     listAccessCodes, addAccessCode, setAccessCodeActive, normalizeCode,
-    hostSessionCode, getAccessCodeVenue, venueProfilesInstalled, sanitizeVenue, updateAccessCodeVenue, houseColumnInstalled, listHouseSets, boardRulesInstalled, breaksInstalled, themeInstalled
+    hostSessionCode, getAccessCodeVenue, venueProfilesInstalled, sanitizeVenue, updateAccessCodeVenue, houseColumnInstalled, listHouseSets, boardRulesInstalled, breaksInstalled, themeInstalled,
+    announcementInstalled, readAnnouncementSettings, announcementForRoom
 } from './services/accessControl.js';
 import { healthMiddleware, attachHealthTracking, healthSnapshot } from './services/serverHealth.js';
 import { fileURLToPath } from 'url';
@@ -232,7 +233,7 @@ app.get('/api/admin/codes', requireAdmin, async (req, res) => {
         const codes = await listAccessCodes(pool);
         // venueProfiles: false until access_codes_venue_profiles.sql is run.
         const houseColumn = await houseColumnInstalled(pool);
-        return res.json({ success: true, codes, venueProfiles: await venueProfilesInstalled(pool), houseColumn, houseSets: houseColumn ? await listHouseSets(pool) : [], boardRules: await boardRulesInstalled(pool), breaks: await breaksInstalled(pool), theme: await themeInstalled(pool), modes: GAME_MODE_KEYS });
+        return res.json({ success: true, codes, venueProfiles: await venueProfilesInstalled(pool), houseColumn, houseSets: houseColumn ? await listHouseSets(pool) : [], boardRules: await boardRulesInstalled(pool), breaks: await breaksInstalled(pool), theme: await themeInstalled(pool), announcement: await announcementInstalled(pool), modes: GAME_MODE_KEYS });
     } catch (e) {
         return res.status(500).json({ success: false, error: 'Failed to load codes.' });
     }
@@ -268,11 +269,30 @@ app.post('/api/admin/codes/:code/venue', requireAdmin, async (req, res) => {
             return res.status(409).json({ success: false, error: 'Run access_codes_venue_profiles.sql in Neon first.' });
         }
         const venue = sanitizeVenue(req.body, GAME_MODE_KEYS);
-        const found = await updateAccessCodeVenue(pool, req.params.code, venue, await houseColumnInstalled(pool), await boardRulesInstalled(pool), await breaksInstalled(pool), await themeInstalled(pool));
+        const withAnnouncement = await announcementInstalled(pool);
+        const found = await updateAccessCodeVenue(pool, req.params.code, venue, await houseColumnInstalled(pool), await boardRulesInstalled(pool), await breaksInstalled(pool), await themeInstalled(pool), withAnnouncement);
         if (!found) return res.status(404).json({ success: false, error: 'No such code.' });
+        // The announcement reaches rooms already open (the rest of a venue's
+        // settings apply from the next room): set it up mid-evening and it works.
+        if (withAnnouncement) refreshAnnouncementForCode(normalizeCode(req.params.code), announcementForRoom(venue.announcement));
         return res.json({ success: true, venue });
     } catch (e) {
         return res.status(500).json({ success: false, error: 'Failed to save the venue profile.' });
+    }
+});
+
+// Play a code's saved announcement now, in every room it has open, at each
+// room's next moment between questions: for trying it out, or when the
+// evening's schedule slips. Uses what's saved, so save first.
+app.post('/api/admin/codes/:code/announce', requireAdmin, async (req, res) => {
+    try {
+        const code = normalizeCode(req.params.code);
+        const settings = await readAnnouncementSettings(pool, code);
+        if (!settings) return res.status(409).json({ success: false, error: 'Turn the announcement on, add some words, and save first.' });
+        const rooms = refreshAnnouncementForCode(code, settings, true);
+        return res.json({ success: true, rooms });
+    } catch (e) {
+        return res.status(500).json({ success: false, error: 'Could not start it.' });
     }
 });
 
@@ -379,6 +399,8 @@ app.post('/api/room-status', (req, res) => {
                 // A pub night's running tally: this player's points and place.
                 tonight: nightTallyFor(targetRoom, playerName),
                 clock: targetRoom.gameSecondsLeft ?? null,
+                // The venue's announcement, while it's on (the phone shows it on top).
+                announcement: announcementMessage(targetRoom),
                 // The last question's answer and who got it, set at the TV's reveal.
                 recap: targetRoom.phoneRecap && targetRoom.phoneRecap.epoch === (targetRoom.gameEpoch || 0) ? targetRoom.phoneRecap : null
             } : body);
@@ -761,6 +783,8 @@ function tvSnapshotMessages(room) {
         // Letter Rip's board in full, so a reconnecting TV redraws it.
         if (room.gameState === 'LETTER_RIP_ROUND' && room.letterRip) messages.push(letterRipTvState(room));
     }
+    // The venue's announcement goes on top of whatever the room was showing.
+    if (room.announcement) messages.push(announcementMessage(room));
     return messages.map(m => JSON.stringify({ ...m, ...tag }));
 }
 
@@ -853,11 +877,8 @@ async function startServer() {
                 if (now - room.lastActivity > ROOM_TIMEOUT_MS) {
 
                     // Clean up and clear out any active room countdown intervals to prevent RAM leaks
-                    if (room.timerInterval) clearInterval(room.timerInterval);
-                    if (room.lobbyTimerInterval) clearInterval(room.lobbyTimerInterval);
-                    if (room.categoryTimerInterval) clearInterval(room.categoryTimerInterval);
-                    if (room.revealTimeout) clearTimeout(room.revealTimeout);
-                    if (room.emptyRoomTimeout) clearTimeout(room.emptyRoomTimeout);
+                    // (every one of the room's timers, not just these few)
+                    clearAllRoomTimers(code);
 
                     // Securely drop the sockets
                     room.screens.forEach(socket => {

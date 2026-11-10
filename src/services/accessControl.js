@@ -167,6 +167,60 @@ const MAX_BREAK_NOTES = 10;
 // name here plus its folder of art.
 export const THEMES = ['OFF', 'CHRISTMAS'];
 const THEME_DATE_PATTERN = /^\d{4}-\d{2}-\d{2}$/;
+// The scheduled announcement (access_codes_announcement.sql; Randy, Nov
+// 2026, after a trivia night where the host stopped at 8:00 for the post's
+// charter and a moment of silence). One JSON column holds it all.
+const ANNOUNCEMENT_TIME_PATTERN = /^([01]\d|2[0-3]):[0-5]\d$/;
+const ANNOUNCEMENT_AUDIO_PATTERN = /^[A-Za-z0-9][A-Za-z0-9._-]*\.(mp3|m4a|wav|ogg)$/;
+const ANNOUNCEMENT_MAX_TEXT = 1500;
+// The US flag is built in (a reading at a Legion post, a VFW, a ballpark);
+// any other picture is the venue's, in public/venues/.
+const ANNOUNCEMENT_US_FLAG = '/announcement/us-flag.svg';
+function validTimeZone(zone) {
+    if (!zone) return false;
+    try { new Intl.DateTimeFormat('en-US', { timeZone: zone }); return true; } catch (e) { return false; }
+}
+const wholeNumber = (value, min, max, fallback) => {
+    const n = Math.round(Number(value));
+    return Number.isFinite(n) ? Math.min(max, Math.max(min, n)) : fallback;
+};
+// Cleans the announcement /admin sends (never trusted as-is).
+export function sanitizeAnnouncement(input) {
+    const a = input || {};
+    const days = Array.isArray(a.days) ? a.days.map(Number).filter(d => Number.isInteger(d) && d >= 0 && d <= 6) : [];
+    const background = a.background === 'US_FLAG' || a.background === 'NONE'
+        ? a.background
+        : (VENUE_LOGO_PATTERN.test(String(a.background || '')) ? String(a.background) : 'NONE');
+    const narration = ANNOUNCEMENT_AUDIO_PATTERN.test(String(a.narration || '')) ? String(a.narration) : null;
+    return {
+        on: !!a.on,
+        time: ANNOUNCEMENT_TIME_PATTERN.test(String(a.time || '')) ? String(a.time) : '20:00',
+        days: [...new Set(days)].sort(),
+        date: THEME_DATE_PATTERN.test(String(a.date || '')) ? String(a.date) : null,
+        timeZone: validTimeZone(a.timeZone) ? String(a.timeZone) : 'America/New_York',
+        title: String(a.title || '').trim().slice(0, 80),
+        text: String(a.text || '').replace(/\r/g, '').trim().slice(0, ANNOUNCEMENT_MAX_TEXT),
+        background,
+        narration,
+        // Measured by /admin from the file itself when it's saved.
+        narrationSeconds: narration ? wholeNumber(a.narrationSeconds, 0, 900, 0) : 0,
+        // How long the words stay up with no narration (someone reads aloud).
+        showSeconds: wholeNumber(a.showSeconds, 5, 600, 60),
+        silenceSeconds: wholeNumber(a.silenceSeconds, 0, 300, 0)
+    };
+}
+
+// What a room carries: the settings plus the addresses the screens load.
+// Null when it's off or has nothing to show.
+export function announcementForRoom(raw) {
+    const a = sanitizeAnnouncement(raw);
+    if (!a.on || (!a.title && !a.text && !a.narration && !a.silenceSeconds)) return null;
+    return {
+        ...a,
+        backgroundUrl: a.background === 'US_FLAG' ? ANNOUNCEMENT_US_FLAG : a.background === 'NONE' ? null : `/venues/${a.background}`,
+        narrationUrl: a.narration ? `/venues/${a.narration}` : null
+    };
+}
 // House sets are named HOUSE_<something> so a code can never point its
 // house column at an ordinary category.
 const HOUSE_CATEGORY_PATTERN = /^HOUSE_[A-Z0-9_]{1,40}$/;
@@ -199,7 +253,8 @@ export function sanitizeVenue(input, knownModes) {
         themeEnds: THEME_DATE_PATTERN.test(v.themeEnds || '') ? v.themeEnds : null,
         // One note per line in /admin; short, and only a handful.
         breakNotes: (Array.isArray(v.breakNotes) ? v.breakNotes : String(v.breakNotes || '').split('\n'))
-            .map(line => String(line).trim().slice(0, 120)).filter(Boolean).slice(0, MAX_BREAK_NOTES)
+            .map(line => String(line).trim().slice(0, 120)).filter(Boolean).slice(0, MAX_BREAK_NOTES),
+        announcement: sanitizeAnnouncement(v.announcement)
     };
 }
 
@@ -247,6 +302,29 @@ async function readThemeSettings(pool, code) {
         const row = result.rows[0];
         if (!row || !row.theme || row.theme === 'OFF' || !THEMES.includes(row.theme)) return null;
         return { key: row.theme, starts: row.starts || null, ends: row.ends || null };
+    } catch (e) {
+        if (e.code === UNDEFINED_COLUMN) return null;
+        throw e;
+    }
+}
+
+export async function announcementInstalled(pool) {
+    try {
+        await pool.query('SELECT announcement FROM access_codes LIMIT 1');
+        return true;
+    } catch (e) {
+        if (e.code === UNDEFINED_COLUMN) return false;
+        throw e;
+    }
+}
+
+// A code's announcement, ready for a room, or null when it's off or before
+// access_codes_announcement.sql is run.
+export async function readAnnouncementSettings(pool, rawCode) {
+    try {
+        const result = await pool.query('SELECT announcement FROM access_codes WHERE code = $1', [normalizeCode(rawCode)]);
+        const row = result.rows[0];
+        return row && row.announcement ? announcementForRoom(row.announcement) : null;
     } catch (e) {
         if (e.code === UNDEFINED_COLUMN) return null;
         throw e;
@@ -329,8 +407,9 @@ export async function getAccessCodeVenue(pool, rawCode) {
             const breaks = await readBreakSettings(pool, code);
             const breakMinutes = breaks ? breaks.minutes : 0;
             const theme = await readThemeSettings(pool, code);
+            const announcement = await readAnnouncementSettings(pool, code);
             // No HOME/PUB any more (Nov 2026): a venue is a code with a name or a logo.
-            if (!row.venue_name && !row.venue_logo && !allowedModes.length && !house && !houseSet && boardRules === 'CLASSIC' && !breakMinutes && !theme) return null;
+            if (!row.venue_name && !row.venue_logo && !allowedModes.length && !house && !houseSet && boardRules === 'CLASSIC' && !breakMinutes && !theme && !announcement) return null;
             return {
                 name: row.venue_name || null,
                 tagline: row.venue_tagline || null,
@@ -341,7 +420,8 @@ export async function getAccessCodeVenue(pool, rawCode) {
                 boardRules,
                 breakMinutes,
                 breakNotes: breaks ? breaks.notes : [],
-                theme
+                theme,
+                announcement
             };
         } catch (e) {
             if (e.code !== UNDEFINED_COLUMN) throw e;
@@ -373,6 +453,14 @@ export async function listAccessCodes(pool) {
             } catch (e) {
                 if (e.code !== UNDEFINED_COLUMN) throw e;
             }
+            // ...and the announcement once access_codes_announcement.sql is run.
+            try {
+                const announcements = await pool.query('SELECT code, announcement FROM access_codes');
+                const byCode = Object.fromEntries(announcements.rows.map(r => [r.code, r.announcement]));
+                result.rows.forEach(r => { r.announcement = byCode[r.code] ? sanitizeAnnouncement(byCode[r.code]) : null; });
+            } catch (e) {
+                if (e.code !== UNDEFINED_COLUMN) throw e;
+            }
             return result.rows;
         } catch (e) {
             if (e.code !== UNDEFINED_COLUMN) throw e;
@@ -388,7 +476,7 @@ export async function addAccessCode(pool, rawCode, label) {
 
 // venue is already sanitized (sanitizeVenue). Returns false if no such code.
 // The house settings are only written once their columns exist.
-export async function updateAccessCodeVenue(pool, rawCode, venue, withHouse, withRules, withBreaks, withTheme) {
+export async function updateAccessCodeVenue(pool, rawCode, venue, withHouse, withRules, withBreaks, withTheme, withAnnouncement) {
     const code = normalizeCode(rawCode);
     const params = [code, venue.profile, venue.name, venue.tagline, venue.logo, venue.allowedModes.length ? venue.allowedModes : null];
     let sql = 'UPDATE access_codes SET profile = $2, venue_name = $3, venue_tagline = $4, venue_logo = $5, allowed_modes = $6';
@@ -413,6 +501,10 @@ export async function updateAccessCodeVenue(pool, rawCode, venue, withHouse, wit
         sql += `, theme_starts = $${params.length}`;
         params.push(venue.themeEnds);
         sql += `, theme_ends = $${params.length}`;
+    }
+    if (withAnnouncement) {
+        params.push(JSON.stringify(venue.announcement));
+        sql += `, announcement = $${params.length}::jsonb`;
     }
     const result = await pool.query(`${sql} WHERE code = $1`, params);
     return result.rowCount > 0;

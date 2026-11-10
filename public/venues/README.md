@@ -19,3 +19,16 @@ the file name, e.g. `pickles-pins.svg`.
 - **File names:** plain lowercase words and dashes, no spaces.
 
 `pickles-pins.svg` is Randy's logo for the Pickles & Pins test venue.
+
+## Announcement pictures and narration
+
+A code's scheduled announcement (set on `/admin`) can use two more files
+from this folder:
+
+- **Background picture:** shown full screen, dimmed, behind the words.
+  Wide like the TV: 1920×1080 WebP or JPG. (The US flag is built in, no
+  file needed.)
+- **Narration:** an MP3 the venue records, like a member reading the post
+  charter or a bugler. The words stay on screen exactly as long as it
+  plays (`/admin` reads its length when you save, so save again after
+  replacing the file). No popular music: it isn't licensed for this.

@@ -38,7 +38,8 @@ event, for a small fee. That's why hosting is gated behind access codes.
   but there is a **bot smoke test** (Nov 2026): `scripts/smoke-test.mjs`
   plays one room per mode at once, sped up 8x, through the real server,
   and fails if a room breaks, sticks for a minute, or never reaches Game
-  Over. It forces the rare screens too: all three Thinking Pants traps
+  Over. Every room also gets the venue's announcement partway in (it
+  must freeze, then finish). It forces the rare screens too: all three Thinking Pants traps
   (one bot answers everything right, so it sweeps alone), Doublers, the
   Final Wagers with clues bought, the Spotlight, a pub room's break and
   night tally, and a vote to end early. About 2 minutes. **Run it before
@@ -110,6 +111,31 @@ event, for a small fee. That's why hosting is gated behind access codes.
   memory only (`room.nightTally`), gone when the room closes. Pickles & Pins is the test venue
   (Randy's logo `pickles-pins.svg`: the pickle-jar-and-pin mark, no
   lettering, since the banner prints the name beside it).
+- **The scheduled announcement** (Randy, Nov 2026, from a Legion trivia
+  night where the host stopped at 8:00 pm for the post charter and a
+  moment of silence: "a selling point"; `access_codes_announcement.sql`,
+  one JSONB column). Per code on /admin: time and the venue's **time
+  zone**, days (none = every day) or one date, title, words, background
+  (none / the built-in `public/announcement/us-flag.svg`, drawn to the
+  official proportions / a picture in `public/venues/`), the venue's
+  **recorded narration** (an MP3 in `public/venues/`; /admin reads its
+  length on save; no computer voice, no popular music -- licensing), how
+  long the words show without narration, and seconds of silence. At the
+  time, the room **waits for the question on screen to finish** (the next
+  moment no answer clock runs, `announcementGoodMoment`; after 75s it
+  pauses anyway, answers kept), then **pauses every timer in the room**
+  (`pauseRoomTimers`: the shadowed `setTimeout`/`setInterval` remember
+  each room's timers, so every mode freezes and resumes exactly where it
+  was without knowing about it). The TV shows the words over the flag,
+  plays the narration after 3s, then "A moment of silence"; all game
+  sounds are paused and resume after. Phones show the same over
+  everything; game input waits ("One moment..."). No game leader: the
+  clock starts it and it ends on its own. /admin's **Play it now** runs
+  the saved one in the code's open rooms (testing, or the evening ran
+  late), and a saved change reaches open rooms. A room plays each day's
+  showing once, up to 10 minutes late (a room opened at 8:05 still gets
+  it). The smoke test gives every room one partway in and fails if
+  anything moves while it's on.
 - **One room's bug stays in that room** (Nov 2026): every timer in
   `gameEngine.js` runs through `guardTimer` (the file shadows
   `setTimeout`/`setInterval`), and each phone message runs inside its

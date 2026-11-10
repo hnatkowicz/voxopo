@@ -172,6 +172,11 @@
         let boardRulesOn = false;
         let breaksOn = false;
         let themeOn = false;
+        let announcementOn = false;
+        // The announcement's time zones: the US ones first; the browser's own is added if it's not here.
+        const ANNOUNCEMENT_ZONES = [['America/New_York', 'Eastern'], ['America/Chicago', 'Central'], ['America/Denver', 'Mountain'], ['America/Phoenix', 'Arizona'], ['America/Los_Angeles', 'Pacific'], ['America/Anchorage', 'Alaska'], ['Pacific/Honolulu', 'Hawaii'], ['America/Puerto_Rico', 'Atlantic (Puerto Rico)'], ['Europe/London', 'UK'], ['UTC', 'UTC']];
+        const DAY_NAMES = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+        const clockText = time => { const [h, m] = (time || '20:00').split(':').map(Number); return `${((h + 11) % 12) + 1}:${String(m).padStart(2, '0')} ${h < 12 ? 'am' : 'pm'}`; };
         // TV themes: [key, what /admin calls it]. Art lives in public/themes/<key in lowercase>/.
         const THEME_CHOICES = [['OFF', 'Off'], ['CHRISTMAS', 'Christmas']];
         let houseSets = []; // [{ key, total, tiers, complete }] from the database
@@ -216,6 +221,11 @@
                 const name = (THEME_CHOICES.find(t => t[0] === c.theme) || [c.theme, c.theme])[1];
                 const dates = c.theme_starts || c.theme_ends ? ` ${esc(c.theme_starts || '…')} to ${esc(c.theme_ends || '…')}` : '';
                 parts.push(`${esc(name)} theme${dates}`);
+            }
+            if (c.announcement && c.announcement.on) {
+                const a = c.announcement;
+                const when = a.date ? ` on ${esc(a.date)}` : a.days && a.days.length && a.days.length < 7 ? ` ${a.days.map(d => DAY_NAMES[d]).join('/')}` : '';
+                parts.push(`Announcement ${clockText(a.time)}${when}`);
             }
             if (c.house_category) {
                 const set = houseSets.find(h => h.key === c.house_category);
@@ -308,13 +318,135 @@
                         <div class="hint">Leave both blank to show it until you switch it Off. With dates, it shows from the first day through the last, by the TV's own calendar.</div>
                     </div>
                     ` : `<div class="hint" style="margin-bottom: 12px;">TV themes turn on once you run <strong>access_codes_theme.sql</strong> in Neon.</div>`}
+                    ${announcementOn ? announcementEditorHtml(c) : `<div class="hint" style="margin-bottom: 12px;">The scheduled announcement turns on once you run <strong>access_codes_announcement.sql</strong> in Neon.</div>`}
                     <div style="display: flex; gap: 10px;">
                         <button class="btn" style="width: auto; padding: 10px 18px;" onclick="saveVenue('${esc(c.code)}')">Save</button>
                         <button class="btn btn-secondary" style="width: auto; padding: 10px 18px;" onclick="toggleVenueEditor(null)">Cancel</button>
                     </div>
-                    <div class="hint">Applies to rooms opened after you save.</div>
+                    <div class="hint">Applies to rooms opened after you save. The announcement reaches rooms already open too.</div>
                     <div class="feedback" id="venue-feedback"></div>
                 </div>`;
+        }
+
+        // The scheduled announcement (Randy, Nov 2026): at a set time the game
+        // pauses for the venue's announcement (a charter reading, a moment of
+        // silence) and then carries on where it was.
+        function announcementEditorHtml(c) {
+            const a = c.announcement || {};
+            const myZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+            const zone = a.timeZone || myZone || 'America/New_York';
+            const zones = [...ANNOUNCEMENT_ZONES];
+            [myZone, zone].forEach(z => { if (z && !zones.some(([k]) => k === z)) zones.push([z, z]); });
+            const bg = a.background === 'US_FLAG' ? 'US_FLAG' : (!a.background || a.background === 'NONE') ? 'NONE' : 'FILE';
+            const box = 'width: 100%; box-sizing: border-box; background: var(--rm-surface); border: 1px solid var(--rm-border); border-radius: 8px; color: var(--rm-white); padding: 10px; font-family: inherit;';
+            return `
+                    <div class="row">
+                        <label>Scheduled announcement</label>
+                        <select id="ann-on">
+                            <option value="off" ${a.on ? '' : 'selected'}>Off</option>
+                            <option value="on" ${a.on ? 'selected' : ''}>On</option>
+                        </select>
+                        <div class="hint">At the time below, the game pauses as soon as the question on screen finishes (within about a minute), the TV and phones show the announcement, and then the game picks up exactly where it was. Game sounds stay off until it's over.</div>
+                    </div>
+                    <div class="row">
+                        <label>Time</label>
+                        <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
+                            <input type="time" id="ann-time" value="${esc(a.time || '20:00')}" style="width: auto;">
+                            <select id="ann-zone" style="width: auto;">${zones.map(([k, name]) => `<option value="${esc(k)}" ${k === zone ? 'selected' : ''}>${esc(name)}</option>`).join('')}</select>
+                        </div>
+                        <div class="hint">The venue's own time zone.</div>
+                    </div>
+                    <div class="row">
+                        <label>Days (none checked = every day)</label>
+                        <div class="modes" id="ann-days">${DAY_NAMES.map((d, i) => `<label><input type="checkbox" value="${i}" ${(a.days || []).includes(i) ? 'checked' : ''}> ${d}</label>`).join('')}</div>
+                        <label style="margin-top: 10px;">Or one date only (optional)</label>
+                        <input type="date" id="ann-date" value="${esc(a.date || '')}" style="width: auto;">
+                        <div class="hint">A date overrides the days: for a one-off, like Veterans Day.</div>
+                    </div>
+                    <div class="row"><label>Title</label><input type="text" id="ann-title" maxlength="80" value="${esc(a.title)}" placeholder="e.g. Post 123 Charter"></div>
+                    <div class="row"><label>Words on screen</label>
+                        <textarea id="ann-text" rows="6" maxlength="1500" placeholder="The words the TV shows, for example the charter or preamble being read" style="${box}">${esc(a.text)}</textarea>
+                        <div class="hint">Shown big on the TV and on every phone. Long text gets smaller to fit; about 900 characters reads best.</div>
+                    </div>
+                    <div class="row">
+                        <label>Background</label>
+                        <select id="ann-bg" onchange="document.getElementById('ann-bg-file-row').style.display = this.value === 'FILE' ? '' : 'none'">
+                            <option value="NONE" ${bg === 'NONE' ? 'selected' : ''}>None (plain denim)</option>
+                            <option value="US_FLAG" ${bg === 'US_FLAG' ? 'selected' : ''}>United States flag</option>
+                            <option value="FILE" ${bg === 'FILE' ? 'selected' : ''}>The venue's own picture</option>
+                        </select>
+                        <div id="ann-bg-file-row" style="margin-top: 8px; ${bg === 'FILE' ? '' : 'display: none;'}">
+                            <input type="text" id="ann-bg-file" maxlength="80" value="${bg === 'FILE' ? esc(a.background) : ''}" placeholder="e.g. post-123-flag.webp">
+                            <div class="hint">A file in public/venues/ (upload it through GitHub). Wide, like the TV: 1920&times;1080 is ideal. It's shown dimmed behind the words.</div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <label>Recorded narration (optional)</label>
+                        <input type="text" id="ann-narration" maxlength="80" value="${esc(a.narration || '')}" placeholder="e.g. post-123-charter.mp3">
+                        <div class="hint" id="ann-narration-status">${a.narration ? (a.narrationSeconds ? `Plays for ${a.narrationSeconds} seconds.` : '&#9888; Its length couldn\'t be read when saved; the words show for the time below instead.') : 'An MP3 the venue records (a member reading the charter, a bugler). Put it in public/venues/ through GitHub. No popular music: it isn\'t licensed for this.'}</div>
+                    </div>
+                    <div class="row"><label>Show the words for (seconds, when there's no narration)</label>
+                        <input type="number" id="ann-show" min="5" max="600" value="${esc(a.showSeconds || 60)}" style="width: auto;">
+                        <div class="hint">Long enough for someone to read it aloud in the room. With narration, the words stay up for exactly as long as it plays.</div>
+                    </div>
+                    <div class="row"><label>Moment of silence afterwards (seconds, 0 = none)</label>
+                        <input type="number" id="ann-silence" min="0" max="300" value="${esc(a.silenceSeconds || 0)}" style="width: auto;">
+                    </div>
+                    <div class="row">
+                        <button type="button" class="btn btn-secondary" style="width: auto; padding: 10px 18px;" onclick="playAnnouncementNow('${esc(c.code)}')">Play it now</button>
+                        <div class="hint">Plays the saved announcement in this code's open rooms, at each room's next moment between questions: to try it out, or when the evening runs late. Save first.</div>
+                        <div class="feedback" id="ann-feedback"></div>
+                    </div>`;
+        }
+
+        // How long the narration plays, read from the file itself. Null when
+        // it can't be loaded (a typo, or not uploaded yet).
+        function measureNarration(file) {
+            return new Promise(resolve => {
+                if (!file) return resolve(null);
+                const audio = new Audio();
+                const done = value => { audio.src = ''; resolve(value); };
+                const timer = setTimeout(() => done(null), 8000);
+                audio.preload = 'metadata';
+                audio.onloadedmetadata = () => { clearTimeout(timer); done(Number.isFinite(audio.duration) ? Math.ceil(audio.duration) : null); };
+                audio.onerror = () => { clearTimeout(timer); done(null); };
+                audio.src = `/venues/${encodeURIComponent(file)}`;
+            });
+        }
+
+        async function readAnnouncementForm() {
+            const bg = document.getElementById('ann-bg').value;
+            const narration = document.getElementById('ann-narration').value.trim();
+            const narrationSeconds = await measureNarration(narration);
+            return {
+                on: document.getElementById('ann-on').value === 'on',
+                time: document.getElementById('ann-time').value,
+                timeZone: document.getElementById('ann-zone').value,
+                days: [...document.querySelectorAll('#ann-days input:checked')].map(b => Number(b.value)),
+                date: document.getElementById('ann-date').value,
+                title: document.getElementById('ann-title').value,
+                text: document.getElementById('ann-text').value,
+                background: bg === 'FILE' ? document.getElementById('ann-bg-file').value.trim() : bg,
+                narration,
+                narrationSeconds: narrationSeconds || 0,
+                showSeconds: Number(document.getElementById('ann-show').value),
+                silenceSeconds: Number(document.getElementById('ann-silence').value),
+                narrationMissing: !!narration && !narrationSeconds
+            };
+        }
+
+        async function playAnnouncementNow(code) {
+            const feedback = document.getElementById('ann-feedback');
+            try {
+                const response = await fetch(`/api/admin/codes/${encodeURIComponent(code)}/announce`, { method: 'POST' });
+                const data = await response.json();
+                if (!data.success) return showFeedback(feedback, data.error || 'Could not start it.');
+                showFeedback(feedback, data.rooms
+                    ? `On its way in ${data.rooms === 1 ? 'the open room' : `${data.rooms} open rooms`}, at the next moment between questions.`
+                    : 'No room is open with this code right now.');
+            } catch (err) {
+                showFeedback(feedback, 'Could not reach the server.');
+            }
         }
 
         // Active codes first (newest first, as the server sends them); revoked
@@ -455,6 +587,15 @@
                 body.breakMinutes = Number(document.getElementById('venue-break-minutes').value);
                 body.breakNotes = document.getElementById('venue-break-notes').value;
             }
+            let narrationMissing = false;
+            if (announcementOn) {
+                const { narrationMissing: missing, ...announcement } = await readAnnouncementForm();
+                narrationMissing = missing;
+                if (announcement.on && !announcement.title.trim() && !announcement.text.trim() && !announcement.narration && !announcement.silenceSeconds) {
+                    return showFeedback(feedback, 'The announcement is On but empty: add a title, words, narration or a moment of silence.');
+                }
+                body.announcement = announcement;
+            }
             if (houseColumnOn) {
                 body.houseRounds = document.getElementById('venue-house-rounds').value;
                 body.houseCategory = document.getElementById('venue-house-category').value;
@@ -470,6 +611,9 @@
                 if (!data.success) return showFeedback(feedback, data.error || 'Could not save.');
                 if (body.logo.trim() && !data.venue.logo) return showFeedback(feedback, 'Saved, but the logo file name was skipped: use a plain name like pickles-pins.svg.');
                 if (houseColumnOn && body.houseRounds !== 'OFF' && !data.venue.houseCategory) return showFeedback(feedback, 'Saved, but the house column is Off: house questions need a name starting with HOUSE_, like HOUSE_PICKLES_PINS.');
+                if (body.announcement && body.announcement.narration && !data.venue.announcement.narration) return showFeedback(feedback, 'Saved, but the narration was skipped: use a plain file name like post-charter.mp3.');
+                if (narrationMissing) return showFeedback(feedback, `Saved, but ${body.announcement.narration} couldn't be played from public/venues/. Check the name, or upload it; until then the words show for ${data.venue.announcement.showSeconds} seconds.`);
+                if (body.announcement && body.announcement.background && !['NONE', 'US_FLAG'].includes(body.announcement.background) && data.venue.announcement.background === 'NONE') return showFeedback(feedback, 'Saved, but the background picture was skipped: use a plain file name like post-flag.webp.');
                 openVenueEditor = null;
                 loadCodes();
             } catch (err) {
@@ -495,6 +639,7 @@
                 boardRulesOn = !!data.boardRules;
                 breaksOn = !!data.breaks;
                 themeOn = !!data.theme;
+                announcementOn = !!data.announcement;
                 renderCodes(data.codes);
                 loadCategories();
                 startHealth();
