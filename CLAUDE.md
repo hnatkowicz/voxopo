@@ -63,17 +63,24 @@ event, for a small fee. That's why hosting is gated behind access codes.
   deletion is `delete_access_code.sql`, run by hand in Neon. A code's
   category settings go with it (`ON DELETE CASCADE`); its house questions
   don't, since they have their own SQL file.
-- **Venue profiles:** an access code can be HOME (the living-room version)
-  or PUB, with a venue name, tagline, logo (`public/venues/`, 2:1, see its
-  README) and a list of allowed modes, all set on `/admin`
-  (`access_codes_venue_profiles.sql` adds the columns; until it's run every
-  code acts as HOME). A room copies its code's profile when it opens, and
-  the host's session remembers which code it used. PUB rooms get the venue
-  banner and a big QR code in the lobby (scannable from a table), the venue
-  in the top bar and a medium QR code during play. Allowed modes are
-  enforced by the server, not just hidden on screens; one allowed mode
-  skips the choice. Pub default list (Randy, Oct 2026): Thinking Pants,
-  Flag Me Down, Country Monkey. **House column** (`access_codes_house_column.sql`):
+- **One kind of access code** (Randy, Nov 2026: no more HOME vs PUB --
+  "the access code defines the room"; the family wanted the pub tally in
+  the living room without the pub limits). A code is the room's recipe:
+  venue name, tagline, logo (`public/venues/`, 2:1, see its README), the
+  list of modes it plays, house set, breaks, board rules, category dial,
+  TV theme, all set on `/admin` (`access_codes_venue_profiles.sql` added
+  the columns; the old `profile` column is still filled, HOME/PUB by
+  whether there's a venue name or logo, but nothing reads it). A room copies
+  its code's settings when it opens, and the host's session remembers
+  which code it used. **A code with a venue name or logo** gets the venue
+  banner in the lobby, the venue in the top bar and a medium QR code during
+  play (`has-venue` on the TV's body). **The big lobby QR code is
+  everywhere.** **The mode list is the only limit** on what a room plays
+  (nothing ticked = everything), enforced by the server, not just hidden
+  on screens; one allowed mode skips the choice; a code with house
+  questions always keeps Trivi-yeah!. **"Fill in pub defaults"** on /admin
+  is a shortcut, not a mode: it ticks Thinking Pants, Flag Me Down,
+  Country Monkey (Randy's pub list, Oct 2026) and sets 10-minute breaks. **House column** (`access_codes_house_column.sql`):
   a code (HOME or PUB) can put its own question set, a `HOUSE_<NAME>`
   category in `questions` (game_mode `TRIVI_YEAH_II`, all 4 tiers), as the
   left column of the Thinking Pants board in rounds 1 & 3 (pub nights: the
@@ -93,14 +100,14 @@ event, for a small fee. That's why hosting is gated behind access codes.
   constantly and piles on the only other player (Randy's call: a per-code
   setting rather than a rule tied to player count). **A pub night's running
   tally** (Randy, Nov 2026: "That could differentiate this platform from
-  others"): at a PUB room, every game played to the end adds placement
+  others"; every room since the family "was playing MORE to change their
+  tally score"): every game played to the end adds placement
   points -- 10, 7, 5, 3, 2 for the top five, 1 for everyone else who
   finished (`NIGHT_TALLY_POINTS`) -- since raw scores aren't comparable
   across modes. A game ended early by the room's vote doesn't count.
   Between games the TV's rail is titled "Tonight" and ranks by those
   points; the phone's Info page says "Tonight: 17 points, 2nd of 9". Room
-  memory only (`room.nightTally`), gone when the room closes. Home rooms
-  keep each game a fresh start. Pickles & Pins is the test venue
+  memory only (`room.nightTally`), gone when the room closes. Pickles & Pins is the test venue
   (Randy's logo `pickles-pins.svg`: the pickle-jar-and-pin mark, no
   lettering, since the banner prints the name beside it).
 - **One room's bug stays in that room** (Nov 2026): every timer in
@@ -459,11 +466,10 @@ Mode keys are used in room votes and in `gameEngine.js`:
   questions. A room remembers the Thinking Pants questions it has seen
   (`room.seenQuestionIds`, shared with the Thinking Pants board), so a
   topic game and a board don't repeat each other while fresh ones last.
-  **At a pub it's only ever the venue's own questions** (Randy, Nov 2026:
-  "Pubs should only get topic Trivi-yeah! as their questions -- or
-  special occasions. Nothing more"): a PUB code sees Trivi-yeah! only
-  with a house set, and it plays that set with no topic pick
-  (`isPubRoom`). HOME codes get the topic pick, house set first if any. **The house set as a topic** (the venue's own
+  Every code gets the topic pick, its house set first if it has one
+  (the pub-only "house set, no topic pick" rule was dropped with the
+  HOME/PUB split, Nov 2026: a venue that shouldn't have general topics
+  leaves Trivi-yeah! off its mode list). **The house set as a topic** (the venue's own
   game, Oct 2026's "1.0" pub-test build) keeps its own rules: the
   `HOUSE_<NAME>` category, the same questions as the Thinking Pants house
   column, available even with the house column Off. Easy to hard by
@@ -481,7 +487,7 @@ Mode keys are used in room votes and in `gameEngine.js`:
   and warns under 8. The old general decks (`game_mode = 'TRIVIA'`, kept as
   a legacy name) stay in the database but are no longer played.
   **Venue breaks** (`access_codes_breaks.sql`; Randy, Oct 2026): a code can
-  set breaks of 2, 5 or 10 minutes (Off by default; 10 for pubs) with up to 10 one-line
+  set breaks of 2, 5 or 10 minutes (Off by default; "Fill in pub defaults" sets 10) with up to 10 one-line
   notes (deals, event news, facts about the bride). A break comes between
   Thinking Pants rounds and after a Trivi-yeah! game (once the room has
   voted what's next) -- never mid-game, and no venue banner during play.

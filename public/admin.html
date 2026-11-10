@@ -208,7 +208,7 @@
         function venueSummary(c) {
             if (!venueProfilesOn) return '';
             const parts = [];
-            if (c.profile === 'PUB') parts.push(`Pub${c.venue_name ? ': ' + esc(c.venue_name) : ''}`);
+            if (c.venue_name) parts.push(esc(c.venue_name));
             if (c.allowed_modes && c.allowed_modes.length) parts.push(`${c.allowed_modes.length} modes`);
             if (c.board_rules === 'PLAIN') parts.push('Plain rules');
             if (c.break_minutes) parts.push(`Breaks: ${c.break_minutes} min`);
@@ -230,17 +230,14 @@
 
         function venueEditorHtml(c) {
             const allowed = c.allowed_modes || [];
-            // Trivi-yeah! isn't ticked: it appears on its own when the code has house questions.
-            const modes = (window.RANDOMANIA_MODES || []).filter(m => m.key !== 'TRIVI_YEAH').map(m => `
+            // Every mode, Trivi-yeah! included (one kind of code, Nov 2026).
+            const modes = (window.RANDOMANIA_MODES || []).map(m => `
                 <label><input type="checkbox" value="${m.key}" ${allowed.includes(m.key) ? 'checked' : ''}> ${esc(m.name)}</label>`).join('');
             return `
                 <div class="venue-editor" id="venue-editor">
                     <div class="row">
-                        <label>Profile</label>
-                        <select id="venue-profile" onchange="onVenueProfileChange()">
-                            <option value="HOME" ${c.profile !== 'PUB' ? 'selected' : ''}>Home (the living-room version)</option>
-                            <option value="PUB" ${c.profile === 'PUB' ? 'selected' : ''}>Pub (venue name, logo, big QR code)</option>
-                        </select>
+                        <button type="button" class="btn btn-secondary" style="width: auto; padding: 10px 18px;" onclick="fillPubDefaults()">Fill in pub defaults</button>
+                        <div class="hint">Ticks the pub game list and sets 10-minute breaks. A shortcut, not a mode: change anything after. A venue name or logo puts the venue's banner on the TV.</div>
                     </div>
                     <div class="row"><label>Venue name</label><input type="text" id="venue-name" maxlength="40" value="${esc(c.venue_name)}" placeholder="e.g. Pickles &amp; Pins"></div>
                     <div class="row"><label>Tagline</label><input type="text" id="venue-tagline" maxlength="80" value="${esc(c.venue_tagline)}" placeholder="e.g. Strikes, spares &amp; dill"></div>
@@ -250,7 +247,7 @@
                     </div>
                     <div class="row">
                         <label>Modes shown (none checked = all of them)</label>
-                        <div class="hint">Trivi-yeah! isn't in this list: it's the venue's own game, and it appears on its own when the code has house questions (below).</div>
+                        <div class="hint">This list is the only limit on what the room plays. Trivi-yeah! is the topic pick, with this code's house questions first if it has them (a code with house questions always keeps Trivi-yeah!).</div>
                         <div class="modes" id="venue-modes">${modes}</div>
                     </div>
                     ${boardRulesOn ? `
@@ -428,18 +425,18 @@
             renderCodes(loadedCodes);
         }
 
-        // Switching to Pub with nothing checked fills in the pub starting list.
-        function onVenueProfileChange() {
-            if (document.getElementById('venue-profile').value !== 'PUB') return;
-            const boxes = [...document.querySelectorAll('#venue-modes input')];
-            if (boxes.some(b => b.checked)) return;
-            boxes.forEach(b => { b.checked = PUB_DEFAULT_MODES.includes(b.value); });
+        // A shortcut, not a mode (Nov 2026): the pub game list and 10-minute breaks.
+        function fillPubDefaults() {
+            document.querySelectorAll('#venue-modes input').forEach(b => { b.checked = PUB_DEFAULT_MODES.includes(b.value); });
+            const breaks = document.getElementById('venue-break-minutes');
+            if (breaks) breaks.value = '10';
         }
 
         async function saveVenue(code) {
             const feedback = document.getElementById('venue-feedback');
             const body = {
-                profile: document.getElementById('venue-profile').value,
+                // The old profile column, kept filled for anyone reading the database.
+                profile: (document.getElementById('venue-name').value.trim() || document.getElementById('venue-logo').value.trim()) ? 'PUB' : 'HOME',
                 name: document.getElementById('venue-name').value,
                 tagline: document.getElementById('venue-tagline').value,
                 logo: document.getElementById('venue-logo').value,
