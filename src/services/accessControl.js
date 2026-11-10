@@ -329,9 +329,9 @@ export async function getAccessCodeVenue(pool, rawCode) {
             const breaks = await readBreakSettings(pool, code);
             const breakMinutes = breaks ? breaks.minutes : 0;
             const theme = await readThemeSettings(pool, code);
-            if (row.profile !== 'PUB' && !allowedModes.length && !house && !houseSet && boardRules === 'CLASSIC' && !breakMinutes && !theme) return null;
+            // No HOME/PUB any more (Nov 2026): a venue is a code with a name or a logo.
+            if (!row.venue_name && !row.venue_logo && !allowedModes.length && !house && !houseSet && boardRules === 'CLASSIC' && !breakMinutes && !theme) return null;
             return {
-                profile: row.profile === 'PUB' ? 'PUB' : 'HOME',
                 name: row.venue_name || null,
                 tagline: row.venue_tagline || null,
                 logoUrl: row.venue_logo ? `/venues/${row.venue_logo}` : null,

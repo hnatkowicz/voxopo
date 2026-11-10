@@ -2410,8 +2410,10 @@ function applyRoomVenue(venue, allowedModes) {
     roomVenue = venue || null;
     window.RANDOMANIA_VENUE = roomVenue;
     roomAllowedModes = allowedModes || null;
-    const isPub = !!(roomVenue && roomVenue.profile === 'PUB');
-    document.body.classList.toggle('pub-profile', isPub);
+    // A code with a venue name or logo gets the banner, the name in the top
+    // bar and the medium QR during play (it used to take the PUB profile).
+    const hasVenue = !!(roomVenue && (roomVenue.name || roomVenue.logoUrl));
+    document.body.classList.toggle('has-venue', hasVenue);
     const name = (roomVenue && roomVenue.name) || '';
     ['venue-banner-name', 'venue-hud-name'].forEach(id => { document.getElementById(id).innerText = name; });
     document.getElementById('venue-banner-tagline').innerText = (roomVenue && roomVenue.tagline) || '';

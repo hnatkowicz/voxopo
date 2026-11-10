@@ -86,17 +86,19 @@ export const GAME_MODE_KEYS = ['TRIVI_YEAH', 'TRIVI_YEAH_II', 'COUNTRY_MONKEY', 
 // list. A code with no modes ticked gets every mode. A code with a ticked
 // list (a pub) gets Trivi-yeah! exactly when it has a house set, as before
 // (its /admin checkbox went when Trivi-yeah! became the venue's own game).
-// A pub's Trivi-yeah! is only ever its own questions (Randy, Nov 2026:
-// "Pubs should only get topic Trivi-yeah! as their questions -- or special
-// occasions. Nothing more"), so a pub sees it only with a house set, and
-// then it plays that set with no topic pick.
-const isPubRoom = room => !!(room && room.venue && room.venue.profile === 'PUB');
+// One kind of access code (Randy, Nov 2026): no HOME/PUB switch. The code's
+// list of modes is the only thing that limits what a room plays -- nothing
+// ticked means everything. Trivi-yeah! plays the topic pick everywhere, the
+// house set first when the code has one. (It used to be house-set-only at a
+// pub; dropped, since a venue that shouldn't have general topics just leaves
+// Trivi-yeah! off its list.) A code with house questions keeps Trivi-yeah!
+// even if its list was ticked before the Trivi-yeah! checkbox came back.
 export function allowedModesFor(room) {
     const venue = room && room.venue;
     const ticked = venue && venue.allowedModes && venue.allowedModes.length ? venue.allowedModes : null;
-    if (!ticked && !isPubRoom(room)) return [...GAME_MODE_KEYS];
-    const others = (ticked || GAME_MODE_KEYS).filter(key => key !== 'TRIVI_YEAH');
-    return venue && venue.houseSet ? ['TRIVI_YEAH', ...others] : others;
+    if (!ticked) return [...GAME_MODE_KEYS];
+    const keep = GAME_MODE_KEYS.filter(key => ticked.includes(key) || (key === 'TRIVI_YEAH' && venue.houseSet));
+    return keep.length ? keep : [...GAME_MODE_KEYS];
 }
 
 // How the venue's Trivi-yeah! is dressed: its logo and name (the byline).
@@ -847,15 +849,6 @@ async function triviaTopicsFor(room) {
 async function openTriviaTopicPick(roomCode) {
     const room = activeRooms[roomCode];
     if (!room) return;
-    // A pub plays its house set straight away (no topic pick; see isPubRoom).
-    const house = room.venue && room.venue.houseSet;
-    if (isPubRoom(room) && house) {
-        room.activeCategoryKey = house.key;
-        room.activeDeckName = room.venue.name || house.label;
-        room.triviaTopic = { key: house.key, label: room.activeDeckName };
-        startQuestionBankGame(roomCode);
-        return;
-    }
     const topics = await triviaTopicsFor(room);
     if (!topics.length) throw new Error('No Thinking Pants category is deep enough for a topic game.');
     // The venue's house set heads the list, then "Surprise me", then the rest.
@@ -4539,11 +4532,12 @@ function resolveReturnToLobbyVote(roomCode) {
 // across different games (raw scores aren't comparable between modes). A
 // game ended early by the room's vote doesn't count (it never reaches
 // endGame). Room memory only, like everything else about players: it ends
-// with the room. Home rooms keep each game a fresh start.
+// with the room. Every room keeps a tally (Randy, Nov 2026: the family
+// played MORE to change theirs; it used to be pub rooms only).
 const NIGHT_TALLY_POINTS = [10, 7, 5, 3, 2];
 const NIGHT_TALLY_FINISHER_POINTS = 1;
 function addToNightTally(room, roomCode, finalStandings) {
-    if (!isPubRoom(room) || !finalStandings.length) return;
+    if (!finalStandings.length) return;
     room.nightTally = room.nightTally || {};
     finalStandings.forEach((p, i) => {
         room.nightTally[p.name] = (room.nightTally[p.name] || 0) + (NIGHT_TALLY_POINTS[i] ?? NIGHT_TALLY_FINISHER_POINTS);
