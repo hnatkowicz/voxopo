@@ -2943,7 +2943,7 @@ const LETTER_RIP_LETTER_POINTS = 100; // per time the letter appears, split amon
 const LETTER_RIP_POT_START = 1000; // shrinks with how much of the phrase is showing
 const LETTER_RIP_POT_MIN = 100;
 const LETTER_RIP_REVEAL_MS = 6000; // was 4s; the reveal is when people study the board and think about solving (Randy, Nov 2026)
-const LETTER_RIP_ALL_PICKED_MS = 1000; // short beat once everyone's picked
+const LETTER_RIP_ALL_PICKED_MS = 2000; // a beat once everyone's picked, to fix a mis-key (Randy, Nov 2026: 1s was "a bit rushed" once picks could change; matches Trivi-yeah!)
 const LETTER_RIP_DONE_MS = 7000; // the solved (or unsolved) board stays up this long
 
 const letterRipLetters = phrase => phrase.replace(/[^A-Z]/g, '');

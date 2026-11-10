@@ -680,7 +680,7 @@ Mode keys are used in room votes and in `gameEngine.js`:
   puzzles this room has played (`room.letterRipPlayed`). Each round,
   everyone secretly picks one letter on their phone at once, and **can
   change it until the round closes** (Randy's son, Nov 2026: a second
-  chance for a mis-key, no confirm step; a change in the 1s all-picked
+  chance for a mis-key, no confirm step; a change in the 2s all-picked
   beat restarts the beat). The phone and TV boards break lines by one
   rule (12 letters and spaces a line, a longer word on its own;
   `letterRipLines` in `app.js`, `lrLines` in `play.html`), so they always
