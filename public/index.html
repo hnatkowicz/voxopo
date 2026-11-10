@@ -154,6 +154,15 @@
 <audio id="doubler-reveal-sound" src="/audio/DOUBLER_REVEAL.wav" preload="auto"></audio>
 <audio id="doubler-correct-sound" src="/audio/DOUBLER_CORRECT.wav" preload="auto"></audio>
 <audio id="doubler-wrong-sound" src="/audio/DOUBLER_WRONG.wav" preload="auto"></audio>
+<!-- The venue's recorded narration for its announcement (set on /admin). -->
+<audio id="announcement-narration" preload="auto"></audio>
+
+<!-- The venue's announcement: over everything, the theme included. -->
+<div id="tv-announcement" aria-live="polite">
+    <img id="tv-announcement-bg" alt="" style="display: none;">
+    <div class="ann-shade"></div>
+    <div id="tv-announcement-words"></div>
+</div>
 
 <!-- Fixed overlay, outside #active-content-stage on purpose -- a
      RETURN_TO_LOBBY broadcast rewrites that panel almost immediately after

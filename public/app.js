@@ -538,6 +538,10 @@ if (btnSubmitSpectate) {
                     stopCountdownMusic();
                     showVenueBreakUI(data);
                 }
+                // The venue's announcement (Randy, Nov 2026): on top of
+                // everything, game sounds off, then back to the game as it was.
+                if (data.type === 'ANNOUNCEMENT') showAnnouncement(data);
+                if (data.type === 'ANNOUNCEMENT_END' || data.type === 'ROOM_CLOSED') hideAnnouncement();
                 if (data.type === 'VENUE_BREAK_UPDATE') {
                     const tally = document.getElementById('venue-break-tally');
                     if (tally) tally.innerText = `${data.backCount} of ${data.totalPlayers} are back`;
@@ -2523,9 +2527,71 @@ function escapeHtml(text) {
     return (text || '').replace(/[&<>"']/g, ch => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[ch]));
 }
 
+// ---- The venue's announcement (Randy, Nov 2026) ----
+// At the venue's set time the game pauses (the server freezes every clock)
+// and the TV shows the announcement over the flag or the venue's picture,
+// plays the venue's recorded narration, then holds the moment of silence.
+// Every game sound is off until it ends: whatever was playing is paused
+// and picks up again afterwards, and nothing new starts.
+let announcementOn = false;
+let announcementPausedAudio = [];
+let announcementNarrationTimer = null;
+function showAnnouncement(data) {
+    const box = document.getElementById('tv-announcement');
+    if (!box) return;
+    if (!announcementOn) {
+        announcementOn = true;
+        announcementPausedAudio = [...document.querySelectorAll('audio')].filter(a => a.id !== 'announcement-narration' && !a.paused);
+        announcementPausedAudio.forEach(a => a.pause());
+    }
+    const bg = document.getElementById('tv-announcement-bg');
+    if (data.backgroundUrl) {
+        if (bg.getAttribute('src') !== data.backgroundUrl) bg.src = data.backgroundUrl;
+        bg.style.display = '';
+    } else {
+        bg.removeAttribute('src');
+        bg.style.display = 'none';
+    }
+    const words = document.getElementById('tv-announcement-words');
+    if (data.step === 'SILENCE') {
+        words.innerHTML = '<div class="ann-silence">A moment of silence</div>';
+    } else {
+        // Longer words get a smaller size, so a whole charter fits.
+        const length = (data.text || '').length;
+        const size = length <= 160 ? 'ann-short' : length <= 450 ? 'ann-medium' : length <= 900 ? 'ann-long' : 'ann-longest';
+        words.innerHTML = `${data.title ? `<div class="ann-title">${escapeHtml(data.title)}</div>` : ''}${data.text ? `<div class="ann-text ${size}">${escapeHtml(data.text)}</div>` : ''}`;
+    }
+    box.classList.add('show');
+    // The narration starts after a short beat with the words alone. A TV
+    // that joins partway through skips it rather than starting mid-sentence.
+    const narration = document.getElementById('announcement-narration');
+    if (announcementNarrationTimer) { clearTimeout(announcementNarrationTimer); announcementNarrationTimer = null; }
+    if (data.step !== 'READ' || !data.narrationUrl) { narration.pause(); return; }
+    const elapsed = Date.now() - (data.startedAt || Date.now());
+    if (elapsed > (data.leadMs || 0) + 1500) return;
+    if (narration.getAttribute('src') !== data.narrationUrl) narration.src = data.narrationUrl;
+    announcementNarrationTimer = setTimeout(() => {
+        announcementNarrationTimer = null;
+        narration.currentTime = 0;
+        const played = narration.play();
+        if (played && typeof played.catch === 'function') played.catch(err => console.warn('[Audio] narration blocked or failed:', err.message));
+    }, Math.max(0, (data.leadMs || 0) - Math.max(0, elapsed)));
+}
+function hideAnnouncement() {
+    const box = document.getElementById('tv-announcement');
+    if (announcementNarrationTimer) { clearTimeout(announcementNarrationTimer); announcementNarrationTimer = null; }
+    const narration = document.getElementById('announcement-narration');
+    if (narration) narration.pause();
+    if (box) box.classList.remove('show');
+    if (!announcementOn) return;
+    announcementOn = false;
+    announcementPausedAudio.forEach(a => { const p = a.play(); if (p && typeof p.catch === 'function') p.catch(() => {}); });
+    announcementPausedAudio = [];
+}
+
 function playAudioTrack(elementId) {
     const audio = document.getElementById(elementId);
-    if (!audio) return;
+    if (!audio || announcementOn) return;
     audio.currentTime = 0;
     // Autoplay can be blocked until the page has seen a user gesture -- clicking
     // "Generate New Lobby" or "View" to get here usually satisfies that, but

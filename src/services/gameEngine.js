@@ -44,6 +44,10 @@ export function handleRoomCrash(error, roomCode = roomContext.getStore()) {
             closeRoom(roomCode);
             return;
         }
+        // An announcement on screen ends (and the room's clocks run again)
+        // before the room goes back to its lobby.
+        room.announcementPending = null;
+        endAnnouncement(roomCode);
         broadcastToRoom(roomCode, { type: 'CONTENT_UNAVAILABLE', message: "Something went wrong with that game. Back to the lobby." });
         resetRoomToLobby(roomCode);
     } catch (recoveryError) {
@@ -70,10 +74,107 @@ function guardTimer(fn) {
 
 // Shadow the globals for this whole file, so every existing and future
 // setTimeout/setInterval here is guarded without touching each call.
+//
+// They're also pausable, room by room (Nov 2026, for the venue
+// announcement: at 8:00 the game stops for a charter reading or a moment
+// of silence, then carries on exactly where it was). A timer set inside a
+// room's context is remembered with that room; pausing the room stops
+// every one of them and remembers the time each had left, and resuming
+// starts them again with that time. Every clock in the game is one of these
+// timers (the countdowns tick down once a second), so the whole room
+// freezes and resumes without each mode knowing about it.
+// A timer set outside any room (server-wide sweeps) works as before.
+const nativeClearTimeout = globalThis.clearTimeout;
+const roomTimers = new Map();   // room code -> Set of its live timers
+const pausedRooms = new Set();  // room codes whose timers are paused
+
+function armRoomTimer(t, ms) {
+    t.due = Date.now() + ms;
+    if (!t.repeat) { t.handle = nativeSetTimeout(t.fire, ms); return; }
+    if (ms === t.ms) { t.handle = nativeSetInterval(t.fire, t.ms); return; }
+    // An interval resumed partway to its next tick: finish that wait, then
+    // tick on its usual beat.
+    t.handle = nativeSetTimeout(() => {
+        t.handle = nativeSetInterval(t.fire, t.ms);
+        t.fire();
+    }, ms);
+}
+
+function forgetRoomTimer(t) {
+    const set = roomTimers.get(t.code);
+    if (!set) return;
+    set.delete(t);
+    if (!set.size) roomTimers.delete(t.code);
+}
+
+function startTimer(fn, ms, args, repeat) {
+    const guarded = guardTimer(fn);
+    const code = roomContext.getStore();
+    if (!code) return repeat ? nativeSetInterval(guarded, ms, ...args) : nativeSetTimeout(guarded, ms, ...args);
+    const t = { isRoomTimer: true, code, repeat, ms: Math.max(1, Number(ms) || 0), handle: null, due: 0, remaining: 0, done: false };
+    t.fire = () => {
+        if (t.done) return;
+        if (repeat) t.due = Date.now() + t.ms;
+        else { t.done = true; t.handle = null; forgetRoomTimer(t); }
+        guarded(...args);
+    };
+    if (!roomTimers.has(code)) roomTimers.set(code, new Set());
+    roomTimers.get(code).add(t);
+    // A timer started while its room is paused (a late database answer,
+    // say) waits for the room to resume.
+    if (pausedRooms.has(code)) t.remaining = t.ms;
+    else armRoomTimer(t, t.ms);
+    return t;
+}
+
+function stopTimer(t) {
+    if (t && t.isRoomTimer) {
+        t.done = true;
+        if (t.handle) nativeClearTimeout(t.handle);
+        t.handle = null;
+        forgetRoomTimer(t);
+        return;
+    }
+    nativeClearTimeout(t);
+}
+
 // eslint-disable-next-line no-shadow
-const setTimeout = (fn, ms, ...args) => nativeSetTimeout(guardTimer(fn), ms, ...args);
+const setTimeout = (fn, ms, ...args) => startTimer(fn, ms, args, false);
 // eslint-disable-next-line no-shadow
-const setInterval = (fn, ms, ...args) => nativeSetInterval(guardTimer(fn), ms, ...args);
+const setInterval = (fn, ms, ...args) => startTimer(fn, ms, args, true);
+// eslint-disable-next-line no-shadow
+const clearTimeout = stopTimer;
+// eslint-disable-next-line no-shadow
+const clearInterval = stopTimer;
+
+function pauseRoomTimers(roomCode) {
+    if (pausedRooms.has(roomCode)) return;
+    pausedRooms.add(roomCode);
+    const now = Date.now();
+    (roomTimers.get(roomCode) || []).forEach(t => {
+        if (!t.handle) return;
+        nativeClearTimeout(t.handle);
+        t.handle = null;
+        t.remaining = Math.max(1, t.due - now);
+    });
+}
+
+function resumeRoomTimers(roomCode) {
+    if (!pausedRooms.delete(roomCode)) return;
+    // Restarted inside the room, so each timer keeps knowing its room.
+    runInRoom(roomCode, () => {
+        (roomTimers.get(roomCode) || []).forEach(t => {
+            if (!t.done && !t.handle) armRoomTimer(t, t.remaining || t.ms);
+        });
+    });
+}
+
+// Every timer a room still has, stopped for good (the room is closing).
+export function clearAllRoomTimers(roomCode) {
+    [...(roomTimers.get(roomCode) || [])].forEach(stopTimer);
+    roomTimers.delete(roomCode);
+    pausedRooms.delete(roomCode);
+}
 
 // Every votable game mode. The display side (names, blurbs, icons) lives in
 // public/modes.js -- keep the keys in step when adding a mode.
@@ -4429,6 +4530,189 @@ function endVenueBreak(roomCode) {
     then();
 }
 
+// ==========================================
+// THE VENUE'S ANNOUNCEMENT (Randy, Nov 2026)
+// ==========================================
+// At a set time (8:00 pm, say) whatever game is on stops for the venue's
+// announcement -- a post charter read aloud, a moment of silence -- with a
+// flag (or the venue's picture) behind the words and the venue's own
+// recorded narration, then carries on exactly where it was. From a Legion
+// trivia night where the host did this by hand; Randy: a selling point.
+//
+// - It waits for the question on screen to finish, so nobody loses an
+//   answer to it: it starts at the next moment no answer clock is running,
+//   or after ANNOUNCEMENT_WAIT_LIMIT seconds regardless (answers kept,
+//   clocks frozen).
+// - Pausing is the timers' own (pauseRoomTimers): every clock in the room
+//   stops and later picks up with the time it had left.
+// - No game leader: the clock starts it, and it ends on its own. Phones
+//   show it too, with nothing to tap; game input waits until it's over.
+// - The time is the venue's local time (its time zone is set on /admin),
+//   so a server in another zone doesn't matter.
+const ANNOUNCEMENT_LEAD_MS = 3000;         // the words alone, before the narration starts
+const ANNOUNCEMENT_TAIL_MS = 1500;         // a breath before the game comes back
+const ANNOUNCEMENT_WAIT_LIMIT = 75;        // seconds of waiting for a question to finish (the longest clock is a 40s Doubler)
+const ANNOUNCEMENT_LATE_MINUTES = 10;      // a room that opens a little after the time still gets it
+const announcementZoneFormats = new Map();
+
+// The venue's date, weekday (0 = Sunday) and minutes past midnight.
+function venueLocalNow(timeZone) {
+    let format = announcementZoneFormats.get(timeZone);
+    if (!format) {
+        try {
+            format = new Intl.DateTimeFormat('en-US', { timeZone, year: 'numeric', month: '2-digit', day: '2-digit', weekday: 'short', hour: '2-digit', minute: '2-digit', hourCycle: 'h23' });
+        } catch (e) {
+            return null;
+        }
+        announcementZoneFormats.set(timeZone, format);
+    }
+    const parts = Object.fromEntries(format.formatToParts(new Date()).map(p => [p.type, p.value]));
+    return {
+        date: `${parts.year}-${parts.month}-${parts.day}`,
+        weekday: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].indexOf(parts.weekday),
+        minutes: (Number(parts.hour) % 24) * 60 + Number(parts.minute)
+    };
+}
+
+// Today's showing, if it's time and the room hasn't had it yet.
+function announcementDueKey(room) {
+    const a = room.venue && room.venue.announcement;
+    if (!a || !a.on) return null;
+    const now = venueLocalNow(a.timeZone);
+    if (!now) return null;
+    if (a.date ? now.date !== a.date : (a.days.length && !a.days.includes(now.weekday))) return null;
+    const [hour, minute] = a.time.split(':').map(Number);
+    const late = now.minutes - (hour * 60 + minute);
+    if (late < 0 || late >= ANNOUNCEMENT_LATE_MINUTES) return null;
+    const key = `${now.date} ${a.time}`;
+    return room.announcementPlayed === key ? null : key;
+}
+
+// True when no answer clock is running: between questions, on a reveal,
+// in the lobby, at Game Over, during a break.
+function announcementGoodMoment(room) {
+    const ty2 = room.triviYeahII, fw = room.finalWager, lr = room.letterRip, pf = room.profiler;
+    const ots = room.onTheSpectrum, ed = room.empossdurr, fmd = room.flagMeDown;
+    if (room.answerSpread) return false; // the one-second beat before a reveal
+    switch (room.gameState) {
+        case 'GAME_ROUND': return false; // a Trivi-yeah! or Country Monkey question is open
+        case 'CATEGORY_VOTE': return false;
+        case 'TRIVI_YEAH_II_ROUND': return !ty2 || !['CATEGORY_REVEAL', 'QUESTION_REVEAL', 'ANSWERING', 'DOUBLER_REVEAL', 'DOUBLER_WAGER', 'DOUBLER_SIDE_BET', 'TRAP_SET', 'TRAP_REVEAL'].includes(ty2.phase);
+        case 'TRIVI_YEAH_II_FINAL_WAGER': return !fw || !['WAGER', 'ANSWER'].includes(fw.phase);
+        case 'LETTER_RIP_ROUND': return !lr || !['PICK', 'SPOT_TAP', 'SPOT_FLIP', 'SPOT_LAST'].includes(lr.phase);
+        case 'PROFILER_ROUND': return !pf || !['ANSWER', 'GUESS'].includes(pf.phase);
+        case 'ON_THE_SPECTRUM_ROUND': return !ots || !['SET_TARGET', 'GUESSING'].includes(ots.phase);
+        case 'EMPOSSDURR_ROUND': return !ed || !['ACCUSE_VOTE', 'DECLARE_VERDICT'].includes(ed.phase);
+        case 'FLAG_ME_DOWN_ROUND': return !fmd || fmd.phase !== 'CLUES';
+        default: return true;
+    }
+}
+
+// What the TV and phones are told (no settings they don't need).
+export function announcementMessage(room) {
+    const a = room.announcement;
+    if (!a) return null;
+    return {
+        type: 'ANNOUNCEMENT',
+        step: a.step,                         // READ, then SILENCE if there is one
+        title: a.title || '',
+        text: a.text || '',
+        backgroundUrl: a.backgroundUrl || null,
+        narrationUrl: a.step === 'READ' ? a.narrationUrl || null : null,
+        leadMs: ANNOUNCEMENT_LEAD_MS,
+        silenceSeconds: a.silenceSeconds || 0,
+        startedAt: a.startedAt
+    };
+}
+
+function startAnnouncement(roomCode, settings, key) {
+    const room = activeRooms[roomCode];
+    if (!room || room.announcement) return;
+    room.announcementPending = null;
+    room.announcementPlayed = key;
+    pauseRoomTimers(roomCode);
+    const readMs = settings.narrationUrl && settings.narrationSeconds
+        ? settings.narrationSeconds * 1000
+        : (settings.title || settings.text ? settings.showSeconds * 1000 : 0);
+    room.announcement = {
+        title: settings.title, text: settings.text, backgroundUrl: settings.backgroundUrl,
+        narrationUrl: settings.narrationUrl, silenceSeconds: settings.silenceSeconds,
+        step: 'READ', startedAt: Date.now(), timer: null
+    };
+    console.log(`[Announcement] Room ${roomCode}: "${settings.title || 'announcement'}" (${Math.round(readMs / 1000)}s + ${settings.silenceSeconds}s silence).`);
+    broadcastToRoom(roomCode, announcementMessage(room));
+    // Its own timers run outside the room's (which are paused).
+    const later = (fn, ms) => nativeSetTimeout(guardTimer(fn), ms);
+    const current = room.announcement;
+    const finish = () => {
+        if (!activeRooms[roomCode] || room.announcement !== current) return;
+        current.timer = later(() => endAnnouncement(roomCode), ANNOUNCEMENT_TAIL_MS);
+    };
+    current.timer = later(() => {
+        if (!activeRooms[roomCode] || room.announcement !== current) return;
+        if (!current.silenceSeconds) return finish();
+        current.step = 'SILENCE';
+        current.startedAt = Date.now();
+        broadcastToRoom(roomCode, announcementMessage(room));
+        current.timer = later(finish, current.silenceSeconds * 1000);
+    }, ANNOUNCEMENT_LEAD_MS + readMs);
+}
+
+export function endAnnouncement(roomCode) {
+    const room = activeRooms[roomCode];
+    if (!room || !room.announcement) { resumeRoomTimers(roomCode); return; }
+    if (room.announcement.timer) nativeClearTimeout(room.announcement.timer);
+    room.announcement = null;
+    broadcastToRoom(roomCode, { type: 'ANNOUNCEMENT_END' });
+    console.log(`[Announcement] Room ${roomCode}: back to the game.`);
+    resumeRoomTimers(roomCode);
+}
+
+// Once a second: is it time somewhere, and is this a good moment?
+function checkAnnouncement(roomCode) {
+    const room = activeRooms[roomCode];
+    if (!room || room.announcement || room.recoveringFromCrash) return;
+    if (!room.announcementPending) {
+        const key = announcementDueKey(room);
+        if (!key) return;
+        room.announcementPending = { key, settings: room.venue.announcement, waited: 0 };
+    }
+    const pending = room.announcementPending;
+    pending.waited++;
+    if (announcementGoodMoment(room) || pending.waited > ANNOUNCEMENT_WAIT_LIMIT) startAnnouncement(roomCode, pending.settings, pending.key);
+}
+nativeSetInterval(() => {
+    Object.keys(activeRooms).forEach(code => {
+        runInRoom(code, () => {
+            try { checkAnnouncement(code); } catch (error) { handleRoomCrash(error, code); }
+        });
+    });
+}, 1000);
+
+// /admin's Play it now (testing, or the time slipped): every open room this
+// code opened, at its next good moment. Also how a saved change reaches
+// rooms already open. Returns how many rooms.
+export function refreshAnnouncementForCode(accessCode, settings, playNow = false) {
+    let rooms = 0;
+    Object.entries(activeRooms).forEach(([code, room]) => {
+        if (!accessCode || room.accessCode !== accessCode) return;
+        rooms++;
+        if (room.venue || settings) room.venue = { ...(room.venue || {}), announcement: settings };
+        // Switched off: one waiting for its moment doesn't play either.
+        if (!settings) room.announcementPending = null;
+        if (playNow && settings && !room.announcement) room.announcementPending = { key: `now ${Date.now()}`, settings, waited: 0 };
+    });
+    return rooms;
+}
+
+// The bot smoke test's way in: this room, at its next good moment.
+export function queueAnnouncement(roomCode, settings) {
+    const room = activeRooms[roomCode];
+    if (!room || room.announcement) return false;
+    room.announcementPending = { key: `now ${Date.now()}`, settings, waited: 0 };
+    return true;
+}
+
 function markBackFromBreak(roomCode, playerName) {
     const room = activeRooms[roomCode];
     if (!room || !room.venueBreak) return `⚠️ There's no break on right now.`;
@@ -4570,8 +4854,10 @@ export function closeRoom(roomCode) {
     if (room.emptyRoomTimeout) clearTimeout(room.emptyRoomTimeout);
     clearOnTheSpectrumTimers(room);
     clearEmpossDurrTimers(room);
+    if (room.announcement && room.announcement.timer) nativeClearTimeout(room.announcement.timer);
     broadcastToRoom(roomCode, { type: 'ROOM_CLOSED' });
     delete activeRooms[roomCode];
+    clearAllRoomTimers(roomCode);
     return true;
 }
 
@@ -6038,6 +6324,10 @@ function handleIncomingMessageInRoom(fromPhone, bodyText, explicitRoomCode, pres
 
         return `You've left Room ${associatedRoomCode}. Come back any time using the same name to pick up where you left off.`;
     }
+
+    // The venue's announcement is on: game input waits until it's over
+    // (the phones show the announcement, with nothing to tap).
+    if (currentRoom.announcement) return "⚠️ One moment. The game picks up right after the announcement.";
 
     // 2.6 Handle re-voting for a different game mode while sitting in the
     // lobby -- e.g. after "Main Menu" bounces everyone back from a finished

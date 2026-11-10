@@ -10,7 +10,9 @@
 // traps (one bot answers everything right, so it sweeps columns alone and
 // hides Pants on Fire, Hot Seat and Wedgie in turn), Doublers, both Final
 // Wagers with clues bought, the Letter Rip Spotlight, a pub room with a
-// venue break and the night's tally, and a vote to end a game early.
+// venue break and the night's tally, and a vote to end a game early. Every
+// room also gets the venue's announcement partway in: the room has to
+// freeze while it's on (nothing moves) and finish the game after.
 //
 // LOCAL TEST DATABASE ONLY. It refuses any DATABASE_URL that isn't on
 // localhost: it adds two test access codes (SMOKE-HOME, SMOKE-PUB) and only
@@ -69,7 +71,7 @@ await db.query(`UPDATE access_codes SET profile = 'PUB', venue_name = 'Smoke Tes
 await db.end();
 
 await import('../src/server.js');
-const { handleIncomingMessage, activeRooms } = await import('../src/services/gameEngine.js');
+const { handleIncomingMessage, activeRooms, queueAnnouncement } = await import('../src/services/gameEngine.js');
 await sleep(2500);
 const BASE = `http://localhost:${PORT}`;
 const api = async (path, body) => (await fetch(BASE + path, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) })).json();
@@ -89,6 +91,10 @@ const ROOMS = [
     { mode: 'COUNTRY_MONKEY', code: 'SMOKE-HOME', endVote: true, label: 'vote to end early' },
 ].filter(r => !process.env.MODES || process.env.MODES.split(',').includes(r.mode));
 
+// The announcement each room gets, short (3s + 8s words + 4s silence, at SPEED).
+const ANNOUNCEMENT = { title: 'Smoke Test Charter', text: 'Words the room reads together.', backgroundUrl: '/announcement/us-flag.svg', narrationUrl: null, narrationSeconds: 0, showSeconds: 8, silenceSeconds: 4 };
+const ANNOUNCEMENT_WAIT_MS = 30 * 1000; // wall clock: it should find a moment between questions well before this
+
 const TIMEOUT_MS = 8 * 60 * 1000; // wall clock, per room
 const STUCK_MS = 60 * 1000;       // no change of screen for this long = stuck
 
@@ -100,6 +106,8 @@ for (const r of ROOMS) {
     for (const [k, n] of BOTS.entries()) await api('/api/message', { From: n, Body: `${r.roomCode} ${n} av:${['bicycle', 'book', 'boot', 'boy'][k]} ${r.mode}`, roomCode: r.roomCode });
     for (const n of BOTS) await api('/api/message', { From: n, Body: 'START', roomCode: r.roomCode });
     r.started = Date.now(); r.lastSig = ''; r.lastChange = Date.now(); r.seen = new Set(); r.traps = r.traps ? [] : null;
+    // Each room at a different point in its game (the two short games early).
+    r.annAfter = ({ ON_THE_SPECTRUM: 0, EMPOSSDURR: 2500 })[r.mode] ?? 4000 + ROOMS.indexOf(r) * 1500;
 }
 
 // ---------- optional screenshots ----------
@@ -300,6 +308,27 @@ for (;;) {
         if (!r.roomCode || r.done) continue;
         const room = activeRooms[r.roomCode];
         if (!room) { r.done = true; r.failed = 'room closed'; continue; }
+        // The venue's announcement: queued partway in; while it's on the
+        // bots sit still and nothing in the room may change.
+        if (!r.endVote && !r.annQueued && Date.now() - r.started > r.annAfter && room.gameState !== 'GAME_OVER') {
+            r.annQueued = Date.now();
+            if (!queueAnnouncement(r.roomCode, ANNOUNCEMENT)) r.annQueued = null;
+        }
+        if (room.announcement) {
+            const step = room.announcement.step;
+            if (!r.annSig) { r.annSig = sigOf(room); r.annSeen = Date.now(); r.annGameState = room.gameState; }
+            else if (sigOf(room) !== r.annSig) r.annMoved = sigOf(room);
+            if (r.annStep !== step) { r.annStep = step; if (SHOTS) await shoot(r, `announcement-${step.toLowerCase()}`); }
+            r.lastChange = Date.now();
+            running++;
+            continue;
+        }
+        if (r.annSeen && !r.annDone) r.annDone = Math.round((Date.now() - r.annSeen) / 100) / 10;
+        if (r.annQueued && !r.annSeen && Date.now() - r.annQueued > ANNOUNCEMENT_WAIT_MS && !r.annLate) r.annLate = room.gameState;
+        // Waiting for a moment between questions: the bots hold off (they'd
+        // otherwise rush past every reveal faster than people do), so the
+        // question on screen runs out its clock first.
+        if (room.announcementPending) { r.lastChange = Date.now(); running++; continue; }
         const before = r.lastSig;
         drive(r);
         if (r.lastSig !== before && SHOTS) await shoot(r, ((room.triviYeahII && room.gameState === 'TRIVI_YEAH_II_ROUND' && room.triviYeahII.phase) || room.gameState).toLowerCase());
@@ -327,6 +356,11 @@ for (const r of ROOMS) {
     if (r.traps) extras.push(`traps set ${r.traps.join(', ') || 'none'}; sprung ${(r.sprung || []).join(', ') || 'none'}`);
     if (r.sawBreak) extras.push('venue break');
     if (r.tally !== undefined) extras.push(`tally for ${r.tally} players`);
+    if (r.annDone) extras.push(`announcement during ${r.annGameState}, ${r.annDone}s`);
+    if (!r.failed && r.annMoved) r.failed = `the game moved during the announcement (${r.annSig} -> ${r.annMoved})`;
+    if (!r.failed && r.annLate) r.failed = `the announcement never found a moment (waited in ${r.annLate})`;
+    if (!r.failed && r.annSeen && !r.annDone) r.failed = 'the announcement never ended';
+    if (!r.failed && !r.endVote && !r.annSeen) r.failed = 'no announcement played (the game ended first: queue it earlier)';
     if (r.failed) { failed++; say(`✗ ${r.label}: ${r.failed}`); }
     else if (r.endVote) say(`✓ ${r.label}: back in the lobby`);
     else say(`✓ ${r.label}: Game Over in ${r.took}s${extras.length ? ' (' + extras.join('; ') + ')' : ''}`);

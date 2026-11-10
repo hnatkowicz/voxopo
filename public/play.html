@@ -50,6 +50,17 @@
         #avatar-zoom { position: fixed; inset: 0; z-index: 60; display: none; cursor: pointer;
             background: rgba(var(--rm-bg-rgb), 0); transition: background 0.3s ease; -webkit-tap-highlight-color: transparent; }
         #avatar-zoom.open { display: block; }
+        /* The venue's announcement (Nov 2026): the same words as the TV, on
+           top of everything, nothing to tap. */
+        #phone-announcement { position: fixed; inset: 0; z-index: 80; display: none; align-items: center; justify-content: center;
+            background: var(--rm-bg); padding: 28px 22px; box-sizing: border-box; overflow-y: auto; }
+        #phone-announcement.show { display: flex; }
+        #phone-announcement img { position: fixed; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+        #phone-announcement .ann-shade { position: fixed; inset: 0; background: rgba(var(--rm-bg-rgb), 0.78); }
+        #phone-announcement .ann-words { position: relative; text-align: center; max-height: 100%; }
+        #phone-announcement .ann-title { font-family: var(--rm-font-display); font-weight: 800; font-size: 1.6rem; line-height: 1.15; color: var(--rm-brand); margin-bottom: 14px; }
+        #phone-announcement .ann-text { color: var(--rm-text); font-size: 1.02rem; line-height: 1.45; white-space: pre-line; }
+        #phone-announcement .ann-silence { font-family: var(--rm-font-display); font-weight: 800; font-size: 1.8rem; line-height: 1.15; color: var(--rm-text); }
         #avatar-zoom.shown { background: rgba(var(--rm-bg-rgb), 0.9); }
         #avatar-zoom img { position: fixed; object-fit: contain; will-change: left, top, width, height;
             transition: left 0.35s cubic-bezier(0.2, 0.8, 0.2, 1), top 0.35s cubic-bezier(0.2, 0.8, 0.2, 1), width 0.35s cubic-bezier(0.2, 0.8, 0.2, 1), height 0.35s cubic-bezier(0.2, 0.8, 0.2, 1), filter 0.35s ease; }
@@ -438,6 +449,7 @@
         <div id="login-feedback" class="feedback"></div>
     </div>
     <div id="avatar-zoom" role="button" aria-label="Back to the avatars" onclick="closeAvatarZoom()"><img alt=""></div>
+    <div id="phone-announcement" aria-live="polite"><img alt="" style="display: none;"><div class="ann-shade"></div><div class="ann-words"></div></div>
 
     <!-- SCREEN 2: GAMEPLAY INPUT CONTROLLER -->
     <div id="game-screen" class="card">
@@ -1556,6 +1568,24 @@
             }
         }
 
+        // The venue's announcement (Randy, Nov 2026): the game is paused and
+        // the TV is showing it, so the phone does too, over everything. Drawn
+        // only when it changes, so a long text can be scrolled.
+        let phoneAnnouncementKey = null;
+        function showPhoneAnnouncement(a) {
+            const box = document.getElementById('phone-announcement');
+            const key = a ? `${a.startedAt}|${a.step}` : null;
+            if (key === phoneAnnouncementKey) return;
+            phoneAnnouncementKey = key;
+            if (!a) { box.classList.remove('show'); return; }
+            const img = box.querySelector('img');
+            if (a.backgroundUrl) { img.src = a.backgroundUrl; img.style.display = ''; } else { img.removeAttribute('src'); img.style.display = 'none'; }
+            box.querySelector('.ann-words').innerHTML = a.step === 'SILENCE'
+                ? '<div class="ann-silence">A moment of silence</div>'
+                : `${a.title ? `<div class="ann-title">${escapeFmd(a.title)}</div>` : ''}${a.text ? `<div class="ann-text">${escapeFmd(a.text)}</div>` : ''}`;
+            box.classList.add('show');
+        }
+
         function initRoomStatePoller(roomCode, nickname) {
             roomStateTrackerInterval = setInterval(async () => {
                 try {
@@ -1568,6 +1598,7 @@
                     });
                     const data = await response.json();
                     fillStandings(data, roomCode);
+                    if (data && data.phase) showPhoneAnnouncement(data.announcement);
 
                     if (data && data.phase) {
                         updateSidePages(data, nickname, roomCode);
