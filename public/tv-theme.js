@@ -8,7 +8,7 @@
 // up to four pictures, one per slot, named <theme>_<slot>.webp (or .svg):
 //
 //   over-r      5 x 5    over the top-left of "Rando", partly covering the R
-//   under-room  5 x 5    hanging under the word ROOM, left edges lined up
+//   under-room  5 x 5    hanging under the word ROOM, left edges lined up (or _room)
 //   hanging     5 x 15   over the scoreboard's top-right corner, 1.4 up and
 //                        1.4 out (Randy: 15px in his sketch); behind the scores
 //   bottom      panel's width x 250/600 of it, across the scoreboard's
@@ -16,7 +16,7 @@
 //
 // Sizes are in u (1% of the 16:9 frame's width), like the rest of the TV.
 // Art is drawn on an artboard of the same shape (100 x 100, 100 x 300,
-// 600 x 250) and fitted to the box, never stretched. A box is where a piece
+// 600 x 250) and shown at its drawn size, centered on the box. A box is where a piece
 // hangs and how big it can get, not a fence (Randy: "artistically obscuring
 // is much better"), but a piece never covers the QR code, the question or
 // the answers, and the scores always sit on top of the two scoreboard
@@ -110,16 +110,16 @@
             img.onerror = () => resolve(null);
             img.src = url;
         });
-        const base = spec.folder + spec.prefix + slot;
-        return tryUrl(base + '.webp').then(img => img || tryUrl(base + '.svg')).then(img => {
+        // under-room also answers to "room" (Randy's first upload's name).
+        const names = slot === 'under-room' ? ['under-room', 'room'] : [slot];
+        const urls = names.flatMap(n => ['.webp', '.svg'].map(ext => spec.folder + spec.prefix + n + ext));
+        const first = i => (i >= urls.length ? Promise.resolve(null) : tryUrl(urls[i]).then(img => img || first(i + 1)));
+        return first(0).then(img => {
             if (!img) return null;
             img.alt = '';
             img.className = 'tv-theme-piece';
-            // Fitted to its box, never stretched; hung from the box's top.
-            img.style.cssText = slot === 'bottom'
-                ? 'position: absolute; object-fit: fill;' // drawn to the panel's exact shape
-                : 'position: absolute; object-fit: contain; object-position: center top;';
-            return { slot, el: img };
+            img.style.position = 'absolute';
+            return { slot, el: img, w: img.naturalWidth, h: img.naturalHeight };
         });
     }
 
@@ -132,15 +132,18 @@
         el.style.height = box.height + 'px';
     }
 
+    // Each picture at its own drawn size, never cropped or stretched
+    // (Randy, Nov 2026: he adjusts the art in Inkscape), centered on its
+    // box. Its pixels are artboard units: 100 is a 5u box's width, and 600
+    // is the scoreboard's width for the bottom piece.
+    const ARTBOARD_WIDTH = { 'over-r': 100, 'under-room': 100, hanging: 100, bottom: 600 };
     function place() {
-        if (active) placed.forEach(({ slot, el }) => {
-            sizeTo(el, slotBox(slot));
-            // The frost follows the scoreboard's rounded bottom corners.
-            if (slot === 'bottom') {
-                const rail = document.getElementById('score-rail');
-                const radius = rail ? getComputedStyle(rail).borderBottomLeftRadius : '0px';
-                el.style.borderRadius = `0 0 ${radius} ${radius}`;
-            }
+        if (active) placed.forEach(({ slot, el, w, h }) => {
+            const box = slotBox(slot);
+            if (!box || !w) return sizeTo(el, null);
+            const scale = box.width / ARTBOARD_WIDTH[slot];
+            const width = w * scale, height = h * scale;
+            sizeTo(el, { left: box.left + (box.width - width) / 2, top: box.top + (box.height - height) / 2, width, height });
         });
         if (outlines) outlines.forEach(({ slot, el }) => sizeTo(el, slotBox(slot)));
     }

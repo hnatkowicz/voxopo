@@ -52,9 +52,11 @@ screen and never moves. A theme is up to four pictures, one per slot:
 
 ## Files
 
-- **One file per slot**, transparent background, drawn on the slot's
-  artboard shape (above). Empty space on the artboard is fine: the
-  artboard's edges are the box's edges.
+- **One file per slot**, transparent background. **Shown at its drawn
+  size, centered on its box, never cropped or stretched** (Randy, Nov
+  2026: he adjusts placement in Inkscape). A file's pixels are artboard
+  units: 100 px wide = a 5u box's full width; for `bottom`, 600 px = the
+  scoreboard's width. `christmas_room.webp` works for under-room too.
 - **Turn any lettering into outlines** (no fonts inside the file).
 - **Keep each file light** -- under about 100 KB if you can. Fine detail
   (tinsel, frost) adds lots of points, and the Fire Stick feels it.

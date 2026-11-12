@@ -1056,7 +1056,8 @@ and forth until we both agree the idea is good **and** worth the effort. So:
   top-right corner, 1.4u up and out) and `bottom` (the scoreboard's width,
   250/600 of it tall, rounded to its corners). Files are
   `<theme>_<slot>.webp` (or .svg), drawn on 100x100 / 100x300 / 600x250
-  artboards and fitted to the box. The two scoreboard pieces sit behind
+  artboards, shown at their drawn size centered on the box (never
+  cropped or stretched; a file's pixels are artboard units). The two scoreboard pieces sit behind
   the scores (a layer under the rail's contents). A box isn't a fence
   (Randy: "artistically obscuring is much better"), but never over the QR
   code, question or answers. `/tv?slots=1` outlines the boxes. The first
