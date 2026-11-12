@@ -1052,10 +1052,10 @@ and forth until we both agree the idea is good **and** worth the effort. So:
   the Fire Stick, and not needed). **Four fixed slots** (Randy, Nov 2026, after the first art went "from
   fun and campy to gaudy": understated is the rule, no movement, no
   peekers): `over-r` (5x5u over the top-left of "Rando"), `under-room`
-  (5x5u under the word ROOM), `hanging` (5x15u over the scoreboard's
-  top-right corner, 1.4u up and out) and `bottom` (the scoreboard's width,
+  (5x5u under the word ROOM), `hanging` (2.5x15u, centered on the
+  scoreboard's right edge, top level with its top, hung from the top) and `bottom` (the scoreboard's width,
   250/600 of it tall, rounded to its corners). Files are
-  `<theme>_<slot>.webp` (or .svg), drawn on 100x100 / 100x300 / 600x250
+  `<theme>_<slot>.webp` (or .svg), drawn on 100x100 / 50x300 / 600x250
   artboards, shown at their drawn size centered on the box (never
   cropped or stretched; a file's pixels are artboard units). The two scoreboard pieces sit behind
   the scores (a layer under the rail's contents). A box isn't a fence
