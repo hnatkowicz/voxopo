@@ -1049,7 +1049,19 @@ and forth until we both agree the idea is good **and** worth the effort. So:
   too, Randy's call -- with taps passing through. Never over the QR code;
   never recolors the game (green/red rule); no licensed characters (no
   Frosty); peekers only in calm moments. Falling snow dropped (costly on
-  the Fire Stick, and not needed). See `public/themes/README.md`. **Built**
+  the Fire Stick, and not needed). **Four fixed slots** (Randy, Nov 2026, after the first art went "from
+  fun and campy to gaudy": understated is the rule, no movement, no
+  peekers): `over-r` (5x5u over the top-left of "Rando"), `under-room`
+  (5x5u under the word ROOM), `hanging` (5x15u over the scoreboard's
+  top-right corner, 1.4u up and out) and `bottom` (the scoreboard's width,
+  250/600 of it tall, rounded to its corners). Files are
+  `<theme>_<slot>.webp` (or .svg), drawn on 100x100 / 100x300 / 600x250
+  artboards, shown at their drawn size centered on the box (never
+  cropped or stretched; a file's pixels are artboard units). The two scoreboard pieces sit behind
+  the scores (a layer under the rail's contents). A box isn't a fence
+  (Randy: "artistically obscuring is much better"), but never over the QR
+  code, question or answers. `/tv?slots=1` outlines the boxes. The first
+  Christmas SVGs are unused, kept until Randy says. See `public/themes/README.md`. **Built**
   (Nov 2026): `access_codes_theme.sql` (theme, theme_starts, theme_ends),
   /admin's TV theme dropdown and dates, the theme riding to the TV with
   the venue (`ROOM_VENUE`), and `public/tv-theme.js`, which loads the art
