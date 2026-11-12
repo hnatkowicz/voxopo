@@ -51,13 +51,17 @@
     // Each slot's box in screen pixels, or null when its anchor isn't on screen.
     function slotBox(slot) {
         const u = unit();
+        // The two top-bar boxes grow and shrink with the wordmark, so the
+        // art keeps its size beside the R and the word ROOM (drawn when the
+        // wordmark was 2.8u tall; Randy shrank the top bar, Nov 2026).
+        const logo = rectOf('hud-logo');
+        const k = shown(logo) ? logo.height / (2.8 * u) : 1;
         if (slot === 'over-r') {
-            const r = rectOf('hud-logo');
-            return shown(r) ? { left: r.left, top: r.top, width: 5 * u, height: 5 * u } : null;
+            return shown(logo) ? { left: logo.left, top: logo.top, width: 5 * k * u, height: 5 * k * u } : null;
         }
         if (slot === 'under-room') {
             const r = roomWordRect();
-            return shown(r) ? { left: r.left, top: r.bottom, width: 5 * u, height: 5 * u } : null;
+            return shown(r) ? { left: r.left, top: r.bottom, width: 5 * k * u, height: 5 * k * u } : null;
         }
         const rail = rectOf('score-rail');
         if (!shown(rail)) return null;

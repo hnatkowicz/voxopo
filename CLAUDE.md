@@ -75,8 +75,10 @@ event, for a small fee. That's why hosting is gated behind access codes.
   its code's settings when it opens, and the host's session remembers
   which code it used. **A code with a venue name or logo** gets the venue
   banner in the lobby, the venue in the top bar and a medium QR code during
-  play (`has-venue` on the TV's body). **The big lobby QR code is
-  everywhere.** **The mode list is the only limit** on what a room plays
+  play (`has-venue` on the TV's body). **The lobby QR code is the same
+  everywhere** (10u; was 13u until 8 modes began to scroll, Randy, Nov
+  2026: the mode tiles get the attention, and every phone's Room page
+  shows the code too). **The mode list is the only limit** on what a room plays
   (nothing ticked = everything), enforced by the server, not just hidden
   on screens; one allowed mode skips the choice; a code with house
   questions always keeps Trivi-yeah!. **"Fill in pub defaults"** on /admin
@@ -319,7 +321,10 @@ event, for a small fee. That's why hosting is gated behind access codes.
      Architecture", "Starting Round 2 of 3", DOUBLER!) stay big (5.2u):
      "clean, bold, right-sized". Reading moments are calmer: question
      2.6u, answers 1.7u, tile values 2.5u, scoreboard rows 1.55u.
-  4. **Nothing jumps.** The top bar never wraps or shifts.
+  4. **Nothing jumps.** The top bar never wraps or shifts. It's small on
+     purpose (wordmark 2.2u tall, was 2.8u until the lobby began to
+     scroll with 8 modes, Randy, Nov 2026); the theme boxes over the R and
+     under ROOM scale with it.
   5. **The clock is informational** (Randy, Nov 2026): a number only (no
      "s"), about 80% of the wordmark's height, quiet denim gray
      (`--rm-text-soft`), turning cream for the last 3 seconds with the TV's
