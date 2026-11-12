@@ -1040,8 +1040,8 @@ and forth until we both agree the idea is good **and** worth the effort. So:
 - **Standalone states quiz page** (Randy, Nov 2026, "another time"): his
   100 state pictures as a phone quiz anyone can run.
 - **TV themes** (Randy, Nov 2026; designing): seasonal and event
-  decorations on the TV, Christmas first (then Halloween, 4th of July,
-  bridal, a cinema night with theater things and no studio branding, St.
+  decorations on the TV, Christmas first, then Autumn, Mardi Gras and Fourth of July
+  on /admin (Nov 2026; later Halloween, bridal, a cinema night with theater things and no studio branding, St.
   Patrick's...). Per venue on /admin, with optional start/end dates (blank
   = on until switched off). Pieces are Randy's SVGs in
   `public/themes/<theme>/`, pinned to the screen's fixed parts (wordmark,

@@ -33,6 +33,19 @@ screen and never moves. A theme is up to four pictures, one per slot:
   files and cheap for the Fire Stick to show. **SVG** works for clean flat
   shapes (same name, `.svg`). Never a picture inside an SVG.
 - **Check on a real TV:** `/tv?slots=1` outlines the four boxes.
+- **The themes and their folders** (/admin's TV theme list):
+
+  | Theme | Folder | Files |
+  |---|---|---|
+  | Christmas | `public/themes/christmas/` | `christmas_over-r.webp` ... |
+  | Autumn | `public/themes/autumn/` | `autumn_over-r.webp` ... |
+  | Mardi Gras | `public/themes/mardi-gras/` | `mardi-gras_over-r.webp` ... |
+  | Fourth of July | `public/themes/fourth-july/` | `fourth-july_over-r.webp` ... |
+
+  The four slot names are `over-r`, `under-room` (or `room`), `hanging`
+  and `bottom`. A new theme is a line in `THEMES` in
+  `src/services/accessControl.js`, `THEME_CHOICES` in `public/admin.html`
+  and `THEMES` in `public/tv-theme.js`, plus its folder.
 - The first Christmas pieces (`garland.svg`, `lights.svg`, ...) are no
   longer used; they're kept in the folder until Randy says to remove them.
 

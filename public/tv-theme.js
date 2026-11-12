@@ -26,7 +26,10 @@
 // checking them on a real TV.
 (function () {
     const THEMES = {
-        CHRISTMAS: { folder: '/themes/christmas/', prefix: 'christmas_' }
+        CHRISTMAS: { folder: '/themes/christmas/', prefix: 'christmas_' },
+        AUTUMN: { folder: '/themes/autumn/', prefix: 'autumn_' },
+        MARDI_GRAS: { folder: '/themes/mardi-gras/', prefix: 'mardi-gras_' },
+        FOURTH_JULY: { folder: '/themes/fourth-july/', prefix: 'fourth-july_' }
     };
     const SLOT_NAMES = ['over-r', 'under-room', 'hanging', 'bottom'];
 
