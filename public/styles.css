@@ -588,22 +588,25 @@ body.tp-layout .tp-stage, body.tp-layout .panel-box { background: transparent; b
 .tp-reveal-row .tp-result { font-weight: 700; font-size: calc(var(--u) * 1.45); }
 .tp-reveal-row .all-in-stamp { font-size: 0.6em; }
 
-/* The frame around the stage, while the layout is on: no boxes, sized to the screen. */
-body.tp-layout .hud-banner { background: transparent; border: none; padding: 0; margin-bottom: calc(var(--u) * 1.6); gap: calc(var(--u) * 2); }
-body.tp-layout .hud-banner > div:first-child { gap: calc(var(--u) * 1.6) !important; }
-body.tp-layout .hud-banner a { height: calc(var(--u) * 2.8) !important; }
+/* The frame around the stage, while the layout is on: no boxes, sized to the screen.
+   The top bar is informative, not crucial, so it stays small (Randy, Nov
+   2026: with 8 modes the lobby began to scroll on the TV; the wordmark
+   went from 2.8u to 2.2u, and everything in the bar with it). */
+body.tp-layout .hud-banner { background: transparent; border: none; padding: 0; margin-bottom: calc(var(--u) * 1.2); gap: calc(var(--u) * 2); }
+body.tp-layout .hud-banner > div:first-child { gap: calc(var(--u) * 1.3) !important; }
+body.tp-layout .hud-banner a { height: calc(var(--u) * 2.2) !important; }
 body.tp-layout .status-pill { padding: calc(var(--u) * 0.45) calc(var(--u) * 1.1); gap: calc(var(--u) * 0.7); }
 body.tp-layout .status-text { font-size: calc(var(--u) * 1.25); }
-body.tp-layout .hud-metric { font-size: calc(var(--u) * 1.3); }
-body.tp-layout .hud-value { font-size: calc(var(--u) * 2) !important; }
+body.tp-layout .hud-metric { font-size: calc(var(--u) * 1.05); }
+body.tp-layout .hud-value { font-size: calc(var(--u) * 1.6) !important; }
 /* The clock: a fixed slot (same size empty or full, so nothing ever moves),
    about 80% of the wordmark's height, quiet denim gray; cream for the last
    3 seconds (setClock in app.js). */
 #lobby-countdown { color: var(--rm-text-soft); font-size: 1.6rem; min-width: 2.5ch; text-align: right; font-variant-numeric: tabular-nums; transition: color 0.2s; }
 #lobby-countdown.clock-final { color: var(--rm-text); }
-body.tp-layout #lobby-countdown { font-size: calc(var(--u) * 2.2) !important; height: calc(var(--u) * 2.8); line-height: calc(var(--u) * 2.8); }
-body.tp-layout #venue-hud-logo { height: calc(var(--u) * 2.8); width: calc(var(--u) * 5.6); }
-body.tp-layout #venue-hud-name { font-size: calc(var(--u) * 1.6); }
+body.tp-layout #lobby-countdown { font-size: calc(var(--u) * 1.75) !important; height: calc(var(--u) * 2.2); line-height: calc(var(--u) * 2.2); }
+body.tp-layout #venue-hud-logo { height: calc(var(--u) * 2.2); width: calc(var(--u) * 4.4); }
+body.tp-layout #venue-hud-name { font-size: calc(var(--u) * 1.3); }
 body.tp-layout .split-container { gap: calc(var(--u) * 2); }
 body.tp-layout #main-trivia-panel { flex: 1 !important; min-width: 0; }
 /* The QR strip becomes a slim footer; the picker's turn message stays big. */
@@ -718,11 +721,13 @@ body.tp-layout.has-venue .lobby-title { display: none; }
 /* The QR code: bigger in the lobby (joining is the point), biggest at a pub
    (scanned from a table). */
 body.tp-layout.tv-lobby #room-qr-box { width: calc(var(--u) * 10) !important; height: calc(var(--u) * 10) !important; }
-/* The big lobby QR everywhere (Nov 2026): it costs nothing at home, and a
-   room of strangers scans from across the room. */
-body.tp-layout.tv-lobby #room-qr-box { width: calc(var(--u) * 13) !important; height: calc(var(--u) * 13) !important; padding: 4px !important; }
-body.tp-layout.tv-lobby #onboarding-text-slot > div:first-child, body.tp-layout.has-venue.tv-lobby #onboarding-text-slot > div:first-child { font-size: calc(var(--u) * 2.2) !important; }
-body.tp-layout.tv-lobby #onboarding-text-slot > div:last-child, body.tp-layout.has-venue.tv-lobby #onboarding-text-slot > div:last-child { font-size: calc(var(--u) * 1.8) !important; }
+/* The lobby QR, everywhere (Nov 2026). Was 13u; Randy cut it to 10u when 8
+   modes began to scroll: the mode tiles are where the attention belongs,
+   and every phone's Room page shows the code too, so a friend can scan in
+   from a phone. */
+body.tp-layout.tv-lobby #room-qr-box { width: calc(var(--u) * 10) !important; height: calc(var(--u) * 10) !important; padding: 4px !important; }
+body.tp-layout.tv-lobby #onboarding-text-slot > div:first-child, body.tp-layout.has-venue.tv-lobby #onboarding-text-slot > div:first-child { font-size: calc(var(--u) * 1.9) !important; }
+body.tp-layout.tv-lobby #onboarding-text-slot > div:last-child, body.tp-layout.has-venue.tv-lobby #onboarding-text-slot > div:last-child { font-size: calc(var(--u) * 1.55) !important; }
 body.tp-layout.has-venue.tv-lobby #onboarding-text-slot { flex: 1 !important; }
 
 /* Game Over: the venue's logo (Trivi-yeah! at a venue) and the return-vote
