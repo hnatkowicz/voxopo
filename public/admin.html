@@ -178,7 +178,7 @@
         const DAY_NAMES = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
         const clockText = time => { const [h, m] = (time || '20:00').split(':').map(Number); return `${((h + 11) % 12) + 1}:${String(m).padStart(2, '0')} ${h < 12 ? 'am' : 'pm'}`; };
         // TV themes: [key, what /admin calls it]. Art lives in public/themes/<key in lowercase>/.
-        const THEME_CHOICES = [['OFF', 'Off'], ['CHRISTMAS', 'Christmas']];
+        const THEME_CHOICES = [['OFF', 'Off'], ['CHRISTMAS', 'Christmas'], ['AUTUMN', 'Autumn'], ['MARDI_GRAS', 'Mardi Gras'], ['FOURTH_JULY', 'Fourth of July']];
         let houseSets = []; // [{ key, total, tiers, complete }] from the database
 
         // "HOUSE_PICKLES_PINS: 16 questions" -- or why the board won't use it.

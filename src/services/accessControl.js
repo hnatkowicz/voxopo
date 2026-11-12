@@ -165,7 +165,7 @@ const MAX_BREAK_NOTES = 10;
 // TV themes (access_codes_theme.sql; Randy, Nov 2026): seasonal and event
 // decorations, Randy's art in public/themes/<theme>/. A new theme is a new
 // name here plus its folder of art.
-export const THEMES = ['OFF', 'CHRISTMAS'];
+export const THEMES = ['OFF', 'CHRISTMAS', 'AUTUMN', 'MARDI_GRAS', 'FOURTH_JULY'];
 const THEME_DATE_PATTERN = /^\d{4}-\d{2}-\d{2}$/;
 // The scheduled announcement (access_codes_announcement.sql; Randy, Nov
 // 2026, after a trivia night where the host stopped at 8:00 for the post's
