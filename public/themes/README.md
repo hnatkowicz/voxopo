@@ -7,23 +7,34 @@ places the pieces; it doesn't care which holiday it is, so a new theme is
 new drawings, not new code.
 
 **Built** (Nov 2026): `access_codes_theme.sql` adds the setting,
-`public/tv-theme.js` places the pieces (where each hangs is a short list at
-its top, tuned by eye), and `THEMES` in `src/services/accessControl.js`
-lists the themes /admin offers. How it works:
+`public/tv-theme.js` places the pieces, and `THEMES` in
+`src/services/accessControl.js` lists the themes /admin offers.
 
-- **Per venue, on /admin.** Each access code gets a Theme setting (Off,
-  Christmas, ...) with optional start and end dates. Blank dates mean
-  "on until switched off". A room picks up its venue's theme when it opens.
-- **Pinned to the screen's fixed parts.** Each piece hangs from something
-  that is on every TV screen and never moves -- the wordmark, the room
-  code, the clock, the scoreboard, "Scan to join" -- so it stays put while
-  the game changes underneath, at any TV size.
-- **Always on top, and see-through to touch.** Decorations sit above the
-  game (frost included), and taps and remote clicks pass straight through
-  them, so nothing can block a button.
-- **Peekers** (characters peeking out from behind things) appear now and
-  then, only in calm moments (the lobby, between questions, breaks), never
-  while people are reading or answering.
+**Four fixed slots** (Randy, Nov 2026, after the first Christmas art went
+"from fun and campy to gaudy": **understated** is the rule). Each slot is a
+box of fixed size and shape, hung from a part of the TV that's on every
+screen and never moves. A theme is up to four pictures, one per slot:
+
+| Slot | File | Draw on | Where |
+|---|---|---|---|
+| over-r | `<theme>_over-r.webp` | 100 x 100 (export 200 x 200) | over the top-left of "Rando", partly covering the R |
+| under-room | `<theme>_under-room.webp` | 100 x 100 (export 200 x 200) | hanging under the word ROOM, left edges lined up |
+| hanging | `<theme>_hanging.webp` | 100 x 300 (export 200 x 600) | over the scoreboard's top-right corner, a little up and out; **behind the scores** |
+| bottom | `<theme>_bottom.webp` | 600 x 250 (export 1200 x 500) | across the scoreboard's bottom, rounded corners trimmed for you; **behind the scores** |
+
+- **A box is where a piece hangs and how big it can get, not a fence**
+  (Randy: "artistically obscuring is much better"). Partly covering the R
+  or drifting into the lobby's space is fine. Never over the QR code, the
+  question or the answers, and the scores always sit on top of the two
+  scoreboard pieces.
+- **Nothing moves.** No twinkling, no peekers (Randy: too cutesy).
+- **Fill only the slots you want.** A missing file leaves its slot empty.
+- **WebP for anything painterly** (frost, glows, gradients, texture): small
+  files and cheap for the Fire Stick to show. **SVG** works for clean flat
+  shapes (same name, `.svg`). Never a picture inside an SVG.
+- **Check on a real TV:** `/tv?slots=1` outlines the four boxes.
+- The first Christmas pieces (`garland.svg`, `lights.svg`, ...) are no
+  longer used; they're kept in the folder until Randy says to remove them.
 
 ## Rules every theme follows
 
@@ -41,9 +52,9 @@ lists the themes /admin offers. How it works:
 
 ## Files
 
-- **SVG**, one file per piece, transparent background.
-- **Crop each file tight to the art.** Pieces are placed by their file's
-  edges, so empty margin pushes a piece off its spot.
+- **One file per slot**, transparent background, drawn on the slot's
+  artboard shape (above). Empty space on the artboard is fine: the
+  artboard's edges are the box's edges.
 - **Turn any lettering into outlines** (no fonts inside the file).
 - **Keep each file light** -- under about 100 KB if you can. Fine detail
   (tinsel, frost) adds lots of points, and the Fire Stick feels it.

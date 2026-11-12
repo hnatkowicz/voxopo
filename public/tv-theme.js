@@ -2,76 +2,95 @@
 // in public/themes/<theme>/. app.js calls applyTvTheme(venue.theme) when a
 // room's venue arrives (ROOM_VENUE) and clearTvTheme() when the room closes.
 //
-// How it works:
-// - Each piece hangs from a part of the TV that's on every screen and never
-//   moves (the wordmark, the room code, the scoreboard, "Scan to join"), so
-//   it stays put while the game changes underneath, at any TV size.
-// - The pieces sit in one layer on top of the game (Randy: designed for on
-//   top), below the toasts, and see-through to taps and remote clicks.
-// - Positions are in "u" (1% of the 16:9 frame's width), like the rest of
-//   the TV, and are re-measured whenever the screen changes.
-// - A piece whose file isn't uploaded yet is simply left off.
-// - Rules every theme keeps (public/themes/README.md): never over the QR
-//   code, never recolors the game, no licensed characters.
+// Four slots, each a fixed box hung from a part of the TV that's on every
+// screen and never moves (Randy, Nov 2026, after the first Christmas art
+// went "from fun and campy to gaudy": understated is the rule). A theme is
+// up to four pictures, one per slot, named <theme>_<slot>.webp (or .svg):
+//
+//   over-r      5 x 5    over the top-left of "Rando", partly covering the R
+//   under-room  5 x 5    hanging under the word ROOM, left edges lined up
+//   hanging     5 x 15   over the scoreboard's top-right corner, 1.4 up and
+//                        1.4 out (Randy: 15px in his sketch); behind the scores
+//   bottom      panel's width x 250/600 of it, across the scoreboard's
+//               bottom (a semi-opaque frost); behind the scores
+//
+// Sizes are in u (1% of the 16:9 frame's width), like the rest of the TV.
+// Art is drawn on an artboard of the same shape (100 x 100, 100 x 300,
+// 600 x 250) and fitted to the box, never stretched. A box is where a piece
+// hangs and how big it can get, not a fence (Randy: "artistically obscuring
+// is much better"), but a piece never covers the QR code, the question or
+// the answers, and the scores always sit on top of the two scoreboard
+// pieces. Nothing moves. A slot with no file is simply left empty.
+//
+// /tv?slots=1 outlines the four boxes on any screen, theme or not, for
+// checking them on a real TV.
 (function () {
-    // Where each piece hangs. anchor: which part of the TV. x/y: where on
-    // that part (0 = its left/top edge, 1 = its right/bottom edge), then
-    // dx/dy nudges and w (the piece's width) in u. Tune by eye on the stick.
     const THEMES = {
-        CHRISTMAS: {
-            folder: '/themes/christmas/',
-            pieces: [
-                // Tinsel draped over "Rando" only, hanging from the top of the
-                // "R" and the crook of the "M" (Randy, Nov 2026). Measured:
-                // the garland's high points sit 6% and 93% across it, the R's
-                // top at 4% of the wordmark and the M's crook at 56%, so at
-                // 60.5% of the wordmark's width both points line up. (A
-                // shallower, squashed version was tried and looked thin; the
-                // drawn depth stays. hScale/rotate/origin can still reshape a
-                // piece if a later drawing needs it.)
-                { file: 'garland', anchor: 'logo', x: 0.003, y: 0, dx: 0, dy: 0, wOfAnchor: 0.605 },
-                // A glass ornament just past "Mania!" (not over the "!"), or
-                // past a pub's name in the top bar -- never over the venue's
-                // branding, which they pay for.
-                { file: 'ornament-2', anchor: 'brand', x: 1, y: 0, dx: 1.0, dy: -1.4, w: 2.6 },
-                // The string of lights along the top, after the wordmark (or
-                // the pub's name); its bulbs' glows twinkle (see loadPiece).
-                // At a pub the top bar is fuller, so it shortens to stop
-                // short of "Room".
-                { file: 'lights', anchor: 'brand', x: 1, y: 0, dx: 3.6, dy: -1.2, w: 24, stopBefore: 'roomlabel', twinkle: true },
-                // The blue ornament hanging under the room code (Randy's mockup).
-                { file: 'ornament-1', anchor: 'roomcode', x: 0.5, y: 1, dx: -1.3, dy: -1.4, w: 2.6 },
-                // Icicles off the scoreboard's top-right corner, centered on
-                // its border so they hang clear of the score column.
-                { file: 'icicles-scores', anchor: 'scores', x: 1, y: 0, dx: -1.1, dy: -0.4, w: 2.2 },
-                // Not drawn yet: icicles-scan (from "Scan to join", never over
-                // the QR code), frost-scores (on top of the scoreboard's bottom).
-                { file: 'icicles-scan', anchor: 'scan', x: 0, y: 0, dx: 0, dy: -0.4, w: 2.2 },
-                { file: 'frost-scores', anchor: 'scores', x: 0, y: 1, dx: 0, dy: 0, wOfAnchor: 1, fromBottom: true }
-            ]
-        }
+        CHRISTMAS: { folder: '/themes/christmas/', prefix: 'christmas_' }
     };
-
-    // The parts of the TV a piece can hang from.
-    const ANCHORS = {
-        logo: () => document.getElementById('hud-logo'),
-        // A pub's name and logo in the top bar when it's showing, else the wordmark.
-        brand: () => {
-            const venue = document.getElementById('venue-hud');
-            return venue && venue.getBoundingClientRect().width ? venue : document.getElementById('hud-logo');
-        },
-        roomcode: () => document.getElementById('display-room-code-badge'),
-        roomlabel: () => { const badge = document.getElementById('display-room-code-badge'); return badge && badge.parentElement; },
-        scores: () => document.getElementById('score-rail'),
-        scan: () => document.getElementById('onboarding-text-slot')
-    };
-
-    let layer = null;
-    let active = null; // the theme's key while it's showing
-    let placed = [];   // [{ piece, el, ratio }]
-    let watchTimer = null;
+    const SLOT_NAMES = ['over-r', 'under-room', 'hanging', 'bottom'];
+    const NUDGE = 1.4; // the hanging strip's offset up and right, in u
 
     const unit = () => Math.min(window.innerWidth, window.innerHeight * 16 / 9) / 100;
+    const shown = rect => rect && (rect.width || rect.height);
+
+    // The word ROOM itself (not the number, whose width changes).
+    function roomWordRect() {
+        const badge = document.getElementById('display-room-code-badge');
+        const label = badge && badge.parentElement;
+        const text = label && [...label.childNodes].find(n => n.nodeType === 3 && n.textContent.trim());
+        if (!text) return null;
+        const range = document.createRange();
+        range.selectNodeContents(text);
+        return range.getBoundingClientRect();
+    }
+    const rectOf = id => { const el = document.getElementById(id); return el ? el.getBoundingClientRect() : null; };
+
+    // Each slot's box in screen pixels, or null when its anchor isn't on screen.
+    function slotBox(slot) {
+        const u = unit();
+        if (slot === 'over-r') {
+            const r = rectOf('hud-logo');
+            return shown(r) ? { left: r.left, top: r.top, width: 5 * u, height: 5 * u } : null;
+        }
+        if (slot === 'under-room') {
+            const r = roomWordRect();
+            return shown(r) ? { left: r.left, top: r.bottom, width: 5 * u, height: 5 * u } : null;
+        }
+        const rail = rectOf('score-rail');
+        if (!shown(rail)) return null;
+        if (slot === 'hanging') return { left: rail.right + NUDGE * u - 5 * u, top: rail.top - NUDGE * u, width: 5 * u, height: 15 * u };
+        const height = rail.width * 250 / 600;
+        return { left: rail.left, top: rail.bottom - height, width: rail.width, height };
+    }
+    const behindScores = slot => slot === 'hanging' || slot === 'bottom';
+
+    // Two layers: one over the game (above the scoreboard too) and one
+    // under the scoreboard's text but over its panel, so the scores always
+    // read. Both see-through to taps and remote clicks.
+    let overLayer = null, underLayer = null;
+    function layers() {
+        if (!overLayer) {
+            overLayer = document.createElement('div');
+            overLayer.id = 'tv-theme-layer';
+            overLayer.setAttribute('aria-hidden', 'true');
+            // Above the game, below the announcement (9500) and the toasts (9999).
+            overLayer.style.cssText = 'position: fixed; inset: 0; pointer-events: none; z-index: 9000; overflow: hidden;';
+            document.body.appendChild(overLayer);
+            underLayer = document.createElement('div');
+            underLayer.id = 'tv-theme-under';
+            underLayer.setAttribute('aria-hidden', 'true');
+            // z-index 0: over the panel's background, under its text (the
+            // scoreboard's contents sit at z-index 1, see styles.css).
+            underLayer.style.cssText = 'position: fixed; inset: 0; pointer-events: none; z-index: 0; overflow: hidden;';
+            document.body.appendChild(underLayer);
+        }
+        return { overLayer, underLayer };
+    }
+
+    let active = null; // the theme's key while it's showing
+    let placed = [];   // [{ slot, el }]
+    let watchTimer = null;
 
     // Dates are plain YYYY-MM-DD from /admin, checked against this TV's own
     // calendar, so "December 1" is the venue's December 1.
@@ -83,81 +102,47 @@
         return true;
     }
 
-    function ensureLayer() {
-        if (layer) return layer;
-        layer = document.createElement('div');
-        layer.id = 'tv-theme-layer';
-        layer.setAttribute('aria-hidden', 'true');
-        // Above the game, below the toasts (9999); taps pass straight through.
-        layer.style.cssText = 'position: fixed; inset: 0; pointer-events: none; z-index: 9000; overflow: hidden;';
-        document.body.appendChild(layer);
-        return layer;
+    // A slot's picture: the WebP if it's there, else an SVG, else nothing.
+    function loadSlot(spec, slot) {
+        const tryUrl = url => new Promise(resolve => {
+            const img = new Image();
+            img.onload = () => resolve(img);
+            img.onerror = () => resolve(null);
+            img.src = url;
+        });
+        const base = spec.folder + spec.prefix + slot;
+        return tryUrl(base + '.webp').then(img => img || tryUrl(base + '.svg')).then(img => {
+            if (!img) return null;
+            img.alt = '';
+            img.className = 'tv-theme-piece';
+            // Fitted to its box, never stretched; hung from the box's top.
+            img.style.cssText = slot === 'bottom'
+                ? 'position: absolute; object-fit: fill;' // drawn to the panel's exact shape
+                : 'position: absolute; object-fit: contain; object-position: center top;';
+            return { slot, el: img };
+        });
     }
 
-    // Lights are put into the page as real SVG so their bulbs' glows (the
-    // blurred shapes Randy drew around each bulb) can twinkle one by one.
-    // Everything else is a plain picture.
-    async function loadPiece(folder, piece) {
-        const url = folder + piece.file + '.svg';
-        let el, ratio;
-        try {
-            const response = await fetch(url);
-            if (!response.ok) return null; // not uploaded yet
-            const text = await response.text();
-            const box = /viewBox="\s*[-\d.]+[\s,]+[-\d.]+[\s,]+([\d.]+)[\s,]+([\d.]+)/.exec(text);
-            ratio = box ? Number(box[2]) / Number(box[1]) : 1;
-            if (piece.twinkle) {
-                el = document.createElement('div');
-                el.innerHTML = text.replace(/<\?xml[^>]*\?>/, '');
-                const svg = el.querySelector('svg');
-                if (svg) { svg.removeAttribute('width'); svg.removeAttribute('height'); svg.style.cssText = 'width: 100%; height: 100%; display: block;'; }
-                // Each glow is a shape with a blur on it; give each its own
-                // slow pace and start, so a few change at a time.
-                el.querySelectorAll('path[style*="filter"]').forEach((glow, i) => {
-                    glow.classList.add('tv-theme-glow');
-                    glow.style.animationDuration = (2.6 + (i * 7 % 5) * 0.5) + 's';
-                    glow.style.animationDelay = (-(i * 1.3) % 4) + 's';
-                });
-            } else {
-                el = document.createElement('img');
-                el.src = url;
-                el.alt = '';
-            }
-        } catch (e) {
-            return null;
-        }
-        el.className = (el.className ? el.className + ' ' : '') + 'tv-theme-piece';
-        el.style.position = 'absolute';
-        return { piece, el, ratio };
+    function sizeTo(el, box) {
+        if (!box) { el.style.display = 'none'; return; }
+        el.style.display = 'block';
+        el.style.left = box.left + 'px';
+        el.style.top = box.top + 'px';
+        el.style.width = box.width + 'px';
+        el.style.height = box.height + 'px';
     }
 
     function place() {
-        if (!active || !layer) return;
-        const u = unit();
-        placed.forEach(({ piece, el, ratio }) => {
-            const anchor = ANCHORS[piece.anchor] && ANCHORS[piece.anchor]();
-            const rect = anchor && anchor.getBoundingClientRect();
-            // An anchor that isn't on screen (the start screen) hides its pieces.
-            if (!rect || (!rect.width && !rect.height)) { el.style.display = 'none'; return; }
-            let left = rect.left + piece.x * rect.width + piece.dx * u;
-            let w = piece.wOfAnchor ? rect.width * piece.wOfAnchor : piece.w * u;
-            // Shorten to end a little before another part (the lights stop
-            // short of "Room" when a pub's name fills the top bar).
-            const stop = piece.stopBefore && ANCHORS[piece.stopBefore] && ANCHORS[piece.stopBefore]();
-            if (stop) w = Math.max(0, Math.min(w, stop.getBoundingClientRect().left - 1.5 * u - left));
-            const h = w * ratio * (piece.hScale || 1);
-            if (piece.rotate) {
-                el.style.transformOrigin = piece.origin || '0 0';
-                el.style.transform = `rotate(${piece.rotate}deg)`;
+        if (active) placed.forEach(({ slot, el }) => {
+            sizeTo(el, slotBox(slot));
+            // The frost follows the scoreboard's rounded bottom corners.
+            if (slot === 'bottom') {
+                const rail = document.getElementById('score-rail');
+                const radius = rail ? getComputedStyle(rail).borderBottomLeftRadius : '0px';
+                el.style.borderRadius = `0 0 ${radius} ${radius}`;
             }
-            let top = rect.top + piece.y * rect.height + piece.dy * u;
-            if (piece.fromBottom) top -= h; // sits up from the anchor's bottom edge
-            el.style.display = 'block';
-            el.style.left = left + 'px';
-            el.style.top = top + 'px';
-            el.style.width = w + 'px';
-            el.style.height = h + 'px';
         });
+        if (outlines) outlines.forEach(({ slot, el }) => sizeTo(el, slotBox(slot)));
     }
 
     async function applyTvTheme(theme) {
@@ -167,22 +152,41 @@
         if (active === key) return place();
         clearTvTheme();
         active = key;
-        ensureLayer();
-        const loaded = await Promise.all(spec.pieces.map(p => loadPiece(spec.folder, p)));
+        const { overLayer: over, underLayer: under } = layers();
+        const loaded = await Promise.all(SLOT_NAMES.map(slot => loadSlot(spec, slot)));
         if (active !== key) return; // switched off while loading
         placed = loaded.filter(Boolean);
-        placed.forEach(p => layer.appendChild(p.el));
+        placed.forEach(p => (behindScores(p.slot) ? under : over).appendChild(p.el));
         place();
-        // Re-measure now and then: the TV's screens change under the pieces,
-        // and a remote's full-screen toggle resizes everything.
-        watchTimer = setInterval(place, 1000);
+        startWatching();
+    }
+
+    // Re-measure now and then: the TV's screens change under the pieces,
+    // and a remote's full-screen toggle resizes everything.
+    function startWatching() {
+        if (!watchTimer) watchTimer = setInterval(place, 1000);
     }
 
     function clearTvTheme() {
         active = null;
+        placed.forEach(({ el }) => el.remove());
         placed = [];
-        if (watchTimer) { clearInterval(watchTimer); watchTimer = null; }
-        if (layer) layer.innerHTML = '';
+        if (watchTimer && !outlines) { clearInterval(watchTimer); watchTimer = null; }
+    }
+
+    // /tv?slots=1: dashed outlines of the four boxes, for checking on a TV.
+    let outlines = null;
+    if (/[?&]slots=1\b/.test(location.search)) {
+        const { overLayer: over } = layers();
+        outlines = SLOT_NAMES.map(slot => {
+            const el = document.createElement('div');
+            el.style.cssText = 'position: absolute; box-sizing: border-box; border: 2px dashed var(--rm-text);';
+            el.innerHTML = `<span style="position: absolute; left: 2px; top: 0; font: 12px sans-serif; color: var(--rm-text);">${slot}</span>`;
+            over.appendChild(el);
+            return { slot, el };
+        });
+        startWatching();
+        window.addEventListener('load', place);
     }
 
     window.addEventListener('resize', () => place());

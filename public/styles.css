@@ -886,10 +886,9 @@ body.tp-layout[data-view="gateway"] #gateway-screen { display: flex !important; 
 }
 
 /* ---------- TV themes (public/tv-theme.js; Randy, Nov 2026) ----------
-   The string of lights' bulb glows (the blurred shapes Randy drew around
-   each bulb) twinkle slowly, each at its own pace, a few at a time. */
-.tv-theme-glow { animation-name: tv-theme-twinkle; animation-timing-function: ease-in-out; animation-iteration-count: infinite; animation-direction: alternate; }
-@keyframes tv-theme-twinkle { from { opacity: 0.12; } to { opacity: 0.85; } }
+   The scoreboard's contents sit above the theme's under-layer (z-index 0),
+   so the hanging strip and the bottom frost pass behind the scores. */
+#score-rail > * { position: relative; z-index: 1; }
 
 /* ---------- Letter Rip, the letter race (Randy, Nov 2026) ----------
    The board is the reading moment: tiles about 4u, words kept whole. */
@@ -990,10 +989,10 @@ body.tp-layout[data-view="gateway"] #gateway-screen { display: flex !important; 
 .ent-compact-names { font-size: calc(var(--u) * 1.4); color: var(--rm-text-muted); }
 
 /* ---- The venue's announcement (Nov 2026) ----
-   Over everything, the TV theme included: the flag (or the venue's picture)
+   Over everything, the TV theme included (its layer is 9000): the flag (or the venue's picture)
    fills the screen under a denim shade, and the words sit in one calm
    column. A reading moment (rule 3), sized down for a long charter. */
-#tv-announcement { position: fixed; inset: 0; z-index: 9000; display: flex; align-items: center; justify-content: center;
+#tv-announcement { position: fixed; inset: 0; z-index: 9500; display: flex; align-items: center; justify-content: center;
     background: var(--rm-bg); opacity: 0; pointer-events: none; transition: opacity 0.6s ease; }
 #tv-announcement.show { opacity: 1; pointer-events: auto; }
 #tv-announcement-bg { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
