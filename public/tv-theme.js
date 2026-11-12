@@ -9,13 +9,13 @@
 //
 //   over-r      5 x 5    over the top-left of "Rando", partly covering the R
 //   under-room  5 x 5    hanging under the word ROOM, left edges lined up (or _room)
-//   hanging     5 x 15   over the scoreboard's top-right corner, 1.4 up and
-//                        1.4 out (Randy: 15px in his sketch); behind the scores
+//   hanging     2.5 x 15 centered on the scoreboard's right edge, top level
+//                        with its top (Randy's 50 x 300); behind the scores
 //   bottom      panel's width x 250/600 of it, across the scoreboard's
 //               bottom (a semi-opaque frost); behind the scores
 //
 // Sizes are in u (1% of the 16:9 frame's width), like the rest of the TV.
-// Art is drawn on an artboard of the same shape (100 x 100, 100 x 300,
+// Art is drawn on an artboard of the same shape (100 x 100, 50 x 300,
 // 600 x 250) and shown at its drawn size, centered on the box. A box is where a piece
 // hangs and how big it can get, not a fence (Randy: "artistically obscuring
 // is much better"), but a piece never covers the QR code, the question or
@@ -29,7 +29,6 @@
         CHRISTMAS: { folder: '/themes/christmas/', prefix: 'christmas_' }
     };
     const SLOT_NAMES = ['over-r', 'under-room', 'hanging', 'bottom'];
-    const NUDGE = 1.4; // the hanging strip's offset up and right, in u
 
     const unit = () => Math.min(window.innerWidth, window.innerHeight * 16 / 9) / 100;
     const shown = rect => rect && (rect.width || rect.height);
@@ -59,7 +58,9 @@
         }
         const rail = rectOf('score-rail');
         if (!shown(rail)) return null;
-        if (slot === 'hanging') return { left: rail.right + NUDGE * u - 5 * u, top: rail.top - NUDGE * u, width: 5 * u, height: 15 * u };
+        // Centered on the scoreboard's right edge, its top level with the
+        // scoreboard's top (Randy, Nov 2026: 50 x 300 on his artboard).
+        if (slot === 'hanging') return { left: rail.right - 1.25 * u, top: rail.top, width: 2.5 * u, height: 15 * u };
         const height = rail.width * 250 / 600;
         return { left: rail.left, top: rail.bottom - height, width: rail.width, height };
     }
@@ -136,14 +137,16 @@
     // (Randy, Nov 2026: he adjusts the art in Inkscape), centered on its
     // box. Its pixels are artboard units: 100 is a 5u box's width, and 600
     // is the scoreboard's width for the bottom piece.
-    const ARTBOARD_WIDTH = { 'over-r': 100, 'under-room': 100, hanging: 100, bottom: 600 };
+    const ARTBOARD_WIDTH = { 'over-r': 100, 'under-room': 100, hanging: 50, bottom: 600 };
     function place() {
         if (active) placed.forEach(({ slot, el, w, h }) => {
             const box = slotBox(slot);
             if (!box || !w) return sizeTo(el, null);
             const scale = box.width / ARTBOARD_WIDTH[slot];
             const width = w * scale, height = h * scale;
-            sizeTo(el, { left: box.left + (box.width - width) / 2, top: box.top + (box.height - height) / 2, width, height });
+            // The hanging piece hangs from the box's top; the rest sit in its middle.
+            const top = slot === 'hanging' ? box.top : box.top + (box.height - height) / 2;
+            sizeTo(el, { left: box.left + (box.width - width) / 2, top, width, height });
         });
         if (outlines) outlines.forEach(({ slot, el }) => sizeTo(el, slotBox(slot)));
     }

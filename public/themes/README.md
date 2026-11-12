@@ -19,7 +19,7 @@ screen and never moves. A theme is up to four pictures, one per slot:
 |---|---|---|---|
 | over-r | `<theme>_over-r.webp` | 100 x 100 (export 200 x 200) | over the top-left of "Rando", partly covering the R |
 | under-room | `<theme>_under-room.webp` | 100 x 100 (export 200 x 200) | hanging under the word ROOM, left edges lined up |
-| hanging | `<theme>_hanging.webp` | 100 x 300 (export 200 x 600) | over the scoreboard's top-right corner, a little up and out; **behind the scores** |
+| hanging | `<theme>_hanging.webp` | 50 x 300 | centered on the scoreboard's right edge, top level with its top, hung from the top; **behind the scores** |
 | bottom | `<theme>_bottom.webp` | 600 x 250 (export 1200 x 500) | across the scoreboard's bottom, rounded corners trimmed for you; **behind the scores** |
 
 - **A box is where a piece hangs and how big it can get, not a fence**
