@@ -1,6 +1,6 @@
 -- ============================================================================
 -- Country Monkey: WATER questions ("Which body of water is highlighted?") --
--- 119 rows from 109 of Randy's water maps (public/water/): oceans, seas,
+-- 124 rows from 114 of Randy's water maps (public/water/): oceans, seas,
 -- gulfs, bays, straits, lakes and rivers. A game mixes in 3 of 20.
 --
 -- Wrong answers are the same kind of water (lakes among lakes, rivers among
@@ -9,8 +9,8 @@
 -- shortens to the same name ("Hudson" could be the bay, river or strait).
 --
 -- category = region; a few belong to two or three (the Mediterranean, the Red
--- Sea, the Indian Ocean). Rows: Africa 16, Europe 21, Asia & Pacific 22,
--- Middle East 11, Americas 50, World Wide only 0. The -2 files and
+-- Sea, the Indian Ocean). Rows: Africa 16, Europe 23, Asia & Pacific 21,
+-- Middle East 13, Americas 51, World Wide only 0. The -2 files and
 -- caspian-sea.webp are second drawings, used for a second region.
 --
 -- Safe to re-run: deletes and re-inserts the water questions only
@@ -67,6 +67,9 @@ FROM (VALUES
 ('EUROPE',           '/water/rhine-river.webp',             'Rhine River',          ARRAY['Danube River', 'Elbe River', 'Rhône River', 'Meuse River', 'Seine River', 'Weser River'], ARRAY['Rhine'], 150),
 ('EUROPE',           '/water/volga-river.webp',             'Volga River',          ARRAY['Don River', 'Dnieper River', 'Ural River', 'Danube River', 'Ob River', 'Dniester River'], ARRAY['Volga'], 200),
 ('EUROPE',           '/water/rhone-river.webp',             'Rhône River',          ARRAY['Rhine River', 'Loire River', 'Seine River', 'Garonne River', 'Po River', 'Danube River'], ARRAY['Rhone', 'Rhône', 'Rhone River'], 200),
+-- Randy's third river batch (Nov 2026).
+('EUROPE',           '/water/po-river.webp',                'Po River',             ARRAY['Rhône River', 'Tiber River', 'Adige River', 'Arno River', 'Danube River', 'Rhine River'], ARRAY['Po'], 200),
+('EUROPE',           '/water/vistula-river.webp',           'Vistula River',        ARRAY['Oder River', 'Elbe River', 'Dnieper River', 'Neman River', 'Daugava River', 'Danube River'], ARRAY['Vistula', 'Wisła', 'Wisla'], 250),
 -- ASIA (Asia & Pacific)
 ('ASIA',             '/water/andaman-sea.webp',             'Andaman Sea',          ARRAY['Bay of Bengal', 'Gulf of Thailand', 'Java Sea', 'Laccadive Sea', 'Celebes Sea', 'Sulu Sea'], ARRAY['Andaman'], 250),
 ('ASIA',             '/water/bay-bengal.webp',              'Bay of Bengal',        ARRAY['Arabian Sea', 'Andaman Sea', 'Laccadive Sea', 'Gulf of Mannar', 'Gulf of Thailand', 'South China Sea'], ARRAY['Bengal'], 150),
@@ -100,6 +103,8 @@ FROM (VALUES
 ('MIDDLE_EAST_ASIA', '/water/indian-ocean.webp',            'Indian Ocean',         ARRAY['Pacific Ocean', 'South Atlantic Ocean', 'North Atlantic Ocean', 'Southern Ocean', 'Arctic Ocean', 'South China Sea'], ARRAY['Indian'], 100),
 ('MIDDLE_EAST_ASIA', '/water/persian-gulf.webp',            'Persian Gulf',         ARRAY['Gulf of Oman', 'Red Sea', 'Arabian Sea', 'Gulf of Aden', 'Caspian Sea', 'Gulf of Aqaba'], ARRAY['Arabian Gulf'], 100),
 ('MIDDLE_EAST_ASIA', '/water/euphrates-river.webp',         'Euphrates River',      ARRAY['Tigris River', 'Jordan River', 'Nile River', 'Karun River', 'Orontes River', 'Indus River'], ARRAY['Euphrates'], 200),
+('MIDDLE_EAST_ASIA', '/water/tigris.webp',                  'Tigris River',         ARRAY['Euphrates River', 'Jordan River', 'Karun River', 'Orontes River', 'Nile River', 'Indus River'], ARRAY['Tigris'], 200),
+('MIDDLE_EAST_ASIA', '/water/jordan-river.webp',            'Jordan River',         ARRAY['Litani River', 'Orontes River', 'Euphrates River', 'Tigris River', 'Karun River', 'Nile River'], ARRAY['Jordan'], 200),
 ('MIDDLE_EAST_ASIA', '/water/indus-river.webp',             'Indus River',          ARRAY['Ganges River', 'Brahmaputra River', 'Euphrates River', 'Amu Darya', 'Helmand River', 'Narmada River'], ARRAY['Indus'], 200),
 -- AMERICAS
 ('AMERICAS',          '/water/baffin-bay.webp',              'Baffin Bay',            ARRAY['Hudson Bay', 'Davis Strait', 'Labrador Sea', 'Beaufort Sea', 'Greenland Sea', 'James Bay'], ARRAY['Baffin'], 200),
@@ -111,7 +116,7 @@ FROM (VALUES
 ('AMERICAS',          '/water/gulf-of-california.webp',      'Gulf of California',    ARRAY['Gulf of Mexico', 'Puget Sound', 'Gulf of Alaska', 'Salish Sea', 'Bay of Campeche', 'Gulf of Panama'], ARRAY['California'], 150),
 ('AMERICAS',          '/water/gulf-of-mexico-2.webp',        'Gulf of Mexico',        ARRAY['Caribbean Sea', 'Gulf of California', 'Sargasso Sea', 'Bay of Campeche', 'Gulf of Honduras', 'Chesapeake Bay'], NULL::text[], 100),
 ('AMERICAS',          '/water/gulf-of-mexico.webp',          'Gulf of Mexico',        ARRAY['Caribbean Sea', 'Gulf of California', 'Sargasso Sea', 'Bay of Campeche', 'Gulf of Honduras', 'Chesapeake Bay'], NULL::text[], 100),
-('AMERICAS',          '/water/gulf-of-st-lawrence.webp',     'Gulf of St. Lawrence',  ARRAY['Bay of Fundy', 'Gulf of Maine', 'Hudson Strait', 'James Bay', 'Labrador Sea', 'Hudson Bay'], ARRAY['St. Lawrence'], 200),
+('AMERICAS',          '/water/gulf-of-st-lawrence.webp',     'Gulf of St. Lawrence',  ARRAY['Bay of Fundy', 'Gulf of Maine', 'Hudson Strait', 'James Bay', 'Labrador Sea', 'Hudson Bay'], NULL::text[], 200),
 ('AMERICAS',          '/water/hudson-bay.webp',              'Hudson Bay',            ARRAY['James Bay', 'Baffin Bay', 'Hudson Strait', 'Labrador Sea', 'Great Bear Lake', 'Lake Superior'], NULL::text[], 100),
 ('AMERICAS',          '/water/hudson-river.webp',            'Hudson River',          ARRAY['Susquehanna River', 'Delaware River', 'Connecticut River', 'Ohio River', 'Potomac River', 'Mohawk River'], NULL::text[], 200),
 ('AMERICAS',          '/water/hudson-strait.webp',           'Hudson Strait',         ARRAY['Davis Strait', 'Hudson Bay', 'Bering Strait', 'Labrador Sea', 'James Bay', 'Northwest Passage'], NULL::text[], 250),
@@ -151,7 +156,9 @@ FROM (VALUES
 ('AMERICAS',          '/water/strait-magellan.webp',         'Strait of Magellan',    ARRAY['Drake Passage', 'Beagle Channel', 'Bering Strait', 'Strait of Gibraltar', 'Davis Strait', 'Strait of Hormuz'], ARRAY['Magellan', 'Straits of Magellan', 'Magellan Strait'], 150),
 ('AMERICAS',         '/water/rio-grande.webp',              'Rio Grande',           ARRAY['Colorado River', 'Red River', 'Arkansas River', 'Brazos River', 'Mississippi River', 'Gila River'], ARRAY['Río Grande', 'Rio Bravo'], 100),
 ('AMERICAS',         '/water/rio-grande-2.webp',            'Rio Grande',           ARRAY['Colorado River', 'Red River', 'Arkansas River', 'Brazos River', 'Mississippi River', 'Gila River'], ARRAY['Río Grande', 'Rio Bravo'], 150),
-('AMERICAS',         '/water/yukon-river.webp',             'Yukon River',          ARRAY['Mackenzie River', 'Columbia River', 'Fraser River', 'Kuskokwim River', 'Nelson River', 'Missouri River'], ARRAY['Yukon'], 200)
+('AMERICAS',         '/water/yukon-river.webp',             'Yukon River',          ARRAY['Mackenzie River', 'Columbia River', 'Fraser River', 'Kuskokwim River', 'Nelson River', 'Missouri River'], ARRAY['Yukon'], 200),
+-- No short name: "St. Lawrence" could be the river or the gulf (Saint/St. already match).
+('AMERICAS',         '/water/st-lawrence-river.webp',       'St. Lawrence River',   ARRAY['Hudson River', 'Connecticut River', 'Ohio River', 'Mississippi River', 'Fraser River', 'Mackenzie River'], NULL::text[], 200)
 ) AS v(region, visual_asset, correct_answer, wrong_answers, accepted_answers, points);
 
 COMMIT;

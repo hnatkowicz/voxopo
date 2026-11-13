@@ -694,7 +694,7 @@ Mode keys are used in room votes and in `gameEngine.js`:
   intensity 1/2/3 because each game cycles light -> medium -> deep.
 - **Thinking Pants geography categories:** Country Monkey (maps), **Flag Me
   Down** (flags, `trivi_yeah_ii_flag_me_down.sql`, 120), **Wet Pants**
-  (water, `trivi_yeah_ii_wet_pants.sql`, 103) and **Wish You Were Here**
+  (water, `trivi_yeah_ii_wet_pants.sql`, 108) and **Wish You Were Here**
   (landmarks, `content/landmarks.csv`, 132; a postcard name because it has
   natural wonders too) -- the cross-play with Country Monkey is deliberate.
 - **LETTER_RIP** (Letter Rip; the name is final -- Randy: "Oh, it's
@@ -1006,14 +1006,15 @@ and forth until we both agree the idea is good **and** worth the effort. So:
   games, fads, viral moments and memes, ad slogans, celebrities and
   royals; film, TV and music stay in their own categories). Both are
   Trivi-yeah! topics too. Cartoons & Kids' TV stays parked.
-- **Water images:** Wet Pants is 103 (Oct 2026). Rivers are coming in
+- **Water images:** Wet Pants is 108 (Nov 2026). Rivers are coming in
   batches from a list Claude gave Randy: batch 1 brought the Danube,
   Rhine, Volga, Euphrates, Ganges, Mekong, Yangtze, Niger and Rio Grande;
   batch 2 the Yellow River, Indus, Brahmaputra, Irrawaddy, Amur, Rhône and
-  Yukon. **Still to draw -- remind him:** Tigris, Jordan, Thames, Po,
-  Vistula, Orange, Limpopo, St. Lawrence, Columbia, Murray. (He's also
-  re-exporting the Yangtze, which Claude patched to un-highlight Lake
-  Balkhash.) A
+  Yukon; batch 3 (Nov 2026) the Tigris, Jordan, Po, Vistula and St.
+  Lawrence (the Gulf of St. Lawrence lost its "St. Lawrence" short answer,
+  since it now means either). **Still to draw, parked until a lull (Randy:
+  "final for now"):** Thames, Orange, Limpopo, Columbia, Murray, and the
+  Yangtze re-export (Claude patched it to un-highlight Lake Balkhash). A
   `-2` file is a second drawing (another scale or angle): the newer ones
   (Danube, Rio Grande) are their own Wet Pants tiles, kept off the same
   board by the no-repeat rule; the older ones (Caribbean, Gulf of Mexico,

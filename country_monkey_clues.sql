@@ -11,7 +11,7 @@
 -- Down's country table. Landmarks get theirs from country_monkey_landmarks.sql.
 --
 -- Safe to re-run. Run it AGAIN after re-running country_monkey_water.sql
--- (that file replaces the water rows, clues and all). 102 bodies of water;
+-- (that file replaces the water rows, clues and all). 107 bodies of water;
 -- a few appear in more than one region, so more rows than that update.
 -- ============================================================================
 
@@ -127,6 +127,13 @@ UPDATE questions SET hint = 'Lyon'                               WHERE game_mode
 UPDATE questions SET hint = 'Whitehorse'                         WHERE game_mode = 'COUNTRY_MONKEY' AND subcategory = 'WATER' AND correct_answer = 'Yukon River';
 UPDATE questions SET hint = 'Khabarovsk'                         WHERE game_mode = 'COUNTRY_MONKEY' AND subcategory = 'WATER' AND correct_answer = 'Amur River';
 UPDATE questions SET hint = 'Mandalay'                           WHERE game_mode = 'COUNTRY_MONKEY' AND subcategory = 'WATER' AND correct_answer = 'Irrawaddy River';
+
+-- Added Nov 2026 with Randy's third river batch.
+UPDATE questions SET hint = 'Baghdad'                            WHERE game_mode = 'COUNTRY_MONKEY' AND subcategory = 'WATER' AND correct_answer = 'Tigris River';
+UPDATE questions SET hint = 'The Dead Sea'                       WHERE game_mode = 'COUNTRY_MONKEY' AND subcategory = 'WATER' AND correct_answer = 'Jordan River';
+UPDATE questions SET hint = 'Turin'                              WHERE game_mode = 'COUNTRY_MONKEY' AND subcategory = 'WATER' AND correct_answer = 'Po River';
+UPDATE questions SET hint = 'Warsaw'                             WHERE game_mode = 'COUNTRY_MONKEY' AND subcategory = 'WATER' AND correct_answer = 'Vistula River';
+UPDATE questions SET hint = 'Montreal'                           WHERE game_mode = 'COUNTRY_MONKEY' AND subcategory = 'WATER' AND correct_answer = 'St. Lawrence River';
 
 COMMIT;
 
