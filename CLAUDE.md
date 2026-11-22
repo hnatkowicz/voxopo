@@ -963,12 +963,12 @@ and forth until we both agree the idea is good **and** worth the effort. So:
 - **All content SQL is live** (Randy ran everything through Literature,
   Nov 22).
 - **Run in Neon (Randy, owner login -- it creates a table):**
-  `venue_memory.sql`. Venue memory is built and merged; it switches on
-  by itself within the hour once the table exists.
+  `double_take.sql` (Double Take's spots; /admin/double-take can't save
+  until it's run). `venue_memory.sql` was run Nov 22, so venue memory is
+  on.
 - **Paused (Randy, Nov 22):** the re-tier and Letter Rip phrases, a
-  "mini pause" while Picture Imperfect is designed (see Ideas in the
-  works). **Run in Neon:** `venue_memory.sql` (not confirmed yet; venue
-  memory stays off until it's run).
+  "mini pause" while Double Take is designed and built (see Ideas in the
+  works).
 - **Re-tier pass** (Nov 22, Randy's go-ahead): the categories written
   before the difficulty benchmarks, tier moves only (50 per tier kept by
   matched swaps). Done: Sports, Movies & TV, Music, Food & Drink. Still
@@ -1280,10 +1280,21 @@ and forth until we both agree the idea is good **and** worth the effort. So:
     all rewards free riders; a split by finds just repeats per-find
     scoring). Pot at zero = no leftover. Idea: a wrong tap also shaves the
     shared pot a little, so the room polices spamming itself.
-  - **Admin:** upload the original + altered pair on /admin; the server
-    finds the differences by comparing pixels (filtering JPEG noise) and
-    proposes the 5 spots; Randy confirms or nudges. Build this first so
-    Randy can make photos while the mode is built.
+  - **Admin: built** (Nov 22 2026), `/admin/double-take`
+    (`public/admin-double-take.html`, linked from /admin; best on a
+    computer). Photos are **not uploaded to the site** (Render's disk is
+    wiped on every deploy): Randy uploads each pair to
+    `public/double-take/` on GitHub, and after the deploy the page lists
+    it. The browser compares the two photos pixel by pixel (8 px squares,
+    within 24 px = one difference; Low/Normal/High sensitivity) and
+    proposes boxes; Randy moves, resizes, draws, merges or deletes them,
+    with Flicker and Differences views, and it checks the spec (5 spots,
+    50x50 px, 80 px from edges and apart). Save stores only the boxes and
+    a Ready flag in `double_take_photos` (`double_take.sql`, in photo
+    pixels; `src/services/doubleTake.js`). The game will pad each box
+    when it checks a tap. On the Allen Street test pair, Normal found
+    exactly its 5 changes and flagged the two real problems (the
+    building and graffiti overlap; the ghost eyes are 96x24).
   - **Size:** medium -- about Letter Rip's Spotlight plus the admin page,
     and a session for zoom. Reuses picture preloading/disguised addresses,
     the TV layout, scores, venue memory and the smoke test (a bot taps

@@ -16,6 +16,7 @@ import {
 } from './services/accessControl.js';
 import { healthMiddleware, attachHealthTracking, healthSnapshot } from './services/serverHealth.js';
 import { attachVenueMemory } from './services/venueMemory.js';
+import { listPhotoPairs, readSavedPairs, savePairSpots } from './services/doubleTake.js';
 import { fileURLToPath } from 'url';
 
 // Recreate __dirname cleanly for ES module environments
@@ -322,6 +323,34 @@ app.post('/api/admin/categories/:key', requireAdmin, async (req, res) => {
     } catch (e) {
         if (e.code === '42P01') return res.status(409).json({ success: false, error: 'Run thinking_pants_category_settings.sql in Neon first.' });
         return res.status(500).json({ success: false, error: 'Failed to save.' });
+    }
+});
+
+// Double Take photo pairs (/admin/double-take): the pairs in
+// public/double-take/ and the difference boxes saved for each.
+app.get('/api/admin/double-take', requireAdmin, async (req, res) => {
+    res.setHeader('Cache-Control', 'no-store');
+    const { pairs, strays } = listPhotoPairs();
+    let saved = {};
+    let tableMissing = false;
+    try {
+        saved = await readSavedPairs();
+    } catch (e) {
+        if (e.code === '42P01') tableMissing = true; // double_take.sql not run yet
+        else if (isDatabaseDownError(e)) return res.status(503).json({ success: false, error: "Couldn't reach the database. Try again in a minute." });
+        else return res.status(500).json({ success: false, error: 'Could not load the saved spots.' });
+    }
+    return res.json({ success: true, tableMissing, strays, pairs: pairs.map(name => ({ name, ...(saved[name] || { spots: [], ready: false, updatedAt: null }), saved: !!saved[name] })) });
+});
+app.post('/api/admin/double-take/:name', requireAdmin, async (req, res) => {
+    try {
+        const ok = await savePairSpots(req.params.name, req.body && req.body.spots, req.body && req.body.ready);
+        if (!ok) return res.status(404).json({ success: false, error: 'No photo pair by that name.' });
+        return res.json({ success: true });
+    } catch (e) {
+        if (e.code === '42P01') return res.status(409).json({ success: false, error: 'Run double_take.sql in Neon first.' });
+        if (isDatabaseDownError(e)) return res.status(503).json({ success: false, error: "Couldn't reach the database. Try again in a minute." });
+        return res.status(500).json({ success: false, error: 'Could not save.' });
     }
 });
 
@@ -756,6 +785,7 @@ app.get('/play', (req, res) => { res.sendFile(path.resolve('public/play.html'));
 app.get('/host', (req, res) => { res.sendFile(path.resolve('public/host.html')); });
 app.get('/info', (req, res) => { res.sendFile(path.resolve('public/info.html')); });
 app.get('/admin', (req, res) => { res.sendFile(path.resolve('public/admin.html')); });
+app.get('/admin/double-take', (req, res) => { res.sendFile(path.resolve('public/admin-double-take.html')); });
 
 // What a TV needs when it (re)joins a room: the venue look, the scoreboard
 // and, mid-game, a catch-up of the current phase. Shared by the live
