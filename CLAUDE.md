@@ -851,7 +851,10 @@ Mode keys are used in room votes and in `gameEngine.js`:
   (`ALTER TABLE ... ADD COLUMN IF NOT EXISTS facts`), and the engine reads
   questions without it until then. 112 facts to start (about 3%). See
   `content/README.md` for the columns and which old SQL files a moved
-  category supersedes. Every text category lives there now (Oct 2026);
+  category supersedes. **To retire a row, put `yes` in its retired
+  column** (the build reads only yes/y/true/x/1; a date there leaves the
+  row live -- Nov 22 slip) and the date and reason in `notes`. Every
+  text category lives there now (Oct 2026);
   the old SQL that built them is in `retired_sql/`, never to be re-run
   (`trivi_yeah_ii_prototype.sql` deletes every Thinking Pants question).
   Picture categories, the Final Wager and house sets still have their own
@@ -942,11 +945,14 @@ and forth until we both agree the idea is good **and** worth the effort. So:
   copy live's tables in with read-only queries (structure, rows; access
   codes structure only).
 - **Run in Neon (Randy):** `content/sql/famous_firsts.sql`,
-  `content/sql/us_history.sql` and `content/sql/world_history.sql` (each
-  to 200). Technology, Mythology and
+  `content/sql/us_history.sql`, `content/sql/world_history.sql`,
+  `content/sql/world_wars.sql`, and again `content/sql/mythology.sql` and
+  `content/sql/art_and_architecture.sql` (Nov 22: their four "retired"
+  rows had a date in the retired column, which the build doesn't count,
+  so Sleipnir, Actaeon, Tadao Ando and the Angel of the North went live;
+  now "yes", with four hooked replacements). Technology, Mythology and
   Art & Architecture are live (Nov 22).
-- **Category depth, next:** World Wars,
-  Literature (about 120).
+- **Category depth, next:** Literature (120), the last of the plan.
 - **Waiting on Randy:** trap screens in a real game; the Orange River
   drawing (Nov 22: "today"); Letter Rip's green keys (Randy watching
   tonight: which letters, which round, were they on the TV?); flipside's
@@ -1123,7 +1129,14 @@ and forth until we both agree the idea is good **and** worth the effort. So:
   sets: 35 moved (the Black Death and the Mayflower to 100; the 1929
   crash, Hannibal, Gorbachev and Castro to 200; Hammurabi, Mansa Musa
   and Haile Selassie to 300; Zheng He, Toussaint and Nasser to 400).
-  Still to go: World Wars, Literature. The family's favorites are school subjects
+  **World Wars** (+83 to 200, Nov 22): G.I.s, dog tags and "Keep Calm
+  and Carry On" at the easy end; Snoopy's Sopwith Camel, Kilroy and "The
+  Great Escape" in the middle; hooks at the hard end (Big Bertha and the
+  golf club, Mata Hari's "eye of the day", the Hershey bar meant to taste
+  like a boiled potato). Retired Chain Home, Bagration and Dragoon (code
+  names with no way in); Molotov, Hindenburg, Tora! Tora! Tora! and
+  Operation Pied Piper moved to 300 on their hooks.
+  Still to go: Literature. The family's favorites are school subjects
   (biology, astronomy, the World Wars, US history) and pop culture; new
   categories get pun names. **The pop-culture pair** (built Nov 2026, 120
   each, 30 per tier; working titles, Randy decides): **Extra Lives**
