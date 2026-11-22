@@ -908,6 +908,32 @@ and forth until we both agree the idea is good **and** worth the effort. So:
   sense to Randy, so for everything else say what changed and why it matters
   for play, not just which functions moved.
 
+## Open items (keep current; Randy, Nov 2026: "keep me honest about work that remains")
+
+- **First thing in a new session:** `node scripts/neon-sql.mjs check` (needs
+  `NEON_URL`, the voxopo environment). Then run on live, each tested on the
+  local database first: `content/sql/geography.sql` (Geography to 200),
+  `country_monkey_water.sql`, `trivi_yeah_ii_wet_pants.sql`,
+  `country_monkey_clues.sql` (water first, clues last: the 9 new rivers).
+  Randy may already have run the rivers files by hand; re-running is safe.
+- **Resilience (Randy: "good idea"):** the site stays up with a clear
+  message when the database can't be reached, instead of not starting
+  (today `startServer` won't listen if the first query fails).
+- **`render.yaml` (Randy: "great idea"):** the voxopo service's settings
+  in the repo (name voxopo, Ohio, Node, `npm install` / `npm start`, a paid
+  instance, `DATABASE_URL` and `ADMIN_PASSWORD` as secrets set in Render,
+  domains randomania.tv and www), so a rebuild is nearly one click.
+- **Category depth, next:** Technology, Mythology, Art & Architecture,
+  Famous Firsts (80 each), then US History, World History, World Wars,
+  Literature (about 120).
+- **Waiting on Randy:** trap screens in a real game; the genie redraw; the
+  Orange River drawing; Letter Rip's green keys (which letters, which round,
+  were they on the TV?); flipside's own DATABASE_URL (another day).
+- **Decisions open:** venue memory (a code remembers the questions its
+  rooms used for a few weeks; question numbers only, no player data), a
+  code cleanup pass (old TRIVIA decks, the unread profile and theme
+  columns, `retired_sql/`), an educator pilot with one teacher.
+
 ## Ideas in the works
 
 - **Logo My Eggo** (Logos, built Oct 2026 -- Randy's youngest's idea;
