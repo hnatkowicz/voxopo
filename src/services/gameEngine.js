@@ -1,4 +1,4 @@
-import pool from '../config/database.js';
+import pool, { isDatabaseDownError, DATABASE_DOWN_MESSAGE } from '../config/database.js';
 import { randomUUID } from 'node:crypto';
 import { AsyncLocalStorage } from 'node:async_hooks';
 
@@ -35,8 +35,12 @@ export function handleRoomCrash(error, roomCode = roomContext.getStore()) {
     const room = roomCode && activeRooms[roomCode];
     if (!room || room.recoveringFromCrash) return;
     const now = Date.now();
+    // The database being unreachable isn't this room's bug (Nov 2026
+    // resilience work): it says so plainly and doesn't count toward the
+    // three breaks that close a room, so a short outage can't close rooms.
+    const databaseDown = isDatabaseDownError(error);
     room.crashTimes = (room.crashTimes || []).filter(t => now - t < ROOM_CRASH_WINDOW_MS);
-    room.crashTimes.push(now);
+    if (!databaseDown) room.crashTimes.push(now);
     room.recoveringFromCrash = true;
     try {
         if (room.crashTimes.length >= ROOM_CRASH_LIMIT) {
@@ -48,7 +52,7 @@ export function handleRoomCrash(error, roomCode = roomContext.getStore()) {
         // before the room goes back to its lobby.
         room.announcementPending = null;
         endAnnouncement(roomCode);
-        broadcastToRoom(roomCode, { type: 'CONTENT_UNAVAILABLE', message: "Something went wrong with that game. Back to the lobby." });
+        broadcastToRoom(roomCode, { type: 'CONTENT_UNAVAILABLE', message: databaseDown ? DATABASE_DOWN_MESSAGE : "Something went wrong with that game. Back to the lobby." });
         resetRoomToLobby(roomCode);
     } catch (recoveryError) {
         console.error(`❌ [Room ${roomCode}] Couldn't recover. Closing it:`, recoveryError && recoveryError.stack || recoveryError);
@@ -483,10 +487,14 @@ export function tvIsConnected(room) {
 // got dropped back to module selection instead of it looking like the app
 // silently broke. TV-only -- phones just quietly follow the room back to
 // the lobby like any other reset, same as they already do.
-function broadcastContentUnavailable(roomCode, deckLabel) {
+// With the error that stopped the game: if the database couldn't be
+// reached (Nov 2026 resilience work), say that instead of blaming the deck.
+function broadcastContentUnavailable(roomCode, deckLabel, error = null) {
     broadcastToRoom(roomCode, {
         type: 'CONTENT_UNAVAILABLE',
-        message: `${deckLabel} isn't ready yet. Back to module selection.`
+        message: isDatabaseDownError(error)
+            ? DATABASE_DOWN_MESSAGE
+            : `${deckLabel} isn't ready yet. Back to the lobby.`
     });
 }
 
@@ -562,7 +570,7 @@ function startGameForMode(roomCode, winningModule) {
     if (winningModule === 'ON_THE_SPECTRUM') {
         startOnTheSpectrumGame(roomCode).catch(error => {
             console.error(`❌ [On the Spectrum] Failed to start Room ${roomCode}:`, error.message);
-            broadcastContentUnavailable(roomCode, 'On the Spectrum');
+            broadcastContentUnavailable(roomCode, 'On the Spectrum', error);
             resetRoomToLobby(roomCode);
         });
         return;
@@ -584,7 +592,7 @@ function startGameForMode(roomCode, winningModule) {
         }
         startProfilerGame(roomCode).catch(error => {
             console.error(`❌ [Profiler] Failed to start Room ${roomCode}:`, error.message);
-            broadcastContentUnavailable(roomCode, 'Profiler');
+            broadcastContentUnavailable(roomCode, 'Profiler', error);
             resetRoomToLobby(roomCode);
         });
         return;
@@ -593,7 +601,7 @@ function startGameForMode(roomCode, winningModule) {
     if (winningModule === 'LETTER_RIP') {
         startLetterRipGame(roomCode).catch(error => {
             console.error(`❌ [Letter Rip] Failed to start Room ${roomCode}:`, error.message);
-            broadcastContentUnavailable(roomCode, 'Letter Rip');
+            broadcastContentUnavailable(roomCode, 'Letter Rip', error);
             resetRoomToLobby(roomCode);
         });
         return;
@@ -602,7 +610,7 @@ function startGameForMode(roomCode, winningModule) {
     if (winningModule === 'FLAG_ME_DOWN') {
         startFlagMeDownGame(roomCode).catch(error => {
             console.error(`❌ [Flag Me Down] Failed to start Room ${roomCode}:`, error.message);
-            broadcastContentUnavailable(roomCode, 'Flag Me Down');
+            broadcastContentUnavailable(roomCode, 'Flag Me Down', error);
             resetRoomToLobby(roomCode);
         });
         return;
@@ -614,7 +622,7 @@ function startGameForMode(roomCode, winningModule) {
     if (winningModule === 'EMPOSSDURR') {
         startEmpossDurrGame(roomCode).catch(error => {
             console.error(`❌ [EmpossDurr] Failed to start Room ${roomCode}:`, error.message);
-            broadcastContentUnavailable(roomCode, 'EmpossDurr');
+            broadcastContentUnavailable(roomCode, 'EmpossDurr', error);
             resetRoomToLobby(roomCode);
         });
         return;
@@ -626,7 +634,7 @@ function startGameForMode(roomCode, winningModule) {
     if (winningModule === 'TRIVI_YEAH_II') {
         startTriviYeahIIGame(roomCode).catch(error => {
             console.error(`❌ [Trivi-Yeah II] Failed to start Room ${roomCode}:`, error.message);
-            broadcastContentUnavailable(roomCode, 'Thinking Pants');
+            broadcastContentUnavailable(roomCode, 'Thinking Pants', error);
             resetRoomToLobby(roomCode);
         });
         return;
@@ -645,7 +653,7 @@ function startGameForMode(roomCode, winningModule) {
         }
         openTriviaTopicPick(roomCode).catch(error => {
             console.error(`❌ [Trivi-yeah!] Failed to open the topic pick in Room ${roomCode}:`, error.message);
-            broadcastContentUnavailable(roomCode, 'Trivi-yeah!');
+            broadcastContentUnavailable(roomCode, 'Trivi-yeah!', error);
             resetRoomToLobby(roomCode);
         });
         return;
@@ -783,6 +791,10 @@ async function startQuestionBankGame(roomCode) {
         await loadQuestionBank(room);
     } catch (error) {
         console.error(`❌ [Question Bank] Failed to load questions for Room ${roomCode}:`, error.message);
+        // Used to just return, which left the room frozen on the last
+        // screen; now the room goes back to its lobby with a message.
+        broadcastContentUnavailable(roomCode, room.activeDeckName || 'This deck', error);
+        resetRoomToLobby(roomCode);
         return;
     }
 
@@ -2157,7 +2169,7 @@ function scheduleTriviYeahIINextStep(roomCode) {
                     room.revealTimeout = null;
                     startTriviYeahIIRound(roomCode).catch(error => {
                         console.error(`❌ [Trivi-Yeah II] Failed to start round ${ty2.round} for Room ${roomCode}:`, error.message);
-                        broadcastContentUnavailable(roomCode, 'Thinking Pants');
+                        broadcastContentUnavailable(roomCode, 'Thinking Pants', error);
                         resetRoomToLobby(roomCode);
                     });
                 }, TRIVI_YEAH_II_ROUND_TRANSITION_MS);

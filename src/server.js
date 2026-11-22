@@ -3,7 +3,7 @@ import compression from 'compression';
 import dotenv from 'dotenv';
 import path from 'path';
 import { WebSocketServer } from 'ws';
-import pool from './config/database.js';
+import pool, { isDatabaseDownError } from './config/database.js';
 import { handleIncomingMessage, activeRooms, getCategoriesForMode, resolveRequestedQuestionCount, compareByRank, closeRoom, profilerStatusFor, profilerTvSnapshot, triviYeahIITrapInfo, emptyModeVotes, finalWagerWinShare, resolveDisguisedAsset, flagMeDownStatusFor, GAME_MODE_KEYS, allowedModesFor, finalWagerRevealFor, venueBrand, isHouseTopic, nightTallyMessage, nightTallyFor, endGameVoteFor, thinkingPantsCategoryOverview, setThinkingPantsCategorySetting, venueCategoryOverview, setVenueCategorySetting, tvMessagesSince, tvIsConnected , letterRipStatusFor, letterRipTvState, announcementMessage, refreshAnnouncementForCode, clearAllRoomTimers } from './services/gameEngine.js';
 import {
     isHostAuthorized, grantHostSession, isAccessCodeActive,
@@ -176,7 +176,12 @@ app.post('/api/create-room', async (req, res) => {
         console.log(`[Room Organizer] Created dynamic session bubble: ${code}`);
         return res.json({ success: true, roomCode: code });
     } catch (e) {
-        return res.status(500).json({ success: false, error: 'Lifecycle allocation failure.' });
+        if (isDatabaseDownError(e)) {
+            console.error('⚠️ [Room Organizer] Database unreachable at host login:', e.message);
+            return res.status(503).json({ success: false, error: "Couldn't check your code right now. Try again in a minute." });
+        }
+        console.error('❌ [Room Organizer] Room creation failed:', e && e.stack || e);
+        return res.status(500).json({ success: false, error: "Couldn't open a room. Try again." });
     }
 });
 
@@ -803,11 +808,25 @@ app.post('/api/tv-events', (req, res) => {
 });
 
 async function startServer() {
-    try {
-        console.log('⏳ Verifying cloud database availability...');
-        const result = await pool.query('SELECT COUNT(*) FROM questions;');
-        console.log(`✅ [Database Connection Verified] Ready for production requests.`);
+    // The site starts whether or not the database answers (Nov 2026; it
+    // used to refuse to listen if this first query failed, so a database
+    // hiccup during a deploy took the whole site down). Live rooms and TVs
+    // don't need the database; host login and game starts do, and say so
+    // plainly while it's away. The check repeats every 30s until it works,
+    // only to log it.
+    const verifyDatabase = async () => {
+        try {
+            await pool.query('SELECT COUNT(*) FROM questions;');
+            console.log(`✅ [Database Connection Verified] Ready for production requests.`);
+        } catch (error) {
+            console.error(`⚠️ [Database] Not reachable yet (${error.message}). The site is up; host login and new games wait for it. Retrying in 30s.`);
+            setTimeout(verifyDatabase, 30 * 1000);
+        }
+    };
+    console.log('⏳ Verifying cloud database availability...');
+    verifyDatabase();
 
+    try {
         const serverInstance = app.listen(PORT, () => {
             console.log(`===============================================`);
             console.log(`🚀 [Voxopo Alive] Server running on port ${PORT}`);
