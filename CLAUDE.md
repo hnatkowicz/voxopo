@@ -941,10 +941,9 @@ and forth until we both agree the idea is good **and** worth the effort. So:
   `ssl = on` (a self-signed cert; the app always connects with SSL), then
   copy live's tables in with read-only queries (structure, rows; access
   codes structure only).
-- **Run in Neon (Randy):** `content/sql/technology.sql`,
-  `content/sql/mythology.sql` and `content/sql/art_and_architecture.sql`
-  (each to 200; Randy started on them Nov 22, so check which are done).
-- **Category depth, next:** Famous Firsts (80), then US History, World History, World Wars,
+- **Run in Neon (Randy):** `content/sql/famous_firsts.sql` (Famous Firsts
+  to 200). Technology, Mythology and Art & Architecture are live (Nov 22).
+- **Category depth, next:** US History, World History, World Wars,
   Literature (about 120).
 - **Waiting on Randy:** trap screens in a real game; the genie redraw; the
   Orange River drawing; Letter Rip's green keys (which letters, which round,
@@ -1093,7 +1092,17 @@ and forth until we both agree the idea is good **and** worth the effort. So:
   Venus de Milo to 100; Gaudi, Raphael and fresco to 300; Pei and the
   Hope poster to 300), Tadao Ando and the Angel of the North retired (no
   hook for an American pub).
-  Still to go: Famous Firsts,
+  **Famous Firsts** (+120 to 200, Nov 22), to the benchmarks: the Moon
+  landing, "We the People" and the first ten amendments at the easy
+  end; Oscar, sports and space firsts in the middle; hooks at the hard
+  end ("Old Kinderhook" and O.K., the Odyssey console, HAL's song). The
+  old 80 re-tiered (MTV's first video, Tereshkova, Amundsen and Adams in
+  the White House to 300; Webb, Kipchoge and "Me at the zoo" to 400;
+  Morrison, da Gama, Delaware and Voyager 1 to 300). Two new questions
+  matched ones retired in October as duplicates of other categories
+  (Washington, Sally Ride) and were swapped out: similar is fine, but
+  an exact repeat of a retired row stays retired.
+  Still to go:
   then US History, World History, World Wars, Literature. The family's favorites are school subjects
   (biology, astronomy, the World Wars, US history) and pop culture; new
   categories get pun names. **The pop-culture pair** (built Nov 2026, 120
