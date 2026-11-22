@@ -962,6 +962,13 @@ and forth until we both agree the idea is good **and** worth the effort. So:
 - **Run in Neon (Randy, owner login -- it creates a table):**
   `venue_memory.sql`. Venue memory is built and merged; it switches on
   by itself within the hour once the table exists.
+- **Re-tier pass** (Nov 22, Randy's go-ahead): the categories written
+  before the difficulty benchmarks, tier moves only (50 per tier kept by
+  matched swaps). Done: Sports, Movies & TV. Still to go: Music, Food &
+  Drink, Science & Nature, Astronomy & Space, Word Nerd, Geography, Cell
+  Mates, College Athletics, Pop Quiz, Extra Lives, the picture sets (Brush
+  With Greatness, The Great State of..., Wish You Were Here, Logo My
+  Eggo), Spellbound and the niche four. Then more Letter Rip phrases.
 - **Category depth: done** (Nov 22). Every general category is at 200
   and built to the benchmarks. Next content ideas are Randy's call (more
   Letter Rip phrases is the standing top need).

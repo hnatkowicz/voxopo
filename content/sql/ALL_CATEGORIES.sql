@@ -10810,10 +10810,6 @@ VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YE
         'Superman', ARRAY['Batman', 'Thor', 'Iron Man', 'The Flash', 'Green Lantern', 'Aquaman'], 100, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MOVIES_TV', 'ORIGINAL', NULL,
-        'In "Star Wars," what is the name of Luke Skywalker''s home planet?', NULL,
-        'Tatooine', ARRAY['Naboo', 'Alderaan', 'Hoth', 'Coruscant', 'Endor', 'Dagobah'], 100, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MOVIES_TV', 'ORIGINAL', NULL,
         'What is the name of the toy cowboy in the "Toy Story" movies?', NULL,
         'Woody', ARRAY['Buzz', 'Rex', 'Hamm', 'Slinky', 'Jessie', 'Lenny'], 100, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
@@ -10846,10 +10842,6 @@ VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YE
         'Pixar', ARRAY['DreamWorks', 'Illumination', 'Blue Sky Studios'], 100, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MOVIES_TV', 'POP_CULTURE_FOLD_1', NULL,
-        'Which actress played Dorothy in "The Wizard of Oz" (1939)?', NULL,
-        'Judy Garland', ARRAY['Shirley Temple', 'Julie Andrews', 'Liza Minnelli'], 100, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MOVIES_TV', 'POP_CULTURE_FOLD_1', NULL,
         'Which actor played Rocky Balboa?', NULL,
         'Sylvester Stallone', ARRAY['Arnold Schwarzenegger', 'Bruce Willis', 'Jean-Claude Van Damme'], 100, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
@@ -10862,16 +10854,8 @@ VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YE
         'Michael J. Fox', ARRAY['Matthew Broderick', 'Tom Hanks', 'Kevin Bacon'], 100, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MOVIES_TV', 'POP_CULTURE_FOLD_1', NULL,
-        'Which actor played Neo in "The Matrix"?', NULL,
-        'Keanu Reeves', ARRAY['Will Smith', 'Tom Cruise', 'Brad Pitt'], 100, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MOVIES_TV', 'POP_CULTURE_FOLD_1', NULL,
         'Which actor played Captain Jack Sparrow in "Pirates of the Caribbean"?', NULL,
         'Johnny Depp', ARRAY['Orlando Bloom', 'Geoffrey Rush', 'Javier Bardem'], 100, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MOVIES_TV', 'POP_CULTURE_FOLD_1', NULL,
-        'Which actress played Katniss Everdeen in "The Hunger Games" films?', NULL,
-        'Jennifer Lawrence', ARRAY['Emma Stone', 'Shailene Woodley', 'Kristen Stewart'], 100, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MOVIES_TV', 'POP_CULTURE_FOLD_1', NULL,
         'Which 1939 film features the song "Over the Rainbow"?', NULL,
@@ -10905,17 +10889,33 @@ VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YE
         'Which phrase, meaning "no worries," do Timon and Pumbaa sing in "The Lion King"?', NULL,
         'Hakuna Matata', ARRAY['Bibbidi-Bobbidi-Boo', 'Zip-a-Dee-Doo-Dah', 'Supercalifragilisticexpialidocious'], 100, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MOVIES_TV', 'POP_CULTURE_FOLD_1', NULL,
-        'Which actor played Ross Geller in "Friends"?', NULL,
-        'David Schwimmer', ARRAY['Matthew Perry', 'Matt LeBlanc', 'Paul Rudd'], 100, NULL);
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MOVIES_TV', 'ORIGINAL', NULL,
+        'Which actor played Jack Dawson in "Titanic"?', NULL,
+        'Leonardo DiCaprio', ARRAY['Brad Pitt', 'Matt Damon', 'Tom Cruise', 'Johnny Depp', 'Matthew McConaughey', 'Ben Affleck'], 100, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MOVIES_TV', 'POP_CULTURE_FOLD_1', NULL,
-        'Which actor played Michael Scott in the American version of "The Office"?', NULL,
-        'Steve Carell', ARRAY['Rainn Wilson', 'John Krasinski', 'Ed Helms'], 100, NULL);
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MOVIES_TV', 'ORIGINAL', NULL,
+        'What is the name of the wizarding school in the Harry Potter series?', NULL,
+        'Hogwarts', ARRAY['Durmstrang', 'Beauxbatons', 'Ilvermorny', 'Hogsmeade', 'Azkaban', 'Diagon'], 100, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MOVIES_TV', 'DEPTH_NOV_2026', NULL,
-        'Which Disney princess has a pet tiger named Rajah?', NULL,
-        'Jasmine', ARRAY['Ariel', 'Belle', 'Mulan', 'Rapunzel', 'Aurora', 'Pocahontas'], 100, NULL);
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MOVIES_TV', 'ORIGINAL', NULL,
+        'Which actor played the Terminator in the 1984 film of the same name?', NULL,
+        'Arnold Schwarzenegger', ARRAY['Sylvester Stallone', 'Jean-Claude Van Damme', 'Dolph Lundgren', 'Bruce Willis', 'Chuck Norris', 'Kurt Russell'], 100, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MOVIES_TV', 'ORIGINAL', NULL,
+        'Which movie features a shark terrorizing the fictional town of Amity Island?', NULL,
+        'Jaws', ARRAY['Deep Blue Sea', 'The Meg', 'Open Water', 'Sharknado', '47 Meters Down', 'Piranha'], 100, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MOVIES_TV', 'ORIGINAL', NULL,
+        'Who played the title role in "Forrest Gump"?', NULL,
+        'Tom Hanks', ARRAY['Tom Cruise', 'Kevin Costner', 'Robin Williams', 'Bill Murray', 'Dustin Hoffman', 'Michael Keaton'], 100, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MOVIES_TV', 'ORIGINAL', NULL,
+        'Which director is known for films such as "Jurassic Park," "E.T.," and "Jaws"?', NULL,
+        'Steven Spielberg', ARRAY['Martin Scorsese', 'James Cameron', 'George Lucas', 'Ridley Scott', 'Christopher Nolan', 'Tim Burton'], 100, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MOVIES_TV', 'ORIGINAL', NULL,
+        'Which long-running animated sitcom is set in the fictional town of Springfield?', NULL,
+        'The Simpsons', ARRAY['Family Guy', 'King of the Hill', 'Bob''s Burgers', 'American Dad!', 'Futurama', 'South Park'], 100, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MOVIES_TV', 'DEPTH_NOV_2026', NULL,
         'In "The Wizard of Oz," which character wants a brain?', NULL,
@@ -10938,10 +10938,6 @@ VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YE
         'A warthog', ARRAY['A meerkat', 'A hyena', 'A baboon', 'A hippo', 'A rhino', 'A mongoose'], 100, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MOVIES_TV', 'DEPTH_NOV_2026', NULL,
-        'In "Scooby-Doo," what breed of dog is Scooby?', NULL,
-        'A Great Dane', ARRAY['A beagle', 'A bloodhound', 'A basset hound', 'A Saint Bernard', 'A boxer', 'A bulldog'], 100, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MOVIES_TV', 'DEPTH_NOV_2026', NULL,
         'In the 1966 TV special "How the Grinch Stole Christmas!," what color is the Grinch?', NULL,
         'Green', ARRAY['Blue', 'Purple', 'Orange', 'Yellow', 'Red', 'Brown'], 100, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
@@ -10962,16 +10958,8 @@ VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YE
         'Mulan', ARRAY['Brave', 'Pocahontas', 'Moana', 'Tangled', 'Frozen', 'Aladdin'], 100, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MOVIES_TV', 'DEPTH_NOV_2026', NULL,
-        'In Disney''s "Aladdin," what is the name of Aladdin''s pet monkey?', NULL,
-        'Abu', ARRAY['Iago', 'Rajah', 'Apu', 'Pascal', 'Flit', 'Meeko'], 100, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MOVIES_TV', 'DEPTH_NOV_2026', NULL,
         'What is the name of Mickey Mouse''s girlfriend?', NULL,
         'Minnie Mouse', ARRAY['Daisy Duck', 'Clarabelle Cow', 'Millie Mouse', 'Molly Mouse', 'Mabel Mouse', 'Maisie Mouse'], 100, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MOVIES_TV', 'DEPTH_NOV_2026', NULL,
-        'In "Toy Story," what is the name of the boy whose toys come to life?', NULL,
-        'Andy', ARRAY['Sid', 'Bonnie', 'Al', 'Max', 'Billy', 'Danny'], 100, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MOVIES_TV', 'DEPTH_NOV_2026', NULL,
         'In "The Little Mermaid," what kind of animal is Sebastian?', NULL,
@@ -10996,60 +10984,56 @@ INSERT INTO questions (question_number, game_mode, category, subcategory, factio
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MOVIES_TV', 'DEPTH_NOV_2026', NULL,
         'Which superhero, "the fastest man alive," wears a red suit with a lightning bolt?', NULL,
         'The Flash', ARRAY['Quicksilver', 'Superman', 'Green Lantern', 'Shazam', 'Iron Man', 'Hawkeye'], 100, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MOVIES_TV', 'DEPTH_NOV_2026', NULL,
+        'Which 1990 film has Macaulay Culkin defending his house from two burglars?', NULL,
+        'Home Alone', ARRAY['Uncle Buck', 'Richie Rich', 'My Girl', 'The Good Son', 'Dennis the Menace', 'Problem Child'], 100, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MOVIES_TV', 'DEPTH_NOV_2026', NULL,
+        'Which sitcom follows physicists Sheldon Cooper and Leonard Hofstadter?', NULL,
+        'The Big Bang Theory', ARRAY['How I Met Your Mother', 'Silicon Valley', 'Two and a Half Men', 'The IT Crowd', 'Community', 'New Girl'], 100, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MOVIES_TV', 'DEPTH_NOV_2026', NULL,
+        'In which 1986 film does Tom Cruise play a fighter pilot called Maverick?', NULL,
+        'Top Gun', ARRAY['Days of Thunder', 'Iron Eagle', 'Stealth', 'Pearl Harbor', 'The Right Stuff', 'Firefox'], 100, NULL);
 
 -- 200 points
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MOVIES_TV', 'ORIGINAL', NULL,
-        'In "Breaking Bad," what is Walter White''s criminal alias?', NULL,
-        'Heisenberg', ARRAY['Saul', 'Jesse', 'Gus', 'Hank', 'Skyler', 'Mike'], 200, NULL);
+        'In "Star Wars," what is the name of Luke Skywalker''s home planet?', NULL,
+        'Tatooine', ARRAY['Naboo', 'Alderaan', 'Hoth', 'Coruscant', 'Endor', 'Dagobah'], 200, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MOVIES_TV', 'ORIGINAL', NULL,
-        'Which actor played Jack Dawson in "Titanic"?', NULL,
-        'Leonardo DiCaprio', ARRAY['Brad Pitt', 'Matt Damon', 'Tom Cruise', 'Johnny Depp', 'Matthew McConaughey', 'Ben Affleck'], 200, NULL);
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MOVIES_TV', 'POP_CULTURE_FOLD_1', NULL,
+        'Which actress played Dorothy in "The Wizard of Oz" (1939)?', NULL,
+        'Judy Garland', ARRAY['Shirley Temple', 'Julie Andrews', 'Liza Minnelli'], 200, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MOVIES_TV', 'ORIGINAL', NULL,
-        'What is the name of the wizarding school in the Harry Potter series?', NULL,
-        'Hogwarts', ARRAY['Durmstrang', 'Beauxbatons', 'Ilvermorny', 'Hogsmeade', 'Azkaban', 'Diagon'], 200, NULL);
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MOVIES_TV', 'POP_CULTURE_FOLD_1', NULL,
+        'Which actor played Neo in "The Matrix"?', NULL,
+        'Keanu Reeves', ARRAY['Will Smith', 'Tom Cruise', 'Brad Pitt'], 200, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MOVIES_TV', 'ORIGINAL', NULL,
-        'Which actor played the Terminator in the 1984 film of the same name?', NULL,
-        'Arnold Schwarzenegger', ARRAY['Sylvester Stallone', 'Jean-Claude Van Damme', 'Dolph Lundgren', 'Bruce Willis', 'Chuck Norris', 'Kurt Russell'], 200, NULL);
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MOVIES_TV', 'POP_CULTURE_FOLD_1', NULL,
+        'Which actress played Katniss Everdeen in "The Hunger Games" films?', NULL,
+        'Jennifer Lawrence', ARRAY['Emma Stone', 'Shailene Woodley', 'Kristen Stewart'], 200, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MOVIES_TV', 'POP_CULTURE_FOLD_1', NULL,
+        'Which actor played Ross Geller in "Friends"?', NULL,
+        'David Schwimmer', ARRAY['Matthew Perry', 'Matt LeBlanc', 'Paul Rudd'], 200, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MOVIES_TV', 'POP_CULTURE_FOLD_1', NULL,
+        'Which actor played Michael Scott in the American version of "The Office"?', NULL,
+        'Steve Carell', ARRAY['Rainn Wilson', 'John Krasinski', 'Ed Helms'], 200, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MOVIES_TV', 'ORIGINAL', NULL,
         'In "The Office" (US), what company does the Scranton branch work for?', NULL,
         'Dunder Mifflin', ARRAY['Vance Refrigeration', 'Prince Family Paper', 'Staples', 'Michael Scott Paper Company', 'Sabre', 'Athlead'], 200, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MOVIES_TV', 'ORIGINAL', NULL,
-        'Which movie features a shark terrorizing the fictional town of Amity Island?', NULL,
-        'Jaws', ARRAY['Deep Blue Sea', 'The Meg', 'Open Water', 'Sharknado', '47 Meters Down', 'Piranha'], 200, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MOVIES_TV', 'ORIGINAL', NULL,
-        'Who played the title role in "Forrest Gump"?', NULL,
-        'Tom Hanks', ARRAY['Tom Cruise', 'Kevin Costner', 'Robin Williams', 'Bill Murray', 'Dustin Hoffman', 'Michael Keaton'], 200, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MOVIES_TV', 'POP_CULTURE_FOLD_1', NULL,
-        'Which actor played Rick Blaine in "Casablanca"?', NULL,
-        'Humphrey Bogart', ARRAY['Cary Grant', 'Clark Gable', 'James Stewart'], 200, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MOVIES_TV', 'POP_CULTURE_FOLD_1', NULL,
         'Which actor was the first to play James Bond in a film, starting in 1962?', NULL,
         'Sean Connery', ARRAY['Roger Moore', 'David Niven', 'George Lazenby'], 200, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MOVIES_TV', 'POP_CULTURE_FOLD_1', NULL,
-        'Which director made "2001: A Space Odyssey" and "The Shining"?', NULL,
-        'Stanley Kubrick', ARRAY['Ridley Scott', 'Francis Ford Coppola', 'Brian De Palma'], 200, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MOVIES_TV', 'POP_CULTURE_FOLD_1', NULL,
         'Which actor played Don Vito Corleone in "The Godfather" (1972)?', NULL,
         'Marlon Brando', ARRAY['Al Pacino', 'Robert De Niro', 'James Caan'], 200, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MOVIES_TV', 'POP_CULTURE_FOLD_1', NULL,
-        'Which actor provided the voice of Darth Vader in the original "Star Wars" trilogy?', NULL,
-        'James Earl Jones', ARRAY['David Prowse', 'Morgan Freeman', 'Christopher Lee'], 200, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MOVIES_TV', 'POP_CULTURE_FOLD_1', NULL,
-        'Which actor played Ferris Bueller?', NULL,
-        'Matthew Broderick', ARRAY['Ralph Macchio', 'John Cusack', 'Charlie Sheen'], 200, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MOVIES_TV', 'POP_CULTURE_FOLD_1', NULL,
         'Which actor played Hannibal Lecter in "The Silence of the Lambs"?', NULL,
@@ -11064,26 +11048,6 @@ VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YE
         'Quentin Tarantino', ARRAY['Guy Ritchie', 'Robert Rodriguez', 'Joel Coen'], 200, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MOVIES_TV', 'POP_CULTURE_FOLD_1', NULL,
-        'Which actress played Ellen Ripley in the "Alien" films?', NULL,
-        'Sigourney Weaver', ARRAY['Linda Hamilton', 'Jamie Lee Curtis', 'Geena Davis'], 200, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MOVIES_TV', 'POP_CULTURE_FOLD_1', NULL,
-        'Which actor played Gandalf in "The Lord of the Rings" films?', NULL,
-        'Ian McKellen', ARRAY['Christopher Lee', 'Patrick Stewart', 'Michael Gambon'], 200, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MOVIES_TV', 'POP_CULTURE_FOLD_1', NULL,
-        'Which actor played Severus Snape in the "Harry Potter" films?', NULL,
-        'Alan Rickman', ARRAY['Gary Oldman', 'Ralph Fiennes', 'Michael Gambon'], 200, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MOVIES_TV', 'POP_CULTURE_FOLD_1', NULL,
-        'In "Back to the Future," how fast must the DeLorean go to travel through time?', NULL,
-        '88 miles per hour', ARRAY['55 miles per hour', '100 miles per hour', '121 miles per hour'], 200, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MOVIES_TV', 'POP_CULTURE_FOLD_1', NULL,
-        'Which 1984 film features a mischievous creature named Gizmo?', NULL,
-        'Gremlins', ARRAY['The Goonies', 'Labyrinth', 'Critters'], 200, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MOVIES_TV', 'POP_CULTURE_FOLD_1', NULL,
         'Which Pixar film follows a rat who dreams of becoming a chef in Paris?', NULL,
         'Ratatouille', ARRAY['Flushed Away', 'The Tale of Despereaux', 'Stuart Little'], 200, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
@@ -11095,29 +11059,57 @@ VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YE
         'Which game show asked contestants, "Is that your final answer?"', NULL,
         'Who Wants to Be a Millionaire', ARRAY['Jeopardy!', 'The Weakest Link', 'Deal or No Deal'], 200, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MOVIES_TV', 'ORIGINAL', NULL,
+        'Who composed the musical score for the original "Star Wars" trilogy?', NULL,
+        'John Williams', ARRAY['Hans Zimmer', 'John Barry', 'Alan Silvestri', 'Danny Elfman', 'Howard Shore', 'James Horner'], 200, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MOVIES_TV', 'ORIGINAL', NULL,
+        'Who played the Joker in "The Dark Knight" (2008)?', NULL,
+        'Heath Ledger', ARRAY['Jack Nicholson', 'Joaquin Phoenix', 'Jared Leto', 'Cesar Romero', 'Mark Hamill', 'Barry Keoghan'], 200, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MOVIES_TV', 'ORIGINAL', NULL,
+        'Which 1975 film is widely credited as Hollywood''s first summer "blockbuster"?', NULL,
+        'Jaws', ARRAY['Star Wars', 'The Godfather', 'Rocky', 'Close Encounters of the Third Kind', 'Jaws 2', 'Grease'], 200, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MOVIES_TV', 'ORIGINAL', NULL,
+        'Which actress played Hermione Granger in the Harry Potter films?', NULL,
+        'Emma Watson', ARRAY['Emma Stone', 'Emma Roberts', 'Keira Knightley', 'Evanna Lynch', 'Bonnie Wright', 'Natalie Portman'], 200, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MOVIES_TV', 'POP_CULTURE_FOLD_1', NULL,
-        'In "Stranger Things," what is the dark alternate dimension called?', NULL,
-        'The Upside Down', ARRAY['The Nether', 'The Shadow Realm', 'The Other Side'], 200, NULL);
+        'Which South Korean film won Best Picture at the 2020 Academy Awards?', NULL,
+        'Parasite', ARRAY['Oldboy', 'Burning', 'The Handmaiden'], 200, 'It was the first film not in English to win Best Picture.');
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MOVIES_TV', 'ORIGINAL', NULL,
+        'Who directed the 1960 psychological horror film "Psycho"?', NULL,
+        'Alfred Hitchcock', ARRAY['Stanley Kubrick', 'Billy Wilder', 'Orson Welles', 'John Huston', 'William Friedkin', 'George Cukor'], 200, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MOVIES_TV', 'ORIGINAL', NULL,
+        'Which silent film actor was famous for his "Little Tramp" character?', NULL,
+        'Charlie Chaplin', ARRAY['Buster Keaton', 'Harold Lloyd', 'Stan Laurel', 'Fatty Arbuckle', 'Harry Langdon', 'Max Linder'], 200, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MOVIES_TV', 'DEPTH_NOV_2026', NULL,
+        'Which Disney princess has a pet tiger named Rajah?', NULL,
+        'Jasmine', ARRAY['Ariel', 'Belle', 'Mulan', 'Rapunzel', 'Aurora', 'Pocahontas'], 200, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MOVIES_TV', 'DEPTH_NOV_2026', NULL,
+        'In "Scooby-Doo," what breed of dog is Scooby?', NULL,
+        'A Great Dane', ARRAY['A beagle', 'A bloodhound', 'A basset hound', 'A Saint Bernard', 'A boxer', 'A bulldog'], 200, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MOVIES_TV', 'DEPTH_NOV_2026', NULL,
+        'In Disney''s "Aladdin," what is the name of Aladdin''s pet monkey?', NULL,
+        'Abu', ARRAY['Iago', 'Rajah', 'Apu', 'Pascal', 'Flit', 'Meeko'], 200, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MOVIES_TV', 'DEPTH_NOV_2026', NULL,
+        'In "Toy Story," what is the name of the boy whose toys come to life?', NULL,
+        'Andy', ARRAY['Sid', 'Bonnie', 'Al', 'Max', 'Billy', 'Danny'], 200, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MOVIES_TV', 'DEPTH_NOV_2026', NULL,
         'What is the name of Thor''s hammer?', NULL,
         'Mjolnir', ARRAY['Gungnir', 'Excalibur', 'Asgard', 'Bifrost', 'Valhalla', 'Yggdrasil'], 200, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MOVIES_TV', 'DEPTH_NOV_2026', NULL,
-        'In "The Godfather," what kind of animal''s head ends up in a Hollywood producer''s bed?', NULL,
-        'A horse', ARRAY['A pig', 'A goat', 'A dog', 'A cow', 'A sheep', 'A bull'], 200, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MOVIES_TV', 'DEPTH_NOV_2026', NULL,
-        'Which 1990 film has Macaulay Culkin defending his house from two burglars?', NULL,
-        'Home Alone', ARRAY['Uncle Buck', 'Richie Rich', 'My Girl', 'The Good Son', 'Dennis the Menace', 'Problem Child'], 200, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MOVIES_TV', 'DEPTH_NOV_2026', NULL,
         'Which TV comedy follows the Dunphy, Pritchett and Tucker-Pritchett families?', NULL,
         'Modern Family', ARRAY['Parenthood', 'This Is Us', 'Arrested Development', 'Brothers & Sisters', 'The Middle', 'Black-ish'], 200, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MOVIES_TV', 'DEPTH_NOV_2026', NULL,
-        'Which sitcom follows physicists Sheldon Cooper and Leonard Hofstadter?', NULL,
-        'The Big Bang Theory', ARRAY['How I Met Your Mother', 'Silicon Valley', 'Two and a Half Men', 'The IT Crowd', 'Community', 'New Girl'], 200, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MOVIES_TV', 'DEPTH_NOV_2026', NULL,
         'Which actress played Princess Leia in the original "Star Wars"?', NULL,
@@ -11144,16 +11136,8 @@ VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YE
         'Jeopardy!', ARRAY['Wheel of Fortune', 'Family Feud', 'The Price Is Right', 'Hollywood Squares', 'Password', 'Tic-Tac-Dough'], 200, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MOVIES_TV', 'DEPTH_NOV_2026', NULL,
-        'In which 1986 film does Tom Cruise play a fighter pilot called Maverick?', NULL,
-        'Top Gun', ARRAY['Days of Thunder', 'Iron Eagle', 'Stealth', 'Pearl Harbor', 'The Right Stuff', 'Firefox'], 200, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MOVIES_TV', 'DEPTH_NOV_2026', NULL,
         'Which actor played Wolverine in the "X-Men" films?', NULL,
         'Hugh Jackman', ARRAY['Russell Crowe', 'Chris Hemsworth', 'Liev Schreiber', 'Gerard Butler', 'Ryan Reynolds', 'Christian Bale'], 200, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MOVIES_TV', 'DEPTH_NOV_2026', NULL,
-        'In "Ghostbusters," what is the name of the green, food-gobbling ghost?', NULL,
-        'Slimer', ARRAY['Zuul', 'Gozer', 'Casper', 'Stay Puft', 'Vigo', 'Blinky'], 200, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MOVIES_TV', 'DEPTH_NOV_2026', NULL,
         'Which Disney film features the songs "Be Our Guest" and "Gaston"?', NULL,
@@ -11162,18 +11146,6 @@ INSERT INTO questions (question_number, game_mode, category, subcategory, factio
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MOVIES_TV', 'DEPTH_NOV_2026', NULL,
         'Which actress played Elle Woods in "Legally Blonde"?', NULL,
         'Reese Witherspoon', ARRAY['Kate Hudson', 'Cameron Diaz', 'Drew Barrymore', 'Anna Faris', 'Amanda Bynes', 'Alicia Silverstone'], 200, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MOVIES_TV', 'DEPTH_NOV_2026', NULL,
-        'In "Mean Girls," what is the name of Regina George''s clique?', NULL,
-        'The Plastics', ARRAY['The Heathers', 'The Barbies', 'The Populars', 'The Glossies', 'The Divas', 'The Queen Bees'], 200, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MOVIES_TV', 'DEPTH_NOV_2026', NULL,
-        'In the movie "Grease," what is the name of Danny Zuko''s gang?', NULL,
-        'The T-Birds', ARRAY['The Jets', 'The Sharks', 'The Scorpions', 'The Socs', 'The Outsiders', 'The Warriors'], 200, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MOVIES_TV', 'DEPTH_NOV_2026', NULL,
-        'Which TV comedy follows detective Jake Peralta and Captain Raymond Holt?', NULL,
-        'Brooklyn Nine-Nine', ARRAY['The Good Cop', 'Reno 911!', 'Barney Miller', 'Blue Bloods', 'Chicago P.D.', 'Police Squad!'], 200, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MOVIES_TV', 'DEPTH_NOV_2026', NULL,
         'Which actor played pet detective Ace Ventura?', NULL,
@@ -11198,16 +11170,84 @@ INSERT INTO questions (question_number, game_mode, category, subcategory, factio
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MOVIES_TV', 'DEPTH_NOV_2026', NULL,
         'Which 1941 Disney film is about a baby elephant with enormous ears?', NULL,
         'Dumbo', ARRAY['Babar', 'Horton', 'Jumbo', 'Bambi', 'Fantasia', 'The Jungle Book'], 200, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MOVIES_TV', 'DEPTH_NOV_2026', NULL,
+        'Which actor played Willy Wonka in the 1971 film?', NULL,
+        'Gene Wilder', ARRAY['Johnny Depp', 'Dick Van Dyke', 'Danny Kaye', 'Peter Sellers', 'Jack Nicholson', 'Timothée Chalamet'], 200, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MOVIES_TV', 'DEPTH_NOV_2026', NULL,
+        'Which 1994 film follows a banker named Andy Dufresne serving a life sentence in prison?', NULL,
+        'The Shawshank Redemption', ARRAY['The Green Mile', 'Escape from Alcatraz', 'Cool Hand Luke', 'Papillon', 'The Longest Yard', 'Brubaker'], 200, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MOVIES_TV', 'DEPTH_NOV_2026', NULL,
+        'In which 1999 film does a boy tell his psychologist, "I see dead people"?', NULL,
+        'The Sixth Sense', ARRAY['The Others', 'Signs', 'Unbreakable', 'Ghost', 'Poltergeist', 'Stir of Echoes'], 200, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MOVIES_TV', 'DEPTH_NOV_2026', NULL,
+        'Which 2000 film stars Russell Crowe as the Roman general Maximus?', NULL,
+        'Gladiator', ARRAY['Troy', 'Spartacus', 'Centurion', 'The Eagle', 'Alexander', 'Quo Vadis'], 200, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MOVIES_TV', 'DEPTH_NOV_2026', NULL,
+        'Which actor played Michael Corleone in "The Godfather"?', NULL,
+        'Al Pacino', ARRAY['Robert De Niro', 'James Caan', 'Robert Duvall', 'John Cazale', 'Dustin Hoffman', 'Jack Nicholson'], 200, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MOVIES_TV', 'DEPTH_NOV_2026', NULL,
+        'Which actor played Walter White in "Breaking Bad"?', NULL,
+        'Bryan Cranston', ARRAY['Aaron Paul', 'Bob Odenkirk', 'Jon Hamm', 'Michael C. Hall', 'Hugh Laurie', 'Damian Lewis'], 200, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MOVIES_TV', 'DEPTH_NOV_2026', NULL,
+        'Which 1952 musical has Gene Kelly dancing and splashing through a downpour?', NULL,
+        'Singin'' in the Rain', ARRAY['An American in Paris', 'Anchors Aweigh', 'On the Town', 'Top Hat', 'Easter Parade', 'The Band Wagon'], 200, NULL);
 
 -- 300 points
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MOVIES_TV', 'ORIGINAL', NULL,
-        'Which movie won the Academy Award for Best Picture for 1994?', NULL,
-        'Forrest Gump', ARRAY['Pulp Fiction', 'The Shawshank Redemption', 'Speed', 'The Lion King', 'Dumb and Dumber', 'True Lies'], 300, NULL);
+        'In "Breaking Bad," what is Walter White''s criminal alias?', NULL,
+        'Heisenberg', ARRAY['Saul', 'Jesse', 'Gus', 'Hank', 'Skyler', 'Mike'], 300, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MOVIES_TV', 'POP_CULTURE_FOLD_1', NULL,
+        'Which actor played Rick Blaine in "Casablanca"?', NULL,
+        'Humphrey Bogart', ARRAY['Cary Grant', 'Clark Gable', 'James Stewart'], 300, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MOVIES_TV', 'POP_CULTURE_FOLD_1', NULL,
+        'Which director made "2001: A Space Odyssey" and "The Shining"?', NULL,
+        'Stanley Kubrick', ARRAY['Ridley Scott', 'Francis Ford Coppola', 'Brian De Palma'], 300, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MOVIES_TV', 'POP_CULTURE_FOLD_1', NULL,
+        'Which actor provided the voice of Darth Vader in the original "Star Wars" trilogy?', NULL,
+        'James Earl Jones', ARRAY['David Prowse', 'Morgan Freeman', 'Christopher Lee'], 300, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MOVIES_TV', 'POP_CULTURE_FOLD_1', NULL,
+        'Which actor played Ferris Bueller?', NULL,
+        'Matthew Broderick', ARRAY['Ralph Macchio', 'John Cusack', 'Charlie Sheen'], 300, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MOVIES_TV', 'POP_CULTURE_FOLD_1', NULL,
+        'Which actress played Ellen Ripley in the "Alien" films?', NULL,
+        'Sigourney Weaver', ARRAY['Linda Hamilton', 'Jamie Lee Curtis', 'Geena Davis'], 300, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MOVIES_TV', 'POP_CULTURE_FOLD_1', NULL,
+        'Which actor played Gandalf in "The Lord of the Rings" films?', NULL,
+        'Ian McKellen', ARRAY['Christopher Lee', 'Patrick Stewart', 'Michael Gambon'], 300, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MOVIES_TV', 'POP_CULTURE_FOLD_1', NULL,
+        'Which actor played Severus Snape in the "Harry Potter" films?', NULL,
+        'Alan Rickman', ARRAY['Gary Oldman', 'Ralph Fiennes', 'Michael Gambon'], 300, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MOVIES_TV', 'POP_CULTURE_FOLD_1', NULL,
+        'In "Back to the Future," how fast must the DeLorean go to travel through time?', NULL,
+        '88 miles per hour', ARRAY['55 miles per hour', '100 miles per hour', '121 miles per hour'], 300, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MOVIES_TV', 'POP_CULTURE_FOLD_1', NULL,
+        'Which 1984 film features a mischievous creature named Gizmo?', NULL,
+        'Gremlins', ARRAY['The Goonies', 'Labyrinth', 'Critters'], 300, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MOVIES_TV', 'POP_CULTURE_FOLD_1', NULL,
+        'In "Stranger Things," what is the dark alternate dimension called?', NULL,
+        'The Upside Down', ARRAY['The Nether', 'The Shadow Realm', 'The Other Side'], 300, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MOVIES_TV', 'ORIGINAL', NULL,
-        'Who composed the musical score for the original "Star Wars" trilogy?', NULL,
-        'John Williams', ARRAY['Hans Zimmer', 'John Barry', 'Alan Silvestri', 'Danny Elfman', 'Howard Shore', 'James Horner'], 300, NULL);
+        'Which movie won the Academy Award for Best Picture for 1994?', NULL,
+        'Forrest Gump', ARRAY['Pulp Fiction', 'The Shawshank Redemption', 'Speed', 'The Lion King', 'Dumb and Dumber', 'True Lies'], 300, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MOVIES_TV', 'ORIGINAL', NULL,
         'What is the name of the AI antagonist in "2001: A Space Odyssey"?', NULL,
@@ -11218,40 +11258,12 @@ VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YE
         'Stranger Things', ARRAY['Twin Peaks', 'Riverdale', 'Gilmore Girls', 'Supernatural', 'The X-Files', 'Fargo'], 300, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MOVIES_TV', 'ORIGINAL', NULL,
-        'Who played the Joker in "The Dark Knight" (2008)?', NULL,
-        'Heath Ledger', ARRAY['Jack Nicholson', 'Joaquin Phoenix', 'Jared Leto', 'Cesar Romero', 'Mark Hamill', 'Barry Keoghan'], 300, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MOVIES_TV', 'ORIGINAL', NULL,
-        'Which director is known for films such as "Jurassic Park," "E.T.," and "Jaws"?', NULL,
-        'Steven Spielberg', ARRAY['Martin Scorsese', 'James Cameron', 'George Lucas', 'Ridley Scott', 'Christopher Nolan', 'Tim Burton'], 300, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MOVIES_TV', 'ORIGINAL', NULL,
         'In "Breaking Bad," what is the name of the lawyer who later gets his own spin-off series?', NULL,
         'Saul Goodman', ARRAY['Gus Fring', 'Mike Ehrmantraut', 'Jesse Pinkman', 'Hank Schrader', 'Walt Jr.', 'Skyler White'], 300, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MOVIES_TV', 'ORIGINAL', NULL,
-        'Which 1975 film is widely credited as Hollywood''s first summer "blockbuster"?', NULL,
-        'Jaws', ARRAY['Star Wars', 'The Godfather', 'Rocky', 'Close Encounters of the Third Kind', 'Jaws 2', 'Grease'], 300, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MOVIES_TV', 'ORIGINAL', NULL,
-        'Which actress played Hermione Granger in the Harry Potter films?', NULL,
-        'Emma Watson', ARRAY['Emma Stone', 'Emma Roberts', 'Keira Knightley', 'Evanna Lynch', 'Bonnie Wright', 'Natalie Portman'], 300, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MOVIES_TV', 'ORIGINAL', NULL,
-        'Which long-running animated sitcom is set in the fictional town of Springfield?', NULL,
-        'The Simpsons', ARRAY['Family Guy', 'King of the Hill', 'Bob''s Burgers', 'American Dad!', 'Futurama', 'South Park'], 300, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MOVIES_TV', 'POP_CULTURE_FOLD_1', NULL,
-        'Which actress won an Oscar for playing the title role in "Annie Hall"?', NULL,
-        'Diane Keaton', ARRAY['Mia Farrow', 'Meryl Streep', 'Faye Dunaway'], 300, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MOVIES_TV', 'POP_CULTURE_FOLD_1', NULL,
         'Which director made "The Breakfast Club" and "Ferris Bueller''s Day Off"?', NULL,
         'John Hughes', ARRAY['Rob Reiner', 'Joel Schumacher', 'Harold Ramis'], 300, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MOVIES_TV', 'POP_CULTURE_FOLD_1', NULL,
-        'Which South Korean film won Best Picture at the 2020 Academy Awards?', NULL,
-        'Parasite', ARRAY['Oldboy', 'Burning', 'The Handmaiden'], 300, 'It was the first film not in English to win Best Picture.');
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MOVIES_TV', 'POP_CULTURE_FOLD_1', NULL,
         'In "Citizen Kane," what was the name of the sled?', NULL,
@@ -11262,44 +11274,12 @@ VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YE
         'North by Northwest', ARRAY['Vertigo', 'Rear Window', 'The Birds'], 300, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MOVIES_TV', 'POP_CULTURE_FOLD_1', NULL,
-        'Which actor played the shark hunter Quint in "Jaws"?', NULL,
-        'Robert Shaw', ARRAY['Roy Scheider', 'Richard Dreyfuss', 'Lee Marvin'], 300, 'Shaw helped rewrite Quint''s famous USS Indianapolis speech.');
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MOVIES_TV', 'POP_CULTURE_FOLD_1', NULL,
-        'Which actor played Westley in "The Princess Bride"?', NULL,
-        'Cary Elwes', ARRAY['Mandy Patinkin', 'Chris Sarandon', 'Billy Crystal'], 300, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MOVIES_TV', 'POP_CULTURE_FOLD_1', NULL,
         'Which actress played Catwoman in "Batman Returns" (1992)?', NULL,
         'Michelle Pfeiffer', ARRAY['Halle Berry', 'Kim Basinger', 'Anne Hathaway'], 300, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MOVIES_TV', 'POP_CULTURE_FOLD_1', NULL,
-        'Which actor played Aragorn in "The Lord of the Rings" films?', NULL,
-        'Viggo Mortensen', ARRAY['Sean Bean', 'Orlando Bloom', 'Karl Urban'], 300, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MOVIES_TV', 'POP_CULTURE_FOLD_1', NULL,
-        'Which actor played Gollum in "The Lord of the Rings" through motion capture?', NULL,
-        'Andy Serkis', ARRAY['Elijah Wood', 'Ian Holm', 'Hugo Weaving'], 300, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MOVIES_TV', 'POP_CULTURE_FOLD_1', NULL,
-        'What metal coats Wolverine''s skeleton and claws in "X-Men"?', NULL,
-        'Adamantium', ARRAY['Vibranium', 'Titanium', 'Uru'], 300, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MOVIES_TV', 'POP_CULTURE_FOLD_1', NULL,
-        'What is the name of Wonder Woman''s home island?', NULL,
-        'Themyscira', ARRAY['Atlantis', 'Avalon', 'Lemuria'], 300, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MOVIES_TV', 'POP_CULTURE_FOLD_1', NULL,
         'In "The Princess Bride," what does R.O.U.S. stand for?', NULL,
         'Rodents of Unusual Size', ARRAY['Rats of Uncommon Size', 'Raccoons of Unusual Strength', 'Rodents of Unknown Species'], 300, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MOVIES_TV', 'POP_CULTURE_FOLD_1', NULL,
-        'What fashion magazine is at the center of "The Devil Wears Prada"?', NULL,
-        'Runway', ARRAY['Vogue', 'Elle', 'Cosmopolitan'], 300, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MOVIES_TV', 'POP_CULTURE_FOLD_1', NULL,
-        'In Disney''s "The Little Mermaid," what is Ariel''s undersea kingdom called?', NULL,
-        'Atlantica', ARRAY['Atlantis', 'Coralia', 'Neptunia'], 300, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MOVIES_TV', 'POP_CULTURE_FOLD_1', NULL,
         'Which actor played Fonzie in "Happy Days"?', NULL,
@@ -11309,25 +11289,45 @@ VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YE
         'Which actor played Tony Soprano in "The Sopranos"?', NULL,
         'James Gandolfini', ARRAY['Michael Imperioli', 'Steve Buscemi', 'Ray Liotta'], 300, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MOVIES_TV', 'POP_CULTURE_FOLD_1', NULL,
-        'Which actor played Jack Bauer in "24"?', NULL,
-        'Kiefer Sutherland', ARRAY['Dennis Haysbert', 'Gary Sinise', 'Michael Chiklis'], 300, NULL);
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MOVIES_TV', 'ORIGINAL', NULL,
+        'Who directed "Citizen Kane"?', NULL,
+        'Orson Welles', ARRAY['Alfred Hitchcock', 'Billy Wilder', 'John Ford', 'Frank Capra', 'Howard Hawks', 'William Wyler'], 300, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MOVIES_TV', 'ORIGINAL', NULL,
+        'What 1988 film extensively blended live action with animated characters, including Roger Rabbit?', NULL,
+        'Who Framed Roger Rabbit', ARRAY['Mary Poppins', 'Space Jam', 'Cool World', 'Pete''s Dragon', 'Bedknobs and Broomsticks', 'Enchanted'], 300, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MOVIES_TV', 'ORIGINAL', NULL,
+        'What was the first feature film to win the Academy Award for Best Animated Feature?', NULL,
+        'Shrek', ARRAY['Toy Story', 'Monsters, Inc.', 'Finding Nemo', 'Spirited Away', 'Ice Age', 'Shrek 2'], 300, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MOVIES_TV', 'POP_CULTURE_FOLD_1', NULL,
-        'Which actor played Archie Bunker in "All in the Family"?', NULL,
-        'Carroll O''Connor', ARRAY['Jackie Gleason', 'Ed Asner', 'Norman Lear'], 300, NULL);
+        'Which actor played Batman in the 1960s "Batman" TV series?', NULL,
+        'Adam West', ARRAY['Burt Ward', 'George Reeves', 'Lyle Waggoner'], 300, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MOVIES_TV', 'POP_CULTURE_FOLD_1', NULL,
-        'Which actor played J.R. Ewing in "Dallas"?', NULL,
-        'Larry Hagman', ARRAY['Patrick Duffy', 'Tom Selleck', 'Burt Reynolds'], 300, NULL);
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MOVIES_TV', 'DEPTH_NOV_2026', NULL,
+        'In "The Godfather," what kind of animal''s head ends up in a Hollywood producer''s bed?', NULL,
+        'A horse', ARRAY['A pig', 'A goat', 'A dog', 'A cow', 'A sheep', 'A bull'], 300, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MOVIES_TV', 'DEPTH_NOV_2026', NULL,
+        'In "Ghostbusters," what is the name of the green, food-gobbling ghost?', NULL,
+        'Slimer', ARRAY['Zuul', 'Gozer', 'Casper', 'Stay Puft', 'Vigo', 'Blinky'], 300, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MOVIES_TV', 'DEPTH_NOV_2026', NULL,
+        'In "Mean Girls," what is the name of Regina George''s clique?', NULL,
+        'The Plastics', ARRAY['The Heathers', 'The Barbies', 'The Populars', 'The Glossies', 'The Divas', 'The Queen Bees'], 300, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MOVIES_TV', 'DEPTH_NOV_2026', NULL,
+        'In the movie "Grease," what is the name of Danny Zuko''s gang?', NULL,
+        'The T-Birds', ARRAY['The Jets', 'The Sharks', 'The Scorpions', 'The Socs', 'The Outsiders', 'The Warriors'], 300, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MOVIES_TV', 'DEPTH_NOV_2026', NULL,
+        'Which TV comedy follows detective Jake Peralta and Captain Raymond Holt?', NULL,
+        'Brooklyn Nine-Nine', ARRAY['The Good Cop', 'Reno 911!', 'Barney Miller', 'Blue Bloods', 'Chicago P.D.', 'Police Squad!'], 300, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MOVIES_TV', 'DEPTH_NOV_2026', NULL,
         'Which director made "Inception" and "Oppenheimer"?', NULL,
         'Christopher Nolan', ARRAY['Denis Villeneuve', 'David Fincher', 'Ridley Scott', 'Sam Mendes', 'Darren Aronofsky', 'Steven Soderbergh'], 300, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MOVIES_TV', 'DEPTH_NOV_2026', NULL,
-        'Which actor played Willy Wonka in the 1971 film?', NULL,
-        'Gene Wilder', ARRAY['Johnny Depp', 'Dick Van Dyke', 'Danny Kaye', 'Peter Sellers', 'Jack Nicholson', 'Timothée Chalamet'], 300, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MOVIES_TV', 'DEPTH_NOV_2026', NULL,
         'Which actor played the title role in "Beetlejuice" (1988)?', NULL,
@@ -11346,40 +11346,16 @@ VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YE
         'Mad Men', ARRAY['The Hour', 'Pan Am', 'Halt and Catch Fire', 'Boardwalk Empire', 'The Marvelous Mrs. Maisel', 'Masters of Sex'], 300, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MOVIES_TV', 'DEPTH_NOV_2026', NULL,
-        'Which 1994 film follows a banker named Andy Dufresne serving a life sentence in prison?', NULL,
-        'The Shawshank Redemption', ARRAY['The Green Mile', 'Escape from Alcatraz', 'Cool Hand Luke', 'Papillon', 'The Longest Yard', 'Brubaker'], 300, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MOVIES_TV', 'DEPTH_NOV_2026', NULL,
         'Which actress played FBI trainee Clarice Starling in "The Silence of the Lambs"?', NULL,
         'Jodie Foster', ARRAY['Julianne Moore', 'Geena Davis', 'Meg Ryan', 'Holly Hunter', 'Kathleen Turner', 'Kelly McGillis'], 300, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MOVIES_TV', 'DEPTH_NOV_2026', NULL,
-        'In which 1999 film does a boy tell his psychologist, "I see dead people"?', NULL,
-        'The Sixth Sense', ARRAY['The Others', 'Signs', 'Unbreakable', 'Ghost', 'Poltergeist', 'Stir of Echoes'], 300, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MOVIES_TV', 'DEPTH_NOV_2026', NULL,
         'Which sitcom''s 1983 finale, "Goodbye, Farewell and Amen," drew about 106 million American viewers?', NULL,
         'M*A*S*H', ARRAY['Happy Days', 'Taxi', 'All in the Family', 'Barney Miller', 'The Jeffersons', 'Cheers'], 300, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MOVIES_TV', 'DEPTH_NOV_2026', NULL,
-        'Which 2000 film stars Russell Crowe as the Roman general Maximus?', NULL,
-        'Gladiator', ARRAY['Troy', 'Spartacus', 'Centurion', 'The Eagle', 'Alexander', 'Quo Vadis'], 300, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MOVIES_TV', 'DEPTH_NOV_2026', NULL,
         'Which TV drama follows the Dutton family on their Montana ranch?', NULL,
         'Yellowstone', ARRAY['Longmire', 'Justified', 'Big Sky', 'Ozark', 'Heartland', 'Hell on Wheels'], 300, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MOVIES_TV', 'DEPTH_NOV_2026', NULL,
-        'Which composer wrote the scores for "The Lion King" (1994) and "Inception"?', NULL,
-        'Hans Zimmer', ARRAY['Danny Elfman', 'James Horner', 'Howard Shore', 'Alan Menken', 'Ennio Morricone', 'James Newton Howard'], 300, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MOVIES_TV', 'DEPTH_NOV_2026', NULL,
-        'Which actor played Michael Corleone in "The Godfather"?', NULL,
-        'Al Pacino', ARRAY['Robert De Niro', 'James Caan', 'Robert Duvall', 'John Cazale', 'Dustin Hoffman', 'Jack Nicholson'], 300, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MOVIES_TV', 'DEPTH_NOV_2026', NULL,
-        'Which TV comedy follows the formerly wealthy Bluth family?', NULL,
-        'Arrested Development', ARRAY['Schitt''s Creek', 'The Royle Family', 'Malcolm in the Middle', 'Succession', 'Married... with Children', 'The Middle'], 300, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MOVIES_TV', 'DEPTH_NOV_2026', NULL,
         'In which 1982 film does Harrison Ford hunt androids called replicants?', NULL,
@@ -11390,38 +11366,94 @@ VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YE
         'Jeff Bridges', ARRAY['John Goodman', 'Steve Buscemi', 'Bill Murray', 'Woody Harrelson', 'Kurt Russell', 'Nick Nolte'], 300, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MOVIES_TV', 'DEPTH_NOV_2026', NULL,
-        'Which 2001 animated film follows a girl named Chihiro into a world of spirits?', NULL,
-        'Spirited Away', ARRAY['Princess Mononoke', 'My Neighbor Totoro', 'Howl''s Moving Castle', 'Kiki''s Delivery Service', 'Ponyo', 'Akira'], 300, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MOVIES_TV', 'DEPTH_NOV_2026', NULL,
-        'Which actor played Walter White in "Breaking Bad"?', NULL,
-        'Bryan Cranston', ARRAY['Aaron Paul', 'Bob Odenkirk', 'Jon Hamm', 'Michael C. Hall', 'Hugh Laurie', 'Damian Lewis'], 300, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MOVIES_TV', 'DEPTH_NOV_2026', NULL,
         'Which actress played Holly Golightly in "Breakfast at Tiffany''s"?', NULL,
         'Audrey Hepburn', ARRAY['Grace Kelly', 'Marilyn Monroe', 'Natalie Wood', 'Elizabeth Taylor', 'Kim Novak', 'Leslie Caron'], 300, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MOVIES_TV', 'DEPTH_NOV_2026', NULL,
+        'Which 1968 film ends with a ruined Statue of Liberty on a beach?', NULL,
+        'Planet of the Apes', ARRAY['Soylent Green', 'Logan''s Run', 'The Omega Man', 'Escape from New York', 'Silent Running', 'On the Beach'], 300, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MOVIES_TV', 'DEPTH_NOV_2026', NULL,
+        'Who hosted "The Tonight Show" from 1962 to 1992?', NULL,
+        'Johnny Carson', ARRAY['Jay Leno', 'Jack Paar', 'Steve Allen', 'David Letterman', 'Ed McMahon', 'Dick Cavett'], 300, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MOVIES_TV', 'DEPTH_NOV_2026', NULL,
+        'Who created and hosted "The Twilight Zone"?', NULL,
+        'Rod Serling', ARRAY['Alfred Hitchcock', 'Boris Karloff', 'Vincent Price', 'Jack Webb', 'Irwin Allen', 'Leonard Nimoy'], 300, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MOVIES_TV', 'DEPTH_NOV_2026', NULL,
+        'Who created the original "Star Trek" TV series?', NULL,
+        'Gene Roddenberry', ARRAY['Rod Serling', 'George Lucas', 'Irwin Allen', 'Gene L. Coon', 'Glen A. Larson', 'J.J. Abrams'], 300, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MOVIES_TV', 'DEPTH_NOV_2026', NULL,
+        'Which film won Best Picture for 2003, sweeping all 11 Oscars it was nominated for?', NULL,
+        'The Lord of the Rings: The Return of the King', ARRAY['The Lord of the Rings: The Two Towers', 'The Lord of the Rings: The Fellowship of the Ring', 'Master and Commander', 'Mystic River', 'Lost in Translation', 'Seabiscuit'], 300, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MOVIES_TV', 'DEPTH_NOV_2026', NULL,
+        'Which actor won his only Oscar for playing Rooster Cogburn in "True Grit" (1969)?', NULL,
+        'John Wayne', ARRAY['Gary Cooper', 'Henry Fonda', 'Lee Marvin', 'Robert Mitchum', 'Glenn Ford', 'Randolph Scott'], 300, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MOVIES_TV', 'DEPTH_NOV_2026', NULL,
+        'Which actor played George Bailey in "It''s a Wonderful Life"?', NULL,
+        'James Stewart', ARRAY['Cary Grant', 'Henry Fonda', 'Gary Cooper', 'Fred MacMurray', 'Spencer Tracy', 'William Holden'], 300, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MOVIES_TV', 'DEPTH_NOV_2026', NULL,
+        'Which actor played Rhett Butler in "Gone with the Wind"?', NULL,
+        'Clark Gable', ARRAY['Errol Flynn', 'Cary Grant', 'Gary Cooper', 'Leslie Howard', 'Tyrone Power', 'Fredric March'], 300, NULL);
 
 -- 400 points
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MOVIES_TV', 'ORIGINAL', NULL,
-        'Who directed "Citizen Kane"?', NULL,
-        'Orson Welles', ARRAY['Alfred Hitchcock', 'Billy Wilder', 'John Ford', 'Frank Capra', 'Howard Hawks', 'William Wyler'], 400, NULL);
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MOVIES_TV', 'POP_CULTURE_FOLD_1', NULL,
+        'Which actress won an Oscar for playing the title role in "Annie Hall"?', NULL,
+        'Diane Keaton', ARRAY['Mia Farrow', 'Meryl Streep', 'Faye Dunaway'], 400, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MOVIES_TV', 'ORIGINAL', NULL,
-        'What 1988 film extensively blended live action with animated characters, including Roger Rabbit?', NULL,
-        'Who Framed Roger Rabbit', ARRAY['Mary Poppins', 'Space Jam', 'Cool World', 'Pete''s Dragon', 'Bedknobs and Broomsticks', 'Enchanted'], 400, NULL);
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MOVIES_TV', 'POP_CULTURE_FOLD_1', NULL,
+        'Which actor played the shark hunter Quint in "Jaws"?', NULL,
+        'Robert Shaw', ARRAY['Roy Scheider', 'Richard Dreyfuss', 'Lee Marvin'], 400, 'Shaw helped rewrite Quint''s famous USS Indianapolis speech.');
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MOVIES_TV', 'POP_CULTURE_FOLD_1', NULL,
+        'Which actor played Westley in "The Princess Bride"?', NULL,
+        'Cary Elwes', ARRAY['Mandy Patinkin', 'Chris Sarandon', 'Billy Crystal'], 400, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MOVIES_TV', 'POP_CULTURE_FOLD_1', NULL,
+        'Which actor played Aragorn in "The Lord of the Rings" films?', NULL,
+        'Viggo Mortensen', ARRAY['Sean Bean', 'Orlando Bloom', 'Karl Urban'], 400, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MOVIES_TV', 'POP_CULTURE_FOLD_1', NULL,
+        'Which actor played Gollum in "The Lord of the Rings" through motion capture?', NULL,
+        'Andy Serkis', ARRAY['Elijah Wood', 'Ian Holm', 'Hugo Weaving'], 400, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MOVIES_TV', 'POP_CULTURE_FOLD_1', NULL,
+        'What metal coats Wolverine''s skeleton and claws in "X-Men"?', NULL,
+        'Adamantium', ARRAY['Vibranium', 'Titanium', 'Uru'], 400, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MOVIES_TV', 'POP_CULTURE_FOLD_1', NULL,
+        'What is the name of Wonder Woman''s home island?', NULL,
+        'Themyscira', ARRAY['Atlantis', 'Avalon', 'Lemuria'], 400, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MOVIES_TV', 'POP_CULTURE_FOLD_1', NULL,
+        'What fashion magazine is at the center of "The Devil Wears Prada"?', NULL,
+        'Runway', ARRAY['Vogue', 'Elle', 'Cosmopolitan'], 400, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MOVIES_TV', 'POP_CULTURE_FOLD_1', NULL,
+        'In Disney''s "The Little Mermaid," what is Ariel''s undersea kingdom called?', NULL,
+        'Atlantica', ARRAY['Atlantis', 'Coralia', 'Neptunia'], 400, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MOVIES_TV', 'POP_CULTURE_FOLD_1', NULL,
+        'Which actor played Jack Bauer in "24"?', NULL,
+        'Kiefer Sutherland', ARRAY['Dennis Haysbert', 'Gary Sinise', 'Michael Chiklis'], 400, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MOVIES_TV', 'POP_CULTURE_FOLD_1', NULL,
+        'Which actor played Archie Bunker in "All in the Family"?', NULL,
+        'Carroll O''Connor', ARRAY['Jackie Gleason', 'Ed Asner', 'Norman Lear'], 400, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MOVIES_TV', 'POP_CULTURE_FOLD_1', NULL,
+        'Which actor played J.R. Ewing in "Dallas"?', NULL,
+        'Larry Hagman', ARRAY['Patrick Duffy', 'Tom Selleck', 'Burt Reynolds'], 400, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MOVIES_TV', 'ORIGINAL', NULL,
         'Which actress holds the record for the most competitive (non-honorary) acting Academy Awards?', NULL,
         'Katharine Hepburn', ARRAY['Meryl Streep', 'Bette Davis', 'Ingrid Bergman', 'Frances McDormand', 'Jane Fonda', 'Elizabeth Taylor'], 400, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MOVIES_TV', 'ORIGINAL', NULL,
-        'What was the first feature film to win the Academy Award for Best Animated Feature?', NULL,
-        'Shrek', ARRAY['Toy Story', 'Monsters, Inc.', 'Finding Nemo', 'Spirited Away', 'Ice Age', 'Shrek 2'], 400, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MOVIES_TV', 'ORIGINAL', NULL,
-        'Who directed the 1960 psychological horror film "Psycho"?', NULL,
-        'Alfred Hitchcock', ARRAY['Stanley Kubrick', 'Billy Wilder', 'Orson Welles', 'John Huston', 'William Friedkin', 'George Cukor'], 400, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MOVIES_TV', 'ORIGINAL', NULL,
         'Which 1959 epic, starring Charlton Heston, was the first film to win 11 Academy Awards?', NULL,
@@ -11430,10 +11462,6 @@ INSERT INTO questions (question_number, game_mode, category, subcategory, factio
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MOVIES_TV', 'ORIGINAL', NULL,
         'What was the name of the first television network to broadcast in color nationally in the US?', NULL,
         'NBC', ARRAY['CBS', 'ABC', 'Fox', 'PBS', 'The CW', 'DuMont'], 400, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MOVIES_TV', 'ORIGINAL', NULL,
-        'Which silent film actor was famous for his "Little Tramp" character?', NULL,
-        'Charlie Chaplin', ARRAY['Buster Keaton', 'Harold Lloyd', 'Stan Laurel', 'Fatty Arbuckle', 'Harry Langdon', 'Max Linder'], 400, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MOVIES_TV', 'POP_CULTURE_FOLD_1', NULL,
         'Which actor played Robin Hood in "The Adventures of Robin Hood" (1938)?', NULL,
@@ -11492,10 +11520,6 @@ VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YE
         'Rue McClanahan', ARRAY['Betty White', 'Bea Arthur', 'Estelle Getty'], 400, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MOVIES_TV', 'POP_CULTURE_FOLD_1', NULL,
-        'Which actor played Batman in the 1960s "Batman" TV series?', NULL,
-        'Adam West', ARRAY['Burt Ward', 'George Reeves', 'Lyle Waggoner'], 400, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MOVIES_TV', 'POP_CULTURE_FOLD_1', NULL,
         'Which actor played MacGyver?', NULL,
         'Richard Dean Anderson', ARRAY['Tom Selleck', 'Lee Majors', 'David Hasselhoff'], 400, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
@@ -11510,6 +11534,18 @@ INSERT INTO questions (question_number, game_mode, category, subcategory, factio
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MOVIES_TV', 'POP_CULTURE_FOLD_1', NULL,
         'Which actor voices Homer Simpson?', NULL,
         'Dan Castellaneta', ARRAY['Hank Azaria', 'Harry Shearer', 'Nancy Cartwright'], 400, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MOVIES_TV', 'DEPTH_NOV_2026', NULL,
+        'Which composer wrote the scores for "The Lion King" (1994) and "Inception"?', NULL,
+        'Hans Zimmer', ARRAY['Danny Elfman', 'James Horner', 'Howard Shore', 'Alan Menken', 'Ennio Morricone', 'James Newton Howard'], 400, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MOVIES_TV', 'DEPTH_NOV_2026', NULL,
+        'Which TV comedy follows the formerly wealthy Bluth family?', NULL,
+        'Arrested Development', ARRAY['Schitt''s Creek', 'The Royle Family', 'Malcolm in the Middle', 'Succession', 'Married... with Children', 'The Middle'], 400, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MOVIES_TV', 'DEPTH_NOV_2026', NULL,
+        'Which 2001 animated film follows a girl named Chihiro into a world of spirits?', NULL,
+        'Spirited Away', ARRAY['Princess Mononoke', 'My Neighbor Totoro', 'Howl''s Moving Castle', 'Kiki''s Delivery Service', 'Ponyo', 'Akira'], 400, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MOVIES_TV', 'DEPTH_NOV_2026', NULL,
         'Which film won the very first Academy Award for Best Picture?', NULL,
@@ -11536,26 +11572,6 @@ VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YE
         'Janet Gaynor', ARRAY['Mary Pickford', 'Greta Garbo', 'Gloria Swanson', 'Clara Bow', 'Lillian Gish', 'Norma Shearer'], 400, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MOVIES_TV', 'DEPTH_NOV_2026', NULL,
-        'Which 1968 film ends with a ruined Statue of Liberty on a beach?', NULL,
-        'Planet of the Apes', ARRAY['Soylent Green', 'Logan''s Run', 'The Omega Man', 'Escape from New York', 'Silent Running', 'On the Beach'], 400, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MOVIES_TV', 'DEPTH_NOV_2026', NULL,
-        'Who hosted "The Tonight Show" from 1962 to 1992?', NULL,
-        'Johnny Carson', ARRAY['Jay Leno', 'Jack Paar', 'Steve Allen', 'David Letterman', 'Ed McMahon', 'Dick Cavett'], 400, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MOVIES_TV', 'DEPTH_NOV_2026', NULL,
-        'Who created and hosted "The Twilight Zone"?', NULL,
-        'Rod Serling', ARRAY['Alfred Hitchcock', 'Boris Karloff', 'Vincent Price', 'Jack Webb', 'Irwin Allen', 'Leonard Nimoy'], 400, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MOVIES_TV', 'DEPTH_NOV_2026', NULL,
-        'Who created the original "Star Trek" TV series?', NULL,
-        'Gene Roddenberry', ARRAY['Rod Serling', 'George Lucas', 'Irwin Allen', 'Gene L. Coon', 'Glen A. Larson', 'J.J. Abrams'], 400, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MOVIES_TV', 'DEPTH_NOV_2026', NULL,
-        'Which film won Best Picture for 2003, sweeping all 11 Oscars it was nominated for?', NULL,
-        'The Lord of the Rings: The Return of the King', ARRAY['The Lord of the Rings: The Two Towers', 'The Lord of the Rings: The Fellowship of the Ring', 'Master and Commander', 'Mystic River', 'Lost in Translation', 'Seabiscuit'], 400, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MOVIES_TV', 'DEPTH_NOV_2026', NULL,
         'Which 1950 film has Bette Davis warn, "Fasten your seatbelts. It''s going to be a bumpy night"?', NULL,
         'All About Eve', ARRAY['The African Queen', 'Harvey', 'Born Yesterday', 'A Streetcar Named Desire', 'Rebecca', 'Mildred Pierce'], 400, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
@@ -11576,14 +11592,6 @@ VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YE
         'Sofia Coppola', ARRAY['Greta Gerwig', 'Kathryn Bigelow', 'Nora Ephron', 'Jane Campion', 'Penny Marshall', 'Ava DuVernay'], 400, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MOVIES_TV', 'DEPTH_NOV_2026', NULL,
-        'Which actor won his only Oscar for playing Rooster Cogburn in "True Grit" (1969)?', NULL,
-        'John Wayne', ARRAY['Gary Cooper', 'Henry Fonda', 'Lee Marvin', 'Robert Mitchum', 'Glenn Ford', 'Randolph Scott'], 400, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MOVIES_TV', 'DEPTH_NOV_2026', NULL,
-        'Which actor played George Bailey in "It''s a Wonderful Life"?', NULL,
-        'James Stewart', ARRAY['Cary Grant', 'Henry Fonda', 'Gary Cooper', 'Fred MacMurray', 'Spencer Tracy', 'William Holden'], 400, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MOVIES_TV', 'DEPTH_NOV_2026', NULL,
         'Which actor played James Bond only once, in "On Her Majesty''s Secret Service" (1969)?', NULL,
         'George Lazenby', ARRAY['Roger Moore', 'Timothy Dalton', 'David Niven', 'Pierce Brosnan', 'Daniel Craig', 'Sean Connery'], 400, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
@@ -11592,16 +11600,8 @@ VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YE
         'Vivien Leigh', ARRAY['Bette Davis', 'Olivia de Havilland', 'Joan Crawford', 'Greer Garson', 'Ginger Rogers', 'Joan Fontaine'], 400, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MOVIES_TV', 'DEPTH_NOV_2026', NULL,
-        'Which actor played Rhett Butler in "Gone with the Wind"?', NULL,
-        'Clark Gable', ARRAY['Errol Flynn', 'Cary Grant', 'Gary Cooper', 'Leslie Howard', 'Tyrone Power', 'Fredric March'], 400, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MOVIES_TV', 'DEPTH_NOV_2026', NULL,
         'Which 1959 comedy has Tony Curtis and Jack Lemmon hide from gangsters in an all-woman band?', NULL,
         'Some Like It Hot', ARRAY['The Apartment', 'Tootsie', 'The Seven Year Itch', 'Pillow Talk', 'Bringing Up Baby', 'Operation Petticoat'], 400, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MOVIES_TV', 'DEPTH_NOV_2026', NULL,
-        'Which 1952 musical has Gene Kelly dancing and splashing through a downpour?', NULL,
-        'Singin'' in the Rain', ARRAY['An American in Paris', 'Anchors Aweigh', 'On the Town', 'Top Hat', 'Easter Parade', 'The Band Wagon'], 400, NULL);
 
 COMMIT;
 
@@ -15725,6 +15725,30 @@ VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YE
         'How often are the Summer Olympic Games normally held?', NULL,
         'Every 4 years', ARRAY['Every 2 years', 'Every 3 years', 'Every 5 years', 'Every 6 years', 'Every year', 'Every 8 years'], 100, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPORTS', 'ORIGINAL', NULL,
+        'How many interlocking rings are on the Olympic flag?', NULL,
+        'Five', ARRAY['Four', 'Six', 'Seven', 'Three', 'Eight', 'Nine'], 100, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPORTS', 'ORIGINAL', NULL,
+        'In American football, how many points is a touchdown worth?', NULL,
+        'Six', ARRAY['Three', 'Seven', 'Two', 'Five', 'Eight', 'Ten'], 100, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPORTS', 'ORIGINAL', NULL,
+        'Which sport is governed by the organization FIFA?', NULL,
+        'Soccer (association football)', ARRAY['Rugby', 'American football', 'Field hockey', 'Basketball', 'Cricket', 'Volleyball'], 100, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPORTS', 'ORIGINAL', NULL,
+        'Which NBA player is nicknamed "King James"?', NULL,
+        'LeBron James', ARRAY['Kevin Durant', 'Stephen Curry', 'Kobe Bryant', 'Michael Jordan', 'James Harden', 'Shaquille O''Neal'], 100, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPORTS', 'ORIGINAL', NULL,
+        'Which boxer, born Cassius Clay, was known as "The Greatest"?', NULL,
+        'Muhammad Ali', ARRAY['Mike Tyson', 'Joe Frazier', 'George Foreman', 'Sugar Ray Robinson', 'Floyd Mayweather', 'Evander Holyfield'], 100, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPORTS', 'ORIGINAL', NULL,
+        'Which swimmer won a record eight gold medals at a single Olympic Games, in Beijing in 2008?', NULL,
+        'Michael Phelps', ARRAY['Mark Spitz', 'Ryan Lochte', 'Caeleb Dressel', 'Ian Thorpe', 'Matt Biondi', 'Adam Peaty'], 100, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPORTS', 'SPORTS_BATCH_1', NULL,
         'In which sport do you try to roll a "strike" or pick up a "spare"?', NULL,
         'Bowling', ARRAY['Curling', 'Croquet', 'Billiards', 'Darts', 'Bocce', 'Shuffleboard'], 100, NULL);
@@ -15769,10 +15793,6 @@ VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YE
         'What color belt does a beginner usually wear in karate?', NULL,
         'White', ARRAY['Black', 'Yellow', 'Red', 'Brown', 'Blue', 'Green'], 100, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPORTS', 'SPORTS_BATCH_1', NULL,
-        'What is the score called when a game is tied at 40-40?', NULL,
-        'Deuce', ARRAY['Love', 'Advantage', 'Let', 'Tiebreak', 'All square', 'Break point'], 100, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPORTS', 'DEPTH_NOV_2026', NULL,
         'In baseball, how many strikes make an out?', NULL,
         'Three strikes', ARRAY['Two strikes', 'Four strikes', 'Five strikes', 'One strike', 'Six strikes', 'Seven strikes'], 100, NULL);
@@ -15788,14 +15808,6 @@ INSERT INTO questions (question_number, game_mode, category, subcategory, factio
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPORTS', 'DEPTH_NOV_2026', NULL,
         'What is it called when a defender tackles the quarterback behind the line of scrimmage?', NULL,
         'A sack', ARRAY['A blitz', 'A fumble', 'A punt', 'An interception', 'A huddle', 'A snap'], 100, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPORTS', 'DEPTH_NOV_2026', NULL,
-        'In basketball, what is a shot called that drops through the hoop without touching the rim?', NULL,
-        'A swish', ARRAY['A brick', 'An air ball', 'A layup', 'A bank shot', 'A tip-in', 'A jumper'], 100, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPORTS', 'DEPTH_NOV_2026', NULL,
-        'In Olympic archery, what color is the bullseye at the center of the target?', NULL,
-        'Gold', ARRAY['Red', 'Blue', 'Black', 'White', 'Green', 'Silver'], 100, 'The yellow-gold center is worth 10 points; the target''s rings go out through red, blue, black and white.');
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPORTS', 'DEPTH_NOV_2026', NULL,
         'What is the name of the NFL''s championship game?', NULL,
@@ -15830,16 +15842,8 @@ VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YE
         'A bat', ARRAY['A club', 'A racket', 'A paddle', 'A stick', 'A mallet', 'A cue'], 100, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPORTS', 'DEPTH_NOV_2026', NULL,
-        'About how wide is the top of a gymnastics balance beam?', NULL,
-        'About 4 inches', ARRAY['About 2 inches', 'About 6 inches', 'About 8 inches', 'About 12 inches', 'About 1 inch', 'About 10 inches'], 100, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPORTS', 'DEPTH_NOV_2026', NULL,
         'Not counting stoppage time, how many minutes long is a regulation soccer match?', NULL,
         '90 minutes', ARRAY['60 minutes', '80 minutes', '100 minutes', '120 minutes', '45 minutes', '70 minutes'], 100, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPORTS', 'DEPTH_NOV_2026', NULL,
-        'In American football, how many points is a safety worth?', NULL,
-        'Two points', ARRAY['One point', 'Three points', 'Six points', 'Four points', 'Seven points', 'Five points'], 100, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPORTS', 'DEPTH_NOV_2026', NULL,
         'In a relay race, what does each runner hand to the next?', NULL,
@@ -15874,62 +15878,50 @@ VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YE
         'Volleyball', ARRAY['Badminton', 'Tennis', 'Handball', 'Squash', 'Netball', 'Basketball'], 100, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPORTS', 'DEPTH_NOV_2026', NULL,
-        'What is it called when a bowler throws three strikes in a row?', NULL,
-        'A turkey', ARRAY['A hat trick', 'A triple', 'A hammer', 'A clean sweep', 'A double', 'A perfect frame'], 100, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPORTS', 'DEPTH_NOV_2026', NULL,
         'In the Olympics, which medal goes to the third-place finisher?', NULL,
         'Bronze', ARRAY['Silver', 'Copper', 'Gold', 'Platinum', 'Tin', 'Iron'], 100, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPORTS', 'DEPTH_NOV_2026', NULL,
-        'In which Olympic sport do competitors score touches with a foil, an épée or a sabre?', NULL,
-        'Fencing', ARRAY['Judo', 'Karate', 'Taekwondo', 'Archery', 'Kendo', 'Boxing'], 100, NULL);
+        'With which team did Michael Jordan win six NBA championships?', NULL,
+        'The Chicago Bulls', ARRAY['The Los Angeles Lakers', 'The Boston Celtics', 'The Detroit Pistons', 'The New York Knicks', 'The Washington Wizards', 'The Miami Heat'], 100, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPORTS', 'DEPTH_NOV_2026', NULL,
-        'How long is each quarter of an NBA game?', NULL,
-        '12 minutes', ARRAY['10 minutes', '15 minutes', '20 minutes', '8 minutes', '25 minutes', '30 minutes'], 100, NULL);
+        'What does "NBA" stand for?', NULL,
+        'National Basketball Association', ARRAY['National Basketball Alliance', 'National Ballplayers Association', 'North American Basketball Association', 'National Basketball Assembly', 'National Basketball Academy', 'National Ball Association'], 100, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPORTS', 'DEPTH_NOV_2026', NULL,
-        'Which sport takes place in a velodrome?', NULL,
-        'Track cycling', ARRAY['Car racing', 'Horse racing', 'Speed skating', 'Running', 'Motorcycle racing', 'Rowing'], 100, NULL);
+        'How many players does a baseball team have on the field on defense?', NULL,
+        'Nine players', ARRAY['Eight players', 'Ten players', 'Eleven players', 'Seven players', 'Twelve players', 'Six players'], 100, NULL);
 
 -- 200 points
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPORTS', 'ORIGINAL', NULL,
-        'Which country was the first to win five FIFA World Cups, completing the set in 2002?', NULL,
-        'Brazil', ARRAY['Germany', 'Italy', 'Argentina', 'France', 'Spain', 'Uruguay'], 200, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPORTS', 'ORIGINAL', NULL,
-        'How many interlocking rings are on the Olympic flag?', NULL,
-        'Five', ARRAY['Four', 'Six', 'Seven', 'Three', 'Eight', 'Nine'], 200, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPORTS', 'ORIGINAL', NULL,
         'What is widely considered the national sport of Japan?', NULL,
         'Sumo wrestling', ARRAY['Judo', 'Karate', 'Baseball', 'Kendo', 'Table tennis', 'Volleyball'], 200, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPORTS', 'ORIGINAL', NULL,
-        'In American football, how many points is a touchdown worth?', NULL,
-        'Six', ARRAY['Three', 'Seven', 'Two', 'Five', 'Eight', 'Ten'], 200, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPORTS', 'ORIGINAL', NULL,
-        'Which sport is governed by the organization FIFA?', NULL,
-        'Soccer (association football)', ARRAY['Rugby', 'American football', 'Field hockey', 'Basketball', 'Cricket', 'Volleyball'], 200, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPORTS', 'ORIGINAL', NULL,
         'In golf, what term describes finishing a hole one stroke under par?', NULL,
         'A birdie', ARRAY['An eagle', 'A bogey', 'An albatross', 'A par', 'A double bogey', 'A condor'], 200, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPORTS', 'ORIGINAL', NULL,
-        'Which country is credited with inventing table tennis (ping pong)?', NULL,
-        'England', ARRAY['China', 'Japan', 'United States', 'Germany', 'France', 'Sweden'], 200, NULL);
+        'Which country is credited with inventing the sport of golf?', NULL,
+        'Scotland', ARRAY['England', 'Ireland', 'Wales', 'Netherlands', 'United States', 'France'], 200, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPORTS', 'ORIGINAL', NULL,
-        'How many points is a successful "try" worth in rugby union?', NULL,
-        'Five', ARRAY['Three', 'Six', 'Four', 'Seven', 'Two', 'Eight'], 200, NULL);
+        'Which Grand Slam tournament is played on grass and is the oldest of the four?', NULL,
+        'Wimbledon', ARRAY['The US Open', 'The French Open', 'The Australian Open', 'The ATP Finals', 'The Davis Cup', 'The Miami Open'], 200, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPORTS', 'ORIGINAL', NULL,
-        'Which NBA player is nicknamed "King James"?', NULL,
-        'LeBron James', ARRAY['Kevin Durant', 'Stephen Curry', 'Kobe Bryant', 'Michael Jordan', 'James Harden', 'Shaquille O''Neal'], 200, NULL);
+        'Which quarterback won his seventh Super Bowl in February 2021, more than any other player had?', NULL,
+        'Tom Brady', ARRAY['Peyton Manning', 'Joe Montana', 'Patrick Mahomes', 'Terry Bradshaw', 'Aaron Rodgers', 'Drew Brees'], 200, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPORTS', 'ORIGINAL', NULL,
+        'Which cyclist was stripped of his record seven Tour de France titles following a doping scandal?', NULL,
+        'Lance Armstrong', ARRAY['Greg LeMond', 'Eddy Merckx', 'Miguel Indurain', 'Jan Ullrich', 'Alberto Contador', 'Chris Froome'], 200, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPORTS', 'SPORTS_BATCH_1', NULL,
+        'What is the score called when a game is tied at 40-40?', NULL,
+        'Deuce', ARRAY['Love', 'Advantage', 'Let', 'Tiebreak', 'All square', 'Break point'], 200, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPORTS', 'SPORTS_BATCH_1', NULL,
         'What color jersey does the overall leader of the Tour de France wear?', NULL,
@@ -15940,20 +15932,8 @@ VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YE
         'Three', ARRAY['Two', 'Four', 'Five', 'Six', 'One', 'Seven'], 200, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPORTS', 'SPORTS_BATCH_1', NULL,
-        'Which men''s golf competition, held every two years, pits Europe against the United States?', NULL,
-        'The Ryder Cup', ARRAY['The Presidents Cup', 'The Solheim Cup', 'The Davis Cup', 'The Curtis Cup', 'The Seve Trophy', 'The Walker Cup'], 200, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPORTS', 'SPORTS_BATCH_1', NULL,
         'What is a serve called when the receiver can''t even touch it?', NULL,
         'An ace', ARRAY['A let', 'A fault', 'A volley', 'A lob', 'A smash', 'A winner'], 200, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPORTS', 'SPORTS_BATCH_1', NULL,
-        'What is the highest score possible with three darts?', NULL,
-        '180', ARRAY['150', '160', '170', '171', '200', '240'], 200, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPORTS', 'SPORTS_BATCH_1', NULL,
-        'Which baseball slugger was nicknamed "the Sultan of Swat"?', NULL,
-        'Babe Ruth', ARRAY['Lou Gehrig', 'Ty Cobb', 'Hank Aaron', 'Mickey Mantle', 'Joe DiMaggio', 'Ted Williams'], 200, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPORTS', 'SPORTS_BATCH_1', NULL,
         'How long is an Olympic swimming pool?', NULL,
@@ -15975,33 +15955,57 @@ VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YE
         'Which country hosted the 2008 Summer Olympics?', NULL,
         'China', ARRAY['Japan', 'South Korea', 'Australia', 'Greece', 'Russia', 'Brazil'], 200, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPORTS', 'SPORTS_BATCH_1', NULL,
+        'Which boxer became the youngest heavyweight champion in history in 1986, aged 20?', NULL,
+        'Mike Tyson', ARRAY['Floyd Patterson', 'Joe Louis', 'George Foreman', 'Evander Holyfield', 'Lennox Lewis', 'Larry Holmes'], 200, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPORTS', 'SPORTS_BATCH_1', NULL,
+        'Which golfer won the 1997 Masters at age 21, by 12 strokes?', NULL,
+        'Tiger Woods', ARRAY['Phil Mickelson', 'Ernie Els', 'Jack Nicklaus', 'Sergio García', 'Vijay Singh', 'David Duval'], 200, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPORTS', 'SPORTS_BATCH_1', NULL,
+        'Which American athlete won four gold medals at the 1936 Berlin Olympics?', NULL,
+        'Jesse Owens', ARRAY['Carl Lewis', 'Jim Thorpe', 'Ralph Metcalfe', 'Bob Hayes', 'Michael Johnson', 'Glenn Cunningham'], 200, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPORTS', 'SPORTS_BATCH_1', NULL,
+        'In the 1980 "Miracle on Ice" at Lake Placid, the US Olympic team stunned which country?', NULL,
+        'The Soviet Union', ARRAY['Finland', 'Canada', 'Sweden', 'Czechoslovakia', 'East Germany', 'West Germany'], 200, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPORTS', 'ORIGINAL', NULL,
+        'Which Atlanta Braves slugger hit his record-breaking 715th career home run in April 1974?', NULL,
+        'Hank Aaron', ARRAY['Willie Mays', 'Mickey Mantle', 'Roberto Clemente', 'Frank Robinson', 'Harmon Killebrew', 'Reggie Jackson'], 200, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPORTS', 'DEPTH_NOV_2026', NULL,
-        'With which team did Michael Jordan win six NBA championships?', NULL,
-        'The Chicago Bulls', ARRAY['The Los Angeles Lakers', 'The Boston Celtics', 'The Detroit Pistons', 'The New York Knicks', 'The Washington Wizards', 'The Miami Heat'], 200, NULL);
+        'In basketball, what is a shot called that drops through the hoop without touching the rim?', NULL,
+        'A swish', ARRAY['A brick', 'An air ball', 'A layup', 'A bank shot', 'A tip-in', 'A jumper'], 200, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPORTS', 'DEPTH_NOV_2026', NULL,
+        'In Olympic archery, what color is the bullseye at the center of the target?', NULL,
+        'Gold', ARRAY['Red', 'Blue', 'Black', 'White', 'Green', 'Silver'], 200, 'The yellow-gold center is worth 10 points; the target''s rings go out through red, blue, black and white.');
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPORTS', 'DEPTH_NOV_2026', NULL,
+        'In American football, how many points is a safety worth?', NULL,
+        'Two points', ARRAY['One point', 'Three points', 'Six points', 'Four points', 'Seven points', 'Five points'], 200, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPORTS', 'DEPTH_NOV_2026', NULL,
+        'What is it called when a bowler throws three strikes in a row?', NULL,
+        'A turkey', ARRAY['A hat trick', 'A triple', 'A hammer', 'A clean sweep', 'A double', 'A perfect frame'], 200, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPORTS', 'DEPTH_NOV_2026', NULL,
+        'In which Olympic sport do competitors score touches with a foil, an épée or a sabre?', NULL,
+        'Fencing', ARRAY['Judo', 'Karate', 'Taekwondo', 'Archery', 'Kendo', 'Boxing'], 200, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPORTS', 'DEPTH_NOV_2026', NULL,
+        'Which sport takes place in a velodrome?', NULL,
+        'Track cycling', ARRAY['Car racing', 'Horse racing', 'Speed skating', 'Running', 'Motorcycle racing', 'Rowing'], 200, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPORTS', 'DEPTH_NOV_2026', NULL,
         'In which city do the NFL''s Steelers play?', NULL,
         'Pittsburgh', ARRAY['Cleveland', 'Philadelphia', 'Baltimore', 'Buffalo', 'Cincinnati', 'Harrisburg'], 200, 'The team is named for the city''s steel industry.');
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPORTS', 'DEPTH_NOV_2026', NULL,
-        'Which country won its first FIFA World Cup in 2010?', NULL,
-        'Spain', ARRAY['The Netherlands', 'Germany', 'Italy', 'Brazil', 'Argentina', 'Uruguay'], 200, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPORTS', 'DEPTH_NOV_2026', NULL,
-        'The "Curse of the Bambino" haunted which baseball team until 2004?', NULL,
-        'The Boston Red Sox', ARRAY['The Chicago Cubs', 'The New York Yankees', 'The Cleveland Indians', 'The Chicago White Sox', 'The Philadelphia Phillies', 'The Detroit Tigers'], 200, '"The Bambino" was Babe Ruth, sold by Boston to the Yankees in 1919.');
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPORTS', 'DEPTH_NOV_2026', NULL,
-        'Which baseball team plays its home games at Wrigley Field?', NULL,
-        'The Chicago Cubs', ARRAY['The Chicago White Sox', 'The St. Louis Cardinals', 'The Milwaukee Brewers', 'The Detroit Tigers', 'The Pittsburgh Pirates', 'The Cincinnati Reds'], 200, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPORTS', 'DEPTH_NOV_2026', NULL,
         'In golf, what is a score of two under par on one hole called?', NULL,
         'An eagle', ARRAY['A birdie', 'An albatross', 'A bogey', 'A condor', 'A par', 'A double bogey'], 200, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPORTS', 'DEPTH_NOV_2026', NULL,
-        'What does "NBA" stand for?', NULL,
-        'National Basketball Association', ARRAY['National Basketball Alliance', 'National Ballplayers Association', 'North American Basketball Association', 'National Basketball Assembly', 'National Basketball Academy', 'National Ball Association'], 200, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPORTS', 'DEPTH_NOV_2026', NULL,
         'Which Grand Slam tennis tournament is played on red clay in Paris?', NULL,
@@ -16012,36 +16016,12 @@ VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YE
         'Skiing', ARRAY['Snowboarding', 'Bobsled', 'Figure skating', 'Luge', 'Speed skating', 'Curling'], 200, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPORTS', 'DEPTH_NOV_2026', NULL,
-        'Which New York Jets quarterback was nicknamed "Broadway Joe"?', NULL,
-        'Joe Namath', ARRAY['Joe Montana', 'Johnny Unitas', 'Terry Bradshaw', 'Dan Marino', 'Bart Starr', 'Roger Staubach'], 200, 'Before Super Bowl III he guaranteed a Jets win over the heavily favored Colts, and delivered.');
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPORTS', 'DEPTH_NOV_2026', NULL,
-        'How many players does a baseball team have on the field on defense?', NULL,
-        'Nine players', ARRAY['Eight players', 'Ten players', 'Eleven players', 'Seven players', 'Twelve players', 'Six players'], 200, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPORTS', 'DEPTH_NOV_2026', NULL,
         'The Vince Lombardi Trophy is awarded in which sport?', NULL,
         'American football', ARRAY['Baseball', 'Basketball', 'Ice hockey', 'Golf', 'Soccer', 'Tennis'], 200, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPORTS', 'DEPTH_NOV_2026', NULL,
-        'Basketball was invented in 1891 in Springfield, in which state?', NULL,
-        'Massachusetts', ARRAY['New York', 'Kansas', 'Ohio', 'Pennsylvania', 'Connecticut', 'Indiana'], 200, 'The first baskets were peach baskets; someone had to fetch the ball after every score.');
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPORTS', 'DEPTH_NOV_2026', NULL,
-        'What is the most clubs a golfer may carry during a round?', NULL,
-        '14', ARRAY['12', '10', '16', '18', '20', '13'], 200, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPORTS', 'DEPTH_NOV_2026', NULL,
         'What is a perfect score in a game of ten-pin bowling?', NULL,
         '300', ARRAY['200', '250', '360', '400', '270', '500'], 200, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPORTS', 'DEPTH_NOV_2026', NULL,
-        'Which city''s baseball team was nicknamed "the Big Red Machine" in the 1970s?', NULL,
-        'Cincinnati', ARRAY['Boston', 'St. Louis', 'Philadelphia', 'Pittsburgh', 'Cleveland', 'Detroit'], 200, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPORTS', 'DEPTH_NOV_2026', NULL,
-        'Which NHL team won the 1994 Stanley Cup, ending a 54-year drought?', NULL,
-        'The New York Rangers', ARRAY['The Toronto Maple Leafs', 'The Chicago Blackhawks', 'The Boston Bruins', 'The Detroit Red Wings', 'The Montreal Canadiens', 'The Vancouver Canucks'], 200, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPORTS', 'DEPTH_NOV_2026', NULL,
         'Which Olympic event combines swimming, cycling and running?', NULL,
@@ -16056,10 +16036,6 @@ VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YE
         'Rafael Nadal', ARRAY['Roger Federer', 'Novak Djokovic', 'Pete Sampras', 'Björn Borg', 'Andre Agassi', 'Andy Murray'], 200, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPORTS', 'DEPTH_NOV_2026', NULL,
-        'Which American won four gold medals at the 1984 Los Angeles Olympics, including the 100 meters and the long jump?', NULL,
-        'Carl Lewis', ARRAY['Edwin Moses', 'Michael Johnson', 'Maurice Greene', 'Bob Beamon', 'Mike Powell', 'Leroy Burrell'], 200, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPORTS', 'DEPTH_NOV_2026', NULL,
         'In soccer, what is it called when an attacker is behind the last defender as the ball is passed to them?', NULL,
         'Offside', ARRAY['A foul', 'Handball', 'Obstruction', 'Encroachment', 'Dangerous play', 'A dive'], 200, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
@@ -16072,14 +16048,6 @@ VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YE
         'The Green Bay Packers', ARRAY['The Chicago Bears', 'The Minnesota Vikings', 'The Detroit Lions', 'The Buffalo Bills', 'The Cleveland Browns', 'The Kansas City Chiefs'], 200, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPORTS', 'DEPTH_NOV_2026', NULL,
-        'Which Formula 1 race winds through the streets of Monte Carlo?', NULL,
-        'The Monaco Grand Prix', ARRAY['The 24 Hours of Le Mans', 'The Indianapolis 500', 'The Daytona 500', 'The Italian Grand Prix', 'The British Grand Prix', 'The Dakar Rally'], 200, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPORTS', 'DEPTH_NOV_2026', NULL,
-        'The fast stick-and-ball sport of hurling comes from which country?', NULL,
-        'Ireland', ARRAY['Scotland', 'Wales', 'England', 'Iceland', 'Canada', 'New Zealand'], 200, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPORTS', 'DEPTH_NOV_2026', NULL,
         'Which NBA team plays its home games at Madison Square Garden?', NULL,
         'The New York Knicks', ARRAY['The Brooklyn Nets', 'The Boston Celtics', 'The Philadelphia 76ers', 'The Washington Wizards', 'The Toronto Raptors', 'The New Jersey Nets'], 200, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
@@ -16088,66 +16056,86 @@ VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YE
         'Serena Williams', ARRAY['Venus Williams', 'Steffi Graf', 'Martina Navratilova', 'Chris Evert', 'Maria Sharapova', 'Margaret Court'], 200, 'She won the 2017 Australian Open while about eight weeks pregnant.');
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPORTS', 'DEPTH_NOV_2026', NULL,
-        'Which race, first run in 1897, is the world''s oldest annual marathon?', NULL,
-        'The Boston Marathon', ARRAY['The New York City Marathon', 'The Chicago Marathon', 'The London Marathon', 'The Berlin Marathon', 'The Athens Marathon', 'The Paris Marathon'], 200, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPORTS', 'DEPTH_NOV_2026', NULL,
         'Which Yankees first baseman was nicknamed "the Iron Horse"?', NULL,
         'Lou Gehrig', ARRAY['Babe Ruth', 'Joe DiMaggio', 'Ty Cobb', 'Honus Wagner', 'Mickey Mantle', 'Yogi Berra'], 200, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPORTS', 'DEPTH_NOV_2026', NULL,
+        'In which sport might a bowler deliver a "googly"?', NULL,
+        'Cricket', ARRAY['Croquet', 'Polo', 'Golf', 'Snooker', 'Lacrosse', 'Hurling'], 200, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPORTS', 'DEPTH_NOV_2026', NULL,
+        'What was the 1973 tennis match between Billie Jean King and Bobby Riggs nicknamed?', NULL,
+        'The Battle of the Sexes', ARRAY['The Match of the Century', 'The Gender Bowl', 'The Clash of Champions', 'The Great Exhibition', 'The Houston Showdown', 'The Love Match'], 200, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPORTS', 'DEPTH_NOV_2026', NULL,
+        'Which ballpark has the left-field wall called the "Green Monster"?', NULL,
+        'Fenway Park', ARRAY['Wrigley Field', 'Yankee Stadium', 'Camden Yards', 'Dodger Stadium', 'Busch Stadium', 'Comerica Park'], 200, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPORTS', 'DEPTH_NOV_2026', NULL,
+        'Which English soccer club is nicknamed "the Red Devils"?', NULL,
+        'Manchester United', ARRAY['Liverpool', 'Arsenal', 'Manchester City', 'Chelsea', 'Nottingham Forest', 'Southampton'], 200, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPORTS', 'DEPTH_NOV_2026', NULL,
+        'In which sport would an athlete land a "triple axel"?', NULL,
+        'Figure skating', ARRAY['Gymnastics', 'Diving', 'Snowboarding', 'Ballet', 'Trampoline', 'Skateboarding'], 200, 'It''s the only jump with a forward takeoff, so it takes three and a half turns in the air.');
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPORTS', 'DEPTH_NOV_2026', NULL,
+        'Which Olympic track and field event packs ten events into two days?', NULL,
+        'Decathlon', ARRAY['Heptathlon', 'Pentathlon', 'Triathlon', 'Biathlon', 'Modern pentathlon', 'Octathlon'], 200, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPORTS', 'DEPTH_NOV_2026', NULL,
+        'Which gymnast won the Olympic all-around gold at the 2016 Rio Games?', NULL,
+        'Simone Biles', ARRAY['Gabby Douglas', 'Aly Raisman', 'Shawn Johnson', 'Nastia Liukin', 'Carly Patterson', 'Sunisa Lee'], 200, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPORTS', 'DEPTH_NOV_2026', NULL,
+        'Which NFL team is often called "America''s Team"?', NULL,
+        'The Dallas Cowboys', ARRAY['The Green Bay Packers', 'The New England Patriots', 'The Pittsburgh Steelers', 'The Chicago Bears', 'The New York Giants', 'The Washington Commanders'], 200, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPORTS', 'DEPTH_NOV_2026', NULL,
+        'Which baseball team moved from Brooklyn to Los Angeles after the 1957 season?', NULL,
+        'The Dodgers', ARRAY['The Giants', 'The Braves', 'The Athletics', 'The Senators', 'The Browns', 'The Pilots'], 200, NULL);
 
 -- 300 points
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPORTS', 'ORIGINAL', NULL,
+        'Which country was the first to win five FIFA World Cups, completing the set in 2002?', NULL,
+        'Brazil', ARRAY['Germany', 'Italy', 'Argentina', 'France', 'Spain', 'Uruguay'], 300, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPORTS', 'ORIGINAL', NULL,
+        'Which country is credited with inventing table tennis (ping pong)?', NULL,
+        'England', ARRAY['China', 'Japan', 'United States', 'Germany', 'France', 'Sweden'], 300, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPORTS', 'ORIGINAL', NULL,
         'Who won a record 24th men''s Grand Slam singles title at the 2023 US Open?', NULL,
         'Novak Djokovic', ARRAY['Roger Federer', 'Rafael Nadal', 'Pete Sampras', 'Andre Agassi', 'Bjorn Borg', 'Rod Laver'], 300, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPORTS', 'ORIGINAL', NULL,
-        'Which boxer, born Cassius Clay, was known as "The Greatest"?', NULL,
-        'Muhammad Ali', ARRAY['Mike Tyson', 'Joe Frazier', 'George Foreman', 'Sugar Ray Robinson', 'Floyd Mayweather', 'Evander Holyfield'], 300, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPORTS', 'ORIGINAL', NULL,
         'In cricket, how many players are on each team?', NULL,
         'Eleven', ARRAY['Ten', 'Twelve', 'Nine', 'Thirteen', 'Eight', 'Fifteen'], 300, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPORTS', 'ORIGINAL', NULL,
-        'Which country is credited with inventing the sport of golf?', NULL,
-        'Scotland', ARRAY['England', 'Ireland', 'Wales', 'Netherlands', 'United States', 'France'], 300, NULL);
+        'Who holds MLB''s officially recognized single-season home run record, with 73 in 2001?', NULL,
+        'Barry Bonds', ARRAY['Babe Ruth', 'Mark McGwire', 'Sammy Sosa', 'Roger Maris', 'Hank Aaron', 'Aaron Judge'], 300, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPORTS', 'ORIGINAL', NULL,
-        'In 2010, Formula 1 raised the points for a race win from 10 to what?', NULL,
-        '25', ARRAY['20', '18', '30', '15', '22', '12'], 300, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPORTS', 'ORIGINAL', NULL,
-        'Which Grand Slam tournament is played on grass and is the oldest of the four?', NULL,
-        'Wimbledon', ARRAY['The US Open', 'The French Open', 'The Australian Open', 'The ATP Finals', 'The Davis Cup', 'The Miami Open'], 300, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPORTS', 'ORIGINAL', NULL,
-        'Which swimmer won a record eight gold medals at a single Olympic Games, in Beijing in 2008?', NULL,
-        'Michael Phelps', ARRAY['Mark Spitz', 'Ryan Lochte', 'Caeleb Dressel', 'Ian Thorpe', 'Matt Biondi', 'Adam Peaty'], 300, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPORTS', 'ORIGINAL', NULL,
-        'Which country won the UEFA Euro 2016 football championship?', NULL,
-        'Portugal', ARRAY['France', 'Germany', 'Spain', 'Italy', 'Belgium', 'Wales'], 300, NULL);
+        'Which racehorse won the US Triple Crown in 1973 by a record margin?', NULL,
+        'Secretariat', ARRAY['Seabiscuit', 'Man o'' War', 'American Pharoah', 'Citation', 'War Admiral', 'Affirmed'], 300, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPORTS', 'SPORTS_BATCH_1', NULL,
-        'Which team lost the 1966 World Cup final at Wembley, 4-2 after extra time?', NULL,
-        'West Germany', ARRAY['Portugal', 'Argentina', 'Brazil', 'Italy', 'Soviet Union', 'Hungary'], 300, NULL);
+        'Which men''s golf competition, held every two years, pits Europe against the United States?', NULL,
+        'The Ryder Cup', ARRAY['The Presidents Cup', 'The Solheim Cup', 'The Davis Cup', 'The Curtis Cup', 'The Seve Trophy', 'The Walker Cup'], 300, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPORTS', 'SPORTS_BATCH_1', NULL,
-        'Which boxer became the youngest heavyweight champion in history in 1986, aged 20?', NULL,
-        'Mike Tyson', ARRAY['Floyd Patterson', 'Joe Louis', 'George Foreman', 'Evander Holyfield', 'Lennox Lewis', 'Larry Holmes'], 300, NULL);
+        'What is the highest score possible with three darts?', NULL,
+        '180', ARRAY['150', '160', '170', '171', '200', '240'], 300, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPORTS', 'SPORTS_BATCH_1', NULL,
-        'Which golfer won the 1997 Masters at age 21, by 12 strokes?', NULL,
-        'Tiger Woods', ARRAY['Phil Mickelson', 'Ernie Els', 'Jack Nicklaus', 'Sergio García', 'Vijay Singh', 'David Duval'], 300, NULL);
+        'Which baseball slugger was nicknamed "the Sultan of Swat"?', NULL,
+        'Babe Ruth', ARRAY['Lou Gehrig', 'Ty Cobb', 'Hank Aaron', 'Mickey Mantle', 'Joe DiMaggio', 'Ted Williams'], 300, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPORTS', 'SPORTS_BATCH_1', NULL,
         'Which gymnast scored the first perfect 10 in Olympic history, at Montreal in 1976?', NULL,
         'Nadia Comaneci', ARRAY['Olga Korbut', 'Mary Lou Retton', 'Nellie Kim', 'Simone Biles', 'Ludmilla Tourischeva', 'Vera Caslavska'], 300, 'The scoreboard couldn''t show 10.00, so her perfect score appeared as 1.00.');
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPORTS', 'SPORTS_BATCH_1', NULL,
-        'Which American athlete won four gold medals at the 1936 Berlin Olympics?', NULL,
-        'Jesse Owens', ARRAY['Carl Lewis', 'Jim Thorpe', 'Ralph Metcalfe', 'Bob Hayes', 'Michael Johnson', 'Glenn Cunningham'], 300, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPORTS', 'SPORTS_BATCH_1', NULL,
         'In which city is the famous Maracanã soccer stadium?', NULL,
@@ -16158,16 +16146,16 @@ VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YE
         'Lewis Hamilton', ARRAY['Sebastian Vettel', 'Fernando Alonso', 'Max Verstappen', 'Nico Rosberg', 'Kimi Räikkönen', 'Jenson Button'], 300, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPORTS', 'SPORTS_BATCH_1', NULL,
-        'In the 1980 "Miracle on Ice" at Lake Placid, the US Olympic team stunned which country?', NULL,
-        'The Soviet Union', ARRAY['Finland', 'Canada', 'Sweden', 'Czechoslovakia', 'East Germany', 'West Germany'], 300, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPORTS', 'SPORTS_BATCH_1', NULL,
         'Which country won the first Rugby World Cup, in 1987?', NULL,
         'New Zealand', ARRAY['Australia', 'South Africa', 'England', 'France', 'Wales', 'Ireland'], 300, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPORTS', 'SPORTS_BATCH_1', NULL,
         'How many minutes long is a regulation NBA game?', NULL,
         '48', ARRAY['40', '60', '44', '36', '50', '52'], 300, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPORTS', 'SPORTS_BATCH_1', NULL,
+        'Which American swimmer won seven gold medals at the 1972 Munich Olympics?', NULL,
+        'Mark Spitz', ARRAY['Matt Biondi', 'Johnny Weissmuller', 'Don Schollander', 'Gary Hall', 'John Naber', 'Ryan Lochte'], 300, 'Spitz set a world record in all seven events he won.');
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPORTS', 'ORIGINAL', NULL,
         'Which golfer was nicknamed "the Golden Bear"?', NULL,
@@ -16178,16 +16166,60 @@ VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YE
         'High jump', ARRAY['Pole vault', 'Long jump', 'Triple jump', 'Hurdles', 'Steeplechase', 'Javelin'], 300, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPORTS', 'DEPTH_NOV_2026', NULL,
-        'Which Yankees pitcher threw a perfect game in Game 5 of the 1956 World Series?', NULL,
-        'Don Larsen', ARRAY['Whitey Ford', 'Sandy Koufax', 'Bob Gibson', 'Cy Young', 'Allie Reynolds', 'Vic Raschi'], 300, NULL);
+        'About how wide is the top of a gymnastics balance beam?', NULL,
+        'About 4 inches', ARRAY['About 2 inches', 'About 6 inches', 'About 8 inches', 'About 12 inches', 'About 1 inch', 'About 10 inches'], 300, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPORTS', 'DEPTH_NOV_2026', NULL,
+        'How long is each quarter of an NBA game?', NULL,
+        '12 minutes', ARRAY['10 minutes', '15 minutes', '20 minutes', '8 minutes', '25 minutes', '30 minutes'], 300, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPORTS', 'DEPTH_NOV_2026', NULL,
+        'Which country won its first FIFA World Cup in 2010?', NULL,
+        'Spain', ARRAY['The Netherlands', 'Germany', 'Italy', 'Brazil', 'Argentina', 'Uruguay'], 300, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPORTS', 'DEPTH_NOV_2026', NULL,
+        'The "Curse of the Bambino" haunted which baseball team until 2004?', NULL,
+        'The Boston Red Sox', ARRAY['The Chicago Cubs', 'The New York Yankees', 'The Cleveland Indians', 'The Chicago White Sox', 'The Philadelphia Phillies', 'The Detroit Tigers'], 300, '"The Bambino" was Babe Ruth, sold by Boston to the Yankees in 1919.');
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPORTS', 'DEPTH_NOV_2026', NULL,
+        'Which baseball team plays its home games at Wrigley Field?', NULL,
+        'The Chicago Cubs', ARRAY['The Chicago White Sox', 'The St. Louis Cardinals', 'The Milwaukee Brewers', 'The Detroit Tigers', 'The Pittsburgh Pirates', 'The Cincinnati Reds'], 300, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPORTS', 'DEPTH_NOV_2026', NULL,
+        'Which New York Jets quarterback was nicknamed "Broadway Joe"?', NULL,
+        'Joe Namath', ARRAY['Joe Montana', 'Johnny Unitas', 'Terry Bradshaw', 'Dan Marino', 'Bart Starr', 'Roger Staubach'], 300, 'Before Super Bowl III he guaranteed a Jets win over the heavily favored Colts, and delivered.');
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPORTS', 'DEPTH_NOV_2026', NULL,
+        'Basketball was invented in 1891 in Springfield, in which state?', NULL,
+        'Massachusetts', ARRAY['New York', 'Kansas', 'Ohio', 'Pennsylvania', 'Connecticut', 'Indiana'], 300, 'The first baskets were peach baskets; someone had to fetch the ball after every score.');
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPORTS', 'DEPTH_NOV_2026', NULL,
+        'What is the most clubs a golfer may carry during a round?', NULL,
+        '14', ARRAY['12', '10', '16', '18', '20', '13'], 300, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPORTS', 'DEPTH_NOV_2026', NULL,
+        'Which city''s baseball team was nicknamed "the Big Red Machine" in the 1970s?', NULL,
+        'Cincinnati', ARRAY['Boston', 'St. Louis', 'Philadelphia', 'Pittsburgh', 'Cleveland', 'Detroit'], 300, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPORTS', 'DEPTH_NOV_2026', NULL,
+        'Which American won four gold medals at the 1984 Los Angeles Olympics, including the 100 meters and the long jump?', NULL,
+        'Carl Lewis', ARRAY['Edwin Moses', 'Michael Johnson', 'Maurice Greene', 'Bob Beamon', 'Mike Powell', 'Leroy Burrell'], 300, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPORTS', 'DEPTH_NOV_2026', NULL,
+        'Which Formula 1 race winds through the streets of Monte Carlo?', NULL,
+        'The Monaco Grand Prix', ARRAY['The 24 Hours of Le Mans', 'The Indianapolis 500', 'The Daytona 500', 'The Italian Grand Prix', 'The British Grand Prix', 'The Dakar Rally'], 300, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPORTS', 'DEPTH_NOV_2026', NULL,
+        'The fast stick-and-ball sport of hurling comes from which country?', NULL,
+        'Ireland', ARRAY['Scotland', 'Wales', 'England', 'Iceland', 'Canada', 'New Zealand'], 300, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPORTS', 'DEPTH_NOV_2026', NULL,
+        'Which race, first run in 1897, is the world''s oldest annual marathon?', NULL,
+        'The Boston Marathon', ARRAY['The New York City Marathon', 'The Chicago Marathon', 'The London Marathon', 'The Berlin Marathon', 'The Athens Marathon', 'The Paris Marathon'], 300, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPORTS', 'DEPTH_NOV_2026', NULL,
         'Which NFL team finished the 1972 season 17-0, winning the Super Bowl?', NULL,
         'The Miami Dolphins', ARRAY['The Dallas Cowboys', 'The Pittsburgh Steelers', 'The Minnesota Vikings', 'The Oakland Raiders', 'The Baltimore Colts', 'The Washington Redskins'], 300, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPORTS', 'DEPTH_NOV_2026', NULL,
-        'In baseball scorekeeping, what does a backward "K" mean?', NULL,
-        'A called third strike', ARRAY['A swinging strikeout', 'A walk', 'A balk', 'A pickoff', 'A sacrifice bunt', 'An error'], 300, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPORTS', 'DEPTH_NOV_2026', NULL,
         'In 1997, whose number 42 did Major League Baseball retire across every team?', NULL,
@@ -16206,14 +16238,6 @@ VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YE
         'A century', ARRAY['A maiden', 'A duck', 'A hat-trick', 'A fifty', 'A boundary', 'A wicket'], 300, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPORTS', 'DEPTH_NOV_2026', NULL,
-        'Which hockey legend, "Mr. Hockey," played in five different decades?', NULL,
-        'Gordie Howe', ARRAY['Bobby Hull', 'Maurice Richard', 'Bobby Orr', 'Mario Lemieux', 'Jean Béliveau', 'Wayne Gretzky'], 300, 'He played his last pro shift in 1997, at age 69, in a minor-league game.');
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPORTS', 'DEPTH_NOV_2026', NULL,
-        'The winner of which golf major takes home the Claret Jug?', NULL,
-        'The Open Championship', ARRAY['The Masters', 'The US Open', 'The PGA Championship', 'The Ryder Cup', 'The Players Championship', 'The US Amateur'], 300, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPORTS', 'DEPTH_NOV_2026', NULL,
         'The Chicago Cubs'' 2016 World Series title ended a drought going back to which year?', NULL,
         '1908', ARRAY['1918', '1945', '1929', '1906', '1919', '1932'], 300, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
@@ -16230,106 +16254,82 @@ VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YE
         'Brandi Chastain', ARRAY['Mia Hamm', 'Abby Wambach', 'Julie Foudy', 'Kristine Lilly', 'Michelle Akers', 'Briana Scurry'], 300, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPORTS', 'DEPTH_NOV_2026', NULL,
-        'Which American figure skater won Olympic gold in 1976 and launched a famous wedge haircut?', NULL,
-        'Dorothy Hamill', ARRAY['Peggy Fleming', 'Kristi Yamaguchi', 'Tara Lipinski', 'Nancy Kerrigan', 'Michelle Kwan', 'Katarina Witt'], 300, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPORTS', 'DEPTH_NOV_2026', NULL,
-        'Which Los Angeles Rams running back rushed for 2,105 yards in 1984?', NULL,
-        'Eric Dickerson', ARRAY['Walter Payton', 'Barry Sanders', 'Jim Brown', 'Marcus Allen', 'Emmitt Smith', 'Earl Campbell'], 300, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPORTS', 'DEPTH_NOV_2026', NULL,
         'Which country''s national soccer team is nicknamed "Les Bleus"?', NULL,
         'France', ARRAY['Italy', 'Belgium', 'The Netherlands', 'Argentina', 'Uruguay', 'Greece'], 300, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPORTS', 'DEPTH_NOV_2026', NULL,
-        'In which sport might a bowler deliver a "googly"?', NULL,
-        'Cricket', ARRAY['Croquet', 'Polo', 'Golf', 'Snooker', 'Lacrosse', 'Hurling'], 300, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPORTS', 'DEPTH_NOV_2026', NULL,
         'Which player scored 100 points in a single NBA game in 1962?', NULL,
         'Wilt Chamberlain', ARRAY['Bill Russell', 'Elgin Baylor', 'Jerry West', 'Oscar Robertson', 'Kareem Abdul-Jabbar', 'Bob Cousy'], 300, 'There''s no video of it; the game in Hershey, Pennsylvania, wasn''t televised.');
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPORTS', 'DEPTH_NOV_2026', NULL,
-        'What was the 1973 tennis match between Billie Jean King and Bobby Riggs nicknamed?', NULL,
-        'The Battle of the Sexes', ARRAY['The Match of the Century', 'The Gender Bowl', 'The Clash of Champions', 'The Great Exhibition', 'The Houston Showdown', 'The Love Match'], 300, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPORTS', 'DEPTH_NOV_2026', NULL,
-        'Which ballpark has the left-field wall called the "Green Monster"?', NULL,
-        'Fenway Park', ARRAY['Wrigley Field', 'Yankee Stadium', 'Camden Yards', 'Dodger Stadium', 'Busch Stadium', 'Comerica Park'], 300, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPORTS', 'DEPTH_NOV_2026', NULL,
         'What is the name of the top competition for Europe''s club soccer teams?', NULL,
         'The Champions League', ARRAY['The Europa League', 'The Premier League', 'La Liga', 'The Copa América', 'Serie A', 'The Bundesliga'], 300, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPORTS', 'DEPTH_NOV_2026', NULL,
-        'Which English soccer club is nicknamed "the Red Devils"?', NULL,
-        'Manchester United', ARRAY['Liverpool', 'Arsenal', 'Manchester City', 'Chelsea', 'Nottingham Forest', 'Southampton'], 300, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPORTS', 'DEPTH_NOV_2026', NULL,
         'Which sprinter was known as "Flo-Jo"?', NULL,
         'Florence Griffith Joyner', ARRAY['Jackie Joyner-Kersee', 'Wilma Rudolph', 'Gail Devers', 'Marion Jones', 'Evelyn Ashford', 'Merlene Ottey'], 300, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPORTS', 'DEPTH_NOV_2026', NULL,
-        'In which sport would an athlete land a "triple axel"?', NULL,
-        'Figure skating', ARRAY['Gymnastics', 'Diving', 'Snowboarding', 'Ballet', 'Trampoline', 'Skateboarding'], 300, 'It''s the only jump with a forward takeoff, so it takes three and a half turns in the air.');
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPORTS', 'DEPTH_NOV_2026', NULL,
         'Which race is the third and longest leg of horse racing''s Triple Crown?', NULL,
         'The Belmont Stakes', ARRAY['The Preakness Stakes', 'The Kentucky Derby', 'The Breeders'' Cup Classic', 'The Travers Stakes', 'The Santa Anita Derby', 'The Arkansas Derby'], 300, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPORTS', 'DEPTH_NOV_2026', NULL,
-        'Which Australian won tennis''s calendar Grand Slam twice, in 1962 and 1969?', NULL,
-        'Rod Laver', ARRAY['Roy Emerson', 'Ken Rosewall', 'Björn Borg', 'John McEnroe', 'Jimmy Connors', 'Don Budge'], 300, NULL);
+        'Which pitcher won 511 games, and now has baseball''s top pitching award named for him?', NULL,
+        'Cy Young', ARRAY['Walter Johnson', 'Christy Mathewson', 'Grover Cleveland Alexander', 'Warren Spahn', 'Nolan Ryan', 'Pud Galvin'], 300, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPORTS', 'DEPTH_NOV_2026', NULL,
-        'Which Olympic track and field event packs ten events into two days?', NULL,
-        'Decathlon', ARRAY['Heptathlon', 'Pentathlon', 'Triathlon', 'Biathlon', 'Modern pentathlon', 'Octathlon'], 300, NULL);
+        'What nickname did the 1919 Chicago White Sox earn after throwing the World Series?', NULL,
+        'The Black Sox', ARRAY['The Dirty Sox', 'The Gray Sox', 'The Crooked Eight', 'The Fixers', 'The Fallen Sox', 'The Shame Sox'], 300, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPORTS', 'DEPTH_NOV_2026', NULL,
-        'Which team drafted Kobe Bryant in 1996, then traded him to the Lakers?', NULL,
-        'The Charlotte Hornets', ARRAY['The Philadelphia 76ers', 'The New Jersey Nets', 'The Toronto Raptors', 'The Boston Celtics', 'The Vancouver Grizzlies', 'The Milwaukee Bucks'], 300, NULL);
+        'Who in 1975 became the first Black man to win the Wimbledon singles title?', NULL,
+        'Arthur Ashe', ARRAY['Yannick Noah', 'James Blake', 'MaliVai Washington', 'Stan Smith', 'Jimmy Connors', 'Björn Borg'], 300, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPORTS', 'DEPTH_NOV_2026', NULL,
-        'Which gymnast won the Olympic all-around gold at the 2016 Rio Games?', NULL,
-        'Simone Biles', ARRAY['Gabby Douglas', 'Aly Raisman', 'Shawn Johnson', 'Nastia Liukin', 'Carly Patterson', 'Sunisa Lee'], 300, NULL);
+        'Which Yankee hit safely in 56 straight games in 1941?', NULL,
+        'Joe DiMaggio', ARRAY['Ted Williams', 'Pete Rose', 'Ty Cobb', 'Willie Keeler', 'Stan Musial', 'Lou Gehrig'], 300, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPORTS', 'DEPTH_NOV_2026', NULL,
-        'Which NFL team is often called "America''s Team"?', NULL,
-        'The Dallas Cowboys', ARRAY['The Green Bay Packers', 'The New England Patriots', 'The Pittsburgh Steelers', 'The Chicago Bears', 'The New York Giants', 'The Washington Commanders'], 300, NULL);
+        'Which NBA team won eight straight championships from 1959 to 1966?', NULL,
+        'The Boston Celtics', ARRAY['The Minneapolis Lakers', 'The New York Knicks', 'The Philadelphia Warriors', 'The Syracuse Nationals', 'The St. Louis Hawks', 'The Cincinnati Royals'], 300, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPORTS', 'DEPTH_NOV_2026', NULL,
+        'Which country hosted the 1994 FIFA World Cup?', NULL,
+        'The United States', ARRAY['Mexico', 'France', 'Italy', 'Germany', 'Japan', 'Canada'], 300, NULL);
 
 -- 400 points
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPORTS', 'ORIGINAL', NULL,
-        'Who holds MLB''s officially recognized single-season home run record, with 73 in 2001?', NULL,
-        'Barry Bonds', ARRAY['Babe Ruth', 'Mark McGwire', 'Sammy Sosa', 'Roger Maris', 'Hank Aaron', 'Aaron Judge'], 400, NULL);
+        'How many points is a successful "try" worth in rugby union?', NULL,
+        'Five', ARRAY['Three', 'Six', 'Four', 'Seven', 'Two', 'Eight'], 400, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPORTS', 'ORIGINAL', NULL,
+        'In 2010, Formula 1 raised the points for a race win from 10 to what?', NULL,
+        '25', ARRAY['20', '18', '30', '15', '22', '12'], 400, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPORTS', 'ORIGINAL', NULL,
+        'Which country won the UEFA Euro 2016 football championship?', NULL,
+        'Portugal', ARRAY['France', 'Germany', 'Spain', 'Italy', 'Belgium', 'Wales'], 400, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPORTS', 'ORIGINAL', NULL,
         'In snooker, what score is a standard "maximum break"?', NULL,
         '147', ARRAY['167', '100', '180', '200', '50', '120'], 400, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPORTS', 'ORIGINAL', NULL,
-        'Which racehorse won the US Triple Crown in 1973 by a record margin?', NULL,
-        'Secretariat', ARRAY['Seabiscuit', 'Man o'' War', 'American Pharoah', 'Citation', 'War Admiral', 'Affirmed'], 400, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPORTS', 'ORIGINAL', NULL,
         'In what year were the first Winter Olympic Games held?', NULL,
         '1924', ARRAY['1920', '1928', '1900', '1932', '1912', '1936'], 400, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPORTS', 'ORIGINAL', NULL,
-        'Which quarterback won his seventh Super Bowl in February 2021, more than any other player had?', NULL,
-        'Tom Brady', ARRAY['Peyton Manning', 'Joe Montana', 'Patrick Mahomes', 'Terry Bradshaw', 'Aaron Rodgers', 'Drew Brees'], 400, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPORTS', 'ORIGINAL', NULL,
         'In what year were women first allowed to compete in the modern Olympic Games?', NULL,
         '1900', ARRAY['1896', '1912', '1920', '1924', '1908', '1932'], 400, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPORTS', 'ORIGINAL', NULL,
-        'Which cyclist was stripped of his record seven Tour de France titles following a doping scandal?', NULL,
-        'Lance Armstrong', ARRAY['Greg LeMond', 'Eddy Merckx', 'Miguel Indurain', 'Jan Ullrich', 'Alberto Contador', 'Chris Froome'], 400, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPORTS', 'ORIGINAL', NULL,
         'Which country''s cricket team is nicknamed "the Baggy Greens"?', NULL,
         'Australia', ARRAY['England', 'India', 'South Africa', 'New Zealand', 'Pakistan', 'Sri Lanka'], 400, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPORTS', 'SPORTS_BATCH_1', NULL,
+        'Which team lost the 1966 World Cup final at Wembley, 4-2 after extra time?', NULL,
+        'West Germany', ARRAY['Portugal', 'Argentina', 'Brazil', 'Italy', 'Soviet Union', 'Hungary'], 400, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPORTS', 'SPORTS_BATCH_1', NULL,
         'Who won all four Grand Slam singles titles and Olympic gold in 1988, the "Golden Slam"?', NULL,
@@ -16367,25 +16367,45 @@ VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YE
         'Which Ethiopian runner won the 1960 Olympic marathon in Rome running barefoot?', NULL,
         'Abebe Bikila', ARRAY['Haile Gebrselassie', 'Kenenisa Bekele', 'Emil Zátopek', 'Mamo Wolde', 'Frank Shorter', 'Eliud Kipchoge'], 400, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPORTS', 'SPORTS_BATCH_1', NULL,
-        'Which American swimmer won seven gold medals at the 1972 Munich Olympics?', NULL,
-        'Mark Spitz', ARRAY['Matt Biondi', 'Johnny Weissmuller', 'Don Schollander', 'Gary Hall', 'John Naber', 'Ryan Lochte'], 400, 'Spitz set a world record in all seven events he won.');
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPORTS', 'ORIGINAL', NULL,
-        'Which Atlanta Braves slugger hit his record-breaking 715th career home run in April 1974?', NULL,
-        'Hank Aaron', ARRAY['Willie Mays', 'Mickey Mantle', 'Roberto Clemente', 'Frank Robinson', 'Harmon Killebrew', 'Reggie Jackson'], 400, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPORTS', 'ORIGINAL', NULL,
         'Which tennis star won nine Wimbledon singles titles between 1978 and 1990?', NULL,
         'Martina Navratilova', ARRAY['Chris Evert', 'Billie Jean King', 'Serena Williams', 'Margaret Court', 'Evonne Goolagong', 'Venus Williams'], 400, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPORTS', 'DEPTH_NOV_2026', NULL,
-        'Which pitcher won 511 games, and now has baseball''s top pitching award named for him?', NULL,
-        'Cy Young', ARRAY['Walter Johnson', 'Christy Mathewson', 'Grover Cleveland Alexander', 'Warren Spahn', 'Nolan Ryan', 'Pud Galvin'], 400, NULL);
+        'Which NHL team won the 1994 Stanley Cup, ending a 54-year drought?', NULL,
+        'The New York Rangers', ARRAY['The Toronto Maple Leafs', 'The Chicago Blackhawks', 'The Boston Bruins', 'The Detroit Red Wings', 'The Montreal Canadiens', 'The Vancouver Canucks'], 400, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPORTS', 'DEPTH_NOV_2026', NULL,
-        'What nickname did the 1919 Chicago White Sox earn after throwing the World Series?', NULL,
-        'The Black Sox', ARRAY['The Dirty Sox', 'The Gray Sox', 'The Crooked Eight', 'The Fixers', 'The Fallen Sox', 'The Shame Sox'], 400, NULL);
+        'Which Yankees pitcher threw a perfect game in Game 5 of the 1956 World Series?', NULL,
+        'Don Larsen', ARRAY['Whitey Ford', 'Sandy Koufax', 'Bob Gibson', 'Cy Young', 'Allie Reynolds', 'Vic Raschi'], 400, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPORTS', 'DEPTH_NOV_2026', NULL,
+        'In baseball scorekeeping, what does a backward "K" mean?', NULL,
+        'A called third strike', ARRAY['A swinging strikeout', 'A walk', 'A balk', 'A pickoff', 'A sacrifice bunt', 'An error'], 400, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPORTS', 'DEPTH_NOV_2026', NULL,
+        'Which hockey legend, "Mr. Hockey," played in five different decades?', NULL,
+        'Gordie Howe', ARRAY['Bobby Hull', 'Maurice Richard', 'Bobby Orr', 'Mario Lemieux', 'Jean Béliveau', 'Wayne Gretzky'], 400, 'He played his last pro shift in 1997, at age 69, in a minor-league game.');
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPORTS', 'DEPTH_NOV_2026', NULL,
+        'The winner of which golf major takes home the Claret Jug?', NULL,
+        'The Open Championship', ARRAY['The Masters', 'The US Open', 'The PGA Championship', 'The Ryder Cup', 'The Players Championship', 'The US Amateur'], 400, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPORTS', 'DEPTH_NOV_2026', NULL,
+        'Which American figure skater won Olympic gold in 1976 and launched a famous wedge haircut?', NULL,
+        'Dorothy Hamill', ARRAY['Peggy Fleming', 'Kristi Yamaguchi', 'Tara Lipinski', 'Nancy Kerrigan', 'Michelle Kwan', 'Katarina Witt'], 400, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPORTS', 'DEPTH_NOV_2026', NULL,
+        'Which Los Angeles Rams running back rushed for 2,105 yards in 1984?', NULL,
+        'Eric Dickerson', ARRAY['Walter Payton', 'Barry Sanders', 'Jim Brown', 'Marcus Allen', 'Emmitt Smith', 'Earl Campbell'], 400, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPORTS', 'DEPTH_NOV_2026', NULL,
+        'Which Australian won tennis''s calendar Grand Slam twice, in 1962 and 1969?', NULL,
+        'Rod Laver', ARRAY['Roy Emerson', 'Ken Rosewall', 'Björn Borg', 'John McEnroe', 'Jimmy Connors', 'Don Budge'], 400, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPORTS', 'DEPTH_NOV_2026', NULL,
+        'Which team drafted Kobe Bryant in 1996, then traded him to the Lakers?', NULL,
+        'The Charlotte Hornets', ARRAY['The Philadelphia 76ers', 'The New Jersey Nets', 'The Toronto Raptors', 'The Boston Celtics', 'The Vancouver Grizzlies', 'The Milwaukee Bucks'], 400, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPORTS', 'DEPTH_NOV_2026', NULL,
         'Which gymnast landed a vault on an injured ankle to help the US win team gold in 1996?', NULL,
@@ -16420,20 +16440,12 @@ VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YE
         'Cooperstown', ARRAY['Saratoga Springs', 'Hoboken', 'Elmira', 'Lake Placid', 'Ithaca', 'Rochester'], 400, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPORTS', 'DEPTH_NOV_2026', NULL,
-        'Who in 1975 became the first Black man to win the Wimbledon singles title?', NULL,
-        'Arthur Ashe', ARRAY['Yannick Noah', 'James Blake', 'MaliVai Washington', 'Stan Smith', 'Jimmy Connors', 'Björn Borg'], 400, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPORTS', 'DEPTH_NOV_2026', NULL,
         'Who in 1967 became the first woman to officially run the Boston Marathon with a race number?', NULL,
         'Kathrine Switzer', ARRAY['Bobbi Gibb', 'Joan Benoit', 'Grete Waitz', 'Paula Radcliffe', 'Uta Pippig', 'Nina Kuscsik'], 400, 'An official tried to tear off her bib mid-race; she finished anyway.');
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPORTS', 'DEPTH_NOV_2026', NULL,
         'What was the first Super Bowl officially called?', NULL,
         'The AFL-NFL World Championship Game', ARRAY['The NFL Championship Bowl', 'The Pro Bowl', 'The Super Classic', 'The American Bowl', 'The Championship Classic', 'The Grand Bowl'], 400, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPORTS', 'DEPTH_NOV_2026', NULL,
-        'Which Yankee hit safely in 56 straight games in 1941?', NULL,
-        'Joe DiMaggio', ARRAY['Ted Williams', 'Pete Rose', 'Ty Cobb', 'Willie Keeler', 'Stan Musial', 'Lou Gehrig'], 400, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPORTS', 'DEPTH_NOV_2026', NULL,
         'Which Boston Red Sox hitter batted .406 in 1941?', NULL,
@@ -16456,10 +16468,6 @@ VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YE
         'Franco Harris', ARRAY['Lynn Swann', 'Terry Bradshaw', 'John Stallworth', 'Rocky Bleier', 'Joe Greene', 'Dwight Clark'], 400, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPORTS', 'DEPTH_NOV_2026', NULL,
-        'Which baseball team moved from Brooklyn to Los Angeles after the 1957 season?', NULL,
-        'The Dodgers', ARRAY['The Giants', 'The Braves', 'The Athletics', 'The Senators', 'The Browns', 'The Pilots'], 400, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPORTS', 'DEPTH_NOV_2026', NULL,
         'Which course''s famous 17th hole is an island green, at the home of the Players Championship?', NULL,
         'TPC Sawgrass', ARRAY['Augusta National', 'Pebble Beach', 'St Andrews', 'Pinehurst No. 2', 'Whistling Straits', 'Torrey Pines'], 400, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
@@ -16474,14 +16482,6 @@ INSERT INTO questions (question_number, game_mode, category, subcategory, factio
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPORTS', 'DEPTH_NOV_2026', NULL,
         'In baseball stats, what does a pitcher''s ERA measure?', NULL,
         'Earned runs allowed per nine innings', ARRAY['Errors per game', 'Every run allowed', 'Strikeouts per nine innings', 'Walks per inning', 'Earned runs per start', 'Innings per start'], 400, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPORTS', 'DEPTH_NOV_2026', NULL,
-        'Which NBA team won eight straight championships from 1959 to 1966?', NULL,
-        'The Boston Celtics', ARRAY['The Minneapolis Lakers', 'The New York Knicks', 'The Philadelphia Warriors', 'The Syracuse Nationals', 'The St. Louis Hawks', 'The Cincinnati Royals'], 400, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPORTS', 'DEPTH_NOV_2026', NULL,
-        'Which country hosted the 1994 FIFA World Cup?', NULL,
-        'The United States', ARRAY['Mexico', 'France', 'Italy', 'Germany', 'Japan', 'Canada'], 400, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'SPORTS', 'DEPTH_NOV_2026', NULL,
         'Which Czech runner won the 5,000 meters, the 10,000 meters and the marathon at the 1952 Olympics?', NULL,
