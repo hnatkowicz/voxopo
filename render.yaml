@@ -1,0 +1,37 @@
+# Render Blueprint for the live site (Nov 2026, Randy: "great idea").
+#
+# The voxopo web service's settings, written down so a rebuild is nearly one
+# click: in Render, New > Blueprint, pick this repo, then paste the two
+# secrets when asked. Committing this file changes nothing on the service
+# that's running today (that one wasn't made from a Blueprint); it only
+# matters if a Blueprint is created from it.
+#
+# Secrets are NOT here and never go here: DATABASE_URL (Neon's owner login)
+# and ADMIN_PASSWORD are typed into Render. `sync: false` makes Render ask
+# for them instead of reading a value from this file. PORT is set by Render.
+services:
+  - type: web
+    name: voxopo
+    runtime: node
+    region: ohio
+    # A paid instance (Nov 2026): the free tier sleeps when idle, and every
+    # restart ends every live game. Check this matches the plan on Render
+    # before creating a Blueprint from it.
+    plan: starter
+    buildCommand: npm install
+    startCommand: npm start
+    # Answers without the database (only in-memory counts), so Render
+    # doesn't restart the site, and end every game, over a database hiccup.
+    healthCheckPath: /api/live-counts
+    # Merging to main deploys, which restarts the server and ends every
+    # live room, so nothing is merged during a venue event.
+    autoDeploy: true
+    branch: main
+    envVars:
+      - key: DATABASE_URL
+        sync: false
+      - key: ADMIN_PASSWORD
+        sync: false
+    domains:
+      - randomania.tv
+      - www.randomania.tv
