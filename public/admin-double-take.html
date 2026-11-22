@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="stylesheet" href="/theme.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Double Take Photos</title>
+    <link rel="icon" type="image/x-icon" href="/R.ico" />
+    <link rel="icon" type="image/svg+xml" href="/r-icon.svg">
+    <style>
+        body { font-family: var(--rm-font-body); background: var(--rm-bg); color: var(--rm-text); margin: 0; padding: 24px 16px; letter-spacing: -0.01em; }
+        .wrap { max-width: 1100px; margin: 0 auto; }
+        a { color: var(--rm-brand); }
+        h1 { font-family: var(--rm-font-display); color: var(--rm-white); font-size: 1.5rem; margin: 6px 0 4px; }
+        h2 { color: var(--rm-white); font-size: 1.1rem; margin: 0 0 4px; }
+        .muted { color: var(--rm-text-muted); font-size: 0.88rem; }
+        .card { background: var(--rm-surface); border: 1px solid var(--rm-border); border-radius: 12px; padding: 18px; margin: 16px 0; }
+        .notice { background: rgba(var(--rm-yellow-rgb), 0.08); border: 1px solid rgba(var(--rm-yellow-rgb), 0.35); color: var(--rm-yellow); border-radius: 8px; padding: 10px 12px; font-size: 0.88rem; margin: 12px 0; }
+        .pairs { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 12px; margin-top: 12px; }
+        .pair { background: var(--rm-surface-2); border: 2px solid var(--rm-border); border-radius: 10px; padding: 8px; cursor: pointer; text-align: left; color: var(--rm-text); font: inherit; }
+        .pair:hover, .pair.current { border-color: var(--rm-brand); }
+        .pair img { width: 100%; aspect-ratio: 4 / 3; object-fit: cover; border-radius: 6px; display: block; background: var(--rm-bg); }
+        .pair .name { font-weight: 700; margin-top: 6px; }
+        .pair .status { font-size: 0.8rem; color: var(--rm-text-muted); }
+        .pair .status.ready { color: var(--rm-green); }
+        .toolbar { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin: 10px 0; }
+        .toolbar .gap { flex: 1; }
+        button.b { padding: 8px 14px; font-size: 0.85rem; border-radius: 6px; border: 1px solid var(--rm-border); background: var(--rm-surface-2); color: var(--rm-text); cursor: pointer; font: inherit; font-size: 0.85rem; }
+        button.b:hover { background: var(--rm-border); }
+        button.b:disabled { opacity: 0.45; cursor: not-allowed; }
+        button.b.on { border-color: var(--rm-brand); color: var(--rm-brand); }
+        button.primary { background: var(--rm-brand); color: var(--rm-bg); border-color: var(--rm-brand); font-weight: 700; }
+        button.primary:hover { background: var(--rm-brand-dark); }
+        select { padding: 7px 8px; background: var(--rm-surface-2); color: var(--rm-text); border: 1px solid var(--rm-border); border-radius: 6px; font: inherit; font-size: 0.85rem; }
+        .stage { position: relative; }
+        canvas#view { width: 100%; height: auto; display: block; border-radius: 8px; touch-action: none; cursor: crosshair; background: var(--rm-bg); }
+        .checks { margin: 10px 0 0; padding: 0; list-style: none; font-size: 0.9rem; }
+        .checks li { padding: 5px 0; border-bottom: 1px solid var(--rm-border); }
+        .checks li.ok { color: var(--rm-green); }
+        .checks li.warn { color: var(--rm-yellow); }
+        .checks li.bad { color: var(--rm-red); }
+        .spotlist { font-size: 0.85rem; color: var(--rm-text-soft); margin-top: 8px; }
+        label.ready { display: inline-flex; gap: 6px; align-items: center; font-size: 0.9rem; font-weight: 600; }
+        .feedback { font-size: 0.88rem; margin-left: 4px; }
+        .feedback.error { color: var(--rm-red); }
+        .feedback.success { color: var(--rm-green); }
+        .help { font-size: 0.85rem; color: var(--rm-text-soft); line-height: 1.5; margin: 6px 0 0; padding-left: 18px; }
+        #editor { display: none; }
+    </style>
+</head>
+<body>
+<div class="wrap">
+    <a href="/admin">&larr; Admin</a>
+    <h1>Double Take photos</h1>
+    <p class="muted">Upload each pair to <strong>public/double-take/</strong> on GitHub as <strong>name-original.webp</strong> and <strong>name-altered.webp</strong> (1600 x 1200, from the same master). They show up here after the next deploy. Pick one, check the boxes around its 5 differences, and save.</p>
+
+    <div id="login-note" class="notice" style="display:none">Log in on <a href="/admin">/admin</a> first, then come back to this page.</div>
+    <div id="table-note" class="notice" style="display:none">Saving turns on once you run <strong>double_take.sql</strong> in Neon. You can still look at the pairs and their differences.</div>
+    <div id="stray-note" class="notice" style="display:none"></div>
+    <div id="load-error" class="notice" style="display:none"></div>
+
+    <div class="pairs" id="pairs"></div>
+
+    <div class="card" id="editor">
+        <h2 id="ed-title"></h2>
+        <div class="toolbar">
+            <span class="muted">Show:</span>
+            <button class="b" data-view="altered">Altered</button>
+            <button class="b" data-view="original">Original</button>
+            <button class="b" data-view="flicker">Flicker</button>
+            <button class="b" data-view="diff">Differences</button>
+            <span class="gap"></span>
+            <span class="muted">Sensitivity</span>
+            <select id="sens">
+                <option value="low">Low</option>
+                <option value="normal" selected>Normal</option>
+                <option value="high">High</option>
+            </select>
+            <button class="b" id="btn-detect">Find again</button>
+        </div>
+        <div class="stage"><canvas id="view"></canvas></div>
+        <div class="toolbar">
+            <button class="b" id="btn-merge" disabled>Merge</button>
+            <button class="b" id="btn-delete" disabled>Delete</button>
+            <button class="b" id="btn-undo" disabled>Undo</button>
+            <span class="gap"></span>
+            <label class="ready"><input type="checkbox" id="ready"> Ready to play</label>
+            <button class="b primary" id="btn-save">Save</button>
+            <span class="feedback" id="save-feedback"></span>
+        </div>
+        <ul class="help">
+            <li><strong>Drag a box</strong> to move it; drag a <strong>corner</strong> to resize it; <strong>drag on an empty spot</strong> to draw a new box.</li>
+            <li>Tap a box to select it; <strong>Shift</strong>-tap to select more. <strong>Merge</strong> joins the selected boxes into one, <strong>Delete</strong> removes them.</li>
+            <li><strong>Flicker</strong> swaps the two photos twice a second, the easiest way to see a change with your own eyes. <strong>Differences</strong> lights up every pixel that changed.</li>
+            <li>The game will make each box a bit bigger when it checks a tap, so a box only needs to fit the change itself.</li>
+        </ul>
+        <ul class="checks" id="checks"></ul>
+        <div class="spotlist" id="spotlist"></div>
+    </div>
+</div>
+
+<script>
+// How the boxes are found (tuned on Randy's first pair, Allen Street, Nov
+// 2026): compare every pixel's red, green and blue; a pixel "changed" when one
+// of them moved by more than the threshold (WebP's own noise stays under ~20).
+// The photo is cut into 8 px squares; a square counts when enough of its 64
+// pixels changed, and squares within 3 squares (24 px) of each other are one
+// difference. Fewer than 3 squares is noise. At Normal, the Allen Street pair
+// came out as exactly its 5 changes.
+const SENSITIVITY = {
+    low:    { threshold: 60, minPixels: 12 },
+    normal: { threshold: 40, minPixels: 8 },
+    high:   { threshold: 25, minPixels: 5 }
+};
+const CELL = 8, GAP = 3, MIN_CELLS = 3;
+// The spec Randy works to (CLAUDE.md, Double Take): 5 differences a photo,
+// each at least ~50 px across and ~80 px from the edges, spread out.
+const WANT_SPOTS = 5, MIN_AREA = 50 * 50, EDGE = 80, APART = 80;
+const PHONE_WIDTH = 390; // a typical phone, for "how big is this on a phone"
+
+const css = name => getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+const canvas = document.getElementById('view');
+const ctx = canvas.getContext('2d');
+let pairs = [], tableMissing = false;
+let cur = null; // { name, imgO, imgA, W, H, mask, spots, selected:Set, history:[], dirty }
+let view = 'altered', flickerTimer = null, flickerShowOriginal = false;
+
+async function loadPairs() {
+    let data;
+    try {
+        const res = await fetch('/api/admin/double-take');
+        if (res.status === 401) { document.getElementById('login-note').style.display = 'block'; return; }
+        data = await res.json();
+    } catch {
+        return showLoadError("Couldn't reach the server. Try again.");
+    }
+    if (!data.success) return showLoadError(data.error || "Couldn't load the pairs.");
+    pairs = data.pairs;
+    tableMissing = data.tableMissing;
+    document.getElementById('table-note').style.display = tableMissing ? 'block' : 'none';
+    const stray = document.getElementById('stray-note');
+    stray.style.display = data.strays.length ? 'block' : 'none';
+    stray.textContent = data.strays.length
+        ? `These files don't make a pair (check the names end in -original.webp and -altered.webp): ${data.strays.join(', ')}`
+        : '';
+    renderPairs();
+}
+
+function showLoadError(msg) {
+    const el = document.getElementById('load-error');
+    el.style.display = 'block';
+    el.textContent = msg;
+}
+
+function statusText(p) {
+    if (p.ready) return `Ready, ${p.spots.length} spots`;
+    if (p.saved) return `${p.spots.length} spots saved, not ready`;
+    return 'Not set up yet';
+}
+
+function renderPairs() {
+    const box = document.getElementById('pairs');
+    if (!pairs.length) { box.innerHTML = '<p class="muted">No pairs in public/double-take/ yet.</p>'; return; }
+    box.innerHTML = '';
+    pairs.forEach(p => {
+        const b = document.createElement('button');
+        b.className = 'pair' + (cur && cur.name === p.name ? ' current' : '');
+        b.innerHTML = `<img loading="lazy" alt=""><div class="name"></div><div class="status${p.ready ? ' ready' : ''}"></div>`;
+        b.querySelector('img').src = `/double-take/${encodeURIComponent(p.name)}-altered.webp`;
+        b.querySelector('.name').textContent = p.name;
+        b.querySelector('.status').textContent = statusText(p);
+        b.onclick = () => openPair(p);
+        box.appendChild(b);
+    });
+}
+
+function loadImage(src) {
+    return new Promise((resolve, reject) => {
+        const img = new Image();
+        img.onload = () => resolve(img);
+        img.onerror = () => reject(new Error(src));
+        img.src = src;
+    });
+}
+
+async function openPair(p) {
+    if (cur && cur.dirty && !confirm(`Leave ${cur.name} without saving?`)) return;
+    const base = `/double-take/${encodeURIComponent(p.name)}`;
+    let imgO, imgA;
+    try {
+        [imgO, imgA] = await Promise.all([loadImage(`${base}-original.webp`), loadImage(`${base}-altered.webp`)]);
+    } catch {
+        return alert(`Couldn't load the photos for ${p.name}.`);
+    }
+    const W = imgO.naturalWidth, H = imgO.naturalHeight;
+    cur = { name: p.name, imgO, imgA, W, H, mask: null, spots: [], selected: new Set(), history: [], dirty: false,
+            sizeProblem: null, saved: p, comparable: imgA.naturalWidth === W && imgA.naturalHeight === H };
+    if (imgA.naturalWidth !== W || imgA.naturalHeight !== H) {
+        cur.sizeProblem = `The two photos are different sizes (${W} x ${H} and ${imgA.naturalWidth} x ${imgA.naturalHeight}). Export both from the same master with the same size and crop.`;
+    } else if (W !== 1600 || H !== 1200) {
+        cur.sizeProblem = `The photos are ${W} x ${H}; Double Take expects 1600 x 1200.`;
+    }
+    canvas.width = W;
+    canvas.height = H;
+    document.getElementById('editor').style.display = 'block';
+    document.getElementById('ed-title').textContent = p.name;
+    document.getElementById('ready').checked = !!p.ready;
+    setFeedback('');
+    if (cur.comparable) {
+        const found = detect(document.getElementById('sens').value);
+        // A pair that was saved keeps its boxes; a new one starts from what was found.
+        cur.spots = p.saved ? p.spots.map(s => ({ ...s })) : found;
+    }
+    renderPairs();
+    refresh();
+    document.getElementById('editor').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function pixelsOf(img) {
+    const c = document.createElement('canvas');
+    c.width = cur.W; c.height = cur.H;
+    const x = c.getContext('2d');
+    x.drawImage(img, 0, 0);
+    return x.getImageData(0, 0, cur.W, cur.H).data;
+}
+
+// Finds the changed areas; also keeps a picture of every changed pixel for
+// the Differences view.
+function detect(level) {
+    const { threshold, minPixels } = SENSITIVITY[level] || SENSITIVITY.normal;
+    const W = cur.W, H = cur.H;
+    const a = pixelsOf(cur.imgO), b = pixelsOf(cur.imgA);
+    const gw = Math.ceil(W / CELL), gh = Math.ceil(H / CELL);
+    const counts = new Uint16Array(gw * gh);
+    const mask = new ImageData(W, H);
+    const [mr, mg, mb] = rgbOf(css('--rm-brand'));
+    for (let p = 0, i = 0; p < W * H; p++, i += 4) {
+        const d = Math.max(Math.abs(a[i] - b[i]), Math.abs(a[i + 1] - b[i + 1]), Math.abs(a[i + 2] - b[i + 2]));
+        if (d > threshold) {
+            const x = p % W, y = (p / W) | 0;
+            counts[((y / CELL) | 0) * gw + ((x / CELL) | 0)]++;
+            mask.data[i] = mr; mask.data[i + 1] = mg; mask.data[i + 2] = mb; mask.data[i + 3] = 255;
+        }
+    }
+    const maskCanvas = document.createElement('canvas');
+    maskCanvas.width = W; maskCanvas.height = H;
+    maskCanvas.getContext('2d').putImageData(mask, 0, 0);
+    cur.mask = maskCanvas;
+
+    const hot = counts.map(n => (n >= minPixels ? 1 : 0));
+    const seen = new Uint8Array(gw * gh);
+    const spots = [];
+    for (let start = 0; start < gw * gh; start++) {
+        if (!hot[start] || seen[start]) continue;
+        const stack = [start];
+        seen[start] = 1;
+        let n = 0, x0 = Infinity, y0 = Infinity, x1 = -1, y1 = -1;
+        while (stack.length) {
+            const c = stack.pop();
+            const cx = c % gw, cy = (c / gw) | 0;
+            n++;
+            x0 = Math.min(x0, cx); x1 = Math.max(x1, cx); y0 = Math.min(y0, cy); y1 = Math.max(y1, cy);
+            for (let dy = -GAP; dy <= GAP; dy++) {
+                for (let dx = -GAP; dx <= GAP; dx++) {
+                    const nx = cx + dx, ny = cy + dy;
+                    if (nx < 0 || ny < 0 || nx >= gw || ny >= gh) continue;
+                    const k = ny * gw + nx;
+                    if (hot[k] && !seen[k]) { seen[k] = 1; stack.push(k); }
+                }
+            }
+        }
+        if (n < MIN_CELLS) continue;
+        const x = x0 * CELL, y = y0 * CELL;
+        spots.push({ x, y, w: Math.min(W, (x1 + 1) * CELL) - x, h: Math.min(H, (y1 + 1) * CELL) - y });
+    }
+    // Top to bottom, then left to right, so the numbers read like a page.
+    spots.sort((p, q) => (Math.abs(p.y - q.y) > 60 ? p.y - q.y : p.x - q.x));
+    return spots;
+}
+
+function rgbOf(color) {
+    const c = document.createElement('canvas').getContext('2d');
+    c.fillStyle = color;
+    const hex = c.fillStyle; // the browser hands back #rrggbb
+    return [1, 3, 5].map(i => parseInt(hex.slice(i, i + 2), 16) || 0);
+}
+
+// ---- Drawing ----
+function draw() {
+    if (!cur) return;
+    const W = cur.W, H = cur.H;
+    ctx.clearRect(0, 0, W, H);
+    let img = cur.imgA;
+    if (view === 'original') img = cur.imgO;
+    if (view === 'flicker' && flickerShowOriginal) img = cur.imgO;
+    ctx.drawImage(img, 0, 0, W, H);
+    if (view === 'diff' && cur.mask) {
+        ctx.fillStyle = `rgba(${css('--rm-black-rgb')}, 0.6)`;
+        ctx.fillRect(0, 0, W, H);
+        ctx.drawImage(cur.mask, 0, 0);
+    }
+    const scale = W / canvas.getBoundingClientRect().width || 1;
+    const problems = spotProblems();
+    cur.spots.forEach((s, i) => {
+        const selected = cur.selected.has(i);
+        const color = selected ? css('--rm-white') : problems.has(i) ? css('--rm-yellow') : css('--rm-brand');
+        ctx.lineWidth = (selected ? 4 : 3) * scale;
+        ctx.strokeStyle = `rgba(${css('--rm-black-rgb')}, 0.6)`;
+        ctx.strokeRect(s.x - ctx.lineWidth, s.y - ctx.lineWidth, s.w + 2 * ctx.lineWidth, s.h + 2 * ctx.lineWidth);
+        ctx.strokeStyle = color;
+        // A box that breaks a rule is dashed, so it reads even on a gold-ish photo.
+        ctx.setLineDash(problems.has(i) && !selected ? [10 * scale, 6 * scale] : []);
+        ctx.strokeRect(s.x, s.y, s.w, s.h);
+        ctx.setLineDash([]);
+        // The number, in a tag above the box's corner.
+        const size = 18 * scale;
+        ctx.font = `700 ${size}px sans-serif`;
+        const label = String(i + 1);
+        const tw = ctx.measureText(label).width + size * 0.6;
+        const ty = s.y - size * 1.3 < 0 ? s.y : s.y - size * 1.3;
+        ctx.fillStyle = color;
+        ctx.fillRect(s.x, ty, tw, size * 1.3);
+        ctx.fillStyle = css('--rm-bg');
+        ctx.fillText(label, s.x + size * 0.3, ty + size * 1.02);
+        if (selected) {
+            const hs = 10 * scale;
+            corners(s).forEach(([cx, cy]) => {
+                ctx.fillStyle = css('--rm-white');
+                ctx.fillRect(cx - hs / 2, cy - hs / 2, hs, hs);
+            });
+        }
+    });
+}
+
+function corners(s) {
+    return [[s.x, s.y], [s.x + s.w, s.y], [s.x, s.y + s.h], [s.x + s.w, s.y + s.h]];
+}
+
+// ---- Checks against the spec ----
+function gapBetween(p, q) {
+    const dx = Math.max(0, Math.max(p.x, q.x) - Math.min(p.x + p.w, q.x + q.w));
+    const dy = Math.max(0, Math.max(p.y, q.y) - Math.min(p.y + p.h, q.y + q.h));
+    return Math.round(Math.hypot(dx, dy));
+}
+function overlaps(p, q) {
+    return p.x < q.x + q.w && q.x < p.x + p.w && p.y < q.y + q.h && q.y < p.y + p.h;
+}
+function checks() {
+    const out = [];
+    if (cur.sizeProblem) out.push(['bad', cur.sizeProblem]);
+    const n = cur.spots.length;
+    out.push(n === WANT_SPOTS ? ['ok', '5 spots.'] : ['warn', `${n} spot${n === 1 ? '' : 's'}; a photo needs ${WANT_SPOTS}.`]);
+    const phone = PHONE_WIDTH / cur.W;
+    cur.spots.forEach((s, i) => {
+        if (s.w * s.h < MIN_AREA) {
+            out.push(['warn', `Spot ${i + 1} is small (${s.w} x ${s.h} px; about ${Math.round(s.w * phone)} x ${Math.round(s.h * phone)} on a phone before zooming). Hard to spot, and on the TV too.`]);
+        }
+        const edge = Math.min(s.x, s.y, cur.W - s.x - s.w, cur.H - s.y - s.h);
+        if (edge < EDGE) out.push(['warn', `Spot ${i + 1} is ${edge} px from the edge (keep ${EDGE}+; some TVs trim the edges).`]);
+    });
+    for (let i = 0; i < n; i++) {
+        for (let j = i + 1; j < n; j++) {
+            const p = cur.spots[i], q = cur.spots[j];
+            if (overlaps(p, q)) out.push(['warn', `Spots ${i + 1} and ${j + 1} overlap: one tap could count for both. Merge them, or move one change in the photo.`]);
+            else if (gapBetween(p, q) < APART) out.push(['warn', `Spots ${i + 1} and ${j + 1} are only ${gapBetween(p, q)} px apart (keep ${APART}+).`]);
+        }
+    }
+    if (out.length === 1 && out[0][0] === 'ok') out.push(['ok', 'Sizes, edges and spacing all look right.']);
+    return out;
+}
+function spotProblems() {
+    const bad = new Set();
+    const n = cur.spots.length;
+    cur.spots.forEach((s, i) => {
+        const edge = Math.min(s.x, s.y, cur.W - s.x - s.w, cur.H - s.y - s.h);
+        if (s.w * s.h < MIN_AREA || edge < EDGE) bad.add(i);
+        for (let j = 0; j < n; j++) {
+            if (j !== i && (overlaps(s, cur.spots[j]) || gapBetween(s, cur.spots[j]) < APART)) bad.add(i);
+        }
+    });
+    return bad;
+}
+
+function refresh() {
+    draw();
+    const list = document.getElementById('checks');
+    list.innerHTML = '';
+    checks().forEach(([kind, text]) => {
+        const li = document.createElement('li');
+        li.className = kind;
+        li.textContent = text;
+        list.appendChild(li);
+    });
+    document.getElementById('spotlist').textContent = cur.spots.length
+        ? cur.spots.map((s, i) => `${i + 1}: ${s.w} x ${s.h} at (${s.x}, ${s.y})`).join('   ·   ')
+        : '';
+    document.getElementById('btn-merge').disabled = cur.selected.size < 2;
+    document.getElementById('btn-delete').disabled = cur.selected.size < 1;
+    document.getElementById('btn-undo').disabled = !cur.history.length;
+    document.querySelectorAll('[data-view]').forEach(b => b.classList.toggle('on', b.dataset.view === view));
+}
+
+// ---- Editing ----
+function remember() {
+    cur.history.push(JSON.stringify(cur.spots));
+    if (cur.history.length > 50) cur.history.shift();
+}
+function changed() {
+    cur.dirty = true;
+    setFeedback('');
+    refresh();
+}
+function toImage(e) {
+    const r = canvas.getBoundingClientRect();
+    return { x: (e.clientX - r.left) * cur.W / r.width, y: (e.clientY - r.top) * cur.H / r.height };
+}
+function clampSpot(s) {
+    s.x = Math.round(Math.max(0, Math.min(cur.W - 8, s.x)));
+    s.y = Math.round(Math.max(0, Math.min(cur.H - 8, s.y)));
+    s.w = Math.round(Math.max(8, Math.min(cur.W - s.x, s.w)));
+    s.h = Math.round(Math.max(8, Math.min(cur.H - s.y, s.h)));
+    return s;
+}
+
+let drag = null;
+canvas.addEventListener('pointerdown', e => {
+    if (!cur || !cur.comparable) return;
+    const p = toImage(e);
+    const scale = cur.W / canvas.getBoundingClientRect().width;
+    const tol = 14 * scale;
+    canvas.setPointerCapture(e.pointerId);
+    const before = JSON.stringify(cur.spots);
+    // A corner of a selected box: resize from the opposite corner.
+    for (const i of cur.selected) {
+        const s = cur.spots[i];
+        const k = corners(s).findIndex(([cx, cy]) => Math.abs(cx - p.x) < tol && Math.abs(cy - p.y) < tol);
+        if (k >= 0) {
+            const [ox, oy] = corners(s)[3 - k];
+            drag = { mode: 'resize', i, ox, oy, before };
+            return;
+        }
+    }
+    // Inside a box (the last one drawn wins): select it, then move it.
+    for (let i = cur.spots.length - 1; i >= 0; i--) {
+        const s = cur.spots[i];
+        if (p.x >= s.x && p.x <= s.x + s.w && p.y >= s.y && p.y <= s.y + s.h) {
+            if (e.shiftKey) {
+                cur.selected.has(i) ? cur.selected.delete(i) : cur.selected.add(i);
+            } else if (!cur.selected.has(i)) {
+                cur.selected = new Set([i]);
+            }
+            drag = { mode: 'move', i, dx: p.x - s.x, dy: p.y - s.y, before };
+            refresh();
+            return;
+        }
+    }
+    // Empty space: draw a new box (a plain tap just clears the selection).
+    if (!e.shiftKey) cur.selected = new Set();
+    drag = { mode: 'draw', sx: p.x, sy: p.y, i: null, before };
+    refresh();
+});
+canvas.addEventListener('pointermove', e => {
+    if (!drag) return;
+    const p = toImage(e);
+    if (drag.mode === 'move') {
+        const s = cur.spots[drag.i];
+        s.x = p.x - drag.dx; s.y = p.y - drag.dy;
+        s.x = Math.max(0, Math.min(cur.W - s.w, s.x));
+        s.y = Math.max(0, Math.min(cur.H - s.h, s.y));
+    } else if (drag.mode === 'resize') {
+        Object.assign(cur.spots[drag.i], { x: Math.min(p.x, drag.ox), y: Math.min(p.y, drag.oy), w: Math.abs(p.x - drag.ox), h: Math.abs(p.y - drag.oy) });
+    } else if (drag.mode === 'draw') {
+        const box = { x: Math.min(p.x, drag.sx), y: Math.min(p.y, drag.sy), w: Math.abs(p.x - drag.sx), h: Math.abs(p.y - drag.sy) };
+        if (drag.i === null) {
+            if (box.w < 10 && box.h < 10) return; // still just a tap
+            cur.spots.push(box);
+            drag.i = cur.spots.length - 1;
+            cur.selected = new Set([drag.i]);
+        } else {
+            Object.assign(cur.spots[drag.i], box);
+        }
+    }
+    draw();
+});
+function endDrag() {
+    if (!drag) return;
+    if (drag.i !== null && cur.spots[drag.i]) clampSpot(cur.spots[drag.i]);
+    const after = JSON.stringify(cur.spots);
+    if (after !== drag.before) {
+        cur.history.push(drag.before);
+        changed();
+    } else {
+        refresh();
+    }
+    drag = null;
+}
+canvas.addEventListener('pointerup', endDrag);
+canvas.addEventListener('pointercancel', endDrag);
+
+document.getElementById('btn-merge').onclick = () => {
+    const picked = [...cur.selected].sort((a, b) => a - b).map(i => cur.spots[i]);
+    if (picked.length < 2) return;
+    remember();
+    const x0 = Math.min(...picked.map(s => s.x)), y0 = Math.min(...picked.map(s => s.y));
+    const x1 = Math.max(...picked.map(s => s.x + s.w)), y1 = Math.max(...picked.map(s => s.y + s.h));
+    const first = Math.min(...cur.selected);
+    // The lowest-numbered box becomes the merged one; nothing before it moves.
+    cur.spots = cur.spots.filter((_, i) => !cur.selected.has(i) || i === first);
+    cur.spots[first] = { x: x0, y: y0, w: x1 - x0, h: y1 - y0 };
+    cur.selected = new Set([first]);
+    changed();
+};
+document.getElementById('btn-delete').onclick = () => {
+    if (!cur.selected.size) return;
+    remember();
+    cur.spots = cur.spots.filter((_, i) => !cur.selected.has(i));
+    cur.selected = new Set();
+    changed();
+};
+document.getElementById('btn-undo').onclick = () => {
+    if (!cur.history.length) return;
+    cur.spots = JSON.parse(cur.history.pop());
+    cur.selected = new Set();
+    changed();
+};
+document.addEventListener('keydown', e => {
+    if (!cur || e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT') return;
+    if (e.key === 'Delete' || e.key === 'Backspace') { e.preventDefault(); document.getElementById('btn-delete').click(); }
+    if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'z') { e.preventDefault(); document.getElementById('btn-undo').click(); }
+});
+
+document.getElementById('btn-detect').onclick = () => {
+    if (!cur || !cur.comparable) return;
+    if (cur.spots.length && !confirm('Replace the boxes with a fresh search?')) return;
+    remember();
+    cur.spots = detect(document.getElementById('sens').value);
+    cur.selected = new Set();
+    changed();
+};
+
+document.querySelectorAll('[data-view]').forEach(b => {
+    b.onclick = () => {
+        view = b.dataset.view;
+        clearInterval(flickerTimer);
+        flickerTimer = null;
+        flickerShowOriginal = false;
+        if (view === 'flicker') {
+            flickerTimer = setInterval(() => { flickerShowOriginal = !flickerShowOriginal; draw(); }, 500);
+        }
+        refresh();
+    };
+});
+
+document.getElementById('ready').onchange = () => { if (cur) { cur.dirty = true; setFeedback(''); } };
+
+function setFeedback(text, kind) {
+    const el = document.getElementById('save-feedback');
+    el.textContent = text;
+    el.className = 'feedback' + (kind ? ' ' + kind : '');
+}
+
+document.getElementById('btn-save').onclick = async () => {
+    if (!cur) return;
+    const ready = document.getElementById('ready').checked;
+    if (ready && cur.spots.length !== WANT_SPOTS && !confirm(`It has ${cur.spots.length} spots, not ${WANT_SPOTS}. Mark it ready anyway?`)) return;
+    try {
+        const res = await fetch(`/api/admin/double-take/${encodeURIComponent(cur.name)}`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ spots: cur.spots, ready })
+        });
+        const data = await res.json();
+        if (!data.success) return setFeedback(data.error || "Couldn't save.", 'error');
+        cur.dirty = false;
+        const p = pairs.find(q => q.name === cur.name);
+        if (p) Object.assign(p, { spots: cur.spots.map(s => ({ ...s })), ready, saved: true });
+        renderPairs();
+        setFeedback('Saved.', 'success');
+    } catch {
+        setFeedback("Couldn't reach the server. Try again.", 'error');
+    }
+};
+
+window.addEventListener('beforeunload', e => { if (cur && cur.dirty) { e.preventDefault(); e.returnValue = ''; } });
+window.addEventListener('resize', () => cur && draw());
+loadPairs();
+</script>
+</body>
+</html>
