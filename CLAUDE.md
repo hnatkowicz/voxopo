@@ -233,7 +233,10 @@ event, for a small fee. That's why hosting is gated behind access codes.
   overflowed, and on a laptop over HDMI it filled half the TV. Now it uses
   the same layout (`ROOM_VENUE` and `RETURN_TO_LOBBY` turn it on): no
   boxes, the mode tiles (`lobby-*`, built by `renderModeElectionTiles` in
-  `modes.js`; the phones' tiles are separate) with a vote bar and no vote
+  `modes.js`; the phones' tiles are separate) (with 5 or more modes they become a
+  3-wide grid of cards, icon over name over byline, `.lobby-cards`;
+  Randy, Nov 2026, ahead of a 9th mode: a 2-wide list of 9 would scroll;
+  1-4 modes keep the 2-wide list) with a vote bar and no vote
   count (Randy, Nov 2026: the bar is enough), the scoreboard rail, and a bigger
   QR code (10u, 13u at a pub, where the venue's banner replaces "What
   should we play?"). After several TVs (Randy, Nov 2026: the lobby felt crowded, the
