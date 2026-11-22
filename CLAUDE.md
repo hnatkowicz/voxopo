@@ -944,15 +944,8 @@ and forth until we both agree the idea is good **and** worth the effort. So:
   `ssl = on` (a self-signed cert; the app always connects with SSL), then
   copy live's tables in with read-only queries (structure, rows; access
   codes structure only).
-- **Run in Neon (Randy):** `content/sql/famous_firsts.sql`,
-  `content/sql/us_history.sql`, `content/sql/world_history.sql`,
-  `content/sql/world_wars.sql`, `content/sql/literature.sql`, and again
-  `content/sql/mythology.sql` and
-  `content/sql/art_and_architecture.sql` (Nov 22: their four "retired"
-  rows had a date in the retired column, which the build doesn't count,
-  so Sleipnir, Actaeon, Tadao Ando and the Angel of the North went live;
-  now "yes", with four hooked replacements). Technology, Mythology and
-  Art & Architecture are live (Nov 22).
+- **All content SQL is live** (Randy ran everything through Literature,
+  Nov 22).
 - **Category depth: done** (Nov 22). Every general category is at 200
   and built to the benchmarks. Next content ideas are Randy's call (more
   Letter Rip phrases is the standing top need).
@@ -964,7 +957,10 @@ and forth until we both agree the idea is good **and** worth the effort. So:
 - **Decisions open:** venue memory (a code remembers the questions its
   rooms used for a few weeks; question numbers only, no player data), a
   code cleanup pass (old TRIVIA decks, the unread profile and theme
-  columns, `retired_sql/`), an educator pilot with one teacher.
+  columns, `retired_sql/`), an educator pilot with one teacher (Randy, Nov 22: "on the back
+  burner... but not too far back"). Next up: talk through venue memory and
+  leagues, then re-tier the categories written before the benchmarks,
+  then more Letter Rip phrases ("my family loves Letter Rip").
 
 ## Ideas in the works
 
