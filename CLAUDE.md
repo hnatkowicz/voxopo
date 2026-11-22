@@ -158,6 +158,19 @@ event, for a small fee. That's why hosting is gated behind access codes.
   `src/config/database.js`), not counted toward a room's three breaks.
   Connections give up after 10s instead of waiting forever. Tested in
   every mode with the database stopped mid-lobby.
+- **Venue memory** (Nov 22 2026; `src/services/venueMemory.js`,
+  `venue_memory.sql`): an access code remembers what its rooms played for
+  **28 days** -- Thinking Pants / Trivi-yeah! questions, Letter Rip
+  phrases, On the Spectrum statements -- so regulars (a pub's weekly
+  crowd, a family on its home code) don't get repeats night to night.
+  A room's three "already played" lists (`seenQuestionIds`,
+  `letterRipPlayed`, `otsSeen`) start pre-filled with the venue's window,
+  and new items are written in a batch once a minute. Question numbers
+  and phrases only, nothing about players (the /info privacy paragraph
+  says so). Rows past the window are deleted by the server. Without the
+  table it does nothing. Not covered yet: Country Monkey, Flag Me Down,
+  Profiler, the house set. Groundwork for a possible league (Randy is
+  weighing the privacy side: opt-in, nickname only, auto-deleted).
 - **`render.yaml`** is the voxopo service written down (Ohio, Node,
   `starter` plan, health check `/api/live-counts`, the two domains;
   secrets typed into Render). The running service wasn't made from it, so
@@ -946,6 +959,9 @@ and forth until we both agree the idea is good **and** worth the effort. So:
   codes structure only).
 - **All content SQL is live** (Randy ran everything through Literature,
   Nov 22).
+- **Run in Neon (Randy, owner login -- it creates a table):**
+  `venue_memory.sql`. Venue memory is built and merged; it switches on
+  by itself within the hour once the table exists.
 - **Category depth: done** (Nov 22). Every general category is at 200
   and built to the benchmarks. Next content ideas are Randy's call (more
   Letter Rip phrases is the standing top need).
@@ -954,8 +970,11 @@ and forth until we both agree the idea is good **and** worth the effort. So:
   tonight: which letters, which round, were they on the TV?); flipside's
   own DATABASE_URL (Randy on it, Nov 22). The genie is out: Randy is
   drawing other avatars instead.
-- **Decisions open:** venue memory (a code remembers the questions its
-  rooms used for a few weeks; question numbers only, no player data), a
+- **Decisions open:** a **league** (Randy weighing it, Nov 22: a
+  multi-week standings table per code needs the server to keep opt-in
+  nicknames and points, auto-deleted after the season -- a change to the
+  privacy promise; friction is a lost phone losing your league card;
+  Claude suggested best-3-of-4 nights and individuals, not teams), a
   code cleanup pass (old TRIVIA decks, the unread profile and theme
   columns, `retired_sql/`), an educator pilot with one teacher (Randy, Nov 22: "on the back
   burner... but not too far back"). Next up: talk through venue memory and
