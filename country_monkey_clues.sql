@@ -136,6 +136,7 @@ UPDATE questions SET hint = 'Warsaw'                             WHERE game_mode
 UPDATE questions SET hint = 'Montreal'                           WHERE game_mode = 'COUNTRY_MONKEY' AND subcategory = 'WATER' AND correct_answer = 'St. Lawrence River';
 UPDATE questions SET hint = 'Oxford'                             WHERE game_mode = 'COUNTRY_MONKEY' AND subcategory = 'WATER' AND correct_answer = 'Thames River';
 UPDATE questions SET hint = 'Botswana'                           WHERE game_mode = 'COUNTRY_MONKEY' AND subcategory = 'WATER' AND correct_answer = 'Limpopo River';
+UPDATE questions SET hint = 'Namibia'                            WHERE game_mode = 'COUNTRY_MONKEY' AND subcategory = 'WATER' AND correct_answer = 'Orange River';
 UPDATE questions SET hint = 'South Australia'                    WHERE game_mode = 'COUNTRY_MONKEY' AND subcategory = 'WATER' AND correct_answer = 'Murray River';
 UPDATE questions SET hint = 'Astoria (Oregon)'                   WHERE game_mode = 'COUNTRY_MONKEY' AND subcategory = 'WATER' AND correct_answer = 'Columbia River';
 
