@@ -149,6 +149,20 @@ event, for a small fee. That's why hosting is gated behind access codes.
   leftover error or stray promise and keeps running. Before this, one
   error crashed the server and ended every live room. Tested with a
   booby-trapped room next to a healthy one.
+- **The site starts without the database** (Nov 2026): `startServer`
+  listens first and checks the database in the background (every 30s
+  until it answers). While it's away, live rooms and TVs carry on; host
+  login says "Couldn't check your code right now. Try again in a minute."
+  and a game that can't load its questions goes back to the lobby with
+  "Couldn't reach the questions..." (`isDatabaseDownError` in
+  `src/config/database.js`), not counted toward a room's three breaks.
+  Connections give up after 10s instead of waiting forever. Tested in
+  every mode with the database stopped mid-lobby.
+- **`render.yaml`** is the voxopo service written down (Ohio, Node,
+  `starter` plan, health check `/api/live-counts`, the two domains;
+  secrets typed into Render). The running service wasn't made from it, so
+  it changes nothing until someone builds a Blueprint from it; check the
+  plan matches Render's first.
 - **Hosting:** Render (a paid plan, Nov 2026), which terminates TLS. That's
   why `trust proxy` is set. **Every deploy restarts the server and ends
   every live game** (rooms live in memory), so nothing is merged during a
@@ -911,18 +925,18 @@ and forth until we both agree the idea is good **and** worth the effort. So:
 ## Open items (keep current; Randy, Nov 2026: "keep me honest about work that remains")
 
 - **First thing in a new session:** `node scripts/neon-sql.mjs check` (needs
-  `NEON_URL`, the voxopo environment). Then run on live, each tested on the
-  local database first: `content/sql/geography.sql` (Geography to 200),
-  `country_monkey_water.sql`, `trivi_yeah_ii_wet_pants.sql`,
-  `country_monkey_clues.sql` (water first, clues last: the 9 new rivers).
-  Randy may already have run the rivers files by hand; re-running is safe.
-- **Resilience (Randy: "good idea"):** the site stays up with a clear
-  message when the database can't be reached, instead of not starting
-  (today `startServer` won't listen if the first query fails).
-- **`render.yaml` (Randy: "great idea"):** the voxopo service's settings
-  in the repo (name voxopo, Ohio, Node, `npm install` / `npm start`, a paid
-  instance, `DATABASE_URL` and `ADMIN_PASSWORD` as secrets set in Render,
-  domains randomania.tv and www), so a rebuild is nearly one click.
+  `NEON_URL`, the voxopo environment). The Nov 22 check found nothing left
+  to run (Geography 200, the water, Wet Pants and clues files all live and
+  matching their files). **Blocked on Randy:** `NEON_URL` holds the
+  **owner** login (`neondb_owner`), not `claude_content` (that role exists).
+  `run` now refuses anything but `claude_content`, so live content changes
+  wait until Randy puts the content login's connection string in the
+  voxopo environment's `NEON_URL`.
+- **Local test database** (for the smoke test and trying SQL first): a
+  fresh container has none. Make a Postgres 16 cluster on port 54329 with
+  `ssl = on` (a self-signed cert; the app always connects with SSL), then
+  copy live's tables in with read-only queries (structure, rows; access
+  codes structure only).
 - **Category depth, next:** Technology, Mythology, Art & Architecture,
   Famous Firsts (80 each), then US History, World History, World Wars,
   Literature (about 120).
