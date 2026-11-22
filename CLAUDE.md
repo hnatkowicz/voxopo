@@ -860,22 +860,19 @@ Mode keys are used in room votes and in `gameEngine.js`:
   School's word questions, Science/Space/Geography from its science ones
   (those Trivi-yeah! decks are left alone). **College Athletics** (Randy's
   idea): Heismans, coaches, mascots, rivalry trophies, athlete arcs.
-- **Claude runs the content SQL on live** (Randy, Nov 2026: "There is truly
-  no need for me to review and enter the SQL; you're better and faster. I'll
-  focus on art and design"). Through `scripts/neon-sql.mjs` and the
-  content-only login from `neon_claude_role.sql` (`claude_content`: read,
-  add, change and delete game content, read venue settings; no DROP,
-  TRUNCATE or ALTER). Its connection string is `NEON_URL` in the **voxopo**
-  cloud environment (with Neon's two hosts allowed) -- never in the repo or
-  the chat. The order, every time: run the file on the local test database
-  first, then `node scripts/neon-sql.mjs run <file>` (the whole file in one
-  transaction, all or nothing; "add column" lines are skipped when the
-  column exists, and a file that truly needs a new column stops untouched
-  and goes to Randy's owner login), then report what changed and what went
-  live. `check` and `query "SELECT ..."` are read-only. Not during a venue
-  event (a board shouldn't change mid-night). Randy still owns the owner
-  login and Render's `DATABASE_URL` (the Nov 2026 password reset went into
-  the wrong Render service and took the site down until it was found).
+- **Randy runs the content SQL** (back to the old way, Randy, Nov 22
+  2026: "I like running the SQL. I get to actually see some code on
+  occasion"). Claude writes and tests each file on the local test
+  database, Randy runs it in Neon's SQL editor and reports what came back.
+  A hookup for Claude to run it was built and parked: `scripts/neon-sql.mjs`
+  plus the content-only login from `neon_claude_role.sql`
+  (`claude_content`, which exists in Neon). It needs that login's
+  connection string as `NEON_URL` in the voxopo environment; the runner
+  refuses the owner login. Don't bring it back unless Randy asks. Not
+  during a venue event (a board shouldn't change mid-night). Randy owns
+  the owner login and Render's `DATABASE_URL` (the Nov 2026 password reset
+  went into the wrong Render service and took the site down until it was
+  found).
   Write SQL that a person can read and check: one statement per question,
   consistent column order, and a short header comment saying what the file
   adds and whether it's safe to re-run.
@@ -924,14 +921,9 @@ and forth until we both agree the idea is good **and** worth the effort. So:
 
 ## Open items (keep current; Randy, Nov 2026: "keep me honest about work that remains")
 
-- **First thing in a new session:** `node scripts/neon-sql.mjs check` (needs
-  `NEON_URL`, the voxopo environment). The Nov 22 check found nothing left
-  to run (Geography 200, the water, Wet Pants and clues files all live and
-  matching their files). **Blocked on Randy:** `NEON_URL` holds the
-  **owner** login (`neondb_owner`), not `claude_content` (that role exists).
-  `run` now refuses anything but `claude_content`, so live content changes
-  wait until Randy puts the content login's connection string in the
-  voxopo environment's `NEON_URL`.
+- **Randy: delete `NEON_URL` from the voxopo environment** (it holds the
+  owner login, more power than any session needs). Nov 22 check: every
+  content file is live (Geography 200, water, Wet Pants, clues).
 - **Local test database** (for the smoke test and trying SQL first): a
   fresh container has none. Make a Postgres 16 cluster on port 54329 with
   `ssl = on` (a self-signed cert; the app always connects with SSL), then
