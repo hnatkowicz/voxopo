@@ -333,7 +333,6 @@ if (btnSubmitSpectate) {
                 // there's nothing left on the other end to stay wired to.
                 if (data.type === 'ROOM_CLOSED') {
                     document.body.setAttribute('data-view', 'gateway');
-                    if (window.clearTvTheme) window.clearTvTheme();
                     tvClosed = true;
                     stopTvFallback();
                     if (socket) socket.close();
@@ -393,9 +392,6 @@ if (btnSubmitSpectate) {
                 }
                 if (data.type === 'ROOM_VENUE') {
                     applyRoomVenue(data.venue, data.allowedModes);
-                    // The venue's TV theme (Christmas...), if it has one on
-                    // today; see public/tv-theme.js.
-                    if (window.applyTvTheme) window.applyTvTheme(data.venue && data.venue.theme);
                 }
                 if (data.type === 'LEADERBOARD_UPDATE') {
                     detectNewPlayerArrival(data.players);
@@ -1178,32 +1174,20 @@ if (btnSubmitSpectate) {
             });
         }
 
-        // ---------- The entrance (Randy, Nov 2026) ----------
-        // Joining is "making an entrance after standing in front of the mirror
-        // finding the perfect outfit" -- and everyone should see the outfit.
-        // In the lobby a new player's avatar appears big over the stage with
-        // the podium's gold glow and their name, then settles into the rail.
-        // Players who arrive close together share one moment (a row); a home
-        // room gets a short gathering beat, so a solo arrival stays solo. Past
-        // ENTRANCE_BUSY_PLAYERS (a pub filling up), entrances move down beside
-        // the QR code as a compact row, so they never keep hiding the mode
-        // tiles people are voting on. Never over the QR code itself.
-        const ENTRANCE_BUSY_PLAYERS = 12;
-        const ENTRANCE_GATHER_MS = 900;        // home: wait this long for company
-        const ENTRANCE_GATHER_BUSY_MS = 2500;  // busy: gather longer, fewer moments
+        // ---------- Arrivals in the lobby ----------
+        // A quiet line beside the QR code: "Ace joined", or "Ace, Bea and Cy
+        // joined" when people arrive together. It used to be each new player's
+        // avatar big over the stage (Nov 2026), but in real rooms nobody looked
+        // at it or remarked on it, so Randy cut it: the rail already shows who's
+        // in, with their avatar. Arrivals close together share one line.
+        const ENTRANCE_GATHER_MS = 1500;   // wait this long for company
         const ENTRANCE_HOLD_MS = 2600;
-        const ENTRANCE_HOLD_GROUP_MS = 3000;
-        const ENTRANCE_STALE_MS = 15000;       // old news by then: skip it
-        const ENTRANCE_ROW_MAX = 8;
+        const ENTRANCE_STALE_MS = 15000;   // old news by then: skip it
         let entranceQueue = [], entrancePlaying = false, entranceTimer = null;
-
-        function entranceIsBusy() { return cachedPlayersSnapshot.length > ENTRANCE_BUSY_PLAYERS; }
 
         function queueEntrance(player) {
             entranceQueue.push({ ...player, queuedAt: Date.now() });
-            if (!entrancePlaying && !entranceTimer) {
-                entranceTimer = setTimeout(playEntrance, entranceIsBusy() ? ENTRANCE_GATHER_BUSY_MS : ENTRANCE_GATHER_MS);
-            }
+            if (!entrancePlaying && !entranceTimer) entranceTimer = setTimeout(playEntrance, ENTRANCE_GATHER_MS);
         }
 
         function playEntrance() {
@@ -1212,55 +1196,25 @@ if (btnSubmitSpectate) {
             if (!entranceQueue.length || currentGamePhase !== 'LOBBY') { entranceQueue = []; return; }
             const batch = entranceQueue.splice(0);
             entrancePlaying = true;
-            const done = () => {
+            showArrivalLine(batch, () => {
                 entrancePlaying = false;
                 if (entranceQueue.length) entranceTimer = setTimeout(playEntrance, 250);
-            };
-            if (entranceIsBusy()) showCompactEntrance(batch, done);
-            else showBigEntrance(batch, done);
+            });
         }
 
-        function showBigEntrance(batch, done) {
-            const stage = document.getElementById('active-content-stage');
-            const foot = document.getElementById('tv-foot');
-            if (!stage || !foot) { done(); return; }
-            let box = document.getElementById('tv-entrance');
-            if (!box) { box = document.createElement('div'); box.id = 'tv-entrance'; document.body.appendChild(box); }
-            // Cover the stage only: from its top down to just above the footer
-            // (the QR code lives there and stays scannable).
-            const s = stage.getBoundingClientRect(), f = foot.getBoundingClientRect();
-            const top = Math.min(s.top, f.top - 40);
-            Object.assign(box.style, { left: s.left + 'px', top: top + 'px', width: s.width + 'px', height: Math.max(40, f.top - top - 8) + 'px' });
-            const solo = batch.length === 1;
-            const shown = batch.slice(0, ENTRANCE_ROW_MAX);
-            const more = batch.length - shown.length;
-            const size = solo ? 'ent-solo' : (shown.length <= 4 ? 'ent-few' : 'ent-many');
-            box.className = size;
-            box.innerHTML = `<div class="ent-row">${shown.map((p, i) => `
-                <div class="ent-one" style="transition-delay: ${i * 90}ms;">
-                    <div class="ent-pic">${avatarHtml(p.emoji, 1, { full: solo })}</div>
-                    <div class="ent-name">${escapeHtml(p.name)}</div>
-                </div>`).join('')}${more > 0 ? `<div class="ent-more">+${more}</div>` : ''}</div>`;
-            void box.offsetWidth;
-            box.classList.add('show');
-            setTimeout(() => {
-                box.classList.remove('show');
-                setTimeout(done, 400);
-            }, solo ? ENTRANCE_HOLD_MS : ENTRANCE_HOLD_GROUP_MS);
+        function arrivalNames(batch) {
+            const names = batch.map(p => escapeHtml(p.name));
+            if (names.length === 1) return names[0];
+            if (names.length <= 3) return `${names.slice(0, -1).join(', ')} and ${names[names.length - 1]}`;
+            return `${names.slice(0, 3).join(', ')} +${names.length - 3}`;
         }
 
-        // A busy room: a row of the newcomers beside the QR code, where the
-        // old "New player joined" note sat.
-        function showCompactEntrance(batch, done) {
+        function showArrivalLine(batch, done) {
             const slot = document.getElementById('onboarding-status-slot');
             if (!slot) { done(); return; }
-            const shown = batch.slice(0, 6);
-            const names = batch.slice(0, 3).map(p => escapeHtml(p.name)).join(', ') + (batch.length > 3 ? ` +${batch.length - 3}` : '');
             slot.style.opacity = '0';
             setTimeout(() => {
-                slot.innerHTML = `<div class="ent-compact">
-                    <div class="ent-compact-row">${shown.map(p => avatarHtml(p.emoji, 1)).join('')}</div>
-                    <div class="ent-compact-names">${names}</div></div>`;
+                slot.innerHTML = `<div class="arrival-line">${arrivalNames(batch)} joined</div>`;
                 slot.style.opacity = '1';
             }, 300);
             setTimeout(() => {
@@ -1273,13 +1227,8 @@ if (btnSubmitSpectate) {
             }, 300 + ENTRANCE_HOLD_MS);
         }
 
-        // A game starting mid-entrance: clear it at once.
-        setInterval(() => {
-            if (currentGamePhase === 'LOBBY') return;
-            entranceQueue = [];
-            const box = document.getElementById('tv-entrance');
-            if (box) box.classList.remove('show');
-        }, 300);
+        // A game starting: arrivals still waiting are old news.
+        setInterval(() => { if (currentGamePhase !== 'LOBBY') entranceQueue = []; }, 300);
 
         // Shown in the status slot beside the QR code (where "Press Start"
         // lives) -- it used to be a floating card that covered the QR code
