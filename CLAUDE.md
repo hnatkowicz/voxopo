@@ -941,10 +941,11 @@ and forth until we both agree the idea is good **and** worth the effort. So:
   `ssl = on` (a self-signed cert; the app always connects with SSL), then
   copy live's tables in with read-only queries (structure, rows; access
   codes structure only).
-- **Run in Neon (Randy):** `content/sql/famous_firsts.sql` and
-  `content/sql/us_history.sql` (each to 200). Technology, Mythology and
+- **Run in Neon (Randy):** `content/sql/famous_firsts.sql`,
+  `content/sql/us_history.sql` and `content/sql/world_history.sql` (each
+  to 200). Technology, Mythology and
   Art & Architecture are live (Nov 22).
-- **Category depth, next:** World History, World Wars,
+- **Category depth, next:** World Wars,
   Literature (about 120).
 - **Waiting on Randy:** trap screens in a real game; the Orange River
   drawing (Nov 22: "today"); Letter Rip's green keys (Randy watching
@@ -1114,7 +1115,15 @@ and forth until we both agree the idea is good **and** worth the effort. So:
   Warren to 300). Its old questions name each other a lot (Booth "shot
   Lincoln", Burr "killed Hamilton"); left as is, since the core facts
   need the names.
-  Still to go: World History, World Wars, Literature. The family's favorites are school subjects
+  **World History** (+80 to 200, Nov 22), to the benchmarks: the
+  Stone Age, the Iron Lady and the Jolly Roger at the easy end; Lenin,
+  Blackbeard and the Iron Curtain in the middle; hooks at the hard end
+  (Montezuma's revenge, the Bounty candy bar, Timbuktu as "the middle of
+  nowhere", Bismarck, North Dakota). The most mis-tiered of the old
+  sets: 35 moved (the Black Death and the Mayflower to 100; the 1929
+  crash, Hannibal, Gorbachev and Castro to 200; Hammurabi, Mansa Musa
+  and Haile Selassie to 300; Zheng He, Toussaint and Nasser to 400).
+  Still to go: World Wars, Literature. The family's favorites are school subjects
   (biology, astronomy, the World Wars, US history) and pop culture; new
   categories get pun names. **The pop-culture pair** (built Nov 2026, 120
   each, 30 per tier; working titles, Randy decides): **Extra Lives**
