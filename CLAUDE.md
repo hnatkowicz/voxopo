@@ -882,6 +882,21 @@ Mode keys are used in room votes and in `gameEngine.js`:
   the answer (e.g. matching `faction`/`subcategory`), and a question must not
   contain its own answer. Recent fixes have targeted exactly these problems.
   Fact-check anything you write.
+- **Difficulty benchmarks, every category** (Randy, Nov 22 2026; the
+  pub crowd, not the family TV, is the yardstick): picture a high-school
+  graduate in the top 25%, answering alone (no teams here), and ask what
+  share would know it *without seeing the choices*. **100: ~90%. 200:
+  60-70%. 300: 30-50%. 400: 10-20%.** Four choices lift the real hit rate
+  (a 400 lands around 30-40% right), which is fine: a 400 should be a
+  reach, not a coin toss. **300s and 400s are second-cousin questions**:
+  an obscure name gets a hook you can reason from -- an everyday word, a
+  planet, a brand, a movie ("...gives us the word *tantalize*", "...the
+  colored part of your eye shares her name"). Pure name recall with no
+  way in ("the eight-legged horse of Norse myth") is retired.
+- **Similar questions in different categories are fine** (Randy, Nov 22
+  2026: "some trivia is just simply similar. That's a feature, not a
+  bug"). The board never shows one answer twice. Within a category, still
+  no repeats, and no question naming another tile's answer.
 
 ## How we work
 
@@ -929,8 +944,9 @@ and forth until we both agree the idea is good **and** worth the effort. So:
   `ssl = on` (a self-signed cert; the app always connects with SSL), then
   copy live's tables in with read-only queries (structure, rows; access
   codes structure only).
-- **Run in Neon (Randy):** `content/sql/technology.sql` (Technology to 200).
-- **Category depth, next:** Mythology, Art & Architecture,
+- **Run in Neon (Randy):** `content/sql/technology.sql` (Technology to 200)
+  and `content/sql/mythology.sql` (Mythology to 200).
+- **Category depth, next:** Art & Architecture,
   Famous Firsts (80 each), then US History, World History, World Wars,
   Literature (about 120).
 - **Waiting on Randy:** trap screens in a real game; the genie redraw; the
@@ -1062,7 +1078,16 @@ and forth until we both agree the idea is good **and** worth the effort. So:
   with Extra Lives, brands' logos with Logo My Eggo; swapped out anything
   Word Nerd, Pop Quiz, Movies & TV or World Wars already asks (LOL,
   selfie, "You've got mail", Pixar, Colossus).
-  Still to go: Mythology, Art & Architecture, Famous Firsts,
+  **Mythology** reworked and grown (+120 to 200, Nov 22), the first
+  category built to the benchmarks below (the family found it too hard;
+  Randy, a Bulfinch reader, found it "generally okay", which is the
+  point). Hooks everywhere: planets, NASA, Nike, Marvel, Moana, words
+  (panic, volcano, cereal, museum, nemesis), days of the week. The old
+  80 were re-tiered (Paris 400 to 200, Anubis and Valhalla to 200), the
+  hard ones given hooks, Sleipnir and Actaeon retired. Greek about half,
+  then Norse, Roman, Egyptian, Arthurian, and the world's myths mostly
+  at 300-400.
+  Still to go: Art & Architecture, Famous Firsts,
   then US History, World History, World Wars, Literature. The family's favorites are school subjects
   (biology, astronomy, the World Wars, US history) and pop culture; new
   categories get pun names. **The pop-culture pair** (built Nov 2026, 120
