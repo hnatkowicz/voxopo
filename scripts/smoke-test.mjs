@@ -68,6 +68,15 @@ await db.query(`INSERT INTO access_codes (code, label, active) VALUES ('SMOKE-PU
 // Board rules, profiles and breaks exist only once their SQL has run.
 await db.query(`UPDATE access_codes SET board_rules = 'CLASSIC', profile = 'HOME' WHERE code = 'SMOKE-HOME'`).catch(() => {});
 await db.query(`UPDATE access_codes SET profile = 'PUB', venue_name = 'Smoke Test Pub', allowed_modes = NULL, break_minutes = 2, break_notes = ARRAY['Test note one', 'Test note two'] WHERE code = 'SMOKE-PUB'`).catch(() => {});
+// Double Take plays only Ready pairs: if none is Ready here, mark the first
+// pair on disk Ready with test boxes (local database only).
+await db.query(`CREATE TABLE IF NOT EXISTS double_take_photos (name TEXT PRIMARY KEY, spots JSONB NOT NULL DEFAULT '[]'::jsonb, ready BOOLEAN NOT NULL DEFAULT false, updated_at TIMESTAMPTZ NOT NULL DEFAULT now())`);
+if (!(await db.query('SELECT 1 FROM double_take_photos WHERE ready')).rows.length) {
+    const { readdirSync } = await import('node:fs');
+    const pair = readdirSync('public/double-take').find(f => f.endsWith('-original.webp'));
+    if (pair) await db.query(`INSERT INTO double_take_photos (name, spots, ready) VALUES ($1, $2::jsonb, true) ON CONFLICT (name) DO UPDATE SET ready = true`,
+        [pair.replace('-original.webp', ''), JSON.stringify([[200, 200], [600, 300], [1000, 500], [1300, 800], [400, 900]].map(([x, y]) => ({ x, y, w: 80, h: 60 })))]);
+}
 await db.end();
 
 await import('../src/server.js');
@@ -85,6 +94,7 @@ const ROOMS = [
     { mode: 'COUNTRY_MONKEY', code: 'SMOKE-PUB', label: 'COUNTRY_MONKEY (pub, tally)' },
     { mode: 'FLAG_ME_DOWN', code: 'SMOKE-HOME' },
     { mode: 'LETTER_RIP', code: 'SMOKE-HOME' },
+    { mode: 'DOUBLE_TAKE', code: 'SMOKE-HOME' },
     { mode: 'EMPOSSDURR', code: 'SMOKE-HOME' },
     { mode: 'ON_THE_SPECTRUM', code: 'SMOKE-HOME' },
     { mode: 'PROFILER', code: 'SMOKE-HOME' },
@@ -106,8 +116,9 @@ for (const r of ROOMS) {
     for (const [k, n] of BOTS.entries()) await api('/api/message', { From: n, Body: `${r.roomCode} ${n} av:${['bicycle', 'book', 'boot', 'boy'][k]} ${r.mode}`, roomCode: r.roomCode });
     for (const n of BOTS) await api('/api/message', { From: n, Body: 'START', roomCode: r.roomCode });
     r.started = Date.now(); r.lastSig = ''; r.lastChange = Date.now(); r.seen = new Set(); r.traps = r.traps ? [] : null;
-    // Each room at a different point in its game (the two short games early).
-    r.annAfter = ({ ON_THE_SPECTRUM: 0, EMPOSSDURR: 2500 })[r.mode] ?? 4000 + ROOMS.indexOf(r) * 1500;
+    // Each room at a different point in its game (the short games early;
+    // Double Take is short while only a photo or two are Ready).
+    r.annAfter = ({ ON_THE_SPECTRUM: 0, EMPOSSDURR: 2500, DOUBLE_TAKE: 2000 })[r.mode] ?? 4000 + ROOMS.indexOf(r) * 1500;
 }
 
 // ---------- optional screenshots ----------
@@ -139,8 +150,8 @@ const wrongLetter = right => (right === 'A' ? 'B' : 'A');
 const act = (room, code, name, text) => { try { return handleIncomingMessage(name, text, code); } catch (e) { problems.push(`bot ${name} "${text}": ${e.stack}`); } };
 
 function sigOf(room) {
-    const ty2 = room.triviYeahII, lr = room.letterRip, pf = room.profiler, ed = room.empossdurr, ots = room.onTheSpectrum, fmd = room.flagMeDown, fw = room.finalWager;
-    return [room.gameState, room.currentQuestionIndex, ty2 && ty2.phase, ty2 && ty2.activeCellIndex, ty2 && ty2.round,
+    const ty2 = room.triviYeahII, lr = room.letterRip, pf = room.profiler, ed = room.empossdurr, ots = room.onTheSpectrum, fmd = room.flagMeDown, fw = room.finalWager, dt = room.doubleTake;
+    return [dt && dt.index, dt && dt.phase, dt && dt.spots && dt.spots.filter(s => s.by).length, room.gameState, room.currentQuestionIndex, ty2 && ty2.phase, ty2 && ty2.activeCellIndex, ty2 && ty2.round,
         lr && lr.index, lr && lr.round, lr && lr.phase, pf && pf.round, pf && pf.phase, ed && ed.currentRound, ed && ed.phase, ed && ed.secretWord,
         ots && ots.phase, ots && ots.namedPlayerName, fmd && fmd.phase, fmd && fmd.stage, fmd && fmd.index, fw && fw.phase].join('|');
 }
@@ -261,6 +272,21 @@ function drive(r) {
             if (lr.round === 2) act(room, code, 'Bea', 'LRDRAFT ' + lr.phrase.toLowerCase().slice(0, 6));
         }
         if (sp && lr.phase === 'SPOT_LAST') act(room, code, 'Cy', 'LRSOLVE wrong answer here');
+    }
+
+    // Double Take: each step, one bot misses, one taps a spot that's already
+    // found (late, not wrong), and one finds the next spot. Ace finds the
+    // first three (the muscle badge); the last photo's last spot is left for
+    // the clock, so both endings run.
+    const dt = room.doubleTake;
+    if (room.gameState === 'DOUBLE_TAKE_ROUND' && dt && dt.phase === 'HUNT' && waited && !r.acted) {
+        r.acted = true;
+        const tapAt = (n, s) => act(room, code, n, `DTTAP ${s.x + Math.floor(s.w / 2)} ${s.y + Math.floor(s.h / 2)}`);
+        const found = dt.spots.filter(s => s.by), left = dt.spots.filter(s => !s.by);
+        const lastPhoto = dt.index === dt.total - 1;
+        if (live[3]) act(room, code, live[3], 'DTTAP 3 3');
+        if (found.length && live[2]) tapAt(live[2], found[0]);
+        if (left.length > (lastPhoto ? 1 : 0)) tapAt(found.length < 3 ? live[0] : live[1 + (found.length % 2)], left[0]);
     }
 
     // Profiler

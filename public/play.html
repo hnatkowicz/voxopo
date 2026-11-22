@@ -94,6 +94,23 @@
             font-weight: 600;
         }
         /* Letter Rip (Randy, Nov 2026) */
+        /* Double Take: the photo in its own frame, zoomed by our own pinch
+           (scale on the picture, not the page), so a tap maps to the same
+           spot at any zoom. */
+        .dt-viewport { position: relative; width: 100%; aspect-ratio: 4 / 3; overflow: hidden; border-radius: 8px; background: var(--rm-bg); touch-action: none; user-select: none; -webkit-user-select: none; -webkit-touch-callout: none; margin: 10px 0 8px; }
+        .dt-layer { position: absolute; left: 0; top: 0; width: 100%; height: 100%; transform-origin: 0 0; }
+        .dt-layer img { width: 100%; height: 100%; display: block; pointer-events: none; }
+        .dt-ring { position: absolute; box-sizing: border-box; border: 2px solid var(--rm-brand); border-radius: 50%; box-shadow: 0 0 6px rgba(var(--rm-brand-rgb), 0.8); pointer-events: none; }
+        .dt-ring.mine { border-width: 3px; }
+        .dt-ring.missed { border-color: var(--rm-text); border-style: dashed; box-shadow: none; }
+        .dt-mark { position: absolute; width: 14px; height: 14px; margin: -7px 0 0 -7px; border-radius: 50%; border: 2px solid var(--rm-white); box-shadow: 0 0 0 1px rgba(var(--rm-black-rgb), 0.6); pointer-events: none; }
+        .dt-dim { position: absolute; inset: 0; display: none; align-items: center; justify-content: center; background: rgba(var(--rm-black-rgb), 0.62); color: var(--rm-white); font-weight: 800; font-size: 1.15rem; text-align: center; padding: 16px; }
+        .dt-dim.on { display: flex; }
+        .dt-tools { display: flex; align-items: center; gap: 10px; min-height: 40px; }
+        .dt-status { flex: 1; font-weight: 600; font-size: 0.95rem; color: var(--rm-text-2); }
+        .dt-status .hit { color: var(--rm-green); }
+        .dt-fit { flex-shrink: 0; padding: 8px 14px; border-radius: 6px; border: 1px solid var(--rm-border); background: var(--rm-surface-2); color: var(--rm-text); font-weight: 600; cursor: pointer; }
+        .dt-ready { display: none; font-family: var(--rm-font-display); font-weight: 800; font-size: 1.6rem; color: var(--rm-brand); text-align: center; padding: 60px 0; }
         .lr-head { font-size: 0.8rem; font-weight: 600; color: var(--rm-text-muted); text-align: center; letter-spacing: 0.04em; }
         .lr-category { font-size: 1.15rem; font-weight: 800; color: var(--rm-brand); text-align: center; margin: 4px 0 12px; }
         /* Lines come from lrLines (the TV's rule), so both boards match. */
@@ -716,6 +733,22 @@
         <button class="btn btn-leave leave-room-btn" onclick="leaveRoom()">Leave Room</button>
     </div>
 
+    <!-- Double Take (Randy, Nov 2026): the altered photo, full width. Pinch
+         to zoom and drag to look around; a quick one-finger tap is a guess.
+         The TV shows both photos; the phone points. -->
+    <div id="double-take-screen" class="card" style="display: none;">
+        <div id="dt-head" class="lr-head"></div>
+        <div id="dt-ready" class="dt-ready"></div>
+        <div id="dt-viewport" class="dt-viewport">
+            <div id="dt-layer" class="dt-layer"><img id="dt-img" alt="" draggable="false"><div id="dt-marks"></div></div>
+            <div id="dt-dim" class="dt-dim"><span id="dt-dim-line"></span></div>
+        </div>
+        <div class="dt-tools">
+            <div id="dt-status" class="dt-status"></div>
+            <button type="button" id="dt-fit" class="dt-fit" onclick="dtFit()">Fit</button>
+        </div>
+    </div>
+
     <!-- Letter Rip (Randy, Nov 2026): the letter race. The board, your own
          letters (green = in it, red = not, gold outline = on the TV), one
          pick a round, and one solve per puzzle, spelled exactly. -->
@@ -879,7 +912,7 @@
         // both missed a spot). Hiding every known screen and showing only
         // the requested one makes that whole bug class impossible going
         // forward -- a future new screen just needs adding here once.
-        const ALL_PLAY_SCREENS = ['login-screen', 'game-screen', 'category-screen', 'empossdurr-screen', 'on-the-spectrum-screen', 'profiler-screen', 'question-screen', 'trivi-yeah-ii-screen', 'trivi-yeah-ii-final-wager-screen', 'flag-me-down-screen', 'letter-rip-screen', 'break-screen', 'game-over-screen'];
+        const ALL_PLAY_SCREENS = ['login-screen', 'game-screen', 'category-screen', 'empossdurr-screen', 'on-the-spectrum-screen', 'profiler-screen', 'question-screen', 'trivi-yeah-ii-screen', 'trivi-yeah-ii-final-wager-screen', 'flag-me-down-screen', 'letter-rip-screen', 'double-take-screen', 'break-screen', 'game-over-screen'];
         function showOnlyPlayScreen(idToShow) {
             ALL_PLAY_SCREENS.forEach(id => {
                 document.getElementById(id).style.display = (id === idToShow) ? 'block' : 'none';
@@ -983,6 +1016,7 @@
                 case 'TRIVI_YEAH_II_FINAL_WAGER_PHASE': return ['Final Wager', data.topicLabel].filter(Boolean).join(' · ');
                 case 'FLAG_ME_DOWN_PHASE': return `Flag ${data.round} of ${data.totalRounds}`;
                 case 'LETTER_RIP_PHASE': return data.mySpotlight ? 'The Spotlight' : `Puzzle ${data.puzzle} of ${data.total}`;
+                case 'DOUBLE_TAKE_PHASE': return `Photo ${data.photo} of ${data.total} · ${data.foundCount} of ${data.spotCount} found`;
                 case 'EMPOSSDURR_ROUND_PHASE': return `Round ${data.round} of ${data.totalRounds}`;
                 case 'ON_THE_SPECTRUM_ROUND_PHASE': return `Round ${data.roundNumber} of ${data.totalRounds}`;
                 case 'PROFILER_ROUND_PHASE':
@@ -1072,6 +1106,10 @@
                 'Every time your letter appears it scores 100, shared by everyone who picked it. The TV shows the room\'s top 2.',
                 'Solve when you\'re ready: one try, spelled exactly. Right wins the pot, which shrinks as the board fills; wrong costs the pot.',
                 'Last comes the Spotlight: wager, light a tile each round, and solve early for a bigger payout.'],
+            DOUBLE_TAKE: ['The TV shows two photos; your phone shows the changed one. Find the 5 differences.',
+                'Pinch to zoom and drag to look around. Tap a difference to claim it: +100, first finder only.',
+                'A wrong tap costs 25 and pauses you for 2 seconds. Find 3 on one photo for +100 more.',
+                'The pot drains with the clock. Find all 5 and what\'s left is shared by everyone who found one.'],
             EMPOSSDURR: ['Everyone gets the secret word except one player: the impostor.',
                 'Take turns saying one clue word out loud. The TV shows who starts.',
                 'Vote to accuse the impostor: +2 if you\'re right, -1 if you\'re wrong.',
@@ -1165,6 +1203,7 @@
                     return data.lrPhase === 'PICK' && !data.myPick ? `lr-${data.puzzle}-${data.round}` : null;
                 case 'PROFILER_ROUND_PHASE':
                     return data.profilerPhase === 'ANSWER' || data.profilerPhase === 'GUESS' ? `pf-${data.profilerPhase}-${data.round}` : null;
+                case 'DOUBLE_TAKE_PHASE': return data.dtPhase === 'HUNT' ? `dt-${data.photo}` : null;
                 default: return null;
             }
         }
@@ -1269,7 +1308,7 @@
                 return;
             }
             // Your sting at the reveal.
-            if (recapId !== null && recapId !== phoneSound.lastRecapId && recap.label !== 'Final Wager') {
+            if (recapId !== null && recapId !== phoneSound.lastRecapId && recap.label !== 'Final Wager' && recap.kind !== 'DOUBLE_TAKE') {
                 const solo = recap.kind === 'DOUBLER' || recap.kind === 'HOT_SEAT';
                 if (recap.right.includes(myName)) playPhoneSound('right');
                 else if (recap.answered.includes(myName) && (!solo || recap.picker === myName)) playPhoneSound('wrong');
@@ -1357,7 +1396,8 @@
                 if (e.touches.length !== 1 || !document.body.classList.contains('in-room')) return;
                 const t = e.touches[0];
                 if (t.clientX < EDGE || t.clientX > window.innerWidth - EDGE) return;
-                if (e.target.closest('input, textarea, select')) return;
+                // Double Take's photo: a drag there looks around the picture.
+                if (e.target.closest('input, textarea, select, .dt-viewport')) return;
                 start = { x: t.clientX, y: t.clientY, time: Date.now() };
             }, { passive: true });
             document.addEventListener('touchend', e => {
@@ -1697,6 +1737,12 @@
                         if (data.phase === 'LETTER_RIP_PHASE') {
                             showOnlyPlayScreen('letter-rip-screen');
                             renderLetterRip(data);
+                        }
+
+                        // Double Take: the altered photo, zoom and tap.
+                        if (data.phase === 'DOUBLE_TAKE_PHASE') {
+                            showOnlyPlayScreen('double-take-screen');
+                            renderDoubleTake(data);
                         }
 
                         // Flag Me Down: the flag, the clues so far, one lock-in.
@@ -2673,6 +2719,195 @@
 
         let lrLastData = null;
         function lrRenderFromLast() { if (lrLastData) { lrLastKey = null; renderLetterRip(lrLastData); } }
+
+        // ---- Double Take (Randy, Nov 2026) ----
+        // Our own pinch-to-zoom: the picture is scaled and shifted inside its
+        // frame (never the page), so a tap maps back to the same spot at any
+        // zoom. A guess is only a quick one-finger tap (lifted within 1/4 s,
+        // barely moved, no second finger during it); two fingers or a drag is
+        // looking around. No double-tap zoom, since that reads as two
+        // guesses: Fit puts the picture back.
+        const DT_W = 1600, DT_H = 1200, DT_MAX_ZOOM = 5, DT_TAP_MS = 250, DT_TAP_MOVE = 10;
+        const dtView = { s: 1, tx: 0, ty: 0 };
+        let dtPhotoKey = null, dtData = null, dtLockedUntil = 0, dtPendingMark = null, dtStatusUntil = 0;
+        const dtPointers = new Map();
+        let dtGesture = null;
+
+        function dtApply() {
+            const vp = document.getElementById('dt-viewport');
+            const w = vp.clientWidth, h = vp.clientHeight;
+            dtView.s = Math.max(1, Math.min(DT_MAX_ZOOM, dtView.s));
+            dtView.tx = Math.min(0, Math.max(w * (1 - dtView.s), dtView.tx));
+            dtView.ty = Math.min(0, Math.max(h * (1 - dtView.s), dtView.ty));
+            document.getElementById('dt-layer').style.transform = `translate(${dtView.tx}px, ${dtView.ty}px) scale(${dtView.s})`;
+            // Rings and the marker keep the same line width at any zoom.
+            document.querySelectorAll('#dt-marks > *').forEach(el => { el.style.borderWidth = `${(el.classList.contains('mine') ? 3 : 2) / dtView.s}px`; });
+            document.querySelectorAll('#dt-marks .dt-mark').forEach(el => { el.style.transform = `scale(${1 / dtView.s})`; });
+        }
+        function dtFit() {
+            Object.assign(dtView, { s: 1, tx: 0, ty: 0 });
+            dtApply();
+        }
+        function dtLocal(e) {
+            const r = document.getElementById('dt-viewport').getBoundingClientRect();
+            return { x: e.clientX - r.left, y: e.clientY - r.top, w: r.width, h: r.height };
+        }
+        function dtSetStatus(html, holdMs) {
+            document.getElementById('dt-status').innerHTML = html;
+            dtStatusUntil = holdMs ? Date.now() + holdMs : 0;
+        }
+        function dtDim(line, ms) {
+            const dim = document.getElementById('dt-dim');
+            document.getElementById('dt-dim-line').textContent = line;
+            dim.classList.add('on');
+            dtLockedUntil = Date.now() + ms;
+            setTimeout(() => { if (Date.now() >= dtLockedUntil) dim.classList.remove('on'); }, ms);
+        }
+
+        async function dtGuess(p) {
+            if (!dtData || dtData.dtPhase !== 'HUNT' || Date.now() < dtLockedUntil) return;
+            const x = Math.round((p.x - dtView.tx) / dtView.s / p.w * DT_W);
+            const y = Math.round((p.y - dtView.ty) / dtView.s / p.h * DT_H);
+            if (x < 0 || y < 0 || x > DT_W || y > DT_H) return;
+            dtPendingMark = { x, y };
+            dtDrawMarks();
+            dtLockedUntil = Date.now() + 400; // no double sends while this one is out
+            try {
+                const reply = (await lrSend(`DTTAP ${x} ${y}`)).reply || '';
+                dtLockedUntil = 0;
+                if (reply.startsWith('Found')) {
+                    playPhoneSound('right');
+                    dtSetStatus(`<span class="hit">${lrEsc(reply)}</span>`, 2500);
+                } else if (reply === 'Already found.') {
+                    dtSetStatus('Already found. Keep looking.', 2000);
+                } else if (reply.startsWith('⚠️') && !/One moment|Wait for/.test(reply)) {
+                    playPhoneSound('wrong');
+                    dtDim(reply.replace('⚠️', '').trim(), 2000);
+                }
+            } catch (e) {
+                dtLockedUntil = 0;
+                dtSetStatus("Couldn't reach the room. Try again.", 2500);
+            }
+        }
+
+        function dtDrawMarks() {
+            if (!dtData) return;
+            const me = localStorage.getItem('randomania_nickname');
+            const pad = 40;
+            const rings = (dtData.spots || []).map(s => {
+                const x = s.x - pad, y = s.y - pad, w = s.w + pad * 2, h = s.h + pad * 2;
+                const cls = !s.by ? 'missed' : s.by.name === me ? 'mine' : '';
+                return `<div class="dt-ring ${cls}" style="left:${x / DT_W * 100}%;top:${y / DT_H * 100}%;width:${w / DT_W * 100}%;height:${h / DT_H * 100}%"></div>`;
+            }).join('');
+            const tap = dtPendingMark || (dtData.myLastTap && dtData.dtPhase === 'HUNT' ? dtData.myLastTap : null);
+            const mark = tap ? `<div class="dt-mark" style="left:${tap.x / DT_W * 100}%;top:${tap.y / DT_H * 100}%"></div>` : '';
+            document.getElementById('dt-marks').innerHTML = rings + mark;
+            dtApply();
+        }
+
+        function renderDoubleTake(data) {
+            dtData = data;
+            const photoKey = `${data.photo}-${data.altered}`;
+            if (photoKey !== dtPhotoKey) {
+                dtPhotoKey = photoKey;
+                dtPendingMark = null;
+                document.getElementById('dt-img').src = data.altered;
+                dtFit();
+                dtSetStatus('');
+            }
+            if (data.myLastTap) dtPendingMark = null;
+            const hunting = data.dtPhase === 'HUNT';
+            document.getElementById('dt-head').innerHTML = `Photo ${data.photo} of ${data.total}${hunting ? ` &middot; Pot ${Number(data.pot).toLocaleString('en-US')}` : ''}`;
+            const ready = document.getElementById('dt-ready');
+            ready.style.display = data.dtPhase === 'INTRO' ? 'block' : 'none';
+            ready.textContent = data.dtPhase === 'INTRO' ? 'Get ready...' : '';
+            document.getElementById('dt-viewport').style.display = data.dtPhase === 'INTRO' ? 'none' : 'block';
+            document.querySelector('#double-take-screen .dt-tools').style.display = data.dtPhase === 'INTRO' ? 'none' : 'flex';
+            // A miss on another device or before a reload: still dimmed.
+            if (hunting && data.myLockedMs > 300 && Date.now() >= dtLockedUntil) dtDim('One moment...', data.myLockedMs);
+            if (!hunting) document.getElementById('dt-dim').classList.remove('on');
+            if (Date.now() >= dtStatusUntil) {
+                if (data.dtPhase === 'DONE') {
+                    const share = data.myShare ? ` +${data.myShare} from the pot.` : '';
+                    dtSetStatus(data.myFinds
+                        ? `<span class="hit">You found ${data.myFinds}.</span>${share}`
+                        : 'You didn\'t find one this time.');
+                } else if (hunting) {
+                    dtSetStatus(`${data.foundCount} of ${data.spotCount} found${data.myFinds ? ` &middot; ${data.myFinds} yours` : ''}`);
+                }
+            }
+            dtDrawMarks();
+        }
+
+        (function dtGestures() {
+            const vp = document.getElementById('dt-viewport');
+            const begin = () => {
+                const pts = [...dtPointers.values()];
+                if (pts.length === 1) {
+                    dtGesture = { ...dtGesture, mode: 'pan', start: pts[0], tx: dtView.tx, ty: dtView.ty };
+                } else if (pts.length >= 2) {
+                    const [a, b] = pts;
+                    dtGesture = { ...dtGesture, mode: 'pinch', tap: false, twoFingers: true,
+                        dist: Math.hypot(a.x - b.x, a.y - b.y) || 1, mid: { x: (a.x + b.x) / 2, y: (a.y + b.y) / 2 },
+                        s: dtView.s, tx: dtView.tx, ty: dtView.ty };
+                }
+            };
+            vp.addEventListener('pointerdown', e => {
+                vp.setPointerCapture(e.pointerId);
+                const p = dtLocal(e);
+                dtPointers.set(e.pointerId, p);
+                if (dtPointers.size === 1) dtGesture = { tap: true, twoFingers: false, downAt: Date.now(), first: p };
+                begin();
+            });
+            vp.addEventListener('pointermove', e => {
+                if (!dtPointers.has(e.pointerId) || !dtGesture) return;
+                const p = dtLocal(e);
+                dtPointers.set(e.pointerId, p);
+                if (dtGesture.mode === 'pinch' && dtPointers.size >= 2) {
+                    const [a, b] = [...dtPointers.values()];
+                    const s = Math.max(1, Math.min(DT_MAX_ZOOM, dtGesture.s * Math.hypot(a.x - b.x, a.y - b.y) / dtGesture.dist));
+                    const mid = { x: (a.x + b.x) / 2, y: (a.y + b.y) / 2 };
+                    // Keep the picture point under the fingers' first midpoint under the fingers.
+                    const cx = (dtGesture.mid.x - dtGesture.tx) / dtGesture.s, cy = (dtGesture.mid.y - dtGesture.ty) / dtGesture.s;
+                    Object.assign(dtView, { s, tx: mid.x - cx * s, ty: mid.y - cy * s });
+                    dtApply();
+                } else if (dtGesture.mode === 'pan') {
+                    const dx = p.x - dtGesture.start.x, dy = p.y - dtGesture.start.y;
+                    if (Math.hypot(p.x - dtGesture.first.x, p.y - dtGesture.first.y) > DT_TAP_MOVE) dtGesture.tap = false;
+                    if (!dtGesture.tap) {
+                        Object.assign(dtView, { tx: dtGesture.tx + dx, ty: dtGesture.ty + dy });
+                        dtApply();
+                    }
+                }
+            });
+            const end = e => {
+                if (!dtPointers.has(e.pointerId)) return;
+                const p = dtLocal(e);
+                dtPointers.delete(e.pointerId);
+                if (!dtGesture) return;
+                if (dtPointers.size === 0) {
+                    const g = dtGesture;
+                    dtGesture = null;
+                    if (e.type === 'pointerup' && g.tap && !g.twoFingers && Date.now() - g.downAt <= DT_TAP_MS
+                        && Math.hypot(p.x - g.first.x, p.y - g.first.y) <= DT_TAP_MOVE) dtGuess(p);
+                } else {
+                    begin(); // a finger lifted mid-pinch: carry on as a pan
+                }
+            };
+            vp.addEventListener('pointerup', end);
+            vp.addEventListener('pointercancel', end);
+            // A computer's scroll wheel zooms too (testing, or a laptop player).
+            vp.addEventListener('wheel', e => {
+                e.preventDefault();
+                const p = dtLocal(e);
+                const s = Math.max(1, Math.min(DT_MAX_ZOOM, dtView.s * (e.deltaY < 0 ? 1.15 : 1 / 1.15)));
+                const cx = (p.x - dtView.tx) / dtView.s, cy = (p.y - dtView.ty) / dtView.s;
+                Object.assign(dtView, { s, tx: p.x - cx * s, ty: p.y - cy * s });
+                dtApply();
+            }, { passive: false });
+            // iPhone Safari's own pinch would zoom the whole page.
+            ['gesturestart', 'gesturechange'].forEach(t => vp.addEventListener(t, e => e.preventDefault()));
+        })();
 
         function renderLetterRip(data) {
             lrLastData = data;

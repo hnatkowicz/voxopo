@@ -14,6 +14,10 @@ window.RANDOMANIA_MODES = [
     { key: 'FLAG_ME_DOWN',    name: 'Flag Me Down',    blurb: 'Name it before the clues do',    tag: null,          color: 'var(--rm-yellow)', emoji: '🚩', icon: 'mode-flag-me-down' },
     // The letter race (Randy, Nov 2026). "Letter Rip" is a working name.
     { key: 'LETTER_RIP',      name: 'Letter Rip',      blurb: 'Solve the phrase first',         tag: 'New',        color: 'var(--rm-periwinkle)', emoji: '🔤', icon: 'mode-letter-rip' },
+    // Spot the difference on Randy's photos (Nov 2026). No icon yet: the
+    // emoji shows until public/modes/mode-double-take.svg exists. Only offered
+    // once /admin/double-take has a Ready photo.
+    { key: 'DOUBLE_TAKE',     name: 'Double Take',     blurb: 'Spot the 5 differences',         tag: 'New',        color: 'var(--rm-blue)', emoji: '👀', icon: 'mode-double-take' },
     { key: 'EMPOSSDURR',      name: 'EmpossDurr',      blurb: 'Find the impostor',              tag: null,         color: 'var(--rm-orange-hot)', emoji: '🕵️', icon: 'mode-empossdurr' },
     { key: 'ON_THE_SPECTRUM', name: 'On The Spectrum', blurb: 'Guess where friends land',       tag: null,         color: 'var(--rm-purple)', emoji: '🎚️', icon: 'mode-on-the-spectrum' },
     { key: 'PROFILER',        name: 'Profiler',        blurb: 'Who said that?',                 tag: '4+ players', color: 'var(--rm-pink)', emoji: '🔍', icon: 'mode-profiler' }
