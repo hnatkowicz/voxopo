@@ -25,6 +25,7 @@ import { readFileSync } from 'node:fs';
 import { pathToFileURL } from 'node:url';
 
 let URL_ = '', host = '';
+const CONTENT_LOGIN = 'claude_content';
 
 async function neon(body, extraHeaders = {}) {
     const response = await fetch(`https://${host}/sql`, {
@@ -79,6 +80,7 @@ async function main() {
     if (cmd === 'check') {
         const r = await one("SELECT current_user AS login, (SELECT COUNT(*) FROM questions)::int AS questions");
         printRows(r);
+        if (r.rows[0] && r.rows[0].login !== CONTENT_LOGIN) console.log(`WARNING: NEON_URL logs in as ${r.rows[0].login}, not ${CONTENT_LOGIN}. run will refuse until NEON_URL is the content login.`);
         return;
     }
     if (cmd === 'query') {
@@ -87,6 +89,11 @@ async function main() {
         return;
     }
     if (cmd === 'run') {
+        // Only ever through the content login (Nov 2026: NEON_URL was found
+        // holding the owner login, which can DROP and TRUNCATE; the whole
+        // point of claude_content is that a bad file can't do that).
+        const who = (await one('SELECT current_user AS login')).rows[0].login;
+        if (who !== CONTENT_LOGIN) throw new Error(`NEON_URL logs in as ${who}, not ${CONTENT_LOGIN}. Nothing was run. Ask Randy to put the ${CONTENT_LOGIN} connection string in NEON_URL.`);
         const statements = splitSql(readFileSync(arg, 'utf8'))
             .filter(s => !/^(begin|commit|start transaction)$/i.test(s.replace(/\s+/g, ' ').trim()));
         const keep = [];
