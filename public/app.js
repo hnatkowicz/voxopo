@@ -876,6 +876,14 @@ if (btnSubmitSpectate) {
                     if (Number(data.secondsLeft) === 3) playAudioTrack('answer-warning-sound');
                 }
 
+                // ---------- Double Take ----------
+                if (data.type === 'DOUBLE_TAKE_STATE') renderDoubleTakeTV(data);
+                if (data.type === 'DOUBLE_TAKE_TICK') {
+                    const pot = document.getElementById('dt-pot');
+                    if (pot) pot.textContent = Number(data.pot).toLocaleString('en-US');
+                    if (Number(data.secondsLeft) === 3) playAudioTrack('answer-warning-sound');
+                }
+
                 // ---------- Flag Me Down ----------
                 if (data.type === 'FLAG_ME_DOWN_ROUND') {
                     currentGamePhase = 'FLAG_ME_DOWN'; // before the standings refresh below, or it re-posts the lobby's "Press Start" line
@@ -992,7 +1000,11 @@ if (btnSubmitSpectate) {
             SPECTRUM_SHARPSHOOTER: { pulse: false, title: 'Within 3 on On the Spectrum', imageBadge: true, iconClass: 'badge-spectrum-sharpshooter' },
             // Just for laughs -- awarded to EVERY guesser 25+ off in the same
             // round, so a room full of wild misses is funnier, not penalized.
-            SPECTRUM_LOST_IN_SPACE: { pulse: false, title: 'Lost in Space: 25+ off on On the Spectrum', imageBadge: true, iconClass: 'badge-spectrum-lost-in-space' }
+            SPECTRUM_LOST_IN_SPACE: { pulse: false, title: 'Lost in Space: 25+ off on On the Spectrum', imageBadge: true, iconClass: 'badge-spectrum-lost-in-space' },
+            // Double Take: 3 of one photo's 5 (the "3" is drawn on the muscle,
+            // Randy: "perfect for this"), and 2+ missed taps on one photo.
+            DT_MUSCLE: { pulse: false, title: 'Found 3 on one photo', nativeIcon: true, iconSrc: '/muscle.svg' },
+            DT_LOST: { pulse: false, title: 'Lost in Space: 2+ missed taps on one photo', imageBadge: true, iconClass: 'badge-spectrum-lost-in-space' }
         };
 
         function renderAwardBadges(awards) {
@@ -1023,7 +1035,7 @@ if (btnSubmitSpectate) {
         // ROOM_VENUE first, and a mid-game join's STATE_CATCH_UP follows.
         // Country Monkey and Trivi-yeah! too (Nov 2026): their region/deck
         // vote and their questions.
-        const TP_LAYOUT_ON = new Set(['ROOM_CLOSED', 'ROOM_VENUE', 'RETURN_TO_LOBBY', 'TRANSITION_TO_CATEGORY_VOTE', 'TRIVIA_TOPIC_CHOSEN', 'TRANSITION_TO_QUESTION', 'FLAG_ME_DOWN_ROUND', 'PROFILER_QUESTION', 'EMPOSSDURR_ROUND_START', 'ON_THE_SPECTRUM_ROUND_START', 'LETTER_RIP_STATE', 'GAME_OVER']);
+        const TP_LAYOUT_ON = new Set(['ROOM_CLOSED', 'ROOM_VENUE', 'RETURN_TO_LOBBY', 'TRANSITION_TO_CATEGORY_VOTE', 'TRIVIA_TOPIC_CHOSEN', 'TRANSITION_TO_QUESTION', 'FLAG_ME_DOWN_ROUND', 'PROFILER_QUESTION', 'EMPOSSDURR_ROUND_START', 'ON_THE_SPECTRUM_ROUND_START', 'LETTER_RIP_STATE', 'DOUBLE_TAKE_STATE', 'GAME_OVER']);
         // Every screen uses the new layout now (Nov 2026); kept for any
         // future screen that isn't ready for it.
         const TP_LAYOUT_OFF = new Set([]);
@@ -1031,7 +1043,7 @@ if (btnSubmitSpectate) {
             let on = null;
             if (data.type === 'TRANSITION_TO_TRIVI_YEAH_II' || /^TRIVI_YEAH_II_(?!FINAL_)/.test(data.type) || TP_LAYOUT_ON.has(data.type)) on = true;
             else if (TP_LAYOUT_OFF.has(data.type)) on = false;
-            else if (data.type === 'STATE_CATCH_UP') on = ['TRIVI_YEAH_II_ROUND', 'CATEGORY_VOTE', 'TRIVIA_TOPIC_SPLASH', 'GAME_ROUND', 'ROUND_REVEAL', 'FLAG_ME_DOWN_ROUND', 'PROFILER_ROUND', 'EMPOSSDURR_ROUND', 'ON_THE_SPECTRUM_ROUND', 'LETTER_RIP_ROUND'].includes(data.gameState);
+            else if (data.type === 'STATE_CATCH_UP') on = ['TRIVI_YEAH_II_ROUND', 'CATEGORY_VOTE', 'TRIVIA_TOPIC_SPLASH', 'GAME_ROUND', 'ROUND_REVEAL', 'FLAG_ME_DOWN_ROUND', 'PROFILER_ROUND', 'EMPOSSDURR_ROUND', 'ON_THE_SPECTRUM_ROUND', 'LETTER_RIP_ROUND', 'DOUBLE_TAKE_ROUND'].includes(data.gameState);
             if (on === null || on === document.body.classList.contains('tp-layout')) return;
             document.body.classList.toggle('tp-layout', on);
             railMoves = {};
@@ -2095,6 +2107,56 @@ function renderLetterRipTV(data) {
     `);
     if (data.lrPhase === 'PICK') setClock(data.secondsLeft);
     else setClock('');
+}
+
+// Double Take (Randy, Nov 2026): the two photos side by side get the room;
+// "Photo 2 / 6" and the pot (in place of the clock) stay small on top. A
+// found spot gets a gold ring with its finder's avatar; at the end, any
+// spot nobody found gets a plain cream ring.
+const DT_W = 1600, DT_H = 1200; // the size /admin/double-take checks for
+let dtTvShown = { key: null, rings: new Set() }; // only a newly found spot pops in
+function doubleTakeRings(data, fresh) {
+    const pad = 40; // the ring sits a little outside the change, so it doesn't cover it
+    return (data.spots || []).map(s => {
+        const x = s.x - pad, y = s.y - pad, w = s.w + pad * 2, h = s.h + pad * 2;
+        const style = `left:${x / DT_W * 100}%;top:${y / DT_H * 100}%;width:${w / DT_W * 100}%;height:${h / DT_H * 100}%`;
+        const who = s.by ? `<span class="dt-ring-who">${avatarHtml(s.by.emoji, 1)}</span>` : '';
+        const isNew = fresh.has(`${s.x},${s.y}`);
+        return `<div class="dt-ring${s.by ? '' : ' dt-ring-missed'}${isNew ? ' dt-new' : ''}" style="${style}">${who}</div>`;
+    }).join('');
+}
+function renderDoubleTakeTV(data) {
+    const panel = document.getElementById('active-content-stage');
+    currentGamePhase = 'DOUBLE_TAKE';
+    setStatusMessage('');
+    setClock('');
+    // Load the next photos while the splash is up, so they appear together.
+    [data.original, data.altered].forEach(src => { const img = new Image(); img.src = src; });
+    if (data.dtPhase === 'INTRO') {
+        panel.innerHTML = tpStage('tp-center dt-stage', `<div class="dt-splash">Photo ${data.photo} of ${data.total}</div>`);
+        return;
+    }
+    const done = data.dtPhase === 'DONE';
+    const photoKey = `${data.photo}-${data.altered}`;
+    if (dtTvShown.key !== photoKey) dtTvShown = { key: photoKey, rings: new Set() };
+    const fresh = new Set((data.spots || []).map(s => `${s.x},${s.y}`).filter(k => !dtTvShown.rings.has(k)));
+    fresh.forEach(k => dtTvShown.rings.add(k));
+    let foot;
+    if (done) {
+        const finders = (data.finders || []).map(f => `<span class="dt-finder">${avatarHtml(f.emoji, 1)}${escapeHtml(f.name)} <span class="tp-pts">${f.finds}</span></span>`).join('');
+        const split = data.split && data.split.share ? `<span class="dt-split">Left in the pot: +${data.split.share} each</span>` : '';
+        foot = finders ? `${finders}${split}` : `<span class="dt-split">Nobody found one</span>`;
+    } else {
+        foot = `<span class="dt-split">${data.foundCount} / ${data.spotCount} found</span>`;
+    }
+    panel.innerHTML = tpStage('tp-center dt-stage', `
+        <div class="tp-eyebrow">Photo <span class="tp-pts">${data.photo} / ${data.total}</span>${done ? '' : ` &middot; Pot <span class="tp-pts" id="dt-pot">${Number(data.pot).toLocaleString('en-US')}</span>`}</div>
+        <div class="dt-photos">
+            <div class="dt-photo"><img src="${data.original}" alt="">${doubleTakeRings(data, fresh)}</div>
+            <div class="dt-photo"><img src="${data.altered}" alt="">${doubleTakeRings(data, fresh)}</div>
+        </div>
+        <div class="dt-foot">${foot}</div>
+    `);
 }
 
 // The Spotlight (Letter Rip's wager final). The board and the avatars on

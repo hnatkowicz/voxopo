@@ -63,5 +63,26 @@ export async function savePairSpots(name, spots, ready) {
          ON CONFLICT (name) DO UPDATE SET spots = EXCLUDED.spots, ready = EXCLUDED.ready, updated_at = now()`,
         [name, JSON.stringify(clean), !!ready]
     );
+    await refreshDoubleTakeReady();
     return true;
 }
+
+// How many pairs are Ready and on disk. The lobby only offers Double Take
+// when there's at least one, so a room never picks a game with no photos.
+// Checked every minute and right after a save on /admin/double-take.
+let readyCount = 0;
+export function doubleTakeReadyCount() {
+    return readyCount;
+}
+export async function refreshDoubleTakeReady() {
+    try {
+        const result = await pool.query("SELECT name FROM double_take_photos WHERE ready AND jsonb_array_length(spots) > 0");
+        const onDisk = new Set(listPhotoPairs().pairs);
+        readyCount = result.rows.filter(r => onDisk.has(r.name)).length;
+    } catch {
+        // Table not made yet, or the database is away: keep what we knew.
+    }
+    return readyCount;
+}
+setTimeout(() => { refreshDoubleTakeReady(); }, 2000).unref();
+setInterval(() => { refreshDoubleTakeReady(); }, 60 * 1000).unref();

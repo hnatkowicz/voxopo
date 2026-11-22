@@ -1,6 +1,7 @@
 import pool, { isDatabaseDownError, DATABASE_DOWN_MESSAGE } from '../config/database.js';
 import { randomUUID } from 'node:crypto';
 import { AsyncLocalStorage } from 'node:async_hooks';
+import { listPhotoPairs, doubleTakeReadyCount } from './doubleTake.js';
 
 export const activeRooms = {};
 
@@ -182,7 +183,7 @@ export function clearAllRoomTimers(roomCode) {
 
 // Every votable game mode. The display side (names, blurbs, icons) lives in
 // public/modes.js -- keep the keys in step when adding a mode.
-export const GAME_MODE_KEYS = ['TRIVI_YEAH', 'TRIVI_YEAH_II', 'COUNTRY_MONKEY', 'FLAG_ME_DOWN', 'LETTER_RIP', 'EMPOSSDURR', 'ON_THE_SPECTRUM', 'PROFILER'];
+export const GAME_MODE_KEYS = ['TRIVI_YEAH', 'TRIVI_YEAH_II', 'COUNTRY_MONKEY', 'FLAG_ME_DOWN', 'LETTER_RIP', 'DOUBLE_TAKE', 'EMPOSSDURR', 'ON_THE_SPECTRUM', 'PROFILER'];
 // A venue's access code can limit which modes its rooms offer (a pub shows
 // only a few) -- the vote tally only ever has those keys, so a vote for any
 // other mode simply never counts.
@@ -199,11 +200,13 @@ export const GAME_MODE_KEYS = ['TRIVI_YEAH', 'TRIVI_YEAH_II', 'COUNTRY_MONKEY', 
 // Trivi-yeah! off its list.) A code with house questions keeps Trivi-yeah!
 // even if its list was ticked before the Trivi-yeah! checkbox came back.
 export function allowedModesFor(room) {
+    // Double Take shows up only once /admin/double-take has a Ready photo.
+    const offered = GAME_MODE_KEYS.filter(key => key !== 'DOUBLE_TAKE' || doubleTakeReadyCount() > 0);
     const venue = room && room.venue;
     const ticked = venue && venue.allowedModes && venue.allowedModes.length ? venue.allowedModes : null;
-    if (!ticked) return [...GAME_MODE_KEYS];
-    const keep = GAME_MODE_KEYS.filter(key => ticked.includes(key) || (key === 'TRIVI_YEAH' && venue.houseSet));
-    return keep.length ? keep : [...GAME_MODE_KEYS];
+    if (!ticked) return [...offered];
+    const keep = offered.filter(key => ticked.includes(key) || (key === 'TRIVI_YEAH' && venue.houseSet));
+    return keep.length ? keep : [...offered];
 }
 
 // How the venue's Trivi-yeah! is dressed: its logo and name (the byline).
@@ -602,6 +605,15 @@ function startGameForMode(roomCode, winningModule) {
         startLetterRipGame(roomCode).catch(error => {
             console.error(`❌ [Letter Rip] Failed to start Room ${roomCode}:`, error.message);
             broadcastContentUnavailable(roomCode, 'Letter Rip', error);
+            resetRoomToLobby(roomCode);
+        });
+        return;
+    }
+
+    if (winningModule === 'DOUBLE_TAKE') {
+        startDoubleTakeGame(roomCode).catch(error => {
+            console.error(`❌ [Double Take] Failed to start Room ${roomCode}:`, error.message);
+            broadcastContentUnavailable(roomCode, 'Double Take', error);
             resetRoomToLobby(roomCode);
         });
         return;
@@ -1229,6 +1241,8 @@ function endGame(roomCode) {
             ? `${room.flagMeDown ? Math.min(room.flagMeDown.roundIndex + 1, room.flagMeDown.totalRounds) : 0} flags`
         : room.winningGameMode === 'LETTER_RIP'
             ? `${room.letterRip ? Math.min(room.letterRip.index + 1, room.letterRip.total) : 0} puzzles`
+        : room.winningGameMode === 'DOUBLE_TAKE'
+            ? `${room.doubleTake ? Math.min(room.doubleTake.index + 1, room.doubleTake.total) : 0} photos`
             : `${room.questionBank.length} questions`;
     console.log(`🏁 [Game Engine] Room ${roomCode} finished ${roundsPlayedDescription}. Broadcasting final leaderboard.`);
 
@@ -3673,6 +3687,247 @@ export function letterRipStatusFor(room, playerName) {
     };
 }
 
+// ==========================================
+// DOUBLE TAKE (Randy, Nov 2026): spot the difference, everyone at once
+// ==========================================
+// The TV shows the original and the altered photo side by side; each phone
+// shows only the altered one and taps where it differs. First finder locks a
+// spot (circled everywhere); tapping it again is "late, not wrong". A miss
+// costs a little and dims that phone for 2 seconds. The clock is a points pot
+// that drains over the round; if all 5 are found, what's left is split evenly
+// among everyone who found one. Photos and their boxes come from
+// /admin/double-take (double_take.sql); only pairs marked Ready are played.
+// Numbers: Randy's yes to Claude's first guesses (Nov 22 2026), to be tuned
+// in play.
+const DOUBLE_TAKE_MAX_PHOTOS = 6; // a game plays whatever's Ready, up to 6 (Randy: test with 2 or 3)
+const DOUBLE_TAKE_FIND_POINTS = 100;
+const DOUBLE_TAKE_MISS_POINTS = 25; // never below 0
+const DOUBLE_TAKE_POT_START = 500; // drains to 0 over the round
+const DOUBLE_TAKE_ROUND_SECONDS = 90; // ends early once all 5 are found
+const DOUBLE_TAKE_LOCKOUT_MS = 2000; // a miss dims that phone this long
+const DOUBLE_TAKE_MUSCLE_FINDS = 3; // 3 of one photo's 5 earns the muscle badge...
+const DOUBLE_TAKE_MUSCLE_BONUS = 100; // ...and this bonus
+const DOUBLE_TAKE_LOST_MISSES = 2; // 2+ misses on one photo: Lost in Space (just for laughs)
+// A box fits the change itself; a tap counts this far outside it (photo
+// pixels, 1600 wide), since a finger on a phone isn't a mouse pointer.
+const DOUBLE_TAKE_HIT_PAD = 30;
+const DOUBLE_TAKE_DONE_MS = 7000; // all five circled, who found what
+const DOUBLE_TAKE_INTRO_MS = 3000; // "Photo 2 of 6" before the clock starts
+// The cheeky line on a missed tap, in turn (Randy, Nov 2026).
+const DOUBLE_TAKE_MISS_LINES = [
+    'Nope. Look again.',
+    'Nice try. Not there.',
+    'Your eyes deceive you.',
+    'Close? Maybe. Right? No.',
+    'That one\'s just a photo.',
+    'Squint harder.'
+];
+
+async function startDoubleTakeGame(roomCode) {
+    const room = activeRooms[roomCode];
+    if (!room) return;
+    const result = await pool.query('SELECT name, spots FROM double_take_photos WHERE ready ORDER BY name');
+    const onDisk = new Set(listPhotoPairs().pairs);
+    // Only pairs whose files are here (a pair deleted on GitHub after it was
+    // marked Ready is skipped) and that have at least one spot.
+    const all = result.rows
+        .filter(r => onDisk.has(r.name) && Array.isArray(r.spots) && r.spots.length)
+        .map(r => ({ name: r.name, spots: r.spots }));
+    if (!all.length) throw new Error('No Double Take photos are marked Ready.');
+    // Photos this room hasn't played yet first, then the rest.
+    room.doubleTakePlayed = room.doubleTakePlayed || new Set();
+    const fresh = shuffleArray(all.filter(p => !room.doubleTakePlayed.has(p.name)));
+    const seen = shuffleArray(all.filter(p => room.doubleTakePlayed.has(p.name)));
+    const photos = [...fresh, ...seen].slice(0, DOUBLE_TAKE_MAX_PHOTOS);
+    if (!fresh.length) room.doubleTakePlayed.clear();
+    room.gameState = 'DOUBLE_TAKE_ROUND';
+    room.doubleTake = { photos, index: -1, total: photos.length, missLine: 0 };
+    console.log(`[Double Take] Room ${roomCode} starting ${photos.length} photo${photos.length === 1 ? '' : 's'}.`);
+    startDoubleTakePhoto(roomCode);
+}
+
+function startDoubleTakePhoto(roomCode) {
+    const room = activeRooms[roomCode];
+    const dt = room && room.doubleTake;
+    if (!dt) return;
+    if (room.timerInterval) { clearInterval(room.timerInterval); room.timerInterval = null; }
+    dt.index++;
+    if (dt.index >= dt.total) { endGame(roomCode); return; }
+    const photo = dt.photos[dt.index];
+    room.doubleTakePlayed.add(photo.name);
+    Object.assign(dt, {
+        name: photo.name,
+        spots: photo.spots.map(s => ({ x: s.x, y: s.y, w: s.w, h: s.h, by: null })),
+        finds: {},      // name -> spots found on this photo
+        misses: {},     // name -> missed taps on this photo
+        lockedUntil: {},
+        lastTaps: {},   // name -> { x, y, hit } the phone draws its marker from
+        split: null,    // the leftover pot's split, once all are found
+        phase: 'INTRO'
+    });
+    room.gameSecondsLeft = DOUBLE_TAKE_ROUND_SECONDS;
+    // Each difference is something you could have found (the Info page's "x of y").
+    Object.values(room.players).filter(p => !p.left).forEach(p => { p.questionsFaced = (p.questionsFaced || 0) + photo.spots.length; });
+    broadcastDoubleTakeState(roomCode);
+    const photoAtStart = dt.index;
+    room.revealTimeout = setTimeout(() => {
+        room.revealTimeout = null;
+        if (room.doubleTake !== dt || dt.index !== photoAtStart) return;
+        dt.phase = 'HUNT';
+        broadcastDoubleTakeState(roomCode);
+        room.timerInterval = setInterval(() => {
+            if (room.doubleTake !== dt || dt.index !== photoAtStart || dt.phase !== 'HUNT') { clearInterval(room.timerInterval); room.timerInterval = null; return; }
+            room.gameSecondsLeft = Math.max(0, room.gameSecondsLeft - 1);
+            broadcastToRoom(roomCode, { type: 'DOUBLE_TAKE_TICK', secondsLeft: room.gameSecondsLeft, pot: doubleTakePot(room) });
+            if (room.gameSecondsLeft <= 0) finishDoubleTakePhoto(roomCode);
+        }, 1000);
+    }, DOUBLE_TAKE_INTRO_MS);
+}
+
+// The pot drains evenly with the clock, in steps of 10.
+function doubleTakePot(room) {
+    const left = Math.max(0, room.gameSecondsLeft || 0);
+    return Math.round(DOUBLE_TAKE_POT_START * left / DOUBLE_TAKE_ROUND_SECONDS / 10) * 10;
+}
+
+function finishDoubleTakePhoto(roomCode) {
+    const room = activeRooms[roomCode];
+    const dt = room && room.doubleTake;
+    if (!dt || dt.phase !== 'HUNT') return;
+    if (room.timerInterval) { clearInterval(room.timerInterval); room.timerInterval = null; }
+    const allFound = dt.spots.every(s => s.by);
+    // All five found: what's left of the pot is split evenly among everyone
+    // who found at least one (Claude's suggestion; Randy undecided, so it's
+    // easy to change here).
+    if (allFound) {
+        const finders = Object.keys(dt.finds).filter(n => dt.finds[n] > 0 && room.players[n] && !room.players[n].left);
+        const pot = doubleTakePot(room);
+        const share = finders.length ? Math.floor(pot / finders.length / 10) * 10 : 0;
+        if (share) finders.forEach(n => { room.players[n].score += share; });
+        dt.split = { pot, share, count: finders.length };
+    }
+    room.gameSecondsLeft = null;
+    dt.phase = 'DONE';
+    const finders = Object.keys(dt.finds).filter(n => dt.finds[n] > 0);
+    const best = finders.sort((a, b) => dt.finds[b] - dt.finds[a])[0];
+    setPhoneRecap(room, {
+        kind: 'DOUBLE_TAKE', // the phone already played your sound at each tap
+        label: `Photo ${dt.index + 1}`,
+        answer: `${dt.spots.filter(s => s.by).length} of ${dt.spots.length} found`,
+        answered: [...new Set([...finders, ...Object.keys(dt.misses)])],
+        right: finders,
+        best: best ? { name: best, points: dt.finds[best] * DOUBLE_TAKE_FIND_POINTS } : null
+    });
+    broadcastDoubleTakeState(roomCode);
+    broadcastToRoom(roomCode, { type: 'LEADERBOARD_UPDATE', players: Object.values(room.players).filter(p => !p.left) });
+    const photoAtDone = dt.index;
+    room.revealTimeout = setTimeout(() => {
+        room.revealTimeout = null;
+        if (room.doubleTake === dt && dt.index === photoAtDone) startDoubleTakePhoto(roomCode);
+    }, DOUBLE_TAKE_DONE_MS);
+}
+
+// DTTAP <x> <y>, in the photo's own pixels, from a phone.
+function handleDoubleTakeAction(roomCode, room, playerName, cleanText) {
+    const dt = room.doubleTake;
+    const tap = /^DTTAP\s+(-?\d+(?:\.\d+)?)\s+(-?\d+(?:\.\d+)?)$/.exec(cleanText);
+    if (!tap) return `⚠️ That action isn't available right now.`;
+    if (dt.phase !== 'HUNT') return `⚠️ Wait for the photo.`;
+    const player = room.players[playerName];
+    if (!player || player.left) return `⚠️ You're not in this game.`;
+    const now = Date.now();
+    if ((dt.lockedUntil[playerName] || 0) > now) return `⚠️ One moment...`;
+    const x = Number(tap[1]), y = Number(tap[2]);
+    const pad = DOUBLE_TAKE_HIT_PAD;
+    const near = s => x >= s.x - pad && x <= s.x + s.w + pad && y >= s.y - pad && y <= s.y + s.h + pad;
+    // An unfound spot wins over a found one it overlaps (closest center first).
+    const center = s => Math.hypot(x - (s.x + s.w / 2), y - (s.y + s.h / 2));
+    const fresh = dt.spots.filter(s => !s.by && near(s)).sort((a, b) => center(a) - center(b))[0];
+    if (fresh) {
+        fresh.by = { name: playerName, emoji: player.emoji || null };
+        dt.finds[playerName] = (dt.finds[playerName] || 0) + 1;
+        player.score += DOUBLE_TAKE_FIND_POINTS;
+        player.correctAnswers = (player.correctAnswers || 0) + 1;
+        let bonus = 0;
+        if (dt.finds[playerName] === DOUBLE_TAKE_MUSCLE_FINDS) {
+            player.score += DOUBLE_TAKE_MUSCLE_BONUS;
+            bonus = DOUBLE_TAKE_MUSCLE_BONUS;
+            player.awards = player.awards || {};
+            player.awards.DT_MUSCLE = 1;
+        }
+        dt.lastTaps[playerName] = { x: Math.round(x), y: Math.round(y), hit: true };
+        broadcastDoubleTakeState(roomCode);
+        broadcastToRoom(roomCode, { type: 'LEADERBOARD_UPDATE', players: Object.values(room.players).filter(p => !p.left) });
+        if (dt.spots.every(s => s.by)) finishDoubleTakePhoto(roomCode);
+        return bonus ? `Found one! +${DOUBLE_TAKE_FIND_POINTS}, and +${bonus} for 3 on one photo.` : `Found one! +${DOUBLE_TAKE_FIND_POINTS}`;
+    }
+    // Late, not wrong (Randy: no "I already touched that!").
+    if (dt.spots.some(s => s.by && near(s))) {
+        dt.lastTaps[playerName] = { x: Math.round(x), y: Math.round(y), hit: false };
+        return `Already found.`;
+    }
+    const lost = Math.min(player.score, DOUBLE_TAKE_MISS_POINTS);
+    player.score -= lost;
+    dt.misses[playerName] = (dt.misses[playerName] || 0) + 1;
+    if (dt.misses[playerName] === DOUBLE_TAKE_LOST_MISSES) {
+        player.awards = player.awards || {};
+        player.awards.DT_LOST = 1;
+    }
+    dt.lockedUntil[playerName] = now + DOUBLE_TAKE_LOCKOUT_MS;
+    dt.lastTaps[playerName] = { x: Math.round(x), y: Math.round(y), hit: false };
+    const line = DOUBLE_TAKE_MISS_LINES[dt.missLine++ % DOUBLE_TAKE_MISS_LINES.length];
+    if (lost) broadcastToRoom(roomCode, { type: 'LEADERBOARD_UPDATE', players: Object.values(room.players).filter(p => !p.left) });
+    return `⚠️ ${line}${lost ? ` -${lost}` : ''}`;
+}
+
+// What the TV shows. While hunting, only the spots already found (a phone
+// reads this too, so an unfound spot never leaves the server); all of them
+// once the photo is done.
+export function doubleTakeTvState(room) {
+    const dt = room.doubleTake;
+    if (!dt) return null;
+    const done = dt.phase === 'DONE';
+    const base = `/double-take/${encodeURIComponent(dt.name)}`;
+    return {
+        type: 'DOUBLE_TAKE_STATE',
+        photo: dt.index + 1,
+        total: dt.total,
+        original: `${base}-original.webp`,
+        altered: `${base}-altered.webp`,
+        dtPhase: dt.phase,
+        secondsLeft: dt.phase === 'HUNT' ? room.gameSecondsLeft : null,
+        pot: dt.phase === 'DONE' ? (dt.split ? dt.split.pot : 0) : doubleTakePot(room),
+        spotCount: dt.spots.length,
+        foundCount: dt.spots.filter(s => s.by).length,
+        spots: dt.spots.filter(s => done || s.by).map(s => ({ x: s.x, y: s.y, w: s.w, h: s.h, by: s.by })),
+        split: done ? dt.split : null,
+        finders: done ? Object.entries(dt.finds).filter(([, n]) => n > 0)
+            .map(([name, n]) => ({ name, emoji: room.players[name] ? room.players[name].emoji || null : null, finds: n }))
+            .sort((a, b) => b.finds - a.finds) : []
+    };
+}
+
+function broadcastDoubleTakeState(roomCode) {
+    const room = activeRooms[roomCode];
+    if (room && room.doubleTake) broadcastToRoom(roomCode, doubleTakeTvState(room));
+}
+
+// What one phone sees: the public state plus that player's own taps.
+export function doubleTakeStatusFor(room, playerName) {
+    const dt = room.doubleTake;
+    if (!dt) return null;
+    const lockedMs = Math.max(0, (dt.lockedUntil[playerName] || 0) - Date.now());
+    return {
+        ...doubleTakeTvState(room),
+        type: undefined,
+        myFinds: dt.finds[playerName] || 0,
+        myMisses: dt.misses[playerName] || 0,
+        myLockedMs: lockedMs,
+        myLastTap: dt.lastTaps[playerName] || null,
+        myShare: dt.phase === 'DONE' && dt.split && dt.finds[playerName] ? dt.split.share : 0
+    };
+}
+
 const FLAG_ME_DOWN_ROUNDS_PER_DIFFICULTY = 5; // x3 difficulties = 15, matching Country Monkey
 // How long each stage shows before the next clue: flag only, +region,
 // +capital, +map. First guesses -- tune by feel in play.
@@ -4616,6 +4871,7 @@ function announcementGoodMoment(room) {
         case 'ON_THE_SPECTRUM_ROUND': return !ots || !['SET_TARGET', 'GUESSING'].includes(ots.phase);
         case 'EMPOSSDURR_ROUND': return !ed || !['ACCUSE_VOTE', 'DECLARE_VERDICT'].includes(ed.phase);
         case 'FLAG_ME_DOWN_ROUND': return !fmd || fmd.phase !== 'CLUES';
+        case 'DOUBLE_TAKE_ROUND': return !room.doubleTake || room.doubleTake.phase !== 'HUNT';
         default: return true;
     }
 }
@@ -4910,6 +5166,7 @@ function clearRoomForFreshGame(room) {
     room.profilerOnExpire = null;
     room.flagMeDown = null;
     room.letterRip = null;
+    room.doubleTake = null;
 
     const activePlayers = Object.values(room.players).filter(p => !p.left);
     // Bumping this marks "a fresh game started" -- a player who left before
@@ -6800,6 +7057,11 @@ function handleIncomingMessageInRoom(fromPhone, bodyText, explicitRoomCode, pres
     // 5.555. Letter Rip round messages
     if (currentRoom.gameState === 'LETTER_RIP_ROUND' && currentRoom.letterRip) {
         return handleLetterRipAction(associatedRoomCode, currentRoom, actingPlayerName, cleanText);
+    }
+
+    // 5.5555. Double Take taps
+    if (currentRoom.gameState === 'DOUBLE_TAKE_ROUND' && currentRoom.doubleTake) {
+        return handleDoubleTakeAction(associatedRoomCode, currentRoom, actingPlayerName, cleanText);
     }
 
     // 5.56. Flag Me Down round messages

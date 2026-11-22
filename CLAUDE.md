@@ -1246,8 +1246,27 @@ and forth until we both agree the idea is good **and** worth the effort. So:
   The scheduled announcement is the venue feature to invest in instead.
 - **Double Take** (the name, Randy Nov 22: "Picture Imperfect is
   actually the better name, but Double Take rolls off the tongue better
-  and requires less screen real estate"; designed, **not built**; Randy
-  is preparing test photos): **photos are 1600x1200 (4:3) WebP, quality
+  and requires less screen real estate"). **Built Nov 22 2026**, key
+  `DOUBLE_TAKE` (`startDoubleTakeGame` and friends in `gameEngine.js`,
+  `renderDoubleTakeTV` in `app.js`, `renderDoubleTake` + the gesture
+  code in `play.html`). Plays the pairs marked Ready on
+  /admin/double-take, up to 6 a game (Randy: so it can be tested with
+  2 or 3); the lobby offers it only once one is Ready
+  (`doubleTakeReadyCount`). A room plays unseen photos first
+  (`room.doubleTakePlayed`). Numbers are Randy's yes to Claude's first
+  guesses, `DOUBLE_TAKE_*`: +100 a find, -25 a miss (never below 0) and
+  2s dimmed, a 500 pot draining over 90s, the leftover split evenly
+  among everyone who found one, the muscle badge + 100 for 3 of a
+  photo's 5, Lost in Space for 2+ misses, a tap counts 30 px outside a
+  box. Phones never learn an unfound spot (only found ones are sent).
+  The page swipe ignores drags that start on the photo (found by the
+  phone test). Tested: the smoke test (bots find, miss, tap a found
+  spot, leave one for the clock) and a Playwright phone (tap, miss and
+  dim, a two-finger pinch that zooms without guessing, a zoomed-in tap
+  on the small window, a drag that pans). **Not tested on a real
+  phone yet**; no mode icon yet (👀 shows until
+  `public/modes/mode-double-take.svg` exists). The design notes below
+  are what it was built from: **photos are 1600x1200 (4:3) WebP, quality
   85**, pairs in `public/double-take/` as `<name>-original.webp` and
   `<name>-altered.webp`, exported from one master with identical size,
   crop and settings (the spot-finder compares pixels); each edit at least
