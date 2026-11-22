@@ -936,18 +936,15 @@ and forth until we both agree the idea is good **and** worth the effort. So:
 
 ## Open items (keep current; Randy, Nov 2026: "keep me honest about work that remains")
 
-- **Randy: delete `NEON_URL` from the voxopo environment** (it holds the
-  owner login, more power than any session needs). Nov 22 check: every
-  content file is live (Geography 200, water, Wet Pants, clues).
 - **Local test database** (for the smoke test and trying SQL first): a
   fresh container has none. Make a Postgres 16 cluster on port 54329 with
   `ssl = on` (a self-signed cert; the app always connects with SSL), then
   copy live's tables in with read-only queries (structure, rows; access
   codes structure only).
-- **Run in Neon (Randy):** `content/sql/technology.sql` (Technology to 200)
-  and `content/sql/mythology.sql` (Mythology to 200).
-- **Category depth, next:** Art & Architecture,
-  Famous Firsts (80 each), then US History, World History, World Wars,
+- **Run in Neon (Randy):** `content/sql/technology.sql`,
+  `content/sql/mythology.sql` and `content/sql/art_and_architecture.sql`
+  (each to 200; Randy started on them Nov 22, so check which are done).
+- **Category depth, next:** Famous Firsts (80), then US History, World History, World Wars,
   Literature (about 120).
 - **Waiting on Randy:** trap screens in a real game; the genie redraw; the
   Orange River drawing; Letter Rip's green keys (which letters, which round,
@@ -1087,7 +1084,16 @@ and forth until we both agree the idea is good **and** worth the effort. So:
   hard ones given hooks, Sleipnir and Actaeon retired. Greek about half,
   then Norse, Roman, Egyptian, Arthurian, and the world's myths mostly
   at 300-400.
-  Still to go: Art & Architecture, Famous Firsts,
+  **Art & Architecture** (+120 to 200, Nov 22), to the benchmarks:
+  landmarks and art-class basics at the easy end (Big Ben, the easel,
+  green from blue and yellow), famous buildings, painters and crafts in
+  the middle, techniques and the world's architecture at the hard end,
+  with hooks (Donatello's Ninja Turtle, the Phantom's opera house,
+  Monticello on the nickel). The old 80 re-tiered (Empire State and
+  Venus de Milo to 100; Gaudi, Raphael and fresco to 300; Pei and the
+  Hope poster to 300), Tadao Ando and the Angel of the North retired (no
+  hook for an American pub).
+  Still to go: Famous Firsts,
   then US History, World History, World Wars, Literature. The family's favorites are school subjects
   (biology, astronomy, the World Wars, US history) and pop culture; new
   categories get pun names. **The pop-culture pair** (built Nov 2026, 120
