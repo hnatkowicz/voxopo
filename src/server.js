@@ -15,6 +15,7 @@ import {
     announcementInstalled, readAnnouncementSettings, announcementForRoom
 } from './services/accessControl.js';
 import { healthMiddleware, attachHealthTracking, healthSnapshot } from './services/serverHealth.js';
+import { attachVenueMemory } from './services/venueMemory.js';
 import { fileURLToPath } from 'url';
 
 // Recreate __dirname cleanly for ES module environments
@@ -170,6 +171,9 @@ app.post('/api/create-room', async (req, res) => {
             gameEpoch: 0,
             lastActivity: Date.now() // Time the room was "born"
         };
+        // The venue's last four weeks of played questions, so regulars
+        // don't see repeats (venueMemory.js; question numbers only).
+        attachVenueMemory(activeRooms[code]);
 
         if (!isHostAuthorized(req) || typedCode) grantHostSession(res, req, openingCode);
 
