@@ -777,6 +777,15 @@ Mode keys are used in room votes and in `gameEngine.js`:
     height ("3 / 4 picked", the letter chips, the solver) moved the whole
     board; that line (`.lr-foot`) now keeps one height. After one-tap
     locks, the Spotlight "played better. Much better" (Randy).
+  - **Open: green keys the player didn't pick** (Randy, Nov 2026: "some
+    letters on the phone keypad were green when NOT selected"; he'll play
+    more to pin it down). Green means "your pick, in the puzzle". Leading
+    guess: a letter picked in an earlier round of the same puzzle that hit
+    but wasn't one of the 2 the TV lit, so it stays green in the bank
+    while the TV board doesn't show it, and reads as never picked. Each
+    puzzle starts with a fresh bank (`lr.banks`), so it shouldn't carry
+    over from the last puzzle. Check: which round, which letters, and
+    whether those letters were on the TV.
 - **FLAG_ME_DOWN** (also a standalone mode, after the family asked where it
   went): 15 flags, 5 easy -> 5 medium -> 5 hard, each with 4 country choices
   (1 wrong answer from the same local region, 2 from the same continent).
