@@ -1038,14 +1038,21 @@ and forth until we both agree the idea is good **and** worth the effort. So:
   sports leagues or Olympic rings, and never parodied or mocked-up logos
   (stripping the name off for the quiz is fine).
 - **Spellbound** (Randy, Nov 2026: "a spelling test during trivia night"):
-  `content/spellbound.csv`, 256 questions, **all spelling, no vocab** (vocab
+  `content/spellbound.csv`, **400 questions, 100 per tier** (256 until
+  Nov 23, when Randy said "go wild": the family loves it in Trivi-yeah!;
+  +144 across all three kinds, e.g. *Momento*-style real mistakes like
+  Tumeric, Mozzerella, Parliment, Decathalon), **all spelling, no vocab** (vocab
   stays in Word Nerd, whose old spelling-bee rows are retired). Three kinds:
   "Which is spelled correctly? (meaning)", "Which of these <theme> words is
   misspelled?" and "Fill in the blank: acco_odate". American spelling,
   one right answer per tile: no words whose "misspelling" is a dictionary
   variant (judgment/judgement, minuscule/miniscule, supersede/supercede).
   Wrong answers are mistakes real people make. No word is the target of
-  two tiles, so one tile can't give another away.
+  two tiles, so one tile can't give another away -- and no target word
+  appears spelled correctly in another tile's "which is misspelled?"
+  list (that gives it away too; checked for the Nov 23 batch). Watch for
+  dictionary variants: sherbert and momento are listed variants, so they
+  were left out.
 - **The Great State of...** (Randy, Nov 2026): `content/great_state.csv`,
   307 questions (145 text, 162 picture) -- capitals, city nicknames (Big Apple, La La Land),
   state nicknames, flags, where names came from. Famous nicknames asked
