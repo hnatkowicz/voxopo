@@ -1,6 +1,6 @@
 -- ============================================================================
--- Thinking Pants: the "Wet Pants" category -- 112 of Randy's water maps
--- (100: 21, 200: 31, 300: 35, 400: 25; 100 = Gulf of Mexico, Pacific ...
+-- Thinking Pants: the "Wet Pants" category -- 113 of Randy's water maps
+-- (100: 21, 200: 31, 300: 36, 400: 25; 100 = Gulf of Mexico, Pacific ...
 -- 400 = Davis Strait, Salish Sea, Gulf of San Jorge), each with 6 same-kind
 -- wrong answers (3 shown).
 --
@@ -135,10 +135,11 @@ FROM (VALUES
 ('/water/amur-river.webp',               'Amur River',          ARRAY['Yellow River', 'Lena River', 'Yenisei River', 'Ob River', 'Yalu River', 'Selenga River'], 400),
 ('/water/irrawaddy-river.webp',          'Irrawaddy River',     ARRAY['Salween River', 'Mekong River', 'Chao Phraya River', 'Brahmaputra River', 'Red River', 'Ganges River'], 400),
 ('/water/vistula-river.webp',            'Vistula River',       ARRAY['Oder River', 'Elbe River', 'Dnieper River', 'Neman River', 'Daugava River', 'Danube River'], 400),
-('/water/limpopo-river.webp',            'Limpopo River',       ARRAY['Zambezi River', 'Orange River', 'Okavango River', 'Congo River', 'Niger River', 'Senegal River'], 400)
+('/water/limpopo-river.webp',            'Limpopo River',       ARRAY['Zambezi River', 'Orange River', 'Okavango River', 'Congo River', 'Niger River', 'Senegal River'], 400),
+('/water/orange-river.webp',             'Orange River',        ARRAY['Limpopo River', 'Vaal River', 'Zambezi River', 'Okavango River', 'Kunene River', 'Fish River'], 300)
 ) AS v(visual_asset, correct_answer, wrong_answers, points);
 
 COMMIT;
 
--- Check: should return 112.
+-- Check: should return 113.
 SELECT COUNT(*) FROM questions WHERE game_mode = 'TRIVI_YEAH_II' AND category = 'WET_PANTS';

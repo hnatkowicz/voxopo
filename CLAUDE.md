@@ -976,8 +976,10 @@ and forth until we both agree the idea is good **and** worth the effort. So:
 - **Category depth: done** (Nov 22). Every general category is at 200
   and built to the benchmarks. Next content ideas are Randy's call (more
   Letter Rip phrases is the standing top need).
-- **Waiting on Randy:** trap screens in a real game; the Orange River
-  drawing (Nov 22: "today"); Letter Rip's green keys (Randy watching
+- **Run in Neon (Randy):** `country_monkey_water.sql`,
+  `trivi_yeah_ii_wet_pants.sql`, then `country_monkey_clues.sql` (the
+  Orange River; clues last).
+- **Waiting on Randy:** trap screens in a real game; Letter Rip's green keys (Randy watching
   tonight: which letters, which round, were they on the TV?); flipside's
   own DATABASE_URL (Randy on it, Nov 22). The genie is out: Randy is
   drawing other avatars instead.
@@ -1193,7 +1195,8 @@ and forth until we both agree the idea is good **and** worth the effort. So:
   Yukon; batch 3 (Nov 2026) the Tigris, Jordan, Po, Vistula and St.
   Lawrence (the Gulf of St. Lawrence lost its "St. Lawrence" short answer,
   since it now means either), then the Thames, Limpopo, Columbia and
-  Murray and Randy's re-exported Yangtze. **Still to draw:** the Orange. A
+  Murray and Randy's re-exported Yangtze, and the Orange (Nov 22: Wet
+  Pants 113, Country Monkey water 129, clue "Namibia"). A
   `-2` file is a second drawing (another scale or angle): the newer ones
   (Danube, Rio Grande) are their own Wet Pants tiles, kept off the same
   board by the no-repeat rule; the older ones (Caribbean, Gulf of Mexico,
@@ -1231,8 +1234,14 @@ and forth until we both agree the idea is good **and** worth the effort. So:
   earn their place; the code, /admin setting and art were removed. The
   `theme` columns (`access_codes_theme.sql`) stay in the database, unread.
   The scheduled announcement is the venue feature to invest in instead.
-- **Picture Imperfect** (working name; runner-up Double Take -- Randy,
-  Nov 22 2026; designed, **not built**, "we'll pick this up later"): a
+- **Double Take** (the name, Randy Nov 22: "Picture Imperfect is
+  actually the better name, but Double Take rolls off the tongue better
+  and requires less screen real estate"; designed, **not built**; Randy
+  is preparing test photos): **photos are 1600x1200 (4:3) WebP, quality
+  85**, pairs in `public/double-take/` as `<name>-original.webp` and
+  `<name>-altered.webp`, exported from one master with identical size,
+  crop and settings (the spot-finder compares pixels); each edit at least
+  ~50 px across and ~80 px from the edges, the 5 spread out. a
   spot-the-difference race on Randy's own photos (or public domain /
   CC0 -- not "fair use", which is a defense, not a permission).
   - **Screens:** the TV shows the original and the altered photo side by
@@ -1270,7 +1279,7 @@ and forth until we both agree the idea is good **and** worth the effort. So:
     the TV layout, scores, venue memory and the smoke test (a bot taps
     known spots). Content is Randy's: ~40 pairs for real depth.
   - **Open:** the leftover split, pot size and speed, points per find and
-    per miss (first guess: +100 / -25), round length, the name.
+    per miss (first guess: +100 / -25), round length.
 - **Mind Field:** a name saved for a future mode built around hidden traps
   on a board.
 - **Final Wager clues elsewhere: tabled** (Randy, Nov 2026: a clue that

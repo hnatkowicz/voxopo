@@ -1,6 +1,6 @@
 -- ============================================================================
 -- Country Monkey: WATER questions ("Which body of water is highlighted?") --
--- 128 rows from 118 of Randy's water maps (public/water/): oceans, seas,
+-- 129 rows from 119 of Randy's water maps (public/water/): oceans, seas,
 -- gulfs, bays, straits, lakes and rivers. A game mixes in 3 of 20.
 --
 -- Wrong answers are the same kind of water (lakes among lakes, rivers among
@@ -9,7 +9,7 @@
 -- shortens to the same name ("Hudson" could be the bay, river or strait).
 --
 -- category = region; a few belong to two or three (the Mediterranean, the Red
--- Sea, the Indian Ocean). Rows: Africa 17, Europe 24, Asia & Pacific 22,
+-- Sea, the Indian Ocean). Rows: Africa 18, Europe 24, Asia & Pacific 22,
 -- Middle East 13, Americas 52, World Wide only 0. The -2 files and
 -- caspian-sea.webp are second drawings, used for a second region.
 --
@@ -45,6 +45,7 @@ FROM (VALUES
 ('AFRICA',            '/water/zambia-river.webp',            'Zambezi River',         ARRAY['Limpopo River', 'Congo River', 'Orange River', 'Okavango River', 'Niger River', 'Nile River'], ARRAY['Zambezi'], 200),
 ('AFRICA',           '/water/indian-ocean.webp',            'Indian Ocean',         ARRAY['Pacific Ocean', 'South Atlantic Ocean', 'North Atlantic Ocean', 'Southern Ocean', 'Arctic Ocean', 'South China Sea'], ARRAY['Indian'], 100),
 ('AFRICA',           '/water/limpopo-river.webp',           'Limpopo River',        ARRAY['Zambezi River', 'Orange River', 'Okavango River', 'Congo River', 'Niger River', 'Senegal River'], ARRAY['Limpopo'], 250),
+('AFRICA',           '/water/orange-river.webp',            'Orange River',         ARRAY['Limpopo River', 'Vaal River', 'Zambezi River', 'Okavango River', 'Kunene River', 'Fish River'], ARRAY['Orange'], 250),
 ('AFRICA',           '/water/niger-river.webp',             'Niger River',          ARRAY['Congo River', 'Senegal River', 'Nile River', 'Volta River', 'Gambia River', 'Zambezi River'], ARRAY['Niger'], 200),
 -- EUROPE
 ('EUROPE',            '/water/adriatic.webp',                'Adriatic Sea',          ARRAY['Aegean Sea', 'Ionian Sea', 'Tyrrhenian Sea', 'Black Sea', 'Ligurian Sea', 'Sea of Marmara'], ARRAY['Adriatic'], 150),
@@ -167,5 +168,5 @@ FROM (VALUES
 
 COMMIT;
 
--- Check: should return 128.
+-- Check: should return 129.
 SELECT COUNT(*) FROM questions WHERE game_mode = 'COUNTRY_MONKEY' AND subcategory = 'WATER';
