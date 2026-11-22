@@ -929,7 +929,8 @@ and forth until we both agree the idea is good **and** worth the effort. So:
   `ssl = on` (a self-signed cert; the app always connects with SSL), then
   copy live's tables in with read-only queries (structure, rows; access
   codes structure only).
-- **Category depth, next:** Technology, Mythology, Art & Architecture,
+- **Run in Neon (Randy):** `content/sql/technology.sql` (Technology to 200).
+- **Category depth, next:** Mythology, Art & Architecture,
   Famous Firsts (80 each), then US History, World History, World Wars,
   Literature (about 120).
 - **Waiting on Randy:** trap screens in a real game; the genie redraw; the
@@ -1055,7 +1056,13 @@ and forth until we both agree the idea is good **and** worth the effort. So:
   (several were reworded for that), and none repeats a Wet Pants picture's
   answer or Science & Nature's glacier. Countries that are also flag and
   map answers are fine: a board never shows the same answer twice.
-  Still to go: Technology, Mythology, Art & Architecture, Famous Firsts,
+  **Technology** done (+120 to 200, Nov 22): everyday computer words and
+  apps at the easy end, acronyms and gadgets in the middle, computing
+  history and word origins at the hard end. Consoles and arcade games stay
+  with Extra Lives, brands' logos with Logo My Eggo; swapped out anything
+  Word Nerd, Pop Quiz, Movies & TV or World Wars already asks (LOL,
+  selfie, "You've got mail", Pixar, Colossus).
+  Still to go: Mythology, Art & Architecture, Famous Firsts,
   then US History, World History, World Wars, Literature. The family's favorites are school subjects
   (biology, astronomy, the World Wars, US history) and pop culture; new
   categories get pun names. **The pop-culture pair** (built Nov 2026, 120

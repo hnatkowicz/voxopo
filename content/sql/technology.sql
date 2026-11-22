@@ -4,8 +4,8 @@
 -- Thinking Pants category TECHNOLOGY. To change a question, change the
 -- spreadsheet and rebuild.
 --
--- Replaces the WHOLE category with the spreadsheet's 80 live questions
--- (100: 20, 200: 20, 300: 20, 400: 20), inside a transaction. Safe to re-run.
+-- Replaces the WHOLE category with the spreadsheet's 200 live questions
+-- (100: 50, 200: 50, 300: 50, 400: 50), inside a transaction. Safe to re-run.
 -- ============================================================================
 
 -- The facts column (shown on the TV after the answer) is added the first
@@ -98,6 +98,126 @@ INSERT INTO questions (question_number, game_mode, category, subcategory, factio
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'TECHNOLOGY', 'ORIGINAL', NULL,
         'In the word "email," what does the "e" stand for?', NULL,
         'Electronic', ARRAY['Easy', 'Express', 'External', 'Ethernet', 'Exchange', 'Encrypted'], 100, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'TECHNOLOGY', 'TECHNOLOGY_BATCH_2', NULL,
+        'Which key is usually the longest one on a computer keyboard?', NULL,
+        'The space bar', ARRAY['The Enter key', 'The Shift key', 'The Tab key', 'The Backspace key', 'The Caps Lock key', 'The Escape key'], 100, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'TECHNOLOGY', 'TECHNOLOGY_BATCH_2', NULL,
+        'What do you call the small picture on a screen that you click to open an app or a file?', NULL,
+        'An icon', ARRAY['A cursor', 'A pixel', 'A scroll bar', 'A menu', 'A window', 'A toolbar'], 100, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'TECHNOLOGY', 'TECHNOLOGY_BATCH_2', NULL,
+        'What do you call a website or app where people post and comment, like Instagram?', NULL,
+        'Social media', ARRAY['A search engine', 'A spreadsheet', 'A web browser', 'An operating system', 'An email client', 'Cloud storage'], 100, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'TECHNOLOGY', 'TECHNOLOGY_BATCH_2', NULL,
+        'What is the blinking line that shows where your typing will appear called?', NULL,
+        'The cursor', ARRAY['The tab', 'The toolbar', 'The scroll bar', 'The margin', 'The icon', 'The ruler'], 100, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'TECHNOLOGY', 'TECHNOLOGY_BATCH_2', NULL,
+        'On a website, what does "FAQ" stand for?', NULL,
+        'Frequently Asked Questions', ARRAY['Facts And Quotes', 'Fast Answer Queue', 'Frequently Answered Queries', 'Files And Questions', 'Free Access Quota', 'Find All Questions'], 100, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'TECHNOLOGY', 'TECHNOLOGY_BATCH_2', NULL,
+        'What do you call a picture of your own computer or phone screen?', NULL,
+        'A screenshot', ARRAY['A screensaver', 'A wallpaper', 'A webcam', 'A selfie', 'A slideshow', 'A thumbnail'], 100, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'TECHNOLOGY', 'TECHNOLOGY_BATCH_2', NULL,
+        'Which bits of data, named after a snack, does a website save in your browser to remember you?', NULL,
+        'Cookies', ARRAY['Crumbs', 'Chips', 'Biscuits', 'Crackers', 'Cupcakes', 'Muffins'], 100, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'TECHNOLOGY', 'TECHNOLOGY_BATCH_2', NULL,
+        'Which app is known for short videos and a "For You" page?', NULL,
+        'TikTok', ARRAY['Instagram', 'Snapchat', 'YouTube', 'Pinterest', 'Twitter', 'Tumblr'], 100, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'TECHNOLOGY', 'TECHNOLOGY_BATCH_2', NULL,
+        'Which voice assistant wakes up when an iPhone owner says "Hey" and its name?', NULL,
+        'Siri', ARRAY['Alexa', 'Cortana', 'Bixby', 'Jarvis', 'Watson', 'Echo'], 100, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'TECHNOLOGY', 'TECHNOLOGY_BATCH_2', NULL,
+        'What do you call the main screen of a computer, where your icons and folders sit?', NULL,
+        'The desktop', ARRAY['The dashboard', 'The homepage', 'The taskbar', 'The tabletop', 'The motherboard', 'The control panel'], 100, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'TECHNOLOGY', 'TECHNOLOGY_BATCH_2', NULL,
+        'Which part of a computer keeps your files saved even when the power is off?', NULL,
+        'The hard drive', ARRAY['The RAM', 'The monitor', 'The CPU', 'The power supply', 'The graphics card', 'The keyboard'], 100, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'TECHNOLOGY', 'TECHNOLOGY_BATCH_2', NULL,
+        'What do you call a computer you can carry, with a screen that folds down over the keyboard?', NULL,
+        'A laptop', ARRAY['A tablet', 'A server', 'A mainframe', 'A notepad', 'A console', 'A terminal'], 100, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'TECHNOLOGY', 'TECHNOLOGY_BATCH_2', NULL,
+        '"App" is short for what word?', NULL,
+        'Application', ARRAY['Appliance', 'Apparatus', 'Approval', 'Appendix', 'Apprentice', 'Appointment'], 100, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'TECHNOLOGY', 'TECHNOLOGY_BATCH_2', NULL,
+        'What is the box that shares an internet connection around a home by Wi-Fi usually called?', NULL,
+        'A router', ARRAY['A server', 'A scanner', 'A speaker', 'A charger', 'A projector', 'A receiver'], 100, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'TECHNOLOGY', 'TECHNOLOGY_BATCH_2', NULL,
+        'Files stored online, so you can reach them from any device, are said to be "in the..." what?', NULL,
+        'The cloud', ARRAY['The sky', 'The moon', 'The stars', 'The satellite', 'The rainbow', 'The orbit'], 100, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'TECHNOLOGY', 'TECHNOLOGY_BATCH_2', NULL,
+        'Moving from web page to web page by clicking links is often called what, like riding waves?', NULL,
+        'Surfing', ARRAY['Sailing', 'Swimming', 'Diving', 'Rowing', 'Skating', 'Floating'], 100, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'TECHNOLOGY', 'TECHNOLOGY_BATCH_2', NULL,
+        'What do you call a computer program that chats with you, like a website''s customer-service helper?', NULL,
+        'A chatbot', ARRAY['A chatroom', 'A browser', 'A spreadsheet', 'A firewall', 'A search engine', 'A plug-in'], 100, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'TECHNOLOGY', 'TECHNOLOGY_BATCH_2', NULL,
+        'What do you call a show you listen to online, usually released in episodes?', NULL,
+        'A podcast', ARRAY['A playlist', 'A broadcast', 'A webinar', 'A vlog', 'A ringtone', 'A newsletter'], 100, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'TECHNOLOGY', 'TECHNOLOGY_BATCH_2', NULL,
+        'On a TV, what does "HD" stand for?', NULL,
+        'High Definition', ARRAY['High Density', 'Hyper Display', 'Home Digital', 'Heavy Duty', 'High Detail', 'Half Digital'], 100, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'TECHNOLOGY', 'TECHNOLOGY_BATCH_2', NULL,
+        'What does the keyboard key labeled "Esc" stand for?', NULL,
+        'Escape', ARRAY['Escalate', 'Escort', 'Escrow', 'Essential', 'Estimate', 'Escalator'], 100, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'TECHNOLOGY', 'TECHNOLOGY_BATCH_2', NULL,
+        'What do you call the small device you hold to change TV channels from across the room?', NULL,
+        'A remote control', ARRAY['A joystick', 'A dial', 'A tuner', 'A dongle', 'A trackpad', 'A receiver'], 100, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'TECHNOLOGY', 'TECHNOLOGY_BATCH_2', NULL,
+        'What do you call the pen-like tool for drawing or writing on a tablet''s screen?', NULL,
+        'A stylus', ARRAY['A wand', 'A marker', 'A probe', 'A quill', 'A chisel', 'A baton'], 100, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'TECHNOLOGY', 'TECHNOLOGY_BATCH_2', NULL,
+        'What do you call a copy of your files kept somewhere else, in case something goes wrong?', NULL,
+        'A backup', ARRAY['A download', 'A shortcut', 'A refresh', 'A restart', 'A reboot', 'An upgrade'], 100, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'TECHNOLOGY', 'TECHNOLOGY_BATCH_2', NULL,
+        'What does it mean to "reboot" a computer?', NULL,
+        'Turn it off and on again', ARRAY['Delete everything on it', 'Clean the screen', 'Buy a new one', 'Change the password', 'Unplug the mouse', 'Give it a kick'], 100, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'TECHNOLOGY', 'TECHNOLOGY_BATCH_2', NULL,
+        'Which key do you hold down to type a capital letter?', NULL,
+        'The Shift key', ARRAY['The Tab key', 'The Alt key', 'The Ctrl key', 'The Enter key', 'The space bar', 'The Esc key'], 100, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'TECHNOLOGY', 'TECHNOLOGY_BATCH_2', NULL,
+        'On most computers, what shape is the mouse pointer when it isn''t over a link or text?', NULL,
+        'An arrow', ARRAY['A hand', 'A cross', 'A circle', 'A star', 'A square', 'A pencil'], 100, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'TECHNOLOGY', 'TECHNOLOGY_BATCH_2', NULL,
+        'Which word means copying a file from the internet onto your own device?', NULL,
+        'Download', ARRAY['Upload', 'Unload', 'Offload', 'Export', 'Reload', 'Overload'], 100, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'TECHNOLOGY', 'TECHNOLOGY_BATCH_2', NULL,
+        'What do you call the short secret number you type for a bank card or to unlock a phone?', NULL,
+        'A PIN', ARRAY['A CVV', 'A ZIP', 'An ID', 'A key', 'A token', 'A tag'], 100, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'TECHNOLOGY', 'TECHNOLOGY_BATCH_2', NULL,
+        'Which button in a web browser takes you to the page you were just on?', NULL,
+        'The Back button', ARRAY['The Home button', 'The Refresh button', 'The Undo button', 'The Exit button', 'The Close button', 'The Forward button'], 100, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'TECHNOLOGY', 'TECHNOLOGY_BATCH_2', NULL,
+        'What is the background picture on a phone''s home screen usually called?', NULL,
+        'Wallpaper', ARRAY['Screensaver', 'Banner', 'Poster', 'Canvas', 'Cover', 'Backdrop'], 100, NULL);
 
 -- 200 points
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
@@ -180,6 +300,126 @@ INSERT INTO questions (question_number, game_mode, category, subcategory, factio
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'TECHNOLOGY', 'ORIGINAL', NULL,
         'Which 2009 mobile game from Finland has players slingshot cartoon birds at egg-stealing pigs?', NULL,
         'Angry Birds', ARRAY['Flappy Bird', 'Cut the Rope', 'Fruit Ninja', 'Candy Crush Saga', 'Doodle Jump', 'Temple Run'], 200, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'TECHNOLOGY', 'TECHNOLOGY_BATCH_2', NULL,
+        'What does "LED" stand for?', NULL,
+        'Light-Emitting Diode', ARRAY['Low-Energy Display', 'Light-Enhanced Diode', 'Liquid Electric Display', 'Laser-Emitting Device', 'Light Energy Device', 'Linear Electron Diode'], 200, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'TECHNOLOGY', 'TECHNOLOGY_BATCH_2', NULL,
+        'On a flat screen, what does "LCD" stand for?', NULL,
+        'Liquid Crystal Display', ARRAY['Light Color Display', 'Laser Crystal Device', 'Liquid Color Diode', 'Low Contrast Display', 'Lit Crystal Diode', 'Linear Crystal Display'], 200, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'TECHNOLOGY', 'TECHNOLOGY_BATCH_2', NULL,
+        'What does "ISP" stand for?', NULL,
+        'Internet Service Provider', ARRAY['Internet Security Protocol', 'Integrated System Processor', 'Internal Server Port', 'Instant Search Program', 'Internet Speed Package', 'International Signal Provider'], 200, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'TECHNOLOGY', 'TECHNOLOGY_BATCH_2', NULL,
+        'What does "VPN" stand for?', NULL,
+        'Virtual Private Network', ARRAY['Verified Personal Network', 'Visual Protocol Node', 'Virtual Public Node', 'Very Private Network', 'Variable Proxy Network', 'Virtual Protected Number'], 200, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'TECHNOLOGY', 'TECHNOLOGY_BATCH_2', NULL,
+        'What is software called when anyone may read, change and share its code?', NULL,
+        'Open source', ARRAY['Freeware', 'Shareware', 'Firmware', 'Middleware', 'Spyware', 'Closed source'], 200, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'TECHNOLOGY', 'TECHNOLOGY_BATCH_2', NULL,
+        'Which Canadian company made the BlackBerry phone?', NULL,
+        'Research In Motion', ARRAY['Nokia', 'Motorola', 'Palm', 'Ericsson', 'Siemens', 'HTC'], 200, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'TECHNOLOGY', 'TECHNOLOGY_BATCH_2', NULL,
+        'Which online encyclopedia, launched in 2001, can be edited by anyone?', NULL,
+        'Wikipedia', ARRAY['Britannica Online', 'Encarta', 'Wiktionary', 'Quora', 'Ask Jeeves', 'WebMD'], 200, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'TECHNOLOGY', 'TECHNOLOGY_BATCH_2', NULL,
+        'A computer chip''s speed is often given as "3 GHz." What unit is that?', NULL,
+        'Hertz', ARRAY['Bytes', 'Watts', 'Volts', 'Bits', 'Pixels', 'Amps'], 200, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'TECHNOLOGY', 'TECHNOLOGY_BATCH_2', NULL,
+        'Which of these is the largest amount of storage?', NULL,
+        'A terabyte', ARRAY['A gigabyte', 'A megabyte', 'A kilobyte', 'A byte', 'A bit', 'A nibble'], 200, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'TECHNOLOGY', 'TECHNOLOGY_BATCH_2', NULL,
+        'Which white music player, launched in 2001, promised "1,000 songs in your pocket"?', NULL,
+        'The iPod', ARRAY['The Walkman', 'The Zune', 'The Discman', 'The Creative Zen', 'The MiniDisc', 'The iRiver'], 200, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'TECHNOLOGY', 'TECHNOLOGY_BATCH_2', NULL,
+        'Which portable cassette player, launched in 1979, made music with headphones something you took everywhere?', NULL,
+        'The Walkman', ARRAY['The boombox', 'The Discman', 'The iPod', 'The Zune', 'The gramophone', 'The jukebox'], 200, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'TECHNOLOGY', 'TECHNOLOGY_BATCH_2', NULL,
+        'Which old storage disk lives on as the picture on the "Save" button in many programs?', NULL,
+        'The floppy disk', ARRAY['The CD-ROM', 'The cassette', 'The Zip disk', 'The hard drive', 'The memory card', 'The punch card'], 200, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'TECHNOLOGY', 'TECHNOLOGY_BATCH_2', NULL,
+        'What does a firewall do on a computer network?', NULL,
+        'Blocks unwanted traffic from getting in', ARRAY['Cools the processor', 'Stops the computer catching fire', 'Speeds up downloads', 'Backs up your files', 'Deletes old emails', 'Charges the battery'], 200, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'TECHNOLOGY', 'TECHNOLOGY_BATCH_2', NULL,
+        'What are the "I''m not a robot" puzzles that ask you to pick out traffic lights called?', NULL,
+        'CAPTCHAs', ARRAY['Cookies', 'Pop-ups', 'Spam filters', 'Bot traps', 'Pixel puzzles', 'Firewalls'], 200, 'CAPTCHA stands for "Completely Automated Public Turing test to tell Computers and Humans Apart."');
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'TECHNOLOGY', 'TECHNOLOGY_BATCH_2', NULL,
+        'When a site texts you a code after you type your password, what is that extra step called?', NULL,
+        'Two-factor authentication', ARRAY['Encryption', 'A firewall', 'Phishing', 'Cookie consent', 'Password recovery', 'A captcha'], 200, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'TECHNOLOGY', 'TECHNOLOGY_BATCH_2', NULL,
+        'On a radio dial, what does "AM" stand for?', NULL,
+        'Amplitude Modulation', ARRAY['Ante Meridiem', 'Audio Mode', 'Analog Music', 'Air Modulation', 'Automatic Mixing', 'Amplified Mono'], 200, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'TECHNOLOGY', 'TECHNOLOGY_BATCH_2', NULL,
+        'Which ride-hailing company, founded in 2009, lets you call a car from an app?', NULL,
+        'Uber', ARRAY['Lyft', 'Grubhub', 'Airbnb', 'Zipcar', 'DoorDash', 'Waze'], 200, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'TECHNOLOGY', 'TECHNOLOGY_BATCH_2', NULL,
+        'Which home-sharing site began in 2008 when its founders rented out air mattresses in their apartment?', NULL,
+        'Airbnb', ARRAY['Vrbo', 'Couchsurfing', 'Booking.com', 'Expedia', 'Craigslist', 'Trivago'], 200, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'TECHNOLOGY', 'TECHNOLOGY_BATCH_2', NULL,
+        'Which company, founded in 1997 to mail DVDs in red envelopes, became a streaming giant?', NULL,
+        'Netflix', ARRAY['Blockbuster', 'Hulu', 'Redbox', 'HBO', 'Roku', 'Disney+'], 200, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'TECHNOLOGY', 'TECHNOLOGY_BATCH_2', NULL,
+        'What is software called that secretly watches what you do on your computer?', NULL,
+        'Spyware', ARRAY['Adware', 'Freeware', 'Firmware', 'Shareware', 'Bloatware', 'Middleware'], 200, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'TECHNOLOGY', 'TECHNOLOGY_BATCH_2', NULL,
+        'What is malware called that locks up your files until you pay?', NULL,
+        'Ransomware', ARRAY['Spyware', 'Adware', 'A worm', 'A keylogger', 'A rootkit', 'Bloatware'], 200, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'TECHNOLOGY', 'TECHNOLOGY_BATCH_2', NULL,
+        'Which kind of malware, named after a story from the Greek myths, sneaks in looking like something harmless?', NULL,
+        'A Trojan horse', ARRAY['A worm', 'A siren', 'A hydra', 'A cyclops', 'A minotaur', 'A phoenix'], 200, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'TECHNOLOGY', 'TECHNOLOGY_BATCH_2', NULL,
+        'What kind of file is an MP3?', NULL,
+        'A sound file', ARRAY['A photo', 'A video', 'A spreadsheet', 'A text document', 'A program', 'A web page'], 200, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'TECHNOLOGY', 'TECHNOLOGY_BATCH_2', NULL,
+        'Which internet calling service, launched in 2003 with code written in Estonia, became a verb ("I''ll ___ you later")?', NULL,
+        'Skype', ARRAY['FaceTime', 'Zoom', 'Google Talk', 'MSN Messenger', 'ICQ', 'Viber'], 200, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'TECHNOLOGY', 'TECHNOLOGY_BATCH_2', NULL,
+        'What kind of light do most TV remote controls use to send their signal?', NULL,
+        'Infrared', ARRAY['Ultraviolet', 'Bluetooth', 'X-rays', 'Microwaves', 'Gamma rays', 'Laser light'], 200, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'TECHNOLOGY', 'TECHNOLOGY_BATCH_2', NULL,
+        'Which kind of rechargeable battery powers most phones and laptops?', NULL,
+        'Lithium-ion', ARRAY['Nickel-cadmium', 'Alkaline', 'Lead-acid', 'Zinc-carbon', 'Mercury', 'Silver oxide'], 200, 'Lithium-ion batteries won their three inventors the 2019 Nobel Prize in Chemistry.');
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'TECHNOLOGY', 'TECHNOLOGY_BATCH_2', NULL,
+        'In an email, what does "CC" stand for?', NULL,
+        'Carbon copy', ARRAY['Common contact', 'Confirmed copy', 'Copy cache', 'Central contact', 'Copy chain', 'Copied content'], 200, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'TECHNOLOGY', 'TECHNOLOGY_BATCH_2', NULL,
+        'What did people fear the "Y2K bug" would do when the year 2000 arrived?', NULL,
+        'Make computers read "00" as 1900', ARRAY['Stop every clock at midnight', 'Use up all internet addresses', 'Make satellites fall', 'Make phones explode', 'Make calculators round up', 'Drain every battery'], 200, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'TECHNOLOGY', 'TECHNOLOGY_BATCH_2', NULL,
+        'On Instagram or X, what does "DM" stand for?', NULL,
+        'Direct message', ARRAY['Digital mail', 'Data message', 'Daily memo', 'Delivered message', 'Device mail', 'Draft message'], 200, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'TECHNOLOGY', 'TECHNOLOGY_BATCH_2', NULL,
+        'What does "QR" in QR code stand for?', NULL,
+        'Quick Response', ARRAY['Quality Read', 'Quote Request', 'Quantum Record', 'Query Result', 'Quick Reference', 'Quarter Rotation'], 200, NULL);
 
 -- 300 points
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
@@ -262,6 +502,126 @@ INSERT INTO questions (question_number, game_mode, category, subcategory, factio
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'TECHNOLOGY', 'ORIGINAL', NULL,
         'Which Italian inventor shared the 1909 Nobel Prize in Physics for his work on wireless telegraphy, the forerunner of radio?', NULL,
         'Guglielmo Marconi', ARRAY['Nikola Tesla', 'Heinrich Hertz', 'Alessandro Volta', 'Enrico Fermi', 'Antonio Meucci', 'Galileo Ferraris'], 300, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'TECHNOLOGY', 'TECHNOLOGY_BATCH_2', NULL,
+        'Which digital encyclopedia, sold on CD-ROM from 1993, shut down in 2009 as free online ones took over?', NULL,
+        'Encarta', ARRAY['Britannica', 'World Book', 'Wikipedia', 'Webster''s', 'AltaVista', 'Lycos'], 300, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'TECHNOLOGY', 'TECHNOLOGY_BATCH_2', NULL,
+        'In a phone''s SIM card, what does "SIM" stand for?', NULL,
+        'Subscriber Identity Module', ARRAY['Secure Internet Memory', 'System Identification Mode', 'Signal Input Module', 'Smart Identity Memory', 'Subscriber Information Memory', 'Single Interface Module'], 300, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'TECHNOLOGY', 'TECHNOLOGY_BATCH_2', NULL,
+        'What does "GIF" stand for?', NULL,
+        'Graphics Interchange Format', ARRAY['Graphic Image File', 'General Image Format', 'Graphical Internet Feed', 'Generated Image Frame', 'Graphics Index File', 'Global Image Format'], 300, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'TECHNOLOGY', 'TECHNOLOGY_BATCH_2', NULL,
+        'Which TV-recording box, launched in 1999, let viewers pause live TV?', NULL,
+        'TiVo', ARRAY['Roku', 'VCR', 'LaserDisc', 'Chromecast', 'Slingbox', 'Betamax'], 300, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'TECHNOLOGY', 'TECHNOLOGY_BATCH_2', NULL,
+        'Which home videotape format, launched in 1975, famously lost a "format war" to VHS?', NULL,
+        'Betamax', ARRAY['LaserDisc', 'Video 8', 'MiniDV', 'U-matic', 'Super 8', 'Cartrivision'], 300, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'TECHNOLOGY', 'TECHNOLOGY_BATCH_2', NULL,
+        'What does "HTML" stand for?', NULL,
+        'HyperText Markup Language', ARRAY['HighText Machine Language', 'Hyperlink Text Mode Language', 'Home Tool Markup Language', 'HyperTransfer Main Link', 'Hyper Terminal Mail List', 'Hybrid Text Markup Logic'], 300, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'TECHNOLOGY', 'TECHNOLOGY_BATCH_2', NULL,
+        'Which number system uses 16 symbols, 0 to 9 and then A to F?', NULL,
+        'Hexadecimal', ARRAY['Binary', 'Decimal', 'Octal', 'Roman numerals', 'Duodecimal', 'Sexagesimal'], 300, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'TECHNOLOGY', 'TECHNOLOGY_BATCH_2', NULL,
+        'Which computer company did Steve Jobs found after he was pushed out of his first one in 1985?', NULL,
+        'NeXT', ARRAY['Oracle', 'Sun Microsystems', 'Palm', 'General Magic', 'Be Inc.', 'Atari'], 300, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'TECHNOLOGY', 'TECHNOLOGY_BATCH_2', NULL,
+        'What does "LAN" stand for?', NULL,
+        'Local Area Network', ARRAY['Large Access Node', 'Linked Area Network', 'Line Access Number', 'Local Access Node', 'Long Area Network', 'Logical Array Network'], 300, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'TECHNOLOGY', 'TECHNOLOGY_BATCH_2', NULL,
+        'Which search engine, launched in 1996, had a butler as its mascot?', NULL,
+        'Ask Jeeves', ARRAY['AltaVista', 'Lycos', 'Excite', 'Yahoo!', 'Dogpile', 'HotBot'], 300, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'TECHNOLOGY', 'TECHNOLOGY_BATCH_2', NULL,
+        'Which tiny electronic switch, invented at Bell Labs in 1947, replaced bulky vacuum tubes?', NULL,
+        'The transistor', ARRAY['The microchip', 'The diode', 'The capacitor', 'The resistor', 'The relay', 'The fuse'], 300, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'TECHNOLOGY', 'TECHNOLOGY_BATCH_2', NULL,
+        'Which beginner-friendly programming language was created at Dartmouth College in 1964?', NULL,
+        'BASIC', ARRAY['COBOL', 'Fortran', 'Logo', 'Pascal', 'Lisp', 'Ada'], 300, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'TECHNOLOGY', 'TECHNOLOGY_BATCH_2', NULL,
+        'In computing, what does "ROM" stand for?', NULL,
+        'Read-Only Memory', ARRAY['Random Order Memory', 'Rapid Output Module', 'Recorded Optical Media', 'Run On Memory', 'Remote Operating Mode', 'Read Order Map'], 300, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'TECHNOLOGY', 'TECHNOLOGY_BATCH_2', NULL,
+        'Which web portal did Stanford students Jerry Yang and David Filo start in 1994?', NULL,
+        'Yahoo!', ARRAY['Google', 'AltaVista', 'Excite', 'Lycos', 'Netscape', 'AOL'], 300, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'TECHNOLOGY', 'TECHNOLOGY_BATCH_2', NULL,
+        'Which web browser, released in 1994, was the first big commercial browser and led to Mozilla''s Firefox?', NULL,
+        'Netscape Navigator', ARRAY['Internet Explorer', 'Opera', 'Safari', 'Chrome', 'Lynx', 'Mosaic'], 300, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'TECHNOLOGY', 'TECHNOLOGY_BATCH_2', NULL,
+        'What do you call a step-by-step set of instructions a computer follows, like a recipe?', NULL,
+        'An algorithm', ARRAY['An equation', 'A spreadsheet', 'A protocol', 'A database', 'A compiler', 'A formula'], 300, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'TECHNOLOGY', 'TECHNOLOGY_BATCH_2', NULL,
+        'Which word for an online diary comes from "web log"?', NULL,
+        'Blog', ARRAY['Vlog', 'Wiki', 'Weblink', 'Forum', 'Webinar', 'Feed'], 300, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'TECHNOLOGY', 'TECHNOLOGY_BATCH_2', NULL,
+        'What did the Napster app, launched in 1999, let people share for free?', NULL,
+        'Music files', ARRAY['Movies', 'Photos', 'E-books', 'Video games', 'Recipes', 'Passwords'], 300, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'TECHNOLOGY', 'TECHNOLOGY_BATCH_2', NULL,
+        'What does "IoT" stand for?', NULL,
+        'Internet of Things', ARRAY['Input of Text', 'Integration of Technology', 'Internet of Tools', 'Interface over Transfer', 'Index of Terms', 'Internet of Transfers'], 300, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'TECHNOLOGY', 'TECHNOLOGY_BATCH_2', NULL,
+        'What does "SSD" stand for, a kind of storage with no moving parts?', NULL,
+        'Solid-State Drive', ARRAY['Super Speed Disk', 'Secure System Drive', 'Single Storage Device', 'Silicon Storage Disk', 'System Save Drive', 'Static Speed Drive'], 300, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'TECHNOLOGY', 'TECHNOLOGY_BATCH_2', NULL,
+        'Which part of a computer draws the images on screen and is prized for gaming and AI?', NULL,
+        'The graphics card', ARRAY['The sound card', 'The motherboard', 'The power supply', 'The network card', 'The cooling fan', 'The BIOS chip'], 300, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'TECHNOLOGY', 'TECHNOLOGY_BATCH_2', NULL,
+        'Which company makes the GeForce graphics cards?', NULL,
+        'Nvidia', ARRAY['AMD', 'Qualcomm', 'ASUS', 'Dell', 'Logitech', 'Creative'], 300, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'TECHNOLOGY', 'TECHNOLOGY_BATCH_2', NULL,
+        'Internet speeds are often given in Mbps. What does the "ps" stand for?', NULL,
+        'Per second', ARRAY['Per session', 'Packets sent', 'Power supply', 'Pixels shown', 'Ports served', 'Per signal'], 300, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'TECHNOLOGY', 'TECHNOLOGY_BATCH_2', NULL,
+        'Which country''s web addresses end in ".de"?', NULL,
+        'Germany', ARRAY['Denmark', 'Spain', 'Netherlands', 'Dominica', 'Austria', 'Switzerland'], 300, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'TECHNOLOGY', 'TECHNOLOGY_BATCH_2', NULL,
+        'In "SMS," the technical name for a text message, what does the first "S" stand for?', NULL,
+        'Short', ARRAY['Simple', 'Secure', 'Standard', 'Speedy', 'Signal', 'Single'], 300, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'TECHNOLOGY', 'TECHNOLOGY_BATCH_2', NULL,
+        'What does "PDA" stand for, the pocket organizers of the 1990s?', NULL,
+        'Personal Digital Assistant', ARRAY['Portable Data Accessory', 'Personal Device App', 'Private Digital Agenda', 'Pocket Data Assistant', 'Portable Digital Archive', 'Personal Dial Adapter'], 300, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'TECHNOLOGY', 'TECHNOLOGY_BATCH_2', NULL,
+        'What does "GUI," pronounced "gooey," stand for?', NULL,
+        'Graphical User Interface', ARRAY['General Utility Interface', 'Graphic Unit Index', 'Guided User Input', 'Global User Interface', 'Graphical Usage Indicator', 'Generic User Integration'], 300, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'TECHNOLOGY', 'TECHNOLOGY_BATCH_2', NULL,
+        'What does "URL" stand for?', NULL,
+        'Uniform Resource Locator', ARRAY['Universal Routing Link', 'Unique Reference Label', 'Uniform Retrieval Language', 'User Request Line', 'Universal Resource Library', 'Unified Remote Location'], 300, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'TECHNOLOGY', 'TECHNOLOGY_BATCH_2', NULL,
+        'Which free email service, launched on April Fools'' Day 2004 with a then-huge 1 GB of storage, was at first taken for a joke?', NULL,
+        'Gmail', ARRAY['Hotmail', 'Yahoo! Mail', 'Outlook', 'AOL Mail', 'ProtonMail', 'iCloud Mail'], 300, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'TECHNOLOGY', 'TECHNOLOGY_BATCH_2', NULL,
+        'What does "DSL," a kind of internet over phone lines, stand for?', NULL,
+        'Digital Subscriber Line', ARRAY['Data Service Link', 'Direct Speed Line', 'Digital Signal Loop', 'Dual Server Link', 'Data Subscriber Lane', 'Direct System Line'], 300, NULL);
 
 -- 400 points
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
@@ -344,8 +704,128 @@ INSERT INTO questions (question_number, game_mode, category, subcategory, factio
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'TECHNOLOGY', 'ORIGINAL', NULL,
         'In 1976, Steve Jobs''s new company sold its first computer, a bare circuit board, for what famously odd price?', NULL,
         '$666.66', ARRAY['$999.99', '$500.00', '$1,000.00', '$777.77', '$1,234.56', '$299.99'], 400, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'TECHNOLOGY', 'TECHNOLOGY_BATCH_2', NULL,
+        'What does "JPEG," the photo format, stand for?', NULL,
+        'Joint Photographic Experts Group', ARRAY['Joint Picture Encoding Group', 'Just Pixels Encoded Graphically', 'Japanese Photo Engineering Guild', 'Joined Pixel Export Grid', 'Junior Photographic Editors Guild', 'Joint Print Exchange Group'], 400, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'TECHNOLOGY', 'TECHNOLOGY_BATCH_2', NULL,
+        'Which programming language, released in 1959 for business records, still runs many banks'' systems?', NULL,
+        'COBOL', ARRAY['Fortran', 'BASIC', 'Pascal', 'Lisp', 'ALGOL', 'Ada'], 400, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'TECHNOLOGY', 'TECHNOLOGY_BATCH_2', NULL,
+        'Dennis Ritchie created which programming language at Bell Labs in the early 1970s, a successor to one called B?', NULL,
+        'C', ARRAY['D', 'A', 'BASIC', 'COBOL', 'Fortran', 'Pascal'], 400, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'TECHNOLOGY', 'TECHNOLOGY_BATCH_2', NULL,
+        '"Wiki," the name for websites anyone can edit, comes from a Hawaiian word meaning what?', NULL,
+        'Quick', ARRAY['Book', 'Know', 'Share', 'Friend', 'Open', 'Learn'], 400, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'TECHNOLOGY', 'TECHNOLOGY_BATCH_2', NULL,
+        'Which "father of the internet" co-designed TCP/IP, the rules computers use to talk online, with Bob Kahn in the 1970s?', NULL,
+        'Vint Cerf', ARRAY['Tim Berners-Lee', 'Marc Andreessen', 'Larry Ellison', 'Steve Case', 'Paul Baran', 'Ray Tomlinson'], 400, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'TECHNOLOGY', 'TECHNOLOGY_BATCH_2', NULL,
+        'Which company introduced the compact audio cassette in 1963?', NULL,
+        'Philips', ARRAY['Sony', 'Panasonic', 'Toshiba', 'Kodak', 'RCA', 'Zenith'], 400, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'TECHNOLOGY', 'TECHNOLOGY_BATCH_2', NULL,
+        'Tuvalu earns a large share of its income by leasing out which web address ending?', NULL,
+        '.tv', ARRAY['.tu', '.tl', '.vu', '.to', '.tk', '.tz'], 400, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'TECHNOLOGY', 'TECHNOLOGY_BATCH_2', NULL,
+        'What was the name of the first PC virus to spread widely, written by two brothers in Pakistan in 1986?', NULL,
+        'Brain', ARRAY['Creeper', 'ILOVEYOU', 'Melissa', 'Morris', 'Stuxnet', 'Code Red'], 400, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'TECHNOLOGY', 'TECHNOLOGY_BATCH_2', NULL,
+        'Which mathematician''s 1948 paper founded information theory and made the word "bit" famous?', NULL,
+        'Claude Shannon', ARRAY['Alan Turing', 'John von Neumann', 'Norbert Wiener', 'Charles Babbage', 'George Boole', 'Alonzo Church'], 400, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'TECHNOLOGY', 'TECHNOLOGY_BATCH_2', NULL,
+        'What did engineer Steven Sasson build at Kodak in 1975?', NULL,
+        'The first digital camera', ARRAY['The first instant camera', 'The first camera phone', 'The first webcam', 'The first flashbulb', 'The first color film', 'The first camcorder'], 400, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'TECHNOLOGY', 'TECHNOLOGY_BATCH_2', NULL,
+        'What was the first product scanned by a UPC barcode at a store checkout, in Ohio in 1974?', NULL,
+        'A pack of Wrigley''s gum', ARRAY['A box of cereal', 'A can of soup', 'A loaf of bread', 'A carton of milk', 'A bag of chips', 'A candy bar'], 400, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'TECHNOLOGY', 'TECHNOLOGY_BATCH_2', NULL,
+        'In 1965, Ted Nelson coined which word for text with links you can follow?', NULL,
+        'Hypertext', ARRAY['Metadata', 'Cyberspace', 'Database', 'Software', 'Spreadsheet', 'Multimedia'], 400, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'TECHNOLOGY', 'TECHNOLOGY_BATCH_2', NULL,
+        'Which science-fiction writer coined the word "cyberspace" in a 1982 story?', NULL,
+        'William Gibson', ARRAY['Isaac Asimov', 'Philip K. Dick', 'Arthur C. Clarke', 'Neal Stephenson', 'Ray Bradbury', 'Douglas Adams'], 400, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'TECHNOLOGY', 'TECHNOLOGY_BATCH_2', NULL,
+        'Neal Stephenson''s 1992 novel "Snow Crash" coined which word, later taken up by big tech companies?', NULL,
+        'Metaverse', ARRAY['Internet', 'Robot', 'Hashtag', 'Blog', 'Hologram', 'Wearable'], 400, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'TECHNOLOGY', 'TECHNOLOGY_BATCH_2', NULL,
+        'The word "robot" first appeared in a 1920 play by which Czech writer?', NULL,
+        'Karel Čapek', ARRAY['Franz Kafka', 'Milan Kundera', 'Václav Havel', 'Jaroslav Hašek', 'Bohumil Hrabal', 'Isaac Asimov'], 400, 'Čapek credited his brother Josef with the word, from the Czech "robota," forced labor.');
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'TECHNOLOGY', 'TECHNOLOGY_BATCH_2', NULL,
+        'Where does the name "spam," for junk email, come from?', NULL,
+        'A comedy sketch about canned meat', ARRAY['An old radio jingle', 'A typing error', 'A military code word', 'A brand of fax machine', 'A computer-lab prank', 'An acronym for "stupid pointless annoying messages"'], 400, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'TECHNOLOGY', 'TECHNOLOGY_BATCH_2', NULL,
+        'Bill Hewlett and David Packard flipped a coin in 1939 to decide what?', NULL,
+        'The order of their names in the company name', ARRAY['Who would be the boss', 'Which city to start in', 'The color of the logo', 'Who got the bigger desk', 'Whether to make calculators', 'Who would pay for the garage'], 400, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'TECHNOLOGY', 'TECHNOLOGY_BATCH_2', NULL,
+        'Which programming language is named after a 17th-century French mathematician who built a calculating machine?', NULL,
+        'Pascal', ARRAY['Fermat', 'Descartes', 'Euler', 'Leibniz', 'Fourier', 'Laplace'], 400, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'TECHNOLOGY', 'TECHNOLOGY_BATCH_2', NULL,
+        'How much memory did the first Macintosh have in 1984?', NULL,
+        '128 KB', ARRAY['16 KB', '64 KB', '256 KB', '512 KB', '1 MB', '4 MB'], 400, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'TECHNOLOGY', 'TECHNOLOGY_BATCH_2', NULL,
+        'The first handheld cell phone sold to the public, in 1983, cost about how much?', NULL,
+        '$4,000', ARRAY['$250', '$400', '$1,000', '$2,000', '$10,000', '$25,000'], 400, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'TECHNOLOGY', 'TECHNOLOGY_BATCH_2', NULL,
+        'When the iMac launched in 1998, its maker said the "i" stood first of all for what?', NULL,
+        'Internet', ARRAY['Innovation', 'Intelligent', 'Interactive', 'Image', 'Instant', 'Idea'], 400, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'TECHNOLOGY', 'TECHNOLOGY_BATCH_2', NULL,
+        'Margaret Hamilton led the team that wrote the onboard flight software for which space program?', NULL,
+        'Apollo', ARRAY['Mercury', 'Gemini', 'Space Shuttle', 'Skylab', 'Voyager', 'Hubble'], 400, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'TECHNOLOGY', 'TECHNOLOGY_BATCH_2', NULL,
+        'NASA''s Mars Climate Orbiter was lost in 1999 because two teams mixed up what?', NULL,
+        'Metric and imperial units', ARRAY['Left and right', 'Morning and evening', 'Two radio frequencies', 'Two versions of the software', 'Earth time and Mars time', 'Latitude and longitude'], 400, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'TECHNOLOGY', 'TECHNOLOGY_BATCH_2', NULL,
+        'Which word for someone who breaks into computers first meant a clever tinkerer at MIT?', NULL,
+        'Hacker', ARRAY['Cracker', 'Geek', 'Nerd', 'Phreaker', 'Coder', 'Techie'], 400, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'TECHNOLOGY', 'TECHNOLOGY_BATCH_2', NULL,
+        'In the 1970s, "phone phreaks" made free long-distance calls with a toy whistle from which cereal box?', NULL,
+        'Cap''n Crunch', ARRAY['Cracker Jack', 'Froot Loops', 'Lucky Charms', 'Frosted Flakes', 'Cheerios', 'Rice Krispies'], 400, 'The whistle''s 2600 Hz tone fooled the phone network, and phreak John Draper took the nickname "Captain Crunch."');
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'TECHNOLOGY', 'TECHNOLOGY_BATCH_2', NULL,
+        '"Modem" is made from which two words?', NULL,
+        'Modulator and demodulator', ARRAY['Mobile and demand', 'Monitor and demonstrator', 'Modular and memory', 'Mode and emitter', 'Motor and dynamo', 'Memory and domain'], 400, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'TECHNOLOGY', 'TECHNOLOGY_BATCH_2', NULL,
+        '"Bit," the smallest unit of computer data, is short for what?', NULL,
+        'Binary digit', ARRAY['Basic integer', 'Byte item', 'Binary item', 'Base input', 'Bitwise token', 'Binary instruction'], 400, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'TECHNOLOGY', 'TECHNOLOGY_BATCH_2', NULL,
+        'Which American inventor of an early typewriter gave us the QWERTY keyboard layout in the 1870s?', NULL,
+        'Christopher Latham Sholes', ARRAY['Thomas Edison', 'Elisha Gray', 'Samuel Morse', 'Isaac Singer', 'Charles Goodyear', 'Cyrus McCormick'], 400, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'TECHNOLOGY', 'TECHNOLOGY_BATCH_2', NULL,
+        'Ray Dolby''s company became famous for cutting what out of tape recordings?', NULL,
+        'Hiss', ARRAY['Echo', 'Static', 'Skips', 'Feedback', 'Distortion', 'Wow and flutter'], 400, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'TECHNOLOGY', 'TECHNOLOGY_BATCH_2', NULL,
+        'Which machine, the first computer sold commercially in the U.S., predicted Eisenhower''s 1952 landslide on live TV?', NULL,
+        'UNIVAC I', ARRAY['EDVAC', 'Harvard Mark I', 'IBM 701', 'Whirlwind', 'Colossus', 'Manchester Mark 1'], 400, NULL);
 
 COMMIT;
 
--- Check: should return 80.
+-- Check: should return 200.
 SELECT COUNT(*) FROM questions WHERE game_mode = 'TRIVI_YEAH_II' AND category = 'TECHNOLOGY';
