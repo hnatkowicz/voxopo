@@ -777,6 +777,15 @@ Mode keys are used in room votes and in `gameEngine.js`:
     height ("3 / 4 picked", the letter chips, the solver) moved the whole
     board; that line (`.lr-foot`) now keeps one height. After one-tap
     locks, the Spotlight "played better. Much better" (Randy).
+  - **Open: green keys the player didn't pick** (Randy, Nov 2026: "some
+    letters on the phone keypad were green when NOT selected"; he'll play
+    more to pin it down). Green means "your pick, in the puzzle". Leading
+    guess: a letter picked in an earlier round of the same puzzle that hit
+    but wasn't one of the 2 the TV lit, so it stays green in the bank
+    while the TV board doesn't show it, and reads as never picked. Each
+    puzzle starts with a fresh bank (`lr.banks`), so it shouldn't carry
+    over from the last puzzle. Check: which round, which letters, and
+    whether those letters were on the TV.
 - **FLAG_ME_DOWN** (also a standalone mode, after the family asked where it
   went): 15 flags, 5 easy -> 5 medium -> 5 hard, each with 4 country choices
   (1 wrong answer from the same local region, 2 from the same continent).
@@ -992,7 +1001,17 @@ and forth until we both agree the idea is good **and** worth the effort. So:
   Then **Music** (+76 from 124: today's pop and instruments at the
   easy end, bands across the decades in the middle, classical, jazz and
   blues at the hard end; no artist a Lyrics question names, like "Which
-  Journey song..."). Every general category Randy listed is at 200 now. The family's favorites are school subjects
+  Journey song..."). Every general category Randy listed is at 200 now. **Next round
+  of depth (Randy, Nov 2026, "building for distribution": pub nights
+  shouldn't come up short):** the 80s first, then the 120s. **Geography**
+  done (+120 to 200): easy capitals and map basics, regional capitals and
+  islands in the middle, former capitals, rivers and highest peaks at the
+  hard end. Checked so no Geography question names another's answer
+  (several were reworded for that), and none repeats a Wet Pants picture's
+  answer or Science & Nature's glacier. Countries that are also flag and
+  map answers are fine: a board never shows the same answer twice.
+  Still to go: Technology, Mythology, Art & Architecture, Famous Firsts,
+  then US History, World History, World Wars, Literature. The family's favorites are school subjects
   (biology, astronomy, the World Wars, US history) and pop culture; new
   categories get pun names. **The pop-culture pair** (built Nov 2026, 120
   each, 30 per tier; working titles, Randy decides): **Extra Lives**

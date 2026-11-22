@@ -167,5 +167,5 @@ FROM (VALUES
 
 COMMIT;
 
--- Check: should return 119.
+-- Check: should return 128.
 SELECT COUNT(*) FROM questions WHERE game_mode = 'COUNTRY_MONKEY' AND subcategory = 'WATER';
