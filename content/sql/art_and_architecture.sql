@@ -633,10 +633,6 @@ VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YE
         'Which 17th-century Italian sculptor and architect designed the colonnade of St. Peter''s Square at the Vatican?', NULL,
         'Gian Lorenzo Bernini', ARRAY['Michelangelo', 'Francesco Borromini', 'Donato Bramante', 'Carlo Maderno', 'Raphael', 'Andrea Palladio'], 400, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'ART_AND_ARCHITECTURE', 'ORIGINAL', NULL,
-        'Which Japanese architect, known for blending concrete minimalism with natural light, designed the Church of the Light in Osaka?', NULL,
-        'Tadao Ando', ARRAY['Kenzo Tange', 'Arata Isozaki', 'Toyo Ito', 'Shigeru Ban', 'Kengo Kuma', 'Fumihiko Maki'], 400, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'ART_AND_ARCHITECTURE', 'POP_CULTURE_FOLD_1', NULL,
         'Which German Renaissance artist is famous for his woodcut "Rhinoceros" and his drawing of praying hands?', NULL,
         'Albrecht Durer', ARRAY['Hans Holbein the Younger', 'Lucas Cranach the Elder', 'Matthias Grunewald', 'Jan van Eyck', 'Pieter Bruegel the Elder', 'Albrecht Altdorfer'], 400, NULL);
@@ -692,10 +688,6 @@ INSERT INTO questions (question_number, game_mode, category, subcategory, factio
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'ART_AND_ARCHITECTURE', 'ORIGINAL', NULL,
         'Which Flemish painter created "The Arnolfini Portrait" of 1434, with its tiny reflection in a convex mirror?', NULL,
         'Jan van Eyck', ARRAY['Rogier van der Weyden', 'Hans Memling', 'Pieter Bruegel the Elder', 'Robert Campin', 'Peter Paul Rubens', 'Petrus Christus'], 400, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'ART_AND_ARCHITECTURE', 'ORIGINAL', NULL,
-        'Which British sculptor created the "Angel of the North," the giant steel winged figure that has stood beside the A1 at Gateshead since 1998?', NULL,
-        'Antony Gormley', ARRAY['Henry Moore', 'Anish Kapoor', 'Damien Hirst', 'Barbara Hepworth', 'Rachel Whiteread', 'Andy Goldsworthy'], 400, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'ART_AND_ARCHITECTURE', 'ART_AND_ARCHITECTURE_BATCH_2', NULL,
         'Which Paris opera house, with an underground lake, inspired "The Phantom of the Opera"?', NULL,
@@ -824,6 +816,14 @@ INSERT INTO questions (question_number, game_mode, category, subcategory, factio
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'ART_AND_ARCHITECTURE', 'ART_AND_ARCHITECTURE_BATCH_2', NULL,
         'What is the Japanese art of mending broken pottery with gold, making the cracks part of its beauty?', NULL,
         'Kintsugi', ARRAY['Raku', 'Ikebana', 'Bonsai', 'Wabi-sabi', 'Shibori', 'Origami'], 400, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'ART_AND_ARCHITECTURE', 'ART_AND_ARCHITECTURE_BATCH_2', NULL,
+        'In egg tempera, the main painting method before oils, what held the colored powder together?', NULL,
+        'Egg yolk', ARRAY['Egg white', 'Linseed oil', 'Beeswax', 'Honey', 'Animal glue', 'Milk'], 400, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'ART_AND_ARCHITECTURE', 'ART_AND_ARCHITECTURE_BATCH_2', NULL,
+        'What is the round opening at the top of a dome, like the one in Rome''s ancient temple to all the gods, called, from the Latin for "eye"?', NULL,
+        'The oculus', ARRAY['The cupola', 'The lantern', 'The apse', 'The drum', 'The vault', 'The pendentive'], 400, NULL);
 
 COMMIT;
 

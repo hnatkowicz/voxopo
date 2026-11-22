@@ -1,4 +1,4 @@
-﻿﻿points,question,answer,wrong_1,wrong_2,wrong_3,wrong_4,wrong_5,wrong_6,image,source,added,retired,notes,facts
+﻿points,question,answer,wrong_1,wrong_2,wrong_3,wrong_4,wrong_5,wrong_6,image,source,added,retired,notes,facts
 100,"In Greek mythology, who is the god of the sea?",Poseidon,Zeus,Hades,Apollo,Ares,Hermes,Hephaestus,,ORIGINAL,,,,
 100,"In Roman mythology, who is the king of the gods?",Jupiter,Mars,Neptune,Mercury,Vulcan,Pluto,Apollo,,ORIGINAL,,,,
 200,"In Egyptian mythology, which jackal-headed god watched over embalming and the dead?",Anubis,Osiris,Horus,Set,Thoth,Sobek,Khnum,,ORIGINAL,,,"Reworded Oct 2026: Osiris, a wrong answer, is THE god of the afterlife; Anubis is the god of embalming.",
@@ -59,7 +59,7 @@
 400,"Which Japanese sun goddess hid in a cave, plunging the world into darkness?",Amaterasu,Izanami,Tsukuyomi,Susanoo,Inari,Benzaiten,Izanagi,,MYTHOLOGY_BATCH_1,2026-10-18,,,
 300,"Which one-eyed Norse king of the gods gave up an eye for wisdom, and gives his name to Wednesday?",Odin,Tyr,Heimdall,Baldur,Freyr,Njord,Vidar,,MYTHOLOGY_BATCH_1,2026-10-18,,Tyr is the one who lost a hand (to Fenrir).,
 400,Which Norse goddess of love rides in a chariot pulled by cats?,Freyja,Frigg,Sif,Idun,Hel,Skadi,Sigyn,,MYTHOLOGY_BATCH_1,2026-10-18,,Frigg (Odin's wife) is the classic mix-up.,
-400,What is the name of the eight-legged horse of Norse myth?,Sleipnir,Gullfaxi,Hrímfaxi,Skinfaxi,Grani,Svaðilfari,Árvakr,,MYTHOLOGY_BATCH_1,2026-10-18,2026-11-22,Svaðilfari is Sleipnir's father. Retired Nov 2026: obscure name with no way to reason to it (pub benchmark).,"Sleipnir's mother was Loki, who had turned himself into a mare."
+400,What is the name of the eight-legged horse of Norse myth?,Sleipnir,Gullfaxi,Hrímfaxi,Skinfaxi,Grani,Svaðilfari,Árvakr,,MYTHOLOGY_BATCH_1,2026-10-18,yes,Svaðilfari is Sleipnir's father. Retired Nov 2026: obscure name with no way to reason to it (pub benchmark).,"Sleipnir's mother was Loki, who had turned himself into a mare."
 300,"Which Greek goddess of the rainbow, a messenger of the gods, shares her name with the colored part of your eye?",Iris,Eos,Nike,Hebe,Selene,Hecate,Nyx,,MYTHOLOGY_BATCH_1,2026-10-18,,,
 200,"Which Trojan prince carried off Helen, sparking the Trojan War?",Paris,Hector,Aeneas,Troilus,Priam,Deiphobus,Memnon,,MYTHOLOGY_BATCH_1,2026-10-18,,,
 400,"Which goddess of epic poetry, chief of her eight sisters, gives her name to the steam organ at the circus?",Calliope,Clio,Erato,Thalia,Terpsichore,Urania,Melpomene,,MYTHOLOGY_BATCH_1,2026-10-18,,,The steam-whistle organ called a calliope is named after her.
@@ -75,7 +75,7 @@
 200,"Which lame Greek god was the blacksmith of the gods, working at his forge?",Hephaestus,Ares,Hermes,Apollo,Dionysus,Helios,Poseidon,,ORIGINAL,2026-10-23,,"Vulcan, his Roman counterpart, is kept out of the wrong answers.",
 200,"Which Greek goddess, queen of the gods, watched over marriage?",Hera,Athena,Aphrodite,Demeter,Hestia,Artemis,Persephone,,ORIGINAL,2026-10-23,,"Juno, her Roman counterpart, is kept out of the wrong answers.",
 200,Which Egyptian goddess of magic and motherhood was the wife and sister of the god of the dead?,Isis,Hathor,Nephthys,Bastet,Sekhmet,Nut,Ma'at,,ORIGINAL,2026-10-23,,"Wife of Osiris (not named, as he is another question's answer). Nephthys is the other sister (wife of Set): a fair trap, but not Osiris's wife.",
-400,Which Greek hunter was turned into a stag and torn apart by his own hounds after seeing a goddess bathing?,Actaeon,Adonis,Orion,Narcissus,Endymion,Hippolytus,Meleager,,ORIGINAL,2026-10-23,2026-11-22,"The goddess is Artemis (not named, as she is another question's answer); Ovid, Metamorphoses book 3. Retired Nov 2026: obscure name with no way to reason to it (pub benchmark).",
+400,Which Greek hunter was turned into a stag and torn apart by his own hounds after seeing a goddess bathing?,Actaeon,Adonis,Orion,Narcissus,Endymion,Hippolytus,Meleager,,ORIGINAL,2026-10-23,yes,"The goddess is Artemis (not named, as she is another question's answer); Ovid, Metamorphoses book 3. Retired Nov 2026: obscure name with no way to reason to it (pub benchmark).",
 400,"In Norse myth, which beloved god could be harmed by nothing except mistletoe, which killed him?",Baldur,Tyr,Heimdall,Freyr,Njord,Vidar,Bragi,,ORIGINAL,2026-10-23,,Also spelled Balder/Baldr. Loki guided the blind god Höðr's mistletoe dart.,
 300,"Which king of Greek myth, punished with water and fruit always just out of reach, gives us the word ""tantalize""?",Tantalus,Sisyphus,Ixion,Tityos,Minos,Lycaon,Salmoneus,,ORIGINAL,2026-10-23,,"Gave us the word ""tantalize."" Sisyphus and Ixion are fellow sinners with different punishments.",
 400,Which Sumerian goddess of love and war was later worshipped by the Babylonians as Ishtar?,Inanna,Ereshkigal,Tiamat,Ninhursag,Ninlil,Nisaba,Nanshe,,ORIGINAL,2026-10-23,,"Astarte (the Phoenician counterpart) is kept out of the wrong answers. Ereshkigal is Inanna's sister, queen of the underworld.",
@@ -139,7 +139,7 @@
 300,"Which Egyptian goddess, shown as a cat or with a cat's head, protected the home?",Bastet,Sekhmet,Hathor,Nut,Neith,Nephthys,Tefnut,,MYTHOLOGY_BATCH_2,2026-11-22,,,
 300,Which bird-women of Greek myth snatched away food and people?,The Harpies,The Sirens,The Furies,The Gorgons,The Graces,The Muses,The Fates,,MYTHOLOGY_BATCH_2,2026-11-22,,,
 300,Which Greek god of dreams gives his name to the painkiller morphine?,Morpheus,Hypnos,Thanatos,Hermes,Oneiros,Nyx,Erebus,,MYTHOLOGY_BATCH_2,2026-11-22,,,
-300,"Which Greek god of sleep gives his name to the art of putting someone in a trance?",Hypnos,Morpheus,Thanatos,Nyx,Erebus,Oneiros,Lethe,,MYTHOLOGY_BATCH_2,2026-11-22,,,
+300,Which Greek god of sleep gives his name to the art of putting someone in a trance?,Hypnos,Morpheus,Thanatos,Nyx,Erebus,Oneiros,Lethe,,MYTHOLOGY_BATCH_2,2026-11-22,,,
 300,Which Roman goddess of the dawn gives her name to the northern lights' Latin name?,Aurora,Luna,Diana,Flora,Juno,Vesta,Fortuna,,MYTHOLOGY_BATCH_2,2026-11-22,,,
 300,Which hero of an Old English epic tore the arm off the monster Grendel?,Beowulf,Sigurd,Siegfried,Roland,Cú Chulainn,Ragnar,Hrothgar,,MYTHOLOGY_BATCH_2,2026-11-22,,,
 300,Which Egyptian symbol of life looks like a cross with a loop on top?,The ankh,The scarab,The djed,The was scepter,The Eye of Horus,The shen ring,The tyet,,MYTHOLOGY_BATCH_2,2026-11-22,,,
@@ -199,3 +199,5 @@
 400,Which Hindu king of the gods wields the thunderbolt called the vajra?,Indra,Vishnu,Agni,Varuna,Surya,Yama,Brahma,,MYTHOLOGY_BATCH_2,2026-11-22,,,
 400,"Which Japanese storm god, the sun goddess's unruly brother, slew an eight-headed serpent?",Susanoo,Tsukuyomi,Raijin,Fujin,Hachiman,Izanagi,Inari,,MYTHOLOGY_BATCH_2,2026-11-22,,,
 400,Which Chinese moon goddess gives her name to China's robot missions to the Moon?,Chang'e,Nüwa,Xiwangmu,Guanyin,Mazu,Houyi,Doumu,,MYTHOLOGY_BATCH_2,2026-11-22,,,
+400,"Which Titan goddess of memory, mother of the nine goddesses of the arts, gives us the word ""mnemonic""?",Mnemosyne,Themis,Phoebe,Tethys,Theia,Rhea,Metis,,MYTHOLOGY_BATCH_2,2026-11-22,,,
+400,"Which shape-shifting old man of the sea gives us ""protean,"" meaning able to change form easily?",Proteus,Nereus,Glaucus,Phorcys,Pontus,Oceanus,Triton,,MYTHOLOGY_BATCH_2,2026-11-22,,,

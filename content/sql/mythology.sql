@@ -646,10 +646,6 @@ VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YE
         'Freyja', ARRAY['Frigg', 'Sif', 'Idun', 'Hel', 'Skadi', 'Sigyn'], 400, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MYTHOLOGY', 'MYTHOLOGY_BATCH_1', NULL,
-        'What is the name of the eight-legged horse of Norse myth?', NULL,
-        'Sleipnir', ARRAY['Gullfaxi', 'Hrímfaxi', 'Skinfaxi', 'Grani', 'Svaðilfari', 'Árvakr'], 400, 'Sleipnir''s mother was Loki, who had turned himself into a mare.');
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MYTHOLOGY', 'MYTHOLOGY_BATCH_1', NULL,
         'Which goddess of epic poetry, chief of her eight sisters, gives her name to the steam organ at the circus?', NULL,
         'Calliope', ARRAY['Clio', 'Erato', 'Thalia', 'Terpsichore', 'Urania', 'Melpomene'], 400, 'The steam-whistle organ called a calliope is named after her.');
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
@@ -676,10 +672,6 @@ INSERT INTO questions (question_number, game_mode, category, subcategory, factio
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MYTHOLOGY', 'MYTHOLOGY_BATCH_1', NULL,
         'Which Monkey King of the Chinese classic "Journey to the West" inspired Goku in "Dragon Ball"?', NULL,
         'Sun Wukong', ARRAY['Zhu Bajie', 'Sha Wujing', 'Erlang Shen', 'Nezha', 'Hanuman', 'Tang Sanzang'], 400, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MYTHOLOGY', 'ORIGINAL', NULL,
-        'Which Greek hunter was turned into a stag and torn apart by his own hounds after seeing a goddess bathing?', NULL,
-        'Actaeon', ARRAY['Adonis', 'Orion', 'Narcissus', 'Endymion', 'Hippolytus', 'Meleager'], 400, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MYTHOLOGY', 'ORIGINAL', NULL,
         'In Norse myth, which beloved god could be harmed by nothing except mistletoe, which killed him?', NULL,
@@ -824,6 +816,14 @@ INSERT INTO questions (question_number, game_mode, category, subcategory, factio
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MYTHOLOGY', 'MYTHOLOGY_BATCH_2', NULL,
         'Which Chinese moon goddess gives her name to China''s robot missions to the Moon?', NULL,
         'Chang''e', ARRAY['Nüwa', 'Xiwangmu', 'Guanyin', 'Mazu', 'Houyi', 'Doumu'], 400, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MYTHOLOGY', 'MYTHOLOGY_BATCH_2', NULL,
+        'Which Titan goddess of memory, mother of the nine goddesses of the arts, gives us the word "mnemonic"?', NULL,
+        'Mnemosyne', ARRAY['Themis', 'Phoebe', 'Tethys', 'Theia', 'Rhea', 'Metis'], 400, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'MYTHOLOGY', 'MYTHOLOGY_BATCH_2', NULL,
+        'Which shape-shifting old man of the sea gives us "protean," meaning able to change form easily?', NULL,
+        'Proteus', ARRAY['Nereus', 'Glaucus', 'Phorcys', 'Pontus', 'Oceanus', 'Triton'], 400, NULL);
 
 COMMIT;
 
