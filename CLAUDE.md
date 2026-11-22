@@ -941,13 +941,16 @@ and forth until we both agree the idea is good **and** worth the effort. So:
   `ssl = on` (a self-signed cert; the app always connects with SSL), then
   copy live's tables in with read-only queries (structure, rows; access
   codes structure only).
-- **Run in Neon (Randy):** `content/sql/famous_firsts.sql` (Famous Firsts
-  to 200). Technology, Mythology and Art & Architecture are live (Nov 22).
-- **Category depth, next:** US History, World History, World Wars,
+- **Run in Neon (Randy):** `content/sql/famous_firsts.sql` and
+  `content/sql/us_history.sql` (each to 200). Technology, Mythology and
+  Art & Architecture are live (Nov 22).
+- **Category depth, next:** World History, World Wars,
   Literature (about 120).
-- **Waiting on Randy:** trap screens in a real game; the genie redraw; the
-  Orange River drawing; Letter Rip's green keys (which letters, which round,
-  were they on the TV?); flipside's own DATABASE_URL (another day).
+- **Waiting on Randy:** trap screens in a real game; the Orange River
+  drawing (Nov 22: "today"); Letter Rip's green keys (Randy watching
+  tonight: which letters, which round, were they on the TV?); flipside's
+  own DATABASE_URL (Randy on it, Nov 22). The genie is out: Randy is
+  drawing other avatars instead.
 - **Decisions open:** venue memory (a code remembers the questions its
   rooms used for a few weeks; question numbers only, no player data), a
   code cleanup pass (old TRIVIA decks, the unread profile and theme
@@ -1102,8 +1105,16 @@ and forth until we both agree the idea is good **and** worth the effort. So:
   matched ones retired in October as duplicates of other categories
   (Washington, Sally Ride) and were swapped out: similar is fine, but
   an exact repeat of a retired row stays retired.
-  Still to go:
-  then US History, World History, World Wars, Literature. The family's favorites are school subjects
+  **US History** (+80 to 200, Nov 22), to the benchmarks: Pearl
+  Harbor, Woodstock and the national anthem at the easy end; Squanto,
+  Route 66 and the Manhattan Project in the middle; hooks at the hard
+  end (Bacon's Rebellion "a breakfast meat", the 21st Amendment sharing
+  the drinking age's number, Hearst as Citizen Kane). Old 400s that
+  were really 300s moved down (Miranda to 200; Pike, Gemini, Clay,
+  Warren to 300). Its old questions name each other a lot (Booth "shot
+  Lincoln", Burr "killed Hamilton"); left as is, since the core facts
+  need the names.
+  Still to go: World History, World Wars, Literature. The family's favorites are school subjects
   (biology, astronomy, the World Wars, US history) and pop culture; new
   categories get pun names. **The pop-culture pair** (built Nov 2026, 120
   each, 30 per tier; working titles, Randy decides): **Extra Lives**
