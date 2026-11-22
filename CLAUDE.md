@@ -1001,7 +1001,17 @@ and forth until we both agree the idea is good **and** worth the effort. So:
   Then **Music** (+76 from 124: today's pop and instruments at the
   easy end, bands across the decades in the middle, classical, jazz and
   blues at the hard end; no artist a Lyrics question names, like "Which
-  Journey song..."). Every general category Randy listed is at 200 now. The family's favorites are school subjects
+  Journey song..."). Every general category Randy listed is at 200 now. **Next round
+  of depth (Randy, Nov 2026, "building for distribution": pub nights
+  shouldn't come up short):** the 80s first, then the 120s. **Geography**
+  done (+120 to 200): easy capitals and map basics, regional capitals and
+  islands in the middle, former capitals, rivers and highest peaks at the
+  hard end. Checked so no Geography question names another's answer
+  (several were reworded for that), and none repeats a Wet Pants picture's
+  answer or Science & Nature's glacier. Countries that are also flag and
+  map answers are fine: a board never shows the same answer twice.
+  Still to go: Technology, Mythology, Art & Architecture, Famous Firsts,
+  then US History, World History, World Wars, Literature. The family's favorites are school subjects
   (biology, astronomy, the World Wars, US history) and pop culture; new
   categories get pun names. **The pop-culture pair** (built Nov 2026, 120
   each, 30 per tier; working titles, Randy decides): **Extra Lives**
