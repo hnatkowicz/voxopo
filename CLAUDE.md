@@ -968,8 +968,8 @@ and forth until we both agree the idea is good **and** worth the effort. So:
   memory stays off until it's run).
 - **Re-tier pass** (Nov 22, Randy's go-ahead): the categories written
   before the difficulty benchmarks, tier moves only (50 per tier kept by
-  matched swaps). Done: Sports, Movies & TV. Still to go: Music, Food &
-  Drink, Science & Nature, Astronomy & Space, Word Nerd, Geography, Cell
+  matched swaps). Done: Sports, Movies & TV, Music, Food & Drink. Still
+  to go: Science & Nature, Astronomy & Space, Word Nerd, Geography, Cell
   Mates, College Athletics, Pop Quiz, Extra Lives, the picture sets (Brush
   With Greatness, The Great State of..., Wish You Were Here, Logo My
   Eggo), Spellbound and the niche four. Then more Letter Rip phrases.
