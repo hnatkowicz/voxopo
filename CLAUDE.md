@@ -962,6 +962,10 @@ and forth until we both agree the idea is good **and** worth the effort. So:
 - **Run in Neon (Randy, owner login -- it creates a table):**
   `venue_memory.sql`. Venue memory is built and merged; it switches on
   by itself within the hour once the table exists.
+- **Paused (Randy, Nov 22):** the re-tier and Letter Rip phrases, a
+  "mini pause" while Picture Imperfect is designed (see Ideas in the
+  works). **Run in Neon:** `venue_memory.sql` (not confirmed yet; venue
+  memory stays off until it's run).
 - **Re-tier pass** (Nov 22, Randy's go-ahead): the categories written
   before the difficulty benchmarks, tier moves only (50 per tier kept by
   matched swaps). Done: Sports, Movies & TV. Still to go: Music, Food &
@@ -1227,6 +1231,46 @@ and forth until we both agree the idea is good **and** worth the effort. So:
   earn their place; the code, /admin setting and art were removed. The
   `theme` columns (`access_codes_theme.sql`) stay in the database, unread.
   The scheduled announcement is the venue feature to invest in instead.
+- **Picture Imperfect** (working name; runner-up Double Take -- Randy,
+  Nov 22 2026; designed, **not built**, "we'll pick this up later"): a
+  spot-the-difference race on Randy's own photos (or public domain /
+  CC0 -- not "fair use", which is a defense, not a permission).
+  - **Screens:** the TV shows the original and the altered photo side by
+    side; each phone shows only the altered photo, full width (the TV
+    compares, the phone points). 5 differences a photo, 6 photos a game.
+  - **Phone zoom:** our own pinch-to-zoom (scale/shift on the image, not
+    the browser's page zoom), so a tap maps back to the same spot at any
+    zoom. A guess counts only as a quick single-finger tap (lifted within
+    ~1/4 s, barely moved, no second finger during it); any two-finger
+    touch or drag is zoom/pan. No double-tap zoom (reads as two guesses):
+    a "Fit" button resets. A small marker shows where your guess landed.
+    Generous hit zones. Needs a real-phone test (iPhone and Android).
+  - **Scoring:** a flat score per find (Randy: keep it playful, no "I
+    already touched that!"). First finder locks the spot: it's circled on
+    the TV and every phone, and tapping it again does nothing (late, not
+    wrong). A miss costs a small point loss and dims that phone for 2
+    seconds with a cheeky line (rotate 5-6). **Badges: `public/muscle.svg`**
+    (already drawn, with a "3" on it -- "perfect for this") for finding 3
+    of the 5 on one photo, plus a bonus; watch it in 2-player games, where
+    it'll be common (like traps -> Plain boards). **`public/spectrum-lost-in-space.svg`**
+    (Randy's suggestion) for 2 or more missed taps in a round.
+  - **The clock is a shrinking points pot** (Randy's idea, like Letter
+    Rip's pot): shown on the TV in place of the seconds. When all 5 are
+    found, what's left is split **equally among everyone who found at
+    least one** (Claude's suggestion, Randy undecided: an even split for
+    all rewards free riders; a split by finds just repeats per-find
+    scoring). Pot at zero = no leftover. Idea: a wrong tap also shaves the
+    shared pot a little, so the room polices spamming itself.
+  - **Admin:** upload the original + altered pair on /admin; the server
+    finds the differences by comparing pixels (filtering JPEG noise) and
+    proposes the 5 spots; Randy confirms or nudges. Build this first so
+    Randy can make photos while the mode is built.
+  - **Size:** medium -- about Letter Rip's Spotlight plus the admin page,
+    and a session for zoom. Reuses picture preloading/disguised addresses,
+    the TV layout, scores, venue memory and the smoke test (a bot taps
+    known spots). Content is Randy's: ~40 pairs for real depth.
+  - **Open:** the leftover split, pot size and speed, points per find and
+    per miss (first guess: +100 / -25), round length, the name.
 - **Mind Field:** a name saved for a future mode built around hidden traps
   on a board.
 - **Final Wager clues elsewhere: tabled** (Randy, Nov 2026: a clue that
