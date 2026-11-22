@@ -846,9 +846,22 @@ Mode keys are used in room votes and in `gameEngine.js`:
   School's word questions, Science/Space/Geography from its science ones
   (those Trivi-yeah! decks are left alone). **College Athletics** (Randy's
   idea): Heismans, coaches, mascots, rivalry trophies, athlete arcs.
-- **Randy applies these by hand** in the Neon console. Content is the part of
-  the codebase Randy works on directly, so keep it that way: Claude writes and
-  reviews `.sql` files but never runs anything against the live database.
+- **Claude runs the content SQL on live** (Randy, Nov 2026: "There is truly
+  no need for me to review and enter the SQL; you're better and faster. I'll
+  focus on art and design"). Through `scripts/neon-sql.mjs` and the
+  content-only login from `neon_claude_role.sql` (`claude_content`: read,
+  add, change and delete game content, read venue settings; no DROP,
+  TRUNCATE or ALTER). Its connection string is `NEON_URL` in the **voxopo**
+  cloud environment (with Neon's two hosts allowed) -- never in the repo or
+  the chat. The order, every time: run the file on the local test database
+  first, then `node scripts/neon-sql.mjs run <file>` (the whole file in one
+  transaction, all or nothing; "add column" lines are skipped when the
+  column exists, and a file that truly needs a new column stops untouched
+  and goes to Randy's owner login), then report what changed and what went
+  live. `check` and `query "SELECT ..."` are read-only. Not during a venue
+  event (a board shouldn't change mid-night). Randy still owns the owner
+  login and Render's `DATABASE_URL` (the Nov 2026 password reset went into
+  the wrong Render service and took the site down until it was found).
   Write SQL that a person can read and check: one statement per question,
   consistent column order, and a short header comment saying what the file
   adds and whether it's safe to re-run.
