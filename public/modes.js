@@ -58,7 +58,7 @@ window.renderModeElectionTiles = function (allowedKeys) {
     return `
         <div class="lobby-stage">
             <h2 class="lobby-title">What should we play?</h2>
-            <div class="lobby-modes">
+            <div class="lobby-modes${window.modesShown(allowedKeys).length >= 5 ? ' lobby-cards' : ''}">
                 ${window.modesShown(allowedKeys).map(m => `
                     <div class="lobby-mode">
                         <div class="lobby-mode-head">
