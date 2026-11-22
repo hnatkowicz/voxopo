@@ -713,6 +713,20 @@ body.tp-layout .tp-stage { padding: 0 calc(var(--u) * 2); }
 .lobby-mode-name .mode-tile-tag { font-family: var(--rm-font-body); font-size: 0.5em; vertical-align: middle; }
 .lobby-mode-blurb { font-size: calc(var(--u) * 1.08); color: var(--rm-text-soft); margin-top: calc(var(--u) * 0.2); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .lobby-mode-track { height: calc(var(--u) * 0.4); background: var(--rm-surface-2); border-radius: 99px; overflow: hidden; }
+/* 5+ modes: a 3-wide grid of cards (Nov 2026, for a 9th mode -- a 5th
+   row of the 2-wide list made the lobby scroll). Three rows instead of
+   four give each card more height, so the icon goes on top, then the
+   name, the byline and the vote bar. Partial rows center. 1-4 modes keep
+   the 2-wide list (a venue that offers only a few). */
+.lobby-modes.lobby-cards { display: flex; flex-wrap: wrap; justify-content: center; gap: calc(var(--u) * 1) calc(var(--u) * 1.1); width: 88%; }
+.lobby-cards .lobby-mode { box-sizing: border-box; flex: 0 0 calc((100% - var(--u) * 2.2) / 3 - 1px); padding: calc(var(--u) * 0.8) calc(var(--u) * 0.9) calc(var(--u) * 0.7); gap: calc(var(--u) * 0.55); }
+.lobby-cards .lobby-mode-head { flex-direction: column; text-align: center; gap: calc(var(--u) * 0.45); }
+.lobby-cards .lobby-mode-head > div { width: 100%; }
+.lobby-cards .lobby-mode-icon { width: auto; }
+.lobby-cards .lobby-mode-icon img { height: calc(var(--u) * 3.4) !important; max-width: calc(var(--u) * 7) !important; }
+.lobby-cards .lobby-mode-icon span { font-size: calc(var(--u) * 2.6) !important; }
+.lobby-cards .lobby-mode-name { font-size: calc(var(--u) * 1.4); }
+.lobby-cards .lobby-mode-blurb { font-size: calc(var(--u) * 1.0); margin-top: calc(var(--u) * 0.1); }
 /* Pubs: the venue's logo, name and tagline open the lobby, without a box. */
 /* 30% smaller than it started (Randy, Nov 2026, after several TVs: the
    lobby felt crowded, and the venue's name is on screen all night). */
