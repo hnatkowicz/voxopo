@@ -11,7 +11,7 @@
 -- Down's country table. Landmarks get theirs from country_monkey_landmarks.sql.
 --
 -- Safe to re-run. Run it AGAIN after re-running country_monkey_water.sql
--- (that file replaces the water rows, clues and all). 107 bodies of water;
+-- (that file replaces the water rows, clues and all). 111 bodies of water;
 -- a few appear in more than one region, so more rows than that update.
 -- ============================================================================
 
@@ -134,6 +134,10 @@ UPDATE questions SET hint = 'The Dead Sea'                       WHERE game_mode
 UPDATE questions SET hint = 'Turin'                              WHERE game_mode = 'COUNTRY_MONKEY' AND subcategory = 'WATER' AND correct_answer = 'Po River';
 UPDATE questions SET hint = 'Warsaw'                             WHERE game_mode = 'COUNTRY_MONKEY' AND subcategory = 'WATER' AND correct_answer = 'Vistula River';
 UPDATE questions SET hint = 'Montreal'                           WHERE game_mode = 'COUNTRY_MONKEY' AND subcategory = 'WATER' AND correct_answer = 'St. Lawrence River';
+UPDATE questions SET hint = 'Oxford'                             WHERE game_mode = 'COUNTRY_MONKEY' AND subcategory = 'WATER' AND correct_answer = 'Thames River';
+UPDATE questions SET hint = 'Botswana'                           WHERE game_mode = 'COUNTRY_MONKEY' AND subcategory = 'WATER' AND correct_answer = 'Limpopo River';
+UPDATE questions SET hint = 'South Australia'                    WHERE game_mode = 'COUNTRY_MONKEY' AND subcategory = 'WATER' AND correct_answer = 'Murray River';
+UPDATE questions SET hint = 'Astoria (Oregon)'                   WHERE game_mode = 'COUNTRY_MONKEY' AND subcategory = 'WATER' AND correct_answer = 'Columbia River';
 
 COMMIT;
 
