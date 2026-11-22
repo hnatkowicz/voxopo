@@ -986,6 +986,16 @@ and forth until we both agree the idea is good **and** worth the effort. So:
   tonight: which letters, which round, were they on the TV?); flipside's
   own DATABASE_URL (Randy on it, Nov 22). The genie is out: Randy is
   drawing other avatars instead.
+- **Pinned (Randy, Nov 22: "No bother. Pin it for later."):** the lobby
+  draws every mode for a moment before the room's own list arrives, so a
+  mode the code doesn't play flashes and vanishes. Fix: wait for the
+  room's list before drawing the tiles.
+- **Double Take, first real test (Nov 22):** the mode was hidden by the
+  test code's ticked mode list (new modes start unticked on any code
+  with a list; Randy cleared the ticks). Watch: pinch-zoom on real
+  phones, TV photo size (option: hide the rail while hunting), pace (90s,
+  500 pot). Boulevard is the second pair (1600x1200, needs its boxes
+  checked and Ready).
 - **Decisions open:** a **league** (Randy weighing it, Nov 22: a
   multi-week standings table per code needs the server to keep opt-in
   nicknames and points, auto-deleted after the season -- a change to the
