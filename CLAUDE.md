@@ -68,8 +68,8 @@ event, for a small fee. That's why hosting is gated behind access codes.
   "the access code defines the room"; the family wanted the pub tally in
   the living room without the pub limits). A code is the room's recipe:
   venue name, tagline, logo (`public/venues/`, 2:1, see its README), the
-  list of modes it plays, house set, breaks, board rules, category dial,
-  TV theme, all set on `/admin` (`access_codes_venue_profiles.sql` added
+  list of modes it plays, house set, breaks, board rules, category dial
+  and announcement, all set on `/admin` (`access_codes_venue_profiles.sql` added
   the columns; the old `profile` column is still filled, HOME/PUB by
   whether there's a venue name or logo, but nothing reads it). A room copies
   its code's settings when it opens, and the host's session remembers
@@ -209,7 +209,10 @@ event, for a small fee. That's why hosting is gated behind access codes.
   `modes.js`; the phones' tiles are separate) with a vote bar and no vote
   count (Randy, Nov 2026: the bar is enough), the scoreboard rail, and a bigger
   QR code (10u, 13u at a pub, where the venue's banner replaces "What
-  should we play?"). Checked at 960x540 and 1080p, home and pub. **Country
+  should we play?"). After several TVs (Randy, Nov 2026: the lobby felt crowded, the
+  QR code squeezed) the venue banner is 30% smaller, the mode tiles 10%
+  smaller, and the footer sits a little up from the bottom edge (some TVs
+  trim the picture's edges). Checked at 960x540 and 1080p, home and pub. **Country
   Monkey** followed (Nov 2026), and with it **Trivi-yeah!**, which shares
   its screens (`switchToQuestionUI`, `switchToCategoryVotingUI`): the
   region vote uses the lobby's tiles; questions use the `tp-*` pieces, with
@@ -280,14 +283,11 @@ event, for a small fee. That's why hosting is gated behind access codes.
   by `scripts/avatar-thumbs.mjs` and a GitHub Action whenever an SVG is
   uploaded; the full SVG loads only where an avatar is big (the enlarge,
   the TV podium, the Champion card), and a missing thumb falls back to
-  it. **The entrance** (Randy, Nov 2026: "you're making an entrance after
-  standing in front of the mirror... everyone will see your outfit"): in
-  the lobby the TV shows a new player's avatar big over the stage, gold
-  glow and name, then it settles into the rail (`showBigEntrance` in
-  `app.js`). Arrivals close together share one moment as a row (up to 8,
-  then "+N"); past 12 players (a pub filling up) entrances shrink to a
-  row beside the QR code, so they never keep hiding the tiles people are
-  voting on; mid-game it's the old quiet note. Never over the QR code.
+  it. **Arrivals** (Randy, Nov 2026): a new player in the lobby gets a quiet
+  line beside the QR code ("Ace joined", "Eve and Fay joined"), and the
+  rail shows them with their avatar. The big avatar "entrance" over the
+  stage was built and cut after real rooms: nobody looked at it or
+  remarked on it. Mid-game it's the old quiet note.
   A pick travels as `av:<name>` in the old
   emoji slot, and `avatarHtml` draws it everywhere a player's emoji was
   (TV scoreboard, join toast, Profiler names, the phone's strip, badge and
@@ -323,8 +323,7 @@ event, for a small fee. That's why hosting is gated behind access codes.
      2.6u, answers 1.7u, tile values 2.5u, scoreboard rows 1.55u.
   4. **Nothing jumps.** The top bar never wraps or shifts. It's small on
      purpose (wordmark 2.2u tall, was 2.8u until the lobby began to
-     scroll with 8 modes, Randy, Nov 2026); the theme boxes over the R and
-     under ROOM scale with it.
+     scroll with 8 modes, Randy, Nov 2026).
   5. **The clock is informational** (Randy, Nov 2026): a number only (no
      "s"), about 80% of the wordmark's height, quiet denim gray
      (`--rm-text-soft`), turning cream for the last 3 seconds with the TV's
@@ -694,7 +693,7 @@ Mode keys are used in room votes and in `gameEngine.js`:
   intensity 1/2/3 because each game cycles light -> medium -> deep.
 - **Thinking Pants geography categories:** Country Monkey (maps), **Flag Me
   Down** (flags, `trivi_yeah_ii_flag_me_down.sql`, 120), **Wet Pants**
-  (water, `trivi_yeah_ii_wet_pants.sql`, 103) and **Wish You Were Here**
+  (water, `trivi_yeah_ii_wet_pants.sql`, 112) and **Wish You Were Here**
   (landmarks, `content/landmarks.csv`, 132; a postcard name because it has
   natural wonders too) -- the cross-play with Country Monkey is deliberate.
 - **LETTER_RIP** (Letter Rip; the name is final -- Randy: "Oh, it's
@@ -1006,14 +1005,14 @@ and forth until we both agree the idea is good **and** worth the effort. So:
   games, fads, viral moments and memes, ad slogans, celebrities and
   royals; film, TV and music stay in their own categories). Both are
   Trivi-yeah! topics too. Cartoons & Kids' TV stays parked.
-- **Water images:** Wet Pants is 103 (Oct 2026). Rivers are coming in
+- **Water images:** Wet Pants is 112 (Nov 2026). Rivers are coming in
   batches from a list Claude gave Randy: batch 1 brought the Danube,
   Rhine, Volga, Euphrates, Ganges, Mekong, Yangtze, Niger and Rio Grande;
   batch 2 the Yellow River, Indus, Brahmaputra, Irrawaddy, Amur, Rhône and
-  Yukon. **Still to draw -- remind him:** Tigris, Jordan, Thames, Po,
-  Vistula, Orange, Limpopo, St. Lawrence, Columbia, Murray. (He's also
-  re-exporting the Yangtze, which Claude patched to un-highlight Lake
-  Balkhash.) A
+  Yukon; batch 3 (Nov 2026) the Tigris, Jordan, Po, Vistula and St.
+  Lawrence (the Gulf of St. Lawrence lost its "St. Lawrence" short answer,
+  since it now means either), then the Thames, Limpopo, Columbia and
+  Murray and Randy's re-exported Yangtze. **Still to draw:** the Orange. A
   `-2` file is a second drawing (another scale or angle): the newer ones
   (Danube, Rio Grande) are their own Wet Pants tiles, kept off the same
   board by the no-repeat rule; the older ones (Caribbean, Gulf of Mexico,
@@ -1044,37 +1043,13 @@ and forth until we both agree the idea is good **and** worth the effort. So:
   Night" was considered and dropped.
 - **Standalone states quiz page** (Randy, Nov 2026, "another time"): his
   100 state pictures as a phone quiz anyone can run.
-- **TV themes** (Randy, Nov 2026; designing): seasonal and event
-  decorations on the TV, Christmas first, then Autumn, Mardi Gras and Fourth of July
-  on /admin (Nov 2026; later Halloween, bridal, a cinema night with theater things and no studio branding, St.
-  Patrick's...). Per venue on /admin, with optional start/end dates (blank
-  = on until switched off). Pieces are Randy's SVGs in
-  `public/themes/<theme>/`, pinned to the screen's fixed parts (wordmark,
-  room code, scoreboard, "Scan to join") and always on top -- the frost
-  too, Randy's call -- with taps passing through. Never over the QR code;
-  never recolors the game (green/red rule); no licensed characters (no
-  Frosty); peekers only in calm moments. Falling snow dropped (costly on
-  the Fire Stick, and not needed). **Four fixed slots** (Randy, Nov 2026, after the first art went "from
-  fun and campy to gaudy": understated is the rule, no movement, no
-  peekers): `over-r` (5x5u over the top-left of "Rando"), `under-room`
-  (5x5u under the word ROOM), `hanging` (2.5x15u, centered on the
-  scoreboard's right edge, top level with its top, hung from the top) and `bottom` (the scoreboard's width,
-  250/600 of it tall, rounded to its corners). Files are
-  `<theme>_<slot>.webp` (or .svg), drawn on 100x100 / 50x300 / 600x250
-  artboards, shown at their drawn size centered on the box (never
-  cropped or stretched; a file's pixels are artboard units). The two scoreboard pieces sit behind
-  the scores (a layer under the rail's contents). A box isn't a fence
-  (Randy: "artistically obscuring is much better"), but never over the QR
-  code, question or answers. `/tv?slots=1` outlines the boxes. The first
-  Christmas SVGs are unused, kept until Randy says. See `public/themes/README.md`. **Built**
-  (Nov 2026): `access_codes_theme.sql` (theme, theme_starts, theme_ends),
-  /admin's TV theme dropdown and dates, the theme riding to the TV with
-  the venue (`ROOM_VENUE`), and `public/tv-theme.js`, which loads the art
-  and pins it (its list says where each piece hangs) and twinkles the
-  lights' bulb glows. The TV checks the dates by its own calendar. At a
-  pub, the lights start after the venue's name in the top bar and shorten
-  to fit, never covering it. Randy's first art is pictures inside SVGs
-  (about 3 MB for Christmas, loaded only when the theme is on).
+- **TV themes: tried and dropped** (Randy, Nov 2026: "They just don't do
+  it for me. I tried. Not worth it."). Seasonal decorations pinned to the
+  TV's fixed parts (Christmas, Autumn, Mardi Gras, Fourth of July) went
+  from campy to gaudy, then to four understated slots, and still didn't
+  earn their place; the code, /admin setting and art were removed. The
+  `theme` columns (`access_codes_theme.sql`) stay in the database, unread.
+  The scheduled announcement is the venue feature to invest in instead.
 - **Mind Field:** a name saved for a future mode built around hidden traps
   on a board.
 - **Final Wager clues elsewhere: tabled** (Randy, Nov 2026: a clue that

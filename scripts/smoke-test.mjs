@@ -310,7 +310,11 @@ for (;;) {
         if (!room) { r.done = true; r.failed = 'room closed'; continue; }
         // The venue's announcement: queued partway in; while it's on the
         // bots sit still and nothing in the room may change.
-        if (!r.endVote && !r.annQueued && Date.now() - r.started > r.annAfter && room.gameState !== 'GAME_OVER') {
+        // Only once the game is under way: a game still loading its content
+        // (a database read, not a timer) finishes under an announcement and
+        // its first round appears behind it, which is fine for players
+        // (the clock waits, taps are held) but isn't "nothing moved".
+        if (!r.endVote && !r.annQueued && Date.now() - r.started > r.annAfter && !['LOBBY', 'GAME_OVER'].includes(room.gameState)) {
             r.annQueued = Date.now();
             if (!queueAnnouncement(r.roomCode, ANNOUNCEMENT)) r.annQueued = null;
         }

@@ -11,7 +11,7 @@ import {
     isAdminLoginRateLimited, recordFailedAdminLogin, clearAdminLoginAttempts,
     isRoomCreateRateLimited, recordFailedRoomCreateAttempt, clearRoomCreateAttempts,
     listAccessCodes, addAccessCode, setAccessCodeActive, normalizeCode,
-    hostSessionCode, getAccessCodeVenue, venueProfilesInstalled, sanitizeVenue, updateAccessCodeVenue, houseColumnInstalled, listHouseSets, boardRulesInstalled, breaksInstalled, themeInstalled,
+    hostSessionCode, getAccessCodeVenue, venueProfilesInstalled, sanitizeVenue, updateAccessCodeVenue, houseColumnInstalled, listHouseSets, boardRulesInstalled, breaksInstalled,
     announcementInstalled, readAnnouncementSettings, announcementForRoom
 } from './services/accessControl.js';
 import { healthMiddleware, attachHealthTracking, healthSnapshot } from './services/serverHealth.js';
@@ -233,7 +233,7 @@ app.get('/api/admin/codes', requireAdmin, async (req, res) => {
         const codes = await listAccessCodes(pool);
         // venueProfiles: false until access_codes_venue_profiles.sql is run.
         const houseColumn = await houseColumnInstalled(pool);
-        return res.json({ success: true, codes, venueProfiles: await venueProfilesInstalled(pool), houseColumn, houseSets: houseColumn ? await listHouseSets(pool) : [], boardRules: await boardRulesInstalled(pool), breaks: await breaksInstalled(pool), theme: await themeInstalled(pool), announcement: await announcementInstalled(pool), modes: GAME_MODE_KEYS });
+        return res.json({ success: true, codes, venueProfiles: await venueProfilesInstalled(pool), houseColumn, houseSets: houseColumn ? await listHouseSets(pool) : [], boardRules: await boardRulesInstalled(pool), breaks: await breaksInstalled(pool), announcement: await announcementInstalled(pool), modes: GAME_MODE_KEYS });
     } catch (e) {
         return res.status(500).json({ success: false, error: 'Failed to load codes.' });
     }
@@ -270,7 +270,7 @@ app.post('/api/admin/codes/:code/venue', requireAdmin, async (req, res) => {
         }
         const venue = sanitizeVenue(req.body, GAME_MODE_KEYS);
         const withAnnouncement = await announcementInstalled(pool);
-        const found = await updateAccessCodeVenue(pool, req.params.code, venue, await houseColumnInstalled(pool), await boardRulesInstalled(pool), await breaksInstalled(pool), await themeInstalled(pool), withAnnouncement);
+        const found = await updateAccessCodeVenue(pool, req.params.code, venue, await houseColumnInstalled(pool), await boardRulesInstalled(pool), await breaksInstalled(pool), withAnnouncement);
         if (!found) return res.status(404).json({ success: false, error: 'No such code.' });
         // The announcement reaches rooms already open (the rest of a venue's
         // settings apply from the next room): set it up mid-evening and it works.
