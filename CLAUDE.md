@@ -986,6 +986,18 @@ and forth until we both agree the idea is good **and** worth the effort. So:
   tonight: which letters, which round, were they on the TV?); flipside's
   own DATABASE_URL (Randy on it, Nov 22). The genie is out: Randy is
   drawing other avatars instead.
+- **Pinned (Randy, Nov 22: "No bother. Pin it for later."):** the lobby
+  draws every mode for a moment before the room's own list arrives, so a
+  mode the code doesn't play flashes and vanishes. Fix: wait for the
+  room's list before drawing the tiles.
+- **Double Take, first real test (Nov 22):** the mode was hidden by the
+  test code's ticked mode list (new modes start unticked on any code
+  with a list; Randy cleared the ticks). Verdict: pinch "natural", no
+  stray taps, 90s right for three, TV photos fine; Allen Street and
+  Boulevard both Ready. Changed after it (Nov 23): both photos on the
+  phone, the pot grows with the room, quieter markers (see Double Take).
+  Watch next: a big room (10+ may find all 5 in seconds, leaving most
+  with nothing).
 - **Decisions open:** a **league** (Randy weighing it, Nov 22: a
   multi-week standings table per code needs the server to keep opt-in
   nicknames and points, auto-deleted after the season -- a change to the
@@ -1258,7 +1270,21 @@ and forth until we both agree the idea is good **and** worth the effort. So:
   2s dimmed, a 500 pot draining over 90s, the leftover split evenly
   among everyone who found one, the muscle badge + 100 for 3 of a
   photo's 5, Lost in Space for 2+ misses, a tap counts 30 px outside a
-  box. Phones never learn an unfound spot (only found ones are sent).
+  box. **After the first real game (Randy, Nov 23):**
+  the phone shows **both photos**, the changed one on top and the
+  original below (comparing a TV across the room with a phone in hand
+  was too hard); zoom and pan move both together and a tap counts on
+  either. **The pot grows with the room**: 500 up to 3 players, +100 a
+  player after, max 700 (only 5 people can share it, one per spot), set
+  when each photo starts, so a mid-photo joiner hunts and shares but
+  changes the pot from the next photo. **Markers** (the rings and big
+  icons cluttered the photo): on the TV a find pops the finder's avatar
+  in big for about a second, then it settles small and half
+  see-through on the spot; phones get a small gold dot with a white
+  edge, half see-through (yours stronger), no avatars (Randy: "The TV
+  is still the focal point, even if not so much in this module"), never
+  red (red means wrong); spots nobody found get a thin dashed outline
+  at the end. Phones never learn an unfound spot (only found ones are sent).
   The page swipe ignores drags that start on the photo (found by the
   phone test). Tested: the smoke test (bots find, miss, tap a found
   spot, leave one for the clock) and a Playwright phone (tap, miss and

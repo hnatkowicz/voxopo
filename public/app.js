@@ -2111,18 +2111,21 @@ function renderLetterRipTV(data) {
 
 // Double Take (Randy, Nov 2026): the two photos side by side get the room;
 // "Photo 2 / 6" and the pot (in place of the clock) stay small on top. A
-// found spot gets a gold ring with its finder's avatar; at the end, any
-// spot nobody found gets a plain cream ring.
+// find pops the finder's avatar in big for a moment (the fun "that's me!"),
+// then it settles to a small, half see-through marker on the spot (Randy,
+// Nov 23: rings and big icons cluttered the photo). At the end, any spot
+// nobody found gets a thin dashed outline.
 const DT_W = 1600, DT_H = 1200; // the size /admin/double-take checks for
-let dtTvShown = { key: null, rings: new Set() }; // only a newly found spot pops in
+let dtTvShown = { key: null, rings: new Set() }; // only a new find pops
 function doubleTakeRings(data, fresh) {
-    const pad = 40; // the ring sits a little outside the change, so it doesn't cover it
+    const pct = (v, of) => `${v / of * 100}%`;
     return (data.spots || []).map(s => {
-        const x = s.x - pad, y = s.y - pad, w = s.w + pad * 2, h = s.h + pad * 2;
-        const style = `left:${x / DT_W * 100}%;top:${y / DT_H * 100}%;width:${w / DT_W * 100}%;height:${h / DT_H * 100}%`;
-        const who = s.by ? `<span class="dt-ring-who">${avatarHtml(s.by.emoji, 1)}</span>` : '';
-        const isNew = fresh.has(`${s.x},${s.y}`);
-        return `<div class="dt-ring${s.by ? '' : ' dt-ring-missed'}${isNew ? ' dt-new' : ''}" style="${style}">${who}</div>`;
+        if (s.by) {
+            const isNew = fresh.has(`${s.x},${s.y}`);
+            return `<div class="dt-mark${isNew ? ' dt-new' : ''}" style="left:${pct(s.x + s.w / 2, DT_W)};top:${pct(s.y + s.h / 2, DT_H)}">${avatarHtml(s.by.emoji, 1)}</div>`;
+        }
+        const pad = 20;
+        return `<div class="dt-missed" style="left:${pct(s.x - pad, DT_W)};top:${pct(s.y - pad, DT_H)};width:${pct(s.w + pad * 2, DT_W)};height:${pct(s.h + pad * 2, DT_H)}"></div>`;
     }).join('');
 }
 function renderDoubleTakeTV(data) {

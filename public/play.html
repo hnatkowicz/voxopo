@@ -97,12 +97,20 @@
         /* Double Take: the photo in its own frame, zoomed by our own pinch
            (scale on the picture, not the page), so a tap maps to the same
            spot at any zoom. */
-        .dt-viewport { position: relative; width: 100%; aspect-ratio: 4 / 3; overflow: hidden; border-radius: 8px; background: var(--rm-bg); touch-action: none; user-select: none; -webkit-user-select: none; -webkit-touch-callout: none; margin: 10px 0 8px; }
+        /* Both photos (Randy, Nov 2026, after the first real test: comparing
+           a TV across the room with a phone in your hand is too hard). The
+           changed one on top, the original below; zoom moves both together. */
+        .dt-pair { position: relative; display: flex; flex-direction: column; gap: 6px; margin: 10px 0 8px; }
+        .dt-viewport { position: relative; width: 100%; aspect-ratio: 4 / 3; overflow: hidden; border-radius: 8px; background: var(--rm-bg); touch-action: none; user-select: none; -webkit-user-select: none; -webkit-touch-callout: none; }
         .dt-layer { position: absolute; left: 0; top: 0; width: 100%; height: 100%; transform-origin: 0 0; }
         .dt-layer img { width: 100%; height: 100%; display: block; pointer-events: none; }
-        .dt-ring { position: absolute; box-sizing: border-box; border: 2px solid var(--rm-brand); border-radius: 50%; box-shadow: 0 0 6px rgba(var(--rm-brand-rgb), 0.8); pointer-events: none; }
-        .dt-ring.mine { border-width: 3px; }
-        .dt-ring.missed { border-color: var(--rm-text); border-style: dashed; box-shadow: none; }
+        /* A found spot: a small gold dot with a white edge, half see-through
+           so it never hides the photo (Randy: circles and icons cluttered it;
+           not red, which means wrong). Yours a little stronger. */
+        .dt-dot { position: absolute; width: 14px; height: 14px; margin: -7px 0 0 -7px; border-radius: 50%; background: var(--rm-brand); border: 2px solid var(--rm-white); box-sizing: border-box; opacity: 0.5; pointer-events: none; }
+        .dt-dot.mine { opacity: 0.85; }
+        /* At the end, a spot nobody found: a thin dashed outline. */
+        .dt-missed { position: absolute; box-sizing: border-box; border: 1.5px dashed var(--rm-text); border-radius: 6px; pointer-events: none; }
         .dt-mark { position: absolute; width: 14px; height: 14px; margin: -7px 0 0 -7px; border-radius: 50%; border: 2px solid var(--rm-white); box-shadow: 0 0 0 1px rgba(var(--rm-black-rgb), 0.6); pointer-events: none; }
         .dt-dim { position: absolute; inset: 0; display: none; align-items: center; justify-content: center; background: rgba(var(--rm-black-rgb), 0.62); color: var(--rm-white); font-weight: 800; font-size: 1.15rem; text-align: center; padding: 16px; }
         .dt-dim.on { display: flex; }
@@ -739,8 +747,13 @@
     <div id="double-take-screen" class="card" style="display: none;">
         <div id="dt-head" class="lr-head"></div>
         <div id="dt-ready" class="dt-ready"></div>
-        <div id="dt-viewport" class="dt-viewport">
-            <div id="dt-layer" class="dt-layer"><img id="dt-img" alt="" draggable="false"><div id="dt-marks"></div></div>
+        <div id="dt-pair" class="dt-pair">
+            <div class="dt-viewport">
+                <div class="dt-layer"><img id="dt-img" alt="" draggable="false"><div class="dt-marks"></div></div>
+            </div>
+            <div class="dt-viewport">
+                <div class="dt-layer"><img id="dt-img-2" alt="" draggable="false"><div class="dt-marks"></div></div>
+            </div>
             <div id="dt-dim" class="dt-dim"><span id="dt-dim-line"></span></div>
         </div>
         <div class="dt-tools">
@@ -2734,22 +2747,24 @@
         let dtGesture = null;
 
         function dtApply() {
-            const vp = document.getElementById('dt-viewport');
+            const vp = document.querySelector('#dt-pair .dt-viewport');
             const w = vp.clientWidth, h = vp.clientHeight;
             dtView.s = Math.max(1, Math.min(DT_MAX_ZOOM, dtView.s));
             dtView.tx = Math.min(0, Math.max(w * (1 - dtView.s), dtView.tx));
             dtView.ty = Math.min(0, Math.max(h * (1 - dtView.s), dtView.ty));
-            document.getElementById('dt-layer').style.transform = `translate(${dtView.tx}px, ${dtView.ty}px) scale(${dtView.s})`;
-            // Rings and the marker keep the same line width at any zoom.
-            document.querySelectorAll('#dt-marks > *').forEach(el => { el.style.borderWidth = `${(el.classList.contains('mine') ? 3 : 2) / dtView.s}px`; });
-            document.querySelectorAll('#dt-marks .dt-mark').forEach(el => { el.style.transform = `scale(${1 / dtView.s})`; });
+            // One zoom for both photos, so the same spot sits under the same finger.
+            document.querySelectorAll('#dt-pair .dt-layer').forEach(layer => { layer.style.transform = `translate(${dtView.tx}px, ${dtView.ty}px) scale(${dtView.s})`; });
+            // Dots and the marker stay the same size on screen at any zoom.
+            document.querySelectorAll('#dt-pair .dt-dot, #dt-pair .dt-mark').forEach(el => { el.style.transform = `scale(${1 / dtView.s})`; });
+            document.querySelectorAll('#dt-pair .dt-missed').forEach(el => { el.style.borderWidth = `${1.5 / dtView.s}px`; });
         }
         function dtFit() {
             Object.assign(dtView, { s: 1, tx: 0, ty: 0 });
             dtApply();
         }
+        // Either photo: both are the same size and zoom, so a point means the same spot.
         function dtLocal(e) {
-            const r = document.getElementById('dt-viewport').getBoundingClientRect();
+            const r = (e.currentTarget && e.currentTarget.getBoundingClientRect ? e.currentTarget : document.querySelector('#dt-pair .dt-viewport')).getBoundingClientRect();
             return { x: e.clientX - r.left, y: e.clientY - r.top, w: r.width, h: r.height };
         }
         function dtSetStatus(html, holdMs) {
@@ -2793,15 +2808,17 @@
         function dtDrawMarks() {
             if (!dtData) return;
             const me = localStorage.getItem('randomania_nickname');
-            const pad = 40;
-            const rings = (dtData.spots || []).map(s => {
-                const x = s.x - pad, y = s.y - pad, w = s.w + pad * 2, h = s.h + pad * 2;
-                const cls = !s.by ? 'missed' : s.by.name === me ? 'mine' : '';
-                return `<div class="dt-ring ${cls}" style="left:${x / DT_W * 100}%;top:${y / DT_H * 100}%;width:${w / DT_W * 100}%;height:${h / DT_H * 100}%"></div>`;
-            }).join('');
-            const tap = dtPendingMark || (dtData.myLastTap && dtData.dtPhase === 'HUNT' ? dtData.myLastTap : null);
-            const mark = tap ? `<div class="dt-mark" style="left:${tap.x / DT_W * 100}%;top:${tap.y / DT_H * 100}%"></div>` : '';
-            document.getElementById('dt-marks').innerHTML = rings + mark;
+            const pct = (v, of) => `${v / of * 100}%`;
+            const found = (dtData.spots || []).filter(s => s.by).map(s =>
+                `<div class="dt-dot${s.by.name === me ? ' mine' : ''}" style="left:${pct(s.x + s.w / 2, DT_W)};top:${pct(s.y + s.h / 2, DT_H)}"></div>`).join('');
+            const pad = 20;
+            const missed = (dtData.spots || []).filter(s => !s.by).map(s =>
+                `<div class="dt-missed" style="left:${pct(s.x - pad, DT_W)};top:${pct(s.y - pad, DT_H)};width:${pct(s.w + pad * 2, DT_W)};height:${pct(s.h + pad * 2, DT_H)}"></div>`).join('');
+            // Where your last tap landed: only for a miss (a find has its dot).
+            const last = dtData.myLastTap && !dtData.myLastTap.hit && dtData.dtPhase === 'HUNT' ? dtData.myLastTap : null;
+            const tap = dtPendingMark || last;
+            const mark = tap ? `<div class="dt-mark" style="left:${pct(tap.x, DT_W)};top:${pct(tap.y, DT_H)}"></div>` : '';
+            document.querySelectorAll('#dt-pair .dt-marks').forEach(el => { el.innerHTML = found + missed + mark; });
             dtApply();
         }
 
@@ -2812,6 +2829,7 @@
                 dtPhotoKey = photoKey;
                 dtPendingMark = null;
                 document.getElementById('dt-img').src = data.altered;
+                document.getElementById('dt-img-2').src = data.original;
                 dtFit();
                 dtSetStatus('');
             }
@@ -2821,7 +2839,7 @@
             const ready = document.getElementById('dt-ready');
             ready.style.display = data.dtPhase === 'INTRO' ? 'block' : 'none';
             ready.textContent = data.dtPhase === 'INTRO' ? 'Get ready...' : '';
-            document.getElementById('dt-viewport').style.display = data.dtPhase === 'INTRO' ? 'none' : 'block';
+            document.getElementById('dt-pair').style.display = data.dtPhase === 'INTRO' ? 'none' : 'flex';
             document.querySelector('#double-take-screen .dt-tools').style.display = data.dtPhase === 'INTRO' ? 'none' : 'flex';
             // A miss on another device or before a reload: still dimmed.
             if (hunting && data.myLockedMs > 300 && Date.now() >= dtLockedUntil) dtDim('One moment...', data.myLockedMs);
@@ -2840,7 +2858,7 @@
         }
 
         (function dtGestures() {
-            const vp = document.getElementById('dt-viewport');
+            let activeVp = null; // a gesture belongs to the photo it started on
             const begin = () => {
                 const pts = [...dtPointers.values()];
                 if (pts.length === 1) {
@@ -2852,61 +2870,66 @@
                         s: dtView.s, tx: dtView.tx, ty: dtView.ty };
                 }
             };
-            vp.addEventListener('pointerdown', e => {
-                vp.setPointerCapture(e.pointerId);
-                const p = dtLocal(e);
-                dtPointers.set(e.pointerId, p);
-                if (dtPointers.size === 1) dtGesture = { tap: true, twoFingers: false, downAt: Date.now(), first: p };
-                begin();
-            });
-            vp.addEventListener('pointermove', e => {
-                if (!dtPointers.has(e.pointerId) || !dtGesture) return;
-                const p = dtLocal(e);
-                dtPointers.set(e.pointerId, p);
-                if (dtGesture.mode === 'pinch' && dtPointers.size >= 2) {
-                    const [a, b] = [...dtPointers.values()];
-                    const s = Math.max(1, Math.min(DT_MAX_ZOOM, dtGesture.s * Math.hypot(a.x - b.x, a.y - b.y) / dtGesture.dist));
-                    const mid = { x: (a.x + b.x) / 2, y: (a.y + b.y) / 2 };
-                    // Keep the picture point under the fingers' first midpoint under the fingers.
-                    const cx = (dtGesture.mid.x - dtGesture.tx) / dtGesture.s, cy = (dtGesture.mid.y - dtGesture.ty) / dtGesture.s;
-                    Object.assign(dtView, { s, tx: mid.x - cx * s, ty: mid.y - cy * s });
-                    dtApply();
-                } else if (dtGesture.mode === 'pan') {
-                    const dx = p.x - dtGesture.start.x, dy = p.y - dtGesture.start.y;
-                    if (Math.hypot(p.x - dtGesture.first.x, p.y - dtGesture.first.y) > DT_TAP_MOVE) dtGesture.tap = false;
-                    if (!dtGesture.tap) {
-                        Object.assign(dtView, { tx: dtGesture.tx + dx, ty: dtGesture.ty + dy });
+            // The same gestures on either photo; zoom and pan move both.
+            document.querySelectorAll('#dt-pair .dt-viewport').forEach(vp => {
+                vp.addEventListener('pointerdown', e => {
+                    if (dtPointers.size && activeVp !== vp) return; // a finger on the other photo mid-gesture
+                    activeVp = vp;
+                    vp.setPointerCapture(e.pointerId);
+                    const p = dtLocal(e);
+                    dtPointers.set(e.pointerId, p);
+                    if (dtPointers.size === 1) dtGesture = { tap: true, twoFingers: false, downAt: Date.now(), first: p };
+                    begin();
+                });
+                vp.addEventListener('pointermove', e => {
+                    if (!dtPointers.has(e.pointerId) || !dtGesture) return;
+                    const p = dtLocal(e);
+                    dtPointers.set(e.pointerId, p);
+                    if (dtGesture.mode === 'pinch' && dtPointers.size >= 2) {
+                        const [a, b] = [...dtPointers.values()];
+                        const s = Math.max(1, Math.min(DT_MAX_ZOOM, dtGesture.s * Math.hypot(a.x - b.x, a.y - b.y) / dtGesture.dist));
+                        const mid = { x: (a.x + b.x) / 2, y: (a.y + b.y) / 2 };
+                        // Keep the picture point under the fingers' first midpoint under the fingers.
+                        const cx = (dtGesture.mid.x - dtGesture.tx) / dtGesture.s, cy = (dtGesture.mid.y - dtGesture.ty) / dtGesture.s;
+                        Object.assign(dtView, { s, tx: mid.x - cx * s, ty: mid.y - cy * s });
                         dtApply();
+                    } else if (dtGesture.mode === 'pan') {
+                        const dx = p.x - dtGesture.start.x, dy = p.y - dtGesture.start.y;
+                        if (Math.hypot(p.x - dtGesture.first.x, p.y - dtGesture.first.y) > DT_TAP_MOVE) dtGesture.tap = false;
+                        if (!dtGesture.tap) {
+                            Object.assign(dtView, { tx: dtGesture.tx + dx, ty: dtGesture.ty + dy });
+                            dtApply();
+                        }
                     }
-                }
+                });
+                const end = e => {
+                    if (!dtPointers.has(e.pointerId)) return;
+                    const p = dtLocal(e);
+                    dtPointers.delete(e.pointerId);
+                    if (!dtGesture) return;
+                    if (dtPointers.size === 0) {
+                        const g = dtGesture;
+                        dtGesture = null;
+                        if (e.type === 'pointerup' && g.tap && !g.twoFingers && Date.now() - g.downAt <= DT_TAP_MS
+                            && Math.hypot(p.x - g.first.x, p.y - g.first.y) <= DT_TAP_MOVE) dtGuess(p);
+                    } else {
+                        begin(); // a finger lifted mid-pinch: carry on as a pan
+                    }
+                };
+                vp.addEventListener('pointerup', end);
+                vp.addEventListener('pointercancel', end);
+                // A computer's scroll wheel zooms too (testing, or a laptop player).
+                vp.addEventListener('wheel', e => {
+                    e.preventDefault();
+                    const p = dtLocal(e);
+                    const s = Math.max(1, Math.min(DT_MAX_ZOOM, dtView.s * (e.deltaY < 0 ? 1.15 : 1 / 1.15)));
+                    const cx = (p.x - dtView.tx) / dtView.s, cy = (p.y - dtView.ty) / dtView.s;
+                    Object.assign(dtView, { s, tx: p.x - cx * s, ty: p.y - cy * s });
+                    dtApply();
+                }, { passive: false });
+                // iPhone Safari's own pinch would zoom the whole page.
+                ['gesturestart', 'gesturechange'].forEach(t => vp.addEventListener(t, e => e.preventDefault()));
             });
-            const end = e => {
-                if (!dtPointers.has(e.pointerId)) return;
-                const p = dtLocal(e);
-                dtPointers.delete(e.pointerId);
-                if (!dtGesture) return;
-                if (dtPointers.size === 0) {
-                    const g = dtGesture;
-                    dtGesture = null;
-                    if (e.type === 'pointerup' && g.tap && !g.twoFingers && Date.now() - g.downAt <= DT_TAP_MS
-                        && Math.hypot(p.x - g.first.x, p.y - g.first.y) <= DT_TAP_MOVE) dtGuess(p);
-                } else {
-                    begin(); // a finger lifted mid-pinch: carry on as a pan
-                }
-            };
-            vp.addEventListener('pointerup', end);
-            vp.addEventListener('pointercancel', end);
-            // A computer's scroll wheel zooms too (testing, or a laptop player).
-            vp.addEventListener('wheel', e => {
-                e.preventDefault();
-                const p = dtLocal(e);
-                const s = Math.max(1, Math.min(DT_MAX_ZOOM, dtView.s * (e.deltaY < 0 ? 1.15 : 1 / 1.15)));
-                const cx = (p.x - dtView.tx) / dtView.s, cy = (p.y - dtView.ty) / dtView.s;
-                Object.assign(dtView, { s, tx: p.x - cx * s, ty: p.y - cy * s });
-                dtApply();
-            }, { passive: false });
-            // iPhone Safari's own pinch would zoom the whole page.
-            ['gesturestart', 'gesturechange'].forEach(t => vp.addEventListener(t, e => e.preventDefault()));
         })();
 
         function renderLetterRip(data) {

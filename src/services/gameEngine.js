@@ -3702,7 +3702,15 @@ export function letterRipStatusFor(room, playerName) {
 const DOUBLE_TAKE_MAX_PHOTOS = 6; // a game plays whatever's Ready, up to 6 (Randy: test with 2 or 3)
 const DOUBLE_TAKE_FIND_POINTS = 100;
 const DOUBLE_TAKE_MISS_POINTS = 25; // never below 0
-const DOUBLE_TAKE_POT_START = 500; // drains to 0 over the round
+// The pot grows with the room (Randy, Nov 23 2026, after the first real
+// game): 500 for up to 3 players, +100 for each one after, but no more than
+// 700, since only 5 people can ever share it (there are 5 spots). Set once
+// when each photo starts, so someone joining mid-photo can hunt and share,
+// but changes the pot from the next photo on.
+const DOUBLE_TAKE_POT_START = 500;
+const DOUBLE_TAKE_POT_PER_PLAYER = 100;
+const DOUBLE_TAKE_POT_FREE_PLAYERS = 3;
+const DOUBLE_TAKE_POT_MAX = 700;
 const DOUBLE_TAKE_ROUND_SECONDS = 90; // ends early once all 5 are found
 const DOUBLE_TAKE_LOCKOUT_MS = 2000; // a miss dims that phone this long
 const DOUBLE_TAKE_MUSCLE_FINDS = 3; // 3 of one photo's 5 earns the muscle badge...
@@ -3763,6 +3771,8 @@ function startDoubleTakePhoto(roomCode) {
         lockedUntil: {},
         lastTaps: {},   // name -> { x, y, hit } the phone draws its marker from
         split: null,    // the leftover pot's split, once all are found
+        potStart: Math.min(DOUBLE_TAKE_POT_MAX, DOUBLE_TAKE_POT_START + DOUBLE_TAKE_POT_PER_PLAYER
+            * Math.max(0, Object.values(room.players).filter(p => !p.left).length - DOUBLE_TAKE_POT_FREE_PLAYERS)),
         phase: 'INTRO'
     });
     room.gameSecondsLeft = DOUBLE_TAKE_ROUND_SECONDS;
@@ -3787,7 +3797,8 @@ function startDoubleTakePhoto(roomCode) {
 // The pot drains evenly with the clock, in steps of 10.
 function doubleTakePot(room) {
     const left = Math.max(0, room.gameSecondsLeft || 0);
-    return Math.round(DOUBLE_TAKE_POT_START * left / DOUBLE_TAKE_ROUND_SECONDS / 10) * 10;
+    const start = (room.doubleTake && room.doubleTake.potStart) || DOUBLE_TAKE_POT_START;
+    return Math.round(start * left / DOUBLE_TAKE_ROUND_SECONDS / 10) * 10;
 }
 
 function finishDoubleTakePhoto(roomCode) {

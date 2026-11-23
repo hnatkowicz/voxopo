@@ -1016,15 +1016,20 @@ body.tp-layout #onboarding-status-slot .arrival-line { font-size: calc(var(--u) 
 .dt-photos { display: flex; justify-content: center; gap: calc(var(--u) * 1.6); width: 100%; }
 .dt-photo { position: relative; width: calc(50% - var(--u) * 0.8); max-width: calc(var(--u) * 42); aspect-ratio: 4 / 3; }
 .dt-photo img { width: 100%; height: 100%; object-fit: cover; display: block; border-radius: calc(var(--u) * 0.6); }
-/* A dark edge on both sides of the gold, so the ring reads on any photo. */
-.dt-ring { position: absolute; box-sizing: border-box; border: calc(var(--u) * 0.45) solid var(--rm-brand); border-radius: 50%;
-    box-shadow: 0 0 0 calc(var(--u) * 0.15) rgba(var(--rm-black-rgb), 0.55), inset 0 0 0 calc(var(--u) * 0.15) rgba(var(--rm-black-rgb), 0.55); }
-.dt-ring.dt-new { animation: dt-pop 0.45s ease-out both; }
-.dt-ring-missed { border-color: var(--rm-text); border-style: dashed; }
-.dt-ring-who { position: absolute; top: calc(var(--u) * -1.3); right: calc(var(--u) * -1.3); width: calc(var(--u) * 2.6); height: calc(var(--u) * 2.6);
-    display: flex; align-items: center; justify-content: center; border-radius: 50%; background: var(--rm-bg); border: calc(var(--u) * 0.2) solid var(--rm-brand); font-size: calc(var(--u) * 1.8); line-height: 1; }
-.dt-ring-who img { width: 80% !important; height: 80% !important; object-fit: contain; }
-@keyframes dt-pop { from { transform: scale(1.8); opacity: 0; } to { transform: none; opacity: 1; } }
+/* A find: the finder's avatar, small and half see-through, centered on the
+   spot. A new find pops in big and bright for about a second first. */
+.dt-mark { position: absolute; width: calc(var(--u) * 2.2); height: calc(var(--u) * 2.2); margin: calc(var(--u) * -1.1) 0 0 calc(var(--u) * -1.1);
+    display: flex; align-items: center; justify-content: center; border-radius: 50%; background: rgba(var(--rm-bg-rgb), 0.7);
+    border: calc(var(--u) * 0.12) solid var(--rm-white); box-sizing: border-box; font-size: calc(var(--u) * 1.3); line-height: 1; opacity: 0.5; }
+.dt-mark img { width: 80% !important; height: 80% !important; object-fit: contain; }
+.dt-mark.dt-new { animation: dt-pop 1.8s ease-out both; }
+@keyframes dt-pop {
+    0% { transform: scale(0.3); opacity: 0; }
+    15% { transform: scale(2.2); opacity: 1; }
+    65% { transform: scale(2.2); opacity: 1; }
+    100% { transform: scale(1); opacity: 0.5; }
+}
+.dt-missed { position: absolute; box-sizing: border-box; border: calc(var(--u) * 0.15) dashed var(--rm-text); border-radius: calc(var(--u) * 0.5); }
 .dt-foot { min-height: calc(var(--u) * 3.4); display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: calc(var(--u) * 0.6) calc(var(--u) * 2); }
 .dt-finder { display: inline-flex; align-items: center; gap: calc(var(--u) * 0.6); font-size: calc(var(--u) * 1.55); font-weight: 600; color: var(--rm-text); }
 .dt-split { font-size: calc(var(--u) * 1.3); font-weight: 600; color: var(--rm-text-soft); }
