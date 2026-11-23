@@ -169,7 +169,12 @@ event, for a small fee. That's why hosting is gated behind access codes.
   and phrases only, nothing about players (the /info privacy paragraph
   says so). Rows past the window are deleted by the server. Without the
   table it does nothing. Not covered yet: Country Monkey, Flag Me Down,
-  Profiler, the house set. Groundwork for a possible league (Randy is
+  the house set. **Profiler questions and EmpossDurr words joined Nov
+  23** (the family noticed repeats over a full game night): both modes
+  now draw what the room and venue haven't played first (they used to
+  reshuffle everything each game), and their memory kinds (`pf`, `ed`)
+  need `venue_memory_more_kinds.sql`; until it's run they're skipped
+  and the rest carries on. Groundwork for a possible league (Randy is
   weighing the privacy side: opt-in, nickname only, auto-deleted).
 - **`render.yaml`** is the voxopo service written down (Ohio, Node,
   `starter` plan, health check `/api/live-counts`, the two domains;
@@ -699,6 +704,9 @@ Mode keys are used in room votes and in `gameEngine.js`:
   database, so a category's code can ship before its SQL is run.
 - **EMPOSSDURR**: impostor social deduction. Impostor selection is
   *intentionally* pure random every round, not a rotation. Don't "fix" it.
+  Words, unlike impostors, avoid repeats: a room (and its venue, the
+  last 28 days) gets words it hasn't played first (`room.empossdurrSeen`,
+  Nov 23).
 - **ON_THE_SPECTRUM**: guess where a player landed on a slider. Its
   judgment-call statements include political ones ("Ronald Reagan was a
   good president", "Labor unions are good for workers") **on purpose**
@@ -718,9 +726,13 @@ Mode keys are used in room votes and in `gameEngine.js`:
   to find (+2 bonus when there were 2+), and +2 open-book for each person who
   found you. Each reveal waits for everyone to tap Continue (60s backstop),
   so the room can talk it over. Ends on a "Who Knows Who" awards screen
-  before Game Over. The pool is 300 questions (`profiler_questions_seed.sql`
-  + `profiler_questions_batch_2.sql`), balanced 100/100/100 across
-  intensity 1/2/3 because each game cycles light -> medium -> deep.
+  before Game Over. The pool is 390 questions (`profiler_questions_seed.sql`
+  + `profiler_questions_batch_2.sql` + `profiler_questions_batch_3.sql`,
+  Nov 23 after a full family game night showed repeats), balanced
+  130/130/130 across intensity 1/2/3 because each game cycles light ->
+  medium -> deep. A room asks questions it (and its venue, the last 28
+  days) hasn't seen first (`room.profilerSeen`). The coffee question
+  has "Black with an ice cube" (Randy's order).
 - **Thinking Pants geography categories:** Country Monkey (maps), **Flag Me
   Down** (flags, `trivi_yeah_ii_flag_me_down.sql`, 120), **Wet Pants**
   (water, `trivi_yeah_ii_wet_pants.sql`, 112) and **Wish You Were Here**
@@ -962,10 +974,11 @@ and forth until we both agree the idea is good **and** worth the effort. So:
   codes structure only).
 - **All content SQL is live** (Randy ran everything through Literature,
   Nov 22).
-- **Run in Neon (Randy, owner login -- it creates a table):**
-  `double_take.sql` (Double Take's spots; /admin/double-take can't save
-  until it's run). `venue_memory.sql` was run Nov 22, so venue memory is
-  on.
+- **Run in Neon (Randy):** `profiler_questions_batch_3.sql` (90 new
+  questions and the coffee option), and, with the owner login since it
+  changes a table, `venue_memory_more_kinds.sql` (Profiler and
+  EmpossDurr in venue memory). `double_take.sql` and `venue_memory.sql`
+  are done.
 - **Paused (Randy, Nov 22):** the re-tier and Letter Rip phrases, a
   "mini pause" while Double Take is designed and built (see Ideas in the
   works).
@@ -997,7 +1010,11 @@ and forth until we both agree the idea is good **and** worth the effort. So:
   Boulevard both Ready. Changed after it (Nov 23): both photos on the
   phone, the pot grows with the room, quieter markers (see Double Take).
   Watch next: a big room (10+ may find all 5 in seconds, leaving most
-  with nothing).
+  with nothing). **Nov 23, 6 photos in:** "intuitive"; scoring, timing
+  and pot "spot on for 5 people"; one change: the TV's avatar markers at
+  full opacity (people hunt on phones and look up to see who found
+  what). Randy is learning which photos and edits show best on TV and
+  phone.
 - **Decisions open:** a **league** (Randy weighing it, Nov 22: a
   multi-week standings table per code needs the server to keep opt-in
   nicknames and points, auto-deleted after the season -- a change to the
@@ -1279,8 +1296,8 @@ and forth until we both agree the idea is good **and** worth the effort. So:
   when each photo starts, so a mid-photo joiner hunts and shares but
   changes the pot from the next photo. **Markers** (the rings and big
   icons cluttered the photo): on the TV a find pops the finder's avatar
-  in big for about a second, then it settles small and half
-  see-through on the spot; phones get a small gold dot with a white
+  in big for about a second, then it settles small on the spot (full
+  opacity since Nov 23: "a smidge more apparent"); phones get a small gold dot with a white
   edge, half see-through (yours stronger), no avatars (Randy: "The TV
   is still the focal point, even if not so much in this module"), never
   red (red means wrong); spots nobody found get a thin dashed outline

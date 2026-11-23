@@ -2112,8 +2112,9 @@ function renderLetterRipTV(data) {
 // Double Take (Randy, Nov 2026): the two photos side by side get the room;
 // "Photo 2 / 6" and the pot (in place of the clock) stay small on top. A
 // find pops the finder's avatar in big for a moment (the fun "that's me!"),
-// then it settles to a small, half see-through marker on the spot (Randy,
-// Nov 23: rings and big icons cluttered the photo). At the end, any spot
+// then it settles to a small marker on the spot (Randy, Nov 23: rings and
+// big icons cluttered the photo; then full opacity, so who found what reads
+// at a glance from the couch). At the end, any spot
 // nobody found gets a thin dashed outline.
 const DT_W = 1600, DT_H = 1200; // the size /admin/double-take checks for
 let dtTvShown = { key: null, rings: new Set() }; // only a new find pops
