@@ -4238,11 +4238,24 @@ function clearOnTheSpectrumTimers(room) {
 // single) category phase resolves -- the equivalent of loadQuestionBank +
 // startNextQuestion for the trivia modes, but EmpossDurr has no
 // multiple-choice question bank at all, just a word deck.
+// The deck for one game: words this room (or its venue, the last 28 days)
+// hasn't played go on top, so they're drawn first (the deck is popped from
+// the end). The family noticed repeats in the social games (Randy, Nov 23
+// 2026); each game used to reshuffle the whole list. Once every word has
+// been played, the room starts over.
+function empossDurrDeck(room, words) {
+    room.empossdurrSeen = room.empossdurrSeen || new Set();
+    let fresh = words.filter(w => !room.empossdurrSeen.has(w.word));
+    if (!fresh.length) { room.empossdurrSeen.clear(); fresh = words; }
+    const seen = words.filter(w => room.empossdurrSeen.has(w.word));
+    return [...shuffleArray(seen), ...shuffleArray(fresh)];
+}
+
 async function startEmpossDurrGame(roomCode) {
     const room = activeRooms[roomCode];
     if (!room) return;
 
-    const wordPool = shuffleArray(await loadEmpossDurrWordPool());
+    const wordPool = empossDurrDeck(room, await loadEmpossDurrWordPool());
     const activePlayerCount = Object.values(room.players).filter(p => !p.left).length;
     const totalRounds = Math.max(EMPOSSDURR_MIN_ROUNDS, Math.min(activePlayerCount + 3, EMPOSSDURR_MAX_ROUNDS));
 
@@ -4288,10 +4301,14 @@ function startEmpossDurrRound(roomCode) {
 
     if (ed.wordPool.length === 0) {
         // Ran through the whole deck this game -- reshuffle a fresh lap rather
-        // than reusing the exact same draw order.
-        loadEmpossDurrWordPool().then(fullPool => { ed.wordPool = shuffleArray(fullPool); });
+        // than reusing the exact same draw order. (This used to reload in the
+        // background and pop an empty deck in the meantime; the words are
+        // already cached by the time a game is running.)
+        ed.wordPool = shuffleArray(empossDurrWordCache || []);
     }
     const nextWord = ed.wordPool.pop();
+    if (!nextWord) { endGame(roomCode); return; }
+    room.empossdurrSeen.add(nextWord.word);
 
     const activePlayers = Object.values(room.players).filter(p => !p.left);
     const impostor = activePlayers[Math.floor(Math.random() * activePlayers.length)];
@@ -5285,11 +5302,12 @@ function profilerIntensityForRound(round) {
     return [1, 2, 3][(round - 1) % 3];
 }
 
-function drawProfilerQuestion(pf, intensity) {
+function drawProfilerQuestion(pf, intensity, room) {
     const bucket = pf.deck[intensity];
-    if (bucket && bucket.length) return bucket.pop();
     const fallback = [1, 2, 3].map(i => pf.deck[i]).find(b => b && b.length);
-    return fallback ? fallback.pop() : null;
+    const question = bucket && bucket.length ? bucket.pop() : fallback ? fallback.pop() : null;
+    if (question && room && room.profilerSeen) room.profilerSeen.add(question.id);
+    return question;
 }
 
 function profilerStatsFor(pf, name) {
@@ -5306,8 +5324,17 @@ async function startProfilerGame(roomCode) {
     const questionPool = await loadProfilerQuestions();
     if (questionPool.length < PROFILER_TOTAL_ROUNDS) throw new Error(`Profiler needs at least ${PROFILER_TOTAL_ROUNDS} questions, found ${questionPool.length}.`);
 
+    // Questions this room (or its venue, the last 28 days) hasn't asked go
+    // on top of each pile, so they're drawn first (piles are popped from the
+    // end). The family noticed repeats over a full game night (Randy, Nov 23
+    // 2026); every game used to reshuffle all of them. Once a room has seen
+    // every question, it starts over.
+    room.profilerSeen = room.profilerSeen || new Set();
+    if (questionPool.every(q => room.profilerSeen.has(q.id))) room.profilerSeen.clear();
     const deck = { 1: [], 2: [], 3: [] };
-    shuffleArray(questionPool).forEach(q => { (deck[q.intensity] || deck[2]).push(q); });
+    const seenFirst = [...shuffleArray(questionPool.filter(q => room.profilerSeen.has(q.id))),
+        ...shuffleArray(questionPool.filter(q => !room.profilerSeen.has(q.id)))];
+    seenFirst.forEach(q => { (deck[q.intensity] || deck[2]).push(q); });
 
     room.profiler = {
         round: 0,
@@ -5350,7 +5377,7 @@ function startProfilerRound(roomCode, isReplacement) {
     const roster = activePlayerNames(room);
     if (roster.length < PROFILER_MIN_PLAYERS_MIDGAME) { finishProfilerGame(roomCode); return; }
 
-    const question = drawProfilerQuestion(pf, profilerIntensityForRound(pf.round));
+    const question = drawProfilerQuestion(pf, profilerIntensityForRound(pf.round), room);
     if (!question) { finishProfilerGame(roomCode); return; }
 
     pf.roster = roster;
