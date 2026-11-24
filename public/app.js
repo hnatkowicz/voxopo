@@ -2156,7 +2156,7 @@ function renderPinDropTV(data) {
         panel.innerHTML = tpStage('tp-center pd-stage', `
             ${eyebrow}
             <div class="pd-answer">${escapeHtml(data.prompt || '')}</div>
-            <div class="pd-map-wrap pd-map-big">${pinDropMapHtml(data)}</div>
+            <div class="pd-map-wrap">${pinDropMapHtml(data)}</div>
             <div class="pd-foot">${rows || '<span class="pd-note">No pins this round</span>'}</div>
         `);
         return;

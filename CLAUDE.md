@@ -882,13 +882,15 @@ Mode keys are used in room votes and in `gameEngine.js`:
     move along"); **nudge arrows** under the map (4 screen pixels a
     press, finer as you zoom; in the second stage a nudge counts as
     moving); **16x zoom** on a map rendered twice as sharp (4800x2505,
-    146 KB); the reveal map sized to fit the room's height (it pushed the
-    QR code down); lines 1 px, solid and see-through on both screens
+    146 KB); the TV map **fills the room left above the QR code** on every
+    Pin Drop screen, the same size while guessing and at the reveal (fixed
+    sizes kept pushing the QR code down; Nov 24: "burn up some of that
+    real estate"; beside a landmark photo it's limited by width); lines 1 px, solid and see-through on both screens
     (the phone's had been scaling with the zoom). **Decided against:**
     blocking the phone's pull-to-refresh, a PWA or in-app camera, and a
     smaller scoreboard (Randy). **The line clue, built Nov 24** (Randy:
     "Go ahead"): in the second stage, once a round, "Draw my line (half
-    points)" draws a 1 px gold line through your pin and the true spot,
+    points; Randy: "kind of harsh", but kept for now)" draws a 1 px gold line through your pin and the true spot,
     edge to edge with neither marked, and zooms the map out to show it;
     the round's points are halved (after any x1.5). The server sends a
     phone only the line's two edge points (`pinDropLineThrough`); a pin

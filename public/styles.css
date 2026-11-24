@@ -1045,16 +1045,25 @@ body.tp-layout #onboarding-status-slot .arrival-line { font-size: calc(var(--u) 
    The map gets the room; a city's name or a landmark's photo sits with it.
    The foot keeps one height, so nothing jumps between stages. */
 .pd-stage { gap: calc(var(--u) * 1.2); }
-.pd-body { display: flex; flex-direction: column; align-items: center; gap: calc(var(--u) * 1.2); width: 100%; }
-.pd-landmark .pd-body { flex-direction: row; justify-content: center; align-items: center; gap: calc(var(--u) * 1.6); }
+/* The map fills whatever room is left between the top line and the QR
+   footer, on every Pin Drop screen, so it can't push the footer down
+   (Randy, Nov 24 2026: "the full reveal map continues to push the QR code
+   down ... burn up some of that real estate"). Fixed sizes fit one screen
+   shape and not the next; this measures the room it's given. */
+#active-content-stage:has(> .pd-stage) { min-height: 0; overflow: hidden; }
+.pd-stage { flex: 1 1 auto; min-height: 0; justify-content: flex-start; }
+.pd-body { flex: 1 1 0; min-height: 0; width: 100%; display: flex; flex-direction: column; align-items: center; gap: calc(var(--u) * 1.2); }
+.pd-landmark .pd-body { flex-direction: row; justify-content: center; align-items: stretch; gap: calc(var(--u) * 1.6); }
 .pd-city { font-family: var(--rm-font-display); font-weight: 800; font-size: calc(var(--u) * 3.4); color: var(--rm-text); text-align: center; line-height: 1.1; }
 .pd-answer { font-family: var(--rm-font-display); font-weight: 800; font-size: calc(var(--u) * 2.4); color: var(--rm-brand); text-align: center; }
-.pd-photo { flex: 0 0 auto; width: calc(var(--u) * 24); }
+.pd-photo { flex: 0 0 auto; width: calc(var(--u) * 24); align-self: center; }
+/* Beside a photo the map keeps its old 38u width (fills less than that only on a short screen). */
+.pd-landmark .pd-map-wrap { flex: 0 1 calc(var(--u) * 38); width: auto; }
 .pd-photo img { width: 100%; aspect-ratio: 3 / 2; object-fit: cover; display: block; border-radius: calc(var(--u) * 0.6); }
-.pd-map-wrap { width: min(100%, calc(var(--u) * 58)); }
-.pd-landmark .pd-map-wrap { width: calc(var(--u) * 38); }
-.pd-map-wrap.pd-map-big { width: min(100%, calc(var(--u) * 52)); } /* was 62u: taller than the room, it pushed the QR code down (Randy, Nov 24) */
-.pd-map { position: relative; width: 100%; aspect-ratio: 4800 / 2505; border-radius: calc(var(--u) * 0.6); overflow: hidden; }
+/* The box the map may fill; the map takes the largest size of its shape
+   that fits inside it (container units). */
+.pd-map-wrap { flex: 1 1 0; min-height: 0; min-width: 0; width: 100%; container-type: size; display: flex; align-items: center; justify-content: center; }
+.pd-map { position: relative; width: min(100cqw, calc(100cqh * 4800 / 2505)); aspect-ratio: 4800 / 2505; border-radius: calc(var(--u) * 0.6); overflow: hidden; }
 .pd-map img, .pd-map svg { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
 .pd-dot { fill: var(--rm-text); stroke: var(--rm-bg); opacity: 0.9; }
 /* Thin, solid and see-through, not dashed (Randy, Nov 24 2026). */
