@@ -13,7 +13,7 @@ const { chromium } = createRequire(import.meta.url)('playwright');
 
 const SVG = new URL('../public/maps/workd-map-complete.svg', import.meta.url).href;
 const OUT = process.argv[2] || '/tmp/world-map.png';
-const W = 2400;
+const W = Number(process.env.MAP_WIDTH || 4800);
 
 const browser = await chromium.launch();
 const page = await browser.newPage({ viewport: { width: 1804, height: 942 } });

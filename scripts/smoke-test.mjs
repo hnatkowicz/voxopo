@@ -307,6 +307,10 @@ function drive(r) {
         });
         if (pd.phase === 'MOVE' && live.includes('Bea')) act(room, code, 'Bea', `PDPIN ${pd.truth.x + 25} ${pd.truth.y + 10}`);
         if (pd.phase === 'MOVE' && pd.index === 0 && live.includes('Di')) act(room, code, 'Di', `PDPIN ${pd.truth.x} ${pd.truth.y}`); // refused: no first pin
+        // Round 2: everyone locks in (Bea after moving), so both stages end early.
+        if (pd.index === 1 && (pd.phase === 'PLACE' || pd.phase === 'MOVE')) live.forEach(n => act(room, code, n, 'PDLOCK'));
+        if (pd.index === 1 && pd.phase === 'PLACE') r.pdLockedAt = now;
+        if (pd.index === 1 && pd.phase === 'MOVE' && r.pdLockedAt) r.pdEarly = true;
     }
 
     // Profiler

@@ -209,10 +209,10 @@ export function allowedModesFor(room) {
         (key !== 'PIN_DROP' || pinDropReadyCount() >= PIN_DROP_MIN_PLACES));
     const venue = room && room.venue;
     const ticked = venue && venue.allowedModes && venue.allowedModes.length ? venue.allowedModes : null;
-    // Double Take sits out of the lobby unless a code ticks it (Randy, Nov
-    // 24 2026: Pin Drop took its tile; nine tiles fit the lobby's 3x3 grid).
-    // He keeps playing it on a test code.
-    if (!ticked) return offered.filter(key => key !== 'DOUBLE_TAKE');
+    // (Double Take sat out of the lobby for a day to keep it at nine tiles;
+    // it came back with the 4-wide grid -- the family "were gravely
+    // disappointed with its removal", Randy, Nov 24 2026.)
+    if (!ticked) return [...offered];
     const keep = offered.filter(key => ticked.includes(key) || (key === 'TRIVI_YEAH' && venue.houseSet));
     return keep.length ? keep : [...offered];
 }
@@ -3988,6 +3988,10 @@ const PIN_DROP_MAX_POINTS = 1000;
 // miles, ~600 at 500, ~370 at 1,000, ~135 at 2,000.
 const PIN_DROP_FALLOFF_MILES = 1000;
 const PIN_DROP_CLOSE_MILES = 300; // "got it" for the phone's last-question card
+// Lock in (Randy, Nov 24 2026: "the backstop timer is the right duration, but
+// we wanted to move along on some of them"): once everyone still playing has
+// locked in, the stage ends after this beat.
+const PIN_DROP_ALL_LOCKED_MS = 800;
 
 function pinDropPoints(miles) {
     return Math.round(PIN_DROP_MAX_POINTS * Math.exp(-miles / PIN_DROP_FALLOFF_MILES) / 10) * 10;
@@ -4041,6 +4045,7 @@ function startPinDropRound(roomCode) {
         pins: {},       // name -> { x, y } where it is now
         firstPins: {},  // name -> { x, y } at the end of the first stage
         moved: new Set(),
+        locked: new Set(), // locked in this stage (cleared for the second)
         results: null,
         phase: 'INTRO'
     });
@@ -4082,12 +4087,15 @@ function showPinDropFirstPins(roomCode) {
     if (!pd || pd.phase !== 'PLACE') return;
     room.gameSecondsLeft = null;
     Object.entries(pd.pins).forEach(([name, pin]) => { pd.firstPins[name] = { ...pin }; });
+    pd.locked = new Set();
     pd.phase = 'SHOW';
     broadcastPinDropState(roomCode);
     const roundAtShow = pd.index;
     room.revealTimeout = setTimeout(() => {
         room.revealTimeout = null;
         if (room.pinDrop !== pd || pd.index !== roundAtShow) return;
+        // Nobody pinned: no second chance to give.
+        if (!Object.keys(pd.firstPins).length) { pd.phase = 'MOVE'; revealPinDrop(roomCode); return; }
         runPinDropClock(roomCode, 'MOVE', PIN_DROP_MOVE_SECONDS, () => revealPinDrop(roomCode));
     }, PIN_DROP_SHOW_MS);
 }
@@ -4129,16 +4137,43 @@ function revealPinDrop(roomCode) {
     }, PIN_DROP_REVEAL_MS);
 }
 
-// PDPIN <x> <y>, in the map image's pixels, from a phone.
+// Everyone still playing this stage has locked in: move along.
+function checkPinDropAllLocked(roomCode) {
+    const room = activeRooms[roomCode];
+    const pd = room && room.pinDrop;
+    if (!pd || (pd.phase !== 'PLACE' && pd.phase !== 'MOVE')) return;
+    const active = Object.values(room.players).filter(p => !p.left).map(p => p.name);
+    const playing = pd.phase === 'MOVE' ? active.filter(n => n in pd.firstPins) : active;
+    if (!playing.length || !playing.every(n => pd.locked.has(n))) return;
+    const phase = pd.phase, roundNow = pd.index;
+    if (room.timerInterval) { clearInterval(room.timerInterval); room.timerInterval = null; }
+    room.revealTimeout = setTimeout(() => {
+        room.revealTimeout = null;
+        if (room.pinDrop !== pd || pd.index !== roundNow || pd.phase !== phase) return;
+        if (phase === 'PLACE') showPinDropFirstPins(roomCode);
+        else revealPinDrop(roomCode);
+    }, PIN_DROP_ALL_LOCKED_MS);
+}
+
+// PDPIN <x> <y> (in the map image's pixels) or PDLOCK, from a phone.
 function handlePinDropAction(roomCode, room, playerName, cleanText) {
     const pd = room.pinDrop;
-    const m = /^PDPIN\s+(\d+(?:\.\d+)?)\s+(\d+(?:\.\d+)?)$/.exec(cleanText);
-    if (!m) return `⚠️ That action isn't available right now.`;
     const player = room.players[playerName];
     if (!player || player.left) return `⚠️ You're not in this game.`;
     if (pd.phase !== 'PLACE' && pd.phase !== 'MOVE') return `⚠️ Wait for the next round.`;
     // The second stage is only for pins from the first.
     if (pd.phase === 'MOVE' && !(playerName in pd.firstPins)) return `⚠️ No pin this round. Sit this one out.`;
+    if (/^PDLOCK$/.test(cleanText)) {
+        if (!(playerName in pd.pins)) return `⚠️ Drop a pin first.`;
+        if (pd.locked.has(playerName)) return `Locked in.`;
+        pd.locked.add(playerName);
+        broadcastPinDropState(roomCode);
+        checkPinDropAllLocked(roomCode);
+        return pd.phase === 'MOVE' && !pd.moved.has(playerName) ? `Staying put.` : `Locked in.`;
+    }
+    const m = /^PDPIN\s+(\d+(?:\.\d+)?)\s+(\d+(?:\.\d+)?)$/.exec(cleanText);
+    if (!m) return `⚠️ That action isn't available right now.`;
+    if (pd.locked.has(playerName)) return `⚠️ You've locked in.`;
     const pin = { x: Math.max(0, Math.min(MAP_W, Math.round(Number(m[1])))), y: Math.max(0, Math.min(MAP_H, Math.round(Number(m[2])))) };
     const first = !(playerName in pd.pins);
     pd.pins[playerName] = pin;
@@ -4177,6 +4212,8 @@ export function pinDropTvState(room) {
         mapH: MAP_H,
         secondsLeft: pd.phase === 'PLACE' || pd.phase === 'MOVE' ? room.gameSecondsLeft : null,
         placedCount: Object.keys(pd.pins).filter(n => active.some(p => p.name === n)).length,
+        lockedCount: [...pd.locked].filter(n => active.some(p => p.name === n)).length,
+        movingCount: pd.phase === 'MOVE' ? Object.keys(pd.firstPins).filter(n => active.some(p => p.name === n)).length : null,
         playerCount: active.length,
         dots: showDots ? Object.values(pd.firstPins) : [],
         truth: revealed ? pd.truth : null,
@@ -4203,6 +4240,7 @@ export function pinDropStatusFor(room, playerName) {
         myFirstPin: pd.firstPins[playerName] || null,
         sittingOut: (pd.phase === 'SHOW' || pd.phase === 'MOVE') && !hasFirst,
         moved: pd.moved.has(playerName),
+        myLocked: pd.locked.has(playerName),
         myResult: pd.results ? (pd.results.find(r => r.name === playerName) || null) : null
     };
 }
@@ -6848,6 +6886,8 @@ function handleIncomingMessageInRoom(fromPhone, bodyText, explicitRoomCode, pres
                 handleProfilerLeave(associatedRoomCode);
             } else if (currentRoom.gameState === 'FLAG_ME_DOWN_ROUND' && currentRoom.flagMeDown) {
                 checkFlagMeDownAllLocked(associatedRoomCode);
+            } else if (currentRoom.gameState === 'PIN_DROP_ROUND' && currentRoom.pinDrop) {
+                checkPinDropAllLocked(associatedRoomCode);
             } else if (currentRoom.gameState === 'LETTER_RIP_ROUND' && currentRoom.letterRip) {
                 checkLetterRipAllPicked(associatedRoomCode);
                 checkSpotlightAfterLeave(associatedRoomCode);

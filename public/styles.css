@@ -718,15 +718,18 @@ body.tp-layout .tp-stage { padding: 0 calc(var(--u) * 2); }
    four give each card more height, so the icon goes on top, then the
    name, the byline and the vote bar. Partial rows center. 1-4 modes keep
    the 2-wide list (a venue that offers only a few). */
-.lobby-modes.lobby-cards { display: flex; flex-wrap: wrap; justify-content: center; gap: calc(var(--u) * 1) calc(var(--u) * 1.1); width: 88%; }
-.lobby-cards .lobby-mode { box-sizing: border-box; flex: 0 0 calc((100% - var(--u) * 2.2) / 3 - 1px); padding: calc(var(--u) * 0.8) calc(var(--u) * 0.9) calc(var(--u) * 0.7); gap: calc(var(--u) * 0.55); }
+/* 4 cards a row, filled left to right, top to bottom, and the last row
+   NOT centered (Randy, Nov 24 2026: 3 rows of 4 hold up to 12 games, which
+   brought Double Take back next to Pin Drop). Was 3 a row, centered. */
+.lobby-modes.lobby-cards { display: flex; flex-wrap: wrap; justify-content: flex-start; gap: calc(var(--u) * 0.9) calc(var(--u) * 1); width: 92%; }
+.lobby-cards .lobby-mode { box-sizing: border-box; flex: 0 0 calc((100% - var(--u) * 3) / 4 - 1px); padding: calc(var(--u) * 0.7) calc(var(--u) * 0.7) calc(var(--u) * 0.6); gap: calc(var(--u) * 0.5); }
 .lobby-cards .lobby-mode-head { flex-direction: column; text-align: center; gap: calc(var(--u) * 0.45); }
 .lobby-cards .lobby-mode-head > div { width: 100%; }
 .lobby-cards .lobby-mode-icon { width: auto; }
-.lobby-cards .lobby-mode-icon img { height: calc(var(--u) * 3.4) !important; max-width: calc(var(--u) * 7) !important; }
-.lobby-cards .lobby-mode-icon span { font-size: calc(var(--u) * 2.6) !important; }
-.lobby-cards .lobby-mode-name { font-size: calc(var(--u) * 1.4); }
-.lobby-cards .lobby-mode-blurb { font-size: calc(var(--u) * 1.0); margin-top: calc(var(--u) * 0.1); }
+.lobby-cards .lobby-mode-icon img { height: calc(var(--u) * 3.0) !important; max-width: calc(var(--u) * 6) !important; }
+.lobby-cards .lobby-mode-icon span { font-size: calc(var(--u) * 2.3) !important; }
+.lobby-cards .lobby-mode-name { font-size: calc(var(--u) * 1.25); }
+.lobby-cards .lobby-mode-blurb { font-size: calc(var(--u) * 0.92); margin-top: calc(var(--u) * 0.1); }
 /* Pubs: the venue's logo, name and tagline open the lobby, without a box. */
 /* 30% smaller than it started (Randy, Nov 2026, after several TVs: the
    lobby felt crowded, and the venue's name is on screen all night). */
@@ -1050,12 +1053,13 @@ body.tp-layout #onboarding-status-slot .arrival-line { font-size: calc(var(--u) 
 .pd-photo img { width: 100%; aspect-ratio: 3 / 2; object-fit: cover; display: block; border-radius: calc(var(--u) * 0.6); }
 .pd-map-wrap { width: min(100%, calc(var(--u) * 58)); }
 .pd-landmark .pd-map-wrap { width: calc(var(--u) * 38); }
-.pd-map-wrap.pd-map-big { width: min(100%, calc(var(--u) * 62)); }
-.pd-map { position: relative; width: 100%; aspect-ratio: 2400 / 1253; border-radius: calc(var(--u) * 0.6); overflow: hidden; }
+.pd-map-wrap.pd-map-big { width: min(100%, calc(var(--u) * 52)); } /* was 62u: taller than the room, it pushed the QR code down (Randy, Nov 24) */
+.pd-map { position: relative; width: 100%; aspect-ratio: 4800 / 2505; border-radius: calc(var(--u) * 0.6); overflow: hidden; }
 .pd-map img, .pd-map svg { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
-.pd-dot { fill: var(--rm-text); stroke: var(--rm-bg); stroke-width: 4; opacity: 0.9; }
-.pd-line { stroke: var(--rm-text); stroke-width: 2px; stroke-dasharray: 6 5; opacity: 0.7; vector-effect: non-scaling-stroke; }
-.pd-truth-ring { fill: none; stroke: var(--rm-brand); stroke-width: 9; }
+.pd-dot { fill: var(--rm-text); stroke: var(--rm-bg); opacity: 0.9; }
+/* Thin, solid and see-through, not dashed (Randy, Nov 24 2026). */
+.pd-line { stroke: var(--rm-text); stroke-width: 1px; opacity: 0.55; vector-effect: non-scaling-stroke; }
+.pd-truth-ring { fill: none; stroke: var(--rm-brand); }
 .pd-truth-dot { fill: var(--rm-brand); }
 .pd-mark { position: absolute; width: calc(var(--u) * 2.4); height: calc(var(--u) * 2.4); margin: calc(var(--u) * -1.2) 0 0 calc(var(--u) * -1.2);
     display: flex; align-items: center; justify-content: center; border-radius: 50%; background: var(--rm-bg);

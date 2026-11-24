@@ -128,10 +128,18 @@
         .pd-ask { font-size: 0.9rem; font-weight: 600; color: var(--rm-text-muted); margin-top: 4px; }
         /* The map runs to the card's edges (past its 24px padding): the world
            is small on a phone, so every pixel of width counts. */
-        .pd-viewport { position: relative; width: calc(100% + 40px); aspect-ratio: 2400 / 1253; overflow: hidden; border-radius: 6px; background: var(--rm-bg); touch-action: none; user-select: none; -webkit-user-select: none; -webkit-touch-callout: none; margin: 6px -20px 8px; }
+        .pd-viewport { position: relative; width: calc(100% + 40px); aspect-ratio: 4800 / 2505; overflow: hidden; border-radius: 6px; background: var(--rm-bg); touch-action: none; user-select: none; -webkit-user-select: none; -webkit-touch-callout: none; margin: 6px -20px 8px; }
         #pd-layer img { width: 100%; height: 100%; display: block; pointer-events: none; }
         .pd-marks svg { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
-        .pd-marks .pd-line { stroke: var(--rm-white); stroke-width: 1.5px; stroke-dasharray: 4 3; vector-effect: non-scaling-stroke; }
+        /* One pixel at any zoom (pdApply sets its width), solid and see-through
+           (Randy, Nov 24 2026: the old one looked like 10 px once zoomed). */
+        .pd-marks .pd-line { stroke: var(--rm-white); opacity: 0.6; }
+        .pd-status-line { min-height: 1.4em; text-align: center; font-weight: 600; font-size: 0.95rem; color: var(--rm-text-2); margin: 2px 0 10px; }
+        .pd-controls { display: flex; align-items: center; gap: 8px; }
+        .pd-nudge { display: flex; gap: 4px; }
+        .pd-nudge button { width: 40px; height: 40px; border-radius: 6px; border: 1px solid var(--rm-border); background: var(--rm-surface-2); color: var(--rm-text); font-size: 1.1rem; font-weight: 700; padding: 0; cursor: pointer; }
+        .pd-nudge button:disabled, .pd-lock:disabled { opacity: 0.4; cursor: default; }
+        .pd-lock { flex: 1; height: 40px; border-radius: 6px; border: none; background: var(--rm-brand); color: var(--rm-bg); font-weight: 800; font-size: 0.95rem; cursor: pointer; }
         .pd-pin { position: absolute; border-radius: 50%; box-sizing: border-box; pointer-events: none; }
         .pd-mine { width: 16px; height: 16px; margin: -8px 0 0 -8px; background: var(--rm-brand); border: 2px solid var(--rm-white); box-shadow: 0 0 0 1px rgba(var(--rm-black-rgb), 0.6); }
         .pd-was { width: 12px; height: 12px; margin: -6px 0 0 -6px; border: 2px dashed var(--rm-brand); }
@@ -768,9 +776,18 @@
         <div id="pd-viewport" class="pd-viewport">
             <div id="pd-layer" class="dt-layer"><img id="pd-map-img" alt="" draggable="false"><div id="pd-marks" class="pd-marks"></div></div>
         </div>
-        <div class="dt-tools">
-            <div id="pd-status" class="dt-status"></div>
+        <div id="pd-status" class="pd-status-line"></div>
+        <!-- Nudge keys for the last few miles, Fit, and Lock in (Stay in the
+             second stage) to move the room along (Randy, Nov 24 2026). -->
+        <div id="pd-controls" class="pd-controls">
+            <div class="pd-nudge">
+                <button type="button" onclick="pdNudge(-1, 0)" aria-label="Left">&larr;</button>
+                <button type="button" onclick="pdNudge(0, -1)" aria-label="Up">&uarr;</button>
+                <button type="button" onclick="pdNudge(0, 1)" aria-label="Down">&darr;</button>
+                <button type="button" onclick="pdNudge(1, 0)" aria-label="Right">&rarr;</button>
+            </div>
             <button type="button" class="dt-fit" onclick="pdFit()">Fit</button>
+            <button type="button" id="pd-lock" class="pd-lock" onclick="pdLock()">Lock in</button>
         </div>
     </div>
 
@@ -2983,13 +3000,13 @@
         // ---- Pin Drop (Randy, Nov 2026) ----
         // The world map with our own pinch-to-zoom (like Double Take's): a
         // quick one-finger tap drops or moves your pin; two fingers or a drag
-        // looks around. Zoom goes further than Double Take's, since the
-        // world is small on a phone (Randy: "how much zooming on a huge map
-        // is enjoyable? ...we'll just need to try it").
-        const PD_MAX_ZOOM = 8, PD_TAP_MS = 250, PD_TAP_MOVE = 10;
+        // looks around. Zoom goes to 16x (was 8x; Randy, Nov 24 2026: "a
+        // competitive person would probably like more granularity"), on a
+        // map twice as sharp.
+        const PD_MAX_ZOOM = 16, PD_TAP_MS = 250, PD_TAP_MOVE = 10;
         const pdView = { s: 1, tx: 0, ty: 0 };
         const pdPointers = new Map();
-        let pdGesture = null, pdData = null, pdRoundKey = null, pdLocalPin = null, pdBusy = false;
+        let pdGesture = null, pdData = null, pdRoundKey = null, pdLocalPin = null;
 
         function pdApply() {
             const vp = document.getElementById('pd-viewport');
@@ -2998,41 +3015,87 @@
             pdView.tx = Math.min(0, Math.max(w * (1 - pdView.s), pdView.tx));
             pdView.ty = Math.min(0, Math.max(h * (1 - pdView.s), pdView.ty));
             document.getElementById('pd-layer').style.transform = `translate(${pdView.tx}px, ${pdView.ty}px) scale(${pdView.s})`;
-            // Pins stay the same size on screen at any zoom.
+            // Pins stay the same size on screen at any zoom, and the line one pixel.
             document.querySelectorAll('#pd-marks .pd-pin').forEach(el => { el.style.transform = `scale(${1 / pdView.s})`; });
+            if (pdData) document.querySelectorAll('#pd-marks .pd-line').forEach(el => { el.style.strokeWidth = `${pdData.mapW / w / pdView.s}`; });
         }
         function pdFit() { Object.assign(pdView, { s: 1, tx: 0, ty: 0 }); pdApply(); }
         function pdLocal(e) {
             const r = document.getElementById('pd-viewport').getBoundingClientRect();
             return { x: e.clientX - r.left, y: e.clientY - r.top, w: r.width, h: r.height };
         }
+        let pdLockedLocal = null; // "round-phase" this phone just locked
+        function pdIsLocked() {
+            return !!(pdData && (pdData.myLocked || pdLockedLocal === `${pdData.round}-${pdData.pdPhase}`));
+        }
         function pdCanPin() {
-            return pdData && (pdData.pdPhase === 'PLACE' || (pdData.pdPhase === 'MOVE' && pdData.myFirstPin));
+            return pdData && !pdIsLocked() && (pdData.pdPhase === 'PLACE' || (pdData.pdPhase === 'MOVE' && pdData.myFirstPin));
+        }
+        function pdCurrentPin() {
+            const local = pdLocalPin && pdLocalPin.round === pdData.round && pdLocalPin.phase === pdData.pdPhase ? pdLocalPin : null;
+            return local || pdData.myPin;
         }
 
-        async function pdPlace(p) {
-            if (!pdCanPin() || pdBusy) return;
-            const x = Math.round((p.x - pdView.tx) / pdView.s / p.w * pdData.mapW);
-            const y = Math.round((p.y - pdView.ty) / pdView.s / p.h * pdData.mapH);
-            if (x < 0 || y < 0 || x > pdData.mapW || y > pdData.mapH) return;
+        // The pin moves on this phone at once; the room hears about it a beat
+        // later, so a burst of nudges sends only where it ended up.
+        let pdSendTimer = null, pdSendPending = null;
+        function pdSetPin(x, y) {
+            x = Math.max(0, Math.min(pdData.mapW, Math.round(x)));
+            y = Math.max(0, Math.min(pdData.mapH, Math.round(y)));
             pdLocalPin = { x, y, round: pdData.round, phase: pdData.pdPhase };
             pdDraw();
-            pdBusy = true;
+            pdControls(pdData);
+            document.getElementById('pd-status').textContent = pdStatusText(pdData);
+            pdSendPending = { x, y };
+            if (pdSendTimer) clearTimeout(pdSendTimer);
+            pdSendTimer = setTimeout(pdFlush, 150);
+        }
+        async function pdFlush() {
+            if (pdSendTimer) { clearTimeout(pdSendTimer); pdSendTimer = null; }
+            const p = pdSendPending;
+            pdSendPending = null;
+            if (!p) return;
             try {
-                const reply = (await lrSend(`PDPIN ${x} ${y}`)).reply || '';
+                const reply = (await lrSend(`PDPIN ${p.x} ${p.y}`)).reply || '';
                 if (reply.startsWith('⚠️')) { pdLocalPin = null; document.getElementById('pd-status').textContent = reply.replace('⚠️', '').trim(); }
             } catch (e) {
                 document.getElementById('pd-status').textContent = "Couldn't reach the room. Try again.";
             }
-            pdBusy = false;
+        }
+        function pdPlace(p) {
+            if (!pdCanPin()) return;
+            const x = (p.x - pdView.tx) / pdView.s / p.w * pdData.mapW;
+            const y = (p.y - pdView.ty) / pdView.s / p.h * pdData.mapH;
+            if (x < 0 || y < 0 || x > pdData.mapW || y > pdData.mapH) return;
+            pdSetPin(x, y);
+        }
+        // A nudge moves the pin 4 screen pixels, so it's finer the further in you zoom.
+        function pdNudge(dx, dy) {
+            if (!pdCanPin()) return;
+            const pin = pdCurrentPin();
+            if (!pin) return;
+            const step = 4 / pdView.s * pdData.mapW / document.getElementById('pd-viewport').clientWidth;
+            pdSetPin(pin.x + dx * step, pin.y + dy * step);
+        }
+        async function pdLock() {
+            if (!pdData || pdIsLocked() || !pdCurrentPin()) return;
+            await pdFlush();
+            pdLockedLocal = `${pdData.round}-${pdData.pdPhase}`;
+            renderPinDrop(pdData);
+            try {
+                const reply = (await lrSend('PDLOCK')).reply || '';
+                if (reply.startsWith('⚠️')) { pdLockedLocal = null; document.getElementById('pd-status').textContent = reply.replace('⚠️', '').trim(); }
+            } catch (e) {
+                pdLockedLocal = null;
+                document.getElementById('pd-status').textContent = "Couldn't reach the room. Try again.";
+            }
         }
 
         function pdDraw() {
             if (!pdData) return;
             const W = pdData.mapW, H = pdData.mapH;
             const pct = (v, of) => `${v / of * 100}%`;
-            const local = pdLocalPin && pdLocalPin.round === pdData.round && pdLocalPin.phase === pdData.pdPhase ? pdLocalPin : null;
-            const mine = local || pdData.myPin;
+            const mine = pdCurrentPin();
             let html = '';
             let svg = '';
             if (pdData.pdPhase === 'SHOW' || pdData.pdPhase === 'MOVE') {
@@ -3054,11 +3117,14 @@
             const me = d.myResult;
             switch (d.pdPhase) {
                 case 'INTRO': return '';
-                case 'PLACE': return d.myPin || pdLocalPin ? 'Pinned. Tap again to move it.' : 'Tap the map to drop your pin.';
+                case 'PLACE':
+                    if (pdIsLocked()) return 'Locked in. Waiting for the others.';
+                    return d.myPin || pdLocalPin ? 'Pinned. Tap again to move it, or lock in.' : 'Tap the map to drop your pin.';
                 case 'SHOW': return d.sittingOut ? 'No pin this round. Sit this one out.' : 'Those dots are everyone\'s first pins.';
                 case 'MOVE':
                     if (d.sittingOut) return 'No pin this round. Sit this one out.';
-                    return d.moved ? 'Moved. No bonus this round.' : `Stay put for x${d.stayBonus}, or tap to move.`;
+                    if (pdIsLocked()) return d.moved || pdMovedLocal(d) ? 'Locked in.' : `Staying put for x${d.stayBonus}.`;
+                    return d.moved || pdMovedLocal(d) ? 'Moved. No bonus this round.' : `Stay put for x${d.stayBonus}, or tap to move.`;
                 case 'REVEAL':
                     if (!me) return 'No pin this round.';
                     // No "+0" for a pin across the world (the phone pass's rule).
@@ -3066,6 +3132,23 @@
                     return `${me.miles.toLocaleString('en-US')} miles off. +${me.points.toLocaleString('en-US')}${me.stayed ? ` (x${d.stayBonus} for staying)` : ''}`;
                 default: return '';
             }
+        }
+
+        // Moved in the second stage, as far as this phone knows (before the room confirms).
+        function pdMovedLocal(d) {
+            const pin = pdCurrentPin();
+            return !!(d.myFirstPin && pin && (pin.x !== d.myFirstPin.x || pin.y !== d.myFirstPin.y));
+        }
+        function pdControls(d) {
+            const stage = d.pdPhase === 'PLACE' || (d.pdPhase === 'MOVE' && !d.sittingOut);
+            document.getElementById('pd-controls').style.visibility = d.pdPhase === 'INTRO' ? 'hidden' : 'visible';
+            const canPin = pdCanPin(), hasPin = !!pdCurrentPin();
+            document.querySelectorAll('.pd-nudge button').forEach(b => { b.disabled = !canPin || !hasPin; });
+            const lock = document.getElementById('pd-lock');
+            const staying = d.pdPhase === 'MOVE' && !pdMovedLocal(d);
+            lock.style.display = stage ? '' : 'none';
+            lock.disabled = pdIsLocked() || !hasPin;
+            lock.textContent = pdIsLocked() ? (staying ? 'Staying' : 'Locked in') : (staying ? `Stay (x${d.stayBonus})` : 'Lock in');
         }
 
         function renderPinDrop(data) {
@@ -3091,6 +3174,7 @@
             document.getElementById('pd-viewport').style.visibility = intro ? 'hidden' : 'visible';
             document.getElementById('pd-status').textContent = pdStatusText(data);
             pdDraw();
+            pdControls(data);
         }
 
         (function pdGestures() {

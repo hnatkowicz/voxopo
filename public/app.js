@@ -2124,12 +2124,13 @@ function renderLetterRipTV(data) {
 function pinDropMapHtml(data) {
     const W = data.mapW, H = data.mapH;
     const pct = (v, of) => `${v / of * 100}%`;
+    const k = W / 2400; // marker sizes were set on the 2400-wide map
     let svg = '';
-    (data.dots || []).forEach(d => { svg += `<circle class="pd-dot" cx="${d.x}" cy="${d.y}" r="13"/>`; });
+    (data.dots || []).forEach(d => { svg += `<circle class="pd-dot" cx="${d.x}" cy="${d.y}" r="${13 * k}" stroke-width="${4 * k}"/>`; });
     let marks = '';
     if (data.truth && data.results) {
         data.results.forEach(r => { svg += `<line class="pd-line" x1="${r.x}" y1="${r.y}" x2="${data.truth.x}" y2="${data.truth.y}"/>`; });
-        svg += `<circle class="pd-truth-ring" cx="${data.truth.x}" cy="${data.truth.y}" r="26"/><circle class="pd-truth-dot" cx="${data.truth.x}" cy="${data.truth.y}" r="9"/>`;
+        svg += `<circle class="pd-truth-ring" cx="${data.truth.x}" cy="${data.truth.y}" r="${26 * k}" stroke-width="${9 * k}"/><circle class="pd-truth-dot" cx="${data.truth.x}" cy="${data.truth.y}" r="${9 * k}"/>`;
         // Farthest first, so the closest avatars sit on top.
         [...data.results].reverse().forEach(r => {
             marks += `<div class="pd-mark" style="left:${pct(r.x, W)};top:${pct(r.y, H)}">${avatarHtml(r.emoji, 1)}</div>`;

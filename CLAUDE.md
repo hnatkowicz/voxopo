@@ -239,9 +239,12 @@ event, for a small fee. That's why hosting is gated behind access codes.
   the same layout (`ROOM_VENUE` and `RETURN_TO_LOBBY` turn it on): no
   boxes, the mode tiles (`lobby-*`, built by `renderModeElectionTiles` in
   `modes.js`; the phones' tiles are separate) (with 5 or more modes they become a
-  3-wide grid of cards, icon over name over byline, `.lobby-cards`;
-  Randy, Nov 2026, ahead of a 9th mode: a 2-wide list of 9 would scroll;
-  1-4 modes keep the 2-wide list) with a vote bar and no vote
+  grid of cards, icon over name over byline, `.lobby-cards`: 3 wide for a
+  9th mode, then **4 wide, filled left to right, top to bottom, the last
+  row not centered** (Randy, Nov 24 2026: 3 rows of 4 hold up to 12; it
+  brought Double Take back beside Pin Drop; checked at 960x540 and 1080p,
+  home and pub, no scrolling; Flag Me Down's byline gets an ellipsis at
+  that size); 1-4 modes keep the 2-wide list) with a vote bar and no vote
   count (Randy, Nov 2026: the bar is enough), the scoreboard rail, and a bigger
   QR code (10u, 13u at a pub, where the venue's banner replaces "What
   should we play?"). After several TVs (Randy, Nov 2026: the lobby felt crowded, the
@@ -867,8 +870,27 @@ Mode keys are used in room votes and in `gameEngine.js`:
     edges), our own pinch-zoom up to 8x (Double Take's, with a tap that
     drops or moves your pin). **TV:** a city's name over the map, or a
     landmark's photo beside it.
-  - **Double Take left the lobby for it** (Randy, Nov 24: nine tiles fit
-    the 3x3 grid): it shows only on a code that ticks it on /admin.
+  - **Double Take left the lobby for it** for a day (Randy, Nov 24: nine
+    tiles fit the 3x3 grid), then came back with the 4-wide lobby (the
+    family "were gravely disappointed with its removal").
+  - **After the first family game (Nov 24: "supremely intuitive and
+    enjoyed immensely by all"):** **Lock in** in the first stage and
+    **Stay (x1.5)** / Lock in in the second (a locked pin can't move;
+    once everyone still playing has locked in, the stage ends after
+    0.8s; "the backstop timer is the right duration, but we wanted to
+    move along"); **nudge arrows** under the map (4 screen pixels a
+    press, finer as you zoom; in the second stage a nudge counts as
+    moving); **16x zoom** on a map rendered twice as sharp (4800x2505,
+    146 KB); the reveal map sized to fit the room's height (it pushed the
+    QR code down); lines 1 px, solid and see-through on both screens
+    (the phone's had been scaling with the zoom). **Decided against:**
+    blocking the phone's pull-to-refresh, a PWA or in-app camera, and a
+    smaller scoreboard (Randy). **Open:** the line clue (a line through
+    your pin and the true spot, second stage only, once, for half your
+    points, zooming out to show it; Randy likes it if it's thin enough);
+    whether the TV keeps the landmark photo or shows only the map (Randy
+    "50-50"); a rejoin after a refresh Randy hit once that couldn't be
+    reproduced (the server and a reloaded test phone both resume fine).
 - **FLAG_ME_DOWN** (also a standalone mode, after the family asked where it
   went): 15 flags, 5 easy -> 5 medium -> 5 hard, each with 4 country choices
   (1 wrong answer from the same local region, 2 from the same continent).
