@@ -1442,6 +1442,51 @@ and forth until we both agree the idea is good **and** worth the effort. So:
   social modes. Randy's worry: it takes away the pub-night trivia feel.
 - **Double Take photos:** Randy is at 25 (Nov 24), about 4 games before a
   room repeats.
+- **RandoMania!-lite, the ambient screen** (Randy, Nov 24 2026; an idea,
+  **nothing built**): a slow trickle of questions on TVs in waiting rooms,
+  restaurants and pubs on non-trivia nights, to introduce the platform and
+  carry ads, asking nobody to show up at a set time. Draft set:
+  `content/lite/set_01_pickles_and_pins.csv` (Pickles & Pins is the test
+  venue).
+  - **Randy's rules:** (1) **none of RandoMania!'s content** (questions,
+    pictures, avatars); anything it needs is built new. The brand itself
+    shows, since introducing the platform is the point (Claude's reading).
+    (2) Hardware is a non-issue: if a $30 stick is a sticking point, the
+    product isn't one owners beg to say yes to. (3) **The TV is silent**;
+    phones play a soft chime on a right answer (Low by default; iPhones
+    on silent stay silent). (4) **Scoring: you vs AVERAGE.** Points as the
+    modes score them now; AVERAGE (all caps, a player on the board) is the
+    average of everyone, everywhere, on the same question. Until 10 people
+    have answered, it leans on a made-up starting average (Claude: blend
+    it in, `(sum + start x 10) / (n + 10)`, so it never jumps). (5) **One
+    instance for everyone** (still thinking), with the player's location
+    on the board.
+  - **Shape (agreed so far):** a **themed set of 30 items, ~45 minutes**
+    (90s each: ~30s to answer, ~10s reveal, the rest a fact or a venue
+    line), then **15 minutes** of breaks, ads and messages, cycling hourly
+    during **live hours**. A set can run all day (customers turn over),
+    so content is about 30 items a day at most, in **its own table**.
+    Multiple choice plus "closest number" items (scored by closeness).
+  - **How it would run (Claude):** like a TV channel, not a room. The
+    clock decides what's on (7:14 = item 12 everywhere), so a deploy
+    changes nothing on screen and the TV's fallback simply reconnects.
+    Each screen gets a long private link from /admin, opened once on the
+    TV; its QR code carries the venue, so a phone that scans it is "at"
+    that venue without picking. Its own small engine and TV page, apart
+    from rooms and `gameEngine.js`, so it can't hurt a game night.
+  - **Ads:** real ones, free while testing ("money after proof"). Images
+    uploaded through GitHub like photos; a schedule; counts only (time on
+    air, phones playing) to show advertisers; venues can refuse a
+    category (no alcohol ads in a waiting room).
+  - **Rivalries:** probably not here (a quiet bar has 3 players; that's
+    noise). Better as two RandoMania! nights in two towns on the same
+    night with the same questions (Baltimore vs Pittsburgh), on the main
+    platform.
+  - **Before any code:** Randy looks at venue displays (what box runs the
+    screen? many signage players can show a web page), asks 2-3 venues
+    whether they'd show it, and judges whether a set of 30 is fun at 90s
+    pacing. Tests: low friction, cheap to run, easy to build, and no drain
+    on the main platform (Randy: "scope creep is a real thing").
 - **Mind Field:** a name saved for a future mode built around hidden traps
   on a board.
 - **Final Wager clues elsewhere: tabled** (Randy, Nov 2026: a clue that
