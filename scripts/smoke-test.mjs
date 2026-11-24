@@ -65,6 +65,9 @@ const say = (...a) => realLog(...a);
 const db = new pg.Pool({ connectionString: DB });
 await db.query(`INSERT INTO access_codes (code, label, active) VALUES ('SMOKE-HOME', 'smoke test', true) ON CONFLICT (code) DO UPDATE SET active = true`);
 await db.query(`INSERT INTO access_codes (code, label, active) VALUES ('SMOKE-PUB', 'smoke test', true) ON CONFLICT (code) DO UPDATE SET active = true`);
+// Double Take only shows on a code that ticks it (Nov 24 2026), like Randy's test code.
+await db.query(`INSERT INTO access_codes (code, label, active) VALUES ('SMOKE-DT', 'smoke test', true) ON CONFLICT (code) DO UPDATE SET active = true`);
+await db.query(`UPDATE access_codes SET allowed_modes = ARRAY['DOUBLE_TAKE'] WHERE code = 'SMOKE-DT'`).catch(() => {});
 // Board rules, profiles and breaks exist only once their SQL has run.
 await db.query(`UPDATE access_codes SET board_rules = 'CLASSIC', profile = 'HOME' WHERE code = 'SMOKE-HOME'`).catch(() => {});
 await db.query(`UPDATE access_codes SET profile = 'PUB', venue_name = 'Smoke Test Pub', allowed_modes = NULL, break_minutes = 2, break_notes = ARRAY['Test note one', 'Test note two'] WHERE code = 'SMOKE-PUB'`).catch(() => {});
@@ -94,7 +97,8 @@ const ROOMS = [
     { mode: 'COUNTRY_MONKEY', code: 'SMOKE-PUB', label: 'COUNTRY_MONKEY (pub, tally)' },
     { mode: 'FLAG_ME_DOWN', code: 'SMOKE-HOME' },
     { mode: 'LETTER_RIP', code: 'SMOKE-HOME' },
-    { mode: 'DOUBLE_TAKE', code: 'SMOKE-HOME' },
+    { mode: 'DOUBLE_TAKE', code: 'SMOKE-DT' },
+    { mode: 'PIN_DROP', code: 'SMOKE-HOME' },
     { mode: 'EMPOSSDURR', code: 'SMOKE-HOME' },
     { mode: 'ON_THE_SPECTRUM', code: 'SMOKE-HOME' },
     { mode: 'PROFILER', code: 'SMOKE-HOME' },
@@ -118,7 +122,7 @@ for (const r of ROOMS) {
     r.started = Date.now(); r.lastSig = ''; r.lastChange = Date.now(); r.seen = new Set(); r.traps = r.traps ? [] : null;
     // Each room at a different point in its game (the short games early;
     // Double Take is short while only a photo or two are Ready).
-    r.annAfter = ({ ON_THE_SPECTRUM: 0, EMPOSSDURR: 2500, DOUBLE_TAKE: 2000 })[r.mode] ?? 4000 + ROOMS.indexOf(r) * 1500;
+    r.annAfter = ({ ON_THE_SPECTRUM: 0, EMPOSSDURR: 2500, DOUBLE_TAKE: 2000, PIN_DROP: 3000 })[r.mode] ?? 4000 + ROOMS.indexOf(r) * 1500;
 }
 
 // ---------- optional screenshots ----------
@@ -150,8 +154,8 @@ const wrongLetter = right => (right === 'A' ? 'B' : 'A');
 const act = (room, code, name, text) => { try { return handleIncomingMessage(name, text, code); } catch (e) { problems.push(`bot ${name} "${text}": ${e.stack}`); } };
 
 function sigOf(room) {
-    const ty2 = room.triviYeahII, lr = room.letterRip, pf = room.profiler, ed = room.empossdurr, ots = room.onTheSpectrum, fmd = room.flagMeDown, fw = room.finalWager, dt = room.doubleTake;
-    return [dt && dt.index, dt && dt.phase, dt && dt.spots && dt.spots.filter(s => s.by).length, room.gameState, room.currentQuestionIndex, ty2 && ty2.phase, ty2 && ty2.activeCellIndex, ty2 && ty2.round,
+    const ty2 = room.triviYeahII, lr = room.letterRip, pf = room.profiler, ed = room.empossdurr, ots = room.onTheSpectrum, fmd = room.flagMeDown, fw = room.finalWager, dt = room.doubleTake, pd = room.pinDrop;
+    return [pd && pd.index, pd && pd.phase, dt && dt.index, dt && dt.phase, dt && dt.spots && dt.spots.filter(s => s.by).length, room.gameState, room.currentQuestionIndex, ty2 && ty2.phase, ty2 && ty2.activeCellIndex, ty2 && ty2.round,
         lr && lr.index, lr && lr.round, lr && lr.phase, pf && pf.round, pf && pf.phase, ed && ed.currentRound, ed && ed.phase, ed && ed.secretWord,
         ots && ots.phase, ots && ots.namedPlayerName, fmd && fmd.phase, fmd && fmd.stage, fmd && fmd.index, fw && fw.phase].join('|');
 }
@@ -287,6 +291,22 @@ function drive(r) {
         if (live[3]) act(room, code, live[3], 'DTTAP 3 3');
         if (found.length && live[2]) tapAt(live[2], found[0]);
         if (left.length > (lastPhoto ? 1 : 0)) tapAt(found.length < 3 ? live[0] : live[1 + (found.length % 2)], left[0]);
+    }
+
+    // Pin Drop: Ace pins near the real spot, the others somewhere; in the
+    // second stage Bea moves next to Ace's (following the crowd, no bonus)
+    // and everyone else stays. Di skips the first stage of round 1, so the
+    // "sit this one out" path runs too.
+    const pd = room.pinDrop;
+    if (room.gameState === 'PIN_DROP_ROUND' && pd && pd.truth && waited && !r.acted) {
+        r.acted = true;
+        if (pd.phase === 'PLACE') live.forEach((n, i) => {
+            if (n === 'Di' && pd.index === 0) return;
+            const x = i === 0 ? pd.truth.x + 15 : (pd.truth.x + 300 * i) % 2400, y = i === 0 ? pd.truth.y : (pd.truth.y + 120 * i) % 1253;
+            act(room, code, n, `PDPIN ${x} ${y}`);
+        });
+        if (pd.phase === 'MOVE' && live.includes('Bea')) act(room, code, 'Bea', `PDPIN ${pd.truth.x + 25} ${pd.truth.y + 10}`);
+        if (pd.phase === 'MOVE' && pd.index === 0 && live.includes('Di')) act(room, code, 'Di', `PDPIN ${pd.truth.x} ${pd.truth.y}`); // refused: no first pin
     }
 
     // Profiler

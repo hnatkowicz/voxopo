@@ -4,7 +4,7 @@ import dotenv from 'dotenv';
 import path from 'path';
 import { WebSocketServer } from 'ws';
 import pool, { isDatabaseDownError } from './config/database.js';
-import { handleIncomingMessage, activeRooms, getCategoriesForMode, resolveRequestedQuestionCount, compareByRank, closeRoom, profilerStatusFor, profilerTvSnapshot, triviYeahIITrapInfo, emptyModeVotes, finalWagerWinShare, resolveDisguisedAsset, flagMeDownStatusFor, GAME_MODE_KEYS, allowedModesFor, finalWagerRevealFor, venueBrand, isHouseTopic, nightTallyMessage, nightTallyFor, endGameVoteFor, thinkingPantsCategoryOverview, setThinkingPantsCategorySetting, venueCategoryOverview, setVenueCategorySetting, tvMessagesSince, tvIsConnected , letterRipStatusFor, letterRipTvState, doubleTakeStatusFor, doubleTakeTvState, announcementMessage, refreshAnnouncementForCode, clearAllRoomTimers } from './services/gameEngine.js';
+import { handleIncomingMessage, activeRooms, getCategoriesForMode, resolveRequestedQuestionCount, compareByRank, closeRoom, profilerStatusFor, profilerTvSnapshot, triviYeahIITrapInfo, emptyModeVotes, finalWagerWinShare, resolveDisguisedAsset, flagMeDownStatusFor, GAME_MODE_KEYS, allowedModesFor, finalWagerRevealFor, venueBrand, isHouseTopic, nightTallyMessage, nightTallyFor, endGameVoteFor, thinkingPantsCategoryOverview, setThinkingPantsCategorySetting, venueCategoryOverview, setVenueCategorySetting, tvMessagesSince, tvIsConnected , letterRipStatusFor, letterRipTvState, doubleTakeStatusFor, doubleTakeTvState, pinDropStatusFor, pinDropTvState, announcementMessage, refreshAnnouncementForCode, clearAllRoomTimers } from './services/gameEngine.js';
 import {
     isHostAuthorized, grantHostSession, isAccessCodeActive,
     isAdminAuthorized, grantAdminSession,
@@ -705,6 +705,13 @@ app.post('/api/room-status', (req, res) => {
                 myScore, myCorrectAnswers, myLeft, myEmoji
             });
         }
+        if (targetRoom && targetRoom.gameState === 'PIN_DROP_ROUND' && targetRoom.pinDrop && targetRoom.pinDrop.place) {
+            return res.json({
+                phase: 'PIN_DROP_PHASE',
+                ...pinDropStatusFor(targetRoom, playerName),
+                myScore, myCorrectAnswers, myLeft, myEmoji
+            });
+        }
         if (targetRoom && targetRoom.gameState === 'DOUBLE_TAKE_ROUND' && targetRoom.doubleTake) {
             return res.json({
                 phase: 'DOUBLE_TAKE_PHASE',
@@ -829,6 +836,7 @@ function tvSnapshotMessages(room) {
         // Letter Rip's board in full, so a reconnecting TV redraws it.
         if (room.gameState === 'LETTER_RIP_ROUND' && room.letterRip) messages.push(letterRipTvState(room));
         if (room.gameState === 'DOUBLE_TAKE_ROUND' && room.doubleTake) messages.push(doubleTakeTvState(room));
+        if (room.gameState === 'PIN_DROP_ROUND' && room.pinDrop && room.pinDrop.place) messages.push(pinDropTvState(room));
     }
     // The venue's announcement goes on top of whatever the room was showing.
     if (room.announcement) messages.push(announcementMessage(room));
