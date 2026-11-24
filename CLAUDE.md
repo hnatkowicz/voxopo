@@ -895,8 +895,10 @@ Mode keys are used in room votes and in `gameEngine.js`:
     the round's points are halved (after any x1.5). The server sends a
     phone only the line's two edge points (`pinDropLineThrough`); a pin
     right on the spot gets a random-angle line through it. Tested: the
-    true spot sat 0.3 px off the drawn line. **Open:** whether the TV keeps the landmark photo or shows only the map (Randy
-    "50-50"); a rejoin after a refresh Randy hit once that couldn't be
+    true spot sat 0.3 px off the drawn line. **The landmark photo stays on the TV** (Randy, Nov 24: removing from
+    the TV something the phone carries goes against the TV being the
+    focus. "If I ever suggest this again, please remind me! We don't
+    remove, and it stays put."). **Open:** a rejoin after a refresh Randy hit once that couldn't be
     reproduced (the server and a reloaded test phone both resume fine).
 - **FLAG_ME_DOWN** (also a standalone mode, after the family asked where it
   went): 15 flags, 5 easy -> 5 medium -> 5 hard, each with 4 country choices
@@ -1432,6 +1434,14 @@ and forth until we both agree the idea is good **and** worth the effort. So:
     known spots). Content is Randy's: ~40 pairs for real depth.
   - **Open:** the leftover split, pot size and speed, points per find and
     per miss (first guess: +100 / -25), round length.
+- **Other modes inside Thinking Pants** (the family's ask, Nov 24 2026;
+  Randy "not convinced", talking it over with family and friends). Claude's
+  suggestion if it happens: a guest round between board rounds (one Pin
+  Drop round or one Letter Rip puzzle), not guest tiles (sweeps, traps and
+  the board's pace assume right/wrong tiles), a per-code setting, never the
+  social modes. Randy's worry: it takes away the pub-night trivia feel.
+- **Double Take photos:** Randy is at 25 (Nov 24), about 4 games before a
+  room repeats.
 - **Mind Field:** a name saved for a future mode built around hidden traps
   on a board.
 - **Final Wager clues elsewhere: tabled** (Randy, Nov 2026: a clue that
