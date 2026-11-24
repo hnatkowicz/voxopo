@@ -3992,6 +3992,10 @@ const PIN_DROP_CLOSE_MILES = 300; // "got it" for the phone's last-question card
 // we wanted to move along on some of them"): once everyone still playing has
 // locked in, the stage ends after this beat.
 const PIN_DROP_ALL_LOCKED_MS = 800;
+// The line clue (Randy, Nov 24 2026: "a great addition" once it's thin): in
+// the second stage, once a round, a line through your pin and the true spot,
+// edge to edge, with neither marked. It costs half that round's points.
+const PIN_DROP_LINE_SHARE = 0.5;
 
 function pinDropPoints(miles) {
     return Math.round(PIN_DROP_MAX_POINTS * Math.exp(-miles / PIN_DROP_FALLOFF_MILES) / 10) * 10;
@@ -4046,6 +4050,7 @@ function startPinDropRound(roomCode) {
         firstPins: {},  // name -> { x, y } at the end of the first stage
         moved: new Set(),
         locked: new Set(), // locked in this stage (cleared for the second)
+        lines: {},         // name -> the line clue bought this round, map edge to map edge
         results: null,
         phase: 'INTRO'
     });
@@ -4112,10 +4117,11 @@ function revealPinDrop(roomCode) {
             const player = room.players[name];
             const miles = Math.round(milesBetween(fromMap(pin.x, pin.y), truthPlace));
             const stayed = !pd.moved.has(name);
-            const points = Math.round(pinDropPoints(miles) * (stayed ? PIN_DROP_STAY_BONUS : 1));
+            const usedLine = !!pd.lines[name];
+            const points = Math.round(pinDropPoints(miles) * (stayed ? PIN_DROP_STAY_BONUS : 1) * (usedLine ? PIN_DROP_LINE_SHARE : 1));
             player.score += points;
             if (miles <= PIN_DROP_CLOSE_MILES) player.correctAnswers = (player.correctAnswers || 0) + 1;
-            return { name, emoji: player.emoji || null, x: pin.x, y: pin.y, miles, points, stayed };
+            return { name, emoji: player.emoji || null, x: pin.x, y: pin.y, miles, points, stayed, usedLine };
         })
         .sort((a, b) => a.miles - b.miles);
     pd.phase = 'REVEAL';
@@ -4135,6 +4141,21 @@ function revealPinDrop(roomCode) {
         room.revealTimeout = null;
         if (room.pinDrop === pd && pd.index === roundAtReveal) startPinDropRound(roomCode);
     }, PIN_DROP_REVEAL_MS);
+}
+
+// The line through a pin and the true spot, cut where it leaves the map, so
+// a phone learns the direction but never the spot. A pin right on the spot
+// gets a line at a random angle through it (still true, still no help).
+function pinDropLineThrough(pin, truth) {
+    let dx = truth.x - pin.x, dy = truth.y - pin.y;
+    if (Math.hypot(dx, dy) < 1) { const a = Math.random() * Math.PI; dx = Math.cos(a); dy = Math.sin(a); }
+    const ts = [];
+    if (dx) { ts.push(-pin.x / dx, (MAP_W - pin.x) / dx); }
+    if (dy) { ts.push(-pin.y / dy, (MAP_H - pin.y) / dy); }
+    const inside = t => { const x = pin.x + dx * t, y = pin.y + dy * t; return x >= -0.5 && x <= MAP_W + 0.5 && y >= -0.5 && y <= MAP_H + 0.5; };
+    const hits = ts.filter(inside);
+    const t1 = Math.min(...hits), t2 = Math.max(...hits);
+    return { x1: Math.round(pin.x + dx * t1), y1: Math.round(pin.y + dy * t1), x2: Math.round(pin.x + dx * t2), y2: Math.round(pin.y + dy * t2) };
 }
 
 // Everyone still playing this stage has locked in: move along.
@@ -4163,6 +4184,13 @@ function handlePinDropAction(roomCode, room, playerName, cleanText) {
     if (pd.phase !== 'PLACE' && pd.phase !== 'MOVE') return `⚠️ Wait for the next round.`;
     // The second stage is only for pins from the first.
     if (pd.phase === 'MOVE' && !(playerName in pd.firstPins)) return `⚠️ No pin this round. Sit this one out.`;
+    if (/^PDLINE$/.test(cleanText)) {
+        if (pd.phase !== 'MOVE') return `⚠️ The line clue comes in the second stage.`;
+        if (pd.lines[playerName]) return `Line drawn.`;
+        if (pd.locked.has(playerName)) return `⚠️ You've locked in.`;
+        pd.lines[playerName] = pinDropLineThrough(pd.pins[playerName], pd.truth);
+        return `Line drawn.`;
+    }
     if (/^PDLOCK$/.test(cleanText)) {
         if (!(playerName in pd.pins)) return `⚠️ Drop a pin first.`;
         if (pd.locked.has(playerName)) return `Locked in.`;
@@ -4241,6 +4269,8 @@ export function pinDropStatusFor(room, playerName) {
         sittingOut: (pd.phase === 'SHOW' || pd.phase === 'MOVE') && !hasFirst,
         moved: pd.moved.has(playerName),
         myLocked: pd.locked.has(playerName),
+        myLine: pd.lines[playerName] || null,
+        lineShare: PIN_DROP_LINE_SHARE,
         myResult: pd.results ? (pd.results.find(r => r.name === playerName) || null) : null
     };
 }

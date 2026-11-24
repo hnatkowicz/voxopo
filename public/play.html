@@ -139,7 +139,9 @@
         .pd-nudge { display: flex; gap: 4px; }
         .pd-nudge button { width: 40px; height: 40px; border-radius: 6px; border: 1px solid var(--rm-border); background: var(--rm-surface-2); color: var(--rm-text); font-size: 1.1rem; font-weight: 700; padding: 0; cursor: pointer; }
         .pd-nudge button:disabled, .pd-lock:disabled { opacity: 0.4; cursor: default; }
-        .pd-lock { flex: 1; height: 40px; border-radius: 6px; border: none; background: var(--rm-brand); color: var(--rm-bg); font-weight: 800; font-size: 0.95rem; cursor: pointer; }
+        .pd-line-btn { width: 100%; margin-top: 10px; height: 40px; border-radius: 6px; border: 1px solid var(--rm-brand); background: transparent; color: var(--rm-brand); font-weight: 700; font-size: 0.9rem; cursor: pointer; }
+        .pd-marks .pd-clue { stroke: var(--rm-brand); opacity: 0.85; }
+        .pd-lock { flex: 1; height: 40px; border-radius: 6px; border: none; background: var(--rm-brand); color: var(--rm-bg); font-weight: 800; font-size: 0.9rem; white-space: nowrap; padding: 0 6px; cursor: pointer; }
         .pd-pin { position: absolute; border-radius: 50%; box-sizing: border-box; pointer-events: none; }
         .pd-mine { width: 16px; height: 16px; margin: -8px 0 0 -8px; background: var(--rm-brand); border: 2px solid var(--rm-white); box-shadow: 0 0 0 1px rgba(var(--rm-black-rgb), 0.6); }
         .pd-was { width: 12px; height: 12px; margin: -6px 0 0 -6px; border: 2px dashed var(--rm-brand); }
@@ -789,6 +791,9 @@
             <button type="button" class="dt-fit" onclick="pdFit()">Fit</button>
             <button type="button" id="pd-lock" class="pd-lock" onclick="pdLock()">Lock in</button>
         </div>
+        <!-- The line clue (Randy, Nov 24 2026): second stage, once a round,
+             half your points. The true spot is somewhere on the line. -->
+        <button type="button" id="pd-line-btn" class="pd-line-btn" onclick="pdBuyLine()" style="display: none;">Draw my line (half points)</button>
     </div>
 
     <!-- Double Take (Randy, Nov 2026): the altered photo, full width. Pinch
@@ -1173,6 +1178,7 @@
             PIN_DROP: ['Each round is a place: a city, or a landmark\'s photo. Tap the world map to drop your pin.',
                 'Pinch to zoom and drag to look around. Tap again to move your pin.',
                 'Then everyone\'s first pins appear as dots. Stay put for x1.5, or move: no pin in the first stage means sitting the round out.',
+                'Stuck? Draw your line: the spot is somewhere on it. It costs half your points that round.',
                 'Closer is more points. The TV shows every pin, the real spot and the miles.'],
             DOUBLE_TAKE: ['The TV shows two photos; your phone shows the changed one. Find the 5 differences.',
                 'Pinch to zoom and drag to look around. Tap a difference to claim it: +100, first finder only.',
@@ -3017,7 +3023,7 @@
             document.getElementById('pd-layer').style.transform = `translate(${pdView.tx}px, ${pdView.ty}px) scale(${pdView.s})`;
             // Pins stay the same size on screen at any zoom, and the line one pixel.
             document.querySelectorAll('#pd-marks .pd-pin').forEach(el => { el.style.transform = `scale(${1 / pdView.s})`; });
-            if (pdData) document.querySelectorAll('#pd-marks .pd-line').forEach(el => { el.style.strokeWidth = `${pdData.mapW / w / pdView.s}`; });
+            if (pdData) document.querySelectorAll('#pd-marks .pd-line, #pd-marks .pd-clue').forEach(el => { el.style.strokeWidth = `${pdData.mapW / w / pdView.s}`; });
         }
         function pdFit() { Object.assign(pdView, { s: 1, tx: 0, ty: 0 }); pdApply(); }
         function pdLocal(e) {
@@ -3077,6 +3083,25 @@
             const step = 4 / pdView.s * pdData.mapW / document.getElementById('pd-viewport').clientWidth;
             pdSetPin(pin.x + dx * step, pin.y + dy * step);
         }
+        // The line clue: zoom out so the whole line shows; it arrives with
+        // the next check-in (the phone never knows the true spot).
+        let pdLineAsked = null;
+        async function pdBuyLine() {
+            if (!pdData || pdData.pdPhase !== 'MOVE' || pdData.myLine || pdIsLocked()) return;
+            await pdFlush();
+            pdLineAsked = `${pdData.round}`;
+            pdFit();
+            pdControls(pdData);
+            try {
+                const reply = (await lrSend('PDLINE')).reply || '';
+                if (reply.startsWith('⚠️')) { pdLineAsked = null; document.getElementById('pd-status').textContent = reply.replace('⚠️', '').trim(); pdControls(pdData); }
+            } catch (e) {
+                pdLineAsked = null;
+                document.getElementById('pd-status').textContent = "Couldn't reach the room. Try again.";
+                pdControls(pdData);
+            }
+        }
+
         async function pdLock() {
             if (!pdData || pdIsLocked() || !pdCurrentPin()) return;
             await pdFlush();
@@ -3104,6 +3129,10 @@
             if (pdData.pdPhase === 'MOVE' && pdData.myFirstPin && mine && (mine.x !== pdData.myFirstPin.x || mine.y !== pdData.myFirstPin.y)) {
                 html += `<div class="pd-pin pd-was" style="left:${pct(pdData.myFirstPin.x, W)};top:${pct(pdData.myFirstPin.y, H)}"></div>`;
             }
+            if (pdData.pdPhase === 'MOVE' && pdData.myLine) {
+                const l = pdData.myLine;
+                svg += `<line class="pd-clue" x1="${l.x1}" y1="${l.y1}" x2="${l.x2}" y2="${l.y2}"/>`;
+            }
             if (pdData.pdPhase === 'REVEAL' && pdData.truth) {
                 if (pdData.myResult) svg += `<line class="pd-line" x1="${pdData.myResult.x}" y1="${pdData.myResult.y}" x2="${pdData.truth.x}" y2="${pdData.truth.y}"/>`;
                 html += `<div class="pd-pin pd-truth" style="left:${pct(pdData.truth.x, W)};top:${pct(pdData.truth.y, H)}"></div>`;
@@ -3124,12 +3153,14 @@
                 case 'MOVE':
                     if (d.sittingOut) return 'No pin this round. Sit this one out.';
                     if (pdIsLocked()) return d.moved || pdMovedLocal(d) ? 'Locked in.' : `Staying put for x${d.stayBonus}.`;
+                    if (d.myLine) return d.moved || pdMovedLocal(d) ? 'It\'s on that line. Moved: no bonus.' : `It's on that line. Stay for x${d.stayBonus}, or move.`;
                     return d.moved || pdMovedLocal(d) ? 'Moved. No bonus this round.' : `Stay put for x${d.stayBonus}, or tap to move.`;
                 case 'REVEAL':
                     if (!me) return 'No pin this round.';
                     // No "+0" for a pin across the world (the phone pass's rule).
                     if (!me.points) return `${me.miles.toLocaleString('en-US')} miles off.`;
-                    return `${me.miles.toLocaleString('en-US')} miles off. +${me.points.toLocaleString('en-US')}${me.stayed ? ` (x${d.stayBonus} for staying)` : ''}`;
+                    const notes = [me.stayed ? `x${d.stayBonus} for staying` : '', me.usedLine ? 'half for the line' : ''].filter(Boolean).join(', ');
+                    return `${me.miles.toLocaleString('en-US')} miles off. +${me.points.toLocaleString('en-US')}${notes ? ` (${notes})` : ''}`;
                 default: return '';
             }
         }
@@ -3149,6 +3180,9 @@
             lock.style.display = stage ? '' : 'none';
             lock.disabled = pdIsLocked() || !hasPin;
             lock.textContent = pdIsLocked() ? (staying ? 'Staying' : 'Locked in') : (staying ? `Stay (x${d.stayBonus})` : 'Lock in');
+            const lineBtn = document.getElementById('pd-line-btn');
+            lineBtn.style.display = d.pdPhase === 'MOVE' && !d.sittingOut && !d.myLine && !pdIsLocked() && hasPin ? '' : 'none';
+            lineBtn.disabled = pdLineAsked === `${d.round}`;
         }
 
         function renderPinDrop(data) {
