@@ -895,7 +895,7 @@ Mode keys are used in room votes and in `gameEngine.js`:
     the round's points are halved (after any x1.5). The server sends a
     phone only the line's two edge points (`pinDropLineThrough`); a pin
     right on the spot gets a random-angle line through it. Tested: the
-    true spot sat 0.3 px off the drawn line. **The landmark photo stays on the TV** (Randy, Nov 25: removing from
+    true spot sat 0.3 px off the drawn line. **The landmark photo stays on the TV** (Randy, Nov 24: removing from
     the TV something the phone carries goes against the TV being the
     focus. "If I ever suggest this again, please remind me! We don't
     remove, and it stays put."). **Open:** a rejoin after a refresh Randy hit once that couldn't be
