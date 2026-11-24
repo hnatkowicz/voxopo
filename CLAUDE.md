@@ -1434,6 +1434,14 @@ and forth until we both agree the idea is good **and** worth the effort. So:
     known spots). Content is Randy's: ~40 pairs for real depth.
   - **Open:** the leftover split, pot size and speed, points per find and
     per miss (first guess: +100 / -25), round length.
+- **Other modes inside Thinking Pants** (the family's ask, Nov 24 2026;
+  Randy "not convinced", talking it over with family and friends). Claude's
+  suggestion if it happens: a guest round between board rounds (one Pin
+  Drop round or one Letter Rip puzzle), not guest tiles (sweeps, traps and
+  the board's pace assume right/wrong tiles), a per-code setting, never the
+  social modes. Randy's worry: it takes away the pub-night trivia feel.
+- **Double Take photos:** Randy is at 25 (Nov 24), about 4 games before a
+  room repeats.
 - **Mind Field:** a name saved for a future mode built around hidden traps
   on a board.
 - **Final Wager clues elsewhere: tabled** (Randy, Nov 2026: a clue that
