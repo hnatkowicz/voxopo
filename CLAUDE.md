@@ -1448,19 +1448,24 @@ and forth until we both agree the idea is good **and** worth the effort. So:
   carry ads, asking nobody to show up at a set time. Draft set:
   `content/lite/set_01_pickles_and_pins.csv` (Pickles & Pins is the test
   venue).
-  - **Randy's rules:** (1) **none of RandoMania!'s content** (questions,
-    pictures, avatars); anything it needs is built new. The brand itself
-    shows, since introducing the platform is the point (Claude's reading).
-    (2) Hardware is a non-issue: if a $30 stick is a sticking point, the
-    product isn't one owners beg to say yes to. (3) **The TV is silent**;
-    phones play a soft chime on a right answer (Low by default; iPhones
-    on silent stay silent). (4) **Scoring: you vs AVERAGE.** Points as the
-    modes score them now; AVERAGE (all caps, a player on the board) is the
-    average of everyone, everywhere, on the same question. Until 10 people
-    have answered, it leans on a made-up starting average (Claude: blend
-    it in, `(sum + start x 10) / (n + 10)`, so it never jumps). (5) **One
-    instance for everyone** (still thinking), with the player's location
-    on the board.
+  - **Randy's rules:** (1) **no gameplay content reused** (questions,
+    question pictures, puzzles); everything else is welcome: the logo,
+    the avatars, the world map (Randy, Nov 24). (2) Hardware is a
+    non-issue: if a $30 stick is a sticking point, the product isn't one
+    owners beg to say yes to. (3) **The TV is silent; phone sounds stay
+    exactly as in the main game** (Randy: it's the introduction to how
+    RandoMania! phones behave, and players can mind their own volume).
+    (4) **Scoring: you vs AVERAGE** (being worked out). Each item scores
+    0 to 1 (right = 1; a clue ladder or a closest-number answer, part of
+    1); your score is your average; AVERAGE (all caps, a row on the board)
+    is everyone's, everywhere. Until enough people have answered, both
+    lean on a starting value (Claude: `(sum + start x k) / (n + k)`, so a
+    newcomer starts level with AVERAGE and one lucky answer can't top the
+    board). (5) **One instance for everyone**, with real names (players
+    want theirs on the screen): a filter for the worst names, the room
+    can hide a name, and /admin can too. Board row: avatar, name,
+    location, badges, score. **Location comes from the QR code** the phone
+    scanned (each screen belongs to a venue on /admin), never GPS.
   - **Shape (agreed so far):** a **themed set of 30 items, ~45 minutes**
     (90s each: ~30s to answer, ~10s reveal, the rest a fact or a venue
     line), then **15 minutes** of breaks, ads and messages, cycling hourly
