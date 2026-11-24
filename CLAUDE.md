@@ -1466,12 +1466,21 @@ and forth until we both agree the idea is good **and** worth the effort. So:
     can hide a name, and /admin can too. Board row: avatar, name,
     location, badges, score. **Location comes from the QR code** the phone
     scanned (each screen belongs to a venue on /admin), never GPS.
-  - **Shape (agreed so far):** a **themed set of 30 items, ~45 minutes**
-    (90s each: ~30s to answer, ~10s reveal, the rest a fact or a venue
-    line), then **15 minutes** of breaks, ads and messages, cycling hourly
-    during **live hours**. A set can run all day (customers turn over),
-    so content is about 30 items a day at most, in **its own table**.
-    Multiple choice plus "closest number" items (scored by closeness).
+  - **Shape (agreed so far, Nov 24):** **45+ minutes of play an hour**,
+    then breaks, ads and messages; facts, ads and venue lines are
+    sprinkled between items, never saved up in one block. Live hours per
+    screen. **One-round servings**, each scoring 0 to 1: a Trivi-yeah!
+    question (new text, plus "closest number" items), a Flag Me Down flag
+    (clue ladder 1 / 0.75 / 0.5 / 0.25), a Country Monkey map, a **Pin
+    Drop place with both stages** (Randy: "almost integral"; score =
+    points / 1,500, the most a perfect stay can earn), **one Letter Rip
+    puzzle** (score = the pot when you solve / 1,000; letter points
+    dropped), and **one Double Take photo against the clock only** (no
+    locking: everyone hunts their own copy; score = finds / 5). Thinking
+    Pants and the social modes are out. **Pictures:** every flag and map
+    may be reused; landmark and art photos at most one each a week;
+    Double Take gets its own new pairs (Randy: about 3 a week). Its own
+    table for the sets.
   - **How it would run (Claude):** like a TV channel, not a room. The
     clock decides what's on (7:14 = item 12 everywhere), so a deploy
     changes nothing on screen and the TV's fallback simply reconnects.
