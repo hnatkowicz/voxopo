@@ -1,0 +1,31 @@
+n,kind,difficulty,question,answer,wrong_1,wrong_2,wrong_3,unit,fact
+1,choice,1,A pickle is most often made from which vegetable?,Cucumber,Zucchini,Eggplant,Okra,,A cucumber is a fruit to a botanist: it grows from a flower and carries seeds.
+2,choice,2,Three strikes in a row in bowling is called a what?,Turkey,Hat trick,Triple,Eagle,,Legend says 1800s bowling alleys gave a live turkey to anyone who rolled three strikes in a row.
+3,choice,2,Dill pickles get their name from what?,An herb,A German town,The inventor,A kind of salt,,Dill is in the same plant family as carrots and celery.
+4,number,2,What score is a perfect game in ten-pin bowling?,300,,,,points,A perfect game takes 12 strikes in a row.
+5,choice,1,Peter Piper picked a peck of pickled what?,Peppers,Onions,Plums,Pears,,A peck is a quarter of a bushel.
+6,choice,3,"In chess, what is a pin?",A piece that can't move without exposing a bigger one behind it,A pawn that reaches the last row,Castling on the queen's side,A draw by repeating moves,,A pin against the king is absolute: moving the pinned piece would be illegal.
+7,choice,2,"At the 1893 Chicago World's Fair, which company drew crowds by giving away a free pickle pin?",Heinz,Vlasic,Kraft,Claussen,,The pickle pin became one of the most famous giveaways in advertising history.
+8,choice,3,What is the medical name for the 'pins and needles' feeling?,Paresthesia,Vertigo,Tinnitus,Neuralgia,,
+9,choice,1,"Which country's dish is kimchi, spicy fermented cabbage?",Korea,Japan,Thailand,Vietnam,,
+10,number,3,"How many feet is a bowling lane, from the foul line to the head pin?",60,,,,feet,
+11,choice,2,"If you're 'in a pickle,' you are what?",In a tough spot,Drunk,In love,Hungry,,"Shakespeare used it in The Tempest: ""How camest thou in this pickle?"""
+12,choice,2,"In golf, 'the pin' is another name for what?",The flagstick,The tee,The putter,The cup's rim,,Since 2019 the rules let you putt with the flagstick left in the hole.
+13,choice,3,Which acid gives vinegar its sour taste?,Acetic,Citric,Lactic,Malic,,"Acetic comes from acetum, the Latin word for vinegar."
+14,choice,1,"In a PIN number, what does the N in PIN stand for?",Number,Name,Network,Notice,,So 'PIN number' says 'number' twice.
+15,choice,2,What makes a bread-and-butter pickle different from a dill?,It's sweet,It's fried,It has no vinegar,It's made from zucchini,,Illinois cucumber growers Omar and Cora Fanning trademarked the name in the 1920s.
+16,choice,2,Pinocchio's author came from which country?,Italy,Germany,France,Switzerland,,Carlo Collodi's story ran in a children's magazine before it became a book in 1883.
+17,choice,2,"Which salty, pickled little 'berries' top chicken piccata?",Capers,Olives,Peppercorns,Anchovies,,Capers aren't berries at all: they're flower buds picked before they open.
+18,choice,2,"In pinball, what is it called when you shake the machine too hard and the flippers go dead?",Tilt,Bump,Fault,Jam,,New York City banned pinball from 1942 to 1976.
+19,choice,2,Pickled ginger served with sushi is called what?,Gari,Nori,Mirin,Wasabi,,
+20,choice,3,"Candlepin bowling, with skinny pins and a small ball, is most popular where?",New England,Texas,California,The Midwest,,"Candlepin bowlers get three balls a frame, not two."
+21,choice,2,Sauerkraut is fermented what?,Cabbage,Turnip,Cucumber,Onion,,
+22,choice,3,Who invented the safety pin in 1849?,Walter Hunt,Elias Howe,Isaac Singer,Thomas Edison,,"Hunt sold the rights for $400, the story goes, to pay off a $15 debt."
+23,choice,3,Pickleball was invented in 1965 on an island near which city?,Seattle,San Diego,Boston,Miami,,Washington made pickleball its official state sport in 2022.
+24,number,3,How many pounds is the heaviest bowling ball allowed in league play?,16,,,,pounds,
+25,choice,2,"Which deli pickle is a New York classic, only partly fermented?",Half-sour,Bread-and-butter,Gherkin,Kosher sweet,,
+26,choice,2,"In bowling, a 7-10 split leaves pins standing where?",The two back corners,The front and center,Two side by side,The middle of the back row,,
+27,choice,3,A cornichon is a tiny pickle from which country's kitchen?,France,Italy,Spain,Germany,,Cornichon is simply the French word for a gherkin.
+28,choice,2,"In wrestling, you win by pinning which part of your opponent to the mat?",Shoulders,Knees,Hands,Head,,
+29,choice,3,Pickled herring is a classic of which part of the world?,Scandinavia,South America,Southeast Asia,The Caribbean,,
+30,choice,1,Which show has a scientist who turns himself into a pickle?,Rick and Morty,The Simpsons,Futurama,Family Guy,,"""Pickle Rick"" won the show an Emmy in 2018."
