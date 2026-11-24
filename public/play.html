@@ -119,6 +119,24 @@
         .dt-status .hit { color: var(--rm-green); }
         .dt-fit { flex-shrink: 0; padding: 8px 14px; border-radius: 6px; border: 1px solid var(--rm-border); background: var(--rm-surface-2); color: var(--rm-text); font-weight: 600; cursor: pointer; }
         .dt-ready { display: none; font-family: var(--rm-font-display); font-weight: 800; font-size: 1.6rem; color: var(--rm-brand); text-align: center; padding: 60px 0; }
+        /* Pin Drop: the place, then the world map (its own zoom, like
+           Double Take's). Your pin is gold with a white edge; the room's
+           first pins are small cream dots; the real spot is a gold ring. */
+        .pd-prompt { margin: 8px 0; text-align: center; }
+        .pd-city-phone { font-family: var(--rm-font-display); font-weight: 800; font-size: 1.5rem; color: var(--rm-white); line-height: 1.15; padding: 6px 0; }
+        .pd-photo-phone { width: 100%; aspect-ratio: 3 / 2; object-fit: cover; border-radius: 8px; display: block; }
+        .pd-ask { font-size: 0.9rem; font-weight: 600; color: var(--rm-text-muted); margin-top: 4px; }
+        /* The map runs to the card's edges (past its 24px padding): the world
+           is small on a phone, so every pixel of width counts. */
+        .pd-viewport { position: relative; width: calc(100% + 40px); aspect-ratio: 2400 / 1253; overflow: hidden; border-radius: 6px; background: var(--rm-bg); touch-action: none; user-select: none; -webkit-user-select: none; -webkit-touch-callout: none; margin: 6px -20px 8px; }
+        #pd-layer img { width: 100%; height: 100%; display: block; pointer-events: none; }
+        .pd-marks svg { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
+        .pd-marks .pd-line { stroke: var(--rm-white); stroke-width: 1.5px; stroke-dasharray: 4 3; vector-effect: non-scaling-stroke; }
+        .pd-pin { position: absolute; border-radius: 50%; box-sizing: border-box; pointer-events: none; }
+        .pd-mine { width: 16px; height: 16px; margin: -8px 0 0 -8px; background: var(--rm-brand); border: 2px solid var(--rm-white); box-shadow: 0 0 0 1px rgba(var(--rm-black-rgb), 0.6); }
+        .pd-was { width: 12px; height: 12px; margin: -6px 0 0 -6px; border: 2px dashed var(--rm-brand); }
+        .pd-other { width: 8px; height: 8px; margin: -4px 0 0 -4px; background: var(--rm-text); border: 1px solid var(--rm-bg); opacity: 0.85; }
+        .pd-truth { width: 20px; height: 20px; margin: -10px 0 0 -10px; border: 3px solid var(--rm-brand); box-shadow: 0 0 0 1px rgba(var(--rm-black-rgb), 0.6); }
         .lr-head { font-size: 0.8rem; font-weight: 600; color: var(--rm-text-muted); text-align: center; letter-spacing: 0.04em; }
         .lr-category { font-size: 1.15rem; font-weight: 800; color: var(--rm-brand); text-align: center; margin: 4px 0 12px; }
         /* Lines come from lrLines (the TV's rule), so both boards match. */
@@ -741,6 +759,21 @@
         <button class="btn btn-leave leave-room-btn" onclick="leaveRoom()">Leave Room</button>
     </div>
 
+    <!-- Pin Drop (Randy, Nov 2026): the place (a city's name or a landmark's
+         photo) and the world map. Tap to drop or move your pin; pinch to
+         zoom, drag to look around. -->
+    <div id="pin-drop-screen" class="card" style="display: none;">
+        <div id="pd-head" class="lr-head"></div>
+        <div id="pd-prompt" class="pd-prompt"></div>
+        <div id="pd-viewport" class="pd-viewport">
+            <div id="pd-layer" class="dt-layer"><img id="pd-map-img" alt="" draggable="false"><div id="pd-marks" class="pd-marks"></div></div>
+        </div>
+        <div class="dt-tools">
+            <div id="pd-status" class="dt-status"></div>
+            <button type="button" class="dt-fit" onclick="pdFit()">Fit</button>
+        </div>
+    </div>
+
     <!-- Double Take (Randy, Nov 2026): the altered photo, full width. Pinch
          to zoom and drag to look around; a quick one-finger tap is a guess.
          The TV shows both photos; the phone points. -->
@@ -925,7 +958,7 @@
         // both missed a spot). Hiding every known screen and showing only
         // the requested one makes that whole bug class impossible going
         // forward -- a future new screen just needs adding here once.
-        const ALL_PLAY_SCREENS = ['login-screen', 'game-screen', 'category-screen', 'empossdurr-screen', 'on-the-spectrum-screen', 'profiler-screen', 'question-screen', 'trivi-yeah-ii-screen', 'trivi-yeah-ii-final-wager-screen', 'flag-me-down-screen', 'letter-rip-screen', 'double-take-screen', 'break-screen', 'game-over-screen'];
+        const ALL_PLAY_SCREENS = ['login-screen', 'game-screen', 'category-screen', 'empossdurr-screen', 'on-the-spectrum-screen', 'profiler-screen', 'question-screen', 'trivi-yeah-ii-screen', 'trivi-yeah-ii-final-wager-screen', 'flag-me-down-screen', 'letter-rip-screen', 'double-take-screen', 'pin-drop-screen', 'break-screen', 'game-over-screen'];
         function showOnlyPlayScreen(idToShow) {
             ALL_PLAY_SCREENS.forEach(id => {
                 document.getElementById(id).style.display = (id === idToShow) ? 'block' : 'none';
@@ -1030,6 +1063,7 @@
                 case 'FLAG_ME_DOWN_PHASE': return `Flag ${data.round} of ${data.totalRounds}`;
                 case 'LETTER_RIP_PHASE': return data.mySpotlight ? 'The Spotlight' : `Puzzle ${data.puzzle} of ${data.total}`;
                 case 'DOUBLE_TAKE_PHASE': return `Photo ${data.photo} of ${data.total} · ${data.foundCount} of ${data.spotCount} found`;
+                case 'PIN_DROP_PHASE': return `Round ${data.round} of ${data.total}`;
                 case 'EMPOSSDURR_ROUND_PHASE': return `Round ${data.round} of ${data.totalRounds}`;
                 case 'ON_THE_SPECTRUM_ROUND_PHASE': return `Round ${data.roundNumber} of ${data.totalRounds}`;
                 case 'PROFILER_ROUND_PHASE':
@@ -1119,6 +1153,10 @@
                 'Every time your letter appears it scores 100, shared by everyone who picked it. The TV shows the room\'s top 2.',
                 'Solve when you\'re ready: one try, spelled exactly. Right wins the pot, which shrinks as the board fills; wrong costs the pot.',
                 'Last comes the Spotlight: wager, light a tile each round, and solve early for a bigger payout.'],
+            PIN_DROP: ['Each round is a place: a city, or a landmark\'s photo. Tap the world map to drop your pin.',
+                'Pinch to zoom and drag to look around. Tap again to move your pin.',
+                'Then everyone\'s first pins appear as dots. Stay put for x1.5, or move: no pin in the first stage means sitting the round out.',
+                'Closer is more points. The TV shows every pin, the real spot and the miles.'],
             DOUBLE_TAKE: ['The TV shows two photos; your phone shows the changed one. Find the 5 differences.',
                 'Pinch to zoom and drag to look around. Tap a difference to claim it: +100, first finder only.',
                 'A wrong tap costs 25 and pauses you for 2 seconds. Find 3 on one photo for +100 more.',
@@ -1217,6 +1255,10 @@
                 case 'PROFILER_ROUND_PHASE':
                     return data.profilerPhase === 'ANSWER' || data.profilerPhase === 'GUESS' ? `pf-${data.profilerPhase}-${data.round}` : null;
                 case 'DOUBLE_TAKE_PHASE': return data.dtPhase === 'HUNT' ? `dt-${data.photo}` : null;
+                case 'PIN_DROP_PHASE':
+                    if (data.pdPhase === 'PLACE') return `pd-${data.round}-place`;
+                    if (data.pdPhase === 'MOVE' && !data.sittingOut) return `pd-${data.round}-move`;
+                    return null;
                 default: return null;
             }
         }
@@ -1410,7 +1452,7 @@
                 const t = e.touches[0];
                 if (t.clientX < EDGE || t.clientX > window.innerWidth - EDGE) return;
                 // Double Take's photo: a drag there looks around the picture.
-                if (e.target.closest('input, textarea, select, .dt-viewport')) return;
+                if (e.target.closest('input, textarea, select, .dt-viewport, .pd-viewport')) return;
                 start = { x: t.clientX, y: t.clientY, time: Date.now() };
             }, { passive: true });
             document.addEventListener('touchend', e => {
@@ -1750,6 +1792,12 @@
                         if (data.phase === 'LETTER_RIP_PHASE') {
                             showOnlyPlayScreen('letter-rip-screen');
                             renderLetterRip(data);
+                        }
+
+                        // Pin Drop: the place and the world map, tap to pin.
+                        if (data.phase === 'PIN_DROP_PHASE') {
+                            showOnlyPlayScreen('pin-drop-screen');
+                            renderPinDrop(data);
                         }
 
                         // Double Take: the altered photo, zoom and tap.
@@ -2930,6 +2978,185 @@
                 // iPhone Safari's own pinch would zoom the whole page.
                 ['gesturestart', 'gesturechange'].forEach(t => vp.addEventListener(t, e => e.preventDefault()));
             });
+        })();
+
+        // ---- Pin Drop (Randy, Nov 2026) ----
+        // The world map with our own pinch-to-zoom (like Double Take's): a
+        // quick one-finger tap drops or moves your pin; two fingers or a drag
+        // looks around. Zoom goes further than Double Take's, since the
+        // world is small on a phone (Randy: "how much zooming on a huge map
+        // is enjoyable? ...we'll just need to try it").
+        const PD_MAX_ZOOM = 8, PD_TAP_MS = 250, PD_TAP_MOVE = 10;
+        const pdView = { s: 1, tx: 0, ty: 0 };
+        const pdPointers = new Map();
+        let pdGesture = null, pdData = null, pdRoundKey = null, pdLocalPin = null, pdBusy = false;
+
+        function pdApply() {
+            const vp = document.getElementById('pd-viewport');
+            const w = vp.clientWidth, h = vp.clientHeight;
+            pdView.s = Math.max(1, Math.min(PD_MAX_ZOOM, pdView.s));
+            pdView.tx = Math.min(0, Math.max(w * (1 - pdView.s), pdView.tx));
+            pdView.ty = Math.min(0, Math.max(h * (1 - pdView.s), pdView.ty));
+            document.getElementById('pd-layer').style.transform = `translate(${pdView.tx}px, ${pdView.ty}px) scale(${pdView.s})`;
+            // Pins stay the same size on screen at any zoom.
+            document.querySelectorAll('#pd-marks .pd-pin').forEach(el => { el.style.transform = `scale(${1 / pdView.s})`; });
+        }
+        function pdFit() { Object.assign(pdView, { s: 1, tx: 0, ty: 0 }); pdApply(); }
+        function pdLocal(e) {
+            const r = document.getElementById('pd-viewport').getBoundingClientRect();
+            return { x: e.clientX - r.left, y: e.clientY - r.top, w: r.width, h: r.height };
+        }
+        function pdCanPin() {
+            return pdData && (pdData.pdPhase === 'PLACE' || (pdData.pdPhase === 'MOVE' && pdData.myFirstPin));
+        }
+
+        async function pdPlace(p) {
+            if (!pdCanPin() || pdBusy) return;
+            const x = Math.round((p.x - pdView.tx) / pdView.s / p.w * pdData.mapW);
+            const y = Math.round((p.y - pdView.ty) / pdView.s / p.h * pdData.mapH);
+            if (x < 0 || y < 0 || x > pdData.mapW || y > pdData.mapH) return;
+            pdLocalPin = { x, y, round: pdData.round, phase: pdData.pdPhase };
+            pdDraw();
+            pdBusy = true;
+            try {
+                const reply = (await lrSend(`PDPIN ${x} ${y}`)).reply || '';
+                if (reply.startsWith('⚠️')) { pdLocalPin = null; document.getElementById('pd-status').textContent = reply.replace('⚠️', '').trim(); }
+            } catch (e) {
+                document.getElementById('pd-status').textContent = "Couldn't reach the room. Try again.";
+            }
+            pdBusy = false;
+        }
+
+        function pdDraw() {
+            if (!pdData) return;
+            const W = pdData.mapW, H = pdData.mapH;
+            const pct = (v, of) => `${v / of * 100}%`;
+            const local = pdLocalPin && pdLocalPin.round === pdData.round && pdLocalPin.phase === pdData.pdPhase ? pdLocalPin : null;
+            const mine = local || pdData.myPin;
+            let html = '';
+            let svg = '';
+            if (pdData.pdPhase === 'SHOW' || pdData.pdPhase === 'MOVE') {
+                (pdData.dots || []).forEach(d => { html += `<div class="pd-pin pd-other" style="left:${pct(d.x, W)};top:${pct(d.y, H)}"></div>`; });
+            }
+            if (pdData.pdPhase === 'MOVE' && pdData.myFirstPin && mine && (mine.x !== pdData.myFirstPin.x || mine.y !== pdData.myFirstPin.y)) {
+                html += `<div class="pd-pin pd-was" style="left:${pct(pdData.myFirstPin.x, W)};top:${pct(pdData.myFirstPin.y, H)}"></div>`;
+            }
+            if (pdData.pdPhase === 'REVEAL' && pdData.truth) {
+                if (pdData.myResult) svg += `<line class="pd-line" x1="${pdData.myResult.x}" y1="${pdData.myResult.y}" x2="${pdData.truth.x}" y2="${pdData.truth.y}"/>`;
+                html += `<div class="pd-pin pd-truth" style="left:${pct(pdData.truth.x, W)};top:${pct(pdData.truth.y, H)}"></div>`;
+            }
+            if (mine && pdData.pdPhase !== 'INTRO') html += `<div class="pd-pin pd-mine" style="left:${pct(mine.x, W)};top:${pct(mine.y, H)}"></div>`;
+            document.getElementById('pd-marks').innerHTML = `<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none">${svg}</svg>${html}`;
+            pdApply();
+        }
+
+        function pdStatusText(d) {
+            const me = d.myResult;
+            switch (d.pdPhase) {
+                case 'INTRO': return '';
+                case 'PLACE': return d.myPin || pdLocalPin ? 'Pinned. Tap again to move it.' : 'Tap the map to drop your pin.';
+                case 'SHOW': return d.sittingOut ? 'No pin this round. Sit this one out.' : 'Those dots are everyone\'s first pins.';
+                case 'MOVE':
+                    if (d.sittingOut) return 'No pin this round. Sit this one out.';
+                    return d.moved ? 'Moved. No bonus this round.' : `Stay put for x${d.stayBonus}, or tap to move.`;
+                case 'REVEAL':
+                    if (!me) return 'No pin this round.';
+                    // No "+0" for a pin across the world (the phone pass's rule).
+                    if (!me.points) return `${me.miles.toLocaleString('en-US')} miles off.`;
+                    return `${me.miles.toLocaleString('en-US')} miles off. +${me.points.toLocaleString('en-US')}${me.stayed ? ` (x${d.stayBonus} for staying)` : ''}`;
+                default: return '';
+            }
+        }
+
+        function renderPinDrop(data) {
+            pdData = data;
+            const key = `${data.round}-${data.mapUrl}`;
+            if (key !== pdRoundKey) {
+                pdRoundKey = key;
+                pdLocalPin = null;
+                const img = document.getElementById('pd-map-img');
+                if (img.getAttribute('src') !== data.mapUrl) img.src = data.mapUrl;
+                pdFit();
+            }
+            document.getElementById('pd-head').textContent = `Round ${data.round} of ${data.total}`;
+            const prompt = document.getElementById('pd-prompt');
+            const promptKey = `${data.round}-${data.pdPhase === 'REVEAL'}`;
+            if (prompt.dataset.key !== promptKey) {
+                prompt.dataset.key = promptKey;
+                if (data.pdPhase === 'REVEAL') prompt.innerHTML = `<div class="pd-city-phone">${lrEsc(data.prompt || '')}</div>`;
+                else if (data.kind === 'LANDMARK' && data.imageUrl) prompt.innerHTML = `<img class="pd-photo-phone" src="${data.imageUrl}" alt=""><div class="pd-ask">Where is this?</div>`;
+                else prompt.innerHTML = `<div class="pd-city-phone">${lrEsc(data.prompt || '')}</div>`;
+            }
+            const intro = data.pdPhase === 'INTRO';
+            document.getElementById('pd-viewport').style.visibility = intro ? 'hidden' : 'visible';
+            document.getElementById('pd-status').textContent = pdStatusText(data);
+            pdDraw();
+        }
+
+        (function pdGestures() {
+            const vp = document.getElementById('pd-viewport');
+            const begin = () => {
+                const pts = [...pdPointers.values()];
+                if (pts.length === 1) {
+                    pdGesture = { ...pdGesture, mode: 'pan', start: pts[0], tx: pdView.tx, ty: pdView.ty };
+                } else if (pts.length >= 2) {
+                    const [a, b] = pts;
+                    pdGesture = { ...pdGesture, mode: 'pinch', tap: false, twoFingers: true,
+                        dist: Math.hypot(a.x - b.x, a.y - b.y) || 1, mid: { x: (a.x + b.x) / 2, y: (a.y + b.y) / 2 },
+                        s: pdView.s, tx: pdView.tx, ty: pdView.ty };
+                }
+            };
+            vp.addEventListener('pointerdown', e => {
+                vp.setPointerCapture(e.pointerId);
+                const p = pdLocal(e);
+                pdPointers.set(e.pointerId, p);
+                if (pdPointers.size === 1) pdGesture = { tap: true, twoFingers: false, downAt: Date.now(), first: p };
+                begin();
+            });
+            vp.addEventListener('pointermove', e => {
+                if (!pdPointers.has(e.pointerId) || !pdGesture) return;
+                const p = pdLocal(e);
+                pdPointers.set(e.pointerId, p);
+                if (pdGesture.mode === 'pinch' && pdPointers.size >= 2) {
+                    const [a, b] = [...pdPointers.values()];
+                    const s = Math.max(1, Math.min(PD_MAX_ZOOM, pdGesture.s * Math.hypot(a.x - b.x, a.y - b.y) / pdGesture.dist));
+                    const mid = { x: (a.x + b.x) / 2, y: (a.y + b.y) / 2 };
+                    const cx = (pdGesture.mid.x - pdGesture.tx) / pdGesture.s, cy = (pdGesture.mid.y - pdGesture.ty) / pdGesture.s;
+                    Object.assign(pdView, { s, tx: mid.x - cx * s, ty: mid.y - cy * s });
+                    pdApply();
+                } else if (pdGesture.mode === 'pan') {
+                    if (Math.hypot(p.x - pdGesture.first.x, p.y - pdGesture.first.y) > PD_TAP_MOVE) pdGesture.tap = false;
+                    if (!pdGesture.tap) {
+                        Object.assign(pdView, { tx: pdGesture.tx + p.x - pdGesture.start.x, ty: pdGesture.ty + p.y - pdGesture.start.y });
+                        pdApply();
+                    }
+                }
+            });
+            const end = e => {
+                if (!pdPointers.has(e.pointerId)) return;
+                const p = pdLocal(e);
+                pdPointers.delete(e.pointerId);
+                if (!pdGesture) return;
+                if (pdPointers.size === 0) {
+                    const g = pdGesture;
+                    pdGesture = null;
+                    if (e.type === 'pointerup' && g.tap && !g.twoFingers && Date.now() - g.downAt <= PD_TAP_MS
+                        && Math.hypot(p.x - g.first.x, p.y - g.first.y) <= PD_TAP_MOVE) pdPlace(p);
+                } else {
+                    begin();
+                }
+            };
+            vp.addEventListener('pointerup', end);
+            vp.addEventListener('pointercancel', end);
+            vp.addEventListener('wheel', e => {
+                e.preventDefault();
+                const p = pdLocal(e);
+                const s = Math.max(1, Math.min(PD_MAX_ZOOM, pdView.s * (e.deltaY < 0 ? 1.15 : 1 / 1.15)));
+                const cx = (p.x - pdView.tx) / pdView.s, cy = (p.y - pdView.ty) / pdView.s;
+                Object.assign(pdView, { s, tx: p.x - cx * s, ty: p.y - cy * s });
+                pdApply();
+            }, { passive: false });
+            ['gesturestart', 'gesturechange'].forEach(t => vp.addEventListener(t, e => e.preventDefault()));
         })();
 
         function renderLetterRip(data) {

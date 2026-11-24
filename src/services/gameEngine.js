@@ -2,6 +2,8 @@ import pool, { isDatabaseDownError, DATABASE_DOWN_MESSAGE } from '../config/data
 import { randomUUID } from 'node:crypto';
 import { AsyncLocalStorage } from 'node:async_hooks';
 import { listPhotoPairs, doubleTakeReadyCount } from './doubleTake.js';
+import { loadPinDropPlaces, pinDropReadyCount, PIN_DROP_MIN_PLACES } from './pinDrop.js';
+import { toMap, fromMap, milesBetween, MAP_W, MAP_H } from './pinMap.js';
 
 export const activeRooms = {};
 
@@ -183,7 +185,7 @@ export function clearAllRoomTimers(roomCode) {
 
 // Every votable game mode. The display side (names, blurbs, icons) lives in
 // public/modes.js -- keep the keys in step when adding a mode.
-export const GAME_MODE_KEYS = ['TRIVI_YEAH', 'TRIVI_YEAH_II', 'COUNTRY_MONKEY', 'FLAG_ME_DOWN', 'LETTER_RIP', 'DOUBLE_TAKE', 'EMPOSSDURR', 'ON_THE_SPECTRUM', 'PROFILER'];
+export const GAME_MODE_KEYS = ['TRIVI_YEAH', 'TRIVI_YEAH_II', 'COUNTRY_MONKEY', 'FLAG_ME_DOWN', 'LETTER_RIP', 'PIN_DROP', 'DOUBLE_TAKE', 'EMPOSSDURR', 'ON_THE_SPECTRUM', 'PROFILER'];
 // A venue's access code can limit which modes its rooms offer (a pub shows
 // only a few) -- the vote tally only ever has those keys, so a vote for any
 // other mode simply never counts.
@@ -200,11 +202,17 @@ export const GAME_MODE_KEYS = ['TRIVI_YEAH', 'TRIVI_YEAH_II', 'COUNTRY_MONKEY', 
 // Trivi-yeah! off its list.) A code with house questions keeps Trivi-yeah!
 // even if its list was ticked before the Trivi-yeah! checkbox came back.
 export function allowedModesFor(room) {
-    // Double Take shows up only once /admin/double-take has a Ready photo.
-    const offered = GAME_MODE_KEYS.filter(key => key !== 'DOUBLE_TAKE' || doubleTakeReadyCount() > 0);
+    // Double Take shows up only once /admin/double-take has a Ready photo,
+    // and Pin Drop once its places are in the database.
+    const offered = GAME_MODE_KEYS.filter(key =>
+        (key !== 'DOUBLE_TAKE' || doubleTakeReadyCount() > 0) &&
+        (key !== 'PIN_DROP' || pinDropReadyCount() >= PIN_DROP_MIN_PLACES));
     const venue = room && room.venue;
     const ticked = venue && venue.allowedModes && venue.allowedModes.length ? venue.allowedModes : null;
-    if (!ticked) return [...offered];
+    // Double Take sits out of the lobby unless a code ticks it (Randy, Nov
+    // 24 2026: Pin Drop took its tile; nine tiles fit the lobby's 3x3 grid).
+    // He keeps playing it on a test code.
+    if (!ticked) return offered.filter(key => key !== 'DOUBLE_TAKE');
     const keep = offered.filter(key => ticked.includes(key) || (key === 'TRIVI_YEAH' && venue.houseSet));
     return keep.length ? keep : [...offered];
 }
@@ -605,6 +613,15 @@ function startGameForMode(roomCode, winningModule) {
         startLetterRipGame(roomCode).catch(error => {
             console.error(`❌ [Letter Rip] Failed to start Room ${roomCode}:`, error.message);
             broadcastContentUnavailable(roomCode, 'Letter Rip', error);
+            resetRoomToLobby(roomCode);
+        });
+        return;
+    }
+
+    if (winningModule === 'PIN_DROP') {
+        startPinDropGame(roomCode).catch(error => {
+            console.error(`❌ [Pin Drop] Failed to start Room ${roomCode}:`, error.message);
+            broadcastContentUnavailable(roomCode, 'Pin Drop', error);
             resetRoomToLobby(roomCode);
         });
         return;
@@ -1241,6 +1258,8 @@ function endGame(roomCode) {
             ? `${room.flagMeDown ? Math.min(room.flagMeDown.roundIndex + 1, room.flagMeDown.totalRounds) : 0} flags`
         : room.winningGameMode === 'LETTER_RIP'
             ? `${room.letterRip ? Math.min(room.letterRip.index + 1, room.letterRip.total) : 0} puzzles`
+        : room.winningGameMode === 'PIN_DROP'
+            ? `${room.pinDrop ? Math.min(room.pinDrop.index + 1, room.pinDrop.total) : 0} rounds`
         : room.winningGameMode === 'DOUBLE_TAKE'
             ? `${room.doubleTake ? Math.min(room.doubleTake.index + 1, room.doubleTake.total) : 0} photos`
             : `${room.questionBank.length} questions`;
@@ -3939,6 +3958,255 @@ export function doubleTakeStatusFor(room, playerName) {
     };
 }
 
+// ==========================================
+// PIN DROP (Randy, Nov 2026; a working name): find it on the world map
+// ==========================================
+// Each round is a place: a city by name, or one of Randy's landmark photos.
+// Everyone drops a pin on the world map on their phone at once. Then the room
+// sees everyone's first pins (plain dots, no names: Randy didn't want to give
+// away too much too soon), and gets a second chance to move. Standing your
+// ground pays x1.5 (Randy: "REALLY fun"), so the experts pin honestly in the
+// first stage, the unsure can follow the crowd, and a decoy costs its maker
+// the bonus. No first-stage pin means sitting the round out, so nobody can
+// just wait and copy. Closer is more points; the reveal shows every pin, the
+// true spot and the miles.
+//
+// All the numbers are first guesses (Nov 24 2026), to tune in play. Clues
+// (a zoom box, a line through your pin) were discussed and parked: "the game
+// itself should be fun out of the box" (Randy).
+const PIN_DROP_ROUNDS = 8;
+const PIN_DROP_TIERS = [1, 1, 1, 2, 2, 2, 3, 3]; // easy to hard, one per round
+const PIN_DROP_LANDMARK_ROUNDS = 3; // the rest are cities
+const PIN_DROP_INTRO_MS = 2500; // "Round 2 of 8", then the prompt
+const PIN_DROP_PLACE_SECONDS = 25; // drop and move your pin
+const PIN_DROP_SHOW_MS = 4000; // everyone's first pins, before the second chance
+const PIN_DROP_MOVE_SECONDS = 15; // stay for the bonus, or move
+const PIN_DROP_REVEAL_MS = 9000;
+const PIN_DROP_STAY_BONUS = 1.5;
+const PIN_DROP_MAX_POINTS = 1000;
+// Points fall off with distance: 1000 * e^(-miles / 1000), so ~900 at 100
+// miles, ~600 at 500, ~370 at 1,000, ~135 at 2,000.
+const PIN_DROP_FALLOFF_MILES = 1000;
+const PIN_DROP_CLOSE_MILES = 300; // "got it" for the phone's last-question card
+
+function pinDropPoints(miles) {
+    return Math.round(PIN_DROP_MAX_POINTS * Math.exp(-miles / PIN_DROP_FALLOFF_MILES) / 10) * 10;
+}
+
+async function startPinDropGame(roomCode) {
+    const room = activeRooms[roomCode];
+    if (!room) return;
+    const places = await loadPinDropPlaces();
+    if (places.length < PIN_DROP_ROUNDS) throw new Error(`Pin Drop needs ${PIN_DROP_ROUNDS} places, found ${places.length}.`);
+    // Places this room hasn't played first (room memory only).
+    room.pinDropSeen = room.pinDropSeen || new Set();
+    if (places.every(p => room.pinDropSeen.has(p.id))) room.pinDropSeen.clear();
+    // Which rounds are landmarks: spread across easy, middle and hard.
+    const landmarkRounds = new Set([1, 4, 6].slice(0, PIN_DROP_LANDMARK_ROUNDS));
+    const used = new Set();
+    const rounds = PIN_DROP_TIERS.map((tier, i) => {
+        const kind = landmarkRounds.has(i) ? 'LANDMARK' : 'CITY';
+        const fits = p => !used.has(p.id) && p.kind === kind;
+        const ranked = [
+            ...shuffleArray(places.filter(p => fits(p) && p.difficulty === tier && !room.pinDropSeen.has(p.id))),
+            ...shuffleArray(places.filter(p => fits(p) && !room.pinDropSeen.has(p.id))),
+            ...shuffleArray(places.filter(p => fits(p))),
+            ...shuffleArray(places.filter(p => !used.has(p.id)))
+        ];
+        const pick = ranked[0];
+        used.add(pick.id);
+        return pick;
+    });
+    room.gameState = 'PIN_DROP_ROUND';
+    room.pinDrop = { rounds, index: -1, total: rounds.length };
+    console.log(`[Pin Drop] Room ${roomCode} starting ${rounds.length} rounds.`);
+    startPinDropRound(roomCode);
+}
+
+function startPinDropRound(roomCode) {
+    const room = activeRooms[roomCode];
+    const pd = room && room.pinDrop;
+    if (!pd) return;
+    if (room.timerInterval) { clearInterval(room.timerInterval); room.timerInterval = null; }
+    pd.index++;
+    if (pd.index >= pd.total) { endGame(roomCode); return; }
+    const place = pd.rounds[pd.index];
+    room.pinDropSeen.add(place.id);
+    const truth = toMap(place.lat, place.lon);
+    Object.assign(pd, {
+        place,
+        truth: { x: Math.round(truth.x), y: Math.round(truth.y) },
+        // A landmark's photo under a disguised address: its filename names it.
+        imageUrl: place.imageUrl ? disguisedAssetUrl(room, { id: `pd-${place.id}`, visual_asset: place.imageUrl }) : null,
+        pins: {},       // name -> { x, y } where it is now
+        firstPins: {},  // name -> { x, y } at the end of the first stage
+        moved: new Set(),
+        results: null,
+        phase: 'INTRO'
+    });
+    Object.values(room.players).filter(p => !p.left).forEach(p => { p.questionsFaced = (p.questionsFaced || 0) + 1; });
+    broadcastPinDropState(roomCode);
+    const roundAtStart = pd.index;
+    room.revealTimeout = setTimeout(() => {
+        room.revealTimeout = null;
+        if (room.pinDrop !== pd || pd.index !== roundAtStart) return;
+        runPinDropClock(roomCode, 'PLACE', PIN_DROP_PLACE_SECONDS, () => showPinDropFirstPins(roomCode));
+    }, PIN_DROP_INTRO_MS);
+}
+
+// One phase with a visible clock, then `next`.
+function runPinDropClock(roomCode, phase, seconds, next) {
+    const room = activeRooms[roomCode];
+    const pd = room && room.pinDrop;
+    if (!pd) return;
+    pd.phase = phase;
+    room.gameSecondsLeft = seconds;
+    broadcastPinDropState(roomCode);
+    const roundAtStart = pd.index;
+    if (room.timerInterval) clearInterval(room.timerInterval);
+    room.timerInterval = setInterval(() => {
+        if (room.pinDrop !== pd || pd.index !== roundAtStart || pd.phase !== phase) { clearInterval(room.timerInterval); room.timerInterval = null; return; }
+        room.gameSecondsLeft = Math.max(0, room.gameSecondsLeft - 1);
+        broadcastToRoom(roomCode, { type: 'PIN_DROP_TICK', secondsLeft: room.gameSecondsLeft });
+        if (room.gameSecondsLeft <= 0) {
+            clearInterval(room.timerInterval);
+            room.timerInterval = null;
+            next();
+        }
+    }, 1000);
+}
+
+function showPinDropFirstPins(roomCode) {
+    const room = activeRooms[roomCode];
+    const pd = room && room.pinDrop;
+    if (!pd || pd.phase !== 'PLACE') return;
+    room.gameSecondsLeft = null;
+    Object.entries(pd.pins).forEach(([name, pin]) => { pd.firstPins[name] = { ...pin }; });
+    pd.phase = 'SHOW';
+    broadcastPinDropState(roomCode);
+    const roundAtShow = pd.index;
+    room.revealTimeout = setTimeout(() => {
+        room.revealTimeout = null;
+        if (room.pinDrop !== pd || pd.index !== roundAtShow) return;
+        runPinDropClock(roomCode, 'MOVE', PIN_DROP_MOVE_SECONDS, () => revealPinDrop(roomCode));
+    }, PIN_DROP_SHOW_MS);
+}
+
+function revealPinDrop(roomCode) {
+    const room = activeRooms[roomCode];
+    const pd = room && room.pinDrop;
+    if (!pd || pd.phase !== 'MOVE') return;
+    room.gameSecondsLeft = null;
+    const truthPlace = { lat: pd.place.lat, lon: pd.place.lon };
+    pd.results = Object.entries(pd.pins)
+        .filter(([name]) => room.players[name] && name in pd.firstPins)
+        .map(([name, pin]) => {
+            const player = room.players[name];
+            const miles = Math.round(milesBetween(fromMap(pin.x, pin.y), truthPlace));
+            const stayed = !pd.moved.has(name);
+            const points = Math.round(pinDropPoints(miles) * (stayed ? PIN_DROP_STAY_BONUS : 1));
+            player.score += points;
+            if (miles <= PIN_DROP_CLOSE_MILES) player.correctAnswers = (player.correctAnswers || 0) + 1;
+            return { name, emoji: player.emoji || null, x: pin.x, y: pin.y, miles, points, stayed };
+        })
+        .sort((a, b) => a.miles - b.miles);
+    pd.phase = 'REVEAL';
+    const best = pd.results[0];
+    setPhoneRecap(room, {
+        kind: 'PIN_DROP',
+        label: `Round ${pd.index + 1}`,
+        answer: pd.place.label,
+        answered: pd.results.map(r => r.name),
+        right: pd.results.filter(r => r.miles <= PIN_DROP_CLOSE_MILES).map(r => r.name),
+        best: best ? { name: best.name, points: best.points } : null
+    });
+    broadcastPinDropState(roomCode);
+    broadcastToRoom(roomCode, { type: 'LEADERBOARD_UPDATE', players: Object.values(room.players).filter(p => !p.left) });
+    const roundAtReveal = pd.index;
+    room.revealTimeout = setTimeout(() => {
+        room.revealTimeout = null;
+        if (room.pinDrop === pd && pd.index === roundAtReveal) startPinDropRound(roomCode);
+    }, PIN_DROP_REVEAL_MS);
+}
+
+// PDPIN <x> <y>, in the map image's pixels, from a phone.
+function handlePinDropAction(roomCode, room, playerName, cleanText) {
+    const pd = room.pinDrop;
+    const m = /^PDPIN\s+(\d+(?:\.\d+)?)\s+(\d+(?:\.\d+)?)$/.exec(cleanText);
+    if (!m) return `⚠️ That action isn't available right now.`;
+    const player = room.players[playerName];
+    if (!player || player.left) return `⚠️ You're not in this game.`;
+    if (pd.phase !== 'PLACE' && pd.phase !== 'MOVE') return `⚠️ Wait for the next round.`;
+    // The second stage is only for pins from the first.
+    if (pd.phase === 'MOVE' && !(playerName in pd.firstPins)) return `⚠️ No pin this round. Sit this one out.`;
+    const pin = { x: Math.max(0, Math.min(MAP_W, Math.round(Number(m[1])))), y: Math.max(0, Math.min(MAP_H, Math.round(Number(m[2])))) };
+    const first = !(playerName in pd.pins);
+    pd.pins[playerName] = pin;
+    if (pd.phase === 'MOVE') {
+        const was = pd.firstPins[playerName];
+        if (was.x !== pin.x || was.y !== pin.y) pd.moved.add(playerName);
+        return `Moved.`;
+    }
+    if (first) {
+        broadcastToRoom(roomCode, { type: 'ANSWER_SUBMITTED', playerName });
+        broadcastPinDropState(roomCode);
+    }
+    return `Pinned.`;
+}
+
+// What the TV shows. Before the reveal, never the answer: a landmark's
+// photo (under a disguised address) but not its name, and no pins at all
+// until the first stage ends (then plain dots, no names).
+export function pinDropTvState(room) {
+    const pd = room.pinDrop;
+    if (!pd || !pd.place) return null;
+    const active = Object.values(room.players).filter(p => !p.left);
+    const showDots = pd.phase === 'SHOW' || pd.phase === 'MOVE';
+    const revealed = pd.phase === 'REVEAL';
+    return {
+        type: 'PIN_DROP_STATE',
+        round: pd.index + 1,
+        total: pd.total,
+        pdPhase: pd.phase,
+        kind: pd.place.kind,
+        // A city is its own prompt; a landmark's name waits for the reveal.
+        prompt: pd.place.kind === 'CITY' || revealed ? pd.place.label : null,
+        imageUrl: pd.imageUrl,
+        mapUrl: '/pin-drop/world-map.webp',
+        mapW: MAP_W,
+        mapH: MAP_H,
+        secondsLeft: pd.phase === 'PLACE' || pd.phase === 'MOVE' ? room.gameSecondsLeft : null,
+        placedCount: Object.keys(pd.pins).filter(n => active.some(p => p.name === n)).length,
+        playerCount: active.length,
+        dots: showDots ? Object.values(pd.firstPins) : [],
+        truth: revealed ? pd.truth : null,
+        results: revealed ? pd.results : null,
+        stayBonus: PIN_DROP_STAY_BONUS
+    };
+}
+
+function broadcastPinDropState(roomCode) {
+    const room = activeRooms[roomCode];
+    if (room && room.pinDrop && room.pinDrop.place) broadcastToRoom(roomCode, pinDropTvState(room));
+}
+
+// What one phone sees: the public state plus that player's own pin.
+export function pinDropStatusFor(room, playerName) {
+    const pd = room.pinDrop;
+    if (!pd || !pd.place) return null;
+    const pub = pinDropTvState(room);
+    const hasFirst = playerName in pd.firstPins;
+    return {
+        ...pub,
+        type: undefined,
+        myPin: pd.pins[playerName] || null,
+        myFirstPin: pd.firstPins[playerName] || null,
+        sittingOut: (pd.phase === 'SHOW' || pd.phase === 'MOVE') && !hasFirst,
+        moved: pd.moved.has(playerName),
+        myResult: pd.results ? (pd.results.find(r => r.name === playerName) || null) : null
+    };
+}
+
 const FLAG_ME_DOWN_ROUNDS_PER_DIFFICULTY = 5; // x3 difficulties = 15, matching Country Monkey
 // How long each stage shows before the next clue: flag only, +region,
 // +capital, +map. First guesses -- tune by feel in play.
@@ -4900,6 +5168,7 @@ function announcementGoodMoment(room) {
         case 'EMPOSSDURR_ROUND': return !ed || !['ACCUSE_VOTE', 'DECLARE_VERDICT'].includes(ed.phase);
         case 'FLAG_ME_DOWN_ROUND': return !fmd || fmd.phase !== 'CLUES';
         case 'DOUBLE_TAKE_ROUND': return !room.doubleTake || room.doubleTake.phase !== 'HUNT';
+        case 'PIN_DROP_ROUND': return !room.pinDrop || !['PLACE', 'SHOW', 'MOVE'].includes(room.pinDrop.phase);
         default: return true;
     }
 }
@@ -5195,6 +5464,7 @@ function clearRoomForFreshGame(room) {
     room.flagMeDown = null;
     room.letterRip = null;
     room.doubleTake = null;
+    room.pinDrop = null;
 
     const activePlayers = Object.values(room.players).filter(p => !p.left);
     // Bumping this marks "a fresh game started" -- a player who left before
@@ -7095,6 +7365,11 @@ function handleIncomingMessageInRoom(fromPhone, bodyText, explicitRoomCode, pres
     // 5.555. Letter Rip round messages
     if (currentRoom.gameState === 'LETTER_RIP_ROUND' && currentRoom.letterRip) {
         return handleLetterRipAction(associatedRoomCode, currentRoom, actingPlayerName, cleanText);
+    }
+
+    // 5.5556. Pin Drop pins
+    if (currentRoom.gameState === 'PIN_DROP_ROUND' && currentRoom.pinDrop) {
+        return handlePinDropAction(associatedRoomCode, currentRoom, actingPlayerName, cleanText);
     }
 
     // 5.5555. Double Take taps

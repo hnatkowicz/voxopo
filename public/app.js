@@ -876,6 +876,13 @@ if (btnSubmitSpectate) {
                     if (Number(data.secondsLeft) === 3) playAudioTrack('answer-warning-sound');
                 }
 
+                // ---------- Pin Drop ----------
+                if (data.type === 'PIN_DROP_STATE') renderPinDropTV(data);
+                if (data.type === 'PIN_DROP_TICK') {
+                    setClock(data.secondsLeft);
+                    if (Number(data.secondsLeft) === 3) playAudioTrack('answer-warning-sound');
+                }
+
                 // ---------- Double Take ----------
                 if (data.type === 'DOUBLE_TAKE_STATE') renderDoubleTakeTV(data);
                 if (data.type === 'DOUBLE_TAKE_TICK') {
@@ -1035,7 +1042,7 @@ if (btnSubmitSpectate) {
         // ROOM_VENUE first, and a mid-game join's STATE_CATCH_UP follows.
         // Country Monkey and Trivi-yeah! too (Nov 2026): their region/deck
         // vote and their questions.
-        const TP_LAYOUT_ON = new Set(['ROOM_CLOSED', 'ROOM_VENUE', 'RETURN_TO_LOBBY', 'TRANSITION_TO_CATEGORY_VOTE', 'TRIVIA_TOPIC_CHOSEN', 'TRANSITION_TO_QUESTION', 'FLAG_ME_DOWN_ROUND', 'PROFILER_QUESTION', 'EMPOSSDURR_ROUND_START', 'ON_THE_SPECTRUM_ROUND_START', 'LETTER_RIP_STATE', 'DOUBLE_TAKE_STATE', 'GAME_OVER']);
+        const TP_LAYOUT_ON = new Set(['ROOM_CLOSED', 'ROOM_VENUE', 'RETURN_TO_LOBBY', 'TRANSITION_TO_CATEGORY_VOTE', 'TRIVIA_TOPIC_CHOSEN', 'TRANSITION_TO_QUESTION', 'FLAG_ME_DOWN_ROUND', 'PROFILER_QUESTION', 'EMPOSSDURR_ROUND_START', 'ON_THE_SPECTRUM_ROUND_START', 'LETTER_RIP_STATE', 'DOUBLE_TAKE_STATE', 'PIN_DROP_STATE', 'GAME_OVER']);
         // Every screen uses the new layout now (Nov 2026); kept for any
         // future screen that isn't ready for it.
         const TP_LAYOUT_OFF = new Set([]);
@@ -1043,7 +1050,7 @@ if (btnSubmitSpectate) {
             let on = null;
             if (data.type === 'TRANSITION_TO_TRIVI_YEAH_II' || /^TRIVI_YEAH_II_(?!FINAL_)/.test(data.type) || TP_LAYOUT_ON.has(data.type)) on = true;
             else if (TP_LAYOUT_OFF.has(data.type)) on = false;
-            else if (data.type === 'STATE_CATCH_UP') on = ['TRIVI_YEAH_II_ROUND', 'CATEGORY_VOTE', 'TRIVIA_TOPIC_SPLASH', 'GAME_ROUND', 'ROUND_REVEAL', 'FLAG_ME_DOWN_ROUND', 'PROFILER_ROUND', 'EMPOSSDURR_ROUND', 'ON_THE_SPECTRUM_ROUND', 'LETTER_RIP_ROUND', 'DOUBLE_TAKE_ROUND'].includes(data.gameState);
+            else if (data.type === 'STATE_CATCH_UP') on = ['TRIVI_YEAH_II_ROUND', 'CATEGORY_VOTE', 'TRIVIA_TOPIC_SPLASH', 'GAME_ROUND', 'ROUND_REVEAL', 'FLAG_ME_DOWN_ROUND', 'PROFILER_ROUND', 'EMPOSSDURR_ROUND', 'ON_THE_SPECTRUM_ROUND', 'LETTER_RIP_ROUND', 'DOUBLE_TAKE_ROUND', 'PIN_DROP_ROUND'].includes(data.gameState);
             if (on === null || on === document.body.classList.contains('tp-layout')) return;
             document.body.classList.toggle('tp-layout', on);
             railMoves = {};
@@ -2106,6 +2113,66 @@ function renderLetterRipTV(data) {
         <div class="lr-foot">${foot}${wrong}</div>
     `);
     if (data.lrPhase === 'PICK') setClock(data.secondsLeft);
+    else setClock('');
+}
+
+// Pin Drop (Randy, Nov 2026): the world map is the stage. A city's name sits
+// above it; a landmark's photo sits beside it (its name waits for the
+// reveal). After the first stage, everyone's first pins show as plain dots
+// (no names, Randy's call); at the reveal each pin gets its avatar, a line to
+// the true spot, and the miles underneath, closest first.
+function pinDropMapHtml(data) {
+    const W = data.mapW, H = data.mapH;
+    const pct = (v, of) => `${v / of * 100}%`;
+    let svg = '';
+    (data.dots || []).forEach(d => { svg += `<circle class="pd-dot" cx="${d.x}" cy="${d.y}" r="13"/>`; });
+    let marks = '';
+    if (data.truth && data.results) {
+        data.results.forEach(r => { svg += `<line class="pd-line" x1="${r.x}" y1="${r.y}" x2="${data.truth.x}" y2="${data.truth.y}"/>`; });
+        svg += `<circle class="pd-truth-ring" cx="${data.truth.x}" cy="${data.truth.y}" r="26"/><circle class="pd-truth-dot" cx="${data.truth.x}" cy="${data.truth.y}" r="9"/>`;
+        // Farthest first, so the closest avatars sit on top.
+        [...data.results].reverse().forEach(r => {
+            marks += `<div class="pd-mark" style="left:${pct(r.x, W)};top:${pct(r.y, H)}">${avatarHtml(r.emoji, 1)}</div>`;
+        });
+    }
+    return `<div class="pd-map"><img src="${data.mapUrl}" alt=""><svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none">${svg}</svg>${marks}</div>`;
+}
+function renderPinDropTV(data) {
+    const panel = document.getElementById('active-content-stage');
+    currentGamePhase = 'PIN_DROP';
+    setStatusMessage('');
+    [data.mapUrl, data.imageUrl].filter(Boolean).forEach(src => { const img = new Image(); img.src = src; });
+    if (data.pdPhase === 'INTRO') {
+        setClock('');
+        panel.innerHTML = tpStage('tp-center pd-stage', `<div class="dt-splash">Round ${data.round} of ${data.total}</div>`);
+        return;
+    }
+    const eyebrow = `<div class="tp-eyebrow">Round <span class="tp-pts">${data.round} / ${data.total}</span></div>`;
+    if (data.pdPhase === 'REVEAL') {
+        setClock('');
+        const rows = (data.results || []).slice(0, 6).map(r =>
+            `<span class="pd-result">${avatarHtml(r.emoji, 1)}${escapeHtml(r.name)} <span class="pd-miles">${r.miles.toLocaleString('en-US')} mi</span>${r.stayed ? ` <span class="tp-pts">x${data.stayBonus}</span>` : ''}</span>`).join('');
+        panel.innerHTML = tpStage('tp-center pd-stage', `
+            ${eyebrow}
+            <div class="pd-answer">${escapeHtml(data.prompt || '')}</div>
+            <div class="pd-map-wrap pd-map-big">${pinDropMapHtml(data)}</div>
+            <div class="pd-foot">${rows || '<span class="pd-note">No pins this round</span>'}</div>
+        `);
+        return;
+    }
+    const prompt = data.kind === 'LANDMARK' && data.imageUrl
+        ? `<div class="pd-photo"><img src="${data.imageUrl}" alt=""></div>`
+        : `<div class="pd-city">${escapeHtml(data.prompt || '')}</div>`;
+    // After the first stage: say once that there's a second chance.
+    const note = data.pdPhase === 'SHOW' ? 'Everyone\'s first pins'
+        : data.pdPhase === 'MOVE' ? `Stay put for x${data.stayBonus}, or move`
+        : (data.placedCount ? `${data.placedCount} / ${data.playerCount} pinned` : '&nbsp;');
+    panel.innerHTML = tpStage(`tp-center pd-stage${data.kind === 'LANDMARK' ? ' pd-landmark' : ''}`, `
+        ${eyebrow}
+        <div class="pd-body">${prompt}<div class="pd-map-wrap">${pinDropMapHtml(data)}</div></div>
+        <div class="pd-foot"><span class="pd-note">${note}</span></div>
+    `);
+    if (data.pdPhase === 'PLACE' || data.pdPhase === 'MOVE') setClock(data.secondsLeft);
     else setClock('');
 }
 
