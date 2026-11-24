@@ -4,7 +4,8 @@
 //
 // The map is Randy's world map SVG (public/maps/workd-map-complete.svg,
 // Wikipedia's blank world map), rendered as public/pin-drop/world-map.webp,
-// 2400 x 1253. It's the Robinson projection centered near 10 E. The numbers
+// 4800 x 2505 (2400 wide until Randy asked for more than 8x zoom, Nov 24
+// 2026: twice the pixels keeps 16x sharp on a phone; 146 KB). It's the Robinson projection centered near 10 E. The numbers
 // below were fitted (Nov 24 2026) by measuring 15 small countries on the SVG
 // against their real coordinates: on average within 2 drawing units, about
 // 15 miles on the ground, which is far finer than the game needs.
@@ -12,8 +13,8 @@
 // Re-rendering the map at another size means re-measuring IMG_* and SVG_* (the
 // SVG's internal-to-screen transform); scripts/pin-drop-map.mjs does both.
 
-export const MAP_W = 2400;
-export const MAP_H = 1253;
+export const MAP_W = 4800;
+export const MAP_H = 2505;
 
 const LON0 = 9.6; // the map's central meridian
 // Robinson x/y (radians-ish) -> the SVG's internal drawing units
