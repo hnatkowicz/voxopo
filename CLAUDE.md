@@ -841,8 +841,9 @@ Mode keys are used in room votes and in `gameEngine.js`:
   first-stage pin means sitting the round out, so nobody waits and
   copies. Points: 1000 x e^(-miles/1000) (about 900 at 100 miles, 370 at
   1,000). The reveal: every pin with its avatar, a line to the true spot,
-  the miles. Clues (a zoom box, a line through your pin) were discussed
-  and parked: "the game itself should be fun out of the box". Replay
+  the miles. Clues (a zoom box, a line through your pin) were parked at
+  first ("the game itself should be fun out of the box"); the line clue
+  was built after the first family game (below). Replay
   worry (Randy: "doubtful of its replayability") is why it's the world
   edition first, on content that already existed; hand-drawn maps (a
   house, a town, a teacher's set) can come later. The numbers are
@@ -885,10 +886,14 @@ Mode keys are used in room votes and in `gameEngine.js`:
     QR code down); lines 1 px, solid and see-through on both screens
     (the phone's had been scaling with the zoom). **Decided against:**
     blocking the phone's pull-to-refresh, a PWA or in-app camera, and a
-    smaller scoreboard (Randy). **Open:** the line clue (a line through
-    your pin and the true spot, second stage only, once, for half your
-    points, zooming out to show it; Randy likes it if it's thin enough);
-    whether the TV keeps the landmark photo or shows only the map (Randy
+    smaller scoreboard (Randy). **The line clue, built Nov 24** (Randy:
+    "Go ahead"): in the second stage, once a round, "Draw my line (half
+    points)" draws a 1 px gold line through your pin and the true spot,
+    edge to edge with neither marked, and zooms the map out to show it;
+    the round's points are halved (after any x1.5). The server sends a
+    phone only the line's two edge points (`pinDropLineThrough`); a pin
+    right on the spot gets a random-angle line through it. Tested: the
+    true spot sat 0.3 px off the drawn line. **Open:** whether the TV keeps the landmark photo or shows only the map (Randy
     "50-50"); a rejoin after a refresh Randy hit once that couldn't be
     reproduced (the server and a reloaded test phone both resume fine).
 - **FLAG_ME_DOWN** (also a standalone mode, after the family asked where it
