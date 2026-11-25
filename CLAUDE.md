@@ -1046,10 +1046,8 @@ and forth until we both agree the idea is good **and** worth the effort. So:
   codes structure only).
 - **All content SQL is live** (Randy ran everything through Literature,
   Nov 22).
-- **Run in Neon (Randy, owner login -- it creates a table):**
-  `pin_drop_places.sql` (Pin Drop's 453 places; the lobby shows Pin Drop
-  once it's run). Everything earlier is done (Profiler batch 3, venue
-  memory's new kinds, Double Take).
+- **`pin_drop_places.sql` is live** (Randy ran it Nov 25), so Pin Drop
+  is in the live lobby. Everything earlier is done too.
 - **Paused (Randy, Nov 22):** the re-tier and Letter Rip phrases, a
   "mini pause" while Double Take is designed and built (see Ideas in the
   works).
@@ -1066,8 +1064,14 @@ and forth until we both agree the idea is good **and** worth the effort. So:
 - **Run in Neon (Randy):** `country_monkey_water.sql`,
   `trivi_yeah_ii_wet_pants.sql`, then `country_monkey_clues.sql` (the
   Orange River; clues last).
-- **Waiting on Randy:** trap screens in a real game; Letter Rip's green keys (Randy watching
-  tonight: which letters, which round, were they on the TV?); flipside's
+- **Waiting on Randy:** Letter Rip's green keys (Nov 25 sighting: a
+  letter Randy picked stayed green for the whole puzzle though he read it
+  as not in the phrase, and cleared at the next puzzle; the server only
+  marks a key green when the letter really is in the phrase, so the
+  likeliest story is still a hit the TV didn't light; he's watching for
+  it again); trap screens (the family doesn't like the traps, Nov 25, so
+  they may never come up at home: a Plain board on the family code is
+  the fix if they keep spoiling games); flipside's
   own DATABASE_URL (Randy on it, Nov 22). The genie is out: Randy is
   drawing other avatars instead.
 - **Pinned (Randy, Nov 22: "No bother. Pin it for later."):** the lobby
