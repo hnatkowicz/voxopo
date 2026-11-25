@@ -1061,7 +1061,8 @@ and forth until we both agree the idea is good **and** worth the effort. So:
   matched swaps). Done: Sports, Movies & TV, Music, Food & Drink, then
   Science & Nature and Astronomy & Space (Nov 25: 42 and 43 moves; the
   Big Bang 100 no longer says "13.8 billion years", which gave away the
-  300 on the universe's age). Still to go: Word Nerd, Geography, Cell
+  300 on the universe's age), then Word Nerd and Geography (Nov 25: 40
+  and 47 moves). Still to go: Cell
   Mates, College Athletics, Pop Quiz, Extra Lives, the picture sets (Brush
   With Greatness, The Great State of..., Wish You Were Here, Logo My
   Eggo), Spellbound and the niche four. Then more Letter Rip phrases.
