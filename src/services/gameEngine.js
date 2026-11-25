@@ -1353,8 +1353,20 @@ const TRIVI_YEAH_II_CATEGORIES = [
     // own categories. content/pop_quiz.csv (POP_QUIZ, not POP_CULTURE: that
     // key belongs to the old, retired Trivi-yeah! deck).
     { key: 'VIDEO_GAMES', label: 'Extra Lives' },
-    { key: 'POP_QUIZ', label: 'Pop Quiz' }
+    { key: 'POP_QUIZ', label: 'Pop Quiz' },
+    // Regional categories are Off everywhere until an access code switches
+    // them on (its Categories button on /admin), so a local category never
+    // lands on a board in another state -- the "no insider knowledge" rule.
+    // Penn State for Pennsylvania crowds (Randy, Nov 2026: "where everyone
+    // bleeds blue and white"). content/we_are.csv.
+    { key: 'WE_ARE', label: 'We Are...', regional: true }
 ];
+// No global dial row = Normal, except a regional category: Off.
+const defaultCategorySetting = key => (TRIVI_YEAH_II_CATEGORIES.find(c => c.key === key) || {}).regional ? 'OFF' : 'NORMAL';
+const withRegionalDefaults = settings => {
+    TRIVI_YEAH_II_CATEGORIES.forEach(c => { if (c.regional && !settings[c.key]) settings[c.key] = 'OFF'; });
+    return settings;
+};
 const TRIVI_YEAH_II_CATEGORIES_PER_BOARD = 3;
 
 // ---- Category dial (Randy, Oct 2026) ----
@@ -1371,9 +1383,9 @@ const CATEGORY_BOOST = 2;
 async function readCategorySettings() {
     try {
         const result = await pool.query('SELECT category, setting FROM thinking_pants_category_settings');
-        return Object.fromEntries(result.rows.map(r => [r.category, r.setting]));
+        return withRegionalDefaults(Object.fromEntries(result.rows.map(r => [r.category, r.setting])));
     } catch (e) {
-        if (e.code === '42P01') return {}; // table not created yet
+        if (e.code === '42P01') return withRegionalDefaults({}); // table not created yet
         throw e;
     }
 }
@@ -1456,7 +1468,7 @@ export async function thinkingPantsCategoryOverview() {
                 label: c.label,
                 total: TRIVI_YEAH_II_TIERS.reduce((sum, t) => sum + (tiers[t] || 0), 0),
                 depth: Math.min(...TRIVI_YEAH_II_TIERS.map(t => tiers[t] || 0)),
-                setting: settings[c.key] || 'NORMAL'
+                setting: settings[c.key] || defaultCategorySetting(c.key)
             };
         })
     };

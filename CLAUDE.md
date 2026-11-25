@@ -642,6 +642,19 @@ Mode keys are used in room votes and in `gameEngine.js`:
   venue whose settings can't fill a board falls back to the global dial
   rather than breaking the game. Main use is Off (no College Athletics at
   a library night).
+  **Regional categories** (Nov 2026): a category marked `regional: true`
+  in `TRIVI_YEAH_II_CATEGORIES` is **Off everywhere** (no global dial row
+  = Off, not Normal) **until an access code's Categories button turns it
+  on**, so a local category never lands on a board in another state (the
+  "no insider knowledge" rule); Trivi-yeah!'s topics follow the same dial.
+  The first is **"We Are..."** (`content/we_are.csv`, key `WE_ARE`, 120,
+  30 per tier; Randy: "where everyone bleeds blue and white"): Penn State
+  -- the university and its campuses, football and other sports, THON and
+  the Creamery, alumni with second-cousin hooks, Happy Valley and around.
+  **The 2011 scandal is off limits** (Randy agreed); Paterno's coaching
+  stays. Rows Claude was less than sure of say "Verify" in `notes`.
+  Name options Randy was offered: Happy Valley, Nittany Knowledge, Blue &
+  White, Lion Pride.
   **Direction (Randy, Oct 2026):** new general trivia goes into Thinking
   Pants categories, which Trivi-yeah!'s topics now draw on too. The old
   general decks (`game_mode = 'TRIVIA'`) aren't played.
@@ -1053,6 +1066,11 @@ and forth until we both agree the idea is good **and** worth the effort. So:
 - **`pin_drop_places.sql` is live** (Randy ran it Nov 25), so Pin Drop
   is in the live lobby. Everything earlier is done too.
 - **`content/sql/letter_rip.sql` is live** (Randy, Nov 25: 2,410 rows).
+- **Run in Neon (Randy):** `content/sql/we_are.sql` (the Penn State
+  category, Nov 25), then switch it on for the family code and any
+  Pennsylvania venue on /admin (Categories: Normal or Boost); it's Off
+  everywhere else. Also the re-tier SQL: `science_nature.sql`,
+  `astronomy_space.sql`, `word_nerd.sql`, `geography.sql`.
 - **Paused (Randy, Nov 22):** the re-tier and Letter Rip phrases, a
   "mini pause" while Double Take is designed and built (see Ideas in the
   works).
