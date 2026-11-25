@@ -1058,8 +1058,10 @@ and forth until we both agree the idea is good **and** worth the effort. So:
   works).
 - **Re-tier pass** (Nov 22, Randy's go-ahead): the categories written
   before the difficulty benchmarks, tier moves only (50 per tier kept by
-  matched swaps). Done: Sports, Movies & TV, Music, Food & Drink. Still
-  to go: Science & Nature, Astronomy & Space, Word Nerd, Geography, Cell
+  matched swaps). Done: Sports, Movies & TV, Music, Food & Drink, then
+  Science & Nature and Astronomy & Space (Nov 25: 42 and 43 moves; the
+  Big Bang 100 no longer says "13.8 billion years", which gave away the
+  300 on the universe's age). Still to go: Word Nerd, Geography, Cell
   Mates, College Athletics, Pop Quiz, Extra Lives, the picture sets (Brush
   With Greatness, The Great State of..., Wish You Were Here, Logo My
   Eggo), Spellbound and the niche four. Then more Letter Rip phrases.
