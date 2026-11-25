@@ -723,8 +723,8 @@ Mode keys are used in room votes and in `gameEngine.js`:
   Words, unlike impostors, avoid repeats: a room (and its venue, the
   last 28 days) gets words it hasn't played first (`room.empossdurrSeen`,
   Nov 23). **Deck cleanup** (Nov 25, `empossdurr_cleanup.sql`; Randy:
-  about 15% "aren't that great"): 29 words out (live: 619 left,
-  since the live deck had ~80 words the repo's files don't). Out: words with
+  about 15% "aren't that great"): 29 words out (live: 580 after the
+  dedupe; the live deck had ~80 words the repo's files don't). Out: words with
   nothing to hold on to (BIG BROTHER, WINNER), insider or room-souring
   ones (TRUMP and CLOSET -- Randy: drop them -- SPRING GROVE, HEISENBERG),
   ones too hard to clue aloud (DEJA VU, YAWN) and near-twins (MITTENS
@@ -1087,8 +1087,11 @@ and forth until we both agree the idea is good **and** worth the effort. So:
   Cell Mates at 240, Pop Quiz and Extra Lives at 200). `empossdurr_cleanup.sql`
   ran Nov 25 (619 words left: the live deck holds ~80 words added in Neon
   that aren't in the repo's SQL files, and some words were in it 2-4
-  times). **Run in Neon (Randy):** `empossdurr_dedupe.sql` (keeps the
-  oldest copy of each word; step 1 lists the doubles first).
+  times). `empossdurr_dedupe.sql` ran the same night (39
+  extra copies out, 0 duplicates left): **the live deck is 580 words.**
+  About 80 of them live only in Neon; Claude hasn't reviewed those yet
+  (Randy can export them). Dud words from Thanksgiving go in the next
+  cleanup.
 - **Paused (Randy, Nov 22):** the re-tier and Letter Rip phrases, a
   "mini pause" while Double Take is designed and built (see Ideas in the
   works).
