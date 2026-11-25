@@ -1066,11 +1066,8 @@ and forth until we both agree the idea is good **and** worth the effort. So:
 - **`pin_drop_places.sql` is live** (Randy ran it Nov 25), so Pin Drop
   is in the live lobby. Everything earlier is done too.
 - **`content/sql/letter_rip.sql` is live** (Randy, Nov 25: 2,410 rows).
-- **Run in Neon (Randy):** `content/sql/we_are.sql` (the Penn State
-  category, Nov 25), then switch it on for the family code and any
-  Pennsylvania venue on /admin (Categories: Normal or Boost); it's Off
-  everywhere else. Also the re-tier SQL: `science_nature.sql`,
-  `astronomy_space.sql`, `word_nerd.sql`, `geography.sql`.
+- **All SQL through Nov 25 is live** (Randy: the re-tiers and "We Are...").
+  **Run in Neon (Randy):** `content/sql/cell_mates.sql` (240 questions).
 - **Paused (Randy, Nov 22):** the re-tier and Letter Rip phrases, a
   "mini pause" while Double Take is designed and built (see Ideas in the
   works).
@@ -1080,8 +1077,8 @@ and forth until we both agree the idea is good **and** worth the effort. So:
   Science & Nature and Astronomy & Space (Nov 25: 42 and 43 moves; the
   Big Bang 100 no longer says "13.8 billion years", which gave away the
   300 on the universe's age), then Word Nerd and Geography (Nov 25: 40
-  and 47 moves). Still to go: Cell
-  Mates, College Athletics, Pop Quiz, Extra Lives, the picture sets (Brush
+  and 47 moves), then Cell Mates (Nov 25: 26 moves, plus 120 new). Still
+  to go: College Athletics, Pop Quiz, Extra Lives, the picture sets (Brush
   With Greatness, The Great State of..., Wish You Were Here, Logo My
   Eggo), Spellbound and the niche four. Then more Letter Rip phrases.
 - **Category depth: done** (Nov 22). Every general category is at 200
@@ -1354,7 +1351,13 @@ and forth until we both agree the idea is good **and** worth the effort. So:
   is a small, fair edge.
 - **Depth plan (Nov 2026):** Country Monkey, Flag Me Down, Red, White &
   Who?, War & Pieces and World History are at 120, and **Cell Mates**
-  (biology, `content/cell_mates.csv`, 120) is built. World History's 13
+  (biology, `content/cell_mates.csv`) is built: **240 since Nov 25**, 60
+  per tier, the deepest general category (Randy: "leaning HARD into the
+  biology... for the family"). The new 120 are biology proper -- cells
+  and organelles, genetics (alleles, mRNA, CRISPR, jumping genes), the
+  body's systems, microbes, plants (xylem, phloem), ecology (keystone
+  species, endemic, decomposers) and evolution -- with Science &
+  Nature's questions left to it. World History's 13
   questions that duplicated Red, White & Who? and War & Pieces were
   retired there. Sports and Food & Drink are at 200 now. Niche pun
   categories (Famous (K)nights, Fictional Locations, Just in Time,
