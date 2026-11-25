@@ -747,8 +747,8 @@ Mode keys are used in room votes and in `gameEngine.js`:
   board + phrase is that show's format) and a **shrinking pot** replaced
   it. 6 puzzles a game, one per category. Puzzles live in a spreadsheet,
   `content/letter_rip.csv` (Randy: "This one has legs"). `build.mjs` checks
-  it and writes `content/sql/letter_rip.sql` (its own table): 2,000 puzzles
-  in 55 categories (Nov 2026: 102, then 600, then 1,200 after the family
+  it and writes `content/sql/letter_rip.sql` (its own table): 2,410 puzzles
+  in 67 categories (Nov 2026: 102, then 600, then 1,200 after the family
   played four games in a row, then +300 in 10 new categories -- Deep Blue
   Sea, Wild West, Under the Hood, Toolbox, Getting Dressed, Science Lab,
   Strike Up the Band, Pirate's Life, Farm Fresh, Prime Time; "Easily a
@@ -756,7 +756,11 @@ Mode keys are used in room votes and in `gameEngine.js`:
   Creepy Crawlies, Head to Toe, Jet Set, Squeaky Clean, Lights Out, Rise
   and Shine, Winter Wonderland, Castle Life, Shop Till You Drop, Dino
   Mite at 30, Pet Shop, Bake Sale, Say Ahh, Movie Night, Money Talks at
-  20). New categories freshen games most, since a game draws 7 different
+  20; then, Nov 25, those five topped up to 30 and 12 more at 30:
+  Bundle of Joy, Wedding Bells, Grandma's House, Rainy Day, Hometown
+  Diner, Lost and Found, Mail Call, Junk Drawer, Garage Sale, Gone
+  Fishing, Going for Gold, Arts and Crafts -- "a favorite, and we can't
+  have too many"). New categories freshen games most, since a game draws 7 different
   ones. 2,000 was the aim; more is always welcome. Play Again avoids
   puzzles this room has played (`room.letterRipPlayed`). Each round,
   everyone secretly picks one letter on their phone at once, and **can
@@ -817,7 +821,7 @@ Mode keys are used in room votes and in `gameEngine.js`:
   - **First family verdict (Nov 2026):** four games in a row; Randy's wife
     "said it's everything she'd want in a game." Randy's icon
     (`mode-letter-rip.svg`) is staying. **Top content need: many more
-    phrases** (2,000 so far). **Tiles jumping** (fixed Nov 2026): the
+    phrases** (2,410 so far). **Tiles jumping** (fixed Nov 2026): the
     stage is centered top to bottom, so the line under the board changing
     height ("3 / 4 picked", the letter chips, the solver) moved the whole
     board; that line (`.lr-foot`) now keeps one height. After one-tap
@@ -1048,6 +1052,9 @@ and forth until we both agree the idea is good **and** worth the effort. So:
   Nov 22).
 - **`pin_drop_places.sql` is live** (Randy ran it Nov 25), so Pin Drop
   is in the live lobby. Everything earlier is done too.
+- **Run in Neon (Randy):** `content/sql/letter_rip.sql` (Nov 25: 410 new
+  phrases, 2,410 in 67 categories; replaces the whole table, safe to
+  re-run).
 - **Paused (Randy, Nov 22):** the re-tier and Letter Rip phrases, a
   "mini pause" while Double Take is designed and built (see Ideas in the
   works).
@@ -1069,7 +1076,8 @@ and forth until we both agree the idea is good **and** worth the effort. So:
   as not in the phrase, and cleared at the next puzzle; the server only
   marks a key green when the letter really is in the phrase, so the
   likeliest story is still a hit the TV didn't light; he's watching for
-  it again); trap screens (the family doesn't like the traps, Nov 25, so
+  it again); trap screens (the family doesn't like the traps, Nov 25 -- Randy's wife: the game
+  should be mostly about trivia, not setting traps -- so
   they may never come up at home: a Plain board on the family code is
   the fix if they keep spoiling games); flipside's
   own DATABASE_URL (Randy on it, Nov 22). The genie is out: Randy is
