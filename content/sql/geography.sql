@@ -40,16 +40,20 @@ VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YE
         'The Sahara', ARRAY['The Gobi', 'The Kalahari', 'The Mojave', 'The Arabian Desert', 'The Atacama', 'The Sonoran'], 100, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GEOGRAPHY', 'ORIGINAL', NULL,
+        'What is the smallest U.S. state by area?', NULL,
+        'Rhode Island', ARRAY['Delaware', 'Connecticut', 'Hawaii', 'Vermont', 'New Hampshire', 'New Jersey'], 100, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GEOGRAPHY', 'ORIGINAL', NULL,
+        'What is the name of the line of 0 degrees longitude that passes through Greenwich, England?', NULL,
+        'The Prime Meridian', ARRAY['The Equator', 'The Tropic of Cancer', 'The International Date Line', 'The Arctic Circle', 'The Tropic of Capricorn', 'The Antimeridian'], 100, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GEOGRAPHY', 'ORIGINAL', NULL,
         'Which sea is so salty that swimmers can easily float on its surface?', NULL,
         'The Dead Sea', ARRAY['The Red Sea', 'The Caspian Sea', 'The Black Sea', 'The Aral Sea', 'The Mediterranean Sea', 'The Baltic Sea'], 100, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GEOGRAPHY', 'GEOGRAPHY_BATCH_1', NULL,
         'What is the capital of Japan?', NULL,
         'Tokyo', ARRAY['Kyoto', 'Osaka', 'Yokohama', 'Hiroshima', 'Nagoya', 'Sapporo'], 100, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GEOGRAPHY', 'GEOGRAPHY_BATCH_1', NULL,
-        'What is the capital of Scotland?', NULL,
-        'Edinburgh', ARRAY['Glasgow', 'Aberdeen', 'Dundee', 'Inverness', 'Stirling', 'Perth'], 100, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GEOGRAPHY', 'GEOGRAPHY_BATCH_1', NULL,
         'Which river flows through Paris?', NULL,
@@ -62,10 +66,6 @@ INSERT INTO questions (question_number, game_mode, category, subcategory, factio
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GEOGRAPHY', 'GEOGRAPHY_BATCH_1', NULL,
         'What is the highest mountain in the world above sea level?', NULL,
         'Mount Everest', ARRAY['K2', 'Kangchenjunga', 'Mont Blanc', 'Kilimanjaro', 'Denali', 'Aconcagua'], 100, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GEOGRAPHY', 'GEOGRAPHY_BATCH_1', NULL,
-        'What is the highest mountain in Africa?', NULL,
-        'Kilimanjaro', ARRAY['Mount Kenya', 'Mount Stanley', 'Ras Dashen', 'Mount Meru', 'Mount Elgon', 'Mount Cameroon'], 100, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GEOGRAPHY', 'GEOGRAPHY_BATCH_1', NULL,
         'Not counting Australia, what is the largest island in the world?', NULL,
@@ -84,12 +84,16 @@ VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YE
         'The Great Barrier Reef', ARRAY['The Belize Barrier Reef', 'The Red Sea Coral Reef', 'The New Caledonia Barrier Reef', 'The Florida Reef', 'Ningaloo Reef', 'Raja Ampat'], 100, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GEOGRAPHY', 'GEOGRAPHY_BATCH_1', NULL,
-        'Which mountain range runs down the western side of South America?', NULL,
-        'The Andes', ARRAY['The Rockies', 'The Sierra Madre', 'The Appalachians', 'The Alps', 'The Himalayas', 'The Atlas Mountains'], 100, NULL);
+        'Which river forms much of the border between the U.S. and Mexico?', NULL,
+        'The Rio Grande', ARRAY['The Colorado', 'The Pecos', 'The Gila', 'The Red River', 'The Brazos', 'The Arkansas'], 100, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GEOGRAPHY', 'GEOGRAPHY_BATCH_1', NULL,
-        'What is the official language of Brazil?', NULL,
-        'Portuguese', ARRAY['Spanish', 'English', 'French', 'Italian', 'Dutch', 'Latin'], 100, NULL);
+        'Which river carries far more water than any other in the world?', NULL,
+        'The Amazon', ARRAY['The Nile', 'The Congo', 'The Mississippi', 'The Yangtze', 'The Ganges', 'The Orinoco'], 100, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GEOGRAPHY', 'GEOGRAPHY_BATCH_1', NULL,
+        'Which two countries share the longest international border in the world?', NULL,
+        'The United States and Canada', ARRAY['Russia and China', 'Russia and Kazakhstan', 'Chile and Argentina', 'China and Mongolia', 'India and Bangladesh', 'Brazil and Argentina'], 100, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GEOGRAPHY', 'ORIGINAL', NULL,
         'What is the capital of Egypt?', NULL,
@@ -98,6 +102,10 @@ INSERT INTO questions (question_number, game_mode, category, subcategory, factio
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GEOGRAPHY', 'ORIGINAL', NULL,
         'Which ocean lies between Africa and Australia?', NULL,
         'The Indian Ocean', ARRAY['The Atlantic Ocean', 'The Pacific Ocean', 'The Southern Ocean', 'The Arctic Ocean', 'The Arabian Sea', 'The Coral Sea'], 100, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GEOGRAPHY', 'ORIGINAL', NULL,
+        'Which city straddles the Bosporus, with one side in Europe and the other in Asia?', NULL,
+        'Istanbul', ARRAY['Ankara', 'Athens', 'Cairo', 'Moscow', 'Tbilisi', 'Baku'], 100, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GEOGRAPHY', 'GEOGRAPHY_BATCH_2', NULL,
         'What is the capital of Spain?', NULL,
@@ -116,16 +124,8 @@ VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YE
         'Beijing', ARRAY['Shanghai', 'Hong Kong', 'Guangzhou', 'Shenzhen', 'Xi''an', 'Nanjing'], 100, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GEOGRAPHY', 'GEOGRAPHY_BATCH_2', NULL,
-        'What is the capital of India?', NULL,
-        'New Delhi', ARRAY['Mumbai', 'Kolkata', 'Bangalore', 'Chennai', 'Hyderabad', 'Karachi'], 100, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GEOGRAPHY', 'GEOGRAPHY_BATCH_2', NULL,
         'What is the capital of Greece?', NULL,
         'Athens', ARRAY['Sparta', 'Thessaloniki', 'Corinth', 'Olympia', 'Rome', 'Heraklion'], 100, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GEOGRAPHY', 'GEOGRAPHY_BATCH_2', NULL,
-        'What is the capital of Portugal?', NULL,
-        'Lisbon', ARRAY['Porto', 'Madrid', 'Faro', 'Coimbra', 'Seville', 'Braga'], 100, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GEOGRAPHY', 'GEOGRAPHY_BATCH_2', NULL,
         'What is the capital of South Korea?', NULL,
@@ -138,10 +138,6 @@ INSERT INTO questions (question_number, game_mode, category, subcategory, factio
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GEOGRAPHY', 'GEOGRAPHY_BATCH_2', NULL,
         'What is the capital of Cuba?', NULL,
         'Havana', ARRAY['Kingston', 'San Juan', 'Santo Domingo', 'Nassau', 'Port-au-Prince', 'Santiago de Cuba'], 100, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GEOGRAPHY', 'GEOGRAPHY_BATCH_2', NULL,
-        'What is the capital of Thailand?', NULL,
-        'Bangkok', ARRAY['Hanoi', 'Phnom Penh', 'Kuala Lumpur', 'Manila', 'Chiang Mai', 'Yangon'], 100, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GEOGRAPHY', 'GEOGRAPHY_BATCH_2', NULL,
         'Which country is famous for its tulip fields, windmills and wooden clogs?', NULL,
@@ -184,20 +180,24 @@ VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YE
         'Warsaw', ARRAY['Kraków', 'Gdańsk', 'Prague', 'Budapest', 'Wrocław', 'Vilnius'], 100, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GEOGRAPHY', 'GEOGRAPHY_BATCH_2', NULL,
-        'What is the capital of Finland?', NULL,
-        'Helsinki', ARRAY['Oslo', 'Stockholm', 'Tallinn', 'Copenhagen', 'Turku', 'Riga'], 100, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GEOGRAPHY', 'GEOGRAPHY_BATCH_2', NULL,
-        'What is the capital of Denmark?', NULL,
-        'Copenhagen', ARRAY['Oslo', 'Stockholm', 'Helsinki', 'Aarhus', 'Amsterdam', 'Hamburg'], 100, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GEOGRAPHY', 'GEOGRAPHY_BATCH_2', NULL,
         'What is the capital of Belgium?', NULL,
         'Brussels', ARRAY['Antwerp', 'Amsterdam', 'Luxembourg', 'Bruges', 'Paris', 'Ghent'], 100, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GEOGRAPHY', 'GEOGRAPHY_BATCH_2', NULL,
-        'Which city is the capital of Catalonia?', NULL,
-        'Barcelona', ARRAY['Madrid', 'Valencia', 'Seville', 'Bilbao', 'Zaragoza', 'Girona'], 100, NULL);
+        'Which island city-state sits at the southern tip of the Malay Peninsula?', NULL,
+        'Singapore', ARRAY['Brunei', 'Hong Kong', 'Macau', 'Monaco', 'Bahrain', 'Penang'], 100, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GEOGRAPHY', 'GEOGRAPHY_BATCH_2', NULL,
+        'Which Canadian province has French as its only official language?', NULL,
+        'Quebec', ARRAY['Ontario', 'Manitoba', 'New Brunswick', 'Nova Scotia', 'Alberta', 'British Columbia'], 100, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GEOGRAPHY', 'GEOGRAPHY_BATCH_2', NULL,
+        'Which vast region makes up most of Asian Russia?', NULL,
+        'Siberia', ARRAY['Lapland', 'Patagonia', 'Manchuria', 'Mongolia', 'Central Asia', 'Alaska'], 100, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GEOGRAPHY', 'GEOGRAPHY_BATCH_2', NULL,
+        'What is the largest city in the province of Ontario?', NULL,
+        'Toronto', ARRAY['Ottawa', 'Hamilton', 'Montreal', 'London', 'Kingston', 'Windsor'], 100, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GEOGRAPHY', 'GEOGRAPHY_BATCH_2', NULL,
         'What is the capital of Norway?', NULL,
@@ -230,44 +230,36 @@ VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YE
         'Canberra', ARRAY['Sydney', 'Melbourne', 'Perth', 'Brisbane', 'Adelaide', 'Darwin'], 200, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GEOGRAPHY', 'ORIGINAL', NULL,
-        'What is the smallest U.S. state by area?', NULL,
-        'Rhode Island', ARRAY['Delaware', 'Connecticut', 'Hawaii', 'Vermont', 'New Hampshire', 'New Jersey'], 200, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GEOGRAPHY', 'ORIGINAL', NULL,
         'Which strait separates Europe and Africa at its narrowest point?', NULL,
         'The Strait of Gibraltar', ARRAY['The Bosphorus', 'The Strait of Hormuz', 'The Strait of Dover', 'The Strait of Messina', 'The Danish Straits', 'The Suez Canal'], 200, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GEOGRAPHY', 'ORIGINAL', NULL,
-        'What is the name of the line of 0 degrees longitude that passes through Greenwich, England?', NULL,
-        'The Prime Meridian', ARRAY['The Equator', 'The Tropic of Cancer', 'The International Date Line', 'The Arctic Circle', 'The Tropic of Capricorn', 'The Antimeridian'], 200, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GEOGRAPHY', 'ORIGINAL', NULL,
         'Which African country has three capital cities: Pretoria, Cape Town, and Bloemfontein?', NULL,
         'South Africa', ARRAY['Namibia', 'Zimbabwe', 'Botswana', 'Kenya', 'Nigeria', 'Egypt'], 200, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GEOGRAPHY', 'GEOGRAPHY_BATCH_1', NULL,
-        'What is the capital of Brazil?', NULL,
-        'Brasília', ARRAY['Rio de Janeiro', 'São Paulo', 'Salvador', 'Buenos Aires', 'Recife', 'Belo Horizonte'], 200, NULL);
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GEOGRAPHY', 'ORIGINAL', NULL,
+        'What is the name of the imaginary line at 180 degrees longitude that roughly marks a change in calendar day?', NULL,
+        'The International Date Line', ARRAY['The Prime Meridian', 'The Equator', 'The Tropic of Cancer', 'The Antarctic Circle', 'The Arctic Circle', 'The Tropic of Capricorn'], 200, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GEOGRAPHY', 'GEOGRAPHY_BATCH_1', NULL,
-        'What is the capital of Turkey?', NULL,
-        'Ankara', ARRAY['Istanbul', 'Izmir', 'Antalya', 'Bursa', 'Konya', 'Adana'], 200, NULL);
+        'What is the capital of Scotland?', NULL,
+        'Edinburgh', ARRAY['Glasgow', 'Aberdeen', 'Dundee', 'Inverness', 'Stirling', 'Perth'], 200, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GEOGRAPHY', 'GEOGRAPHY_BATCH_1', NULL,
-        'What is the capital of New Zealand?', NULL,
-        'Wellington', ARRAY['Auckland', 'Christchurch', 'Queenstown', 'Dunedin', 'Hamilton', 'Napier'], 200, NULL);
+        'What is the highest mountain in Africa?', NULL,
+        'Kilimanjaro', ARRAY['Mount Kenya', 'Mount Stanley', 'Ras Dashen', 'Mount Meru', 'Mount Elgon', 'Mount Cameroon'], 200, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GEOGRAPHY', 'GEOGRAPHY_BATCH_1', NULL,
+        'Which mountain range runs down the western side of South America?', NULL,
+        'The Andes', ARRAY['The Rockies', 'The Sierra Madre', 'The Appalachians', 'The Alps', 'The Himalayas', 'The Atlas Mountains'], 200, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GEOGRAPHY', 'GEOGRAPHY_BATCH_1', NULL,
+        'What is the official language of Brazil?', NULL,
+        'Portuguese', ARRAY['Spanish', 'English', 'French', 'Italian', 'Dutch', 'Latin'], 200, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GEOGRAPHY', 'GEOGRAPHY_BATCH_1', NULL,
         'Which river flows through both Vienna and Budapest?', NULL,
         'The Danube', ARRAY['The Rhine', 'The Elbe', 'The Vltava', 'The Volga', 'The Oder', 'The Drava'], 200, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GEOGRAPHY', 'GEOGRAPHY_BATCH_1', NULL,
-        'Which river forms much of the border between the U.S. and Mexico?', NULL,
-        'The Rio Grande', ARRAY['The Colorado', 'The Pecos', 'The Gila', 'The Red River', 'The Brazos', 'The Arkansas'], 200, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GEOGRAPHY', 'GEOGRAPHY_BATCH_1', NULL,
-        'Which river carries far more water than any other in the world?', NULL,
-        'The Amazon', ARRAY['The Nile', 'The Congo', 'The Mississippi', 'The Yangtze', 'The Ganges', 'The Orinoco'], 200, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GEOGRAPHY', 'GEOGRAPHY_BATCH_1', NULL,
         'The Gobi Desert lies in China and which other country?', NULL,
@@ -276,10 +268,6 @@ INSERT INTO questions (question_number, game_mode, category, subcategory, factio
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GEOGRAPHY', 'GEOGRAPHY_BATCH_1', NULL,
         'Which South American desert is one of the driest places on Earth?', NULL,
         'The Atacama', ARRAY['The Gobi', 'The Sahara', 'The Kalahari', 'The Namib', 'The Mojave', 'The Patagonian Desert'], 200, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GEOGRAPHY', 'GEOGRAPHY_BATCH_1', NULL,
-        'Which two countries share the longest international border in the world?', NULL,
-        'The United States and Canada', ARRAY['Russia and China', 'Russia and Kazakhstan', 'Chile and Argentina', 'China and Mongolia', 'India and Bangladesh', 'Brazil and Argentina'], 200, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GEOGRAPHY', 'PRIMARY_SCHOOL_FOLD_1', NULL,
         'What is the narrow strip of land joining North and South America called?', NULL,
@@ -297,21 +285,37 @@ VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YE
         'What is a long, narrow sea inlet between steep cliffs, carved by a glacier, called?', NULL,
         'A fjord', ARRAY['An estuary', 'A lagoon', 'A strait', 'An atoll', 'A cove', 'A delta'], 200, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GEOGRAPHY', 'ORIGINAL', NULL,
-        'Which city straddles the Bosporus, with one side in Europe and the other in Asia?', NULL,
-        'Istanbul', ARRAY['Ankara', 'Athens', 'Cairo', 'Moscow', 'Tbilisi', 'Baku'], 200, NULL);
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GEOGRAPHY', 'GEOGRAPHY_BATCH_1', NULL,
+        'What is the second-highest mountain in the world?', NULL,
+        'K2', ARRAY['Kangchenjunga', 'Lhotse', 'Makalu', 'Annapurna', 'Nanga Parbat', 'Mont Blanc'], 200, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GEOGRAPHY', 'GEOGRAPHY_BATCH_1', NULL,
+        'What is the deepest known part of the world''s oceans?', NULL,
+        'The Mariana Trench', ARRAY['The Puerto Rico Trench', 'The Tonga Trench', 'The Java Trench', 'The Kuril Trench', 'The Kermadec Trench', 'The Philippine Trench'], 200, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GEOGRAPHY', 'GEOGRAPHY_BATCH_2', NULL,
+        'What is the capital of India?', NULL,
+        'New Delhi', ARRAY['Mumbai', 'Kolkata', 'Bangalore', 'Chennai', 'Hyderabad', 'Karachi'], 200, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GEOGRAPHY', 'GEOGRAPHY_BATCH_2', NULL,
+        'What is the capital of Portugal?', NULL,
+        'Lisbon', ARRAY['Porto', 'Madrid', 'Faro', 'Coimbra', 'Seville', 'Braga'], 200, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GEOGRAPHY', 'GEOGRAPHY_BATCH_2', NULL,
+        'What is the capital of Thailand?', NULL,
+        'Bangkok', ARRAY['Hanoi', 'Phnom Penh', 'Kuala Lumpur', 'Manila', 'Chiang Mai', 'Yangon'], 200, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GEOGRAPHY', 'GEOGRAPHY_BATCH_2', NULL,
         'Nairobi is the capital of which country?', NULL,
         'Kenya', ARRAY['Uganda', 'Tanzania', 'Ethiopia', 'Rwanda', 'Somalia', 'Zambia'], 200, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GEOGRAPHY', 'GEOGRAPHY_BATCH_2', NULL,
-        'What is the capital of Venezuela?', NULL,
-        'Caracas', ARRAY['Bogotá', 'Quito', 'Lima', 'Maracaibo', 'Santiago', 'Montevideo'], 200, NULL);
+        'What is the capital of Finland?', NULL,
+        'Helsinki', ARRAY['Oslo', 'Stockholm', 'Tallinn', 'Copenhagen', 'Turku', 'Riga'], 200, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GEOGRAPHY', 'GEOGRAPHY_BATCH_2', NULL,
-        'What is the capital of Vietnam?', NULL,
-        'Hanoi', ARRAY['Ho Chi Minh City', 'Bangkok', 'Phnom Penh', 'Vientiane', 'Da Nang', 'Yangon'], 200, NULL);
+        'What is the capital of Denmark?', NULL,
+        'Copenhagen', ARRAY['Oslo', 'Stockholm', 'Helsinki', 'Aarhus', 'Amsterdam', 'Hamburg'], 200, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GEOGRAPHY', 'GEOGRAPHY_BATCH_2', NULL,
         'What is the capital of the Philippines?', NULL,
@@ -320,10 +324,6 @@ INSERT INTO questions (question_number, game_mode, category, subcategory, factio
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GEOGRAPHY', 'GEOGRAPHY_BATCH_2', NULL,
         'What is the capital of Saudi Arabia?', NULL,
         'Riyadh', ARRAY['Jeddah', 'Mecca', 'Dubai', 'Doha', 'Medina', 'Abu Dhabi'], 200, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GEOGRAPHY', 'GEOGRAPHY_BATCH_2', NULL,
-        'Which island city-state sits at the southern tip of the Malay Peninsula?', NULL,
-        'Singapore', ARRAY['Brunei', 'Hong Kong', 'Macau', 'Monaco', 'Bahrain', 'Penang'], 200, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GEOGRAPHY', 'GEOGRAPHY_BATCH_2', NULL,
         'The Galápagos Islands belong to which country?', NULL,
@@ -350,10 +350,6 @@ VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YE
         'The Bering Strait', ARRAY['The Strait of Gibraltar', 'The Strait of Magellan', 'The Davis Strait', 'The Strait of Hormuz', 'The Drake Passage', 'The Strait of Malacca'], 200, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GEOGRAPHY', 'GEOGRAPHY_BATCH_2', NULL,
-        'What is the capital of Colombia?', NULL,
-        'Bogotá', ARRAY['Medellín', 'Cali', 'Caracas', 'Quito', 'Cartagena', 'Lima'], 200, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GEOGRAPHY', 'GEOGRAPHY_BATCH_2', NULL,
         'What is the capital of Iran?', NULL,
         'Tehran', ARRAY['Baghdad', 'Isfahan', 'Kabul', 'Shiraz', 'Tabriz', 'Ankara'], 200, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
@@ -374,20 +370,12 @@ VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YE
         'The Canary Islands', ARRAY['The Balearic Islands', 'The Azores', 'Madeira', 'Cape Verde', 'The Faroe Islands', 'The Channel Islands'], 200, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GEOGRAPHY', 'GEOGRAPHY_BATCH_2', NULL,
-        'Which Canadian province has French as its only official language?', NULL,
-        'Quebec', ARRAY['Ontario', 'Manitoba', 'New Brunswick', 'Nova Scotia', 'Alberta', 'British Columbia'], 200, NULL);
+        'Which city is the capital of Catalonia?', NULL,
+        'Barcelona', ARRAY['Madrid', 'Valencia', 'Seville', 'Bilbao', 'Zaragoza', 'Girona'], 200, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GEOGRAPHY', 'GEOGRAPHY_BATCH_2', NULL,
         'Which Australian state is an island?', NULL,
         'Tasmania', ARRAY['Victoria', 'Queensland', 'New South Wales', 'South Australia', 'Western Australia', 'Northern Territory'], 200, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GEOGRAPHY', 'GEOGRAPHY_BATCH_2', NULL,
-        'Which vast region makes up most of Asian Russia?', NULL,
-        'Siberia', ARRAY['Lapland', 'Patagonia', 'Manchuria', 'Mongolia', 'Central Asia', 'Alaska'], 200, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GEOGRAPHY', 'GEOGRAPHY_BATCH_2', NULL,
-        'What is the largest city in the province of Ontario?', NULL,
-        'Toronto', ARRAY['Ottawa', 'Hamilton', 'Montreal', 'London', 'Kingston', 'Windsor'], 200, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GEOGRAPHY', 'GEOGRAPHY_BATCH_2', NULL,
         'What is the capital of Wales?', NULL,
@@ -406,6 +394,22 @@ VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YE
         'Sri Lanka', ARRAY['India', 'Bangladesh', 'The Maldives', 'Myanmar', 'Malaysia', 'Mauritius'], 200, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GEOGRAPHY', 'GEOGRAPHY_BATCH_2', NULL,
+        'Which warm Atlantic current helps keep Western Europe''s winters mild?', NULL,
+        'The Gulf Stream', ARRAY['The Humboldt Current', 'The Kuroshio Current', 'The Labrador Current', 'The Canary Current', 'The Benguela Current', 'The Agulhas Current'], 200, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GEOGRAPHY', 'GEOGRAPHY_BATCH_2', NULL,
+        'What is the largest island in the Mediterranean Sea?', NULL,
+        'Sicily', ARRAY['Sardinia', 'Cyprus', 'Corsica', 'Crete', 'Malta', 'Mallorca'], 200, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GEOGRAPHY', 'GEOGRAPHY_BATCH_2', NULL,
+        'Which city was Brazil''s capital until 1960?', NULL,
+        'Rio de Janeiro', ARRAY['São Paulo', 'Salvador', 'Brasília', 'Recife', 'Belo Horizonte', 'Lisbon'], 200, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GEOGRAPHY', 'GEOGRAPHY_BATCH_2', NULL,
+        'What is the capital of Northern Ireland?', NULL,
+        'Belfast', ARRAY['Dublin', 'Derry', 'Cardiff', 'Glasgow', 'Armagh', 'Edinburgh'], 200, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GEOGRAPHY', 'GEOGRAPHY_BATCH_2', NULL,
         'Which Asian city was called Saigon until 1976?', NULL,
         'Ho Chi Minh City', ARRAY['Hanoi', 'Phnom Penh', 'Bangkok', 'Da Nang', 'Vientiane', 'Yangon'], 200, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
@@ -416,36 +420,28 @@ INSERT INTO questions (question_number, game_mode, category, subcategory, factio
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GEOGRAPHY', 'GEOGRAPHY_BATCH_2', NULL,
         'What is the capital of Lebanon?', NULL,
         'Beirut', ARRAY['Damascus', 'Amman', 'Tripoli', 'Byblos', 'Baghdad', 'Sidon'], 200, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GEOGRAPHY', 'GEOGRAPHY_BATCH_2', NULL,
-        'Which range of hills and mountains is called the backbone of England?', NULL,
-        'The Pennines', ARRAY['The Cotswolds', 'The Cheviot Hills', 'The Chiltern Hills', 'The Mendips', 'The Cambrian Mountains', 'The Grampians'], 200, NULL);
 
 -- 300 points
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GEOGRAPHY', 'ORIGINAL', NULL,
-        'Which African country was formerly known as Abyssinia?', NULL,
-        'Ethiopia', ARRAY['Eritrea', 'Sudan', 'Somalia', 'Kenya', 'Egypt', 'Tanzania'], 300, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GEOGRAPHY', 'ORIGINAL', NULL,
-        'Which mountain kingdom in southern Africa is completely surrounded by a single neighboring country?', NULL,
-        'Lesotho', ARRAY['Swaziland (Eswatini)', 'Botswana', 'Zimbabwe', 'Namibia', 'Malawi', 'Mozambique'], 300, 'Lesotho is the only country lying entirely above 1,000 meters; even its lowest point is higher.');
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GEOGRAPHY', 'ORIGINAL', NULL,
-        'What is the capital of Kazakhstan?', NULL,
-        'Astana', ARRAY['Almaty', 'Bishkek', 'Tashkent', 'Ashgabat', 'Dushanbe', 'Baku'], 300, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GEOGRAPHY', 'ORIGINAL', NULL,
         'Which country has the longest coastline in the world?', NULL,
         'Canada', ARRAY['Russia', 'Indonesia', 'Australia', 'United States', 'Norway', 'Chile'], 300, 'Canada''s coastline is long enough to wrap around the equator about five times.');
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GEOGRAPHY', 'ORIGINAL', NULL,
-        'What is the name of the imaginary line at 180 degrees longitude that roughly marks a change in calendar day?', NULL,
-        'The International Date Line', ARRAY['The Prime Meridian', 'The Equator', 'The Tropic of Cancer', 'The Antarctic Circle', 'The Arctic Circle', 'The Tropic of Capricorn'], 300, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GEOGRAPHY', 'ORIGINAL', NULL,
         'Which European microstate lies high in the Pyrenees mountains?', NULL,
         'Andorra', ARRAY['Monaco', 'San Marino', 'Liechtenstein', 'Luxembourg', 'Malta', 'Vatican City'], 300, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GEOGRAPHY', 'GEOGRAPHY_BATCH_1', NULL,
+        'What is the capital of Brazil?', NULL,
+        'Brasília', ARRAY['Rio de Janeiro', 'São Paulo', 'Salvador', 'Buenos Aires', 'Recife', 'Belo Horizonte'], 300, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GEOGRAPHY', 'GEOGRAPHY_BATCH_1', NULL,
+        'What is the capital of Turkey?', NULL,
+        'Ankara', ARRAY['Istanbul', 'Izmir', 'Antalya', 'Bursa', 'Konya', 'Adana'], 300, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GEOGRAPHY', 'GEOGRAPHY_BATCH_1', NULL,
+        'What is the capital of New Zealand?', NULL,
+        'Wellington', ARRAY['Auckland', 'Christchurch', 'Queenstown', 'Dunedin', 'Hamilton', 'Napier'], 300, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GEOGRAPHY', 'GEOGRAPHY_BATCH_1', NULL,
         'Which city is the seat of Switzerland''s federal government?', NULL,
@@ -462,10 +458,6 @@ INSERT INTO questions (question_number, game_mode, category, subcategory, factio
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GEOGRAPHY', 'GEOGRAPHY_BATCH_1', NULL,
         'What is the longest river in Europe?', NULL,
         'The Volga', ARRAY['The Danube', 'The Rhine', 'The Dnieper', 'The Don', 'The Loire', 'The Elbe'], 300, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GEOGRAPHY', 'GEOGRAPHY_BATCH_1', NULL,
-        'What is the second-highest mountain in the world?', NULL,
-        'K2', ARRAY['Kangchenjunga', 'Lhotse', 'Makalu', 'Annapurna', 'Nanga Parbat', 'Mont Blanc'], 300, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GEOGRAPHY', 'GEOGRAPHY_BATCH_1', NULL,
         'The Matterhorn sits on the border between Switzerland and which country?', NULL,
@@ -500,12 +492,36 @@ VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YE
         'The Caspian Sea', ARRAY['Lake Superior', 'Lake Victoria', 'Lake Baikal', 'The Aral Sea', 'Lake Huron', 'Lake Tanganyika'], 300, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GEOGRAPHY', 'GEOGRAPHY_BATCH_1', NULL,
-        'What is the deepest known part of the world''s oceans?', NULL,
-        'The Mariana Trench', ARRAY['The Puerto Rico Trench', 'The Tonga Trench', 'The Java Trench', 'The Kuril Trench', 'The Kermadec Trench', 'The Philippine Trench'], 300, NULL);
+        'Which river flows through Baghdad?', NULL,
+        'The Tigris', ARRAY['The Euphrates', 'The Jordan', 'The Nile', 'The Indus', 'The Karun', 'The Orontes'], 300, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GEOGRAPHY', 'PRIMARY_SCHOOL_FOLD_1', NULL,
+        'What is the largest peninsula in the world?', NULL,
+        'The Arabian Peninsula', ARRAY['The Iberian Peninsula', 'The Scandinavian Peninsula', 'The Labrador Peninsula', 'The Kamchatka Peninsula', 'The Balkan Peninsula', 'The Malay Peninsula'], 300, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GEOGRAPHY', 'GEOGRAPHY_BATCH_1', NULL,
+        'What is the largest country lying entirely within Europe?', NULL,
+        'Ukraine', ARRAY['France', 'Spain', 'Germany', 'Sweden', 'Poland', 'Norway'], 300, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GEOGRAPHY', 'GEOGRAPHY_BATCH_1', NULL,
+        'Ushuaia, often called the southernmost city in the world, is in which country?', NULL,
+        'Argentina', ARRAY['Chile', 'New Zealand', 'South Africa', 'Australia', 'Uruguay', 'The Falkland Islands'], 300, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GEOGRAPHY', 'GEOGRAPHY_BATCH_1', NULL,
+        'What is the tallest uninterrupted waterfall in the world?', NULL,
+        'Angel Falls', ARRAY['Victoria Falls', 'Niagara Falls', 'Iguazu Falls', 'Yosemite Falls', 'Kaieteur Falls', 'Sutherland Falls'], 300, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GEOGRAPHY', 'GEOGRAPHY_BATCH_2', NULL,
-        'Which coastal desert in southwest Africa is often called the oldest desert in the world?', NULL,
-        'The Namib', ARRAY['The Kalahari', 'The Sahara', 'The Karoo', 'The Atacama', 'The Sonoran', 'The Gobi'], 300, NULL);
+        'What is the capital of Venezuela?', NULL,
+        'Caracas', ARRAY['Bogotá', 'Quito', 'Lima', 'Maracaibo', 'Santiago', 'Montevideo'], 300, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GEOGRAPHY', 'GEOGRAPHY_BATCH_2', NULL,
+        'What is the capital of Vietnam?', NULL,
+        'Hanoi', ARRAY['Ho Chi Minh City', 'Bangkok', 'Phnom Penh', 'Vientiane', 'Da Nang', 'Yangon'], 300, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GEOGRAPHY', 'GEOGRAPHY_BATCH_2', NULL,
+        'What is the capital of Colombia?', NULL,
+        'Bogotá', ARRAY['Medellín', 'Cali', 'Caracas', 'Quito', 'Cartagena', 'Lima'], 300, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GEOGRAPHY', 'GEOGRAPHY_BATCH_2', NULL,
         'Which line of latitude marks where the sun stays up all day on the June solstice?', NULL,
@@ -514,10 +530,6 @@ INSERT INTO questions (question_number, game_mode, category, subcategory, factio
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GEOGRAPHY', 'GEOGRAPHY_BATCH_2', NULL,
         'Which tiny Mediterranean island country has Valletta as its capital?', NULL,
         'Malta', ARRAY['Cyprus', 'Corsica', 'Sardinia', 'Crete', 'Rhodes', 'Mallorca'], 300, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GEOGRAPHY', 'GEOGRAPHY_BATCH_2', NULL,
-        'Which warm Atlantic current helps keep Western Europe''s winters mild?', NULL,
-        'The Gulf Stream', ARRAY['The Humboldt Current', 'The Kuroshio Current', 'The Labrador Current', 'The Canary Current', 'The Benguela Current', 'The Agulhas Current'], 300, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GEOGRAPHY', 'GEOGRAPHY_BATCH_2', NULL,
         'Mallorca, Menorca and Ibiza make up which Spanish island group?', NULL,
@@ -540,10 +552,6 @@ VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YE
         'Hispaniola', ARRAY['Puerto Rico', 'Cuba', 'Jamaica', 'Trinidad', 'Barbados', 'Tortuga'], 300, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GEOGRAPHY', 'GEOGRAPHY_BATCH_2', NULL,
-        'What is the largest island in the Mediterranean Sea?', NULL,
-        'Sicily', ARRAY['Sardinia', 'Cyprus', 'Corsica', 'Crete', 'Malta', 'Mallorca'], 300, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GEOGRAPHY', 'GEOGRAPHY_BATCH_2', NULL,
         'What is the capital of Uruguay?', NULL,
         'Montevideo', ARRAY['Buenos Aires', 'Asunción', 'Santiago', 'Punta del Este', 'Porto Alegre', 'La Paz'], 300, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
@@ -560,20 +568,12 @@ VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YE
         'The Hague', ARRAY['Amsterdam', 'Rotterdam', 'Utrecht', 'Brussels', 'Antwerp', 'Eindhoven'], 300, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GEOGRAPHY', 'GEOGRAPHY_BATCH_2', NULL,
-        'Which city was Brazil''s capital until 1960?', NULL,
-        'Rio de Janeiro', ARRAY['São Paulo', 'Salvador', 'Brasília', 'Recife', 'Belo Horizonte', 'Lisbon'], 300, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GEOGRAPHY', 'GEOGRAPHY_BATCH_2', NULL,
         'Which city was Japan''s imperial capital for over 1,000 years, until 1869?', NULL,
         'Kyoto', ARRAY['Osaka', 'Nara', 'Kamakura', 'Hiroshima', 'Nagoya', 'Sapporo'], 300, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GEOGRAPHY', 'GEOGRAPHY_BATCH_2', NULL,
         'Which city was the capital of West Germany?', NULL,
         'Bonn', ARRAY['Frankfurt', 'Munich', 'Hamburg', 'Cologne', 'Düsseldorf', 'Berlin'], 300, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GEOGRAPHY', 'GEOGRAPHY_BATCH_2', NULL,
-        'The Kalahari Desert covers most of which country?', NULL,
-        'Botswana', ARRAY['Namibia', 'South Africa', 'Zimbabwe', 'Zambia', 'Angola', 'Lesotho'], 300, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GEOGRAPHY', 'GEOGRAPHY_BATCH_2', NULL,
         'Which mountain range runs down the spine of the Italian peninsula?', NULL,
@@ -600,14 +600,6 @@ VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YE
         'The Loire', ARRAY['The Seine', 'The Rhône', 'The Garonne', 'The Dordogne', 'The Rhine', 'The Meuse'], 300, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GEOGRAPHY', 'GEOGRAPHY_BATCH_2', NULL,
-        'Which small country on the Horn of Africa was once called French Somaliland?', NULL,
-        'Djibouti', ARRAY['Eritrea', 'Somalia', 'Yemen', 'Comoros', 'Mauritius', 'Oman'], 300, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GEOGRAPHY', 'GEOGRAPHY_BATCH_2', NULL,
-        'What is the capital of Northern Ireland?', NULL,
-        'Belfast', ARRAY['Dublin', 'Derry', 'Cardiff', 'Glasgow', 'Armagh', 'Edinburgh'], 300, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GEOGRAPHY', 'GEOGRAPHY_BATCH_2', NULL,
         'Which Mediterranean island is divided between a Greek-speaking south and a Turkish-speaking north?', NULL,
         'Cyprus', ARRAY['Crete', 'Rhodes', 'Malta', 'Sicily', 'Corsica', 'Sardinia'], 300, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
@@ -620,14 +612,34 @@ VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YE
         'The Tasman Sea', ARRAY['The Coral Sea', 'The Timor Sea', 'The Arafura Sea', 'The Solomon Sea', 'The Ross Sea', 'The Philippine Sea'], 300, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GEOGRAPHY', 'GEOGRAPHY_BATCH_2', NULL,
+        'Which city, the highest seat of government in the world, houses Bolivia''s government?', NULL,
+        'La Paz', ARRAY['Sucre', 'Santa Cruz', 'Cochabamba', 'Quito', 'Lima', 'Potosí'], 300, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GEOGRAPHY', 'GEOGRAPHY_BATCH_2', NULL,
+        'Which city was Nigeria''s capital until 1991?', NULL,
+        'Lagos', ARRAY['Abuja', 'Kano', 'Ibadan', 'Port Harcourt', 'Accra', 'Enugu'], 300, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GEOGRAPHY', 'GEOGRAPHY_BATCH_2', NULL,
         'What is the largest of Japan''s main islands?', NULL,
         'Honshu', ARRAY['Hokkaido', 'Kyushu', 'Shikoku', 'Okinawa', 'Sakhalin', 'Sado'], 300, NULL);
 
 -- 400 points
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GEOGRAPHY', 'ORIGINAL', NULL,
+        'Which African country was formerly known as Abyssinia?', NULL,
+        'Ethiopia', ARRAY['Eritrea', 'Sudan', 'Somalia', 'Kenya', 'Egypt', 'Tanzania'], 400, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GEOGRAPHY', 'ORIGINAL', NULL,
+        'Which mountain kingdom in southern Africa is completely surrounded by a single neighboring country?', NULL,
+        'Lesotho', ARRAY['Swaziland (Eswatini)', 'Botswana', 'Zimbabwe', 'Namibia', 'Malawi', 'Mozambique'], 400, 'Lesotho is the only country lying entirely above 1,000 meters; even its lowest point is higher.');
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GEOGRAPHY', 'ORIGINAL', NULL,
         'Which country has the most time zones of any country in the world, due to its overseas territories?', NULL,
         'France', ARRAY['Russia', 'United States', 'United Kingdom', 'China', 'Australia', 'Canada'], 400, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GEOGRAPHY', 'ORIGINAL', NULL,
+        'What is the capital of Kazakhstan?', NULL,
+        'Astana', ARRAY['Almaty', 'Bishkek', 'Tashkent', 'Ashgabat', 'Dushanbe', 'Baku'], 400, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GEOGRAPHY', 'ORIGINAL', NULL,
         'What is the only country that lies in all four hemispheres -- north, south, east, and west?', NULL,
@@ -642,16 +654,8 @@ VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YE
         'Abuja', ARRAY['Lagos', 'Kano', 'Ibadan', 'Port Harcourt', 'Accra', 'Benin City'], 400, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GEOGRAPHY', 'GEOGRAPHY_BATCH_1', NULL,
-        'Which river flows through Baghdad?', NULL,
-        'The Tigris', ARRAY['The Euphrates', 'The Jordan', 'The Nile', 'The Indus', 'The Karun', 'The Orontes'], 400, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GEOGRAPHY', 'GEOGRAPHY_BATCH_1', NULL,
         'What is the highest mountain in the Americas?', NULL,
         'Aconcagua', ARRAY['Chimborazo', 'Huascarán', 'Ojos del Salado', 'Cotopaxi', 'Illimani', 'Mount Logan'], 400, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GEOGRAPHY', 'PRIMARY_SCHOOL_FOLD_1', NULL,
-        'What is the largest peninsula in the world?', NULL,
-        'The Arabian Peninsula', ARRAY['The Iberian Peninsula', 'The Scandinavian Peninsula', 'The Labrador Peninsula', 'The Kamchatka Peninsula', 'The Balkan Peninsula', 'The Malay Peninsula'], 400, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GEOGRAPHY', 'GEOGRAPHY_BATCH_1', NULL,
         'Which country has more ancient pyramids than any other?', NULL,
@@ -660,10 +664,6 @@ INSERT INTO questions (question_number, game_mode, category, subcategory, factio
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GEOGRAPHY', 'GEOGRAPHY_BATCH_1', NULL,
         'Which European country is one of only two in the world that are "doubly landlocked"?', NULL,
         'Liechtenstein', ARRAY['Switzerland', 'Andorra', 'Luxembourg', 'Austria', 'San Marino', 'Hungary'], 400, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GEOGRAPHY', 'GEOGRAPHY_BATCH_1', NULL,
-        'What is the largest country lying entirely within Europe?', NULL,
-        'Ukraine', ARRAY['France', 'Spain', 'Germany', 'Sweden', 'Poland', 'Norway'], 400, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GEOGRAPHY', 'GEOGRAPHY_BATCH_1', NULL,
         'What is the smallest country in South America by area?', NULL,
@@ -676,14 +676,6 @@ INSERT INTO questions (question_number, game_mode, category, subcategory, factio
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GEOGRAPHY', 'GEOGRAPHY_BATCH_1', NULL,
         'Switzerland''s four national languages are German, French, Italian and which other?', NULL,
         'Romansh', ARRAY['Ladin', 'Latin', 'Flemish', 'Swiss German', 'Occitan', 'Walloon'], 400, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GEOGRAPHY', 'GEOGRAPHY_BATCH_1', NULL,
-        'Ushuaia, often called the southernmost city in the world, is in which country?', NULL,
-        'Argentina', ARRAY['Chile', 'New Zealand', 'South Africa', 'Australia', 'Uruguay', 'The Falkland Islands'], 400, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GEOGRAPHY', 'GEOGRAPHY_BATCH_1', NULL,
-        'What is the tallest uninterrupted waterfall in the world?', NULL,
-        'Angel Falls', ARRAY['Victoria Falls', 'Niagara Falls', 'Iguazu Falls', 'Yosemite Falls', 'Kaieteur Falls', 'Sutherland Falls'], 400, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GEOGRAPHY', 'GEOGRAPHY_BATCH_1', NULL,
         'What is the largest country in Africa by area?', NULL,
@@ -704,6 +696,18 @@ INSERT INTO questions (question_number, game_mode, category, subcategory, factio
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GEOGRAPHY', 'ORIGINAL', NULL,
         'The Strait of Malacca separates the Malay Peninsula from which Indonesian island?', NULL,
         'Sumatra', ARRAY['Java', 'Borneo', 'Sulawesi', 'Bali', 'Timor', 'New Guinea'], 400, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GEOGRAPHY', 'GEOGRAPHY_BATCH_2', NULL,
+        'Which coastal desert in southwest Africa is often called the oldest desert in the world?', NULL,
+        'The Namib', ARRAY['The Kalahari', 'The Sahara', 'The Karoo', 'The Atacama', 'The Sonoran', 'The Gobi'], 400, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GEOGRAPHY', 'GEOGRAPHY_BATCH_2', NULL,
+        'The Kalahari Desert covers most of which country?', NULL,
+        'Botswana', ARRAY['Namibia', 'South Africa', 'Zimbabwe', 'Zambia', 'Angola', 'Lesotho'], 400, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GEOGRAPHY', 'GEOGRAPHY_BATCH_2', NULL,
+        'Which small country on the Horn of Africa was once called French Somaliland?', NULL,
+        'Djibouti', ARRAY['Eritrea', 'Somalia', 'Yemen', 'Comoros', 'Mauritius', 'Oman'], 400, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GEOGRAPHY', 'GEOGRAPHY_BATCH_2', NULL,
         'What is the capital of Estonia?', NULL,
@@ -738,16 +742,8 @@ VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YE
         'The Ganges Delta', ARRAY['The Nile Delta', 'The Mekong Delta', 'The Amazon Delta', 'The Niger Delta', 'The Mississippi Delta', 'The Okavango Delta'], 400, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GEOGRAPHY', 'GEOGRAPHY_BATCH_2', NULL,
-        'Which city, the highest seat of government in the world, houses Bolivia''s government?', NULL,
-        'La Paz', ARRAY['Sucre', 'Santa Cruz', 'Cochabamba', 'Quito', 'Lima', 'Potosí'], 400, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GEOGRAPHY', 'GEOGRAPHY_BATCH_2', NULL,
         'What is the capital of Laos?', NULL,
         'Vientiane', ARRAY['Phnom Penh', 'Hanoi', 'Bangkok', 'Luang Prabang', 'Yangon', 'Naypyidaw'], 400, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GEOGRAPHY', 'GEOGRAPHY_BATCH_2', NULL,
-        'Which city was Nigeria''s capital until 1991?', NULL,
-        'Lagos', ARRAY['Abuja', 'Kano', 'Ibadan', 'Port Harcourt', 'Accra', 'Enugu'], 400, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GEOGRAPHY', 'GEOGRAPHY_BATCH_2', NULL,
         'Which city housed Australia''s federal parliament from 1901 until 1927?', NULL,
@@ -824,6 +820,10 @@ INSERT INTO questions (question_number, game_mode, category, subcategory, factio
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GEOGRAPHY', 'GEOGRAPHY_BATCH_2', NULL,
         'What is the capital of Uganda?', NULL,
         'Kampala', ARRAY['Entebbe', 'Nairobi', 'Kigali', 'Juba', 'Gulu', 'Jinja'], 400, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GEOGRAPHY', 'GEOGRAPHY_BATCH_2', NULL,
+        'Which range of hills and mountains is called the backbone of England?', NULL,
+        'The Pennines', ARRAY['The Cotswolds', 'The Cheviot Hills', 'The Chiltern Hills', 'The Mendips', 'The Cambrian Mountains', 'The Grampians'], 400, NULL);
 
 COMMIT;
 

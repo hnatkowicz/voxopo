@@ -5818,16 +5818,20 @@ VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YE
         'The Sahara', ARRAY['The Gobi', 'The Kalahari', 'The Mojave', 'The Arabian Desert', 'The Atacama', 'The Sonoran'], 100, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GEOGRAPHY', 'ORIGINAL', NULL,
+        'What is the smallest U.S. state by area?', NULL,
+        'Rhode Island', ARRAY['Delaware', 'Connecticut', 'Hawaii', 'Vermont', 'New Hampshire', 'New Jersey'], 100, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GEOGRAPHY', 'ORIGINAL', NULL,
+        'What is the name of the line of 0 degrees longitude that passes through Greenwich, England?', NULL,
+        'The Prime Meridian', ARRAY['The Equator', 'The Tropic of Cancer', 'The International Date Line', 'The Arctic Circle', 'The Tropic of Capricorn', 'The Antimeridian'], 100, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GEOGRAPHY', 'ORIGINAL', NULL,
         'Which sea is so salty that swimmers can easily float on its surface?', NULL,
         'The Dead Sea', ARRAY['The Red Sea', 'The Caspian Sea', 'The Black Sea', 'The Aral Sea', 'The Mediterranean Sea', 'The Baltic Sea'], 100, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GEOGRAPHY', 'GEOGRAPHY_BATCH_1', NULL,
         'What is the capital of Japan?', NULL,
         'Tokyo', ARRAY['Kyoto', 'Osaka', 'Yokohama', 'Hiroshima', 'Nagoya', 'Sapporo'], 100, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GEOGRAPHY', 'GEOGRAPHY_BATCH_1', NULL,
-        'What is the capital of Scotland?', NULL,
-        'Edinburgh', ARRAY['Glasgow', 'Aberdeen', 'Dundee', 'Inverness', 'Stirling', 'Perth'], 100, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GEOGRAPHY', 'GEOGRAPHY_BATCH_1', NULL,
         'Which river flows through Paris?', NULL,
@@ -5840,10 +5844,6 @@ INSERT INTO questions (question_number, game_mode, category, subcategory, factio
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GEOGRAPHY', 'GEOGRAPHY_BATCH_1', NULL,
         'What is the highest mountain in the world above sea level?', NULL,
         'Mount Everest', ARRAY['K2', 'Kangchenjunga', 'Mont Blanc', 'Kilimanjaro', 'Denali', 'Aconcagua'], 100, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GEOGRAPHY', 'GEOGRAPHY_BATCH_1', NULL,
-        'What is the highest mountain in Africa?', NULL,
-        'Kilimanjaro', ARRAY['Mount Kenya', 'Mount Stanley', 'Ras Dashen', 'Mount Meru', 'Mount Elgon', 'Mount Cameroon'], 100, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GEOGRAPHY', 'GEOGRAPHY_BATCH_1', NULL,
         'Not counting Australia, what is the largest island in the world?', NULL,
@@ -5862,12 +5862,16 @@ VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YE
         'The Great Barrier Reef', ARRAY['The Belize Barrier Reef', 'The Red Sea Coral Reef', 'The New Caledonia Barrier Reef', 'The Florida Reef', 'Ningaloo Reef', 'Raja Ampat'], 100, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GEOGRAPHY', 'GEOGRAPHY_BATCH_1', NULL,
-        'Which mountain range runs down the western side of South America?', NULL,
-        'The Andes', ARRAY['The Rockies', 'The Sierra Madre', 'The Appalachians', 'The Alps', 'The Himalayas', 'The Atlas Mountains'], 100, NULL);
+        'Which river forms much of the border between the U.S. and Mexico?', NULL,
+        'The Rio Grande', ARRAY['The Colorado', 'The Pecos', 'The Gila', 'The Red River', 'The Brazos', 'The Arkansas'], 100, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GEOGRAPHY', 'GEOGRAPHY_BATCH_1', NULL,
-        'What is the official language of Brazil?', NULL,
-        'Portuguese', ARRAY['Spanish', 'English', 'French', 'Italian', 'Dutch', 'Latin'], 100, NULL);
+        'Which river carries far more water than any other in the world?', NULL,
+        'The Amazon', ARRAY['The Nile', 'The Congo', 'The Mississippi', 'The Yangtze', 'The Ganges', 'The Orinoco'], 100, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GEOGRAPHY', 'GEOGRAPHY_BATCH_1', NULL,
+        'Which two countries share the longest international border in the world?', NULL,
+        'The United States and Canada', ARRAY['Russia and China', 'Russia and Kazakhstan', 'Chile and Argentina', 'China and Mongolia', 'India and Bangladesh', 'Brazil and Argentina'], 100, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GEOGRAPHY', 'ORIGINAL', NULL,
         'What is the capital of Egypt?', NULL,
@@ -5876,6 +5880,10 @@ INSERT INTO questions (question_number, game_mode, category, subcategory, factio
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GEOGRAPHY', 'ORIGINAL', NULL,
         'Which ocean lies between Africa and Australia?', NULL,
         'The Indian Ocean', ARRAY['The Atlantic Ocean', 'The Pacific Ocean', 'The Southern Ocean', 'The Arctic Ocean', 'The Arabian Sea', 'The Coral Sea'], 100, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GEOGRAPHY', 'ORIGINAL', NULL,
+        'Which city straddles the Bosporus, with one side in Europe and the other in Asia?', NULL,
+        'Istanbul', ARRAY['Ankara', 'Athens', 'Cairo', 'Moscow', 'Tbilisi', 'Baku'], 100, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GEOGRAPHY', 'GEOGRAPHY_BATCH_2', NULL,
         'What is the capital of Spain?', NULL,
@@ -5894,16 +5902,8 @@ VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YE
         'Beijing', ARRAY['Shanghai', 'Hong Kong', 'Guangzhou', 'Shenzhen', 'Xi''an', 'Nanjing'], 100, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GEOGRAPHY', 'GEOGRAPHY_BATCH_2', NULL,
-        'What is the capital of India?', NULL,
-        'New Delhi', ARRAY['Mumbai', 'Kolkata', 'Bangalore', 'Chennai', 'Hyderabad', 'Karachi'], 100, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GEOGRAPHY', 'GEOGRAPHY_BATCH_2', NULL,
         'What is the capital of Greece?', NULL,
         'Athens', ARRAY['Sparta', 'Thessaloniki', 'Corinth', 'Olympia', 'Rome', 'Heraklion'], 100, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GEOGRAPHY', 'GEOGRAPHY_BATCH_2', NULL,
-        'What is the capital of Portugal?', NULL,
-        'Lisbon', ARRAY['Porto', 'Madrid', 'Faro', 'Coimbra', 'Seville', 'Braga'], 100, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GEOGRAPHY', 'GEOGRAPHY_BATCH_2', NULL,
         'What is the capital of South Korea?', NULL,
@@ -5916,10 +5916,6 @@ INSERT INTO questions (question_number, game_mode, category, subcategory, factio
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GEOGRAPHY', 'GEOGRAPHY_BATCH_2', NULL,
         'What is the capital of Cuba?', NULL,
         'Havana', ARRAY['Kingston', 'San Juan', 'Santo Domingo', 'Nassau', 'Port-au-Prince', 'Santiago de Cuba'], 100, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GEOGRAPHY', 'GEOGRAPHY_BATCH_2', NULL,
-        'What is the capital of Thailand?', NULL,
-        'Bangkok', ARRAY['Hanoi', 'Phnom Penh', 'Kuala Lumpur', 'Manila', 'Chiang Mai', 'Yangon'], 100, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GEOGRAPHY', 'GEOGRAPHY_BATCH_2', NULL,
         'Which country is famous for its tulip fields, windmills and wooden clogs?', NULL,
@@ -5962,20 +5958,24 @@ VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YE
         'Warsaw', ARRAY['Kraków', 'Gdańsk', 'Prague', 'Budapest', 'Wrocław', 'Vilnius'], 100, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GEOGRAPHY', 'GEOGRAPHY_BATCH_2', NULL,
-        'What is the capital of Finland?', NULL,
-        'Helsinki', ARRAY['Oslo', 'Stockholm', 'Tallinn', 'Copenhagen', 'Turku', 'Riga'], 100, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GEOGRAPHY', 'GEOGRAPHY_BATCH_2', NULL,
-        'What is the capital of Denmark?', NULL,
-        'Copenhagen', ARRAY['Oslo', 'Stockholm', 'Helsinki', 'Aarhus', 'Amsterdam', 'Hamburg'], 100, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GEOGRAPHY', 'GEOGRAPHY_BATCH_2', NULL,
         'What is the capital of Belgium?', NULL,
         'Brussels', ARRAY['Antwerp', 'Amsterdam', 'Luxembourg', 'Bruges', 'Paris', 'Ghent'], 100, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GEOGRAPHY', 'GEOGRAPHY_BATCH_2', NULL,
-        'Which city is the capital of Catalonia?', NULL,
-        'Barcelona', ARRAY['Madrid', 'Valencia', 'Seville', 'Bilbao', 'Zaragoza', 'Girona'], 100, NULL);
+        'Which island city-state sits at the southern tip of the Malay Peninsula?', NULL,
+        'Singapore', ARRAY['Brunei', 'Hong Kong', 'Macau', 'Monaco', 'Bahrain', 'Penang'], 100, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GEOGRAPHY', 'GEOGRAPHY_BATCH_2', NULL,
+        'Which Canadian province has French as its only official language?', NULL,
+        'Quebec', ARRAY['Ontario', 'Manitoba', 'New Brunswick', 'Nova Scotia', 'Alberta', 'British Columbia'], 100, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GEOGRAPHY', 'GEOGRAPHY_BATCH_2', NULL,
+        'Which vast region makes up most of Asian Russia?', NULL,
+        'Siberia', ARRAY['Lapland', 'Patagonia', 'Manchuria', 'Mongolia', 'Central Asia', 'Alaska'], 100, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GEOGRAPHY', 'GEOGRAPHY_BATCH_2', NULL,
+        'What is the largest city in the province of Ontario?', NULL,
+        'Toronto', ARRAY['Ottawa', 'Hamilton', 'Montreal', 'London', 'Kingston', 'Windsor'], 100, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GEOGRAPHY', 'GEOGRAPHY_BATCH_2', NULL,
         'What is the capital of Norway?', NULL,
@@ -6008,44 +6008,36 @@ VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YE
         'Canberra', ARRAY['Sydney', 'Melbourne', 'Perth', 'Brisbane', 'Adelaide', 'Darwin'], 200, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GEOGRAPHY', 'ORIGINAL', NULL,
-        'What is the smallest U.S. state by area?', NULL,
-        'Rhode Island', ARRAY['Delaware', 'Connecticut', 'Hawaii', 'Vermont', 'New Hampshire', 'New Jersey'], 200, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GEOGRAPHY', 'ORIGINAL', NULL,
         'Which strait separates Europe and Africa at its narrowest point?', NULL,
         'The Strait of Gibraltar', ARRAY['The Bosphorus', 'The Strait of Hormuz', 'The Strait of Dover', 'The Strait of Messina', 'The Danish Straits', 'The Suez Canal'], 200, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GEOGRAPHY', 'ORIGINAL', NULL,
-        'What is the name of the line of 0 degrees longitude that passes through Greenwich, England?', NULL,
-        'The Prime Meridian', ARRAY['The Equator', 'The Tropic of Cancer', 'The International Date Line', 'The Arctic Circle', 'The Tropic of Capricorn', 'The Antimeridian'], 200, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GEOGRAPHY', 'ORIGINAL', NULL,
         'Which African country has three capital cities: Pretoria, Cape Town, and Bloemfontein?', NULL,
         'South Africa', ARRAY['Namibia', 'Zimbabwe', 'Botswana', 'Kenya', 'Nigeria', 'Egypt'], 200, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GEOGRAPHY', 'GEOGRAPHY_BATCH_1', NULL,
-        'What is the capital of Brazil?', NULL,
-        'Brasília', ARRAY['Rio de Janeiro', 'São Paulo', 'Salvador', 'Buenos Aires', 'Recife', 'Belo Horizonte'], 200, NULL);
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GEOGRAPHY', 'ORIGINAL', NULL,
+        'What is the name of the imaginary line at 180 degrees longitude that roughly marks a change in calendar day?', NULL,
+        'The International Date Line', ARRAY['The Prime Meridian', 'The Equator', 'The Tropic of Cancer', 'The Antarctic Circle', 'The Arctic Circle', 'The Tropic of Capricorn'], 200, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GEOGRAPHY', 'GEOGRAPHY_BATCH_1', NULL,
-        'What is the capital of Turkey?', NULL,
-        'Ankara', ARRAY['Istanbul', 'Izmir', 'Antalya', 'Bursa', 'Konya', 'Adana'], 200, NULL);
+        'What is the capital of Scotland?', NULL,
+        'Edinburgh', ARRAY['Glasgow', 'Aberdeen', 'Dundee', 'Inverness', 'Stirling', 'Perth'], 200, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GEOGRAPHY', 'GEOGRAPHY_BATCH_1', NULL,
-        'What is the capital of New Zealand?', NULL,
-        'Wellington', ARRAY['Auckland', 'Christchurch', 'Queenstown', 'Dunedin', 'Hamilton', 'Napier'], 200, NULL);
+        'What is the highest mountain in Africa?', NULL,
+        'Kilimanjaro', ARRAY['Mount Kenya', 'Mount Stanley', 'Ras Dashen', 'Mount Meru', 'Mount Elgon', 'Mount Cameroon'], 200, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GEOGRAPHY', 'GEOGRAPHY_BATCH_1', NULL,
+        'Which mountain range runs down the western side of South America?', NULL,
+        'The Andes', ARRAY['The Rockies', 'The Sierra Madre', 'The Appalachians', 'The Alps', 'The Himalayas', 'The Atlas Mountains'], 200, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GEOGRAPHY', 'GEOGRAPHY_BATCH_1', NULL,
+        'What is the official language of Brazil?', NULL,
+        'Portuguese', ARRAY['Spanish', 'English', 'French', 'Italian', 'Dutch', 'Latin'], 200, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GEOGRAPHY', 'GEOGRAPHY_BATCH_1', NULL,
         'Which river flows through both Vienna and Budapest?', NULL,
         'The Danube', ARRAY['The Rhine', 'The Elbe', 'The Vltava', 'The Volga', 'The Oder', 'The Drava'], 200, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GEOGRAPHY', 'GEOGRAPHY_BATCH_1', NULL,
-        'Which river forms much of the border between the U.S. and Mexico?', NULL,
-        'The Rio Grande', ARRAY['The Colorado', 'The Pecos', 'The Gila', 'The Red River', 'The Brazos', 'The Arkansas'], 200, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GEOGRAPHY', 'GEOGRAPHY_BATCH_1', NULL,
-        'Which river carries far more water than any other in the world?', NULL,
-        'The Amazon', ARRAY['The Nile', 'The Congo', 'The Mississippi', 'The Yangtze', 'The Ganges', 'The Orinoco'], 200, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GEOGRAPHY', 'GEOGRAPHY_BATCH_1', NULL,
         'The Gobi Desert lies in China and which other country?', NULL,
@@ -6054,10 +6046,6 @@ INSERT INTO questions (question_number, game_mode, category, subcategory, factio
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GEOGRAPHY', 'GEOGRAPHY_BATCH_1', NULL,
         'Which South American desert is one of the driest places on Earth?', NULL,
         'The Atacama', ARRAY['The Gobi', 'The Sahara', 'The Kalahari', 'The Namib', 'The Mojave', 'The Patagonian Desert'], 200, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GEOGRAPHY', 'GEOGRAPHY_BATCH_1', NULL,
-        'Which two countries share the longest international border in the world?', NULL,
-        'The United States and Canada', ARRAY['Russia and China', 'Russia and Kazakhstan', 'Chile and Argentina', 'China and Mongolia', 'India and Bangladesh', 'Brazil and Argentina'], 200, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GEOGRAPHY', 'PRIMARY_SCHOOL_FOLD_1', NULL,
         'What is the narrow strip of land joining North and South America called?', NULL,
@@ -6075,21 +6063,37 @@ VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YE
         'What is a long, narrow sea inlet between steep cliffs, carved by a glacier, called?', NULL,
         'A fjord', ARRAY['An estuary', 'A lagoon', 'A strait', 'An atoll', 'A cove', 'A delta'], 200, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GEOGRAPHY', 'ORIGINAL', NULL,
-        'Which city straddles the Bosporus, with one side in Europe and the other in Asia?', NULL,
-        'Istanbul', ARRAY['Ankara', 'Athens', 'Cairo', 'Moscow', 'Tbilisi', 'Baku'], 200, NULL);
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GEOGRAPHY', 'GEOGRAPHY_BATCH_1', NULL,
+        'What is the second-highest mountain in the world?', NULL,
+        'K2', ARRAY['Kangchenjunga', 'Lhotse', 'Makalu', 'Annapurna', 'Nanga Parbat', 'Mont Blanc'], 200, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GEOGRAPHY', 'GEOGRAPHY_BATCH_1', NULL,
+        'What is the deepest known part of the world''s oceans?', NULL,
+        'The Mariana Trench', ARRAY['The Puerto Rico Trench', 'The Tonga Trench', 'The Java Trench', 'The Kuril Trench', 'The Kermadec Trench', 'The Philippine Trench'], 200, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GEOGRAPHY', 'GEOGRAPHY_BATCH_2', NULL,
+        'What is the capital of India?', NULL,
+        'New Delhi', ARRAY['Mumbai', 'Kolkata', 'Bangalore', 'Chennai', 'Hyderabad', 'Karachi'], 200, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GEOGRAPHY', 'GEOGRAPHY_BATCH_2', NULL,
+        'What is the capital of Portugal?', NULL,
+        'Lisbon', ARRAY['Porto', 'Madrid', 'Faro', 'Coimbra', 'Seville', 'Braga'], 200, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GEOGRAPHY', 'GEOGRAPHY_BATCH_2', NULL,
+        'What is the capital of Thailand?', NULL,
+        'Bangkok', ARRAY['Hanoi', 'Phnom Penh', 'Kuala Lumpur', 'Manila', 'Chiang Mai', 'Yangon'], 200, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GEOGRAPHY', 'GEOGRAPHY_BATCH_2', NULL,
         'Nairobi is the capital of which country?', NULL,
         'Kenya', ARRAY['Uganda', 'Tanzania', 'Ethiopia', 'Rwanda', 'Somalia', 'Zambia'], 200, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GEOGRAPHY', 'GEOGRAPHY_BATCH_2', NULL,
-        'What is the capital of Venezuela?', NULL,
-        'Caracas', ARRAY['Bogotá', 'Quito', 'Lima', 'Maracaibo', 'Santiago', 'Montevideo'], 200, NULL);
+        'What is the capital of Finland?', NULL,
+        'Helsinki', ARRAY['Oslo', 'Stockholm', 'Tallinn', 'Copenhagen', 'Turku', 'Riga'], 200, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GEOGRAPHY', 'GEOGRAPHY_BATCH_2', NULL,
-        'What is the capital of Vietnam?', NULL,
-        'Hanoi', ARRAY['Ho Chi Minh City', 'Bangkok', 'Phnom Penh', 'Vientiane', 'Da Nang', 'Yangon'], 200, NULL);
+        'What is the capital of Denmark?', NULL,
+        'Copenhagen', ARRAY['Oslo', 'Stockholm', 'Helsinki', 'Aarhus', 'Amsterdam', 'Hamburg'], 200, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GEOGRAPHY', 'GEOGRAPHY_BATCH_2', NULL,
         'What is the capital of the Philippines?', NULL,
@@ -6098,10 +6102,6 @@ INSERT INTO questions (question_number, game_mode, category, subcategory, factio
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GEOGRAPHY', 'GEOGRAPHY_BATCH_2', NULL,
         'What is the capital of Saudi Arabia?', NULL,
         'Riyadh', ARRAY['Jeddah', 'Mecca', 'Dubai', 'Doha', 'Medina', 'Abu Dhabi'], 200, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GEOGRAPHY', 'GEOGRAPHY_BATCH_2', NULL,
-        'Which island city-state sits at the southern tip of the Malay Peninsula?', NULL,
-        'Singapore', ARRAY['Brunei', 'Hong Kong', 'Macau', 'Monaco', 'Bahrain', 'Penang'], 200, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GEOGRAPHY', 'GEOGRAPHY_BATCH_2', NULL,
         'The Galápagos Islands belong to which country?', NULL,
@@ -6128,10 +6128,6 @@ VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YE
         'The Bering Strait', ARRAY['The Strait of Gibraltar', 'The Strait of Magellan', 'The Davis Strait', 'The Strait of Hormuz', 'The Drake Passage', 'The Strait of Malacca'], 200, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GEOGRAPHY', 'GEOGRAPHY_BATCH_2', NULL,
-        'What is the capital of Colombia?', NULL,
-        'Bogotá', ARRAY['Medellín', 'Cali', 'Caracas', 'Quito', 'Cartagena', 'Lima'], 200, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GEOGRAPHY', 'GEOGRAPHY_BATCH_2', NULL,
         'What is the capital of Iran?', NULL,
         'Tehran', ARRAY['Baghdad', 'Isfahan', 'Kabul', 'Shiraz', 'Tabriz', 'Ankara'], 200, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
@@ -6152,20 +6148,12 @@ VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YE
         'The Canary Islands', ARRAY['The Balearic Islands', 'The Azores', 'Madeira', 'Cape Verde', 'The Faroe Islands', 'The Channel Islands'], 200, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GEOGRAPHY', 'GEOGRAPHY_BATCH_2', NULL,
-        'Which Canadian province has French as its only official language?', NULL,
-        'Quebec', ARRAY['Ontario', 'Manitoba', 'New Brunswick', 'Nova Scotia', 'Alberta', 'British Columbia'], 200, NULL);
+        'Which city is the capital of Catalonia?', NULL,
+        'Barcelona', ARRAY['Madrid', 'Valencia', 'Seville', 'Bilbao', 'Zaragoza', 'Girona'], 200, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GEOGRAPHY', 'GEOGRAPHY_BATCH_2', NULL,
         'Which Australian state is an island?', NULL,
         'Tasmania', ARRAY['Victoria', 'Queensland', 'New South Wales', 'South Australia', 'Western Australia', 'Northern Territory'], 200, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GEOGRAPHY', 'GEOGRAPHY_BATCH_2', NULL,
-        'Which vast region makes up most of Asian Russia?', NULL,
-        'Siberia', ARRAY['Lapland', 'Patagonia', 'Manchuria', 'Mongolia', 'Central Asia', 'Alaska'], 200, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GEOGRAPHY', 'GEOGRAPHY_BATCH_2', NULL,
-        'What is the largest city in the province of Ontario?', NULL,
-        'Toronto', ARRAY['Ottawa', 'Hamilton', 'Montreal', 'London', 'Kingston', 'Windsor'], 200, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GEOGRAPHY', 'GEOGRAPHY_BATCH_2', NULL,
         'What is the capital of Wales?', NULL,
@@ -6184,6 +6172,22 @@ VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YE
         'Sri Lanka', ARRAY['India', 'Bangladesh', 'The Maldives', 'Myanmar', 'Malaysia', 'Mauritius'], 200, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GEOGRAPHY', 'GEOGRAPHY_BATCH_2', NULL,
+        'Which warm Atlantic current helps keep Western Europe''s winters mild?', NULL,
+        'The Gulf Stream', ARRAY['The Humboldt Current', 'The Kuroshio Current', 'The Labrador Current', 'The Canary Current', 'The Benguela Current', 'The Agulhas Current'], 200, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GEOGRAPHY', 'GEOGRAPHY_BATCH_2', NULL,
+        'What is the largest island in the Mediterranean Sea?', NULL,
+        'Sicily', ARRAY['Sardinia', 'Cyprus', 'Corsica', 'Crete', 'Malta', 'Mallorca'], 200, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GEOGRAPHY', 'GEOGRAPHY_BATCH_2', NULL,
+        'Which city was Brazil''s capital until 1960?', NULL,
+        'Rio de Janeiro', ARRAY['São Paulo', 'Salvador', 'Brasília', 'Recife', 'Belo Horizonte', 'Lisbon'], 200, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GEOGRAPHY', 'GEOGRAPHY_BATCH_2', NULL,
+        'What is the capital of Northern Ireland?', NULL,
+        'Belfast', ARRAY['Dublin', 'Derry', 'Cardiff', 'Glasgow', 'Armagh', 'Edinburgh'], 200, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GEOGRAPHY', 'GEOGRAPHY_BATCH_2', NULL,
         'Which Asian city was called Saigon until 1976?', NULL,
         'Ho Chi Minh City', ARRAY['Hanoi', 'Phnom Penh', 'Bangkok', 'Da Nang', 'Vientiane', 'Yangon'], 200, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
@@ -6194,36 +6198,28 @@ INSERT INTO questions (question_number, game_mode, category, subcategory, factio
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GEOGRAPHY', 'GEOGRAPHY_BATCH_2', NULL,
         'What is the capital of Lebanon?', NULL,
         'Beirut', ARRAY['Damascus', 'Amman', 'Tripoli', 'Byblos', 'Baghdad', 'Sidon'], 200, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GEOGRAPHY', 'GEOGRAPHY_BATCH_2', NULL,
-        'Which range of hills and mountains is called the backbone of England?', NULL,
-        'The Pennines', ARRAY['The Cotswolds', 'The Cheviot Hills', 'The Chiltern Hills', 'The Mendips', 'The Cambrian Mountains', 'The Grampians'], 200, NULL);
 
 -- 300 points
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GEOGRAPHY', 'ORIGINAL', NULL,
-        'Which African country was formerly known as Abyssinia?', NULL,
-        'Ethiopia', ARRAY['Eritrea', 'Sudan', 'Somalia', 'Kenya', 'Egypt', 'Tanzania'], 300, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GEOGRAPHY', 'ORIGINAL', NULL,
-        'Which mountain kingdom in southern Africa is completely surrounded by a single neighboring country?', NULL,
-        'Lesotho', ARRAY['Swaziland (Eswatini)', 'Botswana', 'Zimbabwe', 'Namibia', 'Malawi', 'Mozambique'], 300, 'Lesotho is the only country lying entirely above 1,000 meters; even its lowest point is higher.');
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GEOGRAPHY', 'ORIGINAL', NULL,
-        'What is the capital of Kazakhstan?', NULL,
-        'Astana', ARRAY['Almaty', 'Bishkek', 'Tashkent', 'Ashgabat', 'Dushanbe', 'Baku'], 300, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GEOGRAPHY', 'ORIGINAL', NULL,
         'Which country has the longest coastline in the world?', NULL,
         'Canada', ARRAY['Russia', 'Indonesia', 'Australia', 'United States', 'Norway', 'Chile'], 300, 'Canada''s coastline is long enough to wrap around the equator about five times.');
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GEOGRAPHY', 'ORIGINAL', NULL,
-        'What is the name of the imaginary line at 180 degrees longitude that roughly marks a change in calendar day?', NULL,
-        'The International Date Line', ARRAY['The Prime Meridian', 'The Equator', 'The Tropic of Cancer', 'The Antarctic Circle', 'The Arctic Circle', 'The Tropic of Capricorn'], 300, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GEOGRAPHY', 'ORIGINAL', NULL,
         'Which European microstate lies high in the Pyrenees mountains?', NULL,
         'Andorra', ARRAY['Monaco', 'San Marino', 'Liechtenstein', 'Luxembourg', 'Malta', 'Vatican City'], 300, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GEOGRAPHY', 'GEOGRAPHY_BATCH_1', NULL,
+        'What is the capital of Brazil?', NULL,
+        'Brasília', ARRAY['Rio de Janeiro', 'São Paulo', 'Salvador', 'Buenos Aires', 'Recife', 'Belo Horizonte'], 300, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GEOGRAPHY', 'GEOGRAPHY_BATCH_1', NULL,
+        'What is the capital of Turkey?', NULL,
+        'Ankara', ARRAY['Istanbul', 'Izmir', 'Antalya', 'Bursa', 'Konya', 'Adana'], 300, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GEOGRAPHY', 'GEOGRAPHY_BATCH_1', NULL,
+        'What is the capital of New Zealand?', NULL,
+        'Wellington', ARRAY['Auckland', 'Christchurch', 'Queenstown', 'Dunedin', 'Hamilton', 'Napier'], 300, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GEOGRAPHY', 'GEOGRAPHY_BATCH_1', NULL,
         'Which city is the seat of Switzerland''s federal government?', NULL,
@@ -6240,10 +6236,6 @@ INSERT INTO questions (question_number, game_mode, category, subcategory, factio
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GEOGRAPHY', 'GEOGRAPHY_BATCH_1', NULL,
         'What is the longest river in Europe?', NULL,
         'The Volga', ARRAY['The Danube', 'The Rhine', 'The Dnieper', 'The Don', 'The Loire', 'The Elbe'], 300, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GEOGRAPHY', 'GEOGRAPHY_BATCH_1', NULL,
-        'What is the second-highest mountain in the world?', NULL,
-        'K2', ARRAY['Kangchenjunga', 'Lhotse', 'Makalu', 'Annapurna', 'Nanga Parbat', 'Mont Blanc'], 300, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GEOGRAPHY', 'GEOGRAPHY_BATCH_1', NULL,
         'The Matterhorn sits on the border between Switzerland and which country?', NULL,
@@ -6278,12 +6270,36 @@ VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YE
         'The Caspian Sea', ARRAY['Lake Superior', 'Lake Victoria', 'Lake Baikal', 'The Aral Sea', 'Lake Huron', 'Lake Tanganyika'], 300, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GEOGRAPHY', 'GEOGRAPHY_BATCH_1', NULL,
-        'What is the deepest known part of the world''s oceans?', NULL,
-        'The Mariana Trench', ARRAY['The Puerto Rico Trench', 'The Tonga Trench', 'The Java Trench', 'The Kuril Trench', 'The Kermadec Trench', 'The Philippine Trench'], 300, NULL);
+        'Which river flows through Baghdad?', NULL,
+        'The Tigris', ARRAY['The Euphrates', 'The Jordan', 'The Nile', 'The Indus', 'The Karun', 'The Orontes'], 300, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GEOGRAPHY', 'PRIMARY_SCHOOL_FOLD_1', NULL,
+        'What is the largest peninsula in the world?', NULL,
+        'The Arabian Peninsula', ARRAY['The Iberian Peninsula', 'The Scandinavian Peninsula', 'The Labrador Peninsula', 'The Kamchatka Peninsula', 'The Balkan Peninsula', 'The Malay Peninsula'], 300, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GEOGRAPHY', 'GEOGRAPHY_BATCH_1', NULL,
+        'What is the largest country lying entirely within Europe?', NULL,
+        'Ukraine', ARRAY['France', 'Spain', 'Germany', 'Sweden', 'Poland', 'Norway'], 300, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GEOGRAPHY', 'GEOGRAPHY_BATCH_1', NULL,
+        'Ushuaia, often called the southernmost city in the world, is in which country?', NULL,
+        'Argentina', ARRAY['Chile', 'New Zealand', 'South Africa', 'Australia', 'Uruguay', 'The Falkland Islands'], 300, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GEOGRAPHY', 'GEOGRAPHY_BATCH_1', NULL,
+        'What is the tallest uninterrupted waterfall in the world?', NULL,
+        'Angel Falls', ARRAY['Victoria Falls', 'Niagara Falls', 'Iguazu Falls', 'Yosemite Falls', 'Kaieteur Falls', 'Sutherland Falls'], 300, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GEOGRAPHY', 'GEOGRAPHY_BATCH_2', NULL,
-        'Which coastal desert in southwest Africa is often called the oldest desert in the world?', NULL,
-        'The Namib', ARRAY['The Kalahari', 'The Sahara', 'The Karoo', 'The Atacama', 'The Sonoran', 'The Gobi'], 300, NULL);
+        'What is the capital of Venezuela?', NULL,
+        'Caracas', ARRAY['Bogotá', 'Quito', 'Lima', 'Maracaibo', 'Santiago', 'Montevideo'], 300, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GEOGRAPHY', 'GEOGRAPHY_BATCH_2', NULL,
+        'What is the capital of Vietnam?', NULL,
+        'Hanoi', ARRAY['Ho Chi Minh City', 'Bangkok', 'Phnom Penh', 'Vientiane', 'Da Nang', 'Yangon'], 300, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GEOGRAPHY', 'GEOGRAPHY_BATCH_2', NULL,
+        'What is the capital of Colombia?', NULL,
+        'Bogotá', ARRAY['Medellín', 'Cali', 'Caracas', 'Quito', 'Cartagena', 'Lima'], 300, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GEOGRAPHY', 'GEOGRAPHY_BATCH_2', NULL,
         'Which line of latitude marks where the sun stays up all day on the June solstice?', NULL,
@@ -6292,10 +6308,6 @@ INSERT INTO questions (question_number, game_mode, category, subcategory, factio
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GEOGRAPHY', 'GEOGRAPHY_BATCH_2', NULL,
         'Which tiny Mediterranean island country has Valletta as its capital?', NULL,
         'Malta', ARRAY['Cyprus', 'Corsica', 'Sardinia', 'Crete', 'Rhodes', 'Mallorca'], 300, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GEOGRAPHY', 'GEOGRAPHY_BATCH_2', NULL,
-        'Which warm Atlantic current helps keep Western Europe''s winters mild?', NULL,
-        'The Gulf Stream', ARRAY['The Humboldt Current', 'The Kuroshio Current', 'The Labrador Current', 'The Canary Current', 'The Benguela Current', 'The Agulhas Current'], 300, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GEOGRAPHY', 'GEOGRAPHY_BATCH_2', NULL,
         'Mallorca, Menorca and Ibiza make up which Spanish island group?', NULL,
@@ -6318,10 +6330,6 @@ VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YE
         'Hispaniola', ARRAY['Puerto Rico', 'Cuba', 'Jamaica', 'Trinidad', 'Barbados', 'Tortuga'], 300, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GEOGRAPHY', 'GEOGRAPHY_BATCH_2', NULL,
-        'What is the largest island in the Mediterranean Sea?', NULL,
-        'Sicily', ARRAY['Sardinia', 'Cyprus', 'Corsica', 'Crete', 'Malta', 'Mallorca'], 300, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GEOGRAPHY', 'GEOGRAPHY_BATCH_2', NULL,
         'What is the capital of Uruguay?', NULL,
         'Montevideo', ARRAY['Buenos Aires', 'Asunción', 'Santiago', 'Punta del Este', 'Porto Alegre', 'La Paz'], 300, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
@@ -6338,20 +6346,12 @@ VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YE
         'The Hague', ARRAY['Amsterdam', 'Rotterdam', 'Utrecht', 'Brussels', 'Antwerp', 'Eindhoven'], 300, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GEOGRAPHY', 'GEOGRAPHY_BATCH_2', NULL,
-        'Which city was Brazil''s capital until 1960?', NULL,
-        'Rio de Janeiro', ARRAY['São Paulo', 'Salvador', 'Brasília', 'Recife', 'Belo Horizonte', 'Lisbon'], 300, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GEOGRAPHY', 'GEOGRAPHY_BATCH_2', NULL,
         'Which city was Japan''s imperial capital for over 1,000 years, until 1869?', NULL,
         'Kyoto', ARRAY['Osaka', 'Nara', 'Kamakura', 'Hiroshima', 'Nagoya', 'Sapporo'], 300, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GEOGRAPHY', 'GEOGRAPHY_BATCH_2', NULL,
         'Which city was the capital of West Germany?', NULL,
         'Bonn', ARRAY['Frankfurt', 'Munich', 'Hamburg', 'Cologne', 'Düsseldorf', 'Berlin'], 300, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GEOGRAPHY', 'GEOGRAPHY_BATCH_2', NULL,
-        'The Kalahari Desert covers most of which country?', NULL,
-        'Botswana', ARRAY['Namibia', 'South Africa', 'Zimbabwe', 'Zambia', 'Angola', 'Lesotho'], 300, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GEOGRAPHY', 'GEOGRAPHY_BATCH_2', NULL,
         'Which mountain range runs down the spine of the Italian peninsula?', NULL,
@@ -6378,14 +6378,6 @@ VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YE
         'The Loire', ARRAY['The Seine', 'The Rhône', 'The Garonne', 'The Dordogne', 'The Rhine', 'The Meuse'], 300, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GEOGRAPHY', 'GEOGRAPHY_BATCH_2', NULL,
-        'Which small country on the Horn of Africa was once called French Somaliland?', NULL,
-        'Djibouti', ARRAY['Eritrea', 'Somalia', 'Yemen', 'Comoros', 'Mauritius', 'Oman'], 300, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GEOGRAPHY', 'GEOGRAPHY_BATCH_2', NULL,
-        'What is the capital of Northern Ireland?', NULL,
-        'Belfast', ARRAY['Dublin', 'Derry', 'Cardiff', 'Glasgow', 'Armagh', 'Edinburgh'], 300, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GEOGRAPHY', 'GEOGRAPHY_BATCH_2', NULL,
         'Which Mediterranean island is divided between a Greek-speaking south and a Turkish-speaking north?', NULL,
         'Cyprus', ARRAY['Crete', 'Rhodes', 'Malta', 'Sicily', 'Corsica', 'Sardinia'], 300, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
@@ -6398,14 +6390,34 @@ VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YE
         'The Tasman Sea', ARRAY['The Coral Sea', 'The Timor Sea', 'The Arafura Sea', 'The Solomon Sea', 'The Ross Sea', 'The Philippine Sea'], 300, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GEOGRAPHY', 'GEOGRAPHY_BATCH_2', NULL,
+        'Which city, the highest seat of government in the world, houses Bolivia''s government?', NULL,
+        'La Paz', ARRAY['Sucre', 'Santa Cruz', 'Cochabamba', 'Quito', 'Lima', 'Potosí'], 300, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GEOGRAPHY', 'GEOGRAPHY_BATCH_2', NULL,
+        'Which city was Nigeria''s capital until 1991?', NULL,
+        'Lagos', ARRAY['Abuja', 'Kano', 'Ibadan', 'Port Harcourt', 'Accra', 'Enugu'], 300, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GEOGRAPHY', 'GEOGRAPHY_BATCH_2', NULL,
         'What is the largest of Japan''s main islands?', NULL,
         'Honshu', ARRAY['Hokkaido', 'Kyushu', 'Shikoku', 'Okinawa', 'Sakhalin', 'Sado'], 300, NULL);
 
 -- 400 points
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GEOGRAPHY', 'ORIGINAL', NULL,
+        'Which African country was formerly known as Abyssinia?', NULL,
+        'Ethiopia', ARRAY['Eritrea', 'Sudan', 'Somalia', 'Kenya', 'Egypt', 'Tanzania'], 400, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GEOGRAPHY', 'ORIGINAL', NULL,
+        'Which mountain kingdom in southern Africa is completely surrounded by a single neighboring country?', NULL,
+        'Lesotho', ARRAY['Swaziland (Eswatini)', 'Botswana', 'Zimbabwe', 'Namibia', 'Malawi', 'Mozambique'], 400, 'Lesotho is the only country lying entirely above 1,000 meters; even its lowest point is higher.');
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GEOGRAPHY', 'ORIGINAL', NULL,
         'Which country has the most time zones of any country in the world, due to its overseas territories?', NULL,
         'France', ARRAY['Russia', 'United States', 'United Kingdom', 'China', 'Australia', 'Canada'], 400, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GEOGRAPHY', 'ORIGINAL', NULL,
+        'What is the capital of Kazakhstan?', NULL,
+        'Astana', ARRAY['Almaty', 'Bishkek', 'Tashkent', 'Ashgabat', 'Dushanbe', 'Baku'], 400, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GEOGRAPHY', 'ORIGINAL', NULL,
         'What is the only country that lies in all four hemispheres -- north, south, east, and west?', NULL,
@@ -6420,16 +6432,8 @@ VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YE
         'Abuja', ARRAY['Lagos', 'Kano', 'Ibadan', 'Port Harcourt', 'Accra', 'Benin City'], 400, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GEOGRAPHY', 'GEOGRAPHY_BATCH_1', NULL,
-        'Which river flows through Baghdad?', NULL,
-        'The Tigris', ARRAY['The Euphrates', 'The Jordan', 'The Nile', 'The Indus', 'The Karun', 'The Orontes'], 400, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GEOGRAPHY', 'GEOGRAPHY_BATCH_1', NULL,
         'What is the highest mountain in the Americas?', NULL,
         'Aconcagua', ARRAY['Chimborazo', 'Huascarán', 'Ojos del Salado', 'Cotopaxi', 'Illimani', 'Mount Logan'], 400, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GEOGRAPHY', 'PRIMARY_SCHOOL_FOLD_1', NULL,
-        'What is the largest peninsula in the world?', NULL,
-        'The Arabian Peninsula', ARRAY['The Iberian Peninsula', 'The Scandinavian Peninsula', 'The Labrador Peninsula', 'The Kamchatka Peninsula', 'The Balkan Peninsula', 'The Malay Peninsula'], 400, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GEOGRAPHY', 'GEOGRAPHY_BATCH_1', NULL,
         'Which country has more ancient pyramids than any other?', NULL,
@@ -6438,10 +6442,6 @@ INSERT INTO questions (question_number, game_mode, category, subcategory, factio
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GEOGRAPHY', 'GEOGRAPHY_BATCH_1', NULL,
         'Which European country is one of only two in the world that are "doubly landlocked"?', NULL,
         'Liechtenstein', ARRAY['Switzerland', 'Andorra', 'Luxembourg', 'Austria', 'San Marino', 'Hungary'], 400, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GEOGRAPHY', 'GEOGRAPHY_BATCH_1', NULL,
-        'What is the largest country lying entirely within Europe?', NULL,
-        'Ukraine', ARRAY['France', 'Spain', 'Germany', 'Sweden', 'Poland', 'Norway'], 400, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GEOGRAPHY', 'GEOGRAPHY_BATCH_1', NULL,
         'What is the smallest country in South America by area?', NULL,
@@ -6454,14 +6454,6 @@ INSERT INTO questions (question_number, game_mode, category, subcategory, factio
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GEOGRAPHY', 'GEOGRAPHY_BATCH_1', NULL,
         'Switzerland''s four national languages are German, French, Italian and which other?', NULL,
         'Romansh', ARRAY['Ladin', 'Latin', 'Flemish', 'Swiss German', 'Occitan', 'Walloon'], 400, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GEOGRAPHY', 'GEOGRAPHY_BATCH_1', NULL,
-        'Ushuaia, often called the southernmost city in the world, is in which country?', NULL,
-        'Argentina', ARRAY['Chile', 'New Zealand', 'South Africa', 'Australia', 'Uruguay', 'The Falkland Islands'], 400, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GEOGRAPHY', 'GEOGRAPHY_BATCH_1', NULL,
-        'What is the tallest uninterrupted waterfall in the world?', NULL,
-        'Angel Falls', ARRAY['Victoria Falls', 'Niagara Falls', 'Iguazu Falls', 'Yosemite Falls', 'Kaieteur Falls', 'Sutherland Falls'], 400, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GEOGRAPHY', 'GEOGRAPHY_BATCH_1', NULL,
         'What is the largest country in Africa by area?', NULL,
@@ -6482,6 +6474,18 @@ INSERT INTO questions (question_number, game_mode, category, subcategory, factio
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GEOGRAPHY', 'ORIGINAL', NULL,
         'The Strait of Malacca separates the Malay Peninsula from which Indonesian island?', NULL,
         'Sumatra', ARRAY['Java', 'Borneo', 'Sulawesi', 'Bali', 'Timor', 'New Guinea'], 400, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GEOGRAPHY', 'GEOGRAPHY_BATCH_2', NULL,
+        'Which coastal desert in southwest Africa is often called the oldest desert in the world?', NULL,
+        'The Namib', ARRAY['The Kalahari', 'The Sahara', 'The Karoo', 'The Atacama', 'The Sonoran', 'The Gobi'], 400, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GEOGRAPHY', 'GEOGRAPHY_BATCH_2', NULL,
+        'The Kalahari Desert covers most of which country?', NULL,
+        'Botswana', ARRAY['Namibia', 'South Africa', 'Zimbabwe', 'Zambia', 'Angola', 'Lesotho'], 400, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GEOGRAPHY', 'GEOGRAPHY_BATCH_2', NULL,
+        'Which small country on the Horn of Africa was once called French Somaliland?', NULL,
+        'Djibouti', ARRAY['Eritrea', 'Somalia', 'Yemen', 'Comoros', 'Mauritius', 'Oman'], 400, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GEOGRAPHY', 'GEOGRAPHY_BATCH_2', NULL,
         'What is the capital of Estonia?', NULL,
@@ -6516,16 +6520,8 @@ VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YE
         'The Ganges Delta', ARRAY['The Nile Delta', 'The Mekong Delta', 'The Amazon Delta', 'The Niger Delta', 'The Mississippi Delta', 'The Okavango Delta'], 400, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GEOGRAPHY', 'GEOGRAPHY_BATCH_2', NULL,
-        'Which city, the highest seat of government in the world, houses Bolivia''s government?', NULL,
-        'La Paz', ARRAY['Sucre', 'Santa Cruz', 'Cochabamba', 'Quito', 'Lima', 'Potosí'], 400, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GEOGRAPHY', 'GEOGRAPHY_BATCH_2', NULL,
         'What is the capital of Laos?', NULL,
         'Vientiane', ARRAY['Phnom Penh', 'Hanoi', 'Bangkok', 'Luang Prabang', 'Yangon', 'Naypyidaw'], 400, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GEOGRAPHY', 'GEOGRAPHY_BATCH_2', NULL,
-        'Which city was Nigeria''s capital until 1991?', NULL,
-        'Lagos', ARRAY['Abuja', 'Kano', 'Ibadan', 'Port Harcourt', 'Accra', 'Enugu'], 400, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GEOGRAPHY', 'GEOGRAPHY_BATCH_2', NULL,
         'Which city housed Australia''s federal parliament from 1901 until 1927?', NULL,
@@ -6602,6 +6598,10 @@ INSERT INTO questions (question_number, game_mode, category, subcategory, factio
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GEOGRAPHY', 'GEOGRAPHY_BATCH_2', NULL,
         'What is the capital of Uganda?', NULL,
         'Kampala', ARRAY['Entebbe', 'Nairobi', 'Kigali', 'Juba', 'Gulu', 'Jinja'], 400, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'GEOGRAPHY', 'GEOGRAPHY_BATCH_2', NULL,
+        'Which range of hills and mountains is called the backbone of England?', NULL,
+        'The Pennines', ARRAY['The Cotswolds', 'The Cheviot Hills', 'The Chiltern Hills', 'The Mendips', 'The Cambrian Mountains', 'The Grampians'], 400, NULL);
 
 COMMIT;
 
@@ -19278,26 +19278,6 @@ DELETE FROM questions WHERE game_mode = 'TRIVI_YEAH_II' AND category = 'WORD_NER
 -- 100 points
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORD_NERD', 'PRIMARY_SCHOOL_FOLD_1', NULL,
-        'What does "meticulous" mean?', NULL,
-        'Extremely careful and precise', ARRAY['Easily annoyed', 'Very quick', 'Slightly messy', 'Showing off', 'Deeply sad', 'Overly cheerful'], 100, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORD_NERD', 'PRIMARY_SCHOOL_FOLD_1', NULL,
-        'What does "candid" mean?', NULL,
-        'Honest and direct', ARRAY['Sweet and sugary', 'Secretive', 'Shy and quiet', 'Easily fooled', 'Bright and shiny', 'Polite but fake'], 100, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORD_NERD', 'PRIMARY_SCHOOL_FOLD_1', NULL,
-        'What does "frugal" mean?', NULL,
-        'Careful with money', ARRAY['Full of fruit', 'Easily broken', 'Wasteful', 'Grumpy', 'Very fast', 'Overly emotional'], 100, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORD_NERD', 'The first wrong answer is "malevolent," its opposite.', NULL,
-        'What does "benevolent" mean?', NULL,
-        'Kind and generous', ARRAY['Wishing harm on others', 'Very old', 'Easily bored', 'Proud', 'Lazy', 'Loud'], 100, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORD_NERD', 'PRIMARY_SCHOOL_FOLD_1', NULL,
-        'What does "audacious" mean?', NULL,
-        'Bold and daring', ARRAY['Loud and noisy', 'Shy', 'Careful', 'Boring', 'Rude', 'Wealthy'], 100, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORD_NERD', 'PRIMARY_SCHOOL_FOLD_1', NULL,
         'What does "skeptical" mean?', NULL,
         'Doubtful', ARRAY['Bony', 'Gullible', 'Cheerful', 'Sleepy', 'Germ-free', 'Angry'], 100, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
@@ -19318,16 +19298,8 @@ VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YE
         'Extremely small', ARRAY['Very muscular', 'Slightly late', 'Huge', 'Brief', 'Quiet', 'Cheap'], 100, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORD_NERD', 'PRIMARY_SCHOOL_FOLD_1', NULL,
-        'What does "tele-" mean, as in "telescope" and "telephone"?', NULL,
-        'Far', ARRAY['Small', 'Light', 'See', 'Sound', 'Near', 'Big'], 100, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORD_NERD', 'PRIMARY_SCHOOL_FOLD_1', NULL,
         'What does "chrono-" mean, as in "chronological"?', NULL,
         'Time', ARRAY['Color', 'Light', 'Sound', 'Heat', 'Earth', 'Speed'], 100, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORD_NERD', 'PRIMARY_SCHOOL_FOLD_1', NULL,
-        '"I''ve told you a million times" is an example of what?', NULL,
-        'Hyperbole', ARRAY['A simile', 'A metaphor', 'Onomatopoeia', 'Alliteration', 'Personification', 'Irony'], 100, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORD_NERD', 'PRIMARY_SCHOOL_FOLD_1', NULL,
         'Words that imitate sounds, like "buzz" and "sizzle," are called what?', NULL,
@@ -19336,10 +19308,6 @@ INSERT INTO questions (question_number, game_mode, category, subcategory, factio
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORD_NERD', 'PRIMARY_SCHOOL_FOLD_1', NULL,
         '"Busy as a bee" is an example of what?', NULL,
         'A simile', ARRAY['A metaphor', 'Hyperbole', 'An idiom', 'Alliteration', 'An oxymoron', 'Personification'], 100, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORD_NERD', 'PRIMARY_SCHOOL_FOLD_1', NULL,
-        '"Their," "there" and "they''re" sound alike but mean different things. What are they called?', NULL,
-        'Homophones', ARRAY['Homographs', 'Synonyms', 'Antonyms', 'Anagrams', 'Palindromes', 'Acronyms'], 100, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORD_NERD', 'PRIMARY_SCHOOL_FOLD_1', NULL,
         'What is the opposite of a synonym?', NULL,
@@ -19352,10 +19320,6 @@ INSERT INTO questions (question_number, game_mode, category, subcategory, factio
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORD_NERD', 'WORD_NERD_BATCH_1', NULL,
         '"Listen" and "silent" use exactly the same letters. What are they?', NULL,
         'Anagrams', ARRAY['Palindromes', 'Homophones', 'Synonyms', 'Antonyms', 'Homographs', 'Acronyms'], 100, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORD_NERD', 'WORD_NERD_BATCH_1', NULL,
-        '"Jumbo shrimp" and "deafening silence" are examples of what?', NULL,
-        'An oxymoron', ARRAY['A palindrome', 'A simile', 'Hyperbole', 'A pun', 'An idiom', 'An anagram'], 100, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORD_NERD', 'WORD_NERD_BATCH_1', NULL,
         'A word made from the first letters of other words, like NASA, is called what?', NULL,
@@ -19392,6 +19356,18 @@ INSERT INTO questions (question_number, game_mode, category, subcategory, factio
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORD_NERD', 'WORD_NERD_BATCH_1', NULL,
         'Which word means "to put off doing something until later"?', NULL,
         'Procrastinate', ARRAY['Pontificate', 'Prognosticate', 'Proliferate', 'Perpetuate', 'Precipitate', 'Prevaricate'], 100, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORD_NERD', 'Agoraphobia: open or crowded places. Nyctophobia: the dark. Coulrophobia: clowns.', NULL,
+        'What is the fear of small or enclosed spaces called?', NULL,
+        'Claustrophobia', ARRAY['Agoraphobia', 'Acrophobia', 'Arachnophobia', 'Nyctophobia', 'Aquaphobia', 'Coulrophobia'], 100, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORD_NERD', 'From Latin "exempli gratia." "That is" is i.e.; "and so on" is etc.', NULL,
+        'What does "e.g." stand for?', NULL,
+        'For example', ARRAY['That is', 'And so on', 'Note well', 'Approximately', 'Especially', 'Namely'], 100, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORD_NERD', 'WORD_NERD_BATCH_1', NULL,
+        'What does "vice versa" mean?', NULL,
+        'The other way around', ARRAY['Against the rules', 'In poetry', 'Bad habits', 'Word for word', 'Again and again', 'In other words'], 100, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORD_NERD', 'DEPTH_NOV_2026', NULL,
         'What does "reluctant" mean?', NULL,
@@ -19476,8 +19452,68 @@ INSERT INTO questions (question_number, game_mode, category, subcategory, factio
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORD_NERD', 'DEPTH_NOV_2026', NULL,
         'What does "curious" mean?', NULL,
         'Eager to know or learn', ARRAY['Angry', 'Sleepy', 'Rounded', 'Healing', 'Careful', 'Cozy'], 100, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORD_NERD', 'DEPTH_NOV_2026', NULL,
+        'What does "anonymous" mean?', NULL,
+        'With no name given', ARRAY['Very large', 'Unanimous', 'Ancient', 'Shy', 'Angry', 'Secretive'], 100, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORD_NERD', 'DEPTH_NOV_2026', NULL,
+        'What is insomnia?', NULL,
+        'Trouble sleeping', ARRAY['Fear of the dark', 'Sleepwalking', 'Snoring', 'Oversleeping', 'Bad dreams', 'Talking in your sleep'], 100, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORD_NERD', 'DEPTH_NOV_2026', NULL,
+        'What does "micro-" mean, as in "microscope"?', NULL,
+        'Small', ARRAY['Large', 'Many', 'Half', 'Far', 'Under', 'Fast'], 100, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORD_NERD', 'DEPTH_NOV_2026', NULL,
+        'What does "-ology" mean, as in "biology"?', NULL,
+        'The study of', ARRAY['Fear of', 'Love of', 'Lack of', 'Making of', 'Measure of', 'Writer of'], 100, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORD_NERD', 'DEPTH_NOV_2026', NULL,
+        'What does "geo-" mean, as in "geography"?', NULL,
+        'Earth', ARRAY['Rock', 'Map', 'Sky', 'Water', 'Life', 'Travel'], 100, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORD_NERD', 'DEPTH_NOV_2026', NULL,
+        'A shortened word like "can''t" or "I''m" is called what?', NULL,
+        'A contraction', ARRAY['An abbreviation', 'An acronym', 'A compound word', 'A portmanteau', 'An ellipsis', 'A prefix'], 100, NULL);
 
 -- 200 points
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORD_NERD', 'PRIMARY_SCHOOL_FOLD_1', NULL,
+        'What does "meticulous" mean?', NULL,
+        'Extremely careful and precise', ARRAY['Easily annoyed', 'Very quick', 'Slightly messy', 'Showing off', 'Deeply sad', 'Overly cheerful'], 200, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORD_NERD', 'PRIMARY_SCHOOL_FOLD_1', NULL,
+        'What does "candid" mean?', NULL,
+        'Honest and direct', ARRAY['Sweet and sugary', 'Secretive', 'Shy and quiet', 'Easily fooled', 'Bright and shiny', 'Polite but fake'], 200, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORD_NERD', 'PRIMARY_SCHOOL_FOLD_1', NULL,
+        'What does "frugal" mean?', NULL,
+        'Careful with money', ARRAY['Full of fruit', 'Easily broken', 'Wasteful', 'Grumpy', 'Very fast', 'Overly emotional'], 200, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORD_NERD', 'The first wrong answer is "malevolent," its opposite.', NULL,
+        'What does "benevolent" mean?', NULL,
+        'Kind and generous', ARRAY['Wishing harm on others', 'Very old', 'Easily bored', 'Proud', 'Lazy', 'Loud'], 200, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORD_NERD', 'PRIMARY_SCHOOL_FOLD_1', NULL,
+        'What does "audacious" mean?', NULL,
+        'Bold and daring', ARRAY['Loud and noisy', 'Shy', 'Careful', 'Boring', 'Rude', 'Wealthy'], 200, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORD_NERD', 'PRIMARY_SCHOOL_FOLD_1', NULL,
+        'What does "tele-" mean, as in "telescope" and "telephone"?', NULL,
+        'Far', ARRAY['Small', 'Light', 'See', 'Sound', 'Near', 'Big'], 200, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORD_NERD', 'PRIMARY_SCHOOL_FOLD_1', NULL,
+        '"I''ve told you a million times" is an example of what?', NULL,
+        'Hyperbole', ARRAY['A simile', 'A metaphor', 'Onomatopoeia', 'Alliteration', 'Personification', 'Irony'], 200, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORD_NERD', 'PRIMARY_SCHOOL_FOLD_1', NULL,
+        '"Their," "there" and "they''re" sound alike but mean different things. What are they called?', NULL,
+        'Homophones', ARRAY['Homographs', 'Synonyms', 'Antonyms', 'Anagrams', 'Palindromes', 'Acronyms'], 200, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORD_NERD', 'WORD_NERD_BATCH_1', NULL,
+        '"Jumbo shrimp" and "deafening silence" are examples of what?', NULL,
+        'An oxymoron', ARRAY['A palindrome', 'A simile', 'Hyperbole', 'A pun', 'An idiom', 'An anagram'], 200, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORD_NERD', 'PRIMARY_SCHOOL_FOLD_1', NULL,
         '"Life is a rollercoaster" is an example of what?', NULL,
@@ -19500,24 +19536,8 @@ VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YE
         'All', ARRAY['Meat', 'Plants', 'Many', 'Eating', 'Large', 'None'], 200, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORD_NERD', 'PRIMARY_SCHOOL_FOLD_1', NULL,
-        'What does "ubiquitous" mean?', NULL,
-        'Found everywhere', ARRAY['Very rare', 'Very old', 'Extremely loud', 'Hard to understand', 'Constantly changing', 'Quick to anger'], 200, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORD_NERD', 'PRIMARY_SCHOOL_FOLD_1', NULL,
-        'What does "gregarious" mean?', NULL,
-        'Sociable and outgoing', ARRAY['Greedy', 'Shy', 'Bossy', 'Grumpy', 'Heavy', 'Gloomy'], 200, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORD_NERD', 'PRIMARY_SCHOOL_FOLD_1', NULL,
         'What does "verbose" mean?', NULL,
         'Using more words than needed', ARRAY['Lacking words', 'Rude', 'Full of verbs', 'Honest', 'Very loud', 'Confusing'], 200, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORD_NERD', 'Agoraphobia: open or crowded places. Nyctophobia: the dark. Coulrophobia: clowns.', NULL,
-        'What is the fear of small or enclosed spaces called?', NULL,
-        'Claustrophobia', ARRAY['Agoraphobia', 'Acrophobia', 'Arachnophobia', 'Nyctophobia', 'Aquaphobia', 'Coulrophobia'], 200, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORD_NERD', 'WORD_NERD_BATCH_1', NULL,
-        '"Brunch" blends "breakfast" and "lunch." What is a blended word like this called?', NULL,
-        'A portmanteau', ARRAY['An acronym', 'A contraction', 'An anagram', 'A palindrome', 'A spoonerism', 'An eponym'], 200, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORD_NERD', 'WORD_NERD_BATCH_1', NULL,
         'What does "déjà vu" literally mean?', NULL,
@@ -19531,10 +19551,6 @@ VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YE
         'What is a bibliophile?', NULL,
         'A lover of books', ARRAY['A Bible scholar', 'A fear of books', 'A bookbinder', 'A speed reader', 'A bad writer', 'A book critic'], 200, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORD_NERD', 'Self-Contained Underwater Breathing Apparatus.', NULL,
-        'In "scuba," what does the S stand for?', NULL,
-        'Self-contained', ARRAY['Submarine', 'Sea', 'Safety', 'Surface', 'Snorkel', 'Swimming'], 200, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORD_NERD', 'Light Amplification by Stimulated Emission of Radiation.', NULL,
         '"Laser" started out as a set of initials. What does its L stand for?', NULL,
         'Light', ARRAY['Long', 'Linear', 'Liquid', 'Lens', 'Low', 'Luminous'], 200, NULL);
@@ -19546,10 +19562,6 @@ INSERT INTO questions (question_number, game_mode, category, subcategory, factio
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORD_NERD', 'WORD_NERD_BATCH_1', NULL,
         'What does "carpe diem" mean?', NULL,
         'Seize the day', ARRAY['Fish of the day', 'Live and let live', 'Rest in peace', 'Day by day', 'Count the days', 'Love conquers all'], 200, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORD_NERD', 'From Latin "exempli gratia." "That is" is i.e.; "and so on" is etc.', NULL,
-        'What does "e.g." stand for?', NULL,
-        'For example', ARRAY['That is', 'And so on', 'Note well', 'Approximately', 'Especially', 'Namely'], 200, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORD_NERD', 'WORD_NERD_BATCH_1', NULL,
         'What is a doppelgänger?', NULL,
@@ -19567,21 +19579,9 @@ VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YE
         'What is the "&" symbol called?', NULL,
         'An ampersand', ARRAY['An asterisk', 'An octothorpe', 'A tilde', 'A caret', 'A pilcrow', 'An interrobang'], 200, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORD_NERD', 'Alpha + beta.', NULL,
-        'Where does the word "alphabet" come from?', NULL,
-        'The first two Greek letters', ARRAY['Latin for "letter list"', 'An old English word for "writing"', 'The name of a Roman teacher', 'Hebrew for "beginning"', 'Greek for "sound marks"', 'A Phoenician king'], 200, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORD_NERD', 'WORD_NERD_BATCH_1', NULL,
         'What does "incognito" mean?', NULL,
         'In disguise', ARRAY['Unconscious', 'Confused', 'In debt', 'Without a car', 'Uninvited', 'Underground'], 200, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORD_NERD', 'WORD_NERD_BATCH_1', NULL,
-        'What does "vice versa" mean?', NULL,
-        'The other way around', ARRAY['Against the rules', 'In poetry', 'Bad habits', 'Word for word', 'Again and again', 'In other words'], 200, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORD_NERD', 'WORD_NERD_BATCH_1', NULL,
-        'What does "ad nauseam" mean?', NULL,
-        'Over and over, to a sickening degree', ARRAY['Seasick', 'By the sea', 'To the very end', 'For a fee', 'In advertising', 'In private'], 200, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORD_NERD', 'WORD_NERD_BATCH_1', NULL,
         'What does "bona fide" mean?', NULL,
@@ -19591,9 +19591,9 @@ VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YE
         'What is "..." (three dots that trail off) called?', NULL,
         'An ellipsis', ARRAY['An em dash', 'An asterisk', 'A colon', 'A tilde', 'An interrobang', 'A caret'], 200, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORD_NERD', '"After midnight" is the common guess.', NULL,
-        'What do the letters "a.m." stand for?', NULL,
-        'Ante meridiem (before midday)', ARRAY['After midnight', 'Ante matinee', 'Around midday', 'Anno mundi', 'After morning', 'At meridian'], 200, NULL);
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORD_NERD', 'WORD_NERD_BATCH_1', NULL,
+        '"Passed away" instead of "died" is an example of what?', NULL,
+        'A euphemism', ARRAY['Hyperbole', 'An oxymoron', 'A spoonerism', 'A pun', 'A simile', 'A palindrome'], 200, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORD_NERD', 'DEPTH_NOV_2026', NULL,
         'What does "resilient" mean?', NULL,
@@ -19620,32 +19620,8 @@ VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YE
         'Certain to happen', ARRAY['Invisible', 'Unlikely', 'Unbelievable', 'Unwelcome', 'Endless', 'Impossible'], 200, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORD_NERD', 'DEPTH_NOV_2026', NULL,
-        'What does "anonymous" mean?', NULL,
-        'With no name given', ARRAY['Very large', 'Unanimous', 'Ancient', 'Shy', 'Angry', 'Secretive'], 200, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORD_NERD', 'DEPTH_NOV_2026', NULL,
-        'What is insomnia?', NULL,
-        'Trouble sleeping', ARRAY['Fear of the dark', 'Sleepwalking', 'Snoring', 'Oversleeping', 'Bad dreams', 'Talking in your sleep'], 200, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORD_NERD', 'DEPTH_NOV_2026', NULL,
-        'What does "micro-" mean, as in "microscope"?', NULL,
-        'Small', ARRAY['Large', 'Many', 'Half', 'Far', 'Under', 'Fast'], 200, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORD_NERD', 'DEPTH_NOV_2026', NULL,
-        'What does "-ology" mean, as in "biology"?', NULL,
-        'The study of', ARRAY['Fear of', 'Love of', 'Lack of', 'Making of', 'Measure of', 'Writer of'], 200, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORD_NERD', 'DEPTH_NOV_2026', NULL,
         'What does "auto-" mean, as in "autobiography"?', NULL,
         'Self', ARRAY['Car', 'Life', 'Writing', 'Moving', 'Story', 'Many'], 200, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORD_NERD', 'DEPTH_NOV_2026', NULL,
-        'What does "geo-" mean, as in "geography"?', NULL,
-        'Earth', ARRAY['Rock', 'Map', 'Sky', 'Water', 'Life', 'Travel'], 200, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORD_NERD', 'DEPTH_NOV_2026', NULL,
-        'A shortened word like "can''t" or "I''m" is called what?', NULL,
-        'A contraction', ARRAY['An abbreviation', 'An acronym', 'A compound word', 'A portmanteau', 'An ellipsis', 'A prefix'], 200, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORD_NERD', 'DEPTH_NOV_2026', NULL,
         '"It''s raining cats and dogs" is an example of what?', NULL,
@@ -19678,8 +19654,60 @@ INSERT INTO questions (question_number, game_mode, category, subcategory, factio
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORD_NERD', 'DEPTH_NOV_2026', NULL,
         'What does "ambiguous" mean?', NULL,
         'Open to more than one meaning', ARRAY['Ambitious', 'Able to use both hands', 'Moving slowly', 'Unfriendly', 'Very large', 'Full of energy'], 200, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORD_NERD', 'DEPTH_NOV_2026', NULL,
+        'What is a hypocrite?', NULL,
+        'Someone who doesn''t practice what they preach', ARRAY['Someone who worries about their health', 'Someone who talks too much', 'Someone who copies others', 'Someone who is overly polite', 'Someone who hates change', 'Someone who can''t make decisions'], 200, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORD_NERD', 'DEPTH_NOV_2026', NULL,
+        'What is a "red herring"?', NULL,
+        'A misleading clue', ARRAY['A lucky charm', 'A secret password', 'A sure win', 'A rare find', 'A final clue', 'A smoking gun'], 200, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORD_NERD', 'DEPTH_NOV_2026', NULL,
+        'What does "verbatim" mean?', NULL,
+        'Word for word', ARRAY['Out loud', 'In summary', 'In verse', 'In secret', 'Very quickly', 'In translation'], 200, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORD_NERD', 'DEPTH_NOV_2026', NULL,
+        'What is an epiphany?', NULL,
+        'A sudden realization', ARRAY['A sad ending', 'A long speech', 'A nightmare', 'A fancy party', 'A false belief', 'A lucky guess'], 200, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORD_NERD', 'DEPTH_NOV_2026', NULL,
+        'What does "mundane" mean?', NULL,
+        'Ordinary and dull', ARRAY['Worldwide', 'Muddy', 'Sacred', 'Exciting', 'Monthly', 'Gloomy'], 200, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORD_NERD', 'DEPTH_NOV_2026', NULL,
+        'What does "cryptic" mean?', NULL,
+        'Mysterious and puzzling', ARRAY['Spooky', 'Frozen', 'Crisp', 'Ancient', 'Underground', 'Crying'], 200, NULL);
 
 -- 300 points
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORD_NERD', 'PRIMARY_SCHOOL_FOLD_1', NULL,
+        'What does "ubiquitous" mean?', NULL,
+        'Found everywhere', ARRAY['Very rare', 'Very old', 'Extremely loud', 'Hard to understand', 'Constantly changing', 'Quick to anger'], 300, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORD_NERD', 'PRIMARY_SCHOOL_FOLD_1', NULL,
+        'What does "gregarious" mean?', NULL,
+        'Sociable and outgoing', ARRAY['Greedy', 'Shy', 'Bossy', 'Grumpy', 'Heavy', 'Gloomy'], 300, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORD_NERD', 'WORD_NERD_BATCH_1', NULL,
+        '"Brunch" blends "breakfast" and "lunch." What is a blended word like this called?', NULL,
+        'A portmanteau', ARRAY['An acronym', 'A contraction', 'An anagram', 'A palindrome', 'A spoonerism', 'An eponym'], 300, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORD_NERD', 'Self-Contained Underwater Breathing Apparatus.', NULL,
+        'In "scuba," what does the S stand for?', NULL,
+        'Self-contained', ARRAY['Submarine', 'Sea', 'Safety', 'Surface', 'Snorkel', 'Swimming'], 300, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORD_NERD', 'Alpha + beta.', NULL,
+        'Where does the word "alphabet" come from?', NULL,
+        'The first two Greek letters', ARRAY['Latin for "letter list"', 'An old English word for "writing"', 'The name of a Roman teacher', 'Hebrew for "beginning"', 'Greek for "sound marks"', 'A Phoenician king'], 300, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORD_NERD', 'WORD_NERD_BATCH_1', NULL,
+        'What does "ad nauseam" mean?', NULL,
+        'Over and over, to a sickening degree', ARRAY['Seasick', 'By the sea', 'To the very end', 'For a fee', 'In advertising', 'In private'], 300, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORD_NERD', '"After midnight" is the common guess.', NULL,
+        'What do the letters "a.m." stand for?', NULL,
+        'Ante meridiem (before midday)', ARRAY['After midnight', 'Ante matinee', 'Around midday', 'Anno mundi', 'After morning', 'At meridian'], 300, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORD_NERD', 'PRIMARY_SCHOOL_FOLD_1', NULL,
         'What does "ephemeral" mean?', NULL,
@@ -19726,10 +19754,6 @@ VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YE
         'Writes dictionaries', ARRAY['Studies maps', 'Reads palms', 'Studies rocks', 'Draws charts', 'Analyzes handwriting', 'Designs fonts'], 300, 'Samuel Johnson''s 1755 dictionary defined a lexicographer as "a harmless drudge."');
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORD_NERD', 'WORD_NERD_BATCH_1', NULL,
-        'What is the dot over a lowercase "i" or "j" called?', NULL,
-        'A tittle', ARRAY['A jot', 'A tick', 'A pip', 'A speck', 'A serif', 'A crumb'], 300, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORD_NERD', 'WORD_NERD_BATCH_1', NULL,
         'The word "salary" comes from the Latin word for which everyday item?', NULL,
         'Salt', ARRAY['Bread', 'Silver', 'Wine', 'Grain', 'Oil', 'Cloth'], 300, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
@@ -19741,25 +19765,13 @@ VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YE
         'Saying "You have hissed all my mystery lectures" instead of "missed all my history lectures" is called what?', NULL,
         'A spoonerism', ARRAY['A malapropism', 'A palindrome', 'A portmanteau', 'An anagram', 'A pun', 'A tongue twister'], 300, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORD_NERD', 'WORD_NERD_BATCH_1', NULL,
-        '"Passed away" instead of "died" is an example of what?', NULL,
-        'A euphemism', ARRAY['Hyperbole', 'An oxymoron', 'A spoonerism', 'A pun', 'A simile', 'A palindrome'], 300, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORD_NERD', '... --- ... was picked because it''s simple and unmistakable. "Save Our Souls" came later.', NULL,
         'What do the letters in the distress signal "SOS" stand for?', NULL,
         'Nothing: it''s just easy to send in Morse code', ARRAY['Save Our Souls', 'Save Our Ship', 'Send Out Sailors', 'Stop Or Sink', 'Signal Of Sinking', 'Ship On Sea'], 300, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORD_NERD', 'They were first sold as "Baby Gays," then "Q-tips Baby Gays," Q for quality.', NULL,
-        'What does the "Q" in "Q-tips" stand for?', NULL,
-        'Quality', ARRAY['Quick', 'Queen', 'Quilted', 'Quiet', 'Quarter', 'Quaint'], 300, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORD_NERD', 'From "robota," in Karel Čapek''s 1920 play "R.U.R."', NULL,
         'The word "robot" comes from a Czech word meaning what?', NULL,
         'Forced labor', ARRAY['Metal man', 'Thinking machine', 'Clockwork', 'Iron soldier', 'Lightning', 'Electric brain'], 300, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORD_NERD', 'Bad events were blamed on the stars.', NULL,
-        '"Disaster" comes from Italian. What does it literally mean?', NULL,
-        'Bad star', ARRAY['Great fire', 'Broken city', 'Falling sky', 'Evil wind', 'Dark day', 'Angry god'], 300, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORD_NERD', 'Thomas Edison pushed "hello" as the way to answer the phone.', NULL,
         '"Hello" became the standard greeting thanks to which invention?', NULL,
@@ -19797,9 +19809,21 @@ VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YE
         'What does "ergo" mean?', NULL,
         'Therefore', ARRAY['However', 'Also', 'Unless', 'Despite', 'Meanwhile', 'Instead'], 300, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORD_NERD', 'DEPTH_NOV_2026', NULL,
-        'What is a hypocrite?', NULL,
-        'Someone who doesn''t practice what they preach', ARRAY['Someone who worries about their health', 'Someone who talks too much', 'Someone who copies others', 'Someone who is overly polite', 'Someone who hates change', 'Someone who can''t make decisions'], 300, NULL);
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORD_NERD', 'WORD_NERD_BATCH_1', NULL,
+        'What is triskaidekaphobia?', NULL,
+        'Fear of the number 13', ARRAY['Fear of triangles', 'Fear of tricycles', 'Fear of three-legged animals', 'Fear of long words', 'Fear of Fridays', 'Fear of being tricked'], 300, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORD_NERD', 'WORD_NERD_BATCH_1', NULL,
+        'What does "loquacious" mean?', NULL,
+        'Very talkative', ARRAY['Local', 'Crazy', 'Liquid', 'Lucky', 'Long-lived', 'Stubborn'], 300, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORD_NERD', 'WORD_NERD_BATCH_1', NULL,
+        'What is the Oxford comma?', NULL,
+        'A comma before the "and" at the end of a list', ARRAY['A comma after a greeting', 'A comma in a date', 'A comma joining two sentences', 'A comma used only in Britain', 'A comma in large numbers', 'A comma before a quote'], 300, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORD_NERD', 'WORD_NERD_BATCH_1', NULL,
+        'What is an aglet?', NULL,
+        'The plastic tip of a shoelace', ARRAY['An eyelet', 'The metal band on a pencil', 'The loop on a belt', 'The tag on a teabag', 'The ring on a soda can', 'The clasp on a necklace'], 300, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORD_NERD', 'DEPTH_NOV_2026', NULL,
         'What does "tenacious" mean?', NULL,
@@ -19842,32 +19866,8 @@ VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YE
         'The cardigan', ARRAY['The blazer', 'The poncho', 'The tuxedo', 'The parka', 'The windbreaker', 'The jumper'], 300, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORD_NERD', 'DEPTH_NOV_2026', NULL,
-        'A word named after a person, like "sandwich," is called what?', NULL,
-        'An eponym', ARRAY['An acronym', 'An antonym', 'A pseudonym', 'A homonym', 'A synonym', 'A toponym'], 300, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORD_NERD', 'DEPTH_NOV_2026', NULL,
-        'What is a "red herring"?', NULL,
-        'A misleading clue', ARRAY['A lucky charm', 'A secret password', 'A sure win', 'A rare find', 'A final clue', 'A smoking gun'], 300, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORD_NERD', 'DEPTH_NOV_2026', NULL,
-        'What does "verbatim" mean?', NULL,
-        'Word for word', ARRAY['Out loud', 'In summary', 'In verse', 'In secret', 'Very quickly', 'In translation'], 300, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORD_NERD', 'DEPTH_NOV_2026', NULL,
-        'What is an epiphany?', NULL,
-        'A sudden realization', ARRAY['A sad ending', 'A long speech', 'A nightmare', 'A fancy party', 'A false belief', 'A lucky guess'], 300, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORD_NERD', 'DEPTH_NOV_2026', NULL,
-        'What does "mundane" mean?', NULL,
-        'Ordinary and dull', ARRAY['Worldwide', 'Muddy', 'Sacred', 'Exciting', 'Monthly', 'Gloomy'], 300, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORD_NERD', 'DEPTH_NOV_2026', NULL,
         'What does "zealous" mean?', NULL,
         'Full of passionate enthusiasm', ARRAY['Jealous', 'Lazy', 'Cautious', 'Lonely', 'Cruel', 'Clumsy'], 300, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORD_NERD', 'DEPTH_NOV_2026', NULL,
-        'What does "cryptic" mean?', NULL,
-        'Mysterious and puzzling', ARRAY['Spooky', 'Frozen', 'Crisp', 'Ancient', 'Underground', 'Crying'], 300, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORD_NERD', 'DEPTH_NOV_2026', NULL,
         '"Hippopotamus" comes from Greek words meaning what?', NULL,
@@ -19882,6 +19882,18 @@ VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YE
         'Star sailor', ARRAY['Sky walker', 'Moon traveler', 'Space soldier', 'Night flier', 'Heaven climber', 'Rocket rider'], 300, NULL);
 
 -- 400 points
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORD_NERD', 'WORD_NERD_BATCH_1', NULL,
+        'What is the dot over a lowercase "i" or "j" called?', NULL,
+        'A tittle', ARRAY['A jot', 'A tick', 'A pip', 'A speck', 'A serif', 'A crumb'], 400, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORD_NERD', 'They were first sold as "Baby Gays," then "Q-tips Baby Gays," Q for quality.', NULL,
+        'What does the "Q" in "Q-tips" stand for?', NULL,
+        'Quality', ARRAY['Quick', 'Queen', 'Quilted', 'Quiet', 'Quarter', 'Quaint'], 400, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORD_NERD', 'Bad events were blamed on the stars.', NULL,
+        '"Disaster" comes from Italian. What does it literally mean?', NULL,
+        'Bad star', ARRAY['Great fire', 'Broken city', 'Falling sky', 'Evil wind', 'Dark day', 'Angry god'], 400, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORD_NERD', 'WORD_NERD_BATCH_1', NULL,
         'A group of flamingos is called a what?', NULL,
@@ -19914,10 +19926,6 @@ INSERT INTO questions (question_number, game_mode, category, subcategory, factio
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORD_NERD', 'WORD_NERD_BATCH_1', NULL,
         'What is petrichor?', NULL,
         'The earthy smell after rain', ARRAY['A fossilized tree', 'A choir of stones', 'A type of gasoline', 'Stone flooring', 'A rock-climbing knot', 'Morning dew'], 400, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORD_NERD', 'WORD_NERD_BATCH_1', NULL,
-        'What is triskaidekaphobia?', NULL,
-        'Fear of the number 13', ARRAY['Fear of triangles', 'Fear of tricycles', 'Fear of three-legged animals', 'Fear of long words', 'Fear of Fridays', 'Fear of being tricked'], 400, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORD_NERD', 'After Mrs. Malaprop in Sheridan''s 1775 play "The Rivals," who says it (for "pinnacle").', NULL,
         'Mixing up similar-sounding words for comic effect, like "the pineapple of politeness," is called what?', NULL,
@@ -19964,20 +19972,12 @@ VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YE
         'Cowardly', ARRAY['Pushy', 'Generous', 'Full of pus', 'Rude', 'Childish', 'Fussy'], 400, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORD_NERD', 'WORD_NERD_BATCH_1', NULL,
-        'What does "loquacious" mean?', NULL,
-        'Very talkative', ARRAY['Local', 'Crazy', 'Liquid', 'Lucky', 'Long-lived', 'Stubborn'], 400, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORD_NERD', 'WORD_NERD_BATCH_1', NULL,
         'What does "lugubrious" mean?', NULL,
         'Gloomy and mournful', ARRAY['Slippery', 'Clumsy', 'Greedy', 'Heavy', 'Lazy', 'Long-winded'], 400, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORD_NERD', '"Faithful" is the opposite.', NULL,
         'What does "perfidious" mean?', NULL,
         'Untrustworthy', ARRAY['Perfect', 'Fragrant', 'Fussy', 'Endless', 'Fearless', 'Faithful'], 400, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORD_NERD', 'WORD_NERD_BATCH_1', NULL,
-        'What is the Oxford comma?', NULL,
-        'A comma before the "and" at the end of a list', ARRAY['A comma after a greeting', 'A comma in a date', 'A comma joining two sentences', 'A comma used only in Britain', 'A comma in large numbers', 'A comma before a quote'], 400, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORD_NERD', 'Like the thread Theseus used to find his way out of the Labyrinth.', NULL,
         'The word "clue" comes from "clew," which meant what?', NULL,
@@ -19991,13 +19991,13 @@ VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YE
         'In Middle English, "nice" meant what?', NULL,
         'Foolish', ARRAY['Clean', 'Pretty', 'Gentle', 'Wealthy', 'Brave', 'Holy'], 400, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORD_NERD', 'WORD_NERD_BATCH_1', NULL,
-        'What is an aglet?', NULL,
-        'The plastic tip of a shoelace', ARRAY['An eyelet', 'The metal band on a pencil', 'The loop on a belt', 'The tag on a teabag', 'The ring on a soda can', 'The clasp on a necklace'], 400, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORD_NERD', 'The most common vowel sound in English, like the "a" in "about."', NULL,
         'What is the "schwa"?', NULL,
         'The unstressed "uh" vowel sound', ARRAY['A silent letter', 'A German umlaut', 'A rolled R', 'A Hebrew accent mark', 'A breathy H sound', 'A doubled consonant'], 400, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORD_NERD', 'DEPTH_NOV_2026', NULL,
+        'A word named after a person, like "sandwich," is called what?', NULL,
+        'An eponym', ARRAY['An acronym', 'An antonym', 'A pseudonym', 'A homonym', 'A synonym', 'A toponym'], 400, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORD_NERD', 'DEPTH_NOV_2026', NULL,
         '"Shampoo" comes from Hindi, where it meant what?', NULL,

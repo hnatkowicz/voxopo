@@ -20,26 +20,6 @@ DELETE FROM questions WHERE game_mode = 'TRIVI_YEAH_II' AND category = 'WORD_NER
 -- 100 points
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORD_NERD', 'PRIMARY_SCHOOL_FOLD_1', NULL,
-        'What does "meticulous" mean?', NULL,
-        'Extremely careful and precise', ARRAY['Easily annoyed', 'Very quick', 'Slightly messy', 'Showing off', 'Deeply sad', 'Overly cheerful'], 100, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORD_NERD', 'PRIMARY_SCHOOL_FOLD_1', NULL,
-        'What does "candid" mean?', NULL,
-        'Honest and direct', ARRAY['Sweet and sugary', 'Secretive', 'Shy and quiet', 'Easily fooled', 'Bright and shiny', 'Polite but fake'], 100, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORD_NERD', 'PRIMARY_SCHOOL_FOLD_1', NULL,
-        'What does "frugal" mean?', NULL,
-        'Careful with money', ARRAY['Full of fruit', 'Easily broken', 'Wasteful', 'Grumpy', 'Very fast', 'Overly emotional'], 100, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORD_NERD', 'The first wrong answer is "malevolent," its opposite.', NULL,
-        'What does "benevolent" mean?', NULL,
-        'Kind and generous', ARRAY['Wishing harm on others', 'Very old', 'Easily bored', 'Proud', 'Lazy', 'Loud'], 100, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORD_NERD', 'PRIMARY_SCHOOL_FOLD_1', NULL,
-        'What does "audacious" mean?', NULL,
-        'Bold and daring', ARRAY['Loud and noisy', 'Shy', 'Careful', 'Boring', 'Rude', 'Wealthy'], 100, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORD_NERD', 'PRIMARY_SCHOOL_FOLD_1', NULL,
         'What does "skeptical" mean?', NULL,
         'Doubtful', ARRAY['Bony', 'Gullible', 'Cheerful', 'Sleepy', 'Germ-free', 'Angry'], 100, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
@@ -60,16 +40,8 @@ VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YE
         'Extremely small', ARRAY['Very muscular', 'Slightly late', 'Huge', 'Brief', 'Quiet', 'Cheap'], 100, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORD_NERD', 'PRIMARY_SCHOOL_FOLD_1', NULL,
-        'What does "tele-" mean, as in "telescope" and "telephone"?', NULL,
-        'Far', ARRAY['Small', 'Light', 'See', 'Sound', 'Near', 'Big'], 100, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORD_NERD', 'PRIMARY_SCHOOL_FOLD_1', NULL,
         'What does "chrono-" mean, as in "chronological"?', NULL,
         'Time', ARRAY['Color', 'Light', 'Sound', 'Heat', 'Earth', 'Speed'], 100, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORD_NERD', 'PRIMARY_SCHOOL_FOLD_1', NULL,
-        '"I''ve told you a million times" is an example of what?', NULL,
-        'Hyperbole', ARRAY['A simile', 'A metaphor', 'Onomatopoeia', 'Alliteration', 'Personification', 'Irony'], 100, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORD_NERD', 'PRIMARY_SCHOOL_FOLD_1', NULL,
         'Words that imitate sounds, like "buzz" and "sizzle," are called what?', NULL,
@@ -78,10 +50,6 @@ INSERT INTO questions (question_number, game_mode, category, subcategory, factio
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORD_NERD', 'PRIMARY_SCHOOL_FOLD_1', NULL,
         '"Busy as a bee" is an example of what?', NULL,
         'A simile', ARRAY['A metaphor', 'Hyperbole', 'An idiom', 'Alliteration', 'An oxymoron', 'Personification'], 100, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORD_NERD', 'PRIMARY_SCHOOL_FOLD_1', NULL,
-        '"Their," "there" and "they''re" sound alike but mean different things. What are they called?', NULL,
-        'Homophones', ARRAY['Homographs', 'Synonyms', 'Antonyms', 'Anagrams', 'Palindromes', 'Acronyms'], 100, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORD_NERD', 'PRIMARY_SCHOOL_FOLD_1', NULL,
         'What is the opposite of a synonym?', NULL,
@@ -94,10 +62,6 @@ INSERT INTO questions (question_number, game_mode, category, subcategory, factio
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORD_NERD', 'WORD_NERD_BATCH_1', NULL,
         '"Listen" and "silent" use exactly the same letters. What are they?', NULL,
         'Anagrams', ARRAY['Palindromes', 'Homophones', 'Synonyms', 'Antonyms', 'Homographs', 'Acronyms'], 100, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORD_NERD', 'WORD_NERD_BATCH_1', NULL,
-        '"Jumbo shrimp" and "deafening silence" are examples of what?', NULL,
-        'An oxymoron', ARRAY['A palindrome', 'A simile', 'Hyperbole', 'A pun', 'An idiom', 'An anagram'], 100, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORD_NERD', 'WORD_NERD_BATCH_1', NULL,
         'A word made from the first letters of other words, like NASA, is called what?', NULL,
@@ -134,6 +98,18 @@ INSERT INTO questions (question_number, game_mode, category, subcategory, factio
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORD_NERD', 'WORD_NERD_BATCH_1', NULL,
         'Which word means "to put off doing something until later"?', NULL,
         'Procrastinate', ARRAY['Pontificate', 'Prognosticate', 'Proliferate', 'Perpetuate', 'Precipitate', 'Prevaricate'], 100, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORD_NERD', 'Agoraphobia: open or crowded places. Nyctophobia: the dark. Coulrophobia: clowns.', NULL,
+        'What is the fear of small or enclosed spaces called?', NULL,
+        'Claustrophobia', ARRAY['Agoraphobia', 'Acrophobia', 'Arachnophobia', 'Nyctophobia', 'Aquaphobia', 'Coulrophobia'], 100, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORD_NERD', 'From Latin "exempli gratia." "That is" is i.e.; "and so on" is etc.', NULL,
+        'What does "e.g." stand for?', NULL,
+        'For example', ARRAY['That is', 'And so on', 'Note well', 'Approximately', 'Especially', 'Namely'], 100, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORD_NERD', 'WORD_NERD_BATCH_1', NULL,
+        'What does "vice versa" mean?', NULL,
+        'The other way around', ARRAY['Against the rules', 'In poetry', 'Bad habits', 'Word for word', 'Again and again', 'In other words'], 100, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORD_NERD', 'DEPTH_NOV_2026', NULL,
         'What does "reluctant" mean?', NULL,
@@ -218,8 +194,68 @@ INSERT INTO questions (question_number, game_mode, category, subcategory, factio
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORD_NERD', 'DEPTH_NOV_2026', NULL,
         'What does "curious" mean?', NULL,
         'Eager to know or learn', ARRAY['Angry', 'Sleepy', 'Rounded', 'Healing', 'Careful', 'Cozy'], 100, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORD_NERD', 'DEPTH_NOV_2026', NULL,
+        'What does "anonymous" mean?', NULL,
+        'With no name given', ARRAY['Very large', 'Unanimous', 'Ancient', 'Shy', 'Angry', 'Secretive'], 100, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORD_NERD', 'DEPTH_NOV_2026', NULL,
+        'What is insomnia?', NULL,
+        'Trouble sleeping', ARRAY['Fear of the dark', 'Sleepwalking', 'Snoring', 'Oversleeping', 'Bad dreams', 'Talking in your sleep'], 100, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORD_NERD', 'DEPTH_NOV_2026', NULL,
+        'What does "micro-" mean, as in "microscope"?', NULL,
+        'Small', ARRAY['Large', 'Many', 'Half', 'Far', 'Under', 'Fast'], 100, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORD_NERD', 'DEPTH_NOV_2026', NULL,
+        'What does "-ology" mean, as in "biology"?', NULL,
+        'The study of', ARRAY['Fear of', 'Love of', 'Lack of', 'Making of', 'Measure of', 'Writer of'], 100, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORD_NERD', 'DEPTH_NOV_2026', NULL,
+        'What does "geo-" mean, as in "geography"?', NULL,
+        'Earth', ARRAY['Rock', 'Map', 'Sky', 'Water', 'Life', 'Travel'], 100, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORD_NERD', 'DEPTH_NOV_2026', NULL,
+        'A shortened word like "can''t" or "I''m" is called what?', NULL,
+        'A contraction', ARRAY['An abbreviation', 'An acronym', 'A compound word', 'A portmanteau', 'An ellipsis', 'A prefix'], 100, NULL);
 
 -- 200 points
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORD_NERD', 'PRIMARY_SCHOOL_FOLD_1', NULL,
+        'What does "meticulous" mean?', NULL,
+        'Extremely careful and precise', ARRAY['Easily annoyed', 'Very quick', 'Slightly messy', 'Showing off', 'Deeply sad', 'Overly cheerful'], 200, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORD_NERD', 'PRIMARY_SCHOOL_FOLD_1', NULL,
+        'What does "candid" mean?', NULL,
+        'Honest and direct', ARRAY['Sweet and sugary', 'Secretive', 'Shy and quiet', 'Easily fooled', 'Bright and shiny', 'Polite but fake'], 200, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORD_NERD', 'PRIMARY_SCHOOL_FOLD_1', NULL,
+        'What does "frugal" mean?', NULL,
+        'Careful with money', ARRAY['Full of fruit', 'Easily broken', 'Wasteful', 'Grumpy', 'Very fast', 'Overly emotional'], 200, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORD_NERD', 'The first wrong answer is "malevolent," its opposite.', NULL,
+        'What does "benevolent" mean?', NULL,
+        'Kind and generous', ARRAY['Wishing harm on others', 'Very old', 'Easily bored', 'Proud', 'Lazy', 'Loud'], 200, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORD_NERD', 'PRIMARY_SCHOOL_FOLD_1', NULL,
+        'What does "audacious" mean?', NULL,
+        'Bold and daring', ARRAY['Loud and noisy', 'Shy', 'Careful', 'Boring', 'Rude', 'Wealthy'], 200, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORD_NERD', 'PRIMARY_SCHOOL_FOLD_1', NULL,
+        'What does "tele-" mean, as in "telescope" and "telephone"?', NULL,
+        'Far', ARRAY['Small', 'Light', 'See', 'Sound', 'Near', 'Big'], 200, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORD_NERD', 'PRIMARY_SCHOOL_FOLD_1', NULL,
+        '"I''ve told you a million times" is an example of what?', NULL,
+        'Hyperbole', ARRAY['A simile', 'A metaphor', 'Onomatopoeia', 'Alliteration', 'Personification', 'Irony'], 200, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORD_NERD', 'PRIMARY_SCHOOL_FOLD_1', NULL,
+        '"Their," "there" and "they''re" sound alike but mean different things. What are they called?', NULL,
+        'Homophones', ARRAY['Homographs', 'Synonyms', 'Antonyms', 'Anagrams', 'Palindromes', 'Acronyms'], 200, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORD_NERD', 'WORD_NERD_BATCH_1', NULL,
+        '"Jumbo shrimp" and "deafening silence" are examples of what?', NULL,
+        'An oxymoron', ARRAY['A palindrome', 'A simile', 'Hyperbole', 'A pun', 'An idiom', 'An anagram'], 200, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORD_NERD', 'PRIMARY_SCHOOL_FOLD_1', NULL,
         '"Life is a rollercoaster" is an example of what?', NULL,
@@ -242,24 +278,8 @@ VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YE
         'All', ARRAY['Meat', 'Plants', 'Many', 'Eating', 'Large', 'None'], 200, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORD_NERD', 'PRIMARY_SCHOOL_FOLD_1', NULL,
-        'What does "ubiquitous" mean?', NULL,
-        'Found everywhere', ARRAY['Very rare', 'Very old', 'Extremely loud', 'Hard to understand', 'Constantly changing', 'Quick to anger'], 200, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORD_NERD', 'PRIMARY_SCHOOL_FOLD_1', NULL,
-        'What does "gregarious" mean?', NULL,
-        'Sociable and outgoing', ARRAY['Greedy', 'Shy', 'Bossy', 'Grumpy', 'Heavy', 'Gloomy'], 200, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORD_NERD', 'PRIMARY_SCHOOL_FOLD_1', NULL,
         'What does "verbose" mean?', NULL,
         'Using more words than needed', ARRAY['Lacking words', 'Rude', 'Full of verbs', 'Honest', 'Very loud', 'Confusing'], 200, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORD_NERD', 'Agoraphobia: open or crowded places. Nyctophobia: the dark. Coulrophobia: clowns.', NULL,
-        'What is the fear of small or enclosed spaces called?', NULL,
-        'Claustrophobia', ARRAY['Agoraphobia', 'Acrophobia', 'Arachnophobia', 'Nyctophobia', 'Aquaphobia', 'Coulrophobia'], 200, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORD_NERD', 'WORD_NERD_BATCH_1', NULL,
-        '"Brunch" blends "breakfast" and "lunch." What is a blended word like this called?', NULL,
-        'A portmanteau', ARRAY['An acronym', 'A contraction', 'An anagram', 'A palindrome', 'A spoonerism', 'An eponym'], 200, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORD_NERD', 'WORD_NERD_BATCH_1', NULL,
         'What does "déjà vu" literally mean?', NULL,
@@ -273,10 +293,6 @@ VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YE
         'What is a bibliophile?', NULL,
         'A lover of books', ARRAY['A Bible scholar', 'A fear of books', 'A bookbinder', 'A speed reader', 'A bad writer', 'A book critic'], 200, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORD_NERD', 'Self-Contained Underwater Breathing Apparatus.', NULL,
-        'In "scuba," what does the S stand for?', NULL,
-        'Self-contained', ARRAY['Submarine', 'Sea', 'Safety', 'Surface', 'Snorkel', 'Swimming'], 200, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORD_NERD', 'Light Amplification by Stimulated Emission of Radiation.', NULL,
         '"Laser" started out as a set of initials. What does its L stand for?', NULL,
         'Light', ARRAY['Long', 'Linear', 'Liquid', 'Lens', 'Low', 'Luminous'], 200, NULL);
@@ -288,10 +304,6 @@ INSERT INTO questions (question_number, game_mode, category, subcategory, factio
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORD_NERD', 'WORD_NERD_BATCH_1', NULL,
         'What does "carpe diem" mean?', NULL,
         'Seize the day', ARRAY['Fish of the day', 'Live and let live', 'Rest in peace', 'Day by day', 'Count the days', 'Love conquers all'], 200, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORD_NERD', 'From Latin "exempli gratia." "That is" is i.e.; "and so on" is etc.', NULL,
-        'What does "e.g." stand for?', NULL,
-        'For example', ARRAY['That is', 'And so on', 'Note well', 'Approximately', 'Especially', 'Namely'], 200, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORD_NERD', 'WORD_NERD_BATCH_1', NULL,
         'What is a doppelgänger?', NULL,
@@ -309,21 +321,9 @@ VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YE
         'What is the "&" symbol called?', NULL,
         'An ampersand', ARRAY['An asterisk', 'An octothorpe', 'A tilde', 'A caret', 'A pilcrow', 'An interrobang'], 200, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORD_NERD', 'Alpha + beta.', NULL,
-        'Where does the word "alphabet" come from?', NULL,
-        'The first two Greek letters', ARRAY['Latin for "letter list"', 'An old English word for "writing"', 'The name of a Roman teacher', 'Hebrew for "beginning"', 'Greek for "sound marks"', 'A Phoenician king'], 200, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORD_NERD', 'WORD_NERD_BATCH_1', NULL,
         'What does "incognito" mean?', NULL,
         'In disguise', ARRAY['Unconscious', 'Confused', 'In debt', 'Without a car', 'Uninvited', 'Underground'], 200, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORD_NERD', 'WORD_NERD_BATCH_1', NULL,
-        'What does "vice versa" mean?', NULL,
-        'The other way around', ARRAY['Against the rules', 'In poetry', 'Bad habits', 'Word for word', 'Again and again', 'In other words'], 200, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORD_NERD', 'WORD_NERD_BATCH_1', NULL,
-        'What does "ad nauseam" mean?', NULL,
-        'Over and over, to a sickening degree', ARRAY['Seasick', 'By the sea', 'To the very end', 'For a fee', 'In advertising', 'In private'], 200, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORD_NERD', 'WORD_NERD_BATCH_1', NULL,
         'What does "bona fide" mean?', NULL,
@@ -333,9 +333,9 @@ VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YE
         'What is "..." (three dots that trail off) called?', NULL,
         'An ellipsis', ARRAY['An em dash', 'An asterisk', 'A colon', 'A tilde', 'An interrobang', 'A caret'], 200, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORD_NERD', '"After midnight" is the common guess.', NULL,
-        'What do the letters "a.m." stand for?', NULL,
-        'Ante meridiem (before midday)', ARRAY['After midnight', 'Ante matinee', 'Around midday', 'Anno mundi', 'After morning', 'At meridian'], 200, NULL);
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORD_NERD', 'WORD_NERD_BATCH_1', NULL,
+        '"Passed away" instead of "died" is an example of what?', NULL,
+        'A euphemism', ARRAY['Hyperbole', 'An oxymoron', 'A spoonerism', 'A pun', 'A simile', 'A palindrome'], 200, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORD_NERD', 'DEPTH_NOV_2026', NULL,
         'What does "resilient" mean?', NULL,
@@ -362,32 +362,8 @@ VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YE
         'Certain to happen', ARRAY['Invisible', 'Unlikely', 'Unbelievable', 'Unwelcome', 'Endless', 'Impossible'], 200, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORD_NERD', 'DEPTH_NOV_2026', NULL,
-        'What does "anonymous" mean?', NULL,
-        'With no name given', ARRAY['Very large', 'Unanimous', 'Ancient', 'Shy', 'Angry', 'Secretive'], 200, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORD_NERD', 'DEPTH_NOV_2026', NULL,
-        'What is insomnia?', NULL,
-        'Trouble sleeping', ARRAY['Fear of the dark', 'Sleepwalking', 'Snoring', 'Oversleeping', 'Bad dreams', 'Talking in your sleep'], 200, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORD_NERD', 'DEPTH_NOV_2026', NULL,
-        'What does "micro-" mean, as in "microscope"?', NULL,
-        'Small', ARRAY['Large', 'Many', 'Half', 'Far', 'Under', 'Fast'], 200, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORD_NERD', 'DEPTH_NOV_2026', NULL,
-        'What does "-ology" mean, as in "biology"?', NULL,
-        'The study of', ARRAY['Fear of', 'Love of', 'Lack of', 'Making of', 'Measure of', 'Writer of'], 200, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORD_NERD', 'DEPTH_NOV_2026', NULL,
         'What does "auto-" mean, as in "autobiography"?', NULL,
         'Self', ARRAY['Car', 'Life', 'Writing', 'Moving', 'Story', 'Many'], 200, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORD_NERD', 'DEPTH_NOV_2026', NULL,
-        'What does "geo-" mean, as in "geography"?', NULL,
-        'Earth', ARRAY['Rock', 'Map', 'Sky', 'Water', 'Life', 'Travel'], 200, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORD_NERD', 'DEPTH_NOV_2026', NULL,
-        'A shortened word like "can''t" or "I''m" is called what?', NULL,
-        'A contraction', ARRAY['An abbreviation', 'An acronym', 'A compound word', 'A portmanteau', 'An ellipsis', 'A prefix'], 200, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORD_NERD', 'DEPTH_NOV_2026', NULL,
         '"It''s raining cats and dogs" is an example of what?', NULL,
@@ -420,8 +396,60 @@ INSERT INTO questions (question_number, game_mode, category, subcategory, factio
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORD_NERD', 'DEPTH_NOV_2026', NULL,
         'What does "ambiguous" mean?', NULL,
         'Open to more than one meaning', ARRAY['Ambitious', 'Able to use both hands', 'Moving slowly', 'Unfriendly', 'Very large', 'Full of energy'], 200, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORD_NERD', 'DEPTH_NOV_2026', NULL,
+        'What is a hypocrite?', NULL,
+        'Someone who doesn''t practice what they preach', ARRAY['Someone who worries about their health', 'Someone who talks too much', 'Someone who copies others', 'Someone who is overly polite', 'Someone who hates change', 'Someone who can''t make decisions'], 200, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORD_NERD', 'DEPTH_NOV_2026', NULL,
+        'What is a "red herring"?', NULL,
+        'A misleading clue', ARRAY['A lucky charm', 'A secret password', 'A sure win', 'A rare find', 'A final clue', 'A smoking gun'], 200, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORD_NERD', 'DEPTH_NOV_2026', NULL,
+        'What does "verbatim" mean?', NULL,
+        'Word for word', ARRAY['Out loud', 'In summary', 'In verse', 'In secret', 'Very quickly', 'In translation'], 200, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORD_NERD', 'DEPTH_NOV_2026', NULL,
+        'What is an epiphany?', NULL,
+        'A sudden realization', ARRAY['A sad ending', 'A long speech', 'A nightmare', 'A fancy party', 'A false belief', 'A lucky guess'], 200, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORD_NERD', 'DEPTH_NOV_2026', NULL,
+        'What does "mundane" mean?', NULL,
+        'Ordinary and dull', ARRAY['Worldwide', 'Muddy', 'Sacred', 'Exciting', 'Monthly', 'Gloomy'], 200, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORD_NERD', 'DEPTH_NOV_2026', NULL,
+        'What does "cryptic" mean?', NULL,
+        'Mysterious and puzzling', ARRAY['Spooky', 'Frozen', 'Crisp', 'Ancient', 'Underground', 'Crying'], 200, NULL);
 
 -- 300 points
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORD_NERD', 'PRIMARY_SCHOOL_FOLD_1', NULL,
+        'What does "ubiquitous" mean?', NULL,
+        'Found everywhere', ARRAY['Very rare', 'Very old', 'Extremely loud', 'Hard to understand', 'Constantly changing', 'Quick to anger'], 300, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORD_NERD', 'PRIMARY_SCHOOL_FOLD_1', NULL,
+        'What does "gregarious" mean?', NULL,
+        'Sociable and outgoing', ARRAY['Greedy', 'Shy', 'Bossy', 'Grumpy', 'Heavy', 'Gloomy'], 300, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORD_NERD', 'WORD_NERD_BATCH_1', NULL,
+        '"Brunch" blends "breakfast" and "lunch." What is a blended word like this called?', NULL,
+        'A portmanteau', ARRAY['An acronym', 'A contraction', 'An anagram', 'A palindrome', 'A spoonerism', 'An eponym'], 300, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORD_NERD', 'Self-Contained Underwater Breathing Apparatus.', NULL,
+        'In "scuba," what does the S stand for?', NULL,
+        'Self-contained', ARRAY['Submarine', 'Sea', 'Safety', 'Surface', 'Snorkel', 'Swimming'], 300, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORD_NERD', 'Alpha + beta.', NULL,
+        'Where does the word "alphabet" come from?', NULL,
+        'The first two Greek letters', ARRAY['Latin for "letter list"', 'An old English word for "writing"', 'The name of a Roman teacher', 'Hebrew for "beginning"', 'Greek for "sound marks"', 'A Phoenician king'], 300, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORD_NERD', 'WORD_NERD_BATCH_1', NULL,
+        'What does "ad nauseam" mean?', NULL,
+        'Over and over, to a sickening degree', ARRAY['Seasick', 'By the sea', 'To the very end', 'For a fee', 'In advertising', 'In private'], 300, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORD_NERD', '"After midnight" is the common guess.', NULL,
+        'What do the letters "a.m." stand for?', NULL,
+        'Ante meridiem (before midday)', ARRAY['After midnight', 'Ante matinee', 'Around midday', 'Anno mundi', 'After morning', 'At meridian'], 300, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORD_NERD', 'PRIMARY_SCHOOL_FOLD_1', NULL,
         'What does "ephemeral" mean?', NULL,
@@ -468,10 +496,6 @@ VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YE
         'Writes dictionaries', ARRAY['Studies maps', 'Reads palms', 'Studies rocks', 'Draws charts', 'Analyzes handwriting', 'Designs fonts'], 300, 'Samuel Johnson''s 1755 dictionary defined a lexicographer as "a harmless drudge."');
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORD_NERD', 'WORD_NERD_BATCH_1', NULL,
-        'What is the dot over a lowercase "i" or "j" called?', NULL,
-        'A tittle', ARRAY['A jot', 'A tick', 'A pip', 'A speck', 'A serif', 'A crumb'], 300, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORD_NERD', 'WORD_NERD_BATCH_1', NULL,
         'The word "salary" comes from the Latin word for which everyday item?', NULL,
         'Salt', ARRAY['Bread', 'Silver', 'Wine', 'Grain', 'Oil', 'Cloth'], 300, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
@@ -483,25 +507,13 @@ VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YE
         'Saying "You have hissed all my mystery lectures" instead of "missed all my history lectures" is called what?', NULL,
         'A spoonerism', ARRAY['A malapropism', 'A palindrome', 'A portmanteau', 'An anagram', 'A pun', 'A tongue twister'], 300, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORD_NERD', 'WORD_NERD_BATCH_1', NULL,
-        '"Passed away" instead of "died" is an example of what?', NULL,
-        'A euphemism', ARRAY['Hyperbole', 'An oxymoron', 'A spoonerism', 'A pun', 'A simile', 'A palindrome'], 300, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORD_NERD', '... --- ... was picked because it''s simple and unmistakable. "Save Our Souls" came later.', NULL,
         'What do the letters in the distress signal "SOS" stand for?', NULL,
         'Nothing: it''s just easy to send in Morse code', ARRAY['Save Our Souls', 'Save Our Ship', 'Send Out Sailors', 'Stop Or Sink', 'Signal Of Sinking', 'Ship On Sea'], 300, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORD_NERD', 'They were first sold as "Baby Gays," then "Q-tips Baby Gays," Q for quality.', NULL,
-        'What does the "Q" in "Q-tips" stand for?', NULL,
-        'Quality', ARRAY['Quick', 'Queen', 'Quilted', 'Quiet', 'Quarter', 'Quaint'], 300, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORD_NERD', 'From "robota," in Karel Čapek''s 1920 play "R.U.R."', NULL,
         'The word "robot" comes from a Czech word meaning what?', NULL,
         'Forced labor', ARRAY['Metal man', 'Thinking machine', 'Clockwork', 'Iron soldier', 'Lightning', 'Electric brain'], 300, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORD_NERD', 'Bad events were blamed on the stars.', NULL,
-        '"Disaster" comes from Italian. What does it literally mean?', NULL,
-        'Bad star', ARRAY['Great fire', 'Broken city', 'Falling sky', 'Evil wind', 'Dark day', 'Angry god'], 300, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORD_NERD', 'Thomas Edison pushed "hello" as the way to answer the phone.', NULL,
         '"Hello" became the standard greeting thanks to which invention?', NULL,
@@ -539,9 +551,21 @@ VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YE
         'What does "ergo" mean?', NULL,
         'Therefore', ARRAY['However', 'Also', 'Unless', 'Despite', 'Meanwhile', 'Instead'], 300, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORD_NERD', 'DEPTH_NOV_2026', NULL,
-        'What is a hypocrite?', NULL,
-        'Someone who doesn''t practice what they preach', ARRAY['Someone who worries about their health', 'Someone who talks too much', 'Someone who copies others', 'Someone who is overly polite', 'Someone who hates change', 'Someone who can''t make decisions'], 300, NULL);
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORD_NERD', 'WORD_NERD_BATCH_1', NULL,
+        'What is triskaidekaphobia?', NULL,
+        'Fear of the number 13', ARRAY['Fear of triangles', 'Fear of tricycles', 'Fear of three-legged animals', 'Fear of long words', 'Fear of Fridays', 'Fear of being tricked'], 300, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORD_NERD', 'WORD_NERD_BATCH_1', NULL,
+        'What does "loquacious" mean?', NULL,
+        'Very talkative', ARRAY['Local', 'Crazy', 'Liquid', 'Lucky', 'Long-lived', 'Stubborn'], 300, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORD_NERD', 'WORD_NERD_BATCH_1', NULL,
+        'What is the Oxford comma?', NULL,
+        'A comma before the "and" at the end of a list', ARRAY['A comma after a greeting', 'A comma in a date', 'A comma joining two sentences', 'A comma used only in Britain', 'A comma in large numbers', 'A comma before a quote'], 300, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORD_NERD', 'WORD_NERD_BATCH_1', NULL,
+        'What is an aglet?', NULL,
+        'The plastic tip of a shoelace', ARRAY['An eyelet', 'The metal band on a pencil', 'The loop on a belt', 'The tag on a teabag', 'The ring on a soda can', 'The clasp on a necklace'], 300, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORD_NERD', 'DEPTH_NOV_2026', NULL,
         'What does "tenacious" mean?', NULL,
@@ -584,32 +608,8 @@ VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YE
         'The cardigan', ARRAY['The blazer', 'The poncho', 'The tuxedo', 'The parka', 'The windbreaker', 'The jumper'], 300, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORD_NERD', 'DEPTH_NOV_2026', NULL,
-        'A word named after a person, like "sandwich," is called what?', NULL,
-        'An eponym', ARRAY['An acronym', 'An antonym', 'A pseudonym', 'A homonym', 'A synonym', 'A toponym'], 300, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORD_NERD', 'DEPTH_NOV_2026', NULL,
-        'What is a "red herring"?', NULL,
-        'A misleading clue', ARRAY['A lucky charm', 'A secret password', 'A sure win', 'A rare find', 'A final clue', 'A smoking gun'], 300, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORD_NERD', 'DEPTH_NOV_2026', NULL,
-        'What does "verbatim" mean?', NULL,
-        'Word for word', ARRAY['Out loud', 'In summary', 'In verse', 'In secret', 'Very quickly', 'In translation'], 300, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORD_NERD', 'DEPTH_NOV_2026', NULL,
-        'What is an epiphany?', NULL,
-        'A sudden realization', ARRAY['A sad ending', 'A long speech', 'A nightmare', 'A fancy party', 'A false belief', 'A lucky guess'], 300, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORD_NERD', 'DEPTH_NOV_2026', NULL,
-        'What does "mundane" mean?', NULL,
-        'Ordinary and dull', ARRAY['Worldwide', 'Muddy', 'Sacred', 'Exciting', 'Monthly', 'Gloomy'], 300, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORD_NERD', 'DEPTH_NOV_2026', NULL,
         'What does "zealous" mean?', NULL,
         'Full of passionate enthusiasm', ARRAY['Jealous', 'Lazy', 'Cautious', 'Lonely', 'Cruel', 'Clumsy'], 300, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORD_NERD', 'DEPTH_NOV_2026', NULL,
-        'What does "cryptic" mean?', NULL,
-        'Mysterious and puzzling', ARRAY['Spooky', 'Frozen', 'Crisp', 'Ancient', 'Underground', 'Crying'], 300, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORD_NERD', 'DEPTH_NOV_2026', NULL,
         '"Hippopotamus" comes from Greek words meaning what?', NULL,
@@ -624,6 +624,18 @@ VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YE
         'Star sailor', ARRAY['Sky walker', 'Moon traveler', 'Space soldier', 'Night flier', 'Heaven climber', 'Rocket rider'], 300, NULL);
 
 -- 400 points
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORD_NERD', 'WORD_NERD_BATCH_1', NULL,
+        'What is the dot over a lowercase "i" or "j" called?', NULL,
+        'A tittle', ARRAY['A jot', 'A tick', 'A pip', 'A speck', 'A serif', 'A crumb'], 400, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORD_NERD', 'They were first sold as "Baby Gays," then "Q-tips Baby Gays," Q for quality.', NULL,
+        'What does the "Q" in "Q-tips" stand for?', NULL,
+        'Quality', ARRAY['Quick', 'Queen', 'Quilted', 'Quiet', 'Quarter', 'Quaint'], 400, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORD_NERD', 'Bad events were blamed on the stars.', NULL,
+        '"Disaster" comes from Italian. What does it literally mean?', NULL,
+        'Bad star', ARRAY['Great fire', 'Broken city', 'Falling sky', 'Evil wind', 'Dark day', 'Angry god'], 400, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORD_NERD', 'WORD_NERD_BATCH_1', NULL,
         'A group of flamingos is called a what?', NULL,
@@ -656,10 +668,6 @@ INSERT INTO questions (question_number, game_mode, category, subcategory, factio
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORD_NERD', 'WORD_NERD_BATCH_1', NULL,
         'What is petrichor?', NULL,
         'The earthy smell after rain', ARRAY['A fossilized tree', 'A choir of stones', 'A type of gasoline', 'Stone flooring', 'A rock-climbing knot', 'Morning dew'], 400, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORD_NERD', 'WORD_NERD_BATCH_1', NULL,
-        'What is triskaidekaphobia?', NULL,
-        'Fear of the number 13', ARRAY['Fear of triangles', 'Fear of tricycles', 'Fear of three-legged animals', 'Fear of long words', 'Fear of Fridays', 'Fear of being tricked'], 400, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORD_NERD', 'After Mrs. Malaprop in Sheridan''s 1775 play "The Rivals," who says it (for "pinnacle").', NULL,
         'Mixing up similar-sounding words for comic effect, like "the pineapple of politeness," is called what?', NULL,
@@ -706,20 +714,12 @@ VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YE
         'Cowardly', ARRAY['Pushy', 'Generous', 'Full of pus', 'Rude', 'Childish', 'Fussy'], 400, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORD_NERD', 'WORD_NERD_BATCH_1', NULL,
-        'What does "loquacious" mean?', NULL,
-        'Very talkative', ARRAY['Local', 'Crazy', 'Liquid', 'Lucky', 'Long-lived', 'Stubborn'], 400, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORD_NERD', 'WORD_NERD_BATCH_1', NULL,
         'What does "lugubrious" mean?', NULL,
         'Gloomy and mournful', ARRAY['Slippery', 'Clumsy', 'Greedy', 'Heavy', 'Lazy', 'Long-winded'], 400, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORD_NERD', '"Faithful" is the opposite.', NULL,
         'What does "perfidious" mean?', NULL,
         'Untrustworthy', ARRAY['Perfect', 'Fragrant', 'Fussy', 'Endless', 'Fearless', 'Faithful'], 400, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORD_NERD', 'WORD_NERD_BATCH_1', NULL,
-        'What is the Oxford comma?', NULL,
-        'A comma before the "and" at the end of a list', ARRAY['A comma after a greeting', 'A comma in a date', 'A comma joining two sentences', 'A comma used only in Britain', 'A comma in large numbers', 'A comma before a quote'], 400, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORD_NERD', 'Like the thread Theseus used to find his way out of the Labyrinth.', NULL,
         'The word "clue" comes from "clew," which meant what?', NULL,
@@ -733,13 +733,13 @@ VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YE
         'In Middle English, "nice" meant what?', NULL,
         'Foolish', ARRAY['Clean', 'Pretty', 'Gentle', 'Wealthy', 'Brave', 'Holy'], 400, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORD_NERD', 'WORD_NERD_BATCH_1', NULL,
-        'What is an aglet?', NULL,
-        'The plastic tip of a shoelace', ARRAY['An eyelet', 'The metal band on a pencil', 'The loop on a belt', 'The tag on a teabag', 'The ring on a soda can', 'The clasp on a necklace'], 400, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORD_NERD', 'The most common vowel sound in English, like the "a" in "about."', NULL,
         'What is the "schwa"?', NULL,
         'The unstressed "uh" vowel sound', ARRAY['A silent letter', 'A German umlaut', 'A rolled R', 'A Hebrew accent mark', 'A breathy H sound', 'A doubled consonant'], 400, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORD_NERD', 'DEPTH_NOV_2026', NULL,
+        'A word named after a person, like "sandwich," is called what?', NULL,
+        'An eponym', ARRAY['An acronym', 'An antonym', 'A pseudonym', 'A homonym', 'A synonym', 'A toponym'], 400, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'WORD_NERD', 'DEPTH_NOV_2026', NULL,
         '"Shampoo" comes from Hindi, where it meant what?', NULL,
