@@ -1052,9 +1052,7 @@ and forth until we both agree the idea is good **and** worth the effort. So:
   Nov 22).
 - **`pin_drop_places.sql` is live** (Randy ran it Nov 25), so Pin Drop
   is in the live lobby. Everything earlier is done too.
-- **Run in Neon (Randy):** `content/sql/letter_rip.sql` (Nov 25: 410 new
-  phrases, 2,410 in 67 categories; replaces the whole table, safe to
-  re-run).
+- **`content/sql/letter_rip.sql` is live** (Randy, Nov 25: 2,410 rows).
 - **Paused (Randy, Nov 22):** the re-tier and Letter Rip phrases, a
   "mini pause" while Double Take is designed and built (see Ideas in the
   works).
