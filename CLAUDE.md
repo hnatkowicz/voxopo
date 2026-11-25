@@ -1519,6 +1519,23 @@ and forth until we both agree the idea is good **and** worth the effort. So:
     with Hide. **A new name shows on its own venue's TV at once and on
     other venues' TVs after 3 minutes** unhidden (Randy's compromise), so
     a slip is seen in one room, not across town.
+  - **The TV (Randy, Nov 25):** the main game's frame (top bar, stage,
+    rail, footer, fonts). Top bar: wordmark, the venue's name or logo
+    where "Room 1234" sits, the clock; no room code. Stage: the item, and
+    a fuller reveal for a silent room (the answer big, "61% got it"
+    everywhere and "Pickles & Pins: 3 of 4", the fact). Rail: this
+    venue's players with AVERAGE among them, then the top 3 everywhere
+    with their locations (only the top everywhere when nobody here
+    plays). Footer: a bigger QR code, "Scan to play · free, no app", on
+    screen through everything; an ad never covers it. Facts, venue lines
+    and ads take over the stage for 10-15s; **ads are one 16:9 image
+    with a small "Sponsored" label** (Randy: "we'll see how it works in a
+    real setting"). The break reuses the venue break screen with a
+    countdown to the next hour. **No hourly podium** and **no growing QR
+    nudge** when nobody's playing (Randy: out). **Burn-in drift:** the
+    fixed parts shift a few pixels every few minutes, unnoticed (always-on
+    TVs, OLEDs especially). Outside live hours, a dim card with the hours
+    and the QR code.
   - **Ads:** real ones, free while testing ("money after proof"). Images
     uploaded through GitHub like photos; a schedule; counts only (time on
     air, phones playing) to show advertisers; venues can refuse a
