@@ -1488,6 +1488,19 @@ and forth until we both agree the idea is good **and** worth the effort. So:
     TV; its QR code carries the venue, so a phone that scans it is "at"
     that venue without picking. Its own small engine and TV page, apart
     from rooms and `gameEngine.js`, so it can't hurt a game night.
+  - **Screens and QR codes (Randy, Nov 25):** no login on the TV. /admin
+    adds a screen to a venue and gives it a **long private link**
+    (`randomania.tv/screen/<secret>`), opened once on the TV or typed
+    into a signage player; one link per TV, a leaked one reissued on
+    /admin. The link only shows what's on (the clock decides), so there's
+    nothing to persist; scores live in memory, so deploys stay outside
+    live hours. Each venue gets a **permanent, readable QR code**
+    (`randomania.tv/lite?at=pickles-pins`; readable "for now"): scan,
+    name, avatar, Join, "Playing at Pickles & Pins". **Printed cards**
+    from /admin (Randy: "a superb feature. Let's lean into it"): table
+    tents, menu inserts, a card by the register, so people scan from
+    their seat. A static code can be shared and played from home; the
+    stakes are low, and /admin can change a venue's code.
   - **Ads:** real ones, free while testing ("money after proof"). Images
     uploaded through GitHub like photos; a schedule; counts only (time on
     air, phones playing) to show advertisers; venues can refuse a
