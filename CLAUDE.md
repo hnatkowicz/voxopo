@@ -1066,8 +1066,9 @@ and forth until we both agree the idea is good **and** worth the effort. So:
 - **`pin_drop_places.sql` is live** (Randy ran it Nov 25), so Pin Drop
   is in the live lobby. Everything earlier is done too.
 - **`content/sql/letter_rip.sql` is live** (Randy, Nov 25: 2,410 rows).
-- **All SQL through Nov 25 is live** (Randy: the re-tiers and "We Are...").
-  **Run in Neon (Randy):** `content/sql/cell_mates.sql` (240 questions).
+- **All SQL through Nov 25 is live** (Randy: the re-tiers, "We Are..."
+  and Cell Mates at 240). **Run in Neon (Randy):**
+  `content/sql/pop_quiz.sql` and `content/sql/video_games.sql` (200 each).
 - **Paused (Randy, Nov 22):** the re-tier and Letter Rip phrases, a
   "mini pause" while Double Take is designed and built (see Ideas in the
   works).
@@ -1077,8 +1078,9 @@ and forth until we both agree the idea is good **and** worth the effort. So:
   Science & Nature and Astronomy & Space (Nov 25: 42 and 43 moves; the
   Big Bang 100 no longer says "13.8 billion years", which gave away the
   300 on the universe's age), then Word Nerd and Geography (Nov 25: 40
-  and 47 moves), then Cell Mates (Nov 25: 26 moves, plus 120 new). Still
-  to go: College Athletics, Pop Quiz, Extra Lives, the picture sets (Brush
+  and 47 moves), then Cell Mates (Nov 25: 26 moves, plus 120 new), then Pop
+  Quiz and Extra Lives (Nov 25: 64 and 49 moves, plus 80 new each, to
+  200). Still to go: College Athletics, the picture sets (Brush
   With Greatness, The Great State of..., Wish You Were Here, Logo My
   Eggo), Spellbound and the niche four. Then more Letter Rip phrases.
 - **Category depth: done** (Nov 22). Every general category is at 200
@@ -1315,8 +1317,11 @@ and forth until we both agree the idea is good **and** worth the effort. So:
   300; Puzo, Benchley, Coelho to 400). **The depth plan is complete.**
   The family's favorites are school subjects
   (biology, astronomy, the World Wars, US history) and pop culture; new
-  categories get pun names. **The pop-culture pair** (built Nov 2026, 120
-  each, 30 per tier; working titles, Randy decides): **Extra Lives**
+  categories get pun names. **The pop-culture pair** (built Nov 2026 at
+  120; **200 each since Nov 25**, 50 per tier, re-tiered to the benchmarks
+  -- Minecraft's Nether and Obsidian were 100s a pub crowd wouldn't know;
+  hooks at 400 like Valve "the part of a pipe", Ken "Barbie's boyfriend",
+  Parcheesi "Hindi for twenty-five"; working titles, Randy decides): **Extra Lives**
   (video games, `content/video_games.csv`, key `VIDEO_GAMES`: characters,
   worlds, designers, arcade and indie classics; consoles, Pong, Pac-Man,
   Tetris and Angry Birds stay with Technology and Logo My Eggo, and no
