@@ -722,7 +722,23 @@ Mode keys are used in room votes and in `gameEngine.js`:
   *intentionally* pure random every round, not a rotation. Don't "fix" it.
   Words, unlike impostors, avoid repeats: a room (and its venue, the
   last 28 days) gets words it hasn't played first (`room.empossdurrSeen`,
-  Nov 23).
+  Nov 23). **Deck cleanup** (Nov 25, `empossdurr_cleanup.sql`; Randy:
+  about 15% "aren't that great"): ~568 words to ~539. Out: words with
+  nothing to hold on to (BIG BROTHER, WINNER), insider or room-souring
+  ones (TRUMP and CLOSET -- Randy: drop them -- SPRING GROVE, HEISENBERG),
+  ones too hard to clue aloud (DEJA VU, YAWN) and near-twins (MITTENS
+  beside MITTEN). New clues for words whose clues pointed to another
+  meaning (DOCTOR "pepper, house, strange", ICE CUBE "rapper"): the
+  impostor sees one clue, so a pun clue leaves them lost, not bluffing.
+  BIGFOOT had BACKPACK's clues by mistake. The words are re-read at each
+  game start (like On the Spectrum's), so Neon changes need no restart.
+  The removed words and their clues are listed in the file's header.
+  **Ideas after Thanksgiving (Claude, Nov 25; Randy hasn't decided):** a typed
+  declare the server checks (typo-forgiving, like the Final Wager) in
+  place of the room's yes/no vote on it -- "the server decides" -- with
+  the guess and the word big on the TV; the clue order on the TV; the deck
+  in a spreadsheet with a retired column like the trivia sheets; maybe,
+  later, a category hint for the impostor instead of one random clue.
 - **ON_THE_SPECTRUM**: guess where a player landed on a slider. Its
   judgment-call statements include political ones ("Ronald Reagan was a
   good president", "Labor unions are good for workers") **on purpose**
@@ -1066,9 +1082,10 @@ and forth until we both agree the idea is good **and** worth the effort. So:
 - **`pin_drop_places.sql` is live** (Randy ran it Nov 25), so Pin Drop
   is in the live lobby. Everything earlier is done too.
 - **`content/sql/letter_rip.sql` is live** (Randy, Nov 25: 2,410 rows).
-- **All SQL through Nov 25 is live** (Randy: the re-tiers, "We Are..."
-  and Cell Mates at 240). **Run in Neon (Randy):**
-  `content/sql/pop_quiz.sql` and `content/sql/video_games.sql` (200 each).
+- **All SQL through Nov 25 is live** (Randy: the re-tiers, "We Are...",
+  Cell Mates at 240, Pop Quiz and Extra Lives at 200). **Run in Neon
+  (Randy):** `empossdurr_cleanup.sql` (removes 29 words, new clues for
+  29; ends with two checks: 0 removed words left, ~539 in the deck).
 - **Paused (Randy, Nov 22):** the re-tier and Letter Rip phrases, a
   "mini pause" while Double Take is designed and built (see Ideas in the
   works).
