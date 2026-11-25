@@ -1443,7 +1443,14 @@ and forth until we both agree the idea is good **and** worth the effort. So:
 - **Double Take photos:** Randy is at 25 (Nov 24), about 4 games before a
   room repeats.
 - **RandoMania!-lite, the ambient screen** (Randy, Nov 24 2026; an idea,
-  **nothing built**): a slow trickle of questions on TVs in waiting rooms,
+  **nothing built; paused Nov 25** "for a later time, if the demand
+  arises": a second product whose upkeep -- content every few days, all-day
+  uptime, deploys squeezed outside live hours, names, advertisers -- would
+  drain the main platform. If it returns: venue research first, then a
+  small pilot -- a separate service, trivia, flags and maps only, ads as
+  plain images, one venue for a month, measuring whether people scan and
+  play. Phone side as discussed: a "Be right back" button, no ads on
+  phones, "Next up in 12" plus your last result between items): a slow trickle of questions on TVs in waiting rooms,
   restaurants and pubs on non-trivia nights, to introduce the platform and
   carry ads, asking nobody to show up at a set time. Draft set:
   `content/lite/set_01_pickles_and_pins.csv` (Pickles & Pins is the test
