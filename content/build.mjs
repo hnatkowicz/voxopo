@@ -232,7 +232,10 @@ SELECT COUNT(*) FROM letter_rip_puzzles;
 }
 
 if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
-    const files = fs.readdirSync(DIR).filter(f => f.endsWith('.csv') && f !== LETTER_RIP_FILE).sort();
+    // Not Thinking Pants sheets: Letter Rip has its own check above, and Pin
+    // Drop's city list is read by content/pin_drop_source.py.
+    const NOT_CATEGORIES = new Set([LETTER_RIP_FILE, 'pin_drop_cities.csv']);
+    const files = fs.readdirSync(DIR).filter(f => f.endsWith('.csv') && !NOT_CATEGORIES.has(f)).sort();
     let failed = false;
     if (fs.existsSync(path.join(DIR, LETTER_RIP_FILE))) {
         const { problems, warnings, puzzles, counts } = checkLetterRip(LETTER_RIP_FILE, parseCsv(fs.readFileSync(path.join(DIR, LETTER_RIP_FILE), 'utf8')));
