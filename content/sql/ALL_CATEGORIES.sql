@@ -13758,8 +13758,8 @@ SELECT COUNT(*) FROM questions WHERE game_mode = 'TRIVI_YEAH_II' AND category = 
 -- Thinking Pants category POP_QUIZ. To change a question, change the
 -- spreadsheet and rebuild.
 --
--- Replaces the WHOLE category with the spreadsheet's 120 live questions
--- (100: 30, 200: 30, 300: 30, 400: 30), inside a transaction. Safe to re-run.
+-- Replaces the WHOLE category with the spreadsheet's 200 live questions
+-- (100: 50, 200: 50, 300: 50, 400: 50), inside a transaction. Safe to re-run.
 -- ============================================================================
 
 -- The facts column (shown on the TV after the answer) is added the first
@@ -13780,18 +13780,6 @@ INSERT INTO questions (question_number, game_mode, category, subcategory, factio
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'POP_QUIZ', 'ORIGINAL', NULL,
         'Which 1974 puzzle, invented by a Hungarian professor, has six colored faces to line up?', NULL,
         'Rubik''s Cube', ARRAY['Pyraminx', 'Megaminx', 'Mastermind', 'Skewb', 'Tangram', 'Rush Hour'], 100, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'POP_QUIZ', 'ORIGINAL', NULL,
-        'Which electronic toy barks orders like "Twist it!" and "Pull it!"?', NULL,
-        'Bop It', ARRAY['Simon', 'Furby', 'Speak & Spell', 'Brain Warp', 'Perfection', 'Hungry Hungry Hippos'], 100, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'POP_QUIZ', 'ORIGINAL', NULL,
-        'Which owl-like electronic pet from 1998 seemed to "learn" English the more you played?', NULL,
-        'Furby', ARRAY['Tamagotchi', 'Teddy Ruxpin', 'Poo-Chi', 'Giga Pet', 'Zhu Zhu Pet', 'Hatchimal'], 100, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'POP_QUIZ', 'ORIGINAL', NULL,
-        'Which egg-shaped keychain pet from Japan needed feeding and cleaning, or it would die?', NULL,
-        'Tamagotchi', ARRAY['Furby', 'Neopet', 'Giga Pet', 'Digimon', 'Nano Baby', 'Pou'], 100, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'POP_QUIZ', 'ORIGINAL', NULL,
         'Which game tells you to put your left hand on red and your right foot on green?', NULL,
@@ -13830,20 +13818,8 @@ VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YE
         'Beanie Babies', ARRAY['Pillow Pets', 'Webkinz', 'Trolls', 'Puffalumps', 'Boyds Bears', 'Ty Plush Pals'], 100, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'POP_QUIZ', 'ORIGINAL', NULL,
-        'Which 1980s teddy bears each had a picture on its tummy, like a rainbow or a rain cloud?', NULL,
-        'Care Bears', ARRAY['Gummi Bears', 'Berenstain Bears', 'Snuggle Bears', 'Popples', 'Get Along Gang', 'Shirt Tales'], 100, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'POP_QUIZ', 'ORIGINAL', NULL,
         'Which 2017 spinning gadget was the must-have toy, then banned from many classrooms?', NULL,
         'The fidget spinner', ARRAY['The Beyblade', 'The Pop It', 'The rubber band ball', 'The yo-yo', 'The Tech Deck', 'The gyroscope'], 100, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'POP_QUIZ', 'ORIGINAL', NULL,
-        'Which 1970s fad had people buying an ordinary stone as a "pet"?', NULL,
-        'The Pet Rock', ARRAY['The Chia Pet', 'The Sea-Monkey', 'The Mood Ring', 'The Lava Lamp', 'The Mexican jumping bean', 'The Wacky Wall Walker'], 100, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'POP_QUIZ', 'ORIGINAL', NULL,
-        'Which 1970s ring changed color to show the wearer''s "mood"?', NULL,
-        'The mood ring', ARRAY['The class ring', 'The poison ring', 'The puzzle ring', 'The spinner ring', 'The friendship ring', 'The promise ring'], 100, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'POP_QUIZ', 'ORIGINAL', NULL,
         'Which rubber clogs with holes in the top became a 2000s fashion craze?', NULL,
@@ -13854,20 +13830,8 @@ VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YE
         'The mullet', ARRAY['The mohawk', 'The flattop', 'The rattail', 'The bowl cut', 'The pompadour', 'The feathered cut'], 100, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'POP_QUIZ', 'ORIGINAL', NULL,
-        'Which dance move has you drop your face into the crook of your elbow?', NULL,
-        'The dab', ARRAY['The floss', 'The whip', 'The nae nae', 'The Carlton', 'The robot', 'The sprinkler'], 100, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'POP_QUIZ', 'ORIGINAL', NULL,
         'Which comic strip cat loves lasagna and hates Mondays?', NULL,
         'Garfield', ARRAY['Heathcliff', 'Sylvester', 'Felix', 'Bill the Cat', 'Azrael', 'Snowball'], 100, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'POP_QUIZ', 'ORIGINAL', NULL,
-        'In "Peanuts," what does Lucy always yank away just as Charlie Brown tries to kick it?', NULL,
-        'A football', ARRAY['A soccer ball', 'A kite', 'A chair', 'A baseball', 'A bucket', 'A blanket'], 100, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'POP_QUIZ', 'ORIGINAL', NULL,
-        'Which grumpy-faced cat became an internet star in 2012?', NULL,
-        'Grumpy Cat', ARRAY['Keyboard Cat', 'Nyan Cat', 'Lil Bub', 'Longcat', 'Maru', 'Tom'], 100, 'Her real name was Tardar Sauce.');
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'POP_QUIZ', 'ORIGINAL', NULL,
         'Which 2014 viral challenge had people dumping cold water on their heads to raise money for ALS research?', NULL,
@@ -13886,42 +13850,174 @@ VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YE
         'Princess Diana', ARRAY['Princess Margaret', 'Princess Anne', 'Princess Beatrice', 'Princess Eugenie', 'Princess Charlotte', 'Princess Alexandra'], 100, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'POP_QUIZ', 'ORIGINAL', NULL,
-        'Which escape artist hung upside down in a locked "Water Torture Cell"?', NULL,
-        'Harry Houdini', ARRAY['David Copperfield', 'David Blaine', 'Criss Angel', 'Doug Henning', 'Penn Jillette', 'Lance Burton'], 100, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'POP_QUIZ', 'ORIGINAL', NULL,
         'Which candy''s ads told you to "Taste the Rainbow"?', NULL,
         'Skittles', ARRAY['M&M''s', 'Starburst', 'Jolly Ranchers', 'Nerds', 'Life Savers', 'Gobstoppers'], 100, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'POP_QUIZ', 'ORIGINAL', NULL,
+        'Which 1980s toy ponies had pastel colors and symbols on their flanks?', NULL,
+        'My Little Pony', ARRAY['Pound Puppies', 'Polly Pocket', 'Popples', 'Fluppy Dogs', 'Lady Lovely Locks', 'Glo Friends'], 100, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'POP_QUIZ', 'ORIGINAL', NULL,
+        'Which robot toy line promised "More than meets the eye"?', NULL,
+        'Transformers', ARRAY['GoBots', 'Voltron', 'Zords', 'M.A.S.K.', 'Robotech', 'Zoids'], 100, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'POP_QUIZ', 'ORIGINAL', NULL,
+        'Which board game has players collecting colored pie wedges for answering questions?', NULL,
+        'Trivial Pursuit', ARRAY['Cranium', 'Scene It?', 'Outburst', 'Wits & Wagers', 'Smart Ass', 'Brain Quest'], 100, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'POP_QUIZ', 'ORIGINAL', NULL,
+        'Which Los del Río song set off a worldwide line-dance craze in 1996?', NULL,
+        '"Macarena"', ARRAY['"La Bamba"', '"Mambo No. 5"', '"The Ketchup Song"', '"Lambada"', '"Livin'' la Vida Loca"', '"Cotton Eye Joe"'], 100, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'POP_QUIZ', 'ORIGINAL', NULL,
+        'Which 2012 K-pop video by PSY was the first YouTube video to pass a billion views?', NULL,
+        '"Gangnam Style"', ARRAY['"Gentleman"', '"Daddy"', '"Fantastic Baby"', '"Sorry, Sorry"', '"Bang Bang Bang"', '"Gee"'], 100, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'POP_QUIZ', 'ORIGINAL', NULL,
+        'Which backward-gliding dance did Michael Jackson show off at the "Motown 25" TV special in 1983?', NULL,
+        'The moonwalk', ARRAY['The robot', 'The running man', 'The worm', 'The electric slide', 'The cabbage patch', 'The Charleston'], 100, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'POP_QUIZ', 'ORIGINAL', NULL,
+        'Which royal did American actress Meghan Markle marry in 2018?', NULL,
+        'Prince Harry', ARRAY['Prince William', 'Prince Edward', 'Prince Andrew', 'Prince Charles', 'Peter Phillips', 'Prince Philip'], 100, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'POP_QUIZ', 'ORIGINAL', NULL,
+        'Which milk slogan appeared on the celebrity "milk mustache" ads from 1998 on?', NULL,
+        '"Got Milk?"', ARRAY['"Drink Up!"', '"Milk It!"', '"Moo-ve Over"', '"Say Cheese"', '"Udderly Delicious"', '"Mustache March"'], 100, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'POP_QUIZ', 'ORIGINAL', NULL,
+        'Which department store''s parade fills New York with giant balloons every Thanksgiving morning?', NULL,
+        'Macy''s', ARRAY['Gimbels', 'Saks Fifth Avenue', 'Bloomingdale''s', 'Sears', 'JCPenney', 'Lord & Taylor'], 100, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'POP_QUIZ', 'ORIGINAL', NULL,
+        'Which 2005 Christmas tradition has a "scout" that reports to Santa each night?', NULL,
+        'The Elf on the Shelf', ARRAY['The Christmas Pickle', 'The Advent Calendar', 'Santa''s Spy Cam', 'The North Pole Pal', 'The Night Owl', 'The Snow Buddy'], 100, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'POP_QUIZ', 'ORIGINAL', NULL,
+        'Which brand''s slogan is "Just Do It"?', NULL,
+        'Nike', ARRAY['Adidas', 'Reebok', 'Puma', 'Under Armour', 'New Balance', 'Gatorade'], 100, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'POP_QUIZ', 'ORIGINAL', NULL,
+        'Known as "Wally" in Britain, which striped-shirted traveler hides in crowded picture books?', NULL,
+        'Waldo', ARRAY['Carmen Sandiego', 'Odlaw', 'Flat Stanley', 'Curious George', 'Paddington', 'Tintin'], 100, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'POP_QUIZ', 'POP_QUIZ_NOV25', NULL,
+        'In which card game do you ask, "Do you have any sevens?"', NULL,
+        'Go Fish', ARRAY['Old Maid', 'War', 'Crazy Eights', 'Slapjack', 'Rummy'], 100, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'POP_QUIZ', 'POP_QUIZ_NOV25', NULL,
+        'Which card game makes you call out its name when you''re down to one card?', NULL,
+        'Uno', ARRAY['Go Fish', 'Crazy Eights', 'Old Maid', 'Skip-Bo', 'War'], 100, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'POP_QUIZ', 'POP_QUIZ_NOV25', NULL,
+        'Which board game has you flip down faces by asking yes-or-no questions about a hidden person?', NULL,
+        'Guess Who?', ARRAY['Clue', 'Headbanz', 'Scattergories', 'Mastermind', 'Taboo'], 100, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'POP_QUIZ', 'POP_QUIZ_NOV25', NULL,
+        'Which board game has a spinner and little cars filled with peg people?', NULL,
+        'The Game of Life', ARRAY['Monopoly', 'Sorry!', 'Trouble', 'Candy Land', 'Mouse Trap'], 100, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'POP_QUIZ', 'POP_QUIZ_NOV25', NULL,
+        'Which kids'' board game has you climb up and slide down on your way to square 100?', NULL,
+        'Chutes and Ladders', ARRAY['Candy Land', 'Trouble', 'Sorry!', 'Hi Ho! Cherry-O', 'Parcheesi'], 100, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'POP_QUIZ', 'POP_QUIZ_NOV25', NULL,
+        'Which stuffed toy is named after President Theodore Roosevelt?', NULL,
+        'The teddy bear', ARRAY['The Beanie Baby', 'The Care Bear', 'The Cabbage Patch Kid', 'The rag doll', 'The sock monkey'], 100, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'POP_QUIZ', 'POP_QUIZ_NOV25', NULL,
+        'Which Japanese trading cards of pocket monsters became a 1999 craze?', NULL,
+        'Pokemon cards', ARRAY['Yu-Gi-Oh! cards', 'Baseball cards', 'Pogs', 'Garbage Pail Kids', 'Magic cards'], 100, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'POP_QUIZ', 'POP_QUIZ_NOV25', NULL,
+        'Which party game has players circling a row of seats, one fewer than people, until the music stops?', NULL,
+        'Musical chairs', ARRAY['Freeze tag', 'Hot potato', 'Duck duck goose', 'Simon says', 'Red rover'], 100, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'POP_QUIZ', 'POP_QUIZ_NOV25', NULL,
+        'Which social media app is known for short videos and dance trends?', NULL,
+        'TikTok', ARRAY['LinkedIn', 'Pinterest', 'Reddit', 'Tumblr', 'Yelp'], 100, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'POP_QUIZ', 'POP_QUIZ_NOV25', NULL,
+        'Which online encyclopedia can anyone edit?', NULL,
+        'Wikipedia', ARRAY['Britannica', 'Google', 'Reddit', 'Quora', 'WebMD'], 100, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'POP_QUIZ', 'POP_QUIZ_NOV25', NULL,
+        'Which king was crowned at Westminster Abbey in 2023?', NULL,
+        'Charles III', ARRAY['William V', 'George VII', 'Edward IX', 'Henry IX', 'Philip I'], 100, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'POP_QUIZ', 'POP_QUIZ_NOV25', NULL,
+        'Which British queen reigned for 70 years?', NULL,
+        'Elizabeth II', ARRAY['Victoria', 'Elizabeth I', 'Mary I', 'Anne', 'Catherine'], 100, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'POP_QUIZ', 'POP_QUIZ_NOV25', NULL,
+        'Which cereal''s toucan mascot tells you to "Follow your nose"?', NULL,
+        'Froot Loops', ARRAY['Trix', 'Lucky Charms', 'Apple Jacks', 'Fruity Pebbles', 'Cap''n Crunch'], 100, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'POP_QUIZ', 'POP_QUIZ_NOV25', NULL,
+        'Which cereal mascot says "They''re Gr-r-reat!"?', NULL,
+        'Tony the Tiger', ARRAY['Toucan Sam', 'Cap''n Crunch', 'Snap, Crackle and Pop', 'The Trix Rabbit', 'Lucky the Leprechaun'], 100, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'POP_QUIZ', 'POP_QUIZ_NOV25', NULL,
+        'Which pink bunny keeps going and going in battery ads?', NULL,
+        'The Energizer Bunny', ARRAY['The Duracell Bunny', 'The Trix Rabbit', 'The Nesquik Bunny', 'Bugs Bunny', 'The Cadbury Bunny'], 100, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'POP_QUIZ', 'POP_QUIZ_NOV25', NULL,
+        'Which cereal''s ads end with "Silly rabbit, ___ are for kids!"?', NULL,
+        'Trix', ARRAY['Froot Loops', 'Lucky Charms', 'Cocoa Puffs', 'Fruity Pebbles', 'Kix'], 100, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'POP_QUIZ', 'POP_QUIZ_NOV25', NULL,
+        'In which game do players slap levers to make four plastic animals gobble up marbles?', NULL,
+        'Hungry Hungry Hippos', ARRAY['Mouse Trap', 'Operation', 'Crocodile Dentist', 'Don''t Break the Ice', 'Kerplunk'], 100, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'POP_QUIZ', 'POP_QUIZ_NOV25', NULL,
+        'Which board game has you guess grid squares to sink your opponent''s ships?', NULL,
+        'Battleship', ARRAY['Stratego', 'Risk', 'Connect Four', 'Mastermind', 'Othello'], 100, NULL);
 
 -- 200 points
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'POP_QUIZ', 'ORIGINAL', NULL,
-        'Which squishy modeling dough was first sold as a wallpaper cleaner?', NULL,
-        'Play-Doh', ARRAY['Silly Putty', 'Gak', 'Flubber', 'Plasticine', 'Moon Sand', 'Floam'], 200, NULL);
+        'Which electronic toy barks orders like "Twist it!" and "Pull it!"?', NULL,
+        'Bop It', ARRAY['Simon', 'Furby', 'Speak & Spell', 'Brain Warp', 'Perfection', 'Hungry Hungry Hippos'], 200, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'POP_QUIZ', 'ORIGINAL', NULL,
-        'Which stretchy putty, sold in a plastic egg, could copy newspaper comics?', NULL,
-        'Silly Putty', ARRAY['Play-Doh', 'Gak', 'Slime', 'Flubber', 'Floam', 'Thinking Putty'], 200, NULL);
+        'Which owl-like electronic pet from 1998 seemed to "learn" English the more you played?', NULL,
+        'Furby', ARRAY['Tamagotchi', 'Teddy Ruxpin', 'Poo-Chi', 'Giga Pet', 'Zhu Zhu Pet', 'Hatchimal'], 200, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'POP_QUIZ', 'ORIGINAL', NULL,
+        'Which egg-shaped keychain pet from Japan needed feeding and cleaning, or it would die?', NULL,
+        'Tamagotchi', ARRAY['Furby', 'Neopet', 'Giga Pet', 'Digimon', 'Nano Baby', 'Pou'], 200, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'POP_QUIZ', 'ORIGINAL', NULL,
+        'Which 1980s teddy bears each had a picture on its tummy, like a rainbow or a rain cloud?', NULL,
+        'Care Bears', ARRAY['Gummi Bears', 'Berenstain Bears', 'Snuggle Bears', 'Popples', 'Get Along Gang', 'Shirt Tales'], 200, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'POP_QUIZ', 'ORIGINAL', NULL,
+        'Which 1970s fad had people buying an ordinary stone as a "pet"?', NULL,
+        'The Pet Rock', ARRAY['The Chia Pet', 'The Sea-Monkey', 'The Mood Ring', 'The Lava Lamp', 'The Mexican jumping bean', 'The Wacky Wall Walker'], 200, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'POP_QUIZ', 'ORIGINAL', NULL,
+        'Which 1970s ring changed color to show the wearer''s "mood"?', NULL,
+        'The mood ring', ARRAY['The class ring', 'The poison ring', 'The puzzle ring', 'The spinner ring', 'The friendship ring', 'The promise ring'], 200, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'POP_QUIZ', 'ORIGINAL', NULL,
+        'Which dance move has you drop your face into the crook of your elbow?', NULL,
+        'The dab', ARRAY['The floss', 'The whip', 'The nae nae', 'The Carlton', 'The robot', 'The sprinkler'], 200, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'POP_QUIZ', 'ORIGINAL', NULL,
+        'In "Peanuts," what does Lucy always yank away just as Charlie Brown tries to kick it?', NULL,
+        'A football', ARRAY['A soccer ball', 'A kite', 'A chair', 'A baseball', 'A bucket', 'A blanket'], 200, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'POP_QUIZ', 'ORIGINAL', NULL,
+        'Which grumpy-faced cat became an internet star in 2012?', NULL,
+        'Grumpy Cat', ARRAY['Keyboard Cat', 'Nyan Cat', 'Lil Bub', 'Longcat', 'Maru', 'Tom'], 200, 'Her real name was Tardar Sauce.');
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'POP_QUIZ', 'ORIGINAL', NULL,
+        'Which escape artist hung upside down in a locked "Water Torture Cell"?', NULL,
+        'Harry Houdini', ARRAY['David Copperfield', 'David Blaine', 'Criss Angel', 'Doug Henning', 'Penn Jillette', 'Lance Burton'], 200, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'POP_QUIZ', 'ORIGINAL', NULL,
         'Which 1983 dolls came with adoption papers and caused fights in toy stores?', NULL,
         'Cabbage Patch Kids', ARRAY['Strawberry Shortcake', 'My Child', 'Pound Puppies', 'Rainbow Brite', 'Popples', 'Teddy Ruxpin'], 200, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'POP_QUIZ', 'ORIGINAL', NULL,
-        'Which 1980s toy ponies had pastel colors and symbols on their flanks?', NULL,
-        'My Little Pony', ARRAY['Pound Puppies', 'Polly Pocket', 'Popples', 'Fluppy Dogs', 'Lady Lovely Locks', 'Glo Friends'], 200, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'POP_QUIZ', 'ORIGINAL', NULL,
-        'Which robot toy line promised "More than meets the eye"?', NULL,
-        'Transformers', ARRAY['GoBots', 'Voltron', 'Zords', 'M.A.S.K.', 'Robotech', 'Zoids'], 200, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'POP_QUIZ', 'ORIGINAL', NULL,
-        'Which handheld game flashed colored lights for you to copy in an ever-longer pattern?', NULL,
-        'Simon', ARRAY['Merlin', 'Bop It', 'Touch Me', 'Lights Out', 'Brain Warp', 'Copy Cat'], 200, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'POP_QUIZ', 'ORIGINAL', NULL,
-        'Which board game has players collecting colored pie wedges for answering questions?', NULL,
-        'Trivial Pursuit', ARRAY['Cranium', 'Scene It?', 'Outburst', 'Wits & Wagers', 'Smart Ass', 'Brain Quest'], 200, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'POP_QUIZ', 'ORIGINAL', NULL,
         'Which handheld toy, swung around the waist, sold 25 million in its first months in 1958?', NULL,
@@ -13932,32 +14028,12 @@ VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YE
         'Squishmallows', ARRAY['Beanie Boos', 'Pillow Pets', 'Squishies', 'Jellycats', 'Funko Pops', 'Shopkins'], 200, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'POP_QUIZ', 'ORIGINAL', NULL,
-        'Which 1990s game had kids slamming stacks of cardboard milk-cap discs?', NULL,
-        'Pogs', ARRAY['Tazos', 'Jacks', 'Tiddlywinks', 'Marbles', 'Crazy Bones', 'Slammers'], 200, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'POP_QUIZ', 'ORIGINAL', NULL,
         'Which 1990s wrist accessory snapped around your arm with a smack?', NULL,
         'The slap bracelet', ARRAY['The jelly bracelet', 'The friendship bracelet', 'The scrunchie', 'The snap watch', 'The charm bracelet', 'The rubber band bracelet'], 200, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'POP_QUIZ', 'ORIGINAL', NULL,
         'Which wheeled sneakers let kids roll down store aisles in the 2000s?', NULL,
         'Heelys', ARRAY['Rollerblades', 'Wheelies', 'Skate Kicks', 'Street Gliders', 'Roller Kicks', 'Zoomers'], 200, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'POP_QUIZ', 'ORIGINAL', NULL,
-        'Which 2016 viral challenge had people freezing perfectly still on video?', NULL,
-        'The Mannequin Challenge', ARRAY['The Ice Bucket Challenge', 'The Bottle Flip Challenge', 'The Statue Challenge', 'The Freeze Frame Challenge', 'The Planking Challenge', 'The Silent Challenge'], 200, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'POP_QUIZ', 'ORIGINAL', NULL,
-        'Which Los del Río song set off a worldwide line-dance craze in 1996?', NULL,
-        '"Macarena"', ARRAY['"La Bamba"', '"Mambo No. 5"', '"The Ketchup Song"', '"Lambada"', '"Livin'' la Vida Loca"', '"Cotton Eye Joe"'], 200, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'POP_QUIZ', 'ORIGINAL', NULL,
-        'Which 2012 K-pop video by PSY was the first YouTube video to pass a billion views?', NULL,
-        '"Gangnam Style"', ARRAY['"Gentleman"', '"Daddy"', '"Fantastic Baby"', '"Sorry, Sorry"', '"Bang Bang Bang"', '"Gee"'], 200, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'POP_QUIZ', 'ORIGINAL', NULL,
-        'Which backward-gliding dance did Michael Jackson show off at the "Motown 25" TV special in 1983?', NULL,
-        'The moonwalk', ARRAY['The robot', 'The running man', 'The worm', 'The electric slide', 'The cabbage patch', 'The Charleston'], 200, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'POP_QUIZ', 'ORIGINAL', NULL,
         'Which arm-swinging dance went viral after "Backpack Kid" did it on "Saturday Night Live" in 2017?', NULL,
@@ -13968,62 +14044,174 @@ VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YE
         'Blue and black', ARRAY['White and gold', 'Black and gold', 'Blue and white', 'Gray and gold', 'Purple and black', 'Green and brown'], 200, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'POP_QUIZ', 'ORIGINAL', NULL,
-        'In 2018''s viral audio clip, some people heard "Yanny." What did everyone else hear?', NULL,
-        '"Laurel"', ARRAY['"Larry"', '"Annie"', '"Lonnie"', '"Yolanda"', '"Lenny"', '"Hanny"'], 200, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'POP_QUIZ', 'ORIGINAL', NULL,
-        'Which Shiba Inu dog''s face became the "Doge" meme?', NULL,
-        'Kabosu', ARRAY['Cheems', 'Balltze', 'Maru', 'Boo', 'Bodhi', 'Marnie'], 200, 'The meme later inspired a cryptocurrency, Dogecoin.');
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'POP_QUIZ', 'ORIGINAL', NULL,
-        'Which royal did American actress Meghan Markle marry in 2018?', NULL,
-        'Prince Harry', ARRAY['Prince William', 'Prince Edward', 'Prince Andrew', 'Prince Charles', 'Peter Phillips', 'Prince Philip'], 200, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'POP_QUIZ', 'ORIGINAL', NULL,
-        'Which celebrity chef famously shouted "Bam!" as he cooked?', NULL,
-        'Emeril Lagasse', ARRAY['Gordon Ramsay', 'Bobby Flay', 'Rachael Ray', 'Wolfgang Puck', 'Alton Brown', 'Jamie Oliver'], 200, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'POP_QUIZ', 'ORIGINAL', NULL,
         'Which spiky-haired chef hosts "Diners, Drive-Ins and Dives"?', NULL,
         'Guy Fieri', ARRAY['Bobby Flay', 'Rachael Ray', 'Anthony Bourdain', 'Alton Brown', 'Andrew Zimmern', 'Adam Richman'], 200, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'POP_QUIZ', 'ORIGINAL', NULL,
-        'Which magician made the Statue of Liberty "disappear" on live TV in 1983?', NULL,
-        'David Copperfield', ARRAY['David Blaine', 'Harry Houdini', 'Criss Angel', 'Doug Henning', 'Penn Jillette', 'Lance Burton'], 200, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'POP_QUIZ', 'ORIGINAL', NULL,
         'Which magazine has named a "Person of the Year" since 1927?', NULL,
         'Time', ARRAY['Newsweek', 'Life', 'People', 'Forbes', 'Rolling Stone', 'The New Yorker'], 200, 'It began as "Man of the Year." Charles Lindbergh was the first, for 1927.');
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'POP_QUIZ', 'ORIGINAL', NULL,
-        'Which fast-food chain''s 1984 ads had an older woman demanding "Where''s the beef?"', NULL,
-        'Wendy''s', ARRAY['McDonald''s', 'Burger King', 'Hardee''s', 'Jack in the Box', 'Arby''s', 'Carl''s Jr.'], 200, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'POP_QUIZ', 'ORIGINAL', NULL,
-        'Which milk slogan appeared on the celebrity "milk mustache" ads from 1998 on?', NULL,
-        '"Got Milk?"', ARRAY['"Drink Up!"', '"Milk It!"', '"Moo-ve Over"', '"Say Cheese"', '"Udderly Delicious"', '"Mustache March"'], 200, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'POP_QUIZ', 'ORIGINAL', NULL,
         'Which brand''s ads promise "You''re not you when you''re hungry"?', NULL,
         'Snickers', ARRAY['Twix', 'Kit Kat', 'Milky Way', '3 Musketeers', 'Baby Ruth', 'PayDay'], 200, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'POP_QUIZ', 'ORIGINAL', NULL,
-        'Which department store''s parade fills New York with giant balloons every Thanksgiving morning?', NULL,
-        'Macy''s', ARRAY['Gimbels', 'Saks Fifth Avenue', 'Bloomingdale''s', 'Sears', 'JCPenney', 'Lord & Taylor'], 200, NULL);
+        'Which 1960s action figure was billed as "America''s movable fighting man"?', NULL,
+        'G.I. Joe', ARRAY['Major Matt Mason', 'Captain Action', 'Big Jim', 'Johnny West', 'Stretch Armstrong', 'Action Man'], 200, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'POP_QUIZ', 'ORIGINAL', NULL,
-        'Which 2005 Christmas tradition has a "scout" that reports to Santa each night?', NULL,
-        'The Elf on the Shelf', ARRAY['The Christmas Pickle', 'The Advent Calendar', 'Santa''s Spy Cam', 'The North Pole Pal', 'The Night Owl', 'The Snow Buddy'], 200, NULL);
+        'What is the folded-paper fortune teller kids work with their fingers also called?', NULL,
+        'A cootie catcher', ARRAY['A paper fortune', 'A finger puppet', 'A snap dragon', 'A magic square', 'A crown', 'A paper cootie'], 200, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'POP_QUIZ', 'ORIGINAL', NULL,
+        'Which internet company''s computer voice announced "You''ve got mail!"?', NULL,
+        'AOL', ARRAY['Yahoo!', 'CompuServe', 'Prodigy', 'EarthLink', 'MSN', 'Netscape'], 200, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'POP_QUIZ', 'ORIGINAL', NULL,
+        'Which 2013 Oxford Dictionaries "Word of the Year" means a photo you take of yourself?', NULL,
+        'Selfie', ARRAY['Snapshot', 'Portrait', 'Selfcam', 'Mirror shot', 'Headshot', 'Me-pic'], 200, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'POP_QUIZ', 'ORIGINAL', NULL,
+        'Which phone company''s "Test Man" walked around asking "Can you hear me now? Good."?', NULL,
+        'Verizon', ARRAY['AT&T', 'Sprint', 'T-Mobile', 'Nextel', 'Cingular', 'Cricket'], 200, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'POP_QUIZ', 'ORIGINAL', NULL,
+        'In 1997, which fast-food chain''s ads starred a talking Chihuahua?', NULL,
+        'Taco Bell', ARRAY['Del Taco', 'Chipotle', 'Taco John''s', 'Jack in the Box', 'Burger King', 'Sonic'], 200, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'POP_QUIZ', 'ORIGINAL', NULL,
+        'How many licks does it take to get to the center of which lollipop, according to a famous owl?', NULL,
+        'A Tootsie Pop', ARRAY['A Blow Pop', 'A Dum Dum', 'A Charms Pop', 'A Chupa Chups', 'A Jolly Rancher', 'A Ring Pop'], 200, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'POP_QUIZ', 'ORIGINAL', NULL,
+        'Which pilot landed a crippled airliner on New York''s Hudson River in 2009, saving everyone aboard?', NULL,
+        'Chesley "Sully" Sullenberger', ARRAY['Jeffrey Skiles', 'Chuck Yeager', 'Tammie Jo Shults', 'Al Haynes', 'Bob Hoover', 'Jim Lovell'], 200, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'POP_QUIZ', 'ORIGINAL', NULL,
+        'During 2020''s lockdowns, which homemade bread became a nationwide baking craze?', NULL,
+        'Sourdough', ARRAY['Pretzels', 'Focaccia', 'Rye', 'Challah', 'Brioche', 'Cornbread'], 200, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'POP_QUIZ', 'ORIGINAL', NULL,
+        'Which comic strip follows a 6-year-old boy and a stuffed tiger who comes alive when they''re alone?', NULL,
+        'Calvin and Hobbes', ARRAY['Bloom County', 'The Far Side', 'Peanuts', 'Dennis the Menace', 'Foxtrot', 'Pearls Before Swine'], 200, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'POP_QUIZ', 'ORIGINAL', NULL,
+        'What was the "Y2K bug" fear?', NULL,
+        'That computers would misread the year 2000 as 1900', ARRAY['That a virus would spread on New Year''s Day', 'That satellites would fall at midnight', 'That the power grid would hit its limit', 'That clocks would stop at midnight', 'That the internet would run out of addresses', 'That phones would stop ringing'], 200, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'POP_QUIZ', 'ORIGINAL', NULL,
+        'Which collectible vinyl figures with oversized heads and boxy window packaging took over toy stores in the 2010s?', NULL,
+        'Funko Pops', ARRAY['Bratz', 'Shopkins', 'L.O.L. Surprise!', 'Monster High', 'Lalaloopsy', 'Hatchimals'], 200, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'POP_QUIZ', 'ORIGINAL', NULL,
+        'Which 1960s toy oven baked tiny cakes with the heat of a light bulb?', NULL,
+        'The Easy-Bake Oven', ARRAY['The Kenner Kitchen', 'The Suzy Homemaker', 'The Lil'' Chef', 'The Bake-a-Rama', 'The Toastmaster Jr.', 'The Mini-Range'], 200, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'POP_QUIZ', 'ORIGINAL', NULL,
+        'Which 1960s toy let kids "draw" pictures by poking glowing colored pegs into a lit board?', NULL,
+        'Lite-Brite', ARRAY['Colorforms', 'Glow Pegs', 'Glo-Doodle', 'Peg Art', 'Spirograph', 'Magna Doodle'], 200, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'POP_QUIZ', 'ORIGINAL', NULL,
+        'Which famous 1971 ad featured a crowd on a hilltop singing "I''d Like to Buy the World a ___"?', NULL,
+        'Coke', ARRAY['Pepsi', 'Hug', 'Smile', 'Song', 'Dream', 'Rose'], 200, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'POP_QUIZ', 'ORIGINAL', NULL,
+        'Which fast-food mascot, a purple blob, is a friend of Ronald McDonald?', NULL,
+        'Grimace', ARRAY['The Hamburglar', 'Birdie', 'Mayor McCheese', 'Officer Big Mac', 'The Fry Kids', 'Captain Crook'], 200, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'POP_QUIZ', 'ORIGINAL', NULL,
+        'Which internet meme, a 1987 music video bait-and-switch, has fooled people since 2007?', NULL,
+        'Rickrolling', ARRAY['Trolling', 'Catfishing', 'Planking', 'Doging', 'Vining', 'Numa-ing'], 200, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'POP_QUIZ', 'ORIGINAL', NULL,
+        'Which 1963 board game has players build a wacky contraption of cranks, a boot and a diving man to catch each other''s mice?', NULL,
+        'Mouse Trap', ARRAY['Hungry Hungry Hippos', 'Kerplunk', 'Operation', 'Ants in the Pants', 'Barrel of Monkeys', 'Don''t Spill the Beans'], 200, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'POP_QUIZ', 'POP_QUIZ_NOV25', NULL,
+        'Which rag doll with red yarn hair was created by Johnny Gruelle in 1915?', NULL,
+        'Raggedy Ann', ARRAY['Holly Hobbie', 'Strawberry Shortcake', 'Kewpie', 'Betsy Wetsy', 'Chatty Cathy'], 200, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'POP_QUIZ', 'POP_QUIZ_NOV25', NULL,
+        'Which son of Prince William and Catherine was born in July 2013?', NULL,
+        'Prince George', ARRAY['Prince Louis', 'Prince Archie', 'Prince Harry', 'Prince Edward', 'Prince Andrew'], 200, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'POP_QUIZ', 'POP_QUIZ_NOV25', NULL,
+        'Which game has you drop checkers into an upright grid, trying to get four in a row?', NULL,
+        'Connect Four', ARRAY['Othello', 'Battleship', 'Mastermind', 'Tic-Tac-Toe', 'Chinese Checkers'], 200, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'POP_QUIZ', 'POP_QUIZ_NOV25', NULL,
+        'Which board game lets you bump opponents'' pawns back to Start, with an apology?', NULL,
+        'Sorry!', ARRAY['Trouble', 'Parcheesi', 'Aggravation', 'Candy Land', 'Chutes and Ladders'], 200, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'POP_QUIZ', 'POP_QUIZ_NOV25', NULL,
+        'Which cereal is "magically delicious"?', NULL,
+        'Lucky Charms', ARRAY['Trix', 'Froot Loops', 'Cap''n Crunch', 'Cocoa Puffs', 'Frosted Flakes'], 200, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'POP_QUIZ', 'POP_QUIZ_NOV25', NULL,
+        'Which insurance company''s ads star a green gecko?', NULL,
+        'GEICO', ARRAY['Progressive', 'Allstate', 'State Farm', 'Aflac', 'Liberty Mutual'], 200, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'POP_QUIZ', 'POP_QUIZ_NOV25', NULL,
+        'Which insurance company''s ads star a cheerful saleswoman named Flo?', NULL,
+        'Progressive', ARRAY['GEICO', 'Allstate', 'State Farm', 'Aflac', 'Farmers'], 200, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'POP_QUIZ', 'POP_QUIZ_NOV25', NULL,
+        'Which candy promised to melt in your mouth, not in your hand?', NULL,
+        'M&M''s', ARRAY['Skittles', 'Reese''s Pieces', 'Hershey''s Kisses', 'Milk Duds', 'Junior Mints'], 200, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'POP_QUIZ', 'POP_QUIZ_NOV25', NULL,
+        'Which restaurant chain promised you could "Have it your way"?', NULL,
+        'Burger King', ARRAY['McDonald''s', 'Wendy''s', 'Arby''s', 'Jack in the Box', 'Hardee''s'], 200, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'POP_QUIZ', 'POP_QUIZ_NOV25', NULL,
+        'Which board game has players build roads and settlements on an island of hexagon tiles?', NULL,
+        'Catan', ARRAY['Carcassonne', 'Ticket to Ride', 'Risk', 'Agricola', 'Dominion'], 200, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'POP_QUIZ', 'POP_QUIZ_NOV25', NULL,
+        'Which tiny collectible toys shaped like grocery items were a 2010s craze?', NULL,
+        'Shopkins', ARRAY['Polly Pockets', 'Hatchimals', 'L.O.L. Surprise!', 'Squinkies', 'Zhu Zhu Pets'], 200, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'POP_QUIZ', 'POP_QUIZ_NOV25', NULL,
+        'Which candy bar''s ads sang "Gimme a break"?', NULL,
+        'Kit Kat', ARRAY['Twix', 'Snickers', 'Milky Way', 'Butterfinger', '3 Musketeers'], 200, NULL);
 
 -- 300 points
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'POP_QUIZ', 'ORIGINAL', NULL,
-        'When Mr. Potato Head launched in 1952, what did kids have to supply themselves?', NULL,
-        'A real potato', ARRAY['The eyes', 'The hat', 'The batteries', 'The shoes', 'A plastic body', 'The box'], 300, NULL);
+        'Which squishy modeling dough was first sold as a wallpaper cleaner?', NULL,
+        'Play-Doh', ARRAY['Silly Putty', 'Gak', 'Flubber', 'Plasticine', 'Moon Sand', 'Floam'], 300, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'POP_QUIZ', 'ORIGINAL', NULL,
-        'Which 1960s action figure was billed as "America''s movable fighting man"?', NULL,
-        'G.I. Joe', ARRAY['Major Matt Mason', 'Captain Action', 'Big Jim', 'Johnny West', 'Stretch Armstrong', 'Action Man'], 300, NULL);
+        'Which stretchy putty, sold in a plastic egg, could copy newspaper comics?', NULL,
+        'Silly Putty', ARRAY['Play-Doh', 'Gak', 'Slime', 'Flubber', 'Floam', 'Thinking Putty'], 300, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'POP_QUIZ', 'ORIGINAL', NULL,
+        'Which handheld game flashed colored lights for you to copy in an ever-longer pattern?', NULL,
+        'Simon', ARRAY['Merlin', 'Bop It', 'Touch Me', 'Lights Out', 'Brain Warp', 'Copy Cat'], 300, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'POP_QUIZ', 'ORIGINAL', NULL,
+        'Which 1990s game had kids slamming stacks of cardboard milk-cap discs?', NULL,
+        'Pogs', ARRAY['Tazos', 'Jacks', 'Tiddlywinks', 'Marbles', 'Crazy Bones', 'Slammers'], 300, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'POP_QUIZ', 'ORIGINAL', NULL,
+        'Which 2016 viral challenge had people freezing perfectly still on video?', NULL,
+        'The Mannequin Challenge', ARRAY['The Ice Bucket Challenge', 'The Bottle Flip Challenge', 'The Statue Challenge', 'The Freeze Frame Challenge', 'The Planking Challenge', 'The Silent Challenge'], 300, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'POP_QUIZ', 'ORIGINAL', NULL,
+        'In 2018''s viral audio clip, some people heard "Yanny." What did everyone else hear?', NULL,
+        '"Laurel"', ARRAY['"Larry"', '"Annie"', '"Lonnie"', '"Yolanda"', '"Lenny"', '"Hanny"'], 300, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'POP_QUIZ', 'ORIGINAL', NULL,
+        'Which celebrity chef famously shouted "Bam!" as he cooked?', NULL,
+        'Emeril Lagasse', ARRAY['Gordon Ramsay', 'Bobby Flay', 'Rachael Ray', 'Wolfgang Puck', 'Alton Brown', 'Jamie Oliver'], 300, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'POP_QUIZ', 'ORIGINAL', NULL,
+        'Which magician made the Statue of Liberty "disappear" on live TV in 1983?', NULL,
+        'David Copperfield', ARRAY['David Blaine', 'Harry Houdini', 'Criss Angel', 'Doug Henning', 'Penn Jillette', 'Lance Burton'], 300, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'POP_QUIZ', 'ORIGINAL', NULL,
+        'Which fast-food chain''s 1984 ads had an older woman demanding "Where''s the beef?"', NULL,
+        'Wendy''s', ARRAY['McDonald''s', 'Burger King', 'Hardee''s', 'Jack in the Box', 'Arby''s', 'Carl''s Jr.'], 300, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'POP_QUIZ', 'ORIGINAL', NULL,
         'Which 1987 toy is a ball of hundreds of soft, floppy rubber strings?', NULL,
@@ -14034,44 +14222,20 @@ VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YE
         'Magic: The Gathering', ARRAY['Yu-Gi-Oh!', 'Pokémon TCG', 'Spellfire', 'Legend of the Five Rings', 'Vampire: The Eternal Struggle', 'Netrunner'], 300, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'POP_QUIZ', 'ORIGINAL', NULL,
-        'What did spring toy inventor Richard James see in 1943 that gave him the idea for the Slinky?', NULL,
-        'A spring falling off a shelf', ARRAY['A snake on a staircase', 'A coiled telephone cord', 'A child''s toy accordion', 'A pile of wire', 'A bedspring bouncing', 'A clock unwinding'], 300, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'POP_QUIZ', 'ORIGINAL', NULL,
-        'What is the folded-paper fortune teller kids work with their fingers also called?', NULL,
-        'A cootie catcher', ARRAY['A paper fortune', 'A finger puppet', 'A snap dragon', 'A magic square', 'A crown', 'A paper cootie'], 300, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'POP_QUIZ', 'ORIGINAL', NULL,
         'Which 2000s rubber bracelets, shaped like animals, snapped back into shape when you took them off?', NULL,
         'Silly Bandz', ARRAY['Jelly bracelets', 'Rainbow Loom', 'Livestrong bands', 'Slap bracelets', 'Shape Bands', 'Snap Bands'], 300, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'POP_QUIZ', 'ORIGINAL', NULL,
-        'Which 1980s talking teddy bear read stories from a cassette tape in his back?', NULL,
+        'Which 1980s talking toy bear read stories from a cassette tape in his back?', NULL,
         'Teddy Ruxpin', ARRAY['Corduroy', 'Fozzie', 'Furby', 'Grubby', 'Snuggles', 'Paddington'], 300, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'POP_QUIZ', 'ORIGINAL', NULL,
-        'Which website let 1999-2000s kids adopt and care for virtual pets like Kougras and Aishas?', NULL,
-        'Neopets', ARRAY['Webkinz', 'Club Penguin', 'Habbo Hotel', 'Poptropica', 'Moshi Monsters', 'Tamagotchi Town'], 300, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'POP_QUIZ', 'ORIGINAL', NULL,
         'Which instant-messaging program popularized "away messages" and buddy lists around 2000?', NULL,
         'AIM', ARRAY['MSN Messenger', 'ICQ', 'Yahoo! Messenger', 'Skype', 'Gchat', 'Kik'], 300, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'POP_QUIZ', 'ORIGINAL', NULL,
-        'Which internet company''s computer voice announced "You''ve got mail!"?', NULL,
-        'AOL', ARRAY['Yahoo!', 'CompuServe', 'Prodigy', 'EarthLink', 'MSN', 'Netscape'], 300, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'POP_QUIZ', 'ORIGINAL', NULL,
         'Which word for someone who fakes an online identity to fool others came from a 2010 documentary?', NULL,
         'Catfish', ARRAY['Troll', 'Phisher', 'Sock puppet', 'Spoofer', 'Lurker', 'Shill'], 300, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'POP_QUIZ', 'ORIGINAL', NULL,
-        'Which 2013 Oxford Dictionaries "Word of the Year" means a photo you take of yourself?', NULL,
-        'Selfie', ARRAY['Snapshot', 'Portrait', 'Selfcam', 'Mirror shot', 'Headshot', 'Me-pic'], 300, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'POP_QUIZ', 'ORIGINAL', NULL,
-        'Which emoji was Oxford Dictionaries'' 2015 "Word of the Year"?', NULL,
-        'Face with Tears of Joy', ARRAY['Red Heart', 'Thumbs Up', 'Smiling Face with Heart-Eyes', 'Loudly Crying Face', 'Pile of Poo', 'Rolling on the Floor Laughing'], 300, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'POP_QUIZ', 'ORIGINAL', NULL,
         'What did "planking" involve, in the 2011 photo fad?', NULL,
@@ -14082,20 +14246,8 @@ VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YE
         'Six-second looping videos', ARRAY['Disappearing photos', 'Live audio rooms', 'Short text posts', 'Voice messages', 'Photo filters', 'Music streaming'], 300, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'POP_QUIZ', 'ORIGINAL', NULL,
-        'Which phone company''s "Test Man" walked around asking "Can you hear me now? Good."?', NULL,
-        'Verizon', ARRAY['AT&T', 'Sprint', 'T-Mobile', 'Nextel', 'Cingular', 'Cricket'], 300, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'POP_QUIZ', 'ORIGINAL', NULL,
         'Which beer brand''s 1999 ads had friends shouting "Wassup?!" into the phone?', NULL,
         'Budweiser', ARRAY['Miller Lite', 'Coors Light', 'Schlitz', 'Heineken', 'Corona', 'Pabst'], 300, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'POP_QUIZ', 'ORIGINAL', NULL,
-        'In 1997, which fast-food chain''s ads starred a talking Chihuahua?', NULL,
-        'Taco Bell', ARRAY['Del Taco', 'Chipotle', 'Taco John''s', 'Jack in the Box', 'Burger King', 'Sonic'], 300, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'POP_QUIZ', 'ORIGINAL', NULL,
-        'How many licks does it take to get to the center of which lollipop, according to a famous owl?', NULL,
-        'A Tootsie Pop', ARRAY['A Blow Pop', 'A Dum Dum', 'A Charms Pop', 'A Chupa Chups', 'A Jolly Rancher', 'A Ring Pop'], 300, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'POP_QUIZ', 'ORIGINAL', NULL,
         'Which Hollywood star became Princess of Monaco when she married Prince Rainier III in 1956?', NULL,
@@ -14106,38 +14258,150 @@ VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YE
         'Evel Knievel', ARRAY['Robbie Knievel', 'Travis Pastrana', 'Harry Houdini', 'Steve McQueen', 'Gary Wells', 'Robbie Maddison'], 300, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'POP_QUIZ', 'ORIGINAL', NULL,
-        'Which pilot landed a crippled airliner on New York''s Hudson River in 2009, saving everyone aboard?', NULL,
-        'Chesley "Sully" Sullenberger', ARRAY['Jeffrey Skiles', 'Chuck Yeager', 'Tammie Jo Shults', 'Al Haynes', 'Bob Hoover', 'Jim Lovell'], 300, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'POP_QUIZ', 'ORIGINAL', NULL,
-        'When it went up in 1923, what did the famous Hollywood sign say?', NULL,
-        'Hollywoodland', ARRAY['Hollywood Hills', 'Hollywood Studios', 'Holly Woods', 'Hollywood Park', 'Hollywood Heights', 'Hollywood Estates'], 300, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'POP_QUIZ', 'ORIGINAL', NULL,
-        'During 2020''s lockdowns, which homemade bread became a nationwide baking craze?', NULL,
-        'Sourdough', ARRAY['Pretzels', 'Focaccia', 'Rye', 'Challah', 'Brioche', 'Cornbread'], 300, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'POP_QUIZ', 'ORIGINAL', NULL,
-        'Which comic strip follows a 6-year-old boy and a stuffed tiger who comes alive when they''re alone?', NULL,
-        'Calvin and Hobbes', ARRAY['Bloom County', 'The Far Side', 'Peanuts', 'Dennis the Menace', 'Foxtrot', 'Pearls Before Swine'], 300, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'POP_QUIZ', 'ORIGINAL', NULL,
-        'What was the "Y2K bug" fear?', NULL,
-        'That computers would misread the year 2000 as 1900', ARRAY['That a virus would spread on New Year''s Day', 'That satellites would fall at midnight', 'That the power grid would hit its limit', 'That clocks would stop at midnight', 'That the internet would run out of addresses', 'That phones would stop ringing'], 300, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'POP_QUIZ', 'ORIGINAL', NULL,
         'Which 1938 radio drama, presented as live news of a Martian invasion, alarmed some listeners?', NULL,
         '"The War of the Worlds"', ARRAY['"The Invisible Man"', '"Invaders from Mars"', '"The Day the Earth Stood Still"', '"The Thing"', '"Flash Gordon"', '"Buck Rogers"'], 300, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'POP_QUIZ', 'ORIGINAL', NULL,
-        'Which brand''s slogan is "Just Do It"?', NULL,
-        'Nike', ARRAY['Adidas', 'Reebok', 'Puma', 'Under Armour', 'New Balance', 'Gatorade'], 300, NULL);
+        'Which Wham-O toy was first sold, in 1957, as the "Pluto Platter"?', NULL,
+        'The Frisbee', ARRAY['The Hula-Hoop', 'The Slip ''N Slide', 'The Super Ball', 'The Boomerang', 'The Hacky Sack', 'The Water Wiggle'], 300, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'POP_QUIZ', 'ORIGINAL', NULL,
-        'Known as "Wally" in Britain, which striped-shirted traveler hides in crowded picture books?', NULL,
-        'Waldo', ARRAY['Carmen Sandiego', 'Odlaw', 'Flat Stanley', 'Curious George', 'Paddington', 'Tintin'], 300, NULL);
+        'What did the famous "I''ve fallen, and I can''t get up!" ads of the late 1980s sell?', NULL,
+        'A medical alert button', ARRAY['A walker', 'A stair lift', 'A home phone', 'A pain-relief cream', 'A recliner chair', 'A security system'], 300, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'POP_QUIZ', 'ORIGINAL', NULL,
+        'Which 2013 dance-video craze had one masked person dancing alone, then everyone going wild when the bass dropped?', NULL,
+        'The Harlem Shake', ARRAY['The Gangnam Style', 'The Nae Nae', 'The Dougie', 'The Cupid Shuffle', 'The Wobble', 'The Stanky Leg'], 300, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'POP_QUIZ', 'ORIGINAL', NULL,
+        'Which famous yellow button design did artist Harvey Ball create in 1963 for an insurance company''s morale campaign?', NULL,
+        'The smiley face', ARRAY['The peace sign', 'The happy sun', 'The thumbs-up', 'The yin-yang', 'The have-a-nice-day bee', 'The sunflower'], 300, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'POP_QUIZ', 'ORIGINAL', NULL,
+        'What kind of creatures were "Sea-Monkeys," sold in comic book ads?', NULL,
+        'Brine shrimp', ARRAY['Tiny monkeys', 'Sea horses', 'Tadpoles', 'Water fleas', 'Goldfish eggs', 'Jellyfish'], 300, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'POP_QUIZ', 'ORIGINAL', NULL,
+        'In the 1970s Life cereal ads, who liked it, after his brothers wouldn''t try it?', NULL,
+        'Mikey', ARRAY['Timmy', 'Joey', 'Bobby', 'Danny', 'Billy', 'Johnny'], 300, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'POP_QUIZ', 'ORIGINAL', NULL,
+        'Which 1976 action figure could be stretched to four times his size, then shrink back?', NULL,
+        'Stretch Armstrong', ARRAY['Elastic Man', 'Mr. Fantastic', 'Plastic Man', 'Stretch Monster', 'Rubber Randy', 'Bendy Ben'], 300, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'POP_QUIZ', 'ORIGINAL', NULL,
+        'Which bouncy toy did Lamar Hunt''s kids play with, inspiring him to name the NFL''s championship game?', NULL,
+        'The Super Ball', ARRAY['The Hacky Sack', 'The Nerf ball', 'The Koosh ball', 'The Spaldeen', 'The Bouncy Castle', 'The Pogo Ball'], 300, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'POP_QUIZ', 'ORIGINAL', NULL,
+        'Which egg-shaped toys "wobble, but they don''t fall down"?', NULL,
+        'Weebles', ARRAY['Wobblers', 'Tumblers', 'Bobbles', 'Roly-Polies', 'Kewpies', 'Wiggles'], 300, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'POP_QUIZ', 'POP_QUIZ_NOV25', NULL,
+        'Which board game has players pop a plastic "Pop-O-Matic" bubble to roll the die?', NULL,
+        'Trouble', ARRAY['Sorry!', 'Aggravation', 'Parcheesi', 'Yahtzee', 'Headache'], 300, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'POP_QUIZ', 'POP_QUIZ_NOV25', NULL,
+        'Which board game began as "The Landlord''s Game," designed by Lizzie Magie to warn about greedy landlords?', NULL,
+        'Monopoly', ARRAY['Life', 'Risk', 'Payday', 'Clue', 'Masterpiece'], 300, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'POP_QUIZ', 'POP_QUIZ_NOV25', NULL,
+        'Which big-headed fashion dolls with a "passion for fashion" arrived in 2001?', NULL,
+        'Bratz', ARRAY['Polly Pocket', 'Monster High', 'American Girl', 'Barbie Fashionistas', 'Lalaloopsy'], 300, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'POP_QUIZ', 'POP_QUIZ_NOV25', NULL,
+        'Which yellow rubber wristband, sold to fight cancer, became a 2004 fad?', NULL,
+        'Livestrong', ARRAY['Pink Ribbon', 'Silly Bandz', 'Rainbow Loom', 'Cure Band', 'Hope Band'], 300, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'POP_QUIZ', 'POP_QUIZ_NOV25', NULL,
+        'In the famous "Hang in there, baby" poster of the 1970s, what is hanging from a branch?', NULL,
+        'A kitten', ARRAY['A sloth', 'A monkey', 'A koala', 'A puppy', 'A bat'], 300, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'POP_QUIZ', 'POP_QUIZ_NOV25', NULL,
+        'Which giggling red toy caused store stampedes at Christmas 1996?', NULL,
+        'Tickle Me Elmo', ARRAY['Furby', 'Teddy Ruxpin', 'Talking Barney', 'Tamagotchi', 'Buzz Lightyear'], 300, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'POP_QUIZ', 'POP_QUIZ_NOV25', NULL,
+        'Which advertising mascot giggles when you poke his belly?', NULL,
+        'The Pillsbury Doughboy', ARRAY['Mr. Peanut', 'The Michelin Man', 'The Stay Puft Marshmallow Man', 'Mr. Clean', 'The Kool-Aid Man'], 300, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'POP_QUIZ', 'POP_QUIZ_NOV25', NULL,
+        'Which snack brand''s mascot wears a monocle and a top hat?', NULL,
+        'Planters', ARRAY['Pringles', 'Cracker Jack', 'Frito-Lay', 'Nabisco', 'Chex Mix'], 300, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'POP_QUIZ', 'POP_QUIZ_NOV25', NULL,
+        'Which royal has held the title Princess Royal since 1987?', NULL,
+        'Princess Anne', ARRAY['Princess Margaret', 'Princess Beatrice', 'Princess Eugenie', 'Princess Charlotte', 'Princess Diana'], 300, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'POP_QUIZ', 'POP_QUIZ_NOV25', NULL,
+        'In a famous 2007 viral video, which little brother bit Harry''s finger?', NULL,
+        'Charlie', ARRAY['Dave', 'Ronnie', 'Billy', 'Tommy', 'Freddie'], 300, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'POP_QUIZ', 'POP_QUIZ_NOV25', NULL,
+        'In the game Operation, what is the patient''s name?', NULL,
+        'Cavity Sam', ARRAY['Dr. Bones', 'Funny Bone Fred', 'Mr. Ouch', 'Sick Sid', 'Patient Pete'], 300, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'POP_QUIZ', 'POP_QUIZ_NOV25', NULL,
+        'What is the name of the mustached, top-hatted mascot of the famous property-trading game?', NULL,
+        'Rich Uncle Pennybags', ARRAY['Mr. Moneybags', 'Uncle Sam', 'Mr. Peanut', 'Baron Boardwalk', 'Monty'], 300, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'POP_QUIZ', 'POP_QUIZ_NOV25', NULL,
+        'Which metal playing piece was voted out of the famous property-trading game in 2013 and replaced by a cat?', NULL,
+        'The iron', ARRAY['The thimble', 'The boot', 'The wheelbarrow', 'The top hat', 'The battleship'], 300, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'POP_QUIZ', 'POP_QUIZ_NOV25', NULL,
+        'Wheaties calls itself "The Breakfast of..." what?', NULL,
+        'Champions', ARRAY['Winners', 'Heroes', 'Legends', 'America', 'Athletes'], 300, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'POP_QUIZ', 'POP_QUIZ_NOV25', NULL,
+        'Which candy''s ads said it was "Two great tastes that taste great together"?', NULL,
+        'Reese''s Peanut Butter Cups', ARRAY['Twix', 'Snickers', 'Kit Kat', 'Almond Joy', 'Milky Way'], 300, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'POP_QUIZ', 'POP_QUIZ_NOV25', NULL,
+        'Which chain''s slogan was "It''s finger lickin'' good"?', NULL,
+        'KFC', ARRAY['Popeyes', 'Church''s Chicken', 'Chick-fil-A', 'Bojangles', 'Boston Market'], 300, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'POP_QUIZ', 'POP_QUIZ_NOV25', NULL,
+        'Which Scottish castle has been the royal family''s summer home since Queen Victoria''s day?', NULL,
+        'Balmoral', ARRAY['Windsor', 'Sandringham', 'Holyrood', 'Edinburgh', 'Glamis'], 300, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'POP_QUIZ', 'POP_QUIZ_NOV25', NULL,
+        'Which Swiss brand''s colorful plastic watches were a 1980s craze?', NULL,
+        'Swatch', ARRAY['Timex', 'Casio', 'Rolex', 'Fossil', 'Omega'], 300, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'POP_QUIZ', 'POP_QUIZ_NOV25', NULL,
+        'Which 1990s poster craze hid a 3-D picture you could see only by crossing your eyes?', NULL,
+        'Magic Eye', ARRAY['View-Master', 'Lenticular', 'Holo-Vision', 'Stereo Pix', 'Hidden Pictures'], 300, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'POP_QUIZ', 'POP_QUIZ_NOV25', NULL,
+        'Which foam ball, launched in 1969 as "the world''s first official indoor ball," grew into a dart-blaster brand?', NULL,
+        'Nerf', ARRAY['Koosh', 'Wiffle', 'Super Ball', 'Hacky Sack', 'Spalding'], 300, NULL);
 
 -- 400 points
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'POP_QUIZ', 'ORIGINAL', NULL,
+        'Which Shiba Inu dog''s face became the "Doge" meme?', NULL,
+        'Kabosu', ARRAY['Cheems', 'Balltze', 'Maru', 'Boo', 'Bodhi', 'Marnie'], 400, 'The meme later inspired a cryptocurrency, Dogecoin.');
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'POP_QUIZ', 'ORIGINAL', NULL,
+        'When Mr. Potato Head launched in 1952, what did kids have to supply themselves?', NULL,
+        'A real potato', ARRAY['The eyes', 'The hat', 'The batteries', 'The shoes', 'A plastic body', 'The box'], 400, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'POP_QUIZ', 'ORIGINAL', NULL,
+        'What did spring toy inventor Richard James see in 1943 that gave him the idea for the Slinky?', NULL,
+        'A spring falling off a shelf', ARRAY['A snake on a staircase', 'A coiled telephone cord', 'A child''s toy accordion', 'A pile of wire', 'A bedspring bouncing', 'A clock unwinding'], 400, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'POP_QUIZ', 'ORIGINAL', NULL,
+        'Which website let 1999-2000s kids adopt and care for virtual pets like Kougras and Aishas?', NULL,
+        'Neopets', ARRAY['Webkinz', 'Club Penguin', 'Habbo Hotel', 'Poptropica', 'Moshi Monsters', 'Tamagotchi Town'], 400, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'POP_QUIZ', 'ORIGINAL', NULL,
+        'Which emoji was Oxford Dictionaries'' 2015 "Word of the Year"?', NULL,
+        'Face with Tears of Joy', ARRAY['Red Heart', 'Thumbs Up', 'Smiling Face with Heart-Eyes', 'Loudly Crying Face', 'Pile of Poo', 'Rolling on the Floor Laughing'], 400, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'POP_QUIZ', 'ORIGINAL', NULL,
+        'When it went up in 1923, what did the famous Hollywood sign say?', NULL,
+        'Hollywoodland', ARRAY['Hollywood Hills', 'Hollywood Studios', 'Holly Woods', 'Hollywood Park', 'Hollywood Heights', 'Hollywood Estates'], 400, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'POP_QUIZ', 'ORIGINAL', NULL,
         'In 1939, college students competed to see who could swallow the most of what, alive?', NULL,
@@ -14164,10 +14428,6 @@ VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YE
         'PEZ', ARRAY['Tic Tac', 'Altoids', 'Smarties', 'Mentos', 'Life Savers', 'Certs'], 400, 'Its name comes from the German "Pfefferminz," peppermint.');
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'POP_QUIZ', 'ORIGINAL', NULL,
-        'Which Wham-O toy was first sold, in 1957, as the "Pluto Platter"?', NULL,
-        'The Frisbee', ARRAY['The Hula-Hoop', 'The Slip ''N Slide', 'The Super Ball', 'The Boomerang', 'The Hacky Sack', 'The Water Wiggle'], 400, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'POP_QUIZ', 'ORIGINAL', NULL,
         'Which troll dolls with wild, upright hair, first carved by a Danish woodcutter, were fads in the 1960s and 1990s?', NULL,
         'Good Luck Trolls', ARRAY['Cabbage Patch Kids', 'Kewpie dolls', 'Uglydolls', 'Pound Puppies', 'Wuzzles', 'Boglins'], 400, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
@@ -14176,92 +14436,152 @@ VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YE
         'Clara Peller', ARRAY['Betty White', 'Estelle Getty', 'Jessica Tandy', 'Ruth Gordon', 'Mildred Natwick', 'Bea Arthur'], 400, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'POP_QUIZ', 'ORIGINAL', NULL,
-        'What did the famous "I''ve fallen, and I can''t get up!" ads of the late 1980s sell?', NULL,
-        'A medical alert button', ARRAY['A walker', 'A stair lift', 'A home phone', 'A pain-relief cream', 'A recliner chair', 'A security system'], 400, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'POP_QUIZ', 'ORIGINAL', NULL,
-        'Which 2013 dance-video craze had one masked person dancing alone, then everyone going wild when the bass dropped?', NULL,
-        'The Harlem Shake', ARRAY['The Gangnam Style', 'The Nae Nae', 'The Dougie', 'The Cupid Shuffle', 'The Wobble', 'The Stanky Leg'], 400, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'POP_QUIZ', 'ORIGINAL', NULL,
-        'Which famous yellow button design did artist Harvey Ball create in 1963 for an insurance company''s morale campaign?', NULL,
-        'The smiley face', ARRAY['The peace sign', 'The happy sun', 'The thumbs-up', 'The yin-yang', 'The have-a-nice-day bee', 'The sunflower'], 400, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'POP_QUIZ', 'ORIGINAL', NULL,
-        'Which collectible vinyl figures with oversized heads and boxy window packaging took over toy stores in the 2010s?', NULL,
-        'Funko Pops', ARRAY['Bratz', 'Shopkins', 'L.O.L. Surprise!', 'Monster High', 'Lalaloopsy', 'Hatchimals'], 400, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'POP_QUIZ', 'ORIGINAL', NULL,
         'Which British engineer invented the Spirograph drawing toy in 1965?', NULL,
         'Denys Fisher', ARRAY['James Dyson', 'Clive Sinclair', 'Frank Hornby', 'Ole Kirk Christiansen', 'Richard James', 'Ernő Rubik'], 400, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'POP_QUIZ', 'ORIGINAL', NULL,
-        'Which 1960s toy oven baked tiny cakes with the heat of a light bulb?', NULL,
-        'The Easy-Bake Oven', ARRAY['The Kenner Kitchen', 'The Suzy Homemaker', 'The Lil'' Chef', 'The Bake-a-Rama', 'The Toastmaster Jr.', 'The Mini-Range'], 400, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'POP_QUIZ', 'ORIGINAL', NULL,
-        'Which 1960s toy let kids "draw" pictures by poking glowing colored pegs into a lit board?', NULL,
-        'Lite-Brite', ARRAY['Colorforms', 'Glow Pegs', 'Glo-Doodle', 'Peg Art', 'Spirograph', 'Magna Doodle'], 400, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'POP_QUIZ', 'ORIGINAL', NULL,
-        'What kind of creatures were "Sea-Monkeys," sold in comic book ads?', NULL,
-        'Brine shrimp', ARRAY['Tiny monkeys', 'Sea horses', 'Tadpoles', 'Water fleas', 'Goldfish eggs', 'Jellyfish'], 400, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'POP_QUIZ', 'ORIGINAL', NULL,
         'Which shoe brand''s light-up sneakers were a 1990s playground hit?', NULL,
         'L.A. Gear', ARRAY['Reebok', 'Keds', 'Converse', 'Vans', 'K-Swiss', 'Fila'], 400, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'POP_QUIZ', 'ORIGINAL', NULL,
-        'Which famous 1971 ad featured a crowd on a hilltop singing "I''d Like to Buy the World a ___"?', NULL,
-        'Coke', ARRAY['Pepsi', 'Hug', 'Smile', 'Song', 'Dream', 'Rose'], 400, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'POP_QUIZ', 'ORIGINAL', NULL,
-        'In the 1970s Life cereal ads, who liked it, after his brothers wouldn''t try it?', NULL,
-        'Mikey', ARRAY['Timmy', 'Joey', 'Bobby', 'Danny', 'Billy', 'Johnny'], 400, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'POP_QUIZ', 'ORIGINAL', NULL,
-        'Which fast-food mascot, a purple blob, is a friend of Ronald McDonald?', NULL,
-        'Grimace', ARRAY['The Hamburglar', 'Birdie', 'Mayor McCheese', 'Officer Big Mac', 'The Fry Kids', 'Captain Crook'], 400, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'POP_QUIZ', 'ORIGINAL', NULL,
-        'Which internet meme, a 1987 music video bait-and-switch, has fooled people since 2007?', NULL,
-        'Rickrolling', ARRAY['Trolling', 'Catfishing', 'Planking', 'Doging', 'Vining', 'Numa-ing'], 400, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'POP_QUIZ', 'ORIGINAL', NULL,
         'Which tilting wooden maze, made famous by Sweden''s BRIO in 1946, has you steer a steel ball past holes with two knobs?', NULL,
         'Labyrinth', ARRAY['Perplexus', 'Marble Run', 'Mouse Trap', 'Kerplunk', 'Operation', 'Ball Maze'], 400, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'POP_QUIZ', 'ORIGINAL', NULL,
-        'Which 1963 board game has players build a wacky contraption of cranks, a boot and a diving man to catch each other''s mice?', NULL,
-        'Mouse Trap', ARRAY['Hungry Hungry Hippos', 'Kerplunk', 'Operation', 'Ants in the Pants', 'Barrel of Monkeys', 'Don''t Spill the Beans'], 400, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'POP_QUIZ', 'ORIGINAL', NULL,
         'What were "Furbies" accused of in 1999, getting them banned from some U.S. intelligence offices?', NULL,
         'Recording secrets', ARRAY['Spreading viruses', 'Causing headaches', 'Jamming radios', 'Tracking locations', 'Overheating', 'Scaring guard dogs'], 400, 'The NSA banned them, worried they could record and repeat what they heard. They couldn''t.');
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'POP_QUIZ', 'ORIGINAL', NULL,
-        'Which 1976 action figure could be stretched to four times his size, then shrink back?', NULL,
-        'Stretch Armstrong', ARRAY['Elastic Man', 'Mr. Fantastic', 'Plastic Man', 'Stretch Monster', 'Rubber Randy', 'Bendy Ben'], 400, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'POP_QUIZ', 'ORIGINAL', NULL,
         'Which 1960 Mattel doll spoke one of 11 phrases when you pulled her string?', NULL,
         'Chatty Cathy', ARRAY['Barbie', 'Baby Alive', 'Betsy Wetsy', 'Tiny Tears', 'Kissy', 'Talky Tina'], 400, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'POP_QUIZ', 'ORIGINAL', NULL,
-        'Which bouncy toy did Lamar Hunt''s kids play with, inspiring him to name the NFL''s championship game?', NULL,
-        'The Super Ball', ARRAY['The Hacky Sack', 'The Nerf ball', 'The Koosh ball', 'The Spaldeen', 'The Bouncy Castle', 'The Pogo Ball'], 400, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'POP_QUIZ', 'ORIGINAL', NULL,
         'Which scientist coined the word "meme" in his 1976 book "The Selfish Gene"?', NULL,
         'Richard Dawkins', ARRAY['Carl Sagan', 'Stephen Jay Gould', 'E.O. Wilson', 'Daniel Dennett', 'Steven Pinker', 'Stephen Hawking'], 400, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'POP_QUIZ', 'ORIGINAL', NULL,
-        'Which egg-shaped toys "wobble, but they don''t fall down"?', NULL,
-        'Weebles', ARRAY['Wobblers', 'Tumblers', 'Bobbles', 'Roly-Polies', 'Kewpies', 'Wiggles'], 400, NULL);
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'POP_QUIZ', 'POP_QUIZ_NOV25', NULL,
+        'In the American murder-mystery board game, who is the victim?', NULL,
+        'Mr. Boddy', ARRAY['Colonel Mustard', 'Professor Plum', 'Mrs. White', 'Mr. Green', 'Mrs. Peacock'], 400, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'POP_QUIZ', 'POP_QUIZ_NOV25', NULL,
+        'Which race-around-the-board game takes its name from the Hindi word for "twenty-five"?', NULL,
+        'Parcheesi', ARRAY['Backgammon', 'Sorry!', 'Mancala', 'Chinese Checkers', 'Ludo'], 400, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'POP_QUIZ', 'POP_QUIZ_NOV25', NULL,
+        'Boardwalk and Park Place, famous board game properties, are streets in which seaside city?', NULL,
+        'Atlantic City', ARRAY['Coney Island', 'Miami Beach', 'Ocean City', 'Asbury Park', 'Cape May'], 400, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'POP_QUIZ', 'POP_QUIZ_NOV25', NULL,
+        'In Britain, the murder-mystery game with Colonel Mustard is called what?', NULL,
+        'Cluedo', ARRAY['Whodunit', 'Suspect', 'Detective', 'Murder Most Foul', 'Mystery Mansion'], 400, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'POP_QUIZ', 'POP_QUIZ_NOV25', NULL,
+        'Which gross-out 1980s trading cards parodied a famous 1983 doll that came with adoption papers?', NULL,
+        'Garbage Pail Kids', ARRAY['Wacky Packages', 'Mad Libs', 'Trash Pack', 'Grossology', 'Ugly Dolls'], 400, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'POP_QUIZ', 'POP_QUIZ_NOV25', NULL,
+        'Which company''s name became almost synonymous with the yo-yo after 1929?', NULL,
+        'Duncan', ARRAY['Wham-O', 'Mattel', 'Hasbro', 'Spalding', 'Milton Bradley'], 400, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'POP_QUIZ', 'POP_QUIZ_NOV25', NULL,
+        'Which TV frontiersman set off a 1950s craze for coonskin caps?', NULL,
+        'Davy Crockett', ARRAY['Daniel Boone', 'Kit Carson', 'Buffalo Bill', 'Wild Bill Hickok', 'Jim Bowie'], 400, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'POP_QUIZ', 'POP_QUIZ_NOV25', NULL,
+        'Which 1920s dance craze is named after a South Carolina city?', NULL,
+        'The Charleston', ARRAY['The Columbia', 'The Savannah', 'The Lindy Hop', 'The Black Bottom', 'The Shimmy'], 400, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'POP_QUIZ', 'POP_QUIZ_NOV25', NULL,
+        'What were the bobbed-hair, short-skirted young women of the 1920s called?', NULL,
+        'Flappers', ARRAY['Bobby-soxers', 'Gibson Girls', 'Molls', 'Debutantes', 'Hepcats'], 400, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'POP_QUIZ', 'POP_QUIZ_NOV25', NULL,
+        'Which name did the British royal family adopt in 1917, replacing Saxe-Coburg and Gotha?', NULL,
+        'Windsor', ARRAY['Tudor', 'Stuart', 'Hanover', 'York', 'Lancaster'], 400, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'POP_QUIZ', 'POP_QUIZ_NOV25', NULL,
+        'Which antacid''s ads went "Plop, plop, fizz, fizz, oh what a relief it is"?', NULL,
+        'Alka-Seltzer', ARRAY['Tums', 'Rolaids', 'Pepto-Bismol', 'Maalox', 'Mylanta'], 400, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'POP_QUIZ', 'POP_QUIZ_NOV25', NULL,
+        'Which finicky orange tabby starred in 9Lives cat food ads?', NULL,
+        'Morris', ARRAY['Garfield', 'Felix', 'Sylvester', 'Tom', 'Heathcliff'], 400, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'POP_QUIZ', 'POP_QUIZ_NOV25', NULL,
+        'At which Norfolk country house does the British royal family traditionally spend Christmas?', NULL,
+        'Sandringham', ARRAY['Balmoral', 'Windsor Castle', 'Highgrove', 'Clarence House', 'Osborne House'], 400, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'POP_QUIZ', 'POP_QUIZ_NOV25', NULL,
+        'Which computer did the famous "1984" Super Bowl ad, directed by Ridley Scott, launch?', NULL,
+        'The Macintosh', ARRAY['The IBM PC', 'The Commodore 64', 'The Apple II', 'The Atari ST', 'The Amiga'], 400, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'POP_QUIZ', 'POP_QUIZ_NOV25', NULL,
+        'Which everyday utensils did 1970s psychic Uri Geller claim to bend with his mind?', NULL,
+        'Spoons', ARRAY['Forks', 'Keys', 'Nails', 'Coat hangers', 'Paper clips'], 400, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'POP_QUIZ', 'POP_QUIZ_NOV25', NULL,
+        'Which daredevil walked a tightrope between New York''s Twin Towers in 1974?', NULL,
+        'Philippe Petit', ARRAY['Evel Knievel', 'Karl Wallenda', 'Nik Wallenda', 'Harry Houdini', 'Charles Blondin'], 400, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'POP_QUIZ', 'POP_QUIZ_NOV25', NULL,
+        'Which plastic food-storage brand was sold at at-home "parties" starting in the 1950s?', NULL,
+        'Tupperware', ARRAY['Rubbermaid', 'Pyrex', 'Ziploc', 'Glad', 'Corningware'], 400, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'POP_QUIZ', 'POP_QUIZ_NOV25', NULL,
+        'Which 1985 recipe change was so hated that the original came back within three months?', NULL,
+        'New Coke', ARRAY['Crystal Pepsi', 'Diet Rite', 'OK Soda', 'Coke II', 'Pepsi Blue'], 400, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'POP_QUIZ', 'POP_QUIZ_NOV25', NULL,
+        'Which internet meme of cats with broken grammar gave us "I can has cheezburger?"', NULL,
+        'LOLcats', ARRAY['Nyan Cat', 'Keyboard Cat', 'Doge', 'Grumpy Cat', 'Longcat'], 400, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'POP_QUIZ', 'POP_QUIZ_NOV25', NULL,
+        'Which royal yacht, retired in 1997, is now a museum ship in Edinburgh?', NULL,
+        'Britannia', ARRAY['Victoria and Albert', 'Royal George', 'Windsor', 'Elizabeth', 'Sovereign'], 400, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'POP_QUIZ', 'POP_QUIZ_NOV25', NULL,
+        'Which radio heroine''s "secret decoder ring," mailed out for Ovaltine seals, became a famous premium?', NULL,
+        'Little Orphan Annie', ARRAY['Nancy Drew', 'Wonder Woman', 'Betty Boop', 'Shirley Temple', 'Lois Lane'], 400, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'POP_QUIZ', 'POP_QUIZ_NOV25', NULL,
+        'Which crackling candy was rumored to make your stomach explode if you drank soda with it?', NULL,
+        'Pop Rocks', ARRAY['Nerds', 'Fun Dip', 'Warheads', 'Mentos', 'Lemonheads'], 400, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'POP_QUIZ', 'POP_QUIZ_NOV25', NULL,
+        'Screaming teenage girls who swooned over Frank Sinatra in the 1940s were called what?', NULL,
+        'Bobby-soxers', ARRAY['Flappers', 'Groupies', 'Beatniks', 'Hepcats', 'Jitterbugs'], 400, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'POP_QUIZ', 'POP_QUIZ_NOV25', NULL,
+        'Which 1970s fad had drivers chatting with slang like "Breaker one-nine" and "good buddy"?', NULL,
+        'CB radio', ARRAY['Ham radio', 'Walkie-talkies', 'Car phones', 'Pagers', 'Party lines'], 400, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'POP_QUIZ', 'POP_QUIZ_NOV25', NULL,
+        'Which Chinese tile game became an American craze in the 1920s?', NULL,
+        'Mahjong', ARRAY['Dominoes', 'Go', 'Pai Gow', 'Xiangqi', 'Rummikub'], 400, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'POP_QUIZ', 'POP_QUIZ_NOV25', NULL,
+        'Which chubby, topknotted dolls, from illustrator Rose O''Neill''s comics, were a 1910s craze?', NULL,
+        'Kewpie dolls', ARRAY['Raggedy Ann dolls', 'Billiken dolls', 'Teddy dolls', 'Bye-Lo babies', 'Patsy dolls'], 400, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'POP_QUIZ', 'POP_QUIZ_NOV25', NULL,
+        'In 1986, millions held hands in a chain from coast to coast for charity. What was it called?', NULL,
+        'Hands Across America', ARRAY['Live Aid', 'Farm Aid', 'We Are the World', 'Comic Relief', 'Unity Day'], 400, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'POP_QUIZ', 'POP_QUIZ_NOV25', NULL,
+        'Which "talking board," sold as a parlor game since 1890, spells out spirits'' messages?', NULL,
+        'The Ouija board', ARRAY['The Magic 8 Ball', 'The planchette', 'The Spirit Wheel', 'The Mystic Dial', 'The tarot board'], 400, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'POP_QUIZ', 'POP_QUIZ_NOV25', NULL,
+        'Which Mead folder with a Velcro flap was a must-have 1980s school supply?', NULL,
+        'The Trapper Keeper', ARRAY['The Pee-Chee', 'The Five Star', 'The Lisa Frank', 'The Day-Timer', 'The Duo-Tang'], 400, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'POP_QUIZ', 'POP_QUIZ_NOV25', NULL,
+        'Which British model, nicknamed for her slim frame, became the face of 1960s Swinging London?', NULL,
+        'Twiggy', ARRAY['Jean Shrimpton', 'Kate Moss', 'Penelope Tree', 'Pattie Boyd', 'Mary Quant'], 400, NULL);
 
 COMMIT;
 
--- Check: should return 120.
+-- Check: should return 200.
 SELECT COUNT(*) FROM questions WHERE game_mode = 'TRIVI_YEAH_II' AND category = 'POP_QUIZ';
 
 -- ============================================================================
@@ -19230,8 +19550,8 @@ SELECT COUNT(*) FROM questions WHERE game_mode = 'TRIVI_YEAH_II' AND category = 
 -- Thinking Pants category VIDEO_GAMES. To change a question, change the
 -- spreadsheet and rebuild.
 --
--- Replaces the WHOLE category with the spreadsheet's 120 live questions
--- (100: 30, 200: 30, 300: 30, 400: 30), inside a transaction. Safe to re-run.
+-- Replaces the WHOLE category with the spreadsheet's 200 live questions
+-- (100: 50, 200: 50, 300: 50, 400: 50), inside a transaction. Safe to re-run.
 -- ============================================================================
 
 -- The facts column (shown on the TV after the answer) is added the first
@@ -19246,20 +19566,12 @@ DELETE FROM questions WHERE game_mode = 'TRIVI_YEAH_II' AND category = 'VIDEO_GA
 -- 100 points
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'VIDEO_GAMES', 'ORIGINAL', NULL,
-        'In Minecraft, which green creature sneaks up on you and explodes?', NULL,
-        'A Creeper', ARRAY['A Zombie', 'An Enderman', 'A Skeleton', 'A Slime', 'A Ghast', 'A Spider'], 100, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'VIDEO_GAMES', 'ORIGINAL', NULL,
         'What is the name of Mario''s taller brother, who dresses in green?', NULL,
         'Luigi', ARRAY['Wario', 'Toad', 'Yoshi', 'Waluigi', 'Bowser', 'Daisy'], 100, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'VIDEO_GAMES', 'ORIGINAL', NULL,
         'What is the name of Mario''s friendly green dinosaur, who gobbles enemies with his tongue?', NULL,
         'Yoshi', ARRAY['Rex', 'Dino', 'Birdo', 'Koopa', 'Spike', 'Gex'], 100, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'VIDEO_GAMES', 'ORIGINAL', NULL,
-        'Which spiky-shelled king of the Koopas is Mario''s archenemy?', NULL,
-        'Bowser', ARRAY['Wario', 'Ganon', 'King K. Rool', 'Kamek', 'Dr. Eggman', 'Ridley'], 100, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'VIDEO_GAMES', 'ORIGINAL', NULL,
         'In "The Legend of Zelda" games, what is the name of the hero in the green tunic?', NULL,
@@ -19274,16 +19586,8 @@ VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YE
         'A Poké Ball', ARRAY['A Poké Net', 'A Catch Cube', 'A Lure', 'A Capture Disk', 'A Pokécage', 'A Trainer Box'], 100, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'VIDEO_GAMES', 'ORIGINAL', NULL,
-        'In Minecraft, which dark purple block do you need to build a portal to the fiery dimension?', NULL,
-        'Obsidian', ARRAY['Bedrock', 'Cobblestone', 'Netherrack', 'Glowstone', 'Redstone', 'Basalt'], 100, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'VIDEO_GAMES', 'ORIGINAL', NULL,
         'In "Super Mario Bros.," what does a Super Mushroom do to Mario?', NULL,
         'Makes him grow bigger', ARRAY['Shrinks him', 'Makes him fly', 'Lets him throw fireballs', 'Makes him invincible', 'Gives him an extra life', 'Makes him faster'], 100, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'VIDEO_GAMES', 'ORIGINAL', NULL,
-        'In Fortnite, what do players ride over the island before skydiving in?', NULL,
-        'The Battle Bus', ARRAY['The Battle Blimp', 'The Party Plane', 'The Rocket Van', 'The Drop Ship', 'The Storm Truck', 'The Loot Llama'], 100, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'VIDEO_GAMES', 'ORIGINAL', NULL,
         'What do gamers call the big, tough enemy waiting at the end of a level?', NULL,
@@ -19294,24 +19598,12 @@ VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YE
         'Frogger', ARRAY['Q*bert', 'Dig Dug', 'Centipede', 'Galaga', 'Joust', 'Paperboy'], 100, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'VIDEO_GAMES', 'ORIGINAL', NULL,
-        'Which game lets you live in a village of talking animal neighbors, with a landlord named Tom Nook?', NULL,
-        'Animal Crossing', ARRAY['Stardew Valley', 'Harvest Moon', 'The Sims', 'Viva Piñata', 'Story of Seasons', 'Slime Rancher'], 100, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'VIDEO_GAMES', 'ORIGINAL', NULL,
         'In the game "Among Us," what are the secret saboteurs on the crew called?', NULL,
         'Impostors', ARRAY['Traitors', 'Spies', 'Mimics', 'Infiltrators', 'Moles', 'Saboteurs'], 100, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'VIDEO_GAMES', 'ORIGINAL', NULL,
-        'What does "NPC" stand for in video games?', NULL,
-        'Non-player character', ARRAY['New player challenge', 'Next-phase checkpoint', 'Normal power character', 'Network player client', 'No-pause cutscene', 'Neutral path creature'], 100, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'VIDEO_GAMES', 'ORIGINAL', NULL,
         'What does a "1-Up" give a player?', NULL,
         'An extra life', ARRAY['A higher level', 'Double points', 'A shield', 'A new weapon', 'A map', 'A shortcut'], 100, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'VIDEO_GAMES', 'ORIGINAL', NULL,
-        'In Minecraft, what is the fiery dimension of lava oceans and ghasts called?', NULL,
-        'The Nether', ARRAY['The End', 'The Underworld', 'The Abyss', 'The Void', 'The Inferno', 'The Deep Dark'], 100, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'VIDEO_GAMES', 'ORIGINAL', NULL,
         'What kind of animal is Spyro, the purple video game hero?', NULL,
@@ -19320,18 +19612,6 @@ INSERT INTO questions (question_number, game_mode, category, subcategory, factio
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'VIDEO_GAMES', 'ORIGINAL', NULL,
         'What color is Kirby, the round, floating video game hero?', NULL,
         'Pink', ARRAY['Yellow', 'Blue', 'White', 'Purple', 'Orange', 'Red'], 100, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'VIDEO_GAMES', 'ORIGINAL', NULL,
-        'Which game pits sunflowers, peashooters and wall-nuts against a lawn full of zombies?', NULL,
-        'Plants vs. Zombies', ARRAY['Garden Warfare', 'Zombie Farm', 'Lawn of the Dead', 'Zombies Ate My Neighbors', 'Bloons TD', 'Kingdom Rush'], 100, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'VIDEO_GAMES', 'ORIGINAL', NULL,
-        'What do you call a hidden secret a game''s makers tuck inside it for players to find?', NULL,
-        'An Easter egg', ARRAY['A treasure chest', 'A golden ticket', 'A time capsule', 'A side quest', 'A loot box', 'A cheat code'], 100, '"Adventure" (1979) hid the first famous one: designer Warren Robinett''s name, in a secret room.');
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'VIDEO_GAMES', 'ORIGINAL', NULL,
-        'What does "RPG" stand for in gaming?', NULL,
-        'Role-playing game', ARRAY['Rapid-play game', 'Real player gameplay', 'Ranked player grid', 'Random puzzle game', 'Rocket-powered gun', 'Rival party game'], 100, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'VIDEO_GAMES', 'ORIGINAL', NULL,
         'In online games, what is a "noob"?', NULL,
@@ -19350,26 +19630,186 @@ VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YE
         'Diamond', ARRAY['Emerald', 'Sapphire', 'Lapis lazuli', 'Amethyst', 'Quartz', 'Prismarine'], 100, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'VIDEO_GAMES', 'ORIGINAL', NULL,
-        'In Roblox, what is the in-game money called?', NULL,
-        'Robux', ARRAY['V-Bucks', 'Blox Coins', 'Gems', 'Brickbucks', 'Credits', 'Simoleons'], 100, NULL);
+        'In the 1981 arcade game "Donkey Kong," what does the giant ape hurl down at the hero?', NULL,
+        'Barrels', ARRAY['Bananas', 'Rocks', 'Coconuts', 'Bombs', 'Fireballs', 'Logs'], 100, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'VIDEO_GAMES', 'ORIGINAL', NULL,
-        'What does "GG," typed at the end of a match, mean?', NULL,
-        'Good game', ARRAY['Get going', 'Great goal', 'Go go', 'Game''s gone', 'Good grief', 'Got gold'], 100, NULL);
+        'Which 1978 arcade game had players shooting rows of aliens marching down the screen?', NULL,
+        'Space Invaders', ARRAY['Asteroids', 'Galaga', 'Defender', 'Centipede', 'Missile Command', 'Robotron'], 100, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'VIDEO_GAMES', 'ORIGINAL', NULL,
-        'Which Pokémon is a big, sleepy blob who naps across roads, blocking your way?', NULL,
-        'Snorlax', ARRAY['Jigglypuff', 'Slowpoke', 'Munchlax', 'Wobbuffet', 'Drowzee', 'Lapras'], 100, NULL);
+        'Which 1979 arcade game had players blasting space rocks that split into smaller pieces?', NULL,
+        'Asteroids', ARRAY['Space Invaders', 'Defender', 'Galaga', 'Gravitar', 'Tempest', 'Lunar Lander'], 100, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'VIDEO_GAMES', 'ORIGINAL', NULL,
-        'In "Mario Kart," which item heads straight for the racer in first place?', NULL,
-        'The Blue Shell', ARRAY['The Red Shell', 'The Green Shell', 'The Banana', 'The Lightning Bolt', 'The Bob-omb', 'The Bullet Bill'], 100, 'Officially it''s the Spiny Shell. Players have called it the Blue Shell, and dreaded it, since 1996.');
+        'Which 2012 mobile hit had players matching rows of striped and wrapped sweets?', NULL,
+        'Candy Crush Saga', ARRAY['Bejeweled', 'Fruit Ninja', 'Cookie Jam', 'Toon Blast', 'Gardenscapes', 'Homescapes'], 100, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'VIDEO_GAMES', 'ORIGINAL', NULL,
+        'Which 2005 game came with a plastic guitar-shaped controller to strum along to rock songs?', NULL,
+        'Guitar Hero', ARRAY['Rock Band', 'Amplitude', 'Frequency', 'Rocksmith', 'DJ Hero', 'Band Hero'], 100, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'VIDEO_GAMES', 'ORIGINAL', NULL,
+        'Which arcade game had players stomping on arrows on a dance floor pad?', NULL,
+        'Dance Dance Revolution', ARRAY['Pump It Up', 'Just Dance', 'Dance Central', 'In the Groove', 'Beatmania', 'Para Para Paradise'], 100, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'VIDEO_GAMES', 'ORIGINAL', NULL,
+        'What is "speedrunning"?', NULL,
+        'Beating a game as fast as possible', ARRAY['Racing games played on fast-forward', 'Playing two games at once', 'Finishing a game without dying', 'Reviewing games quickly', 'Collecting every item in a game', 'Holding the run button the whole game'], 100, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'VIDEO_GAMES', 'ORIGINAL', NULL,
+        'In "Super Mario Bros.," what does grabbing a Super Star do?', NULL,
+        'Makes you briefly invincible', ARRAY['Gives you an extra life', 'Makes you grow bigger', 'Lets you fly', 'Doubles your coins', 'Skips the level', 'Turns enemies into coins'], 100, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'VIDEO_GAMES', 'VIDEO_GAMES_NOV25', NULL,
+        'Which spiky blue hedgehog races at blazing speed, collecting gold rings?', NULL,
+        'Sonic', ARRAY['Knuckles', 'Shadow', 'Crash Bandicoot', 'Bubsy', 'Sparkster'], 100, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'VIDEO_GAMES', 'VIDEO_GAMES_NOV25', NULL,
+        'In Minecraft, what do you punch trees to collect?', NULL,
+        'Wood', ARRAY['Stone', 'Coal', 'Leaves', 'Apples', 'Seeds'], 100, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'VIDEO_GAMES', 'VIDEO_GAMES_NOV25', NULL,
+        'In "Super Mario Bros.," what gold objects does Mario collect, earning a bonus for every 100?', NULL,
+        'Coins', ARRAY['Stars', 'Rings', 'Gems', 'Keys', 'Bells'], 100, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'VIDEO_GAMES', 'VIDEO_GAMES_NOV25', NULL,
+        'In "Super Mario Bros.," what green objects can Mario climb into to travel underground?', NULL,
+        'Pipes', ARRAY['Barrels', 'Tunnels', 'Doors', 'Wells', 'Vines'], 100, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'VIDEO_GAMES', 'VIDEO_GAMES_NOV25', NULL,
+        'What is Mario''s job?', NULL,
+        'Plumber', ARRAY['Carpenter', 'Mechanic', 'Chef', 'Electrician', 'Painter'], 100, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'VIDEO_GAMES', 'VIDEO_GAMES_NOV25', NULL,
+        'In video games, what does "XP" stand for?', NULL,
+        'Experience points', ARRAY['Extra power', 'Extreme play', 'Expert player', 'Extended points', 'Exit point'], 100, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'VIDEO_GAMES', 'VIDEO_GAMES_NOV25', NULL,
+        'What do you call the spot partway through a level where you restart after losing a life?', NULL,
+        'A checkpoint', ARRAY['A save slot', 'A warp zone', 'A respawn pad', 'A home base', 'A spawn camp'], 100, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'VIDEO_GAMES', 'VIDEO_GAMES_NOV25', NULL,
+        'In "Mario Kart," which slippery item can you drop behind you to make racers spin out?', NULL,
+        'A banana peel', ARRAY['An oil slick', 'A soap bar', 'An ice cube', 'A grease puddle', 'A wet floor sign'], 100, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'VIDEO_GAMES', 'VIDEO_GAMES_NOV25', NULL,
+        'In Pokémon, what type is Squirtle, the little turtle starter?', NULL,
+        'Water', ARRAY['Fire', 'Grass', 'Ice', 'Normal', 'Rock'], 100, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'VIDEO_GAMES', 'VIDEO_GAMES_NOV25', NULL,
+        'In Minecraft, what do you sleep in to skip the night?', NULL,
+        'A bed', ARRAY['A tent', 'A hammock', 'A sleeping bag', 'A coffin', 'A cot'], 100, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'VIDEO_GAMES', 'VIDEO_GAMES_NOV25', NULL,
+        'What does it mean to play a game "co-op"?', NULL,
+        'Play together on the same team', ARRAY['Play against each other', 'Play alone', 'Play online only', 'Play with a time limit', 'Play without saving'], 100, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'VIDEO_GAMES', 'VIDEO_GAMES_NOV25', NULL,
+        'In "Super Mario Bros.," what does Mario leap onto at the end of each level, beside a little castle?', NULL,
+        'A flagpole', ARRAY['A trampoline', 'A cloud', 'A ladder', 'A rope', 'A tree'], 100, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'VIDEO_GAMES', 'VIDEO_GAMES_NOV25', NULL,
+        'What do gamers call a short movie scene in a game, where you watch instead of play?', NULL,
+        'A cutscene', ARRAY['A trailer', 'A demo', 'A highlight reel', 'A loading screen', 'A replay'], 100, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'VIDEO_GAMES', 'VIDEO_GAMES_NOV25', NULL,
+        'What does "VR" stand for in gaming?', NULL,
+        'Virtual reality', ARRAY['Video recording', 'Visual range', 'Versus round', 'Variable resolution', 'Voice relay'], 100, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'VIDEO_GAMES', 'VIDEO_GAMES_NOV25', NULL,
+        'Which game series has players copying the moves of on-screen dancers?', NULL,
+        'Just Dance', ARRAY['Dance Central', 'SingStar', 'Rock Band', 'Dance Party', 'Step It Up'], 100, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'VIDEO_GAMES', 'VIDEO_GAMES_NOV25', NULL,
+        'Which 2016 phone game had people walking around outdoors catching creatures on a real-world map?', NULL,
+        'Pokémon Go', ARRAY['Ingress', 'Pikmin Bloom', 'Jurassic World Alive', 'Monster Hunter Now', 'Geocaching'], 100, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'VIDEO_GAMES', 'VIDEO_GAMES_NOV25', NULL,
+        'In Minecraft, which animal can you shear for wool?', NULL,
+        'Sheep', ARRAY['Cow', 'Pig', 'Llama', 'Goat', 'Rabbit'], 100, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'VIDEO_GAMES', 'VIDEO_GAMES_NOV25', NULL,
+        'In video games, what does "HP" usually stand for?', NULL,
+        'Hit points', ARRAY['High power', 'Hero points', 'Health potion', 'Hyper play', 'Heavy punch'], 100, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'VIDEO_GAMES', 'VIDEO_GAMES_NOV25', NULL,
+        'What do you call it when two players share one TV, the screen divided down the middle?', NULL,
+        'Split screen', ARRAY['Picture-in-picture', 'Dual view', 'Half mode', 'Twin screen', 'Side-by-side mode'], 100, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'VIDEO_GAMES', 'VIDEO_GAMES_NOV25', NULL,
+        'In video games, what does it mean to "respawn"?', NULL,
+        'Come back to life after being knocked out', ARRAY['Start a brand-new game', 'Change your character', 'Jump to the next level', 'Lose all your items', 'Pause the game'], 100, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'VIDEO_GAMES', 'VIDEO_GAMES_NOV25', NULL,
+        'What do you call a game whose world you can freely explore in any direction?', NULL,
+        'Open world', ARRAY['Side-scroller', 'On rails', 'Linear', 'Arcade', 'Turn-based'], 100, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'VIDEO_GAMES', 'VIDEO_GAMES_NOV25', NULL,
+        'In "Super Mario Bros.," what are the little brown mushroom enemies that waddle toward Mario called?', NULL,
+        'Goombas', ARRAY['Koopas', 'Shy Guys', 'Bloopers', 'Toads', 'Piranhas'], 100, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'VIDEO_GAMES', 'VIDEO_GAMES_NOV25', NULL,
+        'What do gamers call a bug or error that makes a game act strangely?', NULL,
+        'A glitch', ARRAY['A mod', 'A patch', 'A cheat', 'An exploit', 'A crash course'], 100, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'VIDEO_GAMES', 'VIDEO_GAMES_NOV25', NULL,
+        'In online games, what is "lag"?', NULL,
+        'A delay between what you press and what happens', ARRAY['A cheating player', 'A slow character', 'A difficult level', 'A dropped controller', 'A low score'], 100, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'VIDEO_GAMES', 'VIDEO_GAMES_NOV25', NULL,
+        'How does Mario defeat most enemies?', NULL,
+        'Jumping on them', ARRAY['Punching them', 'Throwing hammers', 'Shooting lasers', 'Spinning a sword', 'Tickling them'], 100, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'VIDEO_GAMES', 'VIDEO_GAMES_NOV25', NULL,
+        'In Minecraft, what do you build from four wooden planks to craft nearly everything else?', NULL,
+        'A crafting table', ARRAY['A furnace', 'An anvil', 'A chest', 'A lectern', 'A loom'], 100, NULL);
 
 -- 200 points
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'VIDEO_GAMES', 'ORIGINAL', NULL,
-        'Which Pokémon does Charmander evolve into?', NULL,
-        'Charmeleon', ARRAY['Charizard', 'Vulpix', 'Ponyta', 'Magmar', 'Growlithe', 'Flareon'], 200, NULL);
+        'In Minecraft, which green creature sneaks up on you and explodes?', NULL,
+        'A Creeper', ARRAY['A Zombie', 'An Enderman', 'A Skeleton', 'A Slime', 'A Ghast', 'A Spider'], 200, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'VIDEO_GAMES', 'ORIGINAL', NULL,
+        'Which spiky-shelled king of the Koopas is Mario''s archenemy?', NULL,
+        'Bowser', ARRAY['Wario', 'Ganon', 'King K. Rool', 'Kamek', 'Dr. Eggman', 'Ridley'], 200, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'VIDEO_GAMES', 'ORIGINAL', NULL,
+        'In Fortnite, what do players ride over the island before skydiving in?', NULL,
+        'The Battle Bus', ARRAY['The Battle Blimp', 'The Party Plane', 'The Rocket Van', 'The Drop Ship', 'The Storm Truck', 'The Loot Llama'], 200, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'VIDEO_GAMES', 'ORIGINAL', NULL,
+        'Which game lets you live in a village of talking animal neighbors, with a landlord named Tom Nook?', NULL,
+        'Animal Crossing', ARRAY['Stardew Valley', 'Harvest Moon', 'The Sims', 'Viva Piñata', 'Story of Seasons', 'Slime Rancher'], 200, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'VIDEO_GAMES', 'ORIGINAL', NULL,
+        'What does "NPC" stand for in video games?', NULL,
+        'Non-player character', ARRAY['New player challenge', 'Next-phase checkpoint', 'Normal power character', 'Network player client', 'No-pause cutscene', 'Neutral path creature'], 200, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'VIDEO_GAMES', 'ORIGINAL', NULL,
+        'Which game pits sunflowers, peashooters and wall-nuts against a lawn full of zombies?', NULL,
+        'Plants vs. Zombies', ARRAY['Garden Warfare', 'Zombie Farm', 'Lawn of the Dead', 'Zombies Ate My Neighbors', 'Bloons TD', 'Kingdom Rush'], 200, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'VIDEO_GAMES', 'ORIGINAL', NULL,
+        'What do you call a hidden secret a game''s makers tuck inside it for players to find?', NULL,
+        'An Easter egg', ARRAY['A treasure chest', 'A golden ticket', 'A time capsule', 'A side quest', 'A loot box', 'A cheat code'], 200, '"Adventure" (1979) hid the first famous one: designer Warren Robinett''s name, in a secret room.');
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'VIDEO_GAMES', 'ORIGINAL', NULL,
+        'What does "RPG" stand for in gaming?', NULL,
+        'Role-playing game', ARRAY['Rapid-play game', 'Real player gameplay', 'Ranked player grid', 'Random puzzle game', 'Rocket-powered gun', 'Rival party game'], 200, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'VIDEO_GAMES', 'ORIGINAL', NULL,
+        'In Roblox, what is the in-game money called?', NULL,
+        'Robux', ARRAY['V-Bucks', 'Blox Coins', 'Gems', 'Brickbucks', 'Credits', 'Simoleons'], 200, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'VIDEO_GAMES', 'ORIGINAL', NULL,
+        'What does "GG," typed at the end of a match, mean?', NULL,
+        'Good game', ARRAY['Get going', 'Great goal', 'Go go', 'Game''s gone', 'Good grief', 'Got gold'], 200, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'VIDEO_GAMES', 'ORIGINAL', NULL,
+        'In "Mario Kart," which item heads straight for the racer in first place?', NULL,
+        'The Blue Shell', ARRAY['The Red Shell', 'The Green Shell', 'The Banana', 'The Lightning Bolt', 'The Bob-omb', 'The Bullet Bill'], 200, 'Officially it''s the Spiny Shell. Players have called it the Blue Shell, and dreaded it, since 1996.');
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'VIDEO_GAMES', 'ORIGINAL', NULL,
         'In Pokémon Red and Blue, which professor gives you your first Pokémon?', NULL,
@@ -19392,18 +19832,6 @@ VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YE
         'The Fire Flower', ARRAY['The Super Star', 'The Fire Mushroom', 'The Hot Pepper', 'The Fire Feather', 'The Flame Coin', 'The Magic Lamp'], 200, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'VIDEO_GAMES', 'ORIGINAL', NULL,
-        'In the 1981 arcade game "Donkey Kong," what does the giant ape hurl down at the hero?', NULL,
-        'Barrels', ARRAY['Bananas', 'Rocks', 'Coconuts', 'Bombs', 'Fireballs', 'Logs'], 200, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'VIDEO_GAMES', 'ORIGINAL', NULL,
-        'Which 1978 arcade game had players shooting rows of aliens marching down the screen?', NULL,
-        'Space Invaders', ARRAY['Asteroids', 'Galaga', 'Defender', 'Centipede', 'Missile Command', 'Robotron'], 200, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'VIDEO_GAMES', 'ORIGINAL', NULL,
-        'Which 1979 arcade game had players blasting space rocks that split into smaller pieces?', NULL,
-        'Asteroids', ARRAY['Space Invaders', 'Defender', 'Galaga', 'Gravitar', 'Tempest', 'Lunar Lander'], 200, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'VIDEO_GAMES', 'ORIGINAL', NULL,
         'In "Mortal Kombat," what is the gruesome move that finishes off a beaten opponent called?', NULL,
         'A Fatality', ARRAY['A Finisher', 'A Knockout', 'A Takedown', 'A Wipeout', 'A Smackdown', 'A Final Blow'], 200, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
@@ -19416,36 +19844,8 @@ VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YE
         'Cake', ARRAY['Pie', 'Cookies', 'Ice cream', 'Donuts', 'Cupcakes', 'Brownies'], 200, '"The cake is a lie" became one of gaming''s most famous jokes.');
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'VIDEO_GAMES', 'ORIGINAL', NULL,
-        'Which evil king, a giant boar-like beast in some games, is the main villain of "The Legend of Zelda"?', NULL,
-        'Ganon', ARRAY['Bowser', 'Ridley', 'King Dedede', 'Majora', 'Vaati', 'Sephiroth'], 200, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'VIDEO_GAMES', 'ORIGINAL', NULL,
         'What does "FPS" mean when describing a game like "Call of Duty"?', NULL,
         'First-person shooter', ARRAY['Fast-paced strategy', 'Full-power soldier', 'Free play server', 'Final player standing', 'Field position simulator', 'Friendly-fire protection'], 200, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'VIDEO_GAMES', 'ORIGINAL', NULL,
-        'Which 2012 mobile hit had players matching rows of striped and wrapped sweets?', NULL,
-        'Candy Crush Saga', ARRAY['Bejeweled', 'Fruit Ninja', 'Cookie Jam', 'Toon Blast', 'Gardenscapes', 'Homescapes'], 200, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'VIDEO_GAMES', 'ORIGINAL', NULL,
-        'Which 2005 game came with a plastic guitar-shaped controller to strum along to rock songs?', NULL,
-        'Guitar Hero', ARRAY['Rock Band', 'Amplitude', 'Frequency', 'Rocksmith', 'DJ Hero', 'Band Hero'], 200, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'VIDEO_GAMES', 'ORIGINAL', NULL,
-        'Which arcade game had players stomping on arrows on a dance floor pad?', NULL,
-        'Dance Dance Revolution', ARRAY['Pump It Up', 'Just Dance', 'Dance Central', 'In the Groove', 'Beatmania', 'Para Para Paradise'], 200, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'VIDEO_GAMES', 'ORIGINAL', NULL,
-        'In "Final Fantasy," which big yellow bird do players ride?', NULL,
-        'A Chocobo', ARRAY['A Moogle', 'A Cactuar', 'A Tonberry', 'A Chickadoo', 'A Roc', 'A Bomb'], 200, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'VIDEO_GAMES', 'ORIGINAL', NULL,
-        'What does "DLC" stand for in gaming?', NULL,
-        'Downloadable content', ARRAY['Digital level creator', 'Direct live chat', 'Double-length campaign', 'Deluxe limited copy', 'Data loading cache', 'Daily login credit'], 200, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'VIDEO_GAMES', 'ORIGINAL', NULL,
-        'What is "speedrunning"?', NULL,
-        'Beating a game as fast as possible', ARRAY['Racing games played on fast-forward', 'Playing two games at once', 'Finishing a game without dying', 'Reviewing games quickly', 'Collecting every item in a game', 'Holding the run button the whole game'], 200, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'VIDEO_GAMES', 'ORIGINAL', NULL,
         'In Fortnite, what is the in-game money called?', NULL,
@@ -19456,38 +19856,166 @@ VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YE
         'The Ender Dragon', ARRAY['The Elder Guardian', 'The Warden', 'The Nether King', 'The Void Serpent', 'The Ghast Queen', 'The Iron Golem'], 200, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'VIDEO_GAMES', 'ORIGINAL', NULL,
-        'Which company makes the "Call of Duty" games?', NULL,
-        'Activision', ARRAY['EA', 'Ubisoft', 'Bethesda', 'Epic Games', 'Blizzard', 'Valve'], 200, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'VIDEO_GAMES', 'ORIGINAL', NULL,
-        'Which company makes Fortnite?', NULL,
-        'Epic Games', ARRAY['Activision', 'EA', 'Ubisoft', 'Riot Games', 'Valve', 'Blizzard'], 200, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'VIDEO_GAMES', 'ORIGINAL', NULL,
-        'What does "MMO" stand for, as in games like "EverQuest"?', NULL,
-        'Massively multiplayer online', ARRAY['Mega multi-objective', 'Multiple map online', 'Massive mission overload', 'Mostly melee opponents', 'Many-match overtime', 'Multi-mode offline'], 200, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'VIDEO_GAMES', 'ORIGINAL', NULL,
         'What does Kirby famously do to enemies to copy their powers?', NULL,
         'Inhale them and copy their powers', ARRAY['Freeze them into blocks', 'Turn them into friends', 'Shrink them down', 'Trap them in bubbles', 'Bounce them off walls', 'Paint them pink'], 200, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'VIDEO_GAMES', 'ORIGINAL', NULL,
-        'What is the name of Donkey Kong''s little sidekick in a red cap, in "Donkey Kong Country"?', NULL,
-        'Diddy Kong', ARRAY['Cranky Kong', 'Funky Kong', 'Lanky Kong', 'Tiny Kong', 'Chunky Kong', 'Swanky Kong'], 200, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'VIDEO_GAMES', 'ORIGINAL', NULL,
-        'Which greedy, penguin-like king does Kirby battle in "Kirby''s Dream Land"?', NULL,
-        'King Dedede', ARRAY['Bowser', 'Meta Knight', 'Dr. Robotnik', 'Wario', 'Ganon', 'Ridley'], 200, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'VIDEO_GAMES', 'ORIGINAL', NULL,
         'In "Street Fighter," what does Ryu shout as he throws his famous fireball?', NULL,
         '"Hadouken!"', ARRAY['"Shoryuken!"', '"Tatsumaki!"', '"Sonic Boom!"', '"Yoga Fire!"', '"Kikoken!"', '"Kamehameha!"'], 200, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'VIDEO_GAMES', 'ORIGINAL', NULL,
-        'In "Super Mario Bros.," what does grabbing a Super Star do?', NULL,
-        'Makes you briefly invincible', ARRAY['Gives you an extra life', 'Makes you grow bigger', 'Lets you fly', 'Doubles your coins', 'Skips the level', 'Turns enemies into coins'], 200, NULL);
+        'Which 1993 shooter has a space marine battling demons on the moons of Mars?', NULL,
+        'Doom', ARRAY['Quake', 'Wolfenstein 3D', 'Duke Nukem 3D', 'Halo', 'Marathon', 'Descent'], 200, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'VIDEO_GAMES', 'ORIGINAL', NULL,
+        'Which 1989 game made players mayor of a growing city, managing zoning, power and disasters?', NULL,
+        'SimCity', ARRAY['Civilization', 'Caesar', 'Railroad Tycoon', 'Populous', 'Cities: Skylines', 'Theme Park'], 200, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'VIDEO_GAMES', 'ORIGINAL', NULL,
+        'In which game series does the Spartan warrior Kratos battle the gods?', NULL,
+        'God of War', ARRAY['Devil May Cry', 'Bayonetta', 'Darksiders', 'Dante''s Inferno', 'Ryse', 'Titan Quest'], 200, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'VIDEO_GAMES', 'ORIGINAL', NULL,
+        'Which survival horror series is set in and around the zombie-overrun Raccoon City?', NULL,
+        'Resident Evil', ARRAY['Silent Hill', 'Dead Space', 'Outlast', 'The Evil Within', 'Left 4 Dead', 'Dead Rising'], 200, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'VIDEO_GAMES', 'ORIGINAL', NULL,
+        'Which 2013 phone game was pulled from stores by its creator at the height of its fame, for being too addictive?', NULL,
+        'Flappy Bird', ARRAY['Doodle Jump', 'Crossy Road', 'Temple Run', 'Jetpack Joyride', 'Tiny Wings', 'Subway Surfers'], 200, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'VIDEO_GAMES', 'ORIGINAL', NULL,
+        'What do you call a game that''s free to download but sells extras inside it?', NULL,
+        'Free-to-play', ARRAY['Pay-to-win', 'Early access', 'Shareware', 'Open-world', 'Battle pass', 'Demo'], 200, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'VIDEO_GAMES', 'ORIGINAL', NULL,
+        'Which greedy rival of Mario wears yellow and purple, with a "W" on his cap?', NULL,
+        'Wario', ARRAY['Waluigi', 'Bowser Jr.', 'Toadsworth', 'Fawful', 'Kamek', 'King Boo'], 200, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'VIDEO_GAMES', 'ORIGINAL', NULL,
+        'What does "AFK" mean in online games?', NULL,
+        'Away from keyboard', ARRAY['Always fighting kills', 'Ally for keeps', 'All for kicks', 'Auto-fire key', 'Armed for killing', 'Ask for keys'], 200, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'VIDEO_GAMES', 'VIDEO_GAMES_NOV25', NULL,
+        'In Fortnite, what shrinking danger forces players closer together as the match goes on?', NULL,
+        'The storm', ARRAY['The flood', 'The fog', 'The lava', 'The fire ring', 'The blizzard'], 200, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'VIDEO_GAMES', 'VIDEO_GAMES_NOV25', NULL,
+        'Which orange marsupial hero spins into enemies and smashes wooden crates?', NULL,
+        'Crash Bandicoot', ARRAY['Spyro', 'Sonic', 'Ratchet', 'Banjo', 'Jak'], 200, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'VIDEO_GAMES', 'VIDEO_GAMES_NOV25', NULL,
+        'Which Pokémon is the evolved form of the series'' famous yellow electric mascot?', NULL,
+        'Raichu', ARRAY['Pichu', 'Jolteon', 'Electabuzz', 'Voltorb', 'Zapdos'], 200, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'VIDEO_GAMES', 'VIDEO_GAMES_NOV25', NULL,
+        'In online games, what does "PvP" stand for?', NULL,
+        'Player versus player', ARRAY['Points versus points', 'Party versus party', 'Power versus power', 'Player versus program', 'Play very professionally'], 200, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'VIDEO_GAMES', 'VIDEO_GAMES_NOV25', NULL,
+        'In Mario games, what are the shy white ghosts that cover their faces when you look at them?', NULL,
+        'Boos', ARRAY['Shy Guys', 'Spooks', 'Phantoms', 'Ghosties', 'Wisps'], 200, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'VIDEO_GAMES', 'VIDEO_GAMES_NOV25', NULL,
+        'In "The Legend of Zelda," what do you collect to add hearts to your life meter for good?', NULL,
+        'Heart Containers', ARRAY['Heart Gems', 'Life Jars', 'Fairy Hearts', 'Heart Crystals', 'Love Potions'], 200, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'VIDEO_GAMES', 'VIDEO_GAMES_NOV25', NULL,
+        'What is the name of Minecraft''s default hero, the one in a cyan shirt?', NULL,
+        'Steve', ARRAY['Alex', 'Herobrine', 'Notchy', 'Bob', 'Sam'], 200, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'VIDEO_GAMES', 'VIDEO_GAMES_NOV25', NULL,
+        'What do gamers call a player who hides in one spot, waiting to ambush others?', NULL,
+        'A camper', ARRAY['A lurker', 'A sniper', 'A turtle', 'A troll', 'A tank'], 200, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'VIDEO_GAMES', 'VIDEO_GAMES_NOV25', NULL,
+        'In Pokémon games, what do you win from Gym Leaders, needing eight to enter the League?', NULL,
+        'Badges', ARRAY['Trophies', 'Medals', 'Crowns', 'Ribbons', 'Crystals'], 200, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'VIDEO_GAMES', 'VIDEO_GAMES_NOV25', NULL,
+        'Which 2016 farming game has you inherit your grandfather''s old farm near Pelican Town?', NULL,
+        'Stardew Valley', ARRAY['Harvest Moon', 'FarmVille', 'Story of Seasons', 'Hay Day', 'Farming Simulator'], 200, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'VIDEO_GAMES', 'VIDEO_GAMES_NOV25', NULL,
+        'In "The Legend of Zelda," what are the colorful gems used as money called?', NULL,
+        'Rupees', ARRAY['Gil', 'Zenny', 'Gems', 'Shards', 'Bells'], 200, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'VIDEO_GAMES', 'VIDEO_GAMES_NOV25', NULL,
+        'In Minecraft, which mode gives you unlimited blocks, flying and no danger?', NULL,
+        'Creative mode', ARRAY['Survival mode', 'Adventure mode', 'Peaceful mode', 'Hardcore mode', 'Spectator mode'], 200, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'VIDEO_GAMES', 'VIDEO_GAMES_NOV25', NULL,
+        'Which Pokémon is No. 1 in the national Pokédex, a grass type with a bulb on its back?', NULL,
+        'Bulbasaur', ARRAY['Chikorita', 'Oddish', 'Treecko', 'Bellsprout', 'Ivysaur'], 200, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'VIDEO_GAMES', 'VIDEO_GAMES_NOV25', NULL,
+        'In Minecraft, which red-and-white block blows up when you light it with flint and steel?', NULL,
+        'TNT', ARRAY['Redstone', 'A Creeper egg', 'A fire charge', 'A bomb block', 'Dynamite'], 200, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'VIDEO_GAMES', 'VIDEO_GAMES_NOV25', NULL,
+        'Which weak fish Pokémon only knows "Splash," but evolves into the fearsome Gyarados?', NULL,
+        'Magikarp', ARRAY['Goldeen', 'Feebas', 'Horsea', 'Remoraid', 'Wishiwashi'], 200, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'VIDEO_GAMES', 'VIDEO_GAMES_NOV25', NULL,
+        'Which co-op game has teams of chefs racing to cook orders in chaotic kitchens?', NULL,
+        'Overcooked', ARRAY['Cooking Mama', 'Diner Dash', 'Burger Time', 'Cook, Serve, Delicious!', 'Kitchen Chaos'], 200, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'VIDEO_GAMES', 'VIDEO_GAMES_NOV25', NULL,
+        'Which game is soccer played with rocket-powered cars?', NULL,
+        'Rocket League', ARRAY['Turbo Soccer', 'Car Ball', 'Mario Strikers', 'Nitro Goal', 'Hot Wheels Unleashed'], 200, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'VIDEO_GAMES', 'VIDEO_GAMES_NOV25', NULL,
+        'Which 2020 game has jellybean-shaped players stumbling through wacky obstacle courses?', NULL,
+        'Fall Guys', ARRAY['Gang Beasts', 'Human: Fall Flat', 'Stumble Guys', 'Party Animals', 'Wipeout'], 200, NULL);
 
 -- 300 points
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'VIDEO_GAMES', 'ORIGINAL', NULL,
+        'In Minecraft, which dark purple block do you need to build a portal to the fiery dimension?', NULL,
+        'Obsidian', ARRAY['Bedrock', 'Cobblestone', 'Netherrack', 'Glowstone', 'Redstone', 'Basalt'], 300, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'VIDEO_GAMES', 'ORIGINAL', NULL,
+        'In Minecraft, what is the fiery dimension of lava oceans and ghasts called?', NULL,
+        'The Nether', ARRAY['The End', 'The Underworld', 'The Abyss', 'The Void', 'The Inferno', 'The Deep Dark'], 300, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'VIDEO_GAMES', 'ORIGINAL', NULL,
+        'Which Pokémon is a big, sleepy blob who naps across roads, blocking your way?', NULL,
+        'Snorlax', ARRAY['Jigglypuff', 'Slowpoke', 'Munchlax', 'Wobbuffet', 'Drowzee', 'Lapras'], 300, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'VIDEO_GAMES', 'ORIGINAL', NULL,
+        'Which Pokémon does Charmander evolve into?', NULL,
+        'Charmeleon', ARRAY['Charizard', 'Vulpix', 'Ponyta', 'Magmar', 'Growlithe', 'Flareon'], 300, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'VIDEO_GAMES', 'ORIGINAL', NULL,
+        'Which evil king, a giant boar-like beast in some games, is the main villain of "The Legend of Zelda"?', NULL,
+        'Ganon', ARRAY['Bowser', 'Ridley', 'King Dedede', 'Majora', 'Vaati', 'Sephiroth'], 300, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'VIDEO_GAMES', 'ORIGINAL', NULL,
+        'In "Final Fantasy," which big yellow bird do players ride?', NULL,
+        'A Chocobo', ARRAY['A Moogle', 'A Cactuar', 'A Tonberry', 'A Chickadoo', 'A Roc', 'A Bomb'], 300, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'VIDEO_GAMES', 'ORIGINAL', NULL,
+        'What does "DLC" stand for in gaming?', NULL,
+        'Downloadable content', ARRAY['Digital level creator', 'Direct live chat', 'Double-length campaign', 'Deluxe limited copy', 'Data loading cache', 'Daily login credit'], 300, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'VIDEO_GAMES', 'ORIGINAL', NULL,
+        'Which company makes the "Call of Duty" games?', NULL,
+        'Activision', ARRAY['EA', 'Ubisoft', 'Bethesda', 'Epic Games', 'Blizzard', 'Valve'], 300, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'VIDEO_GAMES', 'ORIGINAL', NULL,
+        'Which company makes Fortnite?', NULL,
+        'Epic Games', ARRAY['Activision', 'EA', 'Ubisoft', 'Riot Games', 'Valve', 'Blizzard'], 300, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'VIDEO_GAMES', 'ORIGINAL', NULL,
+        'What does "MMO" stand for, as in games like "EverQuest"?', NULL,
+        'Massively multiplayer online', ARRAY['Mega multi-objective', 'Multiple map online', 'Massive mission overload', 'Mostly melee opponents', 'Many-match overtime', 'Multi-mode offline'], 300, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'VIDEO_GAMES', 'ORIGINAL', NULL,
+        'What is the name of Donkey Kong''s little sidekick in a red cap, in "Donkey Kong Country"?', NULL,
+        'Diddy Kong', ARRAY['Cranky Kong', 'Funky Kong', 'Lanky Kong', 'Tiny Kong', 'Chunky Kong', 'Swanky Kong'], 300, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'VIDEO_GAMES', 'ORIGINAL', NULL,
+        'Which greedy, penguin-like king does Kirby battle in "Kirby''s Dream Land"?', NULL,
+        'King Dedede', ARRAY['Bowser', 'Meta Knight', 'Dr. Robotnik', 'Wario', 'Ganon', 'Ridley'], 300, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'VIDEO_GAMES', 'ORIGINAL', NULL,
         'Who is the bounty hunter heroine of the "Metroid" games?', NULL,
@@ -19498,24 +20026,12 @@ VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YE
         'The Konami Code', ARRAY['The Cheat Code', 'The Arcade Code', 'The Debug Code', 'The Capcom Code', 'The Atari Code', 'The Midway Code'], 300, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'VIDEO_GAMES', 'ORIGINAL', NULL,
-        'Which 1993 shooter has a space marine battling demons on the moons of Mars?', NULL,
-        'Doom', ARRAY['Quake', 'Wolfenstein 3D', 'Duke Nukem 3D', 'Halo', 'Marathon', 'Descent'], 300, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'VIDEO_GAMES', 'ORIGINAL', NULL,
         'Which AI companion, later the name of a Microsoft voice assistant, guides the hero of "Halo"?', NULL,
         'Cortana', ARRAY['GLaDOS', 'SHODAN', 'EDI', 'Alexa', 'Siri', 'HAL'], 300, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'VIDEO_GAMES', 'ORIGINAL', NULL,
-        'In "The Sims," what is the green crystal that floats over a Sim''s head called?', NULL,
-        'A plumbob', ARRAY['A mood gem', 'A lifeline', 'A wishstone', 'A hovergem', 'A sim-crystal', 'A spirit stone'], 300, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'VIDEO_GAMES', 'ORIGINAL', NULL,
         'What is the made-up language that Sims speak called?', NULL,
         'Simlish', ARRAY['Simspeak', 'Gibberese', 'Simulese', 'Plumbobian', 'Sim-glish', 'Babblish'], 300, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'VIDEO_GAMES', 'ORIGINAL', NULL,
-        'Which 1989 game made players mayor of a growing city, managing zoning, power and disasters?', NULL,
-        'SimCity', ARRAY['Civilization', 'Caesar', 'Railroad Tycoon', 'Populous', 'Cities: Skylines', 'Theme Park'], 300, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'VIDEO_GAMES', 'ORIGINAL', NULL,
         'Which game designer created both Mario and "The Legend of Zelda"?', NULL,
@@ -19534,24 +20050,12 @@ VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YE
         'Cloud Strife', ARRAY['Squall Leonhart', 'Tidus', 'Zack Fair', 'Noctis', 'Lightning', 'Vincent Valentine'], 300, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'VIDEO_GAMES', 'ORIGINAL', NULL,
-        'In which game series does the Spartan warrior Kratos battle the gods?', NULL,
-        'God of War', ARRAY['Devil May Cry', 'Bayonetta', 'Darksiders', 'Dante''s Inferno', 'Ryse', 'Titan Quest'], 300, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'VIDEO_GAMES', 'ORIGINAL', NULL,
-        'Which survival horror series is set in and around the zombie-overrun Raccoon City?', NULL,
-        'Resident Evil', ARRAY['Silent Hill', 'Dead Space', 'Outlast', 'The Evil Within', 'Left 4 Dead', 'Dead Rising'], 300, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'VIDEO_GAMES', 'ORIGINAL', NULL,
         'What is the name of the thumbs-up, blond mascot of the nuclear-wasteland "Fallout" series?', NULL,
         'Vault Boy', ARRAY['Atom Kid', 'Nuka Ned', 'Pip-Boy', 'Rad Rodney', 'Mr. Handy', 'Wasteland Willy'], 300, '"Pip-Boy" is the wrist computer he''s printed on, a classic mix-up.');
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'VIDEO_GAMES', 'ORIGINAL', NULL,
         'In "Ocarina of Time," what is the name of the hero''s chatty fairy companion?', NULL,
         'Navi', ARRAY['Tatl', 'Midna', 'Fi', 'Ezlo', 'Tael', 'Epona'], 300, 'She''s famous for one line: "Hey! Listen!"');
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'VIDEO_GAMES', 'ORIGINAL', NULL,
-        'What is the name of the hero''s trusty horse in "The Legend of Zelda" games?', NULL,
-        'Epona', ARRAY['Navi', 'Ganon', 'Malon', 'Agro', 'Roach', 'Shadowfax'], 300, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'VIDEO_GAMES', 'ORIGINAL', NULL,
         'Which "Street Fighter" fighter is famous for lightning-fast kicks and is often called gaming''s first great female fighter?', NULL,
@@ -19566,24 +20070,32 @@ VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YE
         'Skyrim', ARRAY['Oblivion', 'Morrowind', 'Dragon Age', 'The Witcher 3', 'Dark Souls', 'Fable'], 300, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'VIDEO_GAMES', 'ORIGINAL', NULL,
-        'Which 2013 phone game was pulled from stores by its creator at the height of its fame, for being too addictive?', NULL,
-        'Flappy Bird', ARRAY['Doodle Jump', 'Crossy Road', 'Temple Run', 'Jetpack Joyride', 'Tiny Wings', 'Subway Surfers'], 300, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'VIDEO_GAMES', 'ORIGINAL', NULL,
         'What kind of animal is the master thief Sly Cooper?', NULL,
         'A raccoon', ARRAY['A fox', 'A cat', 'A ferret', 'A weasel', 'A possum', 'A badger'], 300, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'VIDEO_GAMES', 'ORIGINAL', NULL,
-        'What do you call a game that''s free to download but sells extras inside it?', NULL,
-        'Free-to-play', ARRAY['Pay-to-win', 'Early access', 'Shareware', 'Open-world', 'Battle pass', 'Demo'], 300, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'VIDEO_GAMES', 'ORIGINAL', NULL,
         'Which online card game from Blizzard launched in 2014?', NULL,
         'Hearthstone', ARRAY['Gwent', 'Legends of Runeterra', 'Magic Arena', 'Shadowverse', 'Elder Scrolls: Legends', 'Marvel Snap'], 300, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'VIDEO_GAMES', 'ORIGINAL', NULL,
-        'Which greedy rival of Mario wears yellow and purple, with a "W" on his cap?', NULL,
-        'Wario', ARRAY['Waluigi', 'Bowser Jr.', 'Toadsworth', 'Fawful', 'Kamek', 'King Boo'], 300, NULL);
+        'In which game did a player named Leeroy Jenkins famously charge into a room and ruin his team''s careful plan?', NULL,
+        'World of Warcraft', ARRAY['EverQuest', 'Guild Wars', 'RuneScape', 'Final Fantasy XI', 'Star Wars Galaxies', 'Ultima Online'], 300, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'VIDEO_GAMES', 'ORIGINAL', NULL,
+        'Who is the wisecracking treasure hunter hero of the "Uncharted" series?', NULL,
+        'Nathan Drake', ARRAY['Joel Miller', 'Sam Fisher', 'Max Payne', 'Cole MacGrath', 'Alex Mercer', 'Victor Sullivan'], 300, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'VIDEO_GAMES', 'ORIGINAL', NULL,
+        'Which 2017 run-and-gun game copied the hand-drawn look of 1930s cartoons?', NULL,
+        'Cuphead', ARRAY['Undertale', 'Hollow Knight', 'Ori and the Blind Forest', 'Rayman Legends', 'Bendy and the Ink Machine', 'Enchanted Portals'], 300, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'VIDEO_GAMES', 'ORIGINAL', NULL,
+        'In "Super Mario 64," what does Mario collect to open the doors of Peach''s castle?', NULL,
+        'Power Stars', ARRAY['Shine Sprites', 'Star Coins', 'Moons', 'Golden Mushrooms', 'Crystal Hearts', 'Dragon Coins'], 300, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'VIDEO_GAMES', 'ORIGINAL', NULL,
+        'Which game''s hero, Commander Shepard, fights to save the galaxy from the Reapers?', NULL,
+        'Mass Effect', ARRAY['Halo', 'Destiny', 'Star Wars: Knights of the Old Republic', 'Dead Space', 'Starfield', 'Anthem'], 300, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'VIDEO_GAMES', 'ORIGINAL', NULL,
         'Which 2022 open-world game has a lone Tarnished warrior exploring the Lands Between?', NULL,
@@ -19594,22 +20106,78 @@ VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YE
         'The Enderman', ARRAY['The Creeper', 'The Wither', 'The Phantom', 'The Blaze', 'The Shulker', 'The Warden'], 300, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'VIDEO_GAMES', 'ORIGINAL', NULL,
-        'Which 2017 indie game has a little knight bug exploring the ruined kingdom of Hallownest?', NULL,
-        'Hollow Knight', ARRAY['Ori and the Blind Forest', 'Dead Cells', 'Celeste', 'Salt and Sanctuary', 'Blasphemous', 'Axiom Verge'], 300, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'VIDEO_GAMES', 'ORIGINAL', NULL,
         'Which 2017 "Legend of Zelda" game lets you climb nearly anything and cook your own meals?', NULL,
         'Breath of the Wild', ARRAY['Tears of the Kingdom', 'Twilight Princess', 'Skyward Sword', 'Wind Waker', 'Majora''s Mask', 'A Link Between Worlds'], 300, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'VIDEO_GAMES', 'ORIGINAL', NULL,
-        'What does "AFK" mean in online games?', NULL,
-        'Away from keyboard', ARRAY['Always fighting kills', 'Ally for keeps', 'All for kicks', 'Auto-fire key', 'Armed for killing', 'Ask for keys'], 300, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'VIDEO_GAMES', 'ORIGINAL', NULL,
         'Which 1981 arcade game had players shooting a segmented bug winding down through a field of mushrooms?', NULL,
         'Centipede', ARRAY['Millipede', 'Galaga', 'Defender', 'Tempest', 'Berzerk', 'Joust'], 300, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'VIDEO_GAMES', 'ORIGINAL', NULL,
+        'In "The Legend of Zelda: Majora''s Mask," how many days do you get before the moon crashes?', NULL,
+        'Three', ARRAY['One', 'Two', 'Five', 'Seven', 'Ten', 'Thirteen'], 300, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'VIDEO_GAMES', 'ORIGINAL', NULL,
+        'Which much-mocked 1982 game, with thousands of copies buried in a New Mexico landfill, became a symbol of the 1983 video game crash?', NULL,
+        'E.T. the Extra-Terrestrial', ARRAY['Pac-Man for the 2600', 'Custer''s Revenge', 'Superman', 'Raiders of the Lost Ark', 'Swordquest', 'Pepsi Invaders'], 300, 'Digging up the landfill in 2014 proved the legend true: the cartridges really were there.');
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'VIDEO_GAMES', 'VIDEO_GAMES_NOV25', NULL,
+        'Which green-skinned "Street Fighter" brawler from Brazil shocks opponents with electricity?', NULL,
+        'Blanka', ARRAY['Dhalsim', 'Zangief', 'Guile', 'Vega', 'Balrog'], 300, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'VIDEO_GAMES', 'VIDEO_GAMES_NOV25', NULL,
+        'Which game series stars a knitted little hero named Sackboy?', NULL,
+        'LittleBigPlanet', ARRAY['Yoshi''s Woolly World', 'Kirby''s Epic Yarn', 'Unravel', 'Ratchet & Clank', 'Sly Cooper'], 300, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'VIDEO_GAMES', 'VIDEO_GAMES_NOV25', NULL,
+        'In the "Grand Theft Auto" games, which fictional city is based on New York?', NULL,
+        'Liberty City', ARRAY['Vice City', 'San Fierro', 'Gotham', 'Empire Bay', 'Metro City'], 300, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'VIDEO_GAMES', 'VIDEO_GAMES_NOV25', NULL,
+        'Which 2017 battle royale game greeted winners with "Winner winner chicken dinner"?', NULL,
+        'PUBG', ARRAY['Apex Legends', 'Fortnite', 'H1Z1', 'Warzone', 'Fall Guys'], 300, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'VIDEO_GAMES', 'VIDEO_GAMES_NOV25', NULL,
+        'Which fire-type fox Pokémon gets its name from its many tails?', NULL,
+        'Ninetales', ARRAY['Vulpix', 'Flareon', 'Fennekin', 'Arcanine', 'Ponyta'], 300, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'VIDEO_GAMES', 'VIDEO_GAMES_NOV25', NULL,
+        'What do gamers call the small real-money purchases of extras inside a game?', NULL,
+        'Microtransactions', ARRAY['Mini-bucks', 'Season tickets', 'Cash grabs', 'Pay walls', 'Upgrades'], 300, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'VIDEO_GAMES', 'VIDEO_GAMES_NOV25', NULL,
+        'Which "Street Fighter" fighter is a sumo wrestler from Japan?', NULL,
+        'E. Honda', ARRAY['Ryu', 'Akuma', 'Zangief', 'T. Hawk', 'Dan'], 300, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'VIDEO_GAMES', 'VIDEO_GAMES_NOV25', NULL,
+        'Which 2016 space game lets players explore about 18 quintillion planets?', NULL,
+        'No Man''s Sky', ARRAY['Starfield', 'Elite Dangerous', 'Spore', 'Mass Effect', 'Outer Wilds'], 300, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'VIDEO_GAMES', 'VIDEO_GAMES_NOV25', NULL,
+        'Which 1982 arcade game has knights riding ostriches, battling each other in the air with lances?', NULL,
+        'Joust', ARRAY['Defender', 'Galaga', 'Robotron', 'Dig Dug', 'Tempest'], 300, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'VIDEO_GAMES', 'VIDEO_GAMES_NOV25', NULL,
+        'Which 1980 arcade game, played with a trackball, has you protecting cities from falling missiles?', NULL,
+        'Missile Command', ARRAY['Space Invaders', 'Centipede', 'Defender', 'Scramble', 'Battlezone'], 300, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'VIDEO_GAMES', 'VIDEO_GAMES_NOV25', NULL,
+        'Which Pokémon was made in a lab as a clone, and became the villain of the first Pokémon movie?', NULL,
+        'Mewtwo', ARRAY['Mew', 'Gengar', 'Alakazam', 'Deoxys', 'Genesect'], 300, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'VIDEO_GAMES', 'VIDEO_GAMES_NOV25', NULL,
+        'Which pro skateboarder, whose name is on a hit game series, landed the first "900" at the 1999 X Games?', NULL,
+        'Tony Hawk', ARRAY['Rodney Mullen', 'Bob Burnquist', 'Shaun White', 'Ryan Sheckler', 'Danny Way'], 300, NULL);
 
 -- 400 points
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'VIDEO_GAMES', 'ORIGINAL', NULL,
+        'In "The Sims," what is the green crystal that floats over a Sim''s head called?', NULL,
+        'A plumbob', ARRAY['A mood gem', 'A lifeline', 'A wishstone', 'A hovergem', 'A sim-crystal', 'A spirit stone'], 400, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'VIDEO_GAMES', 'ORIGINAL', NULL,
+        'What is the name of the hero''s trusty horse in "The Legend of Zelda" games?', NULL,
+        'Epona', ARRAY['Navi', 'Ganon', 'Malon', 'Agro', 'Roach', 'Shadowfax'], 400, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'VIDEO_GAMES', 'ORIGINAL', NULL,
         'Which 2007 game is set in Rapture, a ruined city at the bottom of the sea?', NULL,
@@ -19620,16 +20188,8 @@ VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YE
         'Sephiroth', ARRAY['Kefka', 'Ultimecia', 'Seymour', 'Jenova', 'Vayne', 'Exdeath'], 400, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'VIDEO_GAMES', 'ORIGINAL', NULL,
-        'In which game did a player named Leeroy Jenkins famously charge into a room and ruin his team''s careful plan?', NULL,
-        'World of Warcraft', ARRAY['EverQuest', 'Guild Wars', 'RuneScape', 'Final Fantasy XI', 'Star Wars Galaxies', 'Ultima Online'], 400, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'VIDEO_GAMES', 'ORIGINAL', NULL,
         'What is the name of the physicist with a crowbar who stars in "Half-Life"?', NULL,
         'Gordon Freeman', ARRAY['Isaac Clarke', 'Adam Jensen', 'Alyx Vance', 'Corvo Attano', 'B.J. Blazkowicz', 'Max Payne'], 400, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'VIDEO_GAMES', 'ORIGINAL', NULL,
-        'Who is the wisecracking treasure hunter hero of the "Uncharted" series?', NULL,
-        'Nathan Drake', ARRAY['Joel Miller', 'Sam Fisher', 'Max Payne', 'Cole MacGrath', 'Alex Mercer', 'Victor Sullivan'], 400, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'VIDEO_GAMES', 'ORIGINAL', NULL,
         'Which punishing 2011 game came to PCs in 2012 as the "Prepare to Die" edition?', NULL,
@@ -19668,20 +20228,8 @@ VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YE
         'Undertale', ARRAY['Cuphead', 'Hollow Knight', 'Celeste', 'Shovel Knight', 'Stardew Valley', 'Hyper Light Drifter'], 400, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'VIDEO_GAMES', 'ORIGINAL', NULL,
-        'Which 2017 run-and-gun game copied the hand-drawn look of 1930s cartoons?', NULL,
-        'Cuphead', ARRAY['Undertale', 'Hollow Knight', 'Ori and the Blind Forest', 'Rayman Legends', 'Bendy and the Ink Machine', 'Enchanted Portals'], 400, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'VIDEO_GAMES', 'ORIGINAL', NULL,
-        'In "Super Mario 64," what does Mario collect to open the doors of Peach''s castle?', NULL,
-        'Power Stars', ARRAY['Shine Sprites', 'Star Coins', 'Moons', 'Golden Mushrooms', 'Crystal Hearts', 'Dragon Coins'], 400, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'VIDEO_GAMES', 'ORIGINAL', NULL,
         'What is the name of the open-world hero of "The Witcher" series, a monster hunter with white hair?', NULL,
         'Geralt of Rivia', ARRAY['Ciri', 'Yennefer', 'Dandelion', 'Vesemir', 'Triss', 'Eskel'], 400, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'VIDEO_GAMES', 'ORIGINAL', NULL,
-        'Which game''s hero, Commander Shepard, fights to save the galaxy from the Reapers?', NULL,
-        'Mass Effect', ARRAY['Halo', 'Destiny', 'Star Wars: Knights of the Old Republic', 'Dead Space', 'Starfield', 'Anthem'], 400, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'VIDEO_GAMES', 'ORIGINAL', NULL,
         'In "Overwatch," what is the name of the gorilla scientist from the Moon?', NULL,
@@ -19692,6 +20240,10 @@ VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YE
         'Spore', ARRAY['Black & White', 'Evolution', 'Darwinia', 'E.V.O.', 'Creatures', 'SimEarth'], 400, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'VIDEO_GAMES', 'ORIGINAL', NULL,
+        'Which 2017 indie game has a little knight bug exploring the ruined kingdom of Hallownest?', NULL,
+        'Hollow Knight', ARRAY['Ori and the Blind Forest', 'Dead Cells', 'Celeste', 'Salt and Sanctuary', 'Blasphemous', 'Axiom Verge'], 400, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'VIDEO_GAMES', 'ORIGINAL', NULL,
         'Which 1980 dungeon game gave its name to a whole genre with random levels and permanent death?', NULL,
         'Rogue', ARRAY['NetHack', 'Adventure', 'Hack', 'Moria', 'Angband', 'Dungeon'], 400, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
@@ -19700,20 +20252,12 @@ VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YE
         'Zork', ARRAY['Colossal Cave Adventure', 'Mystery House', 'The Hobbit', 'Planetfall', 'Hitchhiker''s Guide', 'Adventureland'], 400, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'VIDEO_GAMES', 'ORIGINAL', NULL,
-        'In "The Legend of Zelda: Majora''s Mask," how many days do you get before the moon crashes?', NULL,
-        'Three', ARRAY['One', 'Two', 'Five', 'Seven', 'Ten', 'Thirteen'], 400, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'VIDEO_GAMES', 'ORIGINAL', NULL,
         'Which composer wrote the music for the original "Super Mario Bros." and "The Legend of Zelda"?', NULL,
         'Koji Kondo', ARRAY['Yoko Shimomura', 'Koichi Sugiyama', 'Akira Yamaoka', 'Grant Kirkhope', 'David Wise', 'Yuzo Koshiro'], 400, NULL);
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'VIDEO_GAMES', 'ORIGINAL', NULL,
         'Which composer wrote most of the music for the "Final Fantasy" series?', NULL,
         'Nobuo Uematsu', ARRAY['Koji Kondo', 'Yoko Shimomura', 'Koichi Sugiyama', 'Yasunori Mitsuda', 'Masashi Hamauzu', 'Hiroki Kikuta'], 400, NULL);
-INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
-VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'VIDEO_GAMES', 'ORIGINAL', NULL,
-        'Which much-mocked 1982 game, with thousands of copies buried in a New Mexico landfill, became a symbol of the 1983 video game crash?', NULL,
-        'E.T. the Extra-Terrestrial', ARRAY['Pac-Man for the 2600', 'Custer''s Revenge', 'Superman', 'Raiders of the Lost Ark', 'Swordquest', 'Pepsi Invaders'], 400, 'Digging up the landfill in 2014 proved the legend true: the cartridges really were there.');
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'VIDEO_GAMES', 'ORIGINAL', NULL,
         'What is the name of the silent test subject you play in "Portal"?', NULL,
@@ -19730,10 +20274,106 @@ INSERT INTO questions (question_number, game_mode, category, subcategory, factio
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'VIDEO_GAMES', 'ORIGINAL', NULL,
         'Which space-pirate dragon is the recurring villain of the "Metroid" series?', NULL,
         'Ridley', ARRAY['Kraid', 'Mother Brain', 'Dark Samus', 'Serris', 'Phantoon', 'Draygon'], 400, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'VIDEO_GAMES', 'VIDEO_GAMES_NOV25', NULL,
+        'Which 1962 MIT game, one of the first video games, has two spaceships dueling around a star?', NULL,
+        'Spacewar!', ARRAY['Star Duel', 'Asteroids', 'Lunar Lander', 'Galaxy Game', 'Computer Space'], 400, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'VIDEO_GAMES', 'VIDEO_GAMES_NOV25', NULL,
+        'Which 1958 game, played on an oscilloscope at a national laboratory, was among the first video games made for fun?', NULL,
+        'Tennis for Two', ARRAY['OXO', 'Spacewar!', 'Nim', 'Bertie the Brain', 'Ping Pong Plus'], 400, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'VIDEO_GAMES', 'VIDEO_GAMES_NOV25', NULL,
+        'Which goggled turtle rides a cloud in Mario games, dropping spiny eggs?', NULL,
+        'Lakitu', ARRAY['Koopa Troopa', 'Hammer Bro', 'Bullet Bill', 'Boom Boom', 'Kamek'], 400, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'VIDEO_GAMES', 'VIDEO_GAMES_NOV25', NULL,
+        'Which damsel did the hero rescue in the original 1981 "Donkey Kong," later the mayor of New Donk City?', NULL,
+        'Pauline', ARRAY['Peach', 'Daisy', 'Rosalina', 'Candy Kong', 'Dixie'], 400, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'VIDEO_GAMES', 'VIDEO_GAMES_NOV25', NULL,
+        'Which 1982 arcade hero hops around a pyramid of cubes, cursing "@!#?@!" when he''s caught?', NULL,
+        'Q*bert', ARRAY['Dig Dug', 'Mr. Do!', 'Pengo', 'Frogger', 'Bomb Jack'], 400, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'VIDEO_GAMES', 'VIDEO_GAMES_NOV25', NULL,
+        'Which designer of "The Sims" shares his last name with the brothers who first flew at Kitty Hawk?', NULL,
+        'Will Wright', ARRAY['Sid Meier', 'Peter Molyneux', 'Richard Garriott', 'John Romero', 'Brian Reynolds'], 400, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'VIDEO_GAMES', 'VIDEO_GAMES_NOV25', NULL,
+        'Which 1993 island puzzle game, one letter off a word for fog, was the best-selling PC game of the 1990s?', NULL,
+        'Myst', ARRAY['Riven', 'The 7th Guest', 'Lemmings', 'Phantasmagoria', 'Monkey Island'], 400, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'VIDEO_GAMES', 'VIDEO_GAMES_NOV25', NULL,
+        'Which game company behind "Half-Life" shares its name with the part of a pipe that controls the flow?', NULL,
+        'Valve', ARRAY['Bungie', 'id Software', 'Blizzard', 'Bethesda', 'BioWare'], 400, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'VIDEO_GAMES', 'VIDEO_GAMES_NOV25', NULL,
+        'Which brutally hard 1981 arcade game has a spaceship protecting humanoids on a planet''s surface?', NULL,
+        'Defender', ARRAY['Scramble', 'Stargate', 'Galaxian', 'Gorf', 'Zaxxon'], 400, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'VIDEO_GAMES', 'VIDEO_GAMES_NOV25', NULL,
+        'Which 1986 game has Simon Belmont whipping his way through Dracula''s castle?', NULL,
+        'Castlevania', ARRAY['Ghosts ''n Goblins', 'Shadowgate', 'Monster Party', 'Splatterhouse', 'Darkstalkers'], 400, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'VIDEO_GAMES', 'VIDEO_GAMES_NOV25', NULL,
+        'Which mad scientist, with a name like a cartoon coyote''s, is Mega Man''s archenemy?', NULL,
+        'Dr. Wily', ARRAY['Dr. Light', 'Dr. Eggman', 'Dr. Cossack', 'Dr. Robotnik', 'Dr. Mario'], 400, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'VIDEO_GAMES', 'VIDEO_GAMES_NOV25', NULL,
+        'In "Street Fighter," who is Ryu''s blond American friend and rival, sharing a name with Barbie''s boyfriend?', NULL,
+        'Ken', ARRAY['Guile', 'Charlie', 'Cody', 'Sean', 'Alex'], 400, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'VIDEO_GAMES', 'VIDEO_GAMES_NOV25', NULL,
+        'In "Halo," what is the alien alliance at war with humanity called, a word for a solemn promise?', NULL,
+        'The Covenant', ARRAY['The Pact', 'The Oath', 'The Accord', 'The Bond', 'The Vow'], 400, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'VIDEO_GAMES', 'VIDEO_GAMES_NOV25', NULL,
+        'In "The Legend of Zelda," what are the graceful fish people of the rivers called?', NULL,
+        'Zoras', ARRAY['Gorons', 'Kokiri', 'Gerudo', 'Rito', 'Koroks'], 400, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'VIDEO_GAMES', 'VIDEO_GAMES_NOV25', NULL,
+        'By what nickname is Minecraft''s creator Markus Persson known, also a word for one of the holes in a belt?', NULL,
+        'Notch', ARRAY['Jeb', 'Dinnerbone', 'Herobrine', 'Buckle', 'Loop'], 400, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'VIDEO_GAMES', 'VIDEO_GAMES_NOV25', NULL,
+        'In "Super Mario Bros. 3," which flying suit is named for a raccoon-like Japanese animal?', NULL,
+        'The Tanooki Suit', ARRAY['The Kitsune Suit', 'The Frog Suit', 'The Raccoon Coat', 'The Panda Suit', 'The Bear Suit'], 400, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'VIDEO_GAMES', 'VIDEO_GAMES_NOV25', NULL,
+        'What is the name of Mega Man''s robot dog, shared with a Canadian rock trio?', NULL,
+        'Rush', ARRAY['Bolt', 'Rocket', 'Spike', 'Blitz', 'Dash'], 400, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'VIDEO_GAMES', 'VIDEO_GAMES_NOV25', NULL,
+        'What is the name of the kingdom the hero protects in most "Legend of Zelda" games?', NULL,
+        'Hyrule', ARRAY['Termina', 'Lorule', 'Labrynna', 'Holodrum', 'Koholint'], 400, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'VIDEO_GAMES', 'VIDEO_GAMES_NOV25', NULL,
+        'In "Metroid," what does the bounty hunter heroine curl into to roll through narrow tunnels?', NULL,
+        'The Morph Ball', ARRAY['The Spin Ball', 'The Screw Shell', 'The Roll Pod', 'The Spider Orb', 'The Space Sphere'], 400, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'VIDEO_GAMES', 'VIDEO_GAMES_NOV25', NULL,
+        'Which flower-named princess rules Sarasaland in Mario games?', NULL,
+        'Daisy', ARRAY['Rosalina', 'Pauline', 'Tulip', 'Lily', 'Violet'], 400, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'VIDEO_GAMES', 'VIDEO_GAMES_NOV25', NULL,
+        'Which cheerful yellow shih tzu works as Tom Nook''s assistant at town hall?', NULL,
+        'Isabelle', ARRAY['Celeste', 'Digby', 'Mabel', 'K.K. Slider', 'Blathers'], 400, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'VIDEO_GAMES', 'VIDEO_GAMES_NOV25', NULL,
+        'Which 1983 laserdisc arcade game starred Dirk the Daring rescuing a princess from a dragon?', NULL,
+        'Dragon''s Lair', ARRAY['Space Ace', 'Mad Dog McCree', 'Knight Quest', 'Cliff Hanger', 'Gauntlet'], 400, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'VIDEO_GAMES', 'VIDEO_GAMES_NOV25', NULL,
+        'Which 1982 jungle hero swings on vines over crocodiles and tar pits?', NULL,
+        'Pitfall Harry', ARRAY['Jungle Jim', 'Rick Dangerous', 'Indiana Jones', 'Tarzan', 'Jungle King'], 400, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'VIDEO_GAMES', 'VIDEO_GAMES_NOV25', NULL,
+        'Which name, often given to an engineer or airship pilot, turns up in nearly every "Final Fantasy" game?', NULL,
+        'Cid', ARRAY['Rex', 'Bart', 'Gil', 'Moogle', 'Tonberry'], 400, NULL);
 
 COMMIT;
 
--- Check: should return 120.
+-- Check: should return 200.
 SELECT COUNT(*) FROM questions WHERE game_mode = 'TRIVI_YEAH_II' AND category = 'VIDEO_GAMES';
 
 -- ============================================================================
