@@ -4556,12 +4556,12 @@ async function startFlagMeDownFinalWager(roomCode) {
 // PHASE 3B: EMPOSSDURR ENGINE (impostor social-deduction mode)
 // ==========================================
 
-// Loaded once per process and cached -- the deck barely ever changes
-// mid-runtime, and re-querying it every single game would be wasteful. A
-// server restart naturally picks up any new rows added since.
+// Re-read at every game start (one small query), the same as On the
+// Spectrum's statements, so a cleanup or new batch Randy runs in Neon
+// reaches the next game without a server restart (Nov 25 2026: the
+// Thanksgiving deck cleanup). The cache is only the mid-game fallback.
 let empossDurrWordCache = null;
 async function loadEmpossDurrWordPool() {
-    if (empossDurrWordCache) return empossDurrWordCache;
     const result = await pool.query('SELECT word, clue_1, clue_2, clue_3, clue_4 FROM empossdurr_words');
     empossDurrWordCache = result.rows.map(row => ({
         word: row.word,
