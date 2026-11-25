@@ -1501,6 +1501,24 @@ and forth until we both agree the idea is good **and** worth the effort. So:
     tents, menu inserts, a card by the register, so people scan from
     their seat. A static code can be shared and played from home; the
     stakes are low, and /admin can change a venue's code.
+  - **Names (Randy, Nov 25; lite only, never the main game):** a filter at
+    Join (a friendly "Try another name", no reason given) that undoes
+    tricks first (case, spaces, number swaps like sh1t, stretched
+    letters, look-alike and invisible characters); the worst terms are
+    caught anywhere, ordinary swears only as whole words (so Cassandra
+    and Hancock pass). Start from a maintained open list (e.g. the MIT
+    `obscenity` package, credited on /info) plus our own words added on
+    /admin. Also blocked: web addresses, @handles and phone numbers (no
+    ads in names), names like AVERAGE, RandoMania, Admin, Staff, Host or a
+    venue's, and anything past ~16 characters. **No emojis**: letters,
+    numbers, spaces and simple punctuation only; the avatar carries the
+    personality. **The room hides a name**: 3 different players tap Hide
+    and it becomes the avatar + "Player" everywhere; the player is asked
+    to pick another, and one hidden twice in a day gets a generated name
+    ("Sneaky Otter") for the rest of it. /admin lists the names on air
+    with Hide. **A new name shows on its own venue's TV at once and on
+    other venues' TVs after 3 minutes** unhidden (Randy's compromise), so
+    a slip is seen in one room, not across town.
   - **Ads:** real ones, free while testing ("money after proof"). Images
     uploaded through GitHub like photos; a schedule; counts only (time on
     air, phones playing) to show advertisers; venues can refuse a
