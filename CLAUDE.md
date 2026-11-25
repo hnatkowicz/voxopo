@@ -1501,6 +1501,41 @@ and forth until we both agree the idea is good **and** worth the effort. So:
     tents, menu inserts, a card by the register, so people scan from
     their seat. A static code can be shared and played from home; the
     stakes are low, and /admin can change a venue's code.
+  - **Names (Randy, Nov 25; lite only, never the main game):** a filter at
+    Join (a friendly "Try another name", no reason given) that undoes
+    tricks first (case, spaces, number swaps like sh1t, stretched
+    letters, look-alike and invisible characters); the worst terms are
+    caught anywhere, ordinary swears only as whole words (so Cassandra
+    and Hancock pass). Start from a maintained open list (e.g. the MIT
+    `obscenity` package, credited on /info) plus our own words added on
+    /admin. Also blocked: web addresses, @handles and phone numbers (no
+    ads in names), names like AVERAGE, RandoMania, Admin, Staff, Host or a
+    venue's, and anything past ~16 characters. **No emojis**: letters,
+    numbers, spaces and simple punctuation only; the avatar carries the
+    personality. **The room hides a name**: 3 different players tap Hide
+    and it becomes the avatar + "Player" everywhere; the player is asked
+    to pick another, and one hidden twice in a day gets a generated name
+    ("Sneaky Otter") for the rest of it. /admin lists the names on air
+    with Hide. **A new name shows on its own venue's TV at once and on
+    other venues' TVs after 3 minutes** unhidden (Randy's compromise), so
+    a slip is seen in one room, not across town.
+  - **The TV (Randy, Nov 25):** the main game's frame (top bar, stage,
+    rail, footer, fonts). Top bar: wordmark, the venue's name or logo
+    where "Room 1234" sits, the clock; no room code. Stage: the item, and
+    a fuller reveal for a silent room (the answer big, "61% got it"
+    everywhere and "Pickles & Pins: 3 of 4", the fact). Rail: this
+    venue's players with AVERAGE among them, then the top 3 everywhere
+    with their locations (only the top everywhere when nobody here
+    plays). Footer: a bigger QR code, "Scan to play · free, no app", on
+    screen through everything; an ad never covers it. Facts, venue lines
+    and ads take over the stage for 10-15s; **ads are one 16:9 image
+    with a small "Sponsored" label** (Randy: "we'll see how it works in a
+    real setting"). The break reuses the venue break screen with a
+    countdown to the next hour. **No hourly podium** and **no growing QR
+    nudge** when nobody's playing (Randy: out). **Burn-in drift:** the
+    fixed parts shift a few pixels every few minutes, unnoticed (always-on
+    TVs, OLEDs especially). Outside live hours, a dim card with the hours
+    and the QR code.
   - **Ads:** real ones, free while testing ("money after proof"). Images
     uploaded through GitHub like photos; a schedule; counts only (time on
     air, phones playing) to show advertisers; venues can refuse a
