@@ -64,6 +64,9 @@
         .revoked-section { margin-top: 18px; }
         .revoked-section > summary { cursor: pointer; color: var(--rm-text-soft); font-weight: 600; font-size: 0.9rem; padding: 8px 0; list-style-position: inside; }
         .revoked-section .code-row { opacity: 0.8; }
+        .category-section > summary { cursor: pointer; list-style-position: inside; text-align: center; color: var(--rm-white); }
+        .category-section > summary .cat-title { font-size: 1.1rem; font-weight: 600; letter-spacing: -0.02em; }
+        .category-section > summary .cat-summary { display: block; color: var(--rm-text-muted); font-size: 0.85rem; font-weight: 500; margin-top: 4px; }
         .empty-state { color: var(--rm-text-muted); text-align: center; padding: 20px; font-size: 0.9rem; }
         .code-venue-tag { font-size: 0.7rem; font-weight: 700; color: var(--rm-yellow); border: 1px solid rgba(var(--rm-yellow-rgb), 0.35); border-radius: 4px; padding: 1px 6px; margin-left: 6px; text-transform: uppercase; letter-spacing: 0.04em; }
         .venue-editor { background: var(--rm-surface); border: 1px solid var(--rm-border); border-radius: 8px; padding: 16px; margin: -4px 0 12px 0; text-align: left; }
@@ -132,11 +135,16 @@
         <div id="codes-list"></div>
 
         <div style="border-top: 1px solid var(--rm-border); margin: 28px 0 20px 0;"></div>
-        <h1 style="font-size: 1.1rem; margin-bottom: 4px;">Thinking Pants Categories</h1>
-        <p class="subtitle" style="margin-bottom: 12px;"><strong>Boost</strong> shows a category about twice as often; <strong>Off</strong> keeps its questions but never puts it on a board. Takes effect from the next board. These are the defaults for every venue; a code's <strong>Categories</strong> button can change them for that venue only.</p>
+        <!-- Folded by default (Randy, Nov 26 2026: the long list meant a lot of
+             scrolling to reach Double Take below). The summary line keeps the
+             state visible without opening it. -->
+        <details class="category-section" id="category-section">
+        <summary><span class="cat-title">Thinking Pants Categories</span><span class="cat-summary" id="category-summary"></span></summary>
+        <p class="subtitle" style="margin: 12px 0;"><strong>Boost</strong> shows a category about twice as often; <strong>Off</strong> keeps its questions but never puts it on a board. Takes effect from the next board. These are the defaults for every venue; a code's <strong>Categories</strong> button can change them for that venue only.</p>
         <div id="category-notice" class="venue-notice" style="display: none; margin: 0 0 12px 0;">The category dial turns on once you run <strong>thinking_pants_category_settings.sql</strong> in Neon. Until then every category is Normal.</div>
         <div id="category-list"></div>
         <div class="feedback" id="category-feedback"></div>
+        </details>
 
         <div style="border-top: 1px solid var(--rm-border); margin: 28px 0 20px 0;"></div>
         <h1 style="font-size: 1.1rem; margin-bottom: 4px;">Double Take Photos</h1>
@@ -655,6 +663,10 @@
             categoryDialOn = !!data.installed;
             document.getElementById('category-notice').style.display = categoryDialOn ? 'none' : 'block';
             const esc = t => String(t).replace(/[&<>"']/g, ch => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[ch]));
+            const boosted = data.categories.filter(c => c.setting === 'BOOST').length;
+            const off = data.categories.filter(c => c.setting === 'OFF').length;
+            document.getElementById('category-summary').textContent =
+                `${data.categories.length} categories: ${boosted} boosted, ${off} off. Tap to change.`;
             document.getElementById('category-list').innerHTML = data.categories.map(c => `
                 <div class="category-row">
                     <div class="name">${esc(c.label)}<div class="count">${c.depth > 0 ? `${c.total} questions` : 'Not in the database yet'}</div></div>
