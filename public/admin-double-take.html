@@ -17,12 +17,18 @@
         .card { background: var(--rm-surface); border: 1px solid var(--rm-border); border-radius: 12px; padding: 18px; margin: 16px 0; }
         .notice { background: rgba(var(--rm-yellow-rgb), 0.08); border: 1px solid rgba(var(--rm-yellow-rgb), 0.35); color: var(--rm-yellow); border-radius: 8px; padding: 10px 12px; font-size: 0.88rem; margin: 12px 0; }
         .pairs { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 12px; margin-top: 12px; }
-        .pair { background: var(--rm-surface-2); border: 2px solid var(--rm-border); border-radius: 10px; padding: 8px; cursor: pointer; text-align: left; color: var(--rm-text); font: inherit; }
+        .pair { position: relative; background: var(--rm-surface-2); border: 2px solid var(--rm-border); border-radius: 10px; padding: 8px; cursor: pointer; text-align: left; color: var(--rm-text); font: inherit; }
         .pair:hover, .pair.current { border-color: var(--rm-brand); }
         .pair img { width: 100%; aspect-ratio: 4 / 3; object-fit: cover; border-radius: 6px; display: block; background: var(--rm-bg); }
         .pair .name { font-weight: 700; margin-top: 6px; }
         .pair .status { font-size: 0.8rem; color: var(--rm-text-muted); }
         .pair .status.ready { color: var(--rm-green); }
+        /* A pair that isn't marked Ready yet: a white "!" in a circle in the
+           tile's bottom-right corner, beside the status line (Randy, Nov 26
+           2026, at 39 photos: spot the ones still to finish at a glance). */
+        .pair .todo { position: absolute; right: 8px; bottom: 8px; width: 20px; height: 20px; border: 2px solid var(--rm-white); border-radius: 50%; color: var(--rm-white); font-weight: 800; font-size: 0.8rem; line-height: 20px; text-align: center; box-sizing: content-box; }
+        .pair .status { padding-right: 28px; }
+        #pair-count { margin: 14px 0 0; }
         .toolbar { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin: 10px 0; }
         .toolbar .gap { flex: 1; }
         button.b { padding: 8px 14px; font-size: 0.85rem; border-radius: 6px; border: 1px solid var(--rm-border); background: var(--rm-surface-2); color: var(--rm-text); cursor: pointer; font: inherit; font-size: 0.85rem; }
@@ -59,6 +65,7 @@
     <div id="stray-note" class="notice" style="display:none"></div>
     <div id="load-error" class="notice" style="display:none"></div>
 
+    <p id="pair-count" class="muted"></p>
     <div class="pairs" id="pairs"></div>
 
     <div class="card" id="editor">
@@ -160,12 +167,17 @@ function statusText(p) {
 
 function renderPairs() {
     const box = document.getElementById('pairs');
+    const readyCount = pairs.filter(p => p.ready).length;
+    const toFinish = pairs.length - readyCount;
+    document.getElementById('pair-count').textContent = pairs.length
+        ? `${pairs.length} photo${pairs.length === 1 ? '' : 's'}: ${readyCount} ready` + (toFinish ? `, ${toFinish} to finish` : '')
+        : '';
     if (!pairs.length) { box.innerHTML = '<p class="muted">No pairs in public/double-take/ yet.</p>'; return; }
     box.innerHTML = '';
     pairs.forEach(p => {
         const b = document.createElement('button');
         b.className = 'pair' + (cur && cur.name === p.name ? ' current' : '');
-        b.innerHTML = `<img loading="lazy" alt=""><div class="name"></div><div class="status${p.ready ? ' ready' : ''}"></div>`;
+        b.innerHTML = `<img loading="lazy" alt=""><div class="name"></div><div class="status${p.ready ? ' ready' : ''}"></div>${p.ready ? '' : '<span class="todo" title="Not ready yet">!</span>'}`;
         b.querySelector('img').src = `/double-take/${encodeURIComponent(p.name)}-altered.webp`;
         b.querySelector('.name').textContent = p.name;
         b.querySelector('.status').textContent = statusText(p);
