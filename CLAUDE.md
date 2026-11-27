@@ -946,6 +946,25 @@ Mode keys are used in room votes and in `gameEngine.js`:
     places within 3 miles in one game (the Capitol and Harrisburg). The
     first 21 were placed by Claude from coordinates (memory, a first draft:
     Randy checks them). The smoke test plays a Central PA room.
+    **Maps are now drawn from OpenStreetMap data** (Nov 28 2026; Randy:
+    "That would have taken me hours"): `scripts/osm-local-map.mjs` turns an
+    Overpass Turbo GeoJSON export into a 4:3 SVG in the RandoMania! colors
+    (denim ground, **cream main roads -- gold is kept for the game's own
+    marks**, quiet side roads, blue water, parks a lighter denim since green
+    means right; only longer named creeks). Randy runs the query in his
+    browser (overpass-api.de refuses this cloud's connections) and uploads
+    the export to `content/maps/` (zip it when it's over GitHub's 25 MB).
+    Central PA was redrawn this way (`central-pa-map-osm.svg`, region
+    style: no side streets, county and state lines) **in its existing frame**
+    (`fit:A,B,C,D`), so every place stayed put; Randy: "That. Is.
+    Gorgeous." **Hanover** (`public/maps/hanover-map.svg`, town style, 7.7
+    miles across, ~623 px a mile; no road labels, Randy's call) is drawn
+    but not in the game yet: it needs places (Randy's Hanover businesses,
+    as a marketing angle) and town-sized scoring (falloff ~1/3 mile,
+    smaller circles, a per-map minimum distance between places). A Snazzy
+    Maps screen grab is Google's map and can't be used. On the TV, the
+    first-pin dots and the true spot are a set size on screen with a dark
+    edge (they had shrunk to a couple of pixels on the detailed map).
   - **The map:** Randy's world map SVG (`public/maps/workd-map-complete.svg`,
     Wikipedia's blank world map in his colors), rendered to
     `public/pin-drop/world-map.webp` (2400x1253, 55 KB) by
