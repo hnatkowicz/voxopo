@@ -792,8 +792,8 @@
             <button type="button" id="pd-lock" class="pd-lock" onclick="pdLock()">Lock in</button>
         </div>
         <!-- The line clue (Randy, Nov 24 2026): second stage, once a round,
-             half your points. The true spot is somewhere on the line. -->
-        <button type="button" id="pd-line-btn" class="pd-line-btn" onclick="pdBuyLine()" style="display: none;">Draw my line (half points)</button>
+             a quarter of your points (was half until Thanksgiving 2026). The true spot is somewhere on the line. -->
+        <button type="button" id="pd-line-btn" class="pd-line-btn" onclick="pdBuyLine()" style="display: none;">Draw my line (-25%)</button>
     </div>
 
     <!-- Double Take (Randy, Nov 2026): the altered photo, full width. Pinch
@@ -1178,7 +1178,7 @@
             PIN_DROP: ['Each round is a place: a city, or a landmark\'s photo. Tap the world map to drop your pin.',
                 'Pinch to zoom and drag to look around. Tap again to move your pin.',
                 'Then everyone\'s first pins appear as dots. Stay put for x1.5, or move: no pin in the first stage means sitting the round out.',
-                'Stuck? Draw your line: the spot is somewhere on it. It costs half your points that round.',
+                'Stuck? Draw your line: the spot is somewhere on it. It costs a quarter of your points that round.',
                 'Closer is more points. The TV shows every pin, the real spot and the miles.'],
             DOUBLE_TAKE: ['The TV shows two photos; your phone shows the changed one. Find the 5 differences.',
                 'Pinch to zoom and drag to look around. Tap a difference to claim it: +100, first finder only.',
@@ -3159,7 +3159,7 @@
                     if (!me) return 'No pin this round.';
                     // No "+0" for a pin across the world (the phone pass's rule).
                     if (!me.points) return `${me.miles.toLocaleString('en-US')} miles off.`;
-                    const notes = [me.stayed ? `x${d.stayBonus} for staying` : '', me.usedLine ? 'half for the line' : ''].filter(Boolean).join(', ');
+                    const notes = [me.stayed ? `x${d.stayBonus} for staying` : '', me.usedLine ? '-25% for the line' : ''].filter(Boolean).join(', ');
                     return `${me.miles.toLocaleString('en-US')} miles off. +${me.points.toLocaleString('en-US')}${notes ? ` (${notes})` : ''}`;
                 default: return '';
             }
