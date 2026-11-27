@@ -1139,10 +1139,20 @@ and forth until we both agree the idea is good **and** worth the effort. So:
   privacy, depth and breadth, customization. Randy: not worried about
   competition; ours is "more academic and social", and we stay far from
   copyrighted material.
-- **Being talked through (Nov 27):** a light team mode (everyone on their
-  own phone, team score averaged; an /admin setting; random two-word
-  names and avatars), and a second Pin Drop hint to even out uneven
-  knowledge.
+- **Teams: undecided (Randy, Nov 27).** Talked through a light team mode:
+  everyone on their own phone, each question's team score the average of
+  the members who answered (so "if you don't know, don't answer"), random
+  two-word names and avatars, rerolled by a team majority, an /admin
+  Off / Room decides / Always setting, social modes staying individual.
+  Randy likes "a democracy of individuals" and doesn't yet see how to
+  make it "a republic" without friction and setup; offering teams only
+  in the games that suit them might get clunky.
+- **Pinned (Randy, Nov 27): a second Pin Drop hint.** Claude suggested a
+  distance hint ("about 1,800 miles off", one hint per round, line or
+  distance); Randy has an idea or two of his own. Come back to it.
+- **Being talked through (Nov 27): local Pin Drop.** Randy draws a
+  RandoMania!-styled map of a town, campus or venue, with his own places,
+  photos and prompts, to sell as an option.
 - **Pinned (Randy, Nov 22: "No bother. Pin it for later."):** the lobby
   draws every mode for a moment before the room's own list arrives, so a
   mode the code doesn't play flashes and vanishes. Fix: wait for the
