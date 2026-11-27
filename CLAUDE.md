@@ -845,8 +845,9 @@ Mode keys are used in room votes and in `gameEngine.js`:
     the wager. Answers stay secret until the results, which run lowest
     score first (the leader last), then Game Over.
   - **Pace:** a round ends early once everyone who hasn't locked in has a
-    tile lit (after a 1s beat). A 25s last call follows the flips (was
-    10s; Randy, Nov 2026); it's skipped once everyone has locked in.
+    tile lit (after a 1s beat). A 45s last call follows the flips (was
+    10s, then 25s; Thanksgiving 2026: +20 "to allow for typing and
+    thinking"); it's skipped once everyone has locked in.
   - The numbers are `SPOTLIGHT_*` in `gameEngine.js`, first guesses.
   - **First family verdict (Nov 2026):** four games in a row; Randy's wife
     "said it's everything she'd want in a game." Randy's icon
@@ -868,10 +869,11 @@ Mode keys are used in room votes and in `gameEngine.js`:
 - **PIN_DROP** (Pin Drop, a working name -- Randy will name it once he's
   seen it play; built Nov 24 2026): find it on the world map. 8 rounds,
   easy to hard: 5 cities by name and 3 of Randy's landmark photos.
-  Everyone taps the map on their phone at once (25s, move it as often as
-  you like), then the room's first pins appear as **plain dots, no
-  names** (Randy: don't give away too much too soon), then a 15s second
-  chance: **stay put for x1.5** (Randy: "REALLY fun") or move; no
+  Everyone taps the map on their phone at once (40s since Thanksgiving
+  2026, was 25s: "people were rushing and losing time"; move it as often
+  as you like), then the room's first pins appear as **plain dots, no
+  names** (Randy: don't give away too much too soon), then a 35s second
+  chance (was 15s, same Thanksgiving note): **stay put for x1.5** (Randy: "REALLY fun") or move; no
   first-stage pin means sitting the round out, so nobody waits and
   copies. Points: 1000 x e^(-miles/1000) (about 900 at 100 miles, 370 at
   1,000). The reveal: every pin with its avatar, a line to the true spot,
