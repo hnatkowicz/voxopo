@@ -342,14 +342,16 @@ event, for a small fee. That's why hosting is gated behind access codes.
   list** (Randy, Nov 2026: growing in sixes; one list for everyone, no
   rotating sets, duplicates allowed since a venue may hope for 100+
   players, and no changing your pick after joining): the join grid
-  scrolls in its own box (3.5 rows, so Join stays in view), and **tapping
-  an avatar picks it and grows it big** from its tile with the podium's
-  gold glow; any tap sends it back, outlined as your pick. Small
+  scrolls in its own box (3.5 rows, so Join stays in view), and tapping an
+  avatar picks it, outlined in gold. **No tap-to-enlarge** (removed Nov
+  28 2026: the big copy over the screen left players stuck, not sure
+  whether it would go away or where to tap; Randy: remove it entirely,
+  not on a timer). Small
   places (grid, scoreboards, strips) use a few-KB WebP from
   `public/avatars/thumbs/` (24 drawings: 244 KB instead of 1.2 MB), made
   by `scripts/avatar-thumbs.mjs` and a GitHub Action whenever an SVG is
-  uploaded; the full SVG loads only where an avatar is big (the enlarge,
-  the TV podium, the Champion card), and a missing thumb falls back to
+  uploaded; the full SVG loads only where an avatar is big (the TV
+  podium, the Champion card), and a missing thumb falls back to
   it. **Arrivals** (Randy, Nov 2026): a new player in the lobby gets a quiet
   line beside the QR code ("Ace joined", "Eve and Fay joined"), and the
   rail shows them with their avatar. The big avatar "entrance" over the
