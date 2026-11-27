@@ -1085,3 +1085,6 @@ body.tp-layout #onboarding-status-slot .arrival-line { font-size: calc(var(--u) 
    name, and the lobby's quiet "Teams 3 / 8" count beside the rail title. */
 .rail-team-members { display: inline-flex; gap: calc(var(--u) * 0.15); opacity: 0.9; }
 .rail-teams-vote { font-size: 0.8em; color: var(--rm-text-soft); font-weight: 500; margin-left: calc(var(--u) * 0.6); }
+
+/* Local Pin Drop maps (Nov 27 2026): the place's circle at the reveal. */
+.pd-truth-area { fill: rgba(var(--rm-brand-rgb), 0.18); stroke: var(--rm-brand); stroke-width: 6; }

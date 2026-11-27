@@ -184,6 +184,7 @@
         let houseColumnOn = false;
         let boardRulesOn = false;
         let teamsOn = false;
+        let pinDropMapsList = null; // local Pin Drop maps, once pin_drop_local.sql has run
         let breaksOn = false;
         let announcementOn = false;
         // The announcement's time zones: the US ones first; the browser's own is added if it's not here.
@@ -229,6 +230,7 @@
             if (c.board_rules === 'PLAIN') parts.push('Plain rules');
             if (teamsOn && c.teams_mode === 'ALWAYS') parts.push(`Teams always (up to ${c.team_size_max || 7})`);
             if (teamsOn && c.teams_mode === 'OFF') parts.push('No teams');
+            if (pinDropMapsList && (c.pin_drop_maps || []).length) parts.push(`Pin Drop: ${c.pin_drop_maps.map(k => (pinDropMapsList.find(m => m.key === k) || { name: k }).name).join(', ')}`);
             if (c.break_minutes) parts.push(`Breaks: ${c.break_minutes} min`);
             if (c.announcement && c.announcement.on) {
                 const a = c.announcement;
@@ -278,6 +280,13 @@
                         <div class="hint">Doublers and the Final Wager are in both.</div>
                     </div>
                     ` : `<div class="hint" style="margin-bottom: 12px;">Plain rules (no sweeps or traps) turn on once you run <strong>access_codes_board_rules.sql</strong> in Neon.</div>`}
+                    ${pinDropMapsList ? `
+                    <div class="row">
+                        <label>Pin Drop local maps</label>
+                        <div class="modes" id="venue-pin-drop-maps">${pinDropMapsList.map(m => `<label><input type="checkbox" value="${esc(m.key)}" ${(c.pin_drop_maps || []).includes(m.key) ? 'checked' : ''}> ${esc(m.name)}</label>`).join('')}</div>
+                        <div class="hint">When Pin Drop starts, this code's rooms vote The World or a ticked map.</div>
+                    </div>
+                    ` : ''}
                     ${teamsOn ? `
                     <div class="row">
                         <label>Teams</label>
@@ -578,6 +587,7 @@
                 allowedModes: [...document.querySelectorAll('#venue-modes input:checked')].map(b => b.value)
             };
             if (boardRulesOn) body.boardRules = document.getElementById('venue-board-rules').value;
+            if (pinDropMapsList) body.pinDropMaps = [...document.querySelectorAll('#venue-pin-drop-maps input:checked')].map(b => b.value);
             if (teamsOn) {
                 body.teamsMode = document.getElementById('venue-teams-mode').value;
                 body.teamSizeMax = Number(document.getElementById('venue-team-size').value);
@@ -637,6 +647,7 @@
                 houseSets = data.houseSets || [];
                 boardRulesOn = !!data.boardRules;
                 teamsOn = !!data.teams;
+                pinDropMapsList = data.pinDropMaps || null;
                 breaksOn = !!data.breaks;
                 announcementOn = !!data.announcement;
                 renderCodes(data.codes);

@@ -913,6 +913,31 @@ Mode keys are used in room votes and in `gameEngine.js`:
   edition first, on content that already existed; hand-drawn maps (a
   house, a town, a teacher's set) can come later. The numbers are
   `PIN_DROP_*` in `gameEngine.js`, first guesses.
+  - **Local maps (Nov 27 2026; `src/services/localMaps.js`,
+    `pin_drop_local.sql`):** Randy's own drawn maps, the first **Central
+    PA** (`public/maps/central-pa-map.svg`, his hometown area: Adams, York,
+    Lancaster and up to Harrisburg; 4800x2400, rendered to
+    `public/pin-drop/central-pa.webp` and `-tv.webp` by
+    `scripts/local-map-render.mjs`). Traced over an OpenStreetMap export
+    (Web Mercator; credited on /info), which is still inside the SVG, so
+    real coordinates land on it by a straight-line fit: ten towns within
+    half a mile, ~41 map pixels a mile. **A code turns a map on** (/admin,
+    `pin_drop_maps`); its rooms then **vote The World or the map** when Pin
+    Drop starts (Country Monkey's region screen; no votes = the world).
+    **Each place has a circle** (Randy: a mall or a city has no single
+    center): inside it is full points, and points fall off from its edge,
+    e^(-miles / 5) on Central PA (the world's 1,000 scaled to the map's
+    ~117 miles; Randy's yes): ~820 at a mile out, ~370 at 5. Circles: ~0.3
+    mi for a bridge, dam or building, 0.4 a mall, 0.5-0.75 a small town,
+    1-1.5 a city, lakes by size; drawn on the TV and phone at the reveal,
+    "On it" inside. Distances in tenths of a mile. **Kinds:** PLACE (asked
+    by name), CLUE (its prompt is the question; the name at the reveal),
+    PHOTO. **Difficulty 1-4**, a game going easy to hard (1 cities, 2 on
+    the river or a big road, 3 small towns and malls on a drawn road, 4
+    lakes, which Randy left undrawn on purpose: no "find the blob"); no two
+    places within 3 miles in one game (the Capitol and Harrisburg). The
+    first 21 were placed by Claude from coordinates (memory, a first draft:
+    Randy checks them). The smoke test plays a Central PA room.
   - **The map:** Randy's world map SVG (`public/maps/workd-map-complete.svg`,
     Wikipedia's blank world map in his colors), rendered to
     `public/pin-drop/world-map.webp` (2400x1253, 55 KB) by
@@ -1168,16 +1193,18 @@ and forth until we both agree the idea is good **and** worth the effort. So:
   privacy, depth and breadth, customization. Randy: not worried about
   competition; ours is "more academic and social", and we stay far from
   copyrighted material.
-- **Teams: built Nov 27** (Randy's son asked for them for the living
-  room; designed pub first). **Run in Neon (Randy):** `access_codes_teams.sql`
-  -- until then there are no teams anywhere. See Teams under How it fits
-  together.
+- **Teams: built and live Nov 27** (Randy ran `access_codes_teams.sql`).
+  See Teams under How it fits together.
 - **Pinned (Randy, Nov 27): a second Pin Drop hint.** Claude suggested a
   distance hint ("about 1,800 miles off", one hint per round, line or
   distance); Randy has an idea or two of his own. Come back to it.
-- **Being talked through (Nov 27): local Pin Drop.** Randy draws a
-  RandoMania!-styled map of a town, campus or venue, with his own places,
-  photos and prompts, to sell as an option.
+- **Local Pin Drop: built Nov 27** (see PIN_DROP). **Run in Neon
+  (Randy):** `pin_drop_local.sql` (adds the columns and the first 21
+  Central PA places; until then Pin Drop is the world only), then tick
+  Central PA under a code's Venue settings on /admin. **Next:** an admin
+  page to see every place's pin and circle on the map and drag or resize
+  them (until then, fix a pin by its lat/lon in the SQL); Randy adds
+  places (40-60 for depth) and his photos. `teams` SQL ran Nov 27.
 - **Pinned (Randy, Nov 22: "No bother. Pin it for later."):** the lobby
   draws every mode for a moment before the room's own list arrives, so a
   mode the code doesn't play flashes and vanishes. Fix: wait for the

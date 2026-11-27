@@ -126,7 +126,7 @@ CREATE TABLE IF NOT EXISTS pin_drop_places (
 );
 
 -- Everything off first; the rows below switch back on what's still listed.
-UPDATE pin_drop_places SET active = false;
+UPDATE pin_drop_places SET active = false WHERE kind IN ('CITY', 'LANDMARK'); -- the world's own rows only (local maps' places are kept)
 """]
     for kind, label, img, lat, lon, d in rs:
         lines.append(

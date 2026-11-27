@@ -2177,6 +2177,8 @@ function pinDropMapHtml(data) {
     const pct = (v, of) => `${v / of * 100}%`;
     const k = W / 2400; // marker sizes were set on the 2400-wide map
     let svg = '';
+    // Local maps (Nov 27 2026): the place's circle, inside which is full points.
+    if (data.truth && data.truthRadius) svg += `<circle class="pd-truth-area" cx="${data.truth.x}" cy="${data.truth.y}" r="${data.truthRadius}"/>`;
     (data.dots || []).forEach(d => { svg += `<circle class="pd-dot" cx="${d.x}" cy="${d.y}" r="${13 * k}" stroke-width="${4 * k}"/>`; });
     let marks = '';
     if (data.truth && data.results) {
@@ -2187,7 +2189,7 @@ function pinDropMapHtml(data) {
             marks += `<div class="pd-mark" style="left:${pct(r.x, W)};top:${pct(r.y, H)}">${avatarHtml(r.emoji, 1)}</div>`;
         });
     }
-    return `<div class="pd-map"><svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none">${svg}</svg>${marks}</div>`;
+    return `<div class="pd-map" style="aspect-ratio: ${W} / ${H}; width: min(100cqw, calc(100cqh * ${W} / ${H}));"><svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none">${svg}</svg>${marks}</div>`;
 }
 // The TV keeps ONE loaded map image and moves it into each new screen
 // (Thanksgiving 2026, 11 phones on cable Wi-Fi: "the big map would not always
@@ -2196,8 +2198,8 @@ function pinDropMapHtml(data) {
 // 2400-wide map (world-map-tv.webp, 40 KB): the 4800-wide one is for the
 // phones' 16x zoom, and the pins sit in the same map coordinates either way.
 let pinDropTvMap = null;
-function pinDropTvMapImg(mapUrl) {
-    const tvUrl = mapUrl.replace(/world-map\.webp$/, 'world-map-tv.webp');
+function pinDropTvMapImg(mapUrl, tvMapUrl) {
+    const tvUrl = tvMapUrl || mapUrl.replace(/world-map\.webp$/, 'world-map-tv.webp');
     if (!pinDropTvMap || pinDropTvMap.dataset.for !== mapUrl) {
         const img = new Image();
         img.alt = '';
@@ -2210,13 +2212,19 @@ function pinDropTvMapImg(mapUrl) {
 }
 function placePinDropTvMap(panel, data) {
     const holder = panel.querySelector('.pd-map');
-    if (holder && data.mapUrl) holder.insertBefore(pinDropTvMapImg(data.mapUrl), holder.firstChild);
+    if (holder && data.mapUrl) holder.insertBefore(pinDropTvMapImg(data.mapUrl, data.tvMapUrl), holder.firstChild);
+}
+// Miles off: whole miles on the world, tenths on a local map, and "On it"
+// inside a local place's circle.
+function pinDropMilesText(miles, decimals) {
+    if (decimals && !miles) return 'On it';
+    return `${Number(miles).toLocaleString('en-US', { maximumFractionDigits: decimals || 0 })} mi`;
 }
 function renderPinDropTV(data) {
     const panel = document.getElementById('active-content-stage');
     currentGamePhase = 'PIN_DROP';
     setStatusMessage('');
-    if (data.mapUrl) pinDropTvMapImg(data.mapUrl); // load it during the intro
+    if (data.mapUrl) pinDropTvMapImg(data.mapUrl, data.tvMapUrl); // load it during the intro
     if (data.imageUrl) { const img = new Image(); img.src = data.imageUrl; }
     if (data.pdPhase === 'INTRO') {
         setClock('');
@@ -2227,7 +2235,7 @@ function renderPinDropTV(data) {
     if (data.pdPhase === 'REVEAL') {
         setClock('');
         const rows = (data.results || []).slice(0, 6).map(r =>
-            `<span class="pd-result">${avatarHtml(r.emoji, 1)}${escapeHtml(r.name)} <span class="pd-miles">${r.miles.toLocaleString('en-US')} mi</span>${r.stayed ? ` <span class="tp-pts">x${data.stayBonus}</span>` : ''}</span>`).join('');
+            `<span class="pd-result">${avatarHtml(r.emoji, 1)}${escapeHtml(r.name)} <span class="pd-miles">${pinDropMilesText(r.miles, data.milesDecimals)}</span>${r.stayed ? ` <span class="tp-pts">x${data.stayBonus}</span>` : ''}</span>`).join('');
         panel.innerHTML = tpStage('tp-center pd-stage', `
             ${eyebrow}
             <div class="pd-answer">${escapeHtml(data.prompt || '')}</div>

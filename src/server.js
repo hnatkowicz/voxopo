@@ -11,11 +11,12 @@ import {
     isAdminLoginRateLimited, recordFailedAdminLogin, clearAdminLoginAttempts,
     isRoomCreateRateLimited, recordFailedRoomCreateAttempt, clearRoomCreateAttempts,
     listAccessCodes, addAccessCode, setAccessCodeActive, normalizeCode,
-    hostSessionCode, getAccessCodeVenue, venueProfilesInstalled, sanitizeVenue, updateAccessCodeVenue, houseColumnInstalled, listHouseSets, boardRulesInstalled, breaksInstalled, teamsInstalled, readTeamSettings,
+    hostSessionCode, getAccessCodeVenue, venueProfilesInstalled, sanitizeVenue, updateAccessCodeVenue, houseColumnInstalled, listHouseSets, boardRulesInstalled, breaksInstalled, teamsInstalled, readTeamSettings, pinDropMapsInstalled, readPinDropMaps,
     announcementInstalled, readAnnouncementSettings, announcementForRoom
 } from './services/accessControl.js';
 import { healthMiddleware, attachHealthTracking, healthSnapshot } from './services/serverHealth.js';
 import { attachVenueMemory } from './services/venueMemory.js';
+import { LOCAL_MAP_KEYS, PIN_DROP_MAPS } from './services/localMaps.js';
 import { listPhotoPairs, readSavedPairs, savePairSpots } from './services/doubleTake.js';
 import { fileURLToPath } from 'url';
 
@@ -125,6 +126,8 @@ app.post('/api/create-room', async (req, res) => {
         // Teams come from the code too, but apart from the venue: a plain
         // home code (no venue name or logo) can still play in teams.
         const teamSettings = await readTeamSettings(pool, openingCode);
+        // Pin Drop's local maps this code plays (a map vote when Pin Drop starts).
+        const pinDropMaps = (await readPinDropMaps(pool, openingCode)).filter(k => LOCAL_MAP_KEYS.includes(k));
 
         let code;
         let checks = 0;
@@ -168,6 +171,7 @@ app.post('/api/create-room', async (req, res) => {
             // state (who wants teams, the teams) is set up by the engine.
             teamsMode: teamSettings.mode,
             teamSizeMax: teamSettings.sizeMax,
+            pinDropMaps,
             votes: emptyModeVotes({ venue }),
             // Populated with real keys once the category vote phase actually starts.
             categoryVotes: {},
@@ -250,7 +254,7 @@ app.get('/api/admin/codes', requireAdmin, async (req, res) => {
         const codes = await listAccessCodes(pool);
         // venueProfiles: false until access_codes_venue_profiles.sql is run.
         const houseColumn = await houseColumnInstalled(pool);
-        return res.json({ success: true, codes, venueProfiles: await venueProfilesInstalled(pool), houseColumn, houseSets: houseColumn ? await listHouseSets(pool) : [], boardRules: await boardRulesInstalled(pool), breaks: await breaksInstalled(pool), announcement: await announcementInstalled(pool), teams: await teamsInstalled(pool), modes: GAME_MODE_KEYS });
+        return res.json({ success: true, codes, venueProfiles: await venueProfilesInstalled(pool), houseColumn, houseSets: houseColumn ? await listHouseSets(pool) : [], boardRules: await boardRulesInstalled(pool), breaks: await breaksInstalled(pool), announcement: await announcementInstalled(pool), teams: await teamsInstalled(pool), pinDropMaps: (await pinDropMapsInstalled(pool)) ? LOCAL_MAP_KEYS.map(k => ({ key: k, name: PIN_DROP_MAPS[k].name })) : null, modes: GAME_MODE_KEYS });
     } catch (e) {
         return res.status(500).json({ success: false, error: 'Failed to load codes.' });
     }
@@ -285,9 +289,9 @@ app.post('/api/admin/codes/:code/venue', requireAdmin, async (req, res) => {
         if (!(await venueProfilesInstalled(pool))) {
             return res.status(409).json({ success: false, error: 'Run access_codes_venue_profiles.sql in Neon first.' });
         }
-        const venue = sanitizeVenue(req.body, GAME_MODE_KEYS);
+        const venue = sanitizeVenue({ ...req.body, knownPinDropMaps: LOCAL_MAP_KEYS }, GAME_MODE_KEYS);
         const withAnnouncement = await announcementInstalled(pool);
-        const found = await updateAccessCodeVenue(pool, req.params.code, venue, await houseColumnInstalled(pool), await boardRulesInstalled(pool), await breaksInstalled(pool), withAnnouncement, await teamsInstalled(pool));
+        const found = await updateAccessCodeVenue(pool, req.params.code, venue, await houseColumnInstalled(pool), await boardRulesInstalled(pool), await breaksInstalled(pool), withAnnouncement, await teamsInstalled(pool), await pinDropMapsInstalled(pool));
         if (!found) return res.status(404).json({ success: false, error: 'No such code.' });
         // The announcement reaches rooms already open (the rest of a venue's
         // settings apply from the next room): set it up mid-evening and it works.

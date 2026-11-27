@@ -163,6 +163,8 @@ export const BOARD_RULES = ['CLASSIC', 'PLAIN'];
 // Teams yes/no switch in the lobby (majority wins, and it sticks), ALWAYS
 // plays every game in teams, OFF never. Before the SQL is run: no teams.
 export const TEAMS_MODES = ['ROOM', 'ALWAYS', 'OFF'];
+// Pin Drop's local maps a code plays (pin_drop_local.sql; Nov 27 2026). Keys
+// are checked against the known maps (src/services/localMaps.js) by the caller.
 export const TEAM_SIZE_DEFAULT = 7; // Randy: "lucky"
 const TEAM_SIZE_MIN = 2, TEAM_SIZE_LIMIT = 20;
 // Venue breaks (access_codes_breaks.sql): minutes per break, 0 = Off.
@@ -258,6 +260,7 @@ export function sanitizeVenue(input, knownModes) {
             .map(line => String(line).trim().slice(0, 120)).filter(Boolean).slice(0, MAX_BREAK_NOTES),
         announcement: sanitizeAnnouncement(v.announcement),
         teamsMode: TEAMS_MODES.includes(v.teamsMode) ? v.teamsMode : 'ROOM',
+        pinDropMaps: Array.isArray(v.pinDropMaps) ? [...new Set(v.pinDropMaps.filter(k => (v.knownPinDropMaps || []).includes(k)))] : [],
         teamSizeMax: Math.min(TEAM_SIZE_LIMIT, Math.max(TEAM_SIZE_MIN, Math.round(Number(v.teamSizeMax)) || TEAM_SIZE_DEFAULT))
     };
 }
@@ -268,6 +271,30 @@ export async function teamsInstalled(pool) {
         return true;
     } catch (e) {
         if (e.code === UNDEFINED_COLUMN) return false;
+        throw e;
+    }
+}
+
+export async function pinDropMapsInstalled(pool) {
+    try {
+        await pool.query('SELECT pin_drop_maps FROM access_codes LIMIT 1');
+        return true;
+    } catch (e) {
+        if (e.code === UNDEFINED_COLUMN) return false;
+        throw e;
+    }
+}
+
+// The local Pin Drop maps a code plays ([] with no code, or before
+// pin_drop_local.sql is run).
+export async function readPinDropMaps(pool, rawCode) {
+    const code = normalizeCode(rawCode);
+    if (!code) return [];
+    try {
+        const result = await pool.query('SELECT pin_drop_maps FROM access_codes WHERE code = $1', [code]);
+        return (result.rows[0] && result.rows[0].pin_drop_maps) || [];
+    } catch (e) {
+        if (e.code === UNDEFINED_COLUMN) return [];
         throw e;
     }
 }
@@ -449,6 +476,14 @@ export async function listAccessCodes(pool) {
             } catch (e) {
                 if (e.code !== UNDEFINED_COLUMN) throw e;
             }
+            // ...the local Pin Drop maps once pin_drop_local.sql is run...
+            try {
+                const maps = await pool.query('SELECT code, pin_drop_maps FROM access_codes');
+                const byCode = Object.fromEntries(maps.rows.map(r => [r.code, r.pin_drop_maps]));
+                result.rows.forEach(r => { r.pin_drop_maps = byCode[r.code] || []; });
+            } catch (e) {
+                if (e.code !== UNDEFINED_COLUMN) throw e;
+            }
             // ...the team settings once access_codes_teams.sql is run...
             try {
                 const teams = await pool.query('SELECT code, teams_mode, team_size_max FROM access_codes');
@@ -480,7 +515,7 @@ export async function addAccessCode(pool, rawCode, label) {
 
 // venue is already sanitized (sanitizeVenue). Returns false if no such code.
 // The house settings are only written once their columns exist.
-export async function updateAccessCodeVenue(pool, rawCode, venue, withHouse, withRules, withBreaks, withAnnouncement, withTeams = false) {
+export async function updateAccessCodeVenue(pool, rawCode, venue, withHouse, withRules, withBreaks, withAnnouncement, withTeams = false, withPinDropMaps = false) {
     const code = normalizeCode(rawCode);
     const params = [code, venue.profile, venue.name, venue.tagline, venue.logo, venue.allowedModes.length ? venue.allowedModes : null];
     let sql = 'UPDATE access_codes SET profile = $2, venue_name = $3, venue_tagline = $4, venue_logo = $5, allowed_modes = $6';
@@ -501,6 +536,10 @@ export async function updateAccessCodeVenue(pool, rawCode, venue, withHouse, wit
     if (withAnnouncement) {
         params.push(JSON.stringify(venue.announcement));
         sql += `, announcement = $${params.length}::jsonb`;
+    }
+    if (withPinDropMaps) {
+        params.push(venue.pinDropMaps.length ? venue.pinDropMaps : null);
+        sql += `, pin_drop_maps = $${params.length}`;
     }
     if (withTeams) {
         params.push(venue.teamsMode);
