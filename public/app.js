@@ -2175,15 +2175,17 @@ function renderLetterRipTV(data) {
 function pinDropMapHtml(data) {
     const W = data.mapW, H = data.mapH;
     const pct = (v, of) => `${v / of * 100}%`;
-    const k = W / 2400; // marker sizes were set on the 2400-wide map
     let svg = '';
     // Local maps (Nov 27 2026): the place's circle, inside which is full points.
     if (data.truth && data.truthRadius) svg += `<circle class="pd-truth-area" cx="${data.truth.x}" cy="${data.truth.y}" r="${data.truthRadius}"/>`;
-    (data.dots || []).forEach(d => { svg += `<circle class="pd-dot" cx="${d.x}" cy="${d.y}" r="${13 * k}" stroke-width="${4 * k}"/>`; });
+    // The first pins and the true spot are drawn at a set size on screen,
+    // with a dark edge (Randy, Nov 28 2026: on the detailed OpenStreetMap
+    // Central PA they shrank to a couple of pixels among the roads).
     let marks = '';
+    (data.dots || []).forEach(d => { marks += `<div class="pd-dotmark" style="left:${pct(d.x, W)};top:${pct(d.y, H)}"></div>`; });
     if (data.truth && data.results) {
         data.results.forEach(r => { svg += `<line class="pd-line" x1="${r.x}" y1="${r.y}" x2="${data.truth.x}" y2="${data.truth.y}"/>`; });
-        svg += `<circle class="pd-truth-ring" cx="${data.truth.x}" cy="${data.truth.y}" r="${26 * k}" stroke-width="${9 * k}"/><circle class="pd-truth-dot" cx="${data.truth.x}" cy="${data.truth.y}" r="${9 * k}"/>`;
+        marks += `<div class="pd-truthmark" style="left:${pct(data.truth.x, W)};top:${pct(data.truth.y, H)}"></div>`;
         // Farthest first, so the closest avatars sit on top.
         [...data.results].reverse().forEach(r => {
             marks += `<div class="pd-mark" style="left:${pct(r.x, W)};top:${pct(r.y, H)}">${avatarHtml(r.emoji, 1)}</div>`;
