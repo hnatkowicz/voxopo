@@ -27,5 +27,7 @@ const tmp = join(mkdtempSync(join(tmpdir(), 'map-')), 'map.png');
 await page.screenshot({ path: tmp, clip: { x: 0, y: 0, width: Math.round(w), height: Math.round(h) } });
 await browser.close();
 execFileSync('convert', [tmp, '-quality', '82', '-define', 'webp:method=6', `public/pin-drop/${name}.webp`]);
-execFileSync('convert', [tmp, '-resize', '50%', '-quality', '82', '-define', 'webp:method=6', `public/pin-drop/${name}-tv.webp`]);
+// TV_WIDTH=1800 for a detailed map (Nov 28 2026: the OpenStreetMap Central
+// PA came to 406 KB at half size; a TV shows it ~1,000 px wide at most).
+execFileSync('convert', [tmp, '-resize', process.env.TV_WIDTH ? `${process.env.TV_WIDTH}x` : '50%', '-quality', '82', '-define', 'webp:method=6', `public/pin-drop/${name}-tv.webp`]);
 console.log(`public/pin-drop/${name}.webp (${Math.round(w)} x ${Math.round(h)}) and ${name}-tv.webp`);
