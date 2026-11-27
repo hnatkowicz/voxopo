@@ -958,10 +958,16 @@ Mode keys are used in room votes and in `gameEngine.js`:
     style: no side streets, county and state lines) **in its existing frame**
     (`fit:A,B,C,D`), so every place stayed put; Randy: "That. Is.
     Gorgeous." **Hanover** (`public/maps/hanover-map.svg`, town style, 7.7
-    miles across, ~623 px a mile; no road labels, Randy's call) is drawn
-    but not in the game yet: it needs places (Randy's Hanover businesses,
-    as a marketing angle) and town-sized scoring (falloff ~1/3 mile,
-    smaller circles, a per-map minimum distance between places). A Snazzy
+    miles across, ~623 px a mile; no road labels, Randy's call) is **in
+    the game** (Nov 28 2026, to test before committing): 44 places from
+    Randy's list (`pin_drop_hanover.sql`: his Hanover businesses -- a
+    marketing angle -- landmarks, schools, parks, and three gone places as
+    CLUE rounds, "Where was the old Anchor Inn?"; Hanover Shoe Farms left
+    off, just south of the map), town-sized scoring (falloff 0.33 mi,
+    circles 0.03-0.1 mi, places in one game at least 0.06 mi apart --
+    `minApartMiles` per map in `localMaps.js`). **Coordinates are a first
+    draft** from Randy's list: Moul Field sits ~1/3 mile from OSM's
+    outline of it, so expect others off until the pin editor. A Snazzy
     Maps screen grab is Google's map and can't be used. On the TV, the
     first-pin dots and the true spot are a set size on screen with a dark
     edge (they had shrunk to a couple of pixels on the detailed map).
@@ -1231,6 +1237,9 @@ and forth until we both agree the idea is good **and** worth the effort. So:
 - **Pinned (Randy, Nov 27): a second Pin Drop hint.** Claude suggested a
   distance hint ("about 1,800 miles off", one hint per round, line or
   distance); Randy has an idea or two of his own. Come back to it.
+- **Tomorrow's agenda (Randy, Nov 28): the Pin Drop pin editor** (see
+  below), first for Hanover's pins. **Run in Neon (Randy):**
+  `pin_drop_hanover.sql`, then tick Hanover under a code's Pin Drop maps.
 - **Local Pin Drop: built Nov 27** (see PIN_DROP). `pin_drop_local.sql`
   is live (Randy ran it Nov 27), and so is
   `pin_drop_central_pa_photos.sql` (21 of Randy's photos in
