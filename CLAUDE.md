@@ -917,19 +917,25 @@ Mode keys are used in room votes and in `gameEngine.js`:
   `PIN_DROP_*` in `gameEngine.js`, first guesses.
   - **Local maps (Nov 27 2026; `src/services/localMaps.js`,
     `pin_drop_local.sql`):** Randy's own drawn maps, the first **Central
-    PA** (`public/maps/central-pa-map.svg`, his hometown area: Adams, York,
-    Lancaster and up to Harrisburg; 4800x2400, rendered to
+    PA** (`public/maps/central-pa-map-ii.svg`, his hometown area: Adams, York,
+    Lancaster and up to Harrisburg; **4800x3600, 4:3** -- Randy, Nov 28
+    2026: the first 2:1 drawing, `central-pa-map.svg`, was a thin strip on
+    a phone and small beside a photo on the TV, so **every map is 4:3 from
+    now on**; he zoomed in 1.49x to fill the taller canvas -- rendered to
     `public/pin-drop/central-pa.webp` and `-tv.webp` by
     `scripts/local-map-render.mjs`). Traced over an OpenStreetMap export
     (Web Mercator; credited on /info), which is still inside the SVG, so
     real coordinates land on it by a straight-line fit: ten towns within
-    half a mile, ~41 map pixels a mile. **A code turns a map on** (/admin,
+    half a mile, ~61 map pixels a mile (the redraw's fit is the first one
+    carried through Randy's zoom, which moved the OSM layer with the
+    drawing; all 42 places checked on the new render). **A code turns a map on** (/admin,
     `pin_drop_maps`); its rooms then **vote The World or the map** when Pin
     Drop starts (Country Monkey's region screen; no votes = the world).
     **Each place has a circle** (Randy: a mall or a city has no single
     center): inside it is full points, and points fall off from its edge,
-    e^(-miles / 5) on Central PA (the world's 1,000 scaled to the map's
-    ~117 miles; Randy's yes): ~820 at a mile out, ~370 at 5. Circles: ~0.3
+    e^(-miles / 5) on Central PA (the world's 1,000 scaled to the first
+    map's ~117 miles; Randy's yes; the 4:3 map is ~78 miles across and
+    kept 5): ~820 at a mile out, ~370 at 5. Circles: ~0.3
     mi for a bridge, dam or building, 0.4 a mall, 0.5-0.75 a small town,
     1-1.5 a city, lakes by size; drawn on the TV and phone at the reveal,
     "On it" inside. Distances in tenths of a mile. **Kinds:** PLACE (asked

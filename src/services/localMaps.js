@@ -7,14 +7,16 @@
 // is Web Mercator, so a real place lands on it by a straight-line fit:
 //   x = A * longitude + B,   y = C * mercator(latitude) + D
 // The fit for Central PA came from the OpenStreetMap layer still inside
-// Randy's SVG (public/maps/central-pa-map.svg): ten town centers (Harrisburg,
+// Randy's SVG (public/maps/central-pa-map-ii.svg, the 4:3 redraw; the
+// first, 2:1 drawing is central-pa-map.svg): ten town centers (Harrisburg,
 // Lancaster, York, Gettysburg, Hanover, Chambersburg, Reading, Carlisle,
 // Lebanon, Hagerstown) all land within half a mile, most within 0.2.
 //
 // Points fall off from the EDGE of a place's circle (Randy, Nov 27 2026: a
 // mall or a city has no single center to argue over), by e^(-miles /
 // falloff). The world's falloff is 1,000 miles; a local map's is scaled to
-// its size (Central PA is ~117 miles across: 5 miles, Randy's yes).
+// its size (Central PA was ~117 miles across: 5 miles, Randy's yes; the 4:3
+// redraw is ~78 miles across and kept 5).
 import { toMap as worldToMap, fromMap as worldFromMap, MAP_W, MAP_H } from './pinMap.js';
 
 const merc = lat => Math.log(Math.tan(Math.PI / 4 + lat * Math.PI / 360));
@@ -44,9 +46,14 @@ export const PIN_DROP_MAPS = {
         name: 'Central PA',
         imageUrl: '/pin-drop/central-pa.webp',
         tvImageUrl: '/pin-drop/central-pa-tv.webp',
-        w: 4800, h: 2400,
-        ...mercatorMap({ A: 2180.3483087883455, B: 170081.58976568692, C: -124494.39621367633, D: 96332.89582875017 }),
-        unitsPerMile: 41.15, // map pixels per mile, for drawing a place's circle
+        // Redrawn at 4:3 (Randy, Nov 28 2026: the 2:1 map was a thin strip
+        // on a phone and small beside a photo on the TV; maps are 4:3 from
+        // now on). He zoomed in 1.4929x to fill the taller canvas, and the
+        // OpenStreetMap layer moved with the drawing, so this fit is the
+        // first one carried through that same scale and shift.
+        w: 4800, h: 3600,
+        ...mercatorMap({ A: 3254.98726344757, B: 252250.30771329085, C: -185854.55929805242, D: 143835.84624905584 }),
+        unitsPerMile: 61.43, // map pixels per mile, for drawing a place's circle
         falloffMiles: 5,
         closeMiles: 2,
         local: true

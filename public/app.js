@@ -2282,7 +2282,9 @@ function renderPinDropTV(data) {
     const note = data.pdPhase === 'SHOW' ? 'Everyone\'s first pins'
         : data.pdPhase === 'MOVE' ? `Stay put for x${data.stayBonus}, or move`
         : (data.placedCount ? `${data.placedCount} / ${data.playerCount} pinned` : '&nbsp;');
-    panel.innerHTML = tpStage(`tp-center pd-stage${data.kind === 'LANDMARK' ? ' pd-landmark' : ''}`, `
+    // A 4:3 local map beside a photo takes the rest of the row (Randy, Nov 28 2026).
+    const tallMap = data.mapH / data.mapW > 0.6;
+    panel.innerHTML = tpStage(`tp-center pd-stage${data.kind === 'LANDMARK' ? ' pd-landmark' : ''}${tallMap ? ' pd-tall-map' : ''}`, `
         ${eyebrow}
         <div class="pd-body">${prompt}<div class="pd-map-wrap">${pinDropMapHtml(data)}</div></div>
         <div class="pd-foot"><span class="pd-note">${note}</span></div>
