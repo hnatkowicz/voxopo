@@ -395,7 +395,13 @@ if (btnSubmitSpectate) {
                 }
                 if (data.type === 'LEADERBOARD_UPDATE') {
                     detectNewPlayerArrival(data.players);
+                    lastRailPlayers = data.players;
                     updateLeaderboardUI(data.players);
+                }
+                // Teams (Nov 2026): the rail ranks teams while they're on.
+                if (data.type === 'TEAMS_UPDATE') {
+                    teamsState = data;
+                    if (lastRailPlayers) updateLeaderboardUI(lastRailPlayers);
                 }
                 // The lobby clock ran out with no game picked: the room waits
                 // for a vote (Randy, Nov 2026), and the TV says what's needed.
@@ -560,7 +566,11 @@ if (btnSubmitSpectate) {
                     stopCategoryMusic();
                     stopCountdownMusic();
                     stopAudioTrack('final-wager-timer-sound');
-                    switchToGameOverUI(data.players, data.brand);
+                    // A team game: the winning team takes the podium.
+                    const teamPodium = teamsState && teamsState.on && teamsState.scoring && (teamsState.teams || []).length
+                        ? [...teamsState.teams].sort((a, b) => b.score - a.score).map(t => ({ name: t.name, emoji: t.avatar, score: t.score }))
+                        : null;
+                    switchToGameOverUI(teamPodium || data.players, data.brand, !!teamPodium);
                     playAudioTrack('win-music');
                 }
                 // Post-game consensus (everyone voting START from the game-over
@@ -1103,13 +1113,52 @@ if (btnSubmitSpectate) {
             return rows + (more > 0 ? `<tr class="rail-more"><td colspan="3">+${more} more playing</td></tr>` : '');
         }
 
+        // Teams on the rail (Nov 2026): in the lobby, every team with its
+        // members (ranked by tonight's team points once a game has finished);
+        // during a team game, the teams' scores. Each row is the team's
+        // avatar and two-word name, its members' small avatars, its score.
+        function teamsRailActive() {
+            if (!teamsState || !teamsState.on) return false;
+            return currentGamePhase === 'LOBBY' || teamsState.scoring;
+        }
+        function renderTeamRailRows() {
+            const tally = teamsState.tally || {};
+            const showTonight = currentGamePhase === 'LOBBY' && Object.keys(tally).length > 0;
+            let teams = (teamsState.teams || []).map(t => ({ ...t, shown: showTonight ? (tally[t.id] || 0) : t.score }));
+            if (currentGamePhase === 'LOBBY') teams = teams.filter(t => t.members.length || (showTonight && tally[t.id]));
+            teams.sort((a, b) => b.shown - a.shown || a.name.localeCompare(b.name));
+            const railTitle = document.getElementById('rail-title');
+            if (railTitle) railTitle.textContent = showTonight ? 'Tonight' : 'Teams';
+            if (!teams.length) return `<tr class="rail-more"><td colspan="3">Start a team on your phone</td></tr>`;
+            const shown = teams.slice(0, RAIL_MAX_ROWS);
+            const rows = shown.map((t, index) => `
+                <tr class="rail-row${index === 0 && t.shown > 0 ? ' lead' : ''}">
+                    <td class="rail-rank">${index + 1}</td>
+                    <td class="rail-id"><span class="rail-wrap">
+                        <span class="rail-emoji">${avatarHtml(t.avatar, 1.15)}</span>
+                        <span class="rail-name">${escapeHtml(t.name)}</span>
+                        <span class="rail-badges rail-team-members">${t.members.map(m => avatarHtml(m.emoji, 0.8)).join('')}</span>
+                    </span></td>
+                    <td class="rail-score">${(t.shown || 0).toLocaleString()}</td>
+                </tr>`).join('');
+            const more = teams.length - shown.length;
+            return rows + (more > 0 ? `<tr class="rail-more"><td colspan="3">+${more} more teams</td></tr>` : '');
+        }
+
         function updateLeaderboardUI(playersList) {
             document.getElementById('lobby-player-count').innerText = playersList.length;
+            if (document.body.classList.contains('tp-layout') && teamsRailActive() && playersList && playersList.length) {
+                document.getElementById('leaderboard-rows').innerHTML = renderTeamRailRows();
+                return;
+            }
             // A pub night's tally (Randy, Nov 2026): between games the rail is
             // "Tonight", ranked by placement points across the night's games.
             const showTonight = currentGamePhase === 'LOBBY' && nightTally && Object.keys(nightTally).length;
             const railTitle = document.getElementById('rail-title');
-            if (railTitle) railTitle.textContent = showTonight ? 'Tonight' : 'Scores';
+            // Teams can be turned on, and some phones want them: say how many.
+            const teamsVote = teamsState && teamsState.available && !teamsState.always && !teamsState.on && teamsState.yes > 0 && currentGamePhase === 'LOBBY'
+                ? ` <span class="rail-teams-vote">Teams ${teamsState.yes} / ${teamsState.total}</span>` : '';
+            if (railTitle) railTitle.innerHTML = (showTonight ? 'Tonight' : 'Scores') + teamsVote;
             if (showTonight && playersList) playersList = playersList.map(p => ({ ...p, score: nightTally[p.name] || 0, awards: {}, correctAnswers: 0 }));
             const tbody = document.getElementById('leaderboard-rows');
 
@@ -1359,6 +1408,8 @@ if (btnSubmitSpectate) {
         // than fixed cat1/2/3 slots -- supports any number of categories per mode.
         let activeCategoryLabels = {};
         let nightTally = null; // a pub night's running tally (NIGHT_TALLY)
+        let teamsState = null; // the room's teams (TEAMS_UPDATE), when the code allows them
+        let lastRailPlayers = null;
         let triviaTopicPick = false; // the TV is showing Trivi-yeah!'s topic pick
         // No green or red: those mean right and wrong (Phase 1 rule).
         const CATEGORY_BAR_COLORS = ['var(--rm-orange)', 'var(--rm-periwinkle)', 'var(--rm-pink)', 'var(--rm-blue)', 'var(--rm-purple)', 'var(--rm-yellow-soft)'];
@@ -2550,9 +2601,9 @@ function switchToLobbyVoteUI() {
 // No "Final scores" title and no list: the rail already has every score.
 // Ties can't happen here -- compareByRank breaks them (bullseyes, right
 // answers, fastest, then who joined first).
-function switchToGameOverUI(players, brand) {
+function switchToGameOverUI(players, brand, alreadyRanked = false) {
     const panel = document.getElementById('active-content-stage');
-    const topThree = [...(players || [])].sort(compareByRank).slice(0, 3);
+    const topThree = alreadyRanked ? (players || []).slice(0, 3) : [...(players || [])].sort(compareByRank).slice(0, 3);
     const medals = ['gold', 'silver', 'bronze'];
     const place = (player, index) => player ? `
         <div class="go-place go-p${index + 1}">

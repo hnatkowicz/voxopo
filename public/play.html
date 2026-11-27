@@ -69,6 +69,19 @@
         @media (prefers-reduced-motion: reduce) { #avatar-zoom, #avatar-zoom img { transition: none; } }
 
         .module-list { display: flex; flex-direction: column; gap: 10px; margin-top: 8px; }
+        /* Teams in the lobby (Nov 2026): the Solo / Teams switch, your team,
+           and the teams to join. */
+        .teams-switch { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 8px; }
+        .teams-switch button { height: 44px; border-radius: 8px; border: 1px solid var(--rm-border); background: var(--rm-surface-2); color: var(--rm-text-2); font: inherit; font-weight: 600; cursor: pointer; }
+        .teams-switch button.on { border-color: var(--rm-brand); color: var(--rm-brand); background: rgba(var(--rm-brand-rgb), 0.08); }
+        .teams-note { font-size: 0.8rem; color: var(--rm-text-soft); margin-top: 6px; }
+        .team-row { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: 8px; border: 1px solid var(--rm-border); background: var(--rm-surface-2); margin-top: 8px; cursor: pointer; }
+        .team-row.mine { border-color: var(--rm-brand); background: rgba(var(--rm-brand-rgb), 0.08); cursor: default; }
+        .team-row.full { opacity: 0.5; cursor: default; }
+        .team-row .team-name { font-weight: 700; flex: 1; min-width: 0; }
+        .team-row .team-members { display: flex; gap: 2px; flex-wrap: wrap; justify-content: flex-end; max-width: 45%; }
+        .team-row .team-tag { font-size: 0.75rem; color: var(--rm-brand); font-weight: 700; }
+        .team-new { width: 100%; margin-top: 10px; height: 44px; border-radius: 8px; border: 1px dashed var(--rm-brand); background: transparent; color: var(--rm-brand); font: inherit; font-weight: 700; cursor: pointer; }
         .module-row {
             background: var(--rm-surface-2);
             border: 1px solid var(--rm-border);
@@ -527,6 +540,11 @@
              real phase keeps right on changing for everyone else and this
              screen only makes sense while genuinely sitting in LOBBY_PHASE. -->
         <div id="game-lobby-content">
+            <!-- Teams (Nov 2026): only when the room's access code allows them. -->
+            <div class="input-group" id="teams-group" style="display: none;">
+                <label>Teams</label>
+                <div id="teams-content"></div>
+            </div>
             <div class="input-group" id="mode-revote-group">
                 <label>Pick a game</label>
                 <div class="module-list mode-pick-grid" id="mode-revote-list"></div>
@@ -1215,7 +1233,10 @@
             const t = data.tonight;
             const ordinal = n => n + (['th', 'st', 'nd', 'rd'][(n % 100 >> 3 ^ 1) && n % 10] || 'th');
             const tonight = t ? `<div class="info-line info-tonight">Tonight: ${t.points} ${t.points === 1 ? 'point' : 'points'} &middot; ${ordinal(t.rank)} of ${t.of}</div>` : '';
-            const html = `<div class="info-mode">${title}</div><div class="info-line">${escSidePage(infoWhereLine(data))}</div>${tonight}`
+            // Teams (Nov 2026): your team, and its place tonight.
+            const tm = data.teams && data.teams.on && data.teams.myTeam ? data.teams : null;
+            const teamLine = tm ? `<div class="info-line info-tonight">${avatarHtml(tm.myTeam.avatar, 1)} ${escSidePage(tm.myTeam.name)}${tm.tonight ? ` &middot; ${tm.tonight.points} ${tm.tonight.points === 1 ? 'point' : 'points'}, ${ordinal(tm.tonight.rank)} of ${tm.tonight.of}` : ''}</div>` : '';
+            const html = `<div class="info-mode">${title}</div><div class="info-line">${escSidePage(infoWhereLine(data))}</div>${teamLine}${tonight}`
                 + '\u0000' + recapHtml(data, myName)
                 + '\u0000' + stats.map(st => `<div class="info-stat"><div class="info-stat-num">${escSidePage(st.num)}</div><div class="info-stat-label">${st.label}</div></div>`).join('');
             if (html === lastInfoHtml) return; // polled every second; don't redraw the icon each time
@@ -1884,6 +1905,7 @@
                             // later change via submitModeRevote) -- idempotent,
                             // so re-syncing every poll tick is harmless.
                             syncRevoteModes(data.allowedModes);
+                            renderLobbyTeams(data.teams);
                             document.querySelectorAll('#mode-revote-list .module-row').forEach(r => {
                                 r.classList.toggle('selected', data.myVote && r.dataset.modeKey === data.myVote);
                             });
@@ -3605,6 +3627,61 @@
         // category-screen's own .module-row set -- selecting one shouldn't
         // touch classes on rows in a completely different, currently-hidden
         // screen.
+        // ---------- Teams (Nov 2026) ----------
+        // The lobby's Solo / Teams switch (the room decides by majority, and
+        // it sticks), then, once teams are on: your team, the teams to join,
+        // and Start a team (a random two-word name and avatar, no rerolls).
+        let teamsLastKey = null;
+        function renderLobbyTeams(t) {
+            const group = document.getElementById('teams-group');
+            if (!group) return;
+            const key = JSON.stringify(t || null);
+            if (key === teamsLastKey) return; // polled every second; redraw only on a change
+            teamsLastKey = key;
+            if (!t) { group.style.display = 'none'; return; }
+            group.style.display = 'block';
+            let html = '';
+            if (!t.always) {
+                html += `<div class="teams-switch">
+                    <button type="button" class="${t.myPref ? '' : 'on'}" onclick="sendTeamCommand('TEAMS NO')">Solo</button>
+                    <button type="button" class="${t.myPref ? 'on' : ''}" onclick="sendTeamCommand('TEAMS YES')">Teams</button>
+                </div>
+                <div class="teams-note">${t.on ? 'Teams are on.' : `${t.yes} of ${t.total} want teams. More than half turns them on.`}</div>`;
+            }
+            if (t.on) {
+                const mine = t.myTeam && t.myTeam.id;
+                const rows = (t.list || []).map(team => {
+                    const full = team.id !== mine && team.members.length >= t.sizeMax;
+                    const members = team.members.map(m => avatarHtml(m.emoji, 1.1)).join('');
+                    const click = team.id === mine || full ? '' : ` onclick="sendTeamCommand('TEAM JOIN ${team.id}')"`;
+                    return `<div class="team-row${team.id === mine ? ' mine' : ''}${full ? ' full' : ''}"${click}>
+                        ${avatarHtml(team.avatar, 1.4)}
+                        <span class="team-name">${escSidePage(team.name)}${team.id === mine ? ' <span class="team-tag">Your team</span>' : full ? ' <span class="teams-note">Full</span>' : ''}</span>
+                        <span class="team-members">${members}</span>
+                    </div>`;
+                }).join('');
+                html += rows || '<div class="teams-note">No teams yet.</div>';
+                html += `<button type="button" class="team-new" onclick="sendTeamCommand('TEAM NEW')">Start a team</button>`;
+                if (!mine) html += '<div class="teams-note">Tap a team to join it. Anyone without one at Start goes to the smallest team.</div>';
+            }
+            document.getElementById('teams-content').innerHTML = html;
+        }
+        async function sendTeamCommand(command) {
+            const feedback = document.getElementById('game-feedback');
+            try {
+                const response = await fetch('/api/message', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ From: localStorage.getItem('randomania_nickname') || 'test-handset', Body: command, roomCode: localStorage.getItem('randomania_roomcode') })
+                });
+                const data = await response.json();
+                if (!data.success) showFeedback(feedback, data.reply, "rgba(var(--rm-red-rgb),0.06)", "var(--rm-red)", "rgba(var(--rm-red-rgb),0.1)");
+                teamsLastKey = null; // redraw on the next poll
+            } catch (error) {
+                showFeedback(feedback, "❌ Couldn't reach the room. Try again.", "rgba(var(--rm-red-rgb),0.06)", "var(--rm-red)", "rgba(var(--rm-red-rgb),0.1)");
+            }
+        }
+
         async function submitModeRevote(element, modeKey) {
             document.querySelectorAll('#mode-revote-list .module-row').forEach(r => r.classList.remove('selected'));
             element.classList.add('selected');

@@ -68,6 +68,9 @@ await db.query(`INSERT INTO access_codes (code, label, active) VALUES ('SMOKE-PU
 // Double Take only shows on a code that ticks it (Nov 24 2026), like Randy's test code.
 await db.query(`INSERT INTO access_codes (code, label, active) VALUES ('SMOKE-DT', 'smoke test', true) ON CONFLICT (code) DO UPDATE SET active = true`);
 await db.query(`UPDATE access_codes SET allowed_modes = ARRAY['DOUBLE_TAKE'] WHERE code = 'SMOKE-DT'`).catch(() => {});
+// Teams (Nov 2026): a code whose rooms decide; needs access_codes_teams.sql.
+await db.query(`INSERT INTO access_codes (code, label, active) VALUES ('SMOKE-TEAMS', 'smoke test', true) ON CONFLICT (code) DO UPDATE SET active = true`);
+const teamsReady = await db.query(`UPDATE access_codes SET teams_mode = 'ROOM', team_size_max = 7 WHERE code = 'SMOKE-TEAMS'`).then(() => true, () => false);
 // Board rules, profiles and breaks exist only once their SQL has run.
 await db.query(`UPDATE access_codes SET board_rules = 'CLASSIC', profile = 'HOME' WHERE code = 'SMOKE-HOME'`).catch(() => {});
 await db.query(`UPDATE access_codes SET profile = 'PUB', venue_name = 'Smoke Test Pub', allowed_modes = NULL, break_minutes = 2, break_notes = ARRAY['Test note one', 'Test note two'] WHERE code = 'SMOKE-PUB'`).catch(() => {});
@@ -103,6 +106,12 @@ const ROOMS = [
     { mode: 'ON_THE_SPECTRUM', code: 'SMOKE-HOME' },
     { mode: 'PROFILER', code: 'SMOKE-HOME' },
     { mode: 'COUNTRY_MONKEY', code: 'SMOKE-HOME', endVote: true, label: 'vote to end early' },
+    // Teams: three bots vote teams on; Ace starts a team and Bea joins it,
+    // Cy starts another, Di never picks (the game should place Di).
+    ...(teamsReady ? [
+        { mode: 'PIN_DROP', code: 'SMOKE-TEAMS', teams: true, label: 'PIN_DROP (teams)' },
+        { mode: 'TRIVI_YEAH', code: 'SMOKE-TEAMS', teams: true, label: 'TRIVI_YEAH (teams)' },
+    ] : []),
 ].filter(r => !process.env.MODES || process.env.MODES.split(',').includes(r.mode));
 
 // The announcement each room gets, short (3s + 8s words + 4s silence, at SPEED).
@@ -118,11 +127,20 @@ for (const r of ROOMS) {
     if (!res.roomCode) { say(`✗ ${r.label}: couldn't open a room (${res.error})`); r.failed = 'no room'; continue; }
     r.roomCode = res.roomCode;
     for (const [k, n] of BOTS.entries()) await api('/api/message', { From: n, Body: `${r.roomCode} ${n} av:${['bicycle', 'book', 'boot', 'boy'][k]} ${r.mode}`, roomCode: r.roomCode });
+    if (r.teams) {
+        const send = (n, Body) => api('/api/message', { From: n, Body, roomCode: r.roomCode });
+        for (const n of ['Ace', 'Bea', 'Cy']) await send(n, 'TEAMS YES');
+        await send('Ace', 'TEAM NEW');
+        const aceTeam = activeRooms[r.roomCode].players.Ace.teamId;
+        await send('Bea', `TEAM JOIN ${aceTeam}`);
+        await send('Cy', 'TEAM NEW');
+        r.teamsBefore = { on: !!activeRooms[r.roomCode].teamsOn, di: activeRooms[r.roomCode].players.Di.teamId || null };
+    }
     for (const n of BOTS) await api('/api/message', { From: n, Body: 'START', roomCode: r.roomCode });
     r.started = Date.now(); r.lastSig = ''; r.lastChange = Date.now(); r.seen = new Set(); r.traps = r.traps ? [] : null;
     // Each room at a different point in its game (the short games early;
     // Double Take is short while only a photo or two are Ready).
-    r.annAfter = ({ ON_THE_SPECTRUM: 0, EMPOSSDURR: 2500, DOUBLE_TAKE: 2000, PIN_DROP: 3000 })[r.mode] ?? 4000 + ROOMS.indexOf(r) * 1500;
+    r.annAfter = ({ ON_THE_SPECTRUM: 0, EMPOSSDURR: 2500, DOUBLE_TAKE: 2000, PIN_DROP: 3000, TRIVI_YEAH: 3500 })[r.mode] ?? 4000 + ROOMS.indexOf(r) * 1500;
 }
 
 // ---------- optional screenshots ----------
@@ -413,6 +431,18 @@ for (const r of ROOMS) {
     if (r.sawBreak) extras.push('venue break');
     if (r.tally !== undefined) extras.push(`tally for ${r.tally} players`);
     if (r.annDone) extras.push(`announcement during ${r.annGameState}, ${r.annDone}s`);
+    if (r.teams && !r.failed) {
+        const room = activeRooms[r.roomCode];
+        const teamIds = BOTS.map(n => room.players[n].teamId);
+        const scores = room.teamGame ? room.teamGame.scores : {};
+        const tally = room.teamTally || {};
+        if (!r.teamsBefore.on) r.failed = 'teams never turned on';
+        else if (r.teamsBefore.di) r.failed = 'Di had a team before picking one';
+        else if (teamIds.some(id => !id)) r.failed = 'someone had no team when the game started';
+        else if (teamIds[0] !== teamIds[1] || teamIds[0] === teamIds[2]) r.failed = `teams not as picked (${teamIds.join(', ')})`;
+        else if (Object.keys(tally).length < 2) r.failed = `team tally has ${Object.keys(tally).length} team(s)`;
+        else extras.push(`teams: Di placed on ${room.teams[teamIds[3]].name}; scores ${Object.values(room.teams).map(t => `${t.name} ${scores[t.id] || 0}`).join(', ')}`);
+    }
     if (!r.failed && r.annMoved) r.failed = `the game moved during the announcement (${r.annSig} -> ${r.annMoved})`;
     if (!r.failed && r.annLate) r.failed = `the announcement never found a moment (waited in ${r.annLate})`;
     if (!r.failed && r.annSeen && !r.annDone) r.failed = 'the announcement never ended';

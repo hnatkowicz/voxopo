@@ -183,6 +183,7 @@
         let venueProfilesOn = false;
         let houseColumnOn = false;
         let boardRulesOn = false;
+        let teamsOn = false;
         let breaksOn = false;
         let announcementOn = false;
         // The announcement's time zones: the US ones first; the browser's own is added if it's not here.
@@ -226,6 +227,8 @@
             if (c.venue_name) parts.push(esc(c.venue_name));
             if (c.allowed_modes && c.allowed_modes.length) parts.push(`${c.allowed_modes.length} modes`);
             if (c.board_rules === 'PLAIN') parts.push('Plain rules');
+            if (teamsOn && c.teams_mode === 'ALWAYS') parts.push(`Teams always (up to ${c.team_size_max || 7})`);
+            if (teamsOn && c.teams_mode === 'OFF') parts.push('No teams');
             if (c.break_minutes) parts.push(`Breaks: ${c.break_minutes} min`);
             if (c.announcement && c.announcement.on) {
                 const a = c.announcement;
@@ -275,6 +278,19 @@
                         <div class="hint">Doublers and the Final Wager are in both.</div>
                     </div>
                     ` : `<div class="hint" style="margin-bottom: 12px;">Plain rules (no sweeps or traps) turn on once you run <strong>access_codes_board_rules.sql</strong> in Neon.</div>`}
+                    ${teamsOn ? `
+                    <div class="row">
+                        <label>Teams</label>
+                        <select id="venue-teams-mode">
+                            <option value="ROOM" ${(c.teams_mode || 'ROOM') === 'ROOM' ? 'selected' : ''}>The room decides (a Teams switch in the lobby)</option>
+                            <option value="ALWAYS" ${c.teams_mode === 'ALWAYS' ? 'selected' : ''}>Always teams (team nights)</option>
+                            <option value="OFF" ${c.teams_mode === 'OFF' ? 'selected' : ''}>No teams</option>
+                        </select>
+                        <label style="margin-top: 10px;">Most players on a team</label>
+                        <input type="number" id="venue-team-size" min="2" max="20" value="${Number(c.team_size_max) || 7}" style="max-width: 100px;">
+                        <div class="hint">Everyone still plays on their own phone. A team's score is the average of its members who answered. Profiler, EmpossDurr and On the Spectrum stay individual.</div>
+                    </div>
+                    ` : `<div class="hint" style="margin-bottom: 12px;">Teams turn on once you run <strong>access_codes_teams.sql</strong> in Neon.</div>`}
                     ${houseColumnOn ? `
                     <div class="row">
                         <label>House column (Thinking Pants)</label>
@@ -562,6 +578,10 @@
                 allowedModes: [...document.querySelectorAll('#venue-modes input:checked')].map(b => b.value)
             };
             if (boardRulesOn) body.boardRules = document.getElementById('venue-board-rules').value;
+            if (teamsOn) {
+                body.teamsMode = document.getElementById('venue-teams-mode').value;
+                body.teamSizeMax = Number(document.getElementById('venue-team-size').value);
+            }
             if (breaksOn) {
                 body.breakMinutes = Number(document.getElementById('venue-break-minutes').value);
                 body.breakNotes = document.getElementById('venue-break-notes').value;
@@ -616,6 +636,7 @@
                 houseColumnOn = !!data.houseColumn;
                 houseSets = data.houseSets || [];
                 boardRulesOn = !!data.boardRules;
+                teamsOn = !!data.teams;
                 breaksOn = !!data.breaks;
                 announcementOn = !!data.announcement;
                 renderCodes(data.codes);

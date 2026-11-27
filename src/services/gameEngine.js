@@ -1,5 +1,6 @@
 import pool, { isDatabaseDownError, DATABASE_DOWN_MESSAGE } from '../config/database.js';
 import { randomUUID } from 'node:crypto';
+import { readFileSync } from 'node:fs';
 import { AsyncLocalStorage } from 'node:async_hooks';
 import { listPhotoPairs, doubleTakeReadyCount } from './doubleTake.js';
 import { loadPinDropPlaces, pinDropReadyCount, PIN_DROP_MIN_PLACES } from './pinDrop.js';
@@ -453,6 +454,7 @@ function broadcastToRoom(roomCode, payload) {
             room.phoneStandings = standings;
             room.phoneStandingsVersion = Math.random().toString(36).slice(2, 10);
         }
+        updateTeamScores(room);
     }
     if (!room) return;
     // Every TV message is numbered and the last TV_LOG_SIZE are kept, so a
@@ -471,6 +473,9 @@ function broadcastToRoom(roomCode, payload) {
             }
         });
     }
+    // On a teams night the TV's rail ranks teams: send their scores right
+    // behind every scoreboard update.
+    if (payload.type === 'LEADERBOARD_UPDATE' && teamsActive(room)) broadcastToRoom(roomCode, teamsMessage(room));
 }
 
 // ~2 minutes of a busy game (the answer clock sends one a second), far
@@ -574,6 +579,10 @@ function startGameForMode(roomCode, winningModule) {
     const room = activeRooms[roomCode];
     if (!room) return;
     room.winningGameMode = winningModule;
+    if (teamsActive(room)) {
+        placeTeamlessPlayers(room);
+        broadcastTeams(roomCode);
+    }
 
     // One unified statement pool, no theme to pick between -- skip the
     // category vote screen entirely rather than make everyone click through
@@ -1244,6 +1253,7 @@ function endGame(roomCode) {
     // Players who left mid-game keep their score internally (in case they
     // rejoin before this fires) but don't appear in the final standings.
     const finalStandings = Object.values(room.players).filter(p => !p.left).sort(compareByRank);
+    addToTeamTally(room, roomCode);
     addToNightTally(room, roomCode, finalStandings);
 
     const roundsPlayedDescription = room.winningGameMode === 'EMPOSSDURR'
@@ -5084,6 +5094,7 @@ function resetPlayerStatsForFreshGame(player) {
     player.awards = {};
     player.bullseyeCount = 0;
     player.impostorCatchStreak = 0;
+    player.teamActed = false; // teams: a fresh game, nothing taken part in yet
 }
 
 // Play Again: same roster, same mode, every stat cleared -- skips the mode
@@ -5484,6 +5495,249 @@ export function nightTallyFor(room, playerName) {
     const ranked = Object.entries(tally).sort((a, b) => b[1] - a[1]);
     return { points: tally[playerName], rank: ranked.findIndex(([n]) => n === playerName) + 1, of: ranked.length, games: room.nightGames || 0 };
 }
+
+// ---------- Teams (Randy and his son, Nov 2026) ----------
+// Everyone still plays on their own phone; a team's score for each scoring
+// moment is the AVERAGE of the members who took part in it, so "if you
+// don't know, don't answer" (a wrong answer pulls the team down, sitting
+// it out doesn't). Pub first, then the living room:
+//   * The access code decides whether teams exist (teams_mode): ROOM puts a
+//     Teams yes/no switch on every phone in the lobby (more than half saying
+//     yes turns teams on, and it sticks until the room votes it off),
+//     ALWAYS plays every game in teams, OFF never.
+//   * "Start a team" gives a random two-word name and a random avatar (no
+//     rerolls -- Randy: "that would take the fun out of it"); everyone else
+//     taps the team they want to join, up to the code's cap (7 by default,
+//     Randy: "lucky"). A lone player is a team of one.
+//   * Switching is free in the lobby and locked during a game. Anyone who
+//     hasn't picked by the time a game starts (or joins mid-game) goes to
+//     the smallest team with room.
+//   * A team owns what it earned: points stay with the team when a member
+//     leaves or switches, and a team that empties keeps its place in
+//     tonight's standings. Each player's own score and tally go wherever
+//     they go. All room memory, gone when the room closes.
+//   * Profiler, EmpossDurr and On the Spectrum are about individuals: they
+//     stay individual even on a teams night.
+// Shuffled teams were talked through and skipped for now (Randy, Nov 27).
+const TEAM_SOLO_MODES = new Set(['PROFILER', 'EMPOSSDURR', 'ON_THE_SPECTRUM']);
+// Family-friendly on purpose: a random pair must never land on anything rude.
+const TEAM_WORDS_FIRST = [
+    'Velvet', 'Turbo', 'Cosmic', 'Mighty', 'Sneaky', 'Jolly', 'Golden', 'Fuzzy', 'Electric', 'Midnight',
+    'Rusty', 'Sparkly', 'Thunder', 'Crispy', 'Wobbly', 'Brave', 'Clever', 'Dapper', 'Lucky', 'Speedy',
+    'Polar', 'Atomic', 'Bouncy', 'Silver', 'Crimson', 'Breezy', 'Cheeky', 'Daring', 'Frosty', 'Groovy',
+    'Hidden', 'Jazzy', 'Lunar', 'Mellow', 'Nimble', 'Plucky', 'Quirky', 'Rocket', 'Salty', 'Snappy',
+    'Sunny', 'Tidy', 'Witty', 'Zesty', 'Humble', 'Neon', 'Royal', 'Swift', 'Tiny', 'Wild'
+];
+const TEAM_WORDS_SECOND = [
+    'Walrus', 'Pickles', 'Penguins', 'Waffles', 'Llamas', 'Comets', 'Otters', 'Noodles', 'Badgers', 'Pretzels',
+    'Rockets', 'Owls', 'Turtles', 'Biscuits', 'Moose', 'Pancakes', 'Foxes', 'Dumplings', 'Yetis', 'Muffins',
+    'Narwhals', 'Tacos', 'Beavers', 'Meatballs', 'Hedgehogs', 'Nuggets', 'Flamingos', 'Gnomes', 'Lobsters', 'Pirates',
+    'Robots', 'Wizards', 'Koalas', 'Sprinkles', 'Hamsters', 'Cupcakes', 'Bison', 'Squirrels', 'Mittens', 'Geckos',
+    'Sloths', 'Puffins', 'Dragons', 'Raccoons', 'Bagels', 'Pumpkins', 'Ferrets', 'Beagles', 'Teapots', 'Kittens'
+];
+// Randy's drawn avatars, read from the same list the phones use, so a team
+// avatar is always one that exists.
+let teamAvatarList = null;
+function teamAvatars() {
+    if (teamAvatarList) return teamAvatarList;
+    try {
+        const src = readFileSync(new URL('../../public/avatars.js', import.meta.url), 'utf8');
+        const block = (src.match(/const AVATARS = \[([\s\S]*?)\];/) || [])[1] || '';
+        teamAvatarList = [...block.replace(/\/\/.*$/gm, '').matchAll(/'([a-z0-9-]+)'/g)].map(m => m[1]);
+    } catch (e) {
+        teamAvatarList = [];
+    }
+    if (!teamAvatarList.length) teamAvatarList = ['owl'];
+    return teamAvatarList;
+}
+
+function teamsAvailable(room) {
+    return !!room && (room.teamsMode === 'ROOM' || room.teamsMode === 'ALWAYS');
+}
+// Teams are on for this room (the room voted them on, or the code says always).
+export function teamsActive(room) {
+    if (!teamsAvailable(room)) return false;
+    return room.teamsMode === 'ALWAYS' || !!room.teamsOn;
+}
+// This game is scored by team (teams are on, and it isn't a social mode).
+function teamsScoreThisGame(room) {
+    return teamsActive(room) && !!room.winningGameMode && !TEAM_SOLO_MODES.has(room.winningGameMode);
+}
+function teamMembers(room, teamId) {
+    return Object.values(room.players).filter(p => !p.left && p.teamId === teamId);
+}
+function createTeam(room) {
+    room.teams = room.teams || {};
+    room.teamSeq = (room.teamSeq || 0) + 1;
+    const used = new Set(Object.values(room.teams).map(t => t.name));
+    let name = '';
+    for (let tries = 0; tries < 50; tries++) {
+        name = `${TEAM_WORDS_FIRST[Math.floor(Math.random() * TEAM_WORDS_FIRST.length)]} ${TEAM_WORDS_SECOND[Math.floor(Math.random() * TEAM_WORDS_SECOND.length)]}`;
+        if (!used.has(name)) break;
+    }
+    const avatars = teamAvatars();
+    const usedAvatars = new Set(Object.values(room.teams).map(t => t.avatar));
+    const fresh = avatars.filter(a => !usedAvatars.has(`av:${a}`));
+    const pool = fresh.length ? fresh : avatars;
+    const id = `t${room.teamSeq}`;
+    room.teams[id] = { id, name, avatar: `av:${pool[Math.floor(Math.random() * pool.length)]}`, createdAt: Date.now() };
+    return room.teams[id];
+}
+// The smallest team with room for one more; a new team when all are full.
+function teamForStraggler(room) {
+    const open = Object.values(room.teams || {})
+        .map(t => ({ t, n: teamMembers(room, t.id).length }))
+        .filter(x => x.n > 0 && x.n < (room.teamSizeMax || 7))
+        .sort((a, b) => a.n - b.n || a.t.createdAt - b.t.createdAt);
+    return open.length ? open[0].t : createTeam(room);
+}
+// Before a game (and for anyone joining mid-game): everyone gets a team.
+function placeTeamlessPlayers(room) {
+    if (!teamsActive(room)) return;
+    Object.values(room.players).filter(p => !p.left).forEach(p => {
+        if (!p.teamId || !room.teams || !room.teams[p.teamId]) p.teamId = teamForStraggler(room).id;
+    });
+}
+
+// The team scores for the game being played, kept in step with the
+// players' scores at every scoreboard update. A member "took part" in a
+// scoring moment if their score moved or they sent the game an answer
+// since the last update (see markTeamAction).
+function updateTeamScores(room) {
+    if (!teamsScoreThisGame(room) || room.gameState === 'LOBBY') return;
+    const epoch = room.gameEpoch || 0;
+    if (!room.teamGame || room.teamGame.epoch !== epoch || room.teamGame.mode !== room.winningGameMode) {
+        // A new game: every score started at 0.
+        room.teamGame = { epoch, mode: room.winningGameMode, scores: {}, snap: {} };
+    }
+    const tg = room.teamGame;
+    const byTeam = {};
+    Object.values(room.players).forEach(p => {
+        const before = tg.snap[p.name] || 0;
+        const delta = (p.score || 0) - before;
+        tg.snap[p.name] = p.score || 0;
+        const tookPart = delta !== 0 || p.teamActed;
+        p.teamActed = false;
+        if (!p.teamId || !tookPart) return;
+        (byTeam[p.teamId] = byTeam[p.teamId] || []).push(delta);
+    });
+    Object.entries(byTeam).forEach(([teamId, deltas]) => {
+        const avg = deltas.reduce((a, b) => a + b, 0) / deltas.length;
+        tg.scores[teamId] = Math.round((tg.scores[teamId] || 0) + avg);
+    });
+}
+// A game answer from this player (any in-game input but the room's own
+// controls: leave, vote to end, start, play again, I'm back, teams).
+function markTeamAction(room, player, text) {
+    if (!teamsScoreThisGame(room) || !player) return;
+    if (['LOBBY', 'GAME_OVER', 'VENUE_BREAK', 'CATEGORY_VOTE'].includes(room.gameState)) return;
+    if (/^(LEAVE|START|PLAY_AGAIN|BACK|ENDVOTE|TEAMS?\b)/i.test(text)) return;
+    player.teamActed = true;
+}
+function teamStandings(room) {
+    const scores = (room.teamGame && room.teamGame.epoch === (room.gameEpoch || 0) && room.teamGame.mode === room.winningGameMode) ? room.teamGame.scores : {};
+    return Object.values(room.teams || {})
+        .map(t => ({ id: t.id, name: t.name, avatar: t.avatar, score: scores[t.id] || 0,
+            members: teamMembers(room, t.id).map(p => ({ name: p.name, emoji: p.emoji || null })) }))
+        .filter(t => t.members.length || t.score)
+        .sort((a, b) => b.score - a.score || a.name.localeCompare(b.name));
+}
+// The TV's view of the room's teams.
+export function teamsMessage(room) {
+    const active = Object.values(room.players).filter(p => !p.left);
+    return {
+        type: 'TEAMS_UPDATE',
+        available: teamsAvailable(room),
+        always: room.teamsMode === 'ALWAYS',
+        on: teamsActive(room),
+        scoring: teamsScoreThisGame(room) && room.gameState !== 'LOBBY',
+        yes: active.filter(p => p.teamsPref).length,
+        total: active.length,
+        teams: teamsActive(room) ? teamStandings(room) : [],
+        tally: room.teamTally || {}
+    };
+}
+function broadcastTeams(roomCode) {
+    const room = activeRooms[roomCode];
+    if (room && teamsAvailable(room)) broadcastToRoom(roomCode, teamsMessage(room));
+}
+// One phone's view: the switch, its team, and (in the lobby) the teams to pick.
+export function teamsStatusFor(room, playerName) {
+    if (!teamsAvailable(room)) return null;
+    const me = room.players[playerName];
+    const on = teamsActive(room);
+    const myTeam = on && me && me.teamId && room.teams && room.teams[me.teamId] ? room.teams[me.teamId] : null;
+    const tally = room.teamTally || {};
+    let tonight = null;
+    if (myTeam && myTeam.id in tally) {
+        const ranked = Object.entries(tally).sort((a, b) => b[1] - a[1]);
+        tonight = { points: tally[myTeam.id], rank: ranked.findIndex(([id]) => id === myTeam.id) + 1, of: ranked.length };
+    }
+    return {
+        always: room.teamsMode === 'ALWAYS',
+        on,
+        myPref: !!(me && me.teamsPref),
+        yes: Object.values(room.players).filter(p => !p.left && p.teamsPref).length,
+        total: Object.values(room.players).filter(p => !p.left).length,
+        canSwitch: on && room.gameState === 'LOBBY',
+        sizeMax: room.teamSizeMax || 7,
+        myTeam: myTeam ? { id: myTeam.id, name: myTeam.name, avatar: myTeam.avatar } : null,
+        tonight,
+        list: on && room.gameState === 'LOBBY'
+            ? Object.values(room.teams || {}).map(t => ({ id: t.id, name: t.name, avatar: t.avatar,
+                members: teamMembers(room, t.id).map(p => ({ name: p.name, emoji: p.emoji || null })) }))
+                .filter(t => t.members.length)
+            : []
+    };
+}
+// The phone's team commands: TEAMS YES|NO (the lobby switch), TEAM NEW,
+// TEAM JOIN <id>. Returns a reply, or null when it isn't a team command.
+function handleTeamCommand(roomCode, player, text) {
+    const room = activeRooms[roomCode];
+    const m = /^(TEAMS (YES|NO)|TEAM NEW|TEAM JOIN (\S+))$/i.exec(text);
+    if (!m) return null;
+    if (!teamsAvailable(room)) return "⚠️ Teams aren't on for this room.";
+    if (room.gameState !== 'LOBBY') return '⚠️ Teams can change in the lobby, between games.';
+    const word = m[1].toUpperCase();
+    if (word.startsWith('TEAMS ')) {
+        if (room.teamsMode === 'ALWAYS') return 'This room always plays in teams.';
+        player.teamsPref = word === 'TEAMS YES';
+        const active = Object.values(room.players).filter(p => !p.left);
+        // More than half, like every other room vote. Sticky: it's only
+        // re-counted when someone flips their switch, not when people leave.
+        room.teamsOn = active.filter(p => p.teamsPref).length > active.length / 2;
+        broadcastTeams(roomCode);
+        return room.teamsOn ? 'Teams are on.' : (player.teamsPref ? 'Your vote for teams is in.' : 'Your vote is in.');
+    }
+    if (!teamsActive(room)) return "⚠️ Teams aren't on right now.";
+    if (word === 'TEAM NEW') {
+        const team = createTeam(room);
+        player.teamId = team.id;
+        broadcastTeams(roomCode);
+        return `You started ${team.name}.`;
+    }
+    const team = room.teams && room.teams[m[3]];
+    if (!team) return "⚠️ That team isn't here any more.";
+    if (player.teamId === team.id) return `You're on ${team.name}.`;
+    if (teamMembers(room, team.id).length >= (room.teamSizeMax || 7)) return `⚠️ ${team.name} is full.`;
+    player.teamId = team.id;
+    broadcastTeams(roomCode);
+    return `You joined ${team.name}.`;
+}
+// A game played to the end: team placements join tonight's team tally,
+// with the same 10, 7, 5, 3, 2, 1 points players get.
+function addToTeamTally(room, roomCode) {
+    if (!teamsScoreThisGame(room)) return;
+    updateTeamScores(room);
+    const standings = teamStandings(room).filter(t => t.members.length);
+    if (!standings.length) return;
+    room.teamTally = room.teamTally || {};
+    standings.forEach((t, i) => {
+        room.teamTally[t.id] = (room.teamTally[t.id] || 0) + (NIGHT_TALLY_POINTS[i] ?? NIGHT_TALLY_FINISHER_POINTS);
+    });
+    broadcastTeams(roomCode);
+}
+
 
 // Releases a room entirely -- broadcasts the TV back to its gateway/lobby-code
 // screen and frees the room code for reuse. Used both when the last active
@@ -6747,7 +7001,9 @@ function handleIncomingMessageInRoom(fromPhone, bodyText, explicitRoomCode, pres
             }
 
             const playersArray = Object.values(currentRoom.players).filter(p => !p.left);
+            if (currentRoom.gameState !== 'LOBBY') placeTeamlessPlayers(currentRoom);
             broadcastToRoom(roomCode, { type: 'LEADERBOARD_UPDATE', players: playersArray });
+            broadcastTeams(roomCode);
 
             // Module voting and the lobby clock are only meaningful pre-game --
             // restarting them for a late joiner would silently reset a match
@@ -6846,6 +7102,7 @@ function handleIncomingMessageInRoom(fromPhone, bodyText, explicitRoomCode, pres
 
         const remainingActivePlayers = Object.values(currentRoom.players).filter(p => !p.left);
         broadcastToRoom(associatedRoomCode, { type: 'LEADERBOARD_UPDATE', players: remainingActivePlayers });
+        broadcastTeams(associatedRoomCode);
 
         // The leaver's end-the-game vote goes with them, and the bar drops
         // with the room's size -- the votes already in may now be enough.
@@ -6987,6 +7244,11 @@ function handleIncomingMessageInRoom(fromPhone, bodyText, explicitRoomCode, pres
     // The venue's announcement is on: game input waits until it's over
     // (the phones show the announcement, with nothing to tap).
     if (currentRoom.announcement) return "⚠️ One moment. The game picks up right after the announcement.";
+
+    // Teams (Nov 2026): the lobby switch, starting and joining a team.
+    const teamReply = handleTeamCommand(associatedRoomCode, player, cleanText);
+    if (teamReply !== null) return teamReply;
+    markTeamAction(currentRoom, player, cleanText);
 
     // 2.6 Handle re-voting for a different game mode while sitting in the
     // lobby -- e.g. after "Main Menu" bounces everyone back from a finished

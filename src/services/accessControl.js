@@ -159,6 +159,12 @@ export const HOUSE_ROUNDS = ['OFF', 'ROUNDS_1_3', 'ALL'];
 // Thinking Pants board rules (access_codes_board_rules.sql): PLAIN turns off
 // column sweeps and the traps they earn.
 export const BOARD_RULES = ['CLASSIC', 'PLAIN'];
+// Teams (access_codes_teams.sql; Randy and his son, Nov 2026): ROOM puts a
+// Teams yes/no switch in the lobby (majority wins, and it sticks), ALWAYS
+// plays every game in teams, OFF never. Before the SQL is run: no teams.
+export const TEAMS_MODES = ['ROOM', 'ALWAYS', 'OFF'];
+export const TEAM_SIZE_DEFAULT = 7; // Randy: "lucky"
+const TEAM_SIZE_MIN = 2, TEAM_SIZE_LIMIT = 20;
 // Venue breaks (access_codes_breaks.sql): minutes per break, 0 = Off.
 export const BREAK_MINUTES = [0, 2, 5, 10]; // 10 for pubs, where people wander to the bar (Randy, Oct 2026)
 const MAX_BREAK_NOTES = 10;
@@ -250,8 +256,40 @@ export function sanitizeVenue(input, knownModes) {
         // One note per line in /admin; short, and only a handful.
         breakNotes: (Array.isArray(v.breakNotes) ? v.breakNotes : String(v.breakNotes || '').split('\n'))
             .map(line => String(line).trim().slice(0, 120)).filter(Boolean).slice(0, MAX_BREAK_NOTES),
-        announcement: sanitizeAnnouncement(v.announcement)
+        announcement: sanitizeAnnouncement(v.announcement),
+        teamsMode: TEAMS_MODES.includes(v.teamsMode) ? v.teamsMode : 'ROOM',
+        teamSizeMax: Math.min(TEAM_SIZE_LIMIT, Math.max(TEAM_SIZE_MIN, Math.round(Number(v.teamSizeMax)) || TEAM_SIZE_DEFAULT))
     };
+}
+
+export async function teamsInstalled(pool) {
+    try {
+        await pool.query('SELECT teams_mode FROM access_codes LIMIT 1');
+        return true;
+    } catch (e) {
+        if (e.code === UNDEFINED_COLUMN) return false;
+        throw e;
+    }
+}
+
+// A room's team settings from the code that opened it: { mode, sizeMax }.
+// No code, no such code, or before access_codes_teams.sql: teams Off.
+export async function readTeamSettings(pool, rawCode) {
+    const off = { mode: 'OFF', sizeMax: TEAM_SIZE_DEFAULT };
+    const code = normalizeCode(rawCode);
+    if (!code) return off;
+    try {
+        const result = await pool.query('SELECT teams_mode, team_size_max FROM access_codes WHERE code = $1', [code]);
+        const row = result.rows[0];
+        if (!row) return off;
+        return {
+            mode: TEAMS_MODES.includes(row.teams_mode) ? row.teams_mode : 'OFF',
+            sizeMax: Number(row.team_size_max) >= TEAM_SIZE_MIN ? Number(row.team_size_max) : TEAM_SIZE_DEFAULT
+        };
+    } catch (e) {
+        if (e.code === UNDEFINED_COLUMN) return off;
+        throw e;
+    }
 }
 
 export async function breaksInstalled(pool) {
@@ -411,6 +449,14 @@ export async function listAccessCodes(pool) {
             } catch (e) {
                 if (e.code !== UNDEFINED_COLUMN) throw e;
             }
+            // ...the team settings once access_codes_teams.sql is run...
+            try {
+                const teams = await pool.query('SELECT code, teams_mode, team_size_max FROM access_codes');
+                const byCode = Object.fromEntries(teams.rows.map(r => [r.code, r]));
+                result.rows.forEach(r => { if (byCode[r.code]) { r.teams_mode = byCode[r.code].teams_mode; r.team_size_max = byCode[r.code].team_size_max; } });
+            } catch (e) {
+                if (e.code !== UNDEFINED_COLUMN) throw e;
+            }
             // ...and the announcement once access_codes_announcement.sql is run.
             try {
                 const announcements = await pool.query('SELECT code, announcement FROM access_codes');
@@ -434,7 +480,7 @@ export async function addAccessCode(pool, rawCode, label) {
 
 // venue is already sanitized (sanitizeVenue). Returns false if no such code.
 // The house settings are only written once their columns exist.
-export async function updateAccessCodeVenue(pool, rawCode, venue, withHouse, withRules, withBreaks, withAnnouncement) {
+export async function updateAccessCodeVenue(pool, rawCode, venue, withHouse, withRules, withBreaks, withAnnouncement, withTeams = false) {
     const code = normalizeCode(rawCode);
     const params = [code, venue.profile, venue.name, venue.tagline, venue.logo, venue.allowedModes.length ? venue.allowedModes : null];
     let sql = 'UPDATE access_codes SET profile = $2, venue_name = $3, venue_tagline = $4, venue_logo = $5, allowed_modes = $6';
@@ -455,6 +501,12 @@ export async function updateAccessCodeVenue(pool, rawCode, venue, withHouse, wit
     if (withAnnouncement) {
         params.push(JSON.stringify(venue.announcement));
         sql += `, announcement = $${params.length}::jsonb`;
+    }
+    if (withTeams) {
+        params.push(venue.teamsMode);
+        sql += `, teams_mode = $${params.length}`;
+        params.push(venue.teamSizeMax);
+        sql += `, team_size_max = $${params.length}`;
     }
     const result = await pool.query(`${sql} WHERE code = $1`, params);
     return result.rowCount > 0;

@@ -1080,3 +1080,8 @@ body.tp-layout #onboarding-status-slot .arrival-line { font-size: calc(var(--u) 
 .pd-result { display: inline-flex; align-items: center; gap: calc(var(--u) * 0.5); font-size: calc(var(--u) * 1.45); font-weight: 600; color: var(--rm-text); }
 .pd-miles { color: var(--rm-text-soft); }
 .pd-note { font-size: calc(var(--u) * 1.3); font-weight: 600; color: var(--rm-text-soft); }
+
+/* Teams on the TV rail (Nov 2026): members' small avatars after the team
+   name, and the lobby's quiet "Teams 3 / 8" count beside the rail title. */
+.rail-team-members { display: inline-flex; gap: calc(var(--u) * 0.15); opacity: 0.9; }
+.rail-teams-vote { font-size: 0.8em; color: var(--rm-text-soft); font-weight: 500; margin-left: calc(var(--u) * 0.6); }

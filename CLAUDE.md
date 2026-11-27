@@ -113,6 +113,35 @@ event, for a small fee. That's why hosting is gated behind access codes.
   memory only (`room.nightTally`), gone when the room closes. Pickles & Pins is the test venue
   (Randy's logo `pickles-pins.svg`: the pickle-jar-and-pin mark, no
   lettering, since the banner prints the name beside it).
+- **Teams** (Nov 27 2026; Randy's son asked, for the living room; designed
+  pub first; `access_codes_teams.sql`; the code in `gameEngine.js` under
+  "Teams"). Everyone still plays on their own phone. **A code's setting**
+  (/admin): *The room decides* (default: a **Solo / Teams switch** on every
+  phone in the lobby; more than half saying Teams turns them on, and it
+  sticks until the room votes it off), *Always teams* (team nights) or *No
+  teams*, plus **most players on a team** (default 7 -- Randy: "lucky").
+  **Forming teams:** "Start a team" gives a random two-word name ("Velvet
+  Walrus", family-safe word lists) and a random avatar from Randy's set;
+  **no rerolls** (Randy: "that would take the fun out of it"); others tap
+  a team to join; a lone player is a team of one. Switching is free in
+  the lobby and locked during a game; anyone without a team when a game
+  starts, or who joins mid-game, goes to the smallest team with room.
+  Shuffled teams: skipped for now (Randy). **Scoring:** at every scoreboard
+  update a team adds the **average of the members who took part** (their
+  score moved, or they sent the game an answer), so "if you don't know,
+  don't answer": a wrong answer pulls the team down, sitting it out
+  doesn't. Profiler, EmpossDurr and On the Spectrum stay individual.
+  **Points belong to the team** (it keeps them when a member leaves or
+  switches; an emptied team keeps its place in tonight's standings); each
+  player's own score and tally go with them (Randy: "very sound"). Team
+  placements add to a **team tally** (10, 7, 5...), room memory only.
+  **Screens:** the TV's rail ranks teams (avatar, name, members' small
+  avatars, score; "Tonight" in the lobby once a game has finished), with
+  a quiet "Teams 3 / 8" beside the rail title while the room is voting;
+  the winning team takes the podium. Phones: the switch and team list in
+  the lobby; the Info page shows your team and its place tonight. The
+  smoke test plays two team games (Pin Drop, Trivi-yeah!: three bots vote
+  teams on, two share a team, one never picks and gets placed).
 - **The scheduled announcement** (Randy, Nov 2026, from a Legion trivia
   night where the host stopped at 8:00 pm for the post charter and a
   moment of silence: "a selling point"; `access_codes_announcement.sql`,
@@ -1139,10 +1168,16 @@ and forth until we both agree the idea is good **and** worth the effort. So:
   privacy, depth and breadth, customization. Randy: not worried about
   competition; ours is "more academic and social", and we stay far from
   copyrighted material.
-- **Being talked through (Nov 27):** a light team mode (everyone on their
-  own phone, team score averaged; an /admin setting; random two-word
-  names and avatars), and a second Pin Drop hint to even out uneven
-  knowledge.
+- **Teams: built Nov 27** (Randy's son asked for them for the living
+  room; designed pub first). **Run in Neon (Randy):** `access_codes_teams.sql`
+  -- until then there are no teams anywhere. See Teams under How it fits
+  together.
+- **Pinned (Randy, Nov 27): a second Pin Drop hint.** Claude suggested a
+  distance hint ("about 1,800 miles off", one hint per round, line or
+  distance); Randy has an idea or two of his own. Come back to it.
+- **Being talked through (Nov 27): local Pin Drop.** Randy draws a
+  RandoMania!-styled map of a town, campus or venue, with his own places,
+  photos and prompts, to sell as an option.
 - **Pinned (Randy, Nov 22: "No bother. Pin it for later."):** the lobby
   draws every mode for a moment before the room's own list arrives, so a
   mode the code doesn't play flashes and vanishes. Fix: wait for the
