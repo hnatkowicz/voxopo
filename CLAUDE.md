@@ -1237,8 +1237,21 @@ and forth until we both agree the idea is good **and** worth the effort. So:
 - **Pinned (Randy, Nov 27): a second Pin Drop hint.** Claude suggested a
   distance hint ("about 1,800 miles off", one hint per round, line or
   distance); Randy has an idea or two of his own. Come back to it.
-- **Tomorrow's agenda (Randy, Nov 28): the Pin Drop pin editor** (see
-  below), first for Hanover's pins. **Run in Neon (Randy):**
+- **Hanover's first family game (Nov 28): "WOW! The family loved it."**
+  The line got used more at 25%. **Tomorrow's agenda (agreed Nov 28):**
+  (1) **the Pin Drop pin editor** (see below), first for Hanover's pins,
+  incl. widening circles by hand where a place is hard to pinpoint (not a
+  blanket "harder = bigger" rule); (2) **rounds per map** -- 12 for the
+  world (453 places), 8 for a local map until it has ~60 places;
+  (3) an **Overpass query for Central PA's new place kinds**, so their
+  coordinates come from OpenStreetMap, not memory: airports, colleges,
+  drive-ins, amusement parks, racetracks, viewpoints, famous homes
+  (Eisenhower farm, Wheatland). Skipped: hospitals (not fun, can be a
+  hard memory, mostly inside cities), high schools on Central PA (only
+  their district knows them; fine on a town map). Place-as-answer
+  questions already work (CLUE kind). **Stay bonus stays x1.5 for now**
+  (Randy asked about x1.25; Claude: one change at a time -- play another
+  night and watch whether winners are mostly stayers). **Run in Neon (Randy):**
   `pin_drop_hanover.sql`, then tick Hanover under a code's Pin Drop maps.
 - **Local Pin Drop: built Nov 27** (see PIN_DROP). `pin_drop_local.sql`
   is live (Randy ran it Nov 27), and so is
