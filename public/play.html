@@ -148,13 +148,15 @@
            (Randy, Nov 24 2026: the old one looked like 10 px once zoomed). */
         .pd-marks .pd-line { stroke: var(--rm-white); opacity: 0.6; }
         .pd-status-line { min-height: 1.4em; text-align: center; font-weight: 600; font-size: 0.95rem; color: var(--rm-text-2); margin: 2px 0 10px; }
-        .pd-controls { display: flex; align-items: center; gap: 8px; }
+        /* Arrows and Fit on one row, Lock in / Stay full width under them (Randy,
+           Nov 27 2026: on one row at phone width the arrows got squeezed and cut off). */
+        .pd-controls { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 8px; }
         .pd-nudge { display: flex; gap: 4px; }
-        .pd-nudge button { width: 40px; height: 40px; border-radius: 6px; border: 1px solid var(--rm-border); background: var(--rm-surface-2); color: var(--rm-text); font-size: 1.1rem; font-weight: 700; padding: 0; cursor: pointer; }
+        .pd-nudge button { width: 40px; height: 40px; border-radius: 6px; border: 1px solid var(--rm-border); background: var(--rm-surface-2); color: var(--rm-text); font-size: 1.1rem; font-weight: 700; padding: 0; cursor: pointer; display: flex; align-items: center; justify-content: center; line-height: 1; font-family: system-ui, sans-serif; box-sizing: border-box; flex: 0 0 auto; }
         .pd-nudge button:disabled, .pd-lock:disabled { opacity: 0.4; cursor: default; }
         .pd-line-btn { width: 100%; margin-top: 10px; height: 40px; border-radius: 6px; border: 1px solid var(--rm-brand); background: transparent; color: var(--rm-brand); font-weight: 700; font-size: 0.9rem; cursor: pointer; }
         .pd-marks .pd-clue { stroke: var(--rm-brand); opacity: 0.85; }
-        .pd-lock { flex: 1; height: 40px; border-radius: 6px; border: none; background: var(--rm-brand); color: var(--rm-bg); font-weight: 800; font-size: 0.9rem; white-space: nowrap; padding: 0 6px; cursor: pointer; }
+        .pd-lock { flex: 1 1 100%; height: 44px; border-radius: 6px; border: none; background: var(--rm-brand); color: var(--rm-bg); font-weight: 800; font-size: 0.9rem; white-space: nowrap; padding: 0 6px; cursor: pointer; }
         .pd-pin { position: absolute; border-radius: 50%; box-sizing: border-box; pointer-events: none; }
         .pd-mine { width: 16px; height: 16px; margin: -8px 0 0 -8px; background: var(--rm-brand); border: 2px solid var(--rm-white); box-shadow: 0 0 0 1px rgba(var(--rm-black-rgb), 0.6); }
         .pd-was { width: 12px; height: 12px; margin: -6px 0 0 -6px; border: 2px dashed var(--rm-brand); }
@@ -1866,6 +1868,8 @@
                         // (mirrors the TV's medal styling). Polling keeps running (not
                         // cleared here anymore) so this phone can still detect a
                         // "return to lobby" reset if the room votes to play again.
+                        const cameFromGame = lobbyPhaseSeen === false;
+                        lobbyPhaseSeen = data.phase === 'LOBBY_PHASE';
                         if (data.phase === 'GAME_OVER_PHASE') {
                             // Fresh arrival on Game Over: clear the last game's
                             // "Everyone's in -- moving on!" so it isn't still
@@ -1893,6 +1897,10 @@
                         // every stat cleared. Every player's phone (not just whoever
                         // tapped Play Again) bounces back to the "Vote START" screen.
                         if (data.phase === 'LOBBY_PHASE') {
+                            // Back from a game: clear the last Start's "Consensus
+                            // secured! Game's starting!" (Randy, Nov 27 2026: it
+                            // was still under Start after the room voted Main menu).
+                            if (cameFromGame) document.getElementById('game-feedback').style.display = 'none';
                             showOnlyPlayScreen('game-screen');
                             activeQuestionId = null; // next game's first question should always render fresh
                             edLastPhaseKey = null; // next EmpossDurr game's first round should render fresh
@@ -3637,6 +3645,8 @@
         // it sticks), then, once teams are on: your team, the teams to join,
         // and Start a team (a random two-word name and avatar, no rerolls).
         let teamsLastKey = null;
+        // Was the last poll in the lobby? (So a return from a game clears old lines.)
+        let lobbyPhaseSeen = null;
         function renderLobbyTeams(t) {
             const group = document.getElementById('teams-group');
             if (!group) return;
