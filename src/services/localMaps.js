@@ -56,6 +56,26 @@ export const PIN_DROP_MAPS = {
         unitsPerMile: 61.43, // map pixels per mile, for drawing a place's circle
         falloffMiles: 5,
         closeMiles: 2,
+        minApartMiles: 3,   // no two places this close in one game (the Capitol and Harrisburg)
+        local: true
+    },
+    // Hanover (Nov 28 2026): drawn from OpenStreetMap data by
+    // scripts/osm-local-map.mjs (public/maps/hanover-map.svg), 7.7 miles
+    // across. Town-sized scoring: a third of a mile off is the wrong part of
+    // town, so points fall off over ~1/3 mile (~740 at 0.1 mi out, ~400 at
+    // 0.3), and places a game uses are at least ~300 ft apart (the Square has
+    // five within a block). First guesses, to tune in play.
+    HANOVER: {
+        key: 'HANOVER',
+        name: 'Hanover',
+        imageUrl: '/pin-drop/hanover.webp',
+        tvImageUrl: '/pin-drop/hanover-tv.webp',
+        w: 4800, h: 3600,
+        ...mercatorMap({ A: 33103.44827585973, B: 2550289.655172234, C: -1896687.8735363847, D: 1440085.2304368608 }),
+        unitsPerMile: 622.9,
+        falloffMiles: 0.33,
+        closeMiles: 0.1,
+        minApartMiles: 0.06,
         local: true
     }
 };

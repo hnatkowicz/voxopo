@@ -4078,7 +4078,7 @@ async function startPinDropGame(roomCode) {
     if (map.local) {
         // A local map: easy to hard by difficulty, places the room hasn't
         // played first, never two places a few miles apart in one game.
-        const tooClose = p => [...used].some(id => { const q = places.find(x => x.id === id); return milesBetween(p, q) < PIN_DROP_LOCAL_MIN_APART_MILES; });
+        const tooClose = p => [...used].some(id => { const q = places.find(x => x.id === id); return milesBetween(p, q) < (map.minApartMiles || PIN_DROP_LOCAL_MIN_APART_MILES); });
         rounds = PIN_DROP_LOCAL_TIERS.map(tier => {
             const fits = p => !used.has(p.id) && !tooClose(p);
             const ranked = [

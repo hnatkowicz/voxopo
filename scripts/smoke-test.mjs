@@ -74,6 +74,10 @@ await db.query(`INSERT INTO access_codes (code, label, active) VALUES ('SMOKE-TE
 // Pin Drop's local map (Nov 27 2026): a code that plays Central PA; needs pin_drop_local.sql.
 await db.query(`INSERT INTO access_codes (code, label, active) VALUES ('SMOKE-MAPS', 'smoke test', true) ON CONFLICT (code) DO UPDATE SET active = true`);
 const mapsReady = await db.query(`UPDATE access_codes SET pin_drop_maps = ARRAY['CENTRAL_PA'] WHERE code = 'SMOKE-MAPS'`).then(() => true, () => false);
+// Hanover (Nov 28 2026): a town map, with its own room once its places are in.
+await db.query(`INSERT INTO access_codes (code, label, active) VALUES ('SMOKE-HANOVER', 'smoke test', true) ON CONFLICT (code) DO UPDATE SET active = true`);
+const hanoverReady = mapsReady && await db.query(`UPDATE access_codes SET pin_drop_maps = ARRAY['HANOVER'] WHERE code = 'SMOKE-HANOVER'`)
+    .then(() => db.query(`SELECT COUNT(*)::int AS n FROM pin_drop_places WHERE map_key = 'HANOVER' AND active`)).then(r => r.rows[0].n >= 8, () => false);
 const teamsReady = await db.query(`UPDATE access_codes SET teams_mode = 'ROOM', team_size_max = 7 WHERE code = 'SMOKE-TEAMS'`).then(() => true, () => false);
 // Board rules, profiles and breaks exist only once their SQL has run.
 await db.query(`UPDATE access_codes SET board_rules = 'CLASSIC', profile = 'HOME' WHERE code = 'SMOKE-HOME'`).catch(() => {});
@@ -113,6 +117,7 @@ const ROOMS = [
     // Teams: three bots vote teams on; Ace starts a team and Bea joins it,
     // Cy starts another, Di never picks (the game should place Di).
     ...(mapsReady ? [{ mode: 'PIN_DROP', code: 'SMOKE-MAPS', localMap: 'CENTRAL_PA', label: 'PIN_DROP (Central PA)' }] : []),
+    ...(hanoverReady ? [{ mode: 'PIN_DROP', code: 'SMOKE-HANOVER', localMap: 'HANOVER', label: 'PIN_DROP (Hanover)' }] : []),
     ...(teamsReady ? [
         { mode: 'PIN_DROP', code: 'SMOKE-TEAMS', teams: true, label: 'PIN_DROP (teams)' },
         { mode: 'TRIVI_YEAH', code: 'SMOKE-TEAMS', teams: true, label: 'TRIVI_YEAH (teams)' },
