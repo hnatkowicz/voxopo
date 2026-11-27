@@ -4007,7 +4007,7 @@ const PIN_DROP_ALL_LOCKED_MS = 800;
 // The line clue (Randy, Nov 24 2026: "a great addition" once it's thin): in
 // the second stage, once a round, a line through your pin and the true spot,
 // edge to edge, with neither marked. It costs half that round's points.
-const PIN_DROP_LINE_SHARE = 0.5;
+const PIN_DROP_LINE_SHARE = 0.75; // the line clue keeps 75% of the round's points (was 50%; Thanksgiving 2026, Randy: staying often helps more, "the penalty doesn't match the potential")
 
 function pinDropPoints(miles) {
     return Math.round(PIN_DROP_MAX_POINTS * Math.exp(-miles / PIN_DROP_FALLOFF_MILES) / 10) * 10;

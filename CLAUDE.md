@@ -925,13 +925,20 @@ Mode keys are used in room votes and in `gameEngine.js`:
     (the phone's had been scaling with the zoom). **Decided against:**
     blocking the phone's pull-to-refresh, a PWA or in-app camera, and a
     smaller scoreboard (Randy). **The line clue, built Nov 24** (Randy:
-    "Go ahead"): in the second stage, once a round, "Draw my line (half
-    points; Randy: "kind of harsh", but kept for now)" draws a 1 px gold line through your pin and the true spot,
+    "Go ahead"): in the second stage, once a round, "Draw my line" (it
+    cost half the round's points -- Randy: "kind of harsh" -- then 25%
+    from Thanksgiving 2026: staying often helps more, "the penalty
+    doesn't match the potential") draws a 1 px gold line through your pin and the true spot,
     edge to edge with neither marked, and zooms the map out to show it;
-    the round's points are halved (after any x1.5). The server sends a
+    the round's points drop 25% (after any x1.5). The server sends a
     phone only the line's two edge points (`pinDropLineThrough`); a pin
     right on the spot gets a random-angle line through it. Tested: the
-    true spot sat 0.3 px off the drawn line. **The landmark photo stays on the TV** (Randy, Nov 24: removing from
+    true spot sat 0.3 px off the drawn line. ****The TV's map** (Thanksgiving 2026: on 11 phones and cable Wi-Fi
+    "the big map would not always show up near-instantly"): the TV keeps
+    one loaded map and moves it into each new screen instead of reloading
+    it, and uses its own 2400-wide copy, `world-map-tv.webp` (40 KB, made
+    by `MAP_WIDTH=2400 node scripts/pin-drop-map.mjs`); the 4800-wide one
+    is for the phones' zoom. **The landmark photo stays on the TV** (Randy, Nov 24: removing from
     the TV something the phone carries goes against the TV being the
     focus. "If I ever suggest this again, please remind me! We don't
     remove, and it stays put."). **Open:** a rejoin after a refresh Randy hit once that couldn't be
@@ -1125,6 +1132,17 @@ and forth until we both agree the idea is good **and** worth the effort. So:
   the fix if they keep spoiling games); flipside's
   own DATABASE_URL (Randy on it, Nov 22). The genie is out: Randy is
   drawing other avatars instead.
+- **Pinned for later (Randy, Nov 27):** a comparison chart of
+  RandoMania! against the top three in the space (Crowdpurr is one; it's
+  a host-run event tool: trivia, bingo, polls, team modes, lead capture,
+  priced by crowd size). Rows Randy named: multiple instances, lag,
+  privacy, depth and breadth, customization. Randy: not worried about
+  competition; ours is "more academic and social", and we stay far from
+  copyrighted material.
+- **Being talked through (Nov 27):** a light team mode (everyone on their
+  own phone, team score averaged; an /admin setting; random two-word
+  names and avatars), and a second Pin Drop hint to even out uneven
+  knowledge.
 - **Pinned (Randy, Nov 22: "No bother. Pin it for later."):** the lobby
   draws every mode for a moment before the room's own list arrives, so a
   mode the code doesn't play flashes and vanishes. Fix: wait for the

@@ -2136,13 +2136,37 @@ function pinDropMapHtml(data) {
             marks += `<div class="pd-mark" style="left:${pct(r.x, W)};top:${pct(r.y, H)}">${avatarHtml(r.emoji, 1)}</div>`;
         });
     }
-    return `<div class="pd-map"><img src="${data.mapUrl}" alt=""><svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none">${svg}</svg>${marks}</div>`;
+    return `<div class="pd-map"><svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none">${svg}</svg>${marks}</div>`;
+}
+// The TV keeps ONE loaded map image and moves it into each new screen
+// (Thanksgiving 2026, 11 phones on cable Wi-Fi: "the big map would not always
+// show up near-instantly"). Every state change used to rebuild it, so the TV
+// re-checked and re-decoded the map each time. The TV also gets its own
+// 2400-wide map (world-map-tv.webp, 40 KB): the 4800-wide one is for the
+// phones' 16x zoom, and the pins sit in the same map coordinates either way.
+let pinDropTvMap = null;
+function pinDropTvMapImg(mapUrl) {
+    const tvUrl = mapUrl.replace(/world-map\.webp$/, 'world-map-tv.webp');
+    if (!pinDropTvMap || pinDropTvMap.dataset.for !== mapUrl) {
+        const img = new Image();
+        img.alt = '';
+        img.dataset.for = mapUrl;
+        img.onerror = () => { if (img.src.indexOf(tvUrl) !== -1 && tvUrl !== mapUrl) img.src = mapUrl; }; // no TV copy: use the big one
+        img.src = tvUrl;
+        pinDropTvMap = img;
+    }
+    return pinDropTvMap;
+}
+function placePinDropTvMap(panel, data) {
+    const holder = panel.querySelector('.pd-map');
+    if (holder && data.mapUrl) holder.insertBefore(pinDropTvMapImg(data.mapUrl), holder.firstChild);
 }
 function renderPinDropTV(data) {
     const panel = document.getElementById('active-content-stage');
     currentGamePhase = 'PIN_DROP';
     setStatusMessage('');
-    [data.mapUrl, data.imageUrl].filter(Boolean).forEach(src => { const img = new Image(); img.src = src; });
+    if (data.mapUrl) pinDropTvMapImg(data.mapUrl); // load it during the intro
+    if (data.imageUrl) { const img = new Image(); img.src = data.imageUrl; }
     if (data.pdPhase === 'INTRO') {
         setClock('');
         panel.innerHTML = tpStage('tp-center pd-stage', `<div class="dt-splash">Round ${data.round} of ${data.total}</div>`);
@@ -2159,6 +2183,7 @@ function renderPinDropTV(data) {
             <div class="pd-map-wrap">${pinDropMapHtml(data)}</div>
             <div class="pd-foot">${rows || '<span class="pd-note">No pins this round</span>'}</div>
         `);
+        placePinDropTvMap(panel, data);
         return;
     }
     const prompt = data.kind === 'LANDMARK' && data.imageUrl
@@ -2173,6 +2198,7 @@ function renderPinDropTV(data) {
         <div class="pd-body">${prompt}<div class="pd-map-wrap">${pinDropMapHtml(data)}</div></div>
         <div class="pd-foot"><span class="pd-note">${note}</span></div>
     `);
+    placePinDropTvMap(panel, data);
     if (data.pdPhase === 'PLACE' || data.pdPhase === 'MOVE') setClock(data.secondsLeft);
     else setClock('');
 }
