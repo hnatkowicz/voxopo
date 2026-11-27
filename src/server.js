@@ -4,14 +4,14 @@ import dotenv from 'dotenv';
 import path from 'path';
 import { WebSocketServer } from 'ws';
 import pool, { isDatabaseDownError } from './config/database.js';
-import { handleIncomingMessage, activeRooms, getCategoriesForMode, resolveRequestedQuestionCount, compareByRank, closeRoom, profilerStatusFor, profilerTvSnapshot, triviYeahIITrapInfo, emptyModeVotes, finalWagerWinShare, resolveDisguisedAsset, flagMeDownStatusFor, GAME_MODE_KEYS, allowedModesFor, finalWagerRevealFor, venueBrand, isHouseTopic, nightTallyMessage, nightTallyFor, endGameVoteFor, thinkingPantsCategoryOverview, setThinkingPantsCategorySetting, venueCategoryOverview, setVenueCategorySetting, tvMessagesSince, tvIsConnected , letterRipStatusFor, letterRipTvState, doubleTakeStatusFor, doubleTakeTvState, pinDropStatusFor, pinDropTvState, announcementMessage, refreshAnnouncementForCode, clearAllRoomTimers } from './services/gameEngine.js';
+import { handleIncomingMessage, activeRooms, getCategoriesForMode, resolveRequestedQuestionCount, compareByRank, closeRoom, profilerStatusFor, profilerTvSnapshot, triviYeahIITrapInfo, emptyModeVotes, finalWagerWinShare, resolveDisguisedAsset, flagMeDownStatusFor, GAME_MODE_KEYS, allowedModesFor, finalWagerRevealFor, venueBrand, isHouseTopic, nightTallyMessage, nightTallyFor, teamsMessage, teamsStatusFor, endGameVoteFor, thinkingPantsCategoryOverview, setThinkingPantsCategorySetting, venueCategoryOverview, setVenueCategorySetting, tvMessagesSince, tvIsConnected , letterRipStatusFor, letterRipTvState, doubleTakeStatusFor, doubleTakeTvState, pinDropStatusFor, pinDropTvState, announcementMessage, refreshAnnouncementForCode, clearAllRoomTimers } from './services/gameEngine.js';
 import {
     isHostAuthorized, grantHostSession, isAccessCodeActive,
     isAdminAuthorized, grantAdminSession,
     isAdminLoginRateLimited, recordFailedAdminLogin, clearAdminLoginAttempts,
     isRoomCreateRateLimited, recordFailedRoomCreateAttempt, clearRoomCreateAttempts,
     listAccessCodes, addAccessCode, setAccessCodeActive, normalizeCode,
-    hostSessionCode, getAccessCodeVenue, venueProfilesInstalled, sanitizeVenue, updateAccessCodeVenue, houseColumnInstalled, listHouseSets, boardRulesInstalled, breaksInstalled,
+    hostSessionCode, getAccessCodeVenue, venueProfilesInstalled, sanitizeVenue, updateAccessCodeVenue, houseColumnInstalled, listHouseSets, boardRulesInstalled, breaksInstalled, teamsInstalled, readTeamSettings,
     announcementInstalled, readAnnouncementSettings, announcementForRoom
 } from './services/accessControl.js';
 import { healthMiddleware, attachHealthTracking, healthSnapshot } from './services/serverHealth.js';
@@ -122,6 +122,9 @@ app.post('/api/create-room', async (req, res) => {
         // opened this room -- null for a plain home code.
         const openingCode = typedCode || hostSessionCode(req);
         const venue = openingCode ? await getAccessCodeVenue(pool, openingCode) : null;
+        // Teams come from the code too, but apart from the venue: a plain
+        // home code (no venue name or logo) can still play in teams.
+        const teamSettings = await readTeamSettings(pool, openingCode);
 
         let code;
         let checks = 0;
@@ -161,6 +164,10 @@ app.post('/api/create-room', async (req, res) => {
             askedQuestionIds: new Set(),
             requestedQuestionCount: resolveRequestedQuestionCount(req.body && req.body.questionCount),
             venue,
+            // Teams (Nov 2026): the code's setting. The room's own team
+            // state (who wants teams, the teams) is set up by the engine.
+            teamsMode: teamSettings.mode,
+            teamSizeMax: teamSettings.sizeMax,
             votes: emptyModeVotes({ venue }),
             // Populated with real keys once the category vote phase actually starts.
             categoryVotes: {},
@@ -243,7 +250,7 @@ app.get('/api/admin/codes', requireAdmin, async (req, res) => {
         const codes = await listAccessCodes(pool);
         // venueProfiles: false until access_codes_venue_profiles.sql is run.
         const houseColumn = await houseColumnInstalled(pool);
-        return res.json({ success: true, codes, venueProfiles: await venueProfilesInstalled(pool), houseColumn, houseSets: houseColumn ? await listHouseSets(pool) : [], boardRules: await boardRulesInstalled(pool), breaks: await breaksInstalled(pool), announcement: await announcementInstalled(pool), modes: GAME_MODE_KEYS });
+        return res.json({ success: true, codes, venueProfiles: await venueProfilesInstalled(pool), houseColumn, houseSets: houseColumn ? await listHouseSets(pool) : [], boardRules: await boardRulesInstalled(pool), breaks: await breaksInstalled(pool), announcement: await announcementInstalled(pool), teams: await teamsInstalled(pool), modes: GAME_MODE_KEYS });
     } catch (e) {
         return res.status(500).json({ success: false, error: 'Failed to load codes.' });
     }
@@ -280,7 +287,7 @@ app.post('/api/admin/codes/:code/venue', requireAdmin, async (req, res) => {
         }
         const venue = sanitizeVenue(req.body, GAME_MODE_KEYS);
         const withAnnouncement = await announcementInstalled(pool);
-        const found = await updateAccessCodeVenue(pool, req.params.code, venue, await houseColumnInstalled(pool), await boardRulesInstalled(pool), await breaksInstalled(pool), withAnnouncement);
+        const found = await updateAccessCodeVenue(pool, req.params.code, venue, await houseColumnInstalled(pool), await boardRulesInstalled(pool), await breaksInstalled(pool), withAnnouncement, await teamsInstalled(pool));
         if (!found) return res.status(404).json({ success: false, error: 'No such code.' });
         // The announcement reaches rooms already open (the rest of a venue's
         // settings apply from the next room): set it up mid-evening and it works.
@@ -436,6 +443,8 @@ app.post('/api/room-status', (req, res) => {
                 endVote: endGameVoteFor(targetRoom, playerName),
                 // A pub night's running tally: this player's points and place.
                 tonight: nightTallyFor(targetRoom, playerName),
+                // Teams (Nov 2026): the lobby switch, this player's team, the teams to pick.
+                teams: teamsStatusFor(targetRoom, playerName),
                 clock: targetRoom.gameSecondsLeft ?? null,
                 // The venue's announcement, while it's on (the phone shows it on top).
                 announcement: announcementMessage(targetRoom),
@@ -812,7 +821,8 @@ function tvSnapshotMessages(room) {
         // TV draws the right lobby.
         { type: 'ROOM_VENUE', venue: room.venue || null, allowedModes: allowedModesFor(room) },
         ...(room.nightTally ? [nightTallyMessage(room)] : []),
-        { type: 'LEADERBOARD_UPDATE', players: Object.values(room.players) }
+        { type: 'LEADERBOARD_UPDATE', players: Object.values(room.players) },
+        ...(room.teamsMode === 'ROOM' || room.teamsMode === 'ALWAYS' ? [teamsMessage(room)] : [])
     ];
     if (room.gameState !== 'LOBBY') {
         messages.push({
