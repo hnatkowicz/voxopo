@@ -2189,7 +2189,7 @@ function pinDropMapHtml(data) {
             marks += `<div class="pd-mark" style="left:${pct(r.x, W)};top:${pct(r.y, H)}">${avatarHtml(r.emoji, 1)}</div>`;
         });
     }
-    return `<div class="pd-map" style="aspect-ratio: ${W} / ${H}; width: min(100cqw, calc(100cqh * ${W} / ${H}));"><svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none">${svg}</svg>${marks}</div>`;
+    return `<div class="pd-map" data-w="${W}" data-h="${H}" style="aspect-ratio: ${W} / ${H}; width: min(100cqw, calc(100cqh * ${W} / ${H}));"><svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none">${svg}</svg>${marks}</div>`;
 }
 // The TV keeps ONE loaded map image and moves it into each new screen
 // (Thanksgiving 2026, 11 phones on cable Wi-Fi: "the big map would not always
@@ -2213,7 +2213,37 @@ function pinDropTvMapImg(mapUrl, tvMapUrl) {
 function placePinDropTvMap(panel, data) {
     const holder = panel.querySelector('.pd-map');
     if (holder && data.mapUrl) holder.insertBefore(pinDropTvMapImg(data.mapUrl, data.tvMapUrl), holder.firstChild);
+    sizePinDropTvMapForOldBrowsers();
 }
+// Older TV browsers (Randy, Nov 28 2026: a smart TV's own browser showed no
+// map at all) don't know the container units and aspect-ratio the map is
+// sized with, so the map came out 0 x 0. There, measure the room by hand:
+// the map's box, or down to the footer, and set the size in pixels.
+// Browsers that do know them are left exactly as they were.
+const PD_NEEDS_SIZING = !(window.CSS && CSS.supports && CSS.supports('width', '1cqw') && CSS.supports('aspect-ratio', '1 / 1'));
+function sizePinDropTvMapForOldBrowsers() {
+    if (!PD_NEEDS_SIZING) return;
+    const wrap = document.querySelector('#active-content-stage .pd-map-wrap');
+    const map = wrap && wrap.querySelector('.pd-map');
+    if (!map) return;
+    const W = Number(map.dataset.w) || 2, H = Number(map.dataset.h) || 1;
+    map.style.width = '0px'; map.style.height = '0px'; // measure the box without the old size in it
+    const box = wrap.getBoundingClientRect();
+    let roomH = box.height;
+    if (roomH < 40) {
+        // The box didn't get a height: use the room down to the footer,
+        // less the line under the map.
+        const foot = document.getElementById('tv-foot');
+        const bottom = foot && foot.offsetParent ? foot.getBoundingClientRect().top : window.innerHeight;
+        const under = document.querySelector('#active-content-stage .pd-foot');
+        roomH = bottom - box.top - (under ? under.offsetHeight : 0) - 24;
+    }
+    const roomW = box.width || wrap.parentNode.clientWidth;
+    const w = Math.max(0, Math.min(roomW, roomH * W / H));
+    map.style.width = Math.floor(w) + 'px';
+    map.style.height = Math.floor(w * H / W) + 'px';
+}
+window.addEventListener('resize', sizePinDropTvMapForOldBrowsers);
 // Miles off: whole miles on the world, tenths on a local map, and "On it"
 // inside a local place's circle.
 function pinDropMilesText(miles, decimals) {
