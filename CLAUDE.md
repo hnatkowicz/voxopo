@@ -994,7 +994,13 @@ Mode keys are used in room votes and in `gameEngine.js`:
     one loaded map and moves it into each new screen instead of reloading
     it, and uses its own 2400-wide copy, `world-map-tv.webp` (40 KB, made
     by `MAP_WIDTH=2400 node scripts/pin-drop-map.mjs`); the 4800-wide one
-    is for the phones' zoom. **The landmark photo stays on the TV** (Randy, Nov 24: removing from
+    is for the phones' zoom. **Older TV browsers** (Randy, Nov 28 2026: a
+    smart TV's own browser showed no map at all): the map is sized with
+    container units and aspect-ratio, which older browsers don't know, so
+    it came out 0 x 0; there `sizePinDropTvMapForOldBrowsers` in `app.js`
+    measures the room and sets the size in pixels (newer browsers are
+    untouched). `OLD_TV=1` with `SHOTS=` makes the smoke test's TV act
+    like one. **The landmark photo stays on the TV** (Randy, Nov 24: removing from
     the TV something the phone carries goes against the TV being the
     focus. "If I ever suggest this again, please remind me! We don't
     remove, and it stays put."). **Open:** a rejoin after a refresh Randy hit once that couldn't be

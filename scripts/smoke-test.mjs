@@ -25,6 +25,7 @@
 // Options (environment):
 //   MODES=LETTER_RIP,PROFILER   only these rooms (default: all)
 //   SPEED=8                     how much faster than real time timers run
+//   OLD_TV=1                    with SHOTS: the TV acts like an older TV browser
 //   SHOTS=some/folder           a TV screenshot of every room at each new
 //                               screen, via Playwright (if installed)
 //   PORT=3990
@@ -160,6 +161,20 @@ if (SHOTS) {
         const page = await (await browser.newContext({ viewport: { width: 960, height: 540 } })).newPage();
         // The TV asks for wss:// when served over https; plain ws:// here.
         await page.addInitScript(() => { const W = window.WebSocket; window.WebSocket = function (u, p) { return new W(u.replace('wss://', 'ws://'), p); }; window.WebSocket.prototype = W.prototype; Object.assign(window.WebSocket, { OPEN: 1, CLOSED: 3 }); });
+        // OLD_TV=1: the TV acts like an older TV browser (Randy, Nov 28 2026: a
+        // smart TV's own browser), with no container units, aspect-ratio or :has().
+        if (process.env.OLD_TV) await page.addInitScript(() => {
+            const real = CSS.supports.bind(CSS);
+            CSS.supports = (...a) => /cq|aspect-ratio|:has/.test(a.join(' ')) ? false : real(...a);
+            document.addEventListener('DOMContentLoaded', () => {
+                for (const sheet of document.styleSheets) {
+                    try { for (let i = sheet.cssRules.length - 1; i >= 0; i--) if ((sheet.cssRules[i].selectorText || '').includes(':has(')) sheet.deleteRule(i); } catch (e) {}
+                }
+                const st = document.createElement('style');
+                st.textContent = '.pd-map-wrap { container-type: normal !important; }';
+                document.head.appendChild(st);
+            });
+        });
         await page.goto(BASE + '/tv'); await page.fill('#input-room-code', r.roomCode); await page.click('#btn-submit-spectate');
         r.tv = page; r.shot = 0;
     }
