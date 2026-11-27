@@ -1759,8 +1759,9 @@
                             showOnlyPlayScreen('category-screen');
                         } else if (data.phase === 'CATEGORY_VOTE_PHASE' && (document.getElementById('category-screen').style.display !== "block" || document.getElementById('category-pick-group').style.display === 'none')) {
                             const topics = data.mode === 'TRIVI_YEAH';
-                            document.getElementById('category-title').innerText = topics ? 'Pick a topic' : 'Pick a region';
-                            document.getElementById('category-pick-label').innerText = topics ? 'Tap one. You can change it until time runs out.' : '1. Pick a region';
+                            const maps = data.mode === 'PIN_DROP'; // a code with local maps: the room picks the map
+                            document.getElementById('category-title').innerText = topics ? 'Pick a topic' : maps ? 'Pick a map' : 'Pick a region';
+                            document.getElementById('category-pick-label').innerText = topics ? 'Tap one. You can change it until time runs out.' : maps ? '1. Pick a map' : '1. Pick a region';
                             document.getElementById('category-chosen').style.display = 'none';
                             document.getElementById('category-pick-group').style.display = '';
                             document.getElementById('category-start-group').style.display = topics ? 'none' : '';
@@ -3156,6 +3157,7 @@
                 svg += `<line class="pd-clue" x1="${l.x1}" y1="${l.y1}" x2="${l.x2}" y2="${l.y2}"/>`;
             }
             if (pdData.pdPhase === 'REVEAL' && pdData.truth) {
+                if (pdData.truthRadius) svg += `<circle cx="${pdData.truth.x}" cy="${pdData.truth.y}" r="${pdData.truthRadius}" fill="rgba(var(--rm-brand-rgb),0.18)" stroke="var(--rm-brand)" stroke-width="${pdData.mapW / 600}"/>`;
                 if (pdData.myResult) svg += `<line class="pd-line" x1="${pdData.myResult.x}" y1="${pdData.myResult.y}" x2="${pdData.truth.x}" y2="${pdData.truth.y}"/>`;
                 html += `<div class="pd-pin pd-truth" style="left:${pct(pdData.truth.x, W)};top:${pct(pdData.truth.y, H)}"></div>`;
             }
@@ -3180,9 +3182,10 @@
                 case 'REVEAL':
                     if (!me) return 'No pin this round.';
                     // No "+0" for a pin across the world (the phone pass's rule).
-                    if (!me.points) return `${me.miles.toLocaleString('en-US')} miles off.`;
+                    const off = d.milesDecimals && !me.miles ? 'Right on it!' : `${me.miles.toLocaleString('en-US', { maximumFractionDigits: d.milesDecimals || 0 })} miles off.`;
+                    if (!me.points) return off;
                     const notes = [me.stayed ? `x${d.stayBonus} for staying` : '', me.usedLine ? '-25% for the line' : ''].filter(Boolean).join(', ');
-                    return `${me.miles.toLocaleString('en-US')} miles off. +${me.points.toLocaleString('en-US')}${notes ? ` (${notes})` : ''}`;
+                    return `${off} +${me.points.toLocaleString('en-US')}${notes ? ` (${notes})` : ''}`;
                 default: return '';
             }
         }
@@ -3215,6 +3218,8 @@
                 pdLocalPin = null;
                 const img = document.getElementById('pd-map-img');
                 if (img.getAttribute('src') !== data.mapUrl) img.src = data.mapUrl;
+                // A local map has its own shape (Nov 27 2026).
+                document.getElementById('pd-viewport').style.aspectRatio = `${data.mapW} / ${data.mapH}`;
                 pdFit();
             }
             document.getElementById('pd-head').textContent = `Round ${data.round} of ${data.total}`;

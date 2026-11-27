@@ -70,6 +70,9 @@ await db.query(`INSERT INTO access_codes (code, label, active) VALUES ('SMOKE-DT
 await db.query(`UPDATE access_codes SET allowed_modes = ARRAY['DOUBLE_TAKE'] WHERE code = 'SMOKE-DT'`).catch(() => {});
 // Teams (Nov 2026): a code whose rooms decide; needs access_codes_teams.sql.
 await db.query(`INSERT INTO access_codes (code, label, active) VALUES ('SMOKE-TEAMS', 'smoke test', true) ON CONFLICT (code) DO UPDATE SET active = true`);
+// Pin Drop's local map (Nov 27 2026): a code that plays Central PA; needs pin_drop_local.sql.
+await db.query(`INSERT INTO access_codes (code, label, active) VALUES ('SMOKE-MAPS', 'smoke test', true) ON CONFLICT (code) DO UPDATE SET active = true`);
+const mapsReady = await db.query(`UPDATE access_codes SET pin_drop_maps = ARRAY['CENTRAL_PA'] WHERE code = 'SMOKE-MAPS'`).then(() => true, () => false);
 const teamsReady = await db.query(`UPDATE access_codes SET teams_mode = 'ROOM', team_size_max = 7 WHERE code = 'SMOKE-TEAMS'`).then(() => true, () => false);
 // Board rules, profiles and breaks exist only once their SQL has run.
 await db.query(`UPDATE access_codes SET board_rules = 'CLASSIC', profile = 'HOME' WHERE code = 'SMOKE-HOME'`).catch(() => {});
@@ -108,6 +111,7 @@ const ROOMS = [
     { mode: 'COUNTRY_MONKEY', code: 'SMOKE-HOME', endVote: true, label: 'vote to end early' },
     // Teams: three bots vote teams on; Ace starts a team and Bea joins it,
     // Cy starts another, Di never picks (the game should place Di).
+    ...(mapsReady ? [{ mode: 'PIN_DROP', code: 'SMOKE-MAPS', localMap: 'CENTRAL_PA', label: 'PIN_DROP (Central PA)' }] : []),
     ...(teamsReady ? [
         { mode: 'PIN_DROP', code: 'SMOKE-TEAMS', teams: true, label: 'PIN_DROP (teams)' },
         { mode: 'TRIVI_YEAH', code: 'SMOKE-TEAMS', teams: true, label: 'TRIVI_YEAH (teams)' },
@@ -199,6 +203,7 @@ function drive(r) {
     if (room.gameState === 'CATEGORY_VOTE' && waited && !r.acted) {
         r.acted = true;
         if (room.winningGameMode === 'TRIVI_YEAH') live.forEach((n, i) => act(room, code, n, i % 2 ? 'SURPRISE' : 'SCIENCE_NATURE'));
+        if (room.winningGameMode === 'PIN_DROP') { live.forEach(n => act(room, code, n, r.localMap || 'WORLD')); r.sawMapVote = true; }
     }
 
     // Question-bank modes: Trivi-yeah!, Country Monkey
@@ -320,7 +325,8 @@ function drive(r) {
         r.acted = true;
         if (pd.phase === 'PLACE') live.forEach((n, i) => {
             if (n === 'Di' && pd.index === 0) return;
-            const x = i === 0 ? pd.truth.x + 15 : (pd.truth.x + 300 * i) % 2400, y = i === 0 ? pd.truth.y : (pd.truth.y + 120 * i) % 1253;
+            const W = pd.map ? pd.map.w : 2400, H = pd.map ? pd.map.h : 1253;
+            const x = i === 0 ? pd.truth.x + 15 : (pd.truth.x + 300 * i) % W, y = i === 0 ? pd.truth.y : (pd.truth.y + 120 * i) % H;
             act(room, code, n, `PDPIN ${x} ${y}`);
         });
         if (pd.phase === 'MOVE' && live.includes('Bea')) act(room, code, 'Bea', `PDPIN ${pd.truth.x + 25} ${pd.truth.y + 10}`);
@@ -431,6 +437,12 @@ for (const r of ROOMS) {
     if (r.sawBreak) extras.push('venue break');
     if (r.tally !== undefined) extras.push(`tally for ${r.tally} players`);
     if (r.annDone) extras.push(`announcement during ${r.annGameState}, ${r.annDone}s`);
+    if (r.localMap && !r.failed) {
+        const pd = activeRooms[r.roomCode].pinDrop;
+        if (!r.sawMapVote) r.failed = 'no map vote';
+        else if (!pd || pd.map.key !== r.localMap) r.failed = `played ${pd ? pd.map.key : 'nothing'}, not ${r.localMap}`;
+        else extras.push(`map ${pd.map.name}: ${pd.rounds.map(p => p.label).join(', ')}`);
+    }
     if (r.teams && !r.failed) {
         const room = activeRooms[r.roomCode];
         const teamIds = BOTS.map(n => room.players[n].teamId);

@@ -1,0 +1,60 @@
+// Pin Drop's maps (Nov 2026): the world, plus local maps Randy draws (a
+// county, a campus, a venue). A local map is offered in a room only when
+// the room's access code has it turned on (/admin, access_codes.pin_drop_maps);
+// the room then votes World or the local map.
+//
+// A local map is Randy's drawing traced over an OpenStreetMap export, which
+// is Web Mercator, so a real place lands on it by a straight-line fit:
+//   x = A * longitude + B,   y = C * mercator(latitude) + D
+// The fit for Central PA came from the OpenStreetMap layer still inside
+// Randy's SVG (public/maps/central-pa-map.svg): ten town centers (Harrisburg,
+// Lancaster, York, Gettysburg, Hanover, Chambersburg, Reading, Carlisle,
+// Lebanon, Hagerstown) all land within half a mile, most within 0.2.
+//
+// Points fall off from the EDGE of a place's circle (Randy, Nov 27 2026: a
+// mall or a city has no single center to argue over), by e^(-miles /
+// falloff). The world's falloff is 1,000 miles; a local map's is scaled to
+// its size (Central PA is ~117 miles across: 5 miles, Randy's yes).
+import { toMap as worldToMap, fromMap as worldFromMap, MAP_W, MAP_H } from './pinMap.js';
+
+const merc = lat => Math.log(Math.tan(Math.PI / 4 + lat * Math.PI / 360));
+const unmerc = m => (2 * Math.atan(Math.exp(m)) - Math.PI / 2) * 180 / Math.PI;
+
+function mercatorMap({ A, B, C, D }) {
+    return {
+        toMap: (lat, lon) => ({ x: A * lon + B, y: C * merc(lat) + D }),
+        fromMap: (x, y) => ({ lat: unmerc((y - D) / C), lon: (x - B) / A })
+    };
+}
+
+export const PIN_DROP_MAPS = {
+    WORLD: {
+        key: 'WORLD',
+        name: 'The World',
+        imageUrl: '/pin-drop/world-map.webp',
+        tvImageUrl: '/pin-drop/world-map-tv.webp',
+        w: MAP_W, h: MAP_H,
+        toMap: worldToMap, fromMap: worldFromMap,
+        falloffMiles: 1000,
+        closeMiles: 300,   // "got it" on the phone's last-question card
+        local: false
+    },
+    CENTRAL_PA: {
+        key: 'CENTRAL_PA',
+        name: 'Central PA',
+        imageUrl: '/pin-drop/central-pa.webp',
+        tvImageUrl: '/pin-drop/central-pa-tv.webp',
+        w: 4800, h: 2400,
+        ...mercatorMap({ A: 2180.3483087883455, B: 170081.58976568692, C: -124494.39621367633, D: 96332.89582875017 }),
+        unitsPerMile: 41.15, // map pixels per mile, for drawing a place's circle
+        falloffMiles: 5,
+        closeMiles: 2,
+        local: true
+    }
+};
+
+export const LOCAL_MAP_KEYS = Object.values(PIN_DROP_MAPS).filter(m => m.local).map(m => m.key);
+
+export function pinDropMap(key) {
+    return PIN_DROP_MAPS[key] || PIN_DROP_MAPS.WORLD;
+}

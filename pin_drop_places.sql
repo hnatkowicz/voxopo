@@ -25,7 +25,7 @@ CREATE TABLE IF NOT EXISTS pin_drop_places (
 );
 
 -- Everything off first; the rows below switch back on what's still listed.
-UPDATE pin_drop_places SET active = false;
+UPDATE pin_drop_places SET active = false WHERE kind IN ('CITY', 'LANDMARK'); -- the world's own rows only (local maps' places are kept)
 
 INSERT INTO pin_drop_places (kind, label, image_url, lat, lon, difficulty) VALUES ('CITY', 'Addis Ababa, Ethiopia', NULL, 9.035, 38.698, 1) ON CONFLICT (kind, label) DO UPDATE SET image_url = EXCLUDED.image_url, lat = EXCLUDED.lat, lon = EXCLUDED.lon, difficulty = EXCLUDED.difficulty, active = true;
 INSERT INTO pin_drop_places (kind, label, image_url, lat, lon, difficulty) VALUES ('CITY', 'Amsterdam, Netherlands', NULL, 52.352, 4.915, 1) ON CONFLICT (kind, label) DO UPDATE SET image_url = EXCLUDED.image_url, lat = EXCLUDED.lat, lon = EXCLUDED.lon, difficulty = EXCLUDED.difficulty, active = true;

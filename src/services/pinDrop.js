@@ -6,30 +6,50 @@ import pool from '../config/database.js';
 
 export const PIN_DROP_MIN_PLACES = 8; // a game's worth
 
+// Every active place, on every map. map_key, radius_miles and prompt come
+// with pin_drop_local.sql (local maps, Nov 27 2026); before it runs, every
+// place is the world's, with no circle and no separate prompt.
 export async function loadPinDropPlaces() {
-    const result = await pool.query(
-        `SELECT id, kind, label, image_url, lat, lon, difficulty FROM pin_drop_places WHERE active`
-    );
-    return result.rows.map(r => ({
+    let rows;
+    try {
+        rows = (await pool.query(
+            `SELECT id, kind, label, image_url, lat, lon, difficulty, map_key, radius_miles, prompt FROM pin_drop_places WHERE active`
+        )).rows;
+    } catch (e) {
+        if (e.code !== '42703') throw e; // an undefined column: the local-maps SQL hasn't run
+        rows = (await pool.query(
+            `SELECT id, kind, label, image_url, lat, lon, difficulty FROM pin_drop_places WHERE active`
+        )).rows;
+    }
+    return rows.map(r => ({
         id: r.id, kind: r.kind, label: r.label, imageUrl: r.image_url,
-        lat: Number(r.lat), lon: Number(r.lon), difficulty: r.difficulty
+        lat: Number(r.lat), lon: Number(r.lon), difficulty: r.difficulty,
+        mapKey: r.map_key || 'WORLD', radiusMiles: Number(r.radius_miles) || 0, prompt: r.prompt || null
     }));
 }
 
 // The lobby offers Pin Drop only once its places are in the database, so a
-// room never picks a game with nothing to play. Checked every minute.
-let readyCount = 0;
-export function pinDropReadyCount() {
-    return readyCount;
+// room never picks a game with nothing to play. Checked every minute, per
+// map: the world's count decides the lobby tile; a local map is offered in
+// the map vote only with a game's worth of places.
+let readyCounts = {};
+export function pinDropReadyCount(mapKey = 'WORLD') {
+    return readyCounts[mapKey] || 0;
 }
 export async function refreshPinDropReady() {
     try {
-        const result = await pool.query('SELECT COUNT(*)::int AS n FROM pin_drop_places WHERE active');
-        readyCount = result.rows[0].n;
+        let rows;
+        try {
+            rows = (await pool.query('SELECT map_key, COUNT(*)::int AS n FROM pin_drop_places WHERE active GROUP BY map_key')).rows;
+        } catch (e) {
+            if (e.code !== '42703') throw e;
+            rows = [{ map_key: 'WORLD', n: (await pool.query('SELECT COUNT(*)::int AS n FROM pin_drop_places WHERE active')).rows[0].n }];
+        }
+        readyCounts = Object.fromEntries(rows.map(r => [r.map_key, r.n]));
     } catch {
         // Table not made yet, or the database is away: keep what we knew.
     }
-    return readyCount;
+    return readyCounts.WORLD || 0;
 }
 setTimeout(() => { refreshPinDropReady(); }, 2000).unref();
 setInterval(() => { refreshPinDropReady(); }, 60 * 1000).unref();
