@@ -1199,11 +1199,11 @@ and forth until we both agree the idea is good **and** worth the effort. So:
   distance hint ("about 1,800 miles off", one hint per round, line or
   distance); Randy has an idea or two of his own. Come back to it.
 - **Local Pin Drop: built Nov 27** (see PIN_DROP). `pin_drop_local.sql`
-  is live (Randy ran it Nov 27). **Run in Neon (Randy):**
+  is live (Randy ran it Nov 27), and so is
   `pin_drop_central_pa_photos.sql` (21 of Randy's photos in
   `public/pin-drop/central-pa/`, 1200x900 WebP q85, placed from his street
-  addresses; Sideling Hill Tunnel left out: west of the map). Tick Central
-  PA under a code's Venue settings on /admin. **Next:** an admin
+  addresses; Sideling Hill Tunnel left out: west of the map). First family
+  test Nov 27: "That's pretty fun! I can see many uses for this!" **Next:** an admin
   page to see every place's pin and circle on the map and drag or resize
   them (until then, fix a pin by its lat/lon in the SQL); Randy adds
   places (40-60 for depth) and his photos. `teams` SQL ran Nov 27.
