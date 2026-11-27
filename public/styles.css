@@ -1059,6 +1059,10 @@ body.tp-layout #onboarding-status-slot .arrival-line { font-size: calc(var(--u) 
 .pd-photo { flex: 0 0 auto; width: calc(var(--u) * 24); align-self: center; }
 /* Beside a photo the map keeps its old 38u width (fills less than that only on a short screen). */
 .pd-landmark .pd-map-wrap { flex: 0 1 calc(var(--u) * 38); width: auto; }
+/* A 4:3 local map (Nov 28 2026): the map takes the rest of the row and
+   fills its height, and the photo grows a little beside it. */
+.pd-landmark.pd-tall-map .pd-photo { width: calc(var(--u) * 26); }
+.pd-landmark.pd-tall-map .pd-map-wrap { flex: 1 1 0; }
 .pd-photo img { width: 100%; aspect-ratio: 3 / 2; object-fit: cover; display: block; border-radius: calc(var(--u) * 0.6); }
 /* The box the map may fill; the map takes the largest size of its shape
    that fits inside it (container units). */
