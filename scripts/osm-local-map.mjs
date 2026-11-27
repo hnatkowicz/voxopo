@@ -17,7 +17,9 @@
 // The script prints A, B, C and D for src/services/localMaps.js.
 //
 // Colors: green means "right" in RandoMania!, so parks are a lighter denim,
-// not green. Gold is the main roads, the same gold as the buttons.
+// not green. Gold is kept for the game's own marks (the true spot, the line
+// clue), so the main roads are cream (Randy, Nov 28 2026), and everything
+// else steps back so the pins stand out.
 import { readFileSync, writeFileSync } from 'node:fs';
 
 const args = process.argv.slice(2);
@@ -51,9 +53,9 @@ const COLORS = {
     water: '#2f5e9e',       // lakes: a deeper --rm-blue
     stream: '#5b8bd9',      // --rm-blue
     rail: '#7f92b4',        // --rm-text-muted
-    minor: '#7f92b4',       // side streets
-    collector: '#ebe6da',   // cream
-    major: '#f5b82e',       // gold, --rm-brand
+    minor: '#55688c',       // side streets: quiet
+    collector: '#a7b6d1',   // --rm-text-soft
+    major: '#f4f1e8',       // cream, --rm-text
     casing: '#0b1424',      // --rm-bg, under the main roads
     border: '#31507f'       // --rm-border-3, county and state lines
 };
@@ -70,11 +72,25 @@ const ROADS = {
 // County scale (~61 px a mile): interstates and the big US routes gold,
 // other US and PA routes cream, the rest thin.
 if (REGION) Object.assign(ROADS, {
-    motorway: ['major', 14], trunk: ['major', 12], primary: ['collector', 8], secondary: ['minor', 4]
+    motorway: ['major', 14], trunk: ['major', 12], primary: ['collector', 6], secondary: ['minor', 3]
 });
 const BORDERS = { '4': 10, '6': 4 }; // state line, county lines
 
 const data = JSON.parse(readFileSync(src, 'utf8'));
+// Fewer creeks (Randy, Nov 28 2026): only named creeks with enough length on
+// the map (10 miles across a county, 1 mile across a town); the rest were
+// what made the map busy behind the pins.
+const MIN_CREEK_MILES = REGION ? 10 : 1;
+const segMiles = ([lon1, lat1], [lon2, lat2]) => Math.hypot((lon2 - lon1) * 69.17 * Math.cos(rad(lat1)), (lat2 - lat1) * 69.17);
+const creekMiles = {};
+for (const f of data.features) {
+    const p = f.properties || {}, g = f.geometry;
+    if (p.waterway !== 'stream' || !p.name || !g || g.type !== 'LineString') continue;
+    let m = 0;
+    for (let i = 1; i < g.coordinates.length; i++) m += segMiles(g.coordinates[i - 1], g.coordinates[i]);
+    creekMiles[p.name] = (creekMiles[p.name] || 0) + m;
+}
+const keepCreek = p => p.name && creekMiles[p.name] >= MIN_CREEK_MILES;
 const layers = { green: [], forest: [], water: [], stream: [], rail: [], border: [], minor: [], collector: [], majorCasing: [], major: [] };
 const path = rings => rings.map(r => 'M' + r.map(c => px(c).map(v => v.toFixed(1)).join(',')).join('L') + 'Z').join('');
 const line = cs => 'M' + cs.map(c => px(c).map(v => v.toFixed(1)).join(',')).join('L');
@@ -98,6 +114,7 @@ for (const f of data.features) {
     }
     if (g.type !== 'LineString' || !onMap(g.coordinates)) continue;
     const d = line(g.coordinates);
+    if (p.waterway === 'stream' && !keepCreek(p)) continue;
     if (p.waterway) layers.stream.push(`<path d="${d}" stroke-width="${p.waterway === 'river' ? (REGION ? 6 : 14) : (REGION ? 2.5 : 5)}"/>`);
     else if (p.railway) layers.rail.push(`<path d="${d}"/>`);
     else if (ROADS[p.highway]) {

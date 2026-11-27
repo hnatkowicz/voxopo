@@ -1072,8 +1072,15 @@ body.tp-layout #onboarding-status-slot .arrival-line { font-size: calc(var(--u) 
 .pd-dot { fill: var(--rm-text); stroke: var(--rm-bg); opacity: 0.9; }
 /* Thin, solid and see-through, not dashed (Randy, Nov 24 2026). */
 .pd-line { stroke: var(--rm-text); stroke-width: 1px; opacity: 0.55; vector-effect: non-scaling-stroke; }
-.pd-truth-ring { fill: none; stroke: var(--rm-brand); }
-.pd-truth-dot { fill: var(--rm-brand); }
+/* First pins and the true spot: a set size on screen, dark-edged so they
+   stand out on any map (Nov 28 2026). */
+.pd-dotmark { position: absolute; width: calc(var(--u) * 1.2); height: calc(var(--u) * 1.2); margin: calc(var(--u) * -0.6) 0 0 calc(var(--u) * -0.6);
+    border-radius: 50%; background: var(--rm-text); border: calc(var(--u) * 0.2) solid var(--rm-bg); box-sizing: border-box; pointer-events: none; }
+.pd-truthmark { position: absolute; width: calc(var(--u) * 2.4); height: calc(var(--u) * 2.4); margin: calc(var(--u) * -1.2) 0 0 calc(var(--u) * -1.2);
+    border-radius: 50%; border: calc(var(--u) * 0.4) solid var(--rm-brand); box-sizing: border-box; pointer-events: none;
+    box-shadow: 0 0 0 calc(var(--u) * 0.15) var(--rm-bg), inset 0 0 0 calc(var(--u) * 0.15) var(--rm-bg); }
+.pd-truthmark::after { content: ''; position: absolute; left: 50%; top: 50%; width: calc(var(--u) * 0.6); height: calc(var(--u) * 0.6);
+    margin: calc(var(--u) * -0.3) 0 0 calc(var(--u) * -0.3); border-radius: 50%; background: var(--rm-brand); box-shadow: 0 0 0 calc(var(--u) * 0.1) var(--rm-bg); }
 .pd-mark { position: absolute; width: calc(var(--u) * 2.4); height: calc(var(--u) * 2.4); margin: calc(var(--u) * -1.2) 0 0 calc(var(--u) * -1.2);
     display: flex; align-items: center; justify-content: center; border-radius: 50%; background: var(--rm-bg);
     border: calc(var(--u) * 0.15) solid var(--rm-white); box-sizing: border-box; font-size: calc(var(--u) * 1.4); line-height: 1;
