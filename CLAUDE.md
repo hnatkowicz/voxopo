@@ -1232,9 +1232,10 @@ and forth until we both agree the idea is good **and** worth the effort. So:
 - **Category depth: done** (Nov 22). Every general category is at 200
   and built to the benchmarks. Next content ideas are Randy's call (more
   Letter Rip phrases is the standing top need).
-- **Run in Neon (Randy):** `country_monkey_water.sql`,
-  `trivi_yeah_ii_wet_pants.sql`, then `country_monkey_clues.sql` (the
-  Orange River; clues last).
+- **The Orange River batch and `venue_memory_more_kinds.sql` are live**
+  (Randy ran them Nov 28, after a read-only checklist query showed them
+  missing: Wet Pants 113, Country Monkey water with the Orange River and
+  its "Namibia" clue, venue memory for Profiler and EmpossDurr).
 - **Waiting on Randy:** Letter Rip's green keys (Nov 25 sighting: a
   letter Randy picked stayed green for the whole puzzle though he read it
   as not in the phrase, and cleared at the next puzzle; the server only
