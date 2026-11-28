@@ -4031,10 +4031,19 @@ export function doubleTakeStatusFor(room, playerName) {
 // All the numbers are first guesses (Nov 24 2026), to tune in play. Clues
 // (a zoom box, a line through your pin) were discussed and parked: "the game
 // itself should be fun out of the box" (Randy).
-const PIN_DROP_ROUNDS = 8;
-const PIN_DROP_TIERS = [1, 1, 1, 2, 2, 2, 3, 3]; // easy to hard, one per round
-const PIN_DROP_LANDMARK_ROUNDS = 3; // the rest are cities
-const PIN_DROP_INTRO_MS = 2500; // "Round 2 of 8", then the prompt
+// Rounds per map (Randy, Nov 28 2026: "this could easily be 12"): the world
+// (450+ places) plays 12; a local map plays 8 until it has ~60 places, then
+// 12, so a small map doesn't repeat itself night to night.
+const PIN_DROP_WORLD_TIERS = [1, 1, 1, 1, 2, 2, 2, 2, 3, 3, 3, 3]; // easy to hard, one per round
+const PIN_DROP_WORLD_LANDMARK_ROUNDS = [1, 4, 7, 10]; // a landmark photo in each stretch; the rest are cities
+const PIN_DROP_LOCAL_SHORT_TIERS = [1, 1, 2, 2, 3, 3, 4, 4];
+const PIN_DROP_LOCAL_LONG_TIERS = [1, 1, 1, 2, 2, 2, 3, 3, 3, 4, 4, 4];
+const PIN_DROP_LOCAL_LONG_AT = 60; // places a local map needs for 12 rounds
+function pinDropTiersFor(mapKey) {
+    if (!PIN_DROP_MAPS[mapKey] || !PIN_DROP_MAPS[mapKey].local) return PIN_DROP_WORLD_TIERS;
+    return pinDropReadyCount(mapKey) >= PIN_DROP_LOCAL_LONG_AT ? PIN_DROP_LOCAL_LONG_TIERS : PIN_DROP_LOCAL_SHORT_TIERS;
+}
+const PIN_DROP_INTRO_MS = 2500; // "Round 2 of 12", then the prompt
 const PIN_DROP_PLACE_SECONDS = 40; // drop and move your pin (was 25; Thanksgiving 2026: people rushed and lost points. Lock in still ends it early)
 const PIN_DROP_SHOW_MS = 4000; // everyone's first pins, before the second chance
 const PIN_DROP_MOVE_SECONDS = 35; // stay for the bonus, or move (was 15; Thanksgiving 2026, same reason)
@@ -4062,11 +4071,9 @@ function pinDropPoints(miles, falloffMiles = PIN_DROP_FALLOFF_MILES) {
 // The maps this room can play: the world, plus the code's local maps that
 // have a game's worth of places (pin_drop_local.sql).
 function pinDropMapChoices(room) {
-    const local = ((room && room.pinDropMaps) || []).filter(k => PIN_DROP_MAPS[k] && pinDropReadyCount(k) >= PIN_DROP_ROUNDS);
+    const local = ((room && room.pinDropMaps) || []).filter(k => PIN_DROP_MAPS[k] && pinDropReadyCount(k) >= PIN_DROP_LOCAL_SHORT_TIERS.length);
     return ['WORLD', ...local];
 }
-// Local maps' rounds, easy to hard (difficulty 1-4).
-const PIN_DROP_LOCAL_TIERS = [1, 1, 2, 2, 3, 3, 4, 4];
 // No two places this close in one game (the Capitol and Harrisburg).
 const PIN_DROP_LOCAL_MIN_APART_MILES = 3;
 
@@ -4075,7 +4082,8 @@ async function startPinDropGame(roomCode) {
     if (!room) return;
     const map = pinDropMap(room.pinDropMapKey);
     const places = (await loadPinDropPlaces()).filter(p => p.mapKey === map.key);
-    if (places.length < PIN_DROP_ROUNDS) throw new Error(`Pin Drop needs ${PIN_DROP_ROUNDS} places, found ${places.length}.`);
+    const tiers = pinDropTiersFor(map.key);
+    if (places.length < tiers.length) throw new Error(`Pin Drop needs ${tiers.length} places, found ${places.length}.`);
     // Places this room hasn't played first (room memory only).
     room.pinDropSeen = room.pinDropSeen || new Set();
     if (places.every(p => room.pinDropSeen.has(p.id))) room.pinDropSeen.clear();
@@ -4085,7 +4093,7 @@ async function startPinDropGame(roomCode) {
         // A local map: easy to hard by difficulty, places the room hasn't
         // played first, never two places a few miles apart in one game.
         const tooClose = p => [...used].some(id => { const q = places.find(x => x.id === id); return milesBetween(p, q) < (map.minApartMiles || PIN_DROP_LOCAL_MIN_APART_MILES); });
-        rounds = PIN_DROP_LOCAL_TIERS.map(tier => {
+        rounds = tiers.map(tier => {
             const fits = p => !used.has(p.id) && !tooClose(p);
             const ranked = [
                 ...shuffleArray(places.filter(p => fits(p) && p.difficulty === tier && !room.pinDropSeen.has(p.id))),
@@ -4100,8 +4108,8 @@ async function startPinDropGame(roomCode) {
         rounds.sort((a, b) => a.difficulty - b.difficulty);
     } else {
     // Which rounds are landmarks: spread across easy, middle and hard.
-    const landmarkRounds = new Set([1, 4, 6].slice(0, PIN_DROP_LANDMARK_ROUNDS));
-    rounds = PIN_DROP_TIERS.map((tier, i) => {
+    const landmarkRounds = new Set(PIN_DROP_WORLD_LANDMARK_ROUNDS);
+    rounds = tiers.map((tier, i) => {
         const kind = landmarkRounds.has(i) ? 'LANDMARK' : 'CITY';
         const fits = p => !used.has(p.id) && p.kind === kind;
         const ranked = [

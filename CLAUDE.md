@@ -912,8 +912,10 @@ Mode keys are used in room votes and in `gameEngine.js`:
     over from the last puzzle. Check: which round, which letters, and
     whether those letters were on the TV.
 - **PIN_DROP** (Pin Drop, a working name -- Randy will name it once he's
-  seen it play; built Nov 24 2026): find it on the world map. 8 rounds,
-  easy to hard: 5 cities by name and 3 of Randy's landmark photos.
+  seen it play; built Nov 24 2026): find it on the world map. **12 rounds**
+  (8 until Nov 28 2026; Randy: "this could easily be 12"), easy to hard:
+  8 cities by name and 4 of Randy's landmark photos. A local map plays 8
+  until it has 60 places, then 12 (`pinDropTiersFor`).
   Everyone taps the map on their phone at once (40s since Thanksgiving
   2026, was 25s: "people were rushing and losing time"; move it as often
   as you like), then the room's first pins appear as **plain dots, no
@@ -1266,8 +1268,7 @@ and forth until we both agree the idea is good **and** worth the effort. So:
   The line got used more at 25%. **Tomorrow's agenda (agreed Nov 28):**
   (1) **the Pin Drop pin editor** (see below), first for Hanover's pins,
   incl. widening circles by hand where a place is hard to pinpoint (not a
-  blanket "harder = bigger" rule); (2) **rounds per map** -- 12 for the
-  world (453 places), 8 for a local map until it has ~60 places;
+  blanket "harder = bigger" rule); (2) **rounds per map** -- done Nov 28;
   (3) an **Overpass query for Central PA's new place kinds**, so their
   coordinates come from OpenStreetMap, not memory: airports, colleges,
   drive-ins, amusement parks, racetracks, viewpoints, famous homes
