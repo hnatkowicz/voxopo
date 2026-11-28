@@ -984,8 +984,7 @@ Mode keys are used in room votes and in `gameEngine.js`:
     style: no side streets, county and state lines) **in its existing frame**
     (`fit:A,B,C,D`), so every place stayed put; Randy: "That. Is.
     Gorgeous." **Hanover** (`public/maps/hanover-map.svg`, town style, 7.7
-    miles across, ~623 px a mile; no road labels, Randy's call) is **in
-    the game** (Nov 28 2026, to test before committing): 44 places from
+    miles across, ~623 px a mile) is **in the game** (Nov 28 2026, to test before committing): 44 places from
     Randy's list (`pin_drop_hanover.sql`: his Hanover businesses -- a
     marketing angle -- landmarks, schools, parks, and three gone places as
     CLUE rounds, "Where was the old Anchor Inn?"; Hanover Shoe Farms left
@@ -997,6 +996,20 @@ Mode keys are used in room votes and in `gameEngine.js`:
     Maps screen grab is Google's map and can't be used. On the TV, the
     first-pin dots and the true spot are a set size on screen with a dark
     edge (they had shrunk to a couple of pixels on the detailed map).
+    **Street names** (Nov 29 2026; Randy's wife wouldn't play the
+    town map without them, so "no road labels" was reversed): `LABELS=1`
+    on `osm-local-map.mjs` names the motorway-to-secondary roads once along
+    their longest stretch (twice if very long), upright, never overlapping,
+    on a smoothed copy of the road so bends don't break the words, and only
+    where the whole name fits; on the road, cream with a thin dark outline
+    and slightly wide letter spacing (Randy found the first, heavy outline
+    squished; names beside the road were tried, and he chose on the road).
+    Side streets and smaller collectors stay unnamed, which keeps Moul
+    Avenue and Eichelberger Street from giving rounds away. Redrawn in the
+    same frame, so every pin stayed put (the roads were checked identical).
+    Hanover has 15 names. **They're readable on phones once zoomed a little,
+    not on the TV** (about 7 px tall on a 1080p TV's map box); bigger names
+    on fewer roads for the TV is an open option for Randy.
     **Hometown heroes** (Nov 28 2026): on a local map, when everyone who
     pinned (2+) lands inside the circle, "This crowd CRUSHED it!" drops
     onto the TV's map with a shake, in the half away from the answer, and
