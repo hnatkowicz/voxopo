@@ -1,9 +1,14 @@
 // Randy's drawn avatars (public/avatars/), the only picks on the join screen
 // since Nov 2026 -- they replaced the 24-emoji grid (Randy: "my drawn
-// avatars only"). Add one: upload <name>.svg to public/avatars/ and add
-// its name here (its small copy in thumbs/ is made by a GitHub Action). To retire one, take it off this list but keep its file,
-// so anyone already playing as it still shows (pants came off when the
-// list grew from 18 to 24, Randy, Nov 2026).
+// avatars only").
+//
+// ADD ONE: just upload <name>.svg to public/avatars/ (Randy, Nov 28 2026:
+// "I want to continue adding until I'm blue in the face"). The server adds
+// every drawing that isn't on the list below to the end of it, A to Z
+// (src/services/avatarList.js), and a GitHub Action makes its small copy in
+// thumbs/. Writing a name into the list is only for choosing its place.
+// HOLD ONE BACK: put its name in AVATARS_HELD_BACK and keep the file, so
+// anyone already playing as it still shows.
 //
 // A player's pick travels as "av:<name>" in the same slot the emoji used
 // (the join message, player.emoji, every scoreboard). Anything else in that
@@ -20,6 +25,13 @@ const AVATARS = [
     'camera', 'camp-fire', 'mountain', 'mustache-mask', 'peace', 'penguin',
     'pie', 'radioactive', 'surf-wave', 'tape-measure', 'union-jack'
 ];
+
+// Drawn but not offered. pants came off when the list grew from 18 to 24
+// (Randy, Nov 2026). genie: a blue genie with a goatee and topknot reads as
+// Disney's. fawkes (held Nov 28 2026, Randy decides): the "V for Vendetta"
+// mask is Warner Bros.' design and the Anonymous hacker mask, the same
+// licensed-look problem as the genie.
+const AVATARS_HELD_BACK = ['pants', 'genie', 'fawkes'];
 
 const AVATAR_PATTERN = /^av:([a-z0-9-]+)$/;
 

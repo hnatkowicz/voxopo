@@ -344,12 +344,20 @@ event, for a small fee. That's why hosting is gated behind access codes.
   `public/avatars/` replaced the 24-emoji join grid ("my drawn avatars
   only"; no tally of picks). **How many: whatever Randy comes up with**
   (Nov 2026: "the scrolling has emboldened me to continue creating"); he
-  adds them in sixes (35 on the list; pants came off but keeps its
-  file, and genie is drawn but held back: a blue genie with a goatee
-  and topknot reads as Disney's, so Randy decides).
+  adds them in sixes. **Uploading the SVG is all it takes** (Nov 28
+  2026, after six uploads sat unused because the list had to be edited:
+  "I want to continue adding until I'm blue in the face"): the server
+  adds every drawing in `public/avatars/` that isn't written into
+  `AVATARS` to its end, A to Z (`src/services/avatarList.js`, which serves
+  `/avatars.js` and gives teams their avatars), and the thumbnail Action
+  makes its small copy. 40 in the game (Nov 28). **Held back**
+  (`AVATARS_HELD_BACK`, files kept): pants (came off at 24), genie (reads
+  as Disney's) and fawkes (the "V for Vendetta"/Anonymous mask is Warner
+  Bros.' design; held Nov 28, Randy decides).
   Randy: the big avatar on the podium "means a lot when it's yours up
   there", which is why the ones that are so-so small stay. The list is
-  `AVATARS` in `public/avatars.js` (add a file, add its name). **A bigger
+  `AVATARS` in `public/avatars.js` (writing a name there only sets its
+  place; any uploaded file joins anyway). **A bigger
   list** (Randy, Nov 2026: growing in sixes; one list for everyone, no
   rotating sets, duplicates allowed since a venue may hope for 100+
   players, and no changing your pick after joining): the join grid
@@ -1232,9 +1240,10 @@ and forth until we both agree the idea is good **and** worth the effort. So:
 - **Category depth: done** (Nov 22). Every general category is at 200
   and built to the benchmarks. Next content ideas are Randy's call (more
   Letter Rip phrases is the standing top need).
-- **Run in Neon (Randy):** `country_monkey_water.sql`,
-  `trivi_yeah_ii_wet_pants.sql`, then `country_monkey_clues.sql` (the
-  Orange River; clues last).
+- **The Orange River batch and `venue_memory_more_kinds.sql` are live**
+  (Randy ran them Nov 28, after a read-only checklist query showed them
+  missing: Wet Pants 113, Country Monkey water with the Orange River and
+  its "Namibia" clue, venue memory for Profiler and EmpossDurr).
 - **Waiting on Randy:** Letter Rip's green keys (Nov 25 sighting: a
   letter Randy picked stayed green for the whole puzzle though he read it
   as not in the phrase, and cleared at the next puzzle; the server only
@@ -1258,7 +1267,7 @@ and forth until we both agree the idea is good **and** worth the effort. So:
 - **Pinned (Randy, Nov 27): a second Pin Drop hint.** Claude suggested a
   distance hint ("about 1,800 miles off", one hint per round, line or
   distance); Randy has an idea or two of his own. Come back to it.
-- **Run in Neon (Randy):** `content/sql/pop_quiz.sql` (Pop Quiz to 250).
+- **Pop Quiz at 250 is live** (Randy ran `content/sql/pop_quiz.sql`, Nov 28).
 - **Pinned (Randy, Nov 28):** road numbers on the local maps (OSM `ref`
   tags make shields automatic; town names would give rounds away) until
   feedback from different groups; phone full screen (iPhones can't; Android
@@ -1282,8 +1291,8 @@ and forth until we both agree the idea is good **and** worth the effort. So:
   questions already work (CLUE kind). **Stay bonus stays x1.5 for now**
   (Randy asked about x1.25; Claude: one change at a time -- play another
   night and watch whether winners are mostly stayers). **Run in Neon (Randy):**
-  `pin_drop_hanover.sql`, then tick Hanover under a code's Pin Drop maps;
-  `pin_drop_central_pa_osm.sql` (once; fix pins in the editor after).
+  `pin_drop_hanover.sql`, then tick Hanover under a code's Pin Drop maps.
+  `pin_drop_central_pa_osm.sql` is live (Randy ran it Nov 28).
 - **Local Pin Drop: built Nov 27** (see PIN_DROP). `pin_drop_local.sql`
   is live (Randy ran it Nov 27), and so is
   `pin_drop_central_pa_photos.sql` (21 of Randy's photos in

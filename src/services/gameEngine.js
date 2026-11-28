@@ -6,6 +6,7 @@ import { listPhotoPairs, doubleTakeReadyCount } from './doubleTake.js';
 import { loadPinDropPlaces, pinDropReadyCount, PIN_DROP_MIN_PLACES } from './pinDrop.js';
 import { milesBetween } from './pinMap.js';
 import { pinDropMap, PIN_DROP_MAPS } from './localMaps.js';
+import { avatarNames } from './avatarList.js';
 
 export const activeRooms = {};
 
@@ -5637,20 +5638,11 @@ const TEAM_WORDS_SECOND = [
     'Robots', 'Wizards', 'Koalas', 'Sprinkles', 'Hamsters', 'Cupcakes', 'Bison', 'Squirrels', 'Mittens', 'Geckos',
     'Sloths', 'Puffins', 'Dragons', 'Raccoons', 'Bagels', 'Pumpkins', 'Ferrets', 'Beagles', 'Teapots', 'Kittens'
 ];
-// Randy's drawn avatars, read from the same list the phones use, so a team
-// avatar is always one that exists.
-let teamAvatarList = null;
+// Randy's drawn avatars, the same list the phones get (written ones plus
+// any uploaded drawing, avatarList.js), so a team avatar always exists.
 function teamAvatars() {
-    if (teamAvatarList) return teamAvatarList;
-    try {
-        const src = readFileSync(new URL('../../public/avatars.js', import.meta.url), 'utf8');
-        const block = (src.match(/const AVATARS = \[([\s\S]*?)\];/) || [])[1] || '';
-        teamAvatarList = [...block.replace(/\/\/.*$/gm, '').matchAll(/'([a-z0-9-]+)'/g)].map(m => m[1]);
-    } catch (e) {
-        teamAvatarList = [];
-    }
-    if (!teamAvatarList.length) teamAvatarList = ['owl'];
-    return teamAvatarList;
+    const all = avatarNames().all;
+    return all.length ? all : ['owl'];
 }
 
 function teamsAvailable(room) {
