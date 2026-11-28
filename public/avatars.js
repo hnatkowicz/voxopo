@@ -28,9 +28,9 @@ const AVATARS = [
 
 // Drawn but not offered. pants came off when the list grew from 18 to 24
 // (Randy, Nov 2026). genie: a blue genie with a goatee and topknot reads as
-// Disney's. fawkes (held Nov 28 2026, Randy decides): the "V for Vendetta"
-// mask is Warner Bros.' design and the Anonymous hacker mask, the same
-// licensed-look problem as the genie.
+// Disney's. fawkes: Randy's own drawing (from a reference), on hold by his choice
+// (Nov 28 2026) while he draws more; the "V for Vendetta" mask's design is
+// Warner Bros.', the same licensed-look question as the genie.
 const AVATARS_HELD_BACK = ['pants', 'genie', 'fawkes'];
 
 const AVATAR_PATTERN = /^av:([a-z0-9-]+)$/;

@@ -124,6 +124,144 @@ for (const f of data.features) {
     }
 }
 
+// Street names (Nov 29 2026; Randy's wife wouldn't play Hanover without
+// them -- she couldn't tell where she was). LABELS=1 names the main and
+// collector roads (motorway to secondary): each name's pieces are joined end
+// to end, and the name is written once along its longest stretch (twice if
+// it's very long), on the road, reading left to right. Side streets and the
+// smaller collectors stay unnamed, which also keeps names like Moul Avenue
+// and Eichelberger Street (beside Moul Field and the Eichelberger) from
+// giving rounds away. Names sit on their roads (Randy, Nov 29 2026: "I know
+// I'm okay with it"; beside the road was tried), with letters spaced a little
+// wider and a thinner outline (he found the first, heavy one squished), words
+// pulled a touch closer so the road barely shows between them.
+const LABEL_CLASSES = new Set(['motorway', 'trunk', 'primary', 'secondary']);
+const labelFont = REGION ? 30 : 46;
+const labels = [];
+if (process.env.LABELS === '1') {
+    const byName = {}, classOf = {}, candidates = [];
+    const ROAD_RANK = { motorway: 0, trunk: 1, primary: 2, secondary: 3 };
+    for (const f of data.features) {
+        const p = f.properties || {}, g = f.geometry;
+        if (!p.name || !LABEL_CLASSES.has(p.highway) || !g || g.type !== 'LineString') continue;
+        (byName[p.name] = byName[p.name] || []).push(g.coordinates.map(px));
+        if (!(classOf[p.name] in ROAD_RANK) || ROAD_RANK[p.highway] < ROAD_RANK[classOf[p.name]]) classOf[p.name] = p.highway;
+    }
+    // The point a fraction of the way along a line, and which way it runs there.
+    const alongPath = (pts, frac) => {
+        const target = lengthOf(pts) * frac;
+        let run = 0;
+        for (let i = 1; i < pts.length; i++) {
+            const seg = Math.hypot(pts[i][0] - pts[i - 1][0], pts[i][1] - pts[i - 1][1]);
+            if (run + seg >= target) {
+                const t = seg ? (target - run) / seg : 0;
+                return { pt: [pts[i - 1][0] + t * (pts[i][0] - pts[i - 1][0]), pts[i - 1][1] + t * (pts[i][1] - pts[i - 1][1])],
+                         dir: [pts[i][0] - pts[i - 1][0], pts[i][1] - pts[i - 1][1]] };
+            }
+            run += seg;
+        }
+        return { pt: pts[pts.length - 1], dir: [1, 0] };
+    };
+    const key = ([x, y]) => `${x.toFixed(0)},${y.toFixed(0)}`;
+    const lengthOf = pts => pts.reduce((m, q, i) => i ? m + Math.hypot(q[0] - pts[i - 1][0], q[1] - pts[i - 1][1]) : 0, 0);
+    for (const [name, pieces] of Object.entries(byName)) {
+        // Join pieces that share an end into longer chains.
+        const chains = pieces.map(p => p.slice());
+        let joined = true;
+        while (joined) {
+            joined = false;
+            outer: for (let i = 0; i < chains.length; i++) for (let j = 0; j < chains.length; j++) {
+                if (i === j) continue;
+                const a = chains[i], b = chains[j];
+                let merged = null;
+                if (key(a[a.length - 1]) === key(b[0])) merged = a.concat(b.slice(1));
+                else if (key(a[a.length - 1]) === key(b[b.length - 1])) merged = a.concat(b.slice(0, -1).reverse());
+                else if (key(a[0]) === key(b[b.length - 1])) merged = b.concat(a.slice(1));
+                else if (key(a[0]) === key(b[0])) merged = b.slice().reverse().concat(a.slice(1));
+                if (merged) { chains.splice(Math.max(i, j), 1); chains.splice(Math.min(i, j), 1, merged); joined = true; break outer; }
+            }
+        }
+        // Only the part of a chain that's on the map counts.
+        const onMapParts = [];
+        for (const c of chains) {
+            let cur = [];
+            for (const q of c) {
+                if (q[0] > 60 && q[0] < W - 60 && q[1] > 60 && q[1] < H - 60) cur.push(q);
+                else { if (cur.length > 1) onMapParts.push(cur); cur = []; }
+            }
+            if (cur.length > 1) onMapParts.push(cur);
+        }
+        onMapParts.sort((a, b) => lengthOf(b) - lengthOf(a));
+        const best = onMapParts[0];
+        if (!best) continue;
+        const len = lengthOf(best);
+        const textLen = name.length * labelFont * 0.55;
+        if (len < textLen * 1.6) continue; // too short to carry its name
+        const wanted = len > textLen * 8 ? [0.3, 0.7] : [0.5];
+        candidates.push({ name, best, len, textLen, wanted, rank: ROAD_RANK[classOf[name]] ?? 9 });
+    }
+    // Biggest roads first, then longest; a name that would land on top of
+    // another one (Eisenhower Drive over Broadway) moves along its road, or
+    // is left off.
+    candidates.sort((a, b) => (a.rank - b.rank) || (b.len - a.len));
+    // The name follows a smoothed copy of the road: set beside a road,
+    // text bunches up or drops letters on the inside of a sharp bend
+    // ("3rd Steet" in the first preview). Resample every 12 px, then
+    // average over about three letters' width, twice.
+    const smooth = (pts) => {
+        const step = 12, out = [pts[0]];
+        for (let i = 1; i < pts.length; i++) {
+            const [x0, y0] = pts[i - 1], [x1, y1] = pts[i];
+            const n = Math.max(1, Math.round(Math.hypot(x1 - x0, y1 - y0) / step));
+            for (let k = 1; k <= n; k++) out.push([x0 + (x1 - x0) * k / n, y0 + (y1 - y0) * k / n]);
+        }
+        const w = Math.max(2, Math.round(labelFont * 1.6 / step));
+        let cur = out;
+        for (let pass = 0; pass < 2; pass++) {
+            cur = cur.map((_, i) => {
+                const a = Math.max(0, i - w), b = Math.min(cur.length - 1, i + w);
+                let sx = 0, sy = 0;
+                for (let j = a; j <= b; j++) { sx += cur[j][0]; sy += cur[j][1]; }
+                return [sx / (b - a + 1), sy / (b - a + 1)];
+            });
+        }
+        return cur;
+    };
+    const placed = [];
+    for (const c of candidates) {
+        c.best = smooth(c.best);
+        c.len = lengthOf(c.best);
+        const offsets = [];
+        for (const want of c.wanted) {
+            for (const f of [want, want - 0.15, want + 0.15, want - 0.3, want + 0.3]) {
+                // The whole name has to fit on the road on both sides of its
+                // middle ("3rd Street" lost its "3" off a short stretch).
+                const room = c.textLen / 2 + labelFont;
+                if (f * c.len < room || (1 - f) * c.len < room) continue;
+                const { pt, dir } = alongPath(c.best, f);
+                if (placed.some(q => Math.hypot(q[0] - pt[0], q[1] - pt[1]) < (c.textLen + labelFont * 4) / 1.6)) continue;
+                placed.push(pt);
+                offsets.push({ f, dir });
+                break;
+            }
+        }
+        for (const o of offsets) {
+            // Read left to right where the name sits, not by the road's ends
+            // (a road that curves back on itself put Eisenhower upside down).
+            const run = o.dir[0] >= 0 ? c.best : c.best.slice().reverse();
+            const f = o.dir[0] >= 0 ? o.f : 1 - o.f;
+            labels.push({ name: c.name, d: 'M' + run.map(q => q.map(v => v.toFixed(1)).join(',')).join('L'), offset: `${(f * 100).toFixed(1)}%` });
+        }
+    }
+}
+const labelGroup = () => {
+    if (!labels.length) return '';
+    const defs = labels.map((l, i) => `<path id="road-name-${i}" d="${l.d}"/>`).join('\n      ');
+    const texts = labels.map((l, i) =>
+        `<text><textPath href="#road-name-${i}" startOffset="${l.offset}">${l.name.replace(/&/g, '&amp;')}</textPath></text>`).join('\n    ');
+    return `  <defs>\n      ${defs}\n  </defs>\n  <g id="road-names" inkscape:label="road-names" inkscape:groupmode="layer" font-family="DM Sans, Arial, sans-serif" font-weight="700" font-size="${labelFont}" fill="${COLORS.major}" stroke="${COLORS.casing}" stroke-width="${labelFont * 0.3}" stroke-linejoin="round" paint-order="stroke" text-anchor="middle" dominant-baseline="central" letter-spacing="${labelFont * 0.09}" word-spacing="${-labelFont * 0.12}">\n    ${texts}\n  </g>`;
+};
+
 const group = (label, style, items) =>
     `  <g id="${label}" inkscape:label="${label}" inkscape:groupmode="layer" ${style}>\n    ${items.join('\n    ')}\n  </g>`;
 const roundLine = 'fill="none" stroke-linecap="round" stroke-linejoin="round"';
@@ -146,6 +284,7 @@ ${group('side-streets', `${roundLine} stroke="${COLORS.minor}"`, layers.minor)}
 ${group('collector-roads', `${roundLine} stroke="${COLORS.collector}"`, layers.collector)}
 ${group('main-roads-edge', `${roundLine} stroke="${COLORS.casing}"`, layers.majorCasing)}
 ${group('main-roads', `${roundLine} stroke="${COLORS.major}"`, layers.major)}
+${labelGroup()}
 </svg>
 `;
 writeFileSync(out, svg);
