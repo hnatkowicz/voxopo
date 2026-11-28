@@ -12,6 +12,10 @@
 -- check them on the map. Circles 0.3 mi for a building, bridge or stand,
 -- 0.4 for a mall or Chickies Rock, 0.5 for Intercourse.
 --
+-- !! Since the pin editor (/admin/pin-drop, Nov 28 2026), the database is the
+-- !! master copy of these pins. Re-running this file puts its places back
+-- !! where they were here, undoing the editor's fixes. Use the editor's
+-- !! "Export SQL" file instead (it replaces this one in the repo).
 -- SAFE TO RE-RUN: each photo is added or updated by (kind, label).
 -- ============================================================================
 

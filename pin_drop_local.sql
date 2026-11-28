@@ -17,6 +17,10 @@
 --    src/services/localMaps.js. Check them on the map; correct a pin by
 --    editing its lat/lon here (an admin page to drag pins comes next).
 --
+-- !! Since the pin editor (/admin/pin-drop, Nov 28 2026), the database is the
+-- !! master copy of these pins. Re-running this file puts its places back
+-- !! where they were here, undoing the editor's fixes. Use the editor's
+-- !! "Export SQL" file instead (it replaces this one in the repo).
 -- SAFE TO RE-RUN: columns are added only if missing, and each place is
 -- added or updated by (kind, label).
 -- ============================================================================

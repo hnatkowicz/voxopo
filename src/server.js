@@ -18,6 +18,7 @@ import { healthMiddleware, attachHealthTracking, healthSnapshot } from './servic
 import { attachVenueMemory } from './services/venueMemory.js';
 import { LOCAL_MAP_KEYS, PIN_DROP_MAPS } from './services/localMaps.js';
 import { listPhotoPairs, readSavedPairs, savePairSpots } from './services/doubleTake.js';
+import { listMapPlaces, checkEditedPlace, saveMapPlace } from './services/pinDrop.js';
 import { fileURLToPath } from 'url';
 
 // Recreate __dirname cleanly for ES module environments
@@ -360,6 +361,44 @@ app.post('/api/admin/double-take/:name', requireAdmin, async (req, res) => {
         return res.json({ success: true });
     } catch (e) {
         if (e.code === '42P01') return res.status(409).json({ success: false, error: 'Run double_take.sql in Neon first.' });
+        if (isDatabaseDownError(e)) return res.status(503).json({ success: false, error: "Couldn't reach the database. Try again in a minute." });
+        return res.status(500).json({ success: false, error: 'Could not save.' });
+    }
+});
+
+// The Pin Drop pin editor (/admin/pin-drop, Nov 28 2026): a local map's
+// places, to move, resize, add and retire. Edits reach the next game.
+app.get('/api/admin/pin-drop', requireAdmin, (req, res) => {
+    res.setHeader('Cache-Control', 'no-store');
+    return res.json({ success: true, maps: LOCAL_MAP_KEYS.map(k => {
+        const m = PIN_DROP_MAPS[k];
+        return { key: m.key, name: m.name, imageUrl: m.imageUrl, w: m.w, h: m.h, fit: m.fit, unitsPerMile: m.unitsPerMile, minApartMiles: m.minApartMiles || 0 };
+    }) });
+});
+app.get('/api/admin/pin-drop/:map/places', requireAdmin, async (req, res) => {
+    res.setHeader('Cache-Control', 'no-store');
+    if (!LOCAL_MAP_KEYS.includes(req.params.map)) return res.status(404).json({ success: false, error: 'No local map by that name.' });
+    try {
+        return res.json({ success: true, places: await listMapPlaces(req.params.map) });
+    } catch (e) {
+        if (isDatabaseDownError(e)) return res.status(503).json({ success: false, error: "Couldn't reach the database. Try again in a minute." });
+        if (e.code === '42703') return res.status(409).json({ success: false, error: 'Run pin_drop_local.sql in Neon first.' });
+        return res.status(500).json({ success: false, error: 'Could not load the places.' });
+    }
+});
+app.post('/api/admin/pin-drop/:map/places/:id', requireAdmin, async (req, res) => {
+    const mapKey = req.params.map;
+    if (!LOCAL_MAP_KEYS.includes(mapKey)) return res.status(404).json({ success: false, error: 'No local map by that name.' });
+    const id = req.params.id === 'new' ? null : Number(req.params.id);
+    if (id !== null && !Number.isInteger(id)) return res.status(400).json({ success: false, error: 'Bad place number.' });
+    const { error, place } = checkEditedPlace(PIN_DROP_MAPS[mapKey], req.body);
+    if (error) return res.status(400).json({ success: false, error });
+    try {
+        const savedId = await saveMapPlace(mapKey, id, place);
+        if (savedId == null) return res.status(404).json({ success: false, error: 'That place is gone. Reload the page.' });
+        return res.json({ success: true, id: savedId });
+    } catch (e) {
+        if (e.code === '23505') return res.status(409).json({ success: false, error: `Another ${place.kind.toLowerCase()} is already called "${place.label}".` });
         if (isDatabaseDownError(e)) return res.status(503).json({ success: false, error: "Couldn't reach the database. Try again in a minute." });
         return res.status(500).json({ success: false, error: 'Could not save.' });
     }
@@ -813,6 +852,7 @@ app.get('/host', (req, res) => { res.sendFile(path.resolve('public/host.html'));
 app.get('/info', (req, res) => { res.sendFile(path.resolve('public/info.html')); });
 app.get('/admin', (req, res) => { res.sendFile(path.resolve('public/admin.html')); });
 app.get('/admin/double-take', (req, res) => { res.sendFile(path.resolve('public/admin-double-take.html')); });
+app.get('/admin/pin-drop', (req, res) => { res.sendFile(path.resolve('public/admin-pin-drop.html')); });
 
 // What a TV needs when it (re)joins a room: the venue look, the scoreboard
 // and, mid-game, a catch-up of the current phase. Shared by the live

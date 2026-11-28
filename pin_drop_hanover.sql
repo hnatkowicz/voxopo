@@ -13,9 +13,13 @@
 --
 -- COORDINATES ARE A FIRST DRAFT from Randy's list: Wirt Park and Codorus
 -- State Park check out against OpenStreetMap, but Moul Field sits ~1/3 mile
--- from OSM's outline of it, so expect a few more off. Fix pins in the
--- coming pin editor (or edit lat/lon here and re-run).
+-- from OSM's outline of it, so expect a few more off. Run this file once,
+-- then fix pins in the pin editor (/admin/pin-drop).
 --
+-- !! Since the pin editor (/admin/pin-drop, Nov 28 2026), the database is the
+-- !! master copy of these pins. Re-running this file puts its places back
+-- !! where they were here, undoing the editor's fixes. Use the editor's
+-- !! "Export SQL" file instead (it replaces this one in the repo).
 -- Needs pin_drop_local.sql (already run). SAFE TO RE-RUN: each place is
 -- added or updated by (kind, label).
 -- ============================================================================
