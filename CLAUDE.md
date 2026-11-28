@@ -110,7 +110,18 @@ event, for a small fee. That's why hosting is gated behind access codes.
   across modes. A game ended early by the room's vote doesn't count.
   Between games the TV's rail is titled "Tonight" and ranks by those
   points; the phone's Info page says "Tonight: 17 points, 2nd of 9". Room
-  memory only (`room.nightTally`), gone when the room closes. Pickles & Pins is the test venue
+  memory only (`room.nightTally`), gone when the room closes. **Easter eggs**
+  (Nov 28 2026; Randy's oldest daughter's idea, and Randy is "tuned in" to
+  the rare ~5% moments that could earn one, without becoming a parody game):
+  **the title** -- in the TV's lobby only, the last game's winner takes over
+  the wordmark: a name of 3-6 letters drops a final vowel or y and adds
+  "o" (Laura → LauroMania!, Tom → TomoMania!, Randy → RandoMania!, so the
+  title stays put when Randy wins), every room, pubs included (Randy:
+  adjust if anyone complains); **the hat trick** -- three wins in a row
+  earns the muscle-3 icon beside the name in the lobby's "Tonight" rail
+  for the rest of the night (a crown on the avatar "doesn't fit the
+  vibe"); **Hometown heroes** -- see PIN_DROP. Room memory only
+  (`room.lastWinner`, `room.winStreak`, `room.hatTricks`). Pickles & Pins is the test venue
   (Randy's logo `pickles-pins.svg`: the pickle-jar-and-pin mark, no
   lettering, since the banner prints the name beside it).
 - **Teams** (Nov 27 2026; Randy's son asked, for the living room; designed
@@ -974,6 +985,10 @@ Mode keys are used in room votes and in `gameEngine.js`:
     Maps screen grab is Google's map and can't be used. On the TV, the
     first-pin dots and the true spot are a set size on screen with a dark
     edge (they had shrunk to a couple of pixels on the detailed map).
+    **Hometown heroes** (Nov 28 2026): on a local map, when everyone who
+    pinned (2+) lands inside the circle, "This crowd CRUSHED it!" drops
+    onto the TV's map with a shake, in the half away from the answer, and
+    the reveal holds 3s longer (`PIN_DROP_CRUSHED_EXTRA_MS`).
   - **The map:** Randy's world map SVG (`public/maps/workd-map-complete.svg`,
     Wikipedia's blank world map in his colors), rendered to
     `public/pin-drop/world-map.webp` (2400x1253, 55 KB) by
@@ -1241,6 +1256,12 @@ and forth until we both agree the idea is good **and** worth the effort. So:
 - **Pinned (Randy, Nov 27): a second Pin Drop hint.** Claude suggested a
   distance hint ("about 1,800 miles off", one hint per round, line or
   distance); Randy has an idea or two of his own. Come back to it.
+- **Run in Neon (Randy):** `content/sql/pop_quiz.sql` (Pop Quiz to 250).
+- **Pinned (Randy, Nov 28):** road numbers on the local maps (OSM `ref`
+  tags make shields automatic; town names would give rounds away) until
+  feedback from different groups; phone full screen (iPhones can't; Android
+  could on Join) while Randy watches how it behaves; a curated "pub night
+  stream" (talked through Nov 28, not decided).
 - **Hanover's first family game (Nov 28): "WOW! The family loved it."**
   The line got used more at 25%. **Tomorrow's agenda (agreed Nov 28):**
   (1) **the Pin Drop pin editor** (see below), first for Hanover's pins,
@@ -1487,7 +1508,13 @@ and forth until we both agree the idea is good **and** worth the effort. So:
   120; **200 each since Nov 25**, 50 per tier, re-tiered to the benchmarks
   -- Minecraft's Nether and Obsidian were 100s a pub crowd wouldn't know;
   hooks at 400 like Valve "the part of a pipe", Ken "Barbie's boyfriend",
-  Parcheesi "Hindi for twenty-five"; working titles, Randy decides): **Extra Lives**
+  Parcheesi "Hindi for twenty-five"; working titles, Randy decides). **Pop Quiz
+  at 250** (Nov 28 2026: a family favorite; +50 of mid-2020s pop the mom and
+  daughters know best -- Stanley cups, Labubu, Moo Deng, Sephora kids,
+  words of the year, K-pop fandoms incl. ILLIT for Randy's youngest; written
+  as events, never "what's popular now", so they don't go stale; two rows
+  stretch the scope on purpose, KPop Demon Hunters and ILLIT's "Magnetic",
+  marked in `notes`): **Extra Lives**
   (video games, `content/video_games.csv`, key `VIDEO_GAMES`: characters,
   worlds, designers, arcade and indie classics; consoles, Pong, Pac-Man,
   Tetris and Angry Birds stay with Technology and Logo My Eggo, and no
