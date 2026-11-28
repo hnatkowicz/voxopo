@@ -344,12 +344,20 @@ event, for a small fee. That's why hosting is gated behind access codes.
   `public/avatars/` replaced the 24-emoji join grid ("my drawn avatars
   only"; no tally of picks). **How many: whatever Randy comes up with**
   (Nov 2026: "the scrolling has emboldened me to continue creating"); he
-  adds them in sixes (35 on the list; pants came off but keeps its
-  file, and genie is drawn but held back: a blue genie with a goatee
-  and topknot reads as Disney's, so Randy decides).
+  adds them in sixes. **Uploading the SVG is all it takes** (Nov 28
+  2026, after six uploads sat unused because the list had to be edited:
+  "I want to continue adding until I'm blue in the face"): the server
+  adds every drawing in `public/avatars/` that isn't written into
+  `AVATARS` to its end, A to Z (`src/services/avatarList.js`, which serves
+  `/avatars.js` and gives teams their avatars), and the thumbnail Action
+  makes its small copy. 40 in the game (Nov 28). **Held back**
+  (`AVATARS_HELD_BACK`, files kept): pants (came off at 24), genie (reads
+  as Disney's) and fawkes (the "V for Vendetta"/Anonymous mask is Warner
+  Bros.' design; held Nov 28, Randy decides).
   Randy: the big avatar on the podium "means a lot when it's yours up
   there", which is why the ones that are so-so small stay. The list is
-  `AVATARS` in `public/avatars.js` (add a file, add its name). **A bigger
+  `AVATARS` in `public/avatars.js` (writing a name there only sets its
+  place; any uploaded file joins anyway). **A bigger
   list** (Randy, Nov 2026: growing in sixes; one list for everyone, no
   rotating sets, duplicates allowed since a venue may hope for 100+
   players, and no changing your pick after joining): the join grid

@@ -19,6 +19,7 @@ import { attachVenueMemory } from './services/venueMemory.js';
 import { LOCAL_MAP_KEYS, PIN_DROP_MAPS } from './services/localMaps.js';
 import { listPhotoPairs, readSavedPairs, savePairSpots } from './services/doubleTake.js';
 import { listMapPlaces, checkEditedPlace, saveMapPlace } from './services/pinDrop.js';
+import { avatarsScript } from './services/avatarList.js';
 import { fileURLToPath } from 'url';
 
 // Recreate __dirname cleanly for ES module environments
@@ -69,6 +70,12 @@ app.use(express.json());
 // no-cache (not no-store) so browsers still revalidate via ETag/Last-Modified
 // instead of serving a stale cached copy of index.html/app.js/play.html after
 // a deploy -- avoids "I don't see the fix" confusion from a cached old build.
+// The avatar list with every uploaded drawing in it (avatarList.js), served
+// in place of the static file so an SVG uploaded on GitHub is all it takes.
+app.get('/avatars.js', (req, res) => {
+    res.setHeader('Cache-Control', 'no-cache');
+    res.type('application/javascript').send(avatarsScript());
+});
 app.use(express.static('public', {
     index: false,
     setHeaders: (res) => res.setHeader('Cache-Control', 'no-cache')
