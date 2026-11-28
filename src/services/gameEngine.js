@@ -520,7 +520,11 @@ function broadcastContentUnavailable(roomCode, deckLabel, error = null) {
 // ==========================================
 // PHASE 1: LOBBY MACHINERY
 // ==========================================
-function startLobbyCountdown(roomCode, seconds = 60) {
+// The lobby's backstop clock, restarted by every join (Randy, Nov 28 2026:
+// 300s, was 60 -- players joining needed more time; Start still moves the
+// room along as soon as everyone taps it).
+const LOBBY_SECONDS = 300;
+function startLobbyCountdown(roomCode, seconds = LOBBY_SECONDS) {
     const room = activeRooms[roomCode];
     if (!room) return;
     if (room.lobbyWaitingForVote) return; // see executeLobbyPhaseExpiration
@@ -997,7 +1001,7 @@ function buildHouseTriviaBank(room, shuffledRows) {
 // 12 questions, three from each tier, easy to hard; no finale (Randy: a
 // quick round -- Thinking Pants owns the big finish).
 const TRIVIA_SURPRISE_KEY = 'SURPRISE';
-const TRIVIA_TOPIC_PICK_SECONDS = 20;
+const TRIVIA_TOPIC_PICK_SECONDS = 40; // was 20 (Randy, Nov 28 2026: "We need more time"); it still closes 2s after everyone has picked
 const TRIVIA_ALL_PICKED_MS = 2000; // a beat once everyone has picked, to change their mind
 const TRIVIA_TOPIC_SPLASH_MS = 3000; // "Up next: Science & Nature"
 const TRIVIA_PER_TIER = 3; // x 4 tiers = 12 questions (Randy, Nov 2026: "Twelve, please")
@@ -1033,7 +1037,8 @@ async function openTriviaTopicPick(roomCode) {
     const topics = await triviaTopicsFor(room);
     if (!topics.length) throw new Error('No Thinking Pants category is deep enough for a topic game.');
     // The venue's house set heads the list, then "Surprise me", then the rest.
-    const houseTopics = topics.filter(t => t.house), rest = topics.filter(t => !t.house);
+    // The rest A to Z (Randy, Nov 28 2026), so a topic is easy to find.
+    const houseTopics = topics.filter(t => t.house), rest = topics.filter(t => !t.house).sort((a, b) => a.label.localeCompare(b.label));
     room.triviaTopics = [...houseTopics, { key: TRIVIA_SURPRISE_KEY, label: 'Surprise me' }, ...rest];
     room.gameState = 'CATEGORY_VOTE';
     room.categoryVotes = {};
@@ -5912,7 +5917,7 @@ function resetRoomToLobby(roomCode) {
 
     room.lobbyWaitingForVote = false;
     startLobbyCountdown(roomCode);
-    broadcastToRoom(roomCode, { type: 'LOBBY_TIMER_TICK', secondsLeft: "60 s" });
+    broadcastToRoom(roomCode, { type: 'LOBBY_TIMER_TICK', secondsLeft: `${LOBBY_SECONDS} s` });
 }
 
 // ==========================================
@@ -7093,7 +7098,7 @@ function handleIncomingMessageInRoom(fromPhone, bodyText, explicitRoomCode, pres
                 if (currentRoom.lobbyWaitingForVote) lobbyVoteCast(roomCode);
                 else {
                     startLobbyCountdown(roomCode);
-                    broadcastToRoom(roomCode, { type: 'LOBBY_TIMER_TICK', secondsLeft: "60 s" });
+                    broadcastToRoom(roomCode, { type: 'LOBBY_TIMER_TICK', secondsLeft: `${LOBBY_SECONDS} s` });
                 }
 
                 return { reply: `Welcome to RandoMania, ${playerNickname}! Entry logged live.`, sessionToken };

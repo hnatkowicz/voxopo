@@ -466,8 +466,10 @@ join on their phones via the TV's QR code or `/play`. **Joining and voting
 are separate** (Randy, Nov 2026): the join screen is just room code, name,
 emoji and Join (the phone sends `NONE` as its vote); the lobby is "Pick a
 game" (a tap is your vote, shown on the TV right away) and Start. One game
-on offer is still picked for you. **Nobody picks, nothing starts:** if the
-60s lobby clock runs out with no votes, the room waits (`lobbyWaitingForVote`,
+on offer is still picked for you. **The lobby clock is 300s** (restarted by
+every join; was 60s -- Randy, Nov 28 2026: players joining needed more
+time; Start still moves the room along). **Nobody picks, nothing starts:** if the
+lobby clock runs out with no votes, the room waits (`lobbyWaitingForVote`,
 the TV says "Pick a game on your phone"), and the first vote restarts a
 15s clock so others can weigh in (`lobbyVoteCast`); Start with no votes
 answers "Pick a game first." Before this, a room with no votes started
@@ -555,7 +557,8 @@ Mode keys are used in room votes and in `gameEngine.js`:
   venue's dial wins, as on the board), so the mode grows with them. The
   list, top to bottom: the venue's house set (if the code has one,
   titled with the venue's name), **"Surprise me"** (Randy: "you surprise
-  me!"), then the rest. Phones pick from a list (20s, changeable; it
+  me!"), then the rest **A to Z** (Randy, Nov 28 2026). Phones pick from a
+  list (40s, was 20 -- Randy: "We need more time"; changeable; it
   closes 2s after everyone has picked); the TV shows only the topics
   someone picked, with gold bars, then "Up next: <topic>" big. Ties and
   no votes are broken at random, and "Surprise me" lands on a random
@@ -1004,7 +1007,8 @@ Mode keys are used in room votes and in `gameEngine.js`:
     0.8s; "the backstop timer is the right duration, but we wanted to
     move along"); **nudge arrows** under the map (4 screen pixels a
     press, finer as you zoom; in the second stage a nudge counts as
-    moving); **16x zoom** on a map rendered twice as sharp (4800x2505,
+    moving; drawn triangles since Nov 28 -- the text arrows sat low on
+    some phones); **16x zoom** on a map rendered twice as sharp (4800x2505,
     146 KB); the TV map **fills the room left above the QR code** on every
     Pin Drop screen, the same size while guessing and at the reveal (fixed
     sizes kept pushing the QR code down; Nov 24: "burn up some of that

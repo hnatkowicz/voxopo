@@ -790,10 +790,13 @@
              second stage) to move the room along (Randy, Nov 24 2026). -->
         <div id="pd-controls" class="pd-controls">
             <div class="pd-nudge">
-                <button type="button" onclick="pdNudge(-1, 0)" aria-label="Left">&larr;</button>
-                <button type="button" onclick="pdNudge(0, -1)" aria-label="Up">&uarr;</button>
-                <button type="button" onclick="pdNudge(0, 1)" aria-label="Down">&darr;</button>
-                <button type="button" onclick="pdNudge(1, 0)" aria-label="Right">&rarr;</button>
+                <!-- Drawn triangles, not text arrows (Randy, Nov 28 2026: the
+                     text arrows sat a little low on some phones; a drawing
+                     centers the same everywhere). -->
+                <button type="button" onclick="pdNudge(-1, 0)" aria-label="Left"><svg viewBox="0 0 10 10" width="12" height="12" aria-hidden="true" style="transform:rotate(180deg)"><path d="M2.25 1.5 L8.75 5 L2.25 8.5 Z" fill="currentColor"/></svg></button>
+                <button type="button" onclick="pdNudge(0, -1)" aria-label="Up"><svg viewBox="0 0 10 10" width="12" height="12" aria-hidden="true" style="transform:rotate(270deg)"><path d="M2.25 1.5 L8.75 5 L2.25 8.5 Z" fill="currentColor"/></svg></button>
+                <button type="button" onclick="pdNudge(0, 1)" aria-label="Down"><svg viewBox="0 0 10 10" width="12" height="12" aria-hidden="true" style="transform:rotate(90deg)"><path d="M2.25 1.5 L8.75 5 L2.25 8.5 Z" fill="currentColor"/></svg></button>
+                <button type="button" onclick="pdNudge(1, 0)" aria-label="Right"><svg viewBox="0 0 10 10" width="12" height="12" aria-hidden="true" style="transform:rotate(0deg)"><path d="M2.25 1.5 L8.75 5 L2.25 8.5 Z" fill="currentColor"/></svg></button>
             </div>
             <button type="button" class="dt-fit" onclick="pdFit()">Fit</button>
             <button type="button" id="pd-lock" class="pd-lock" onclick="pdLock()">Lock in</button>
