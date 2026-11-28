@@ -1258,7 +1258,7 @@ and forth until we both agree the idea is good **and** worth the effort. So:
 - **Pinned (Randy, Nov 27): a second Pin Drop hint.** Claude suggested a
   distance hint ("about 1,800 miles off", one hint per round, line or
   distance); Randy has an idea or two of his own. Come back to it.
-- **Run in Neon (Randy):** `content/sql/pop_quiz.sql` (Pop Quiz to 250).
+- **Pop Quiz at 250 is live** (Randy ran `content/sql/pop_quiz.sql`, Nov 28).
 - **Pinned (Randy, Nov 28):** road numbers on the local maps (OSM `ref`
   tags make shields automatic; town names would give rounds away) until
   feedback from different groups; phone full screen (iPhones can't; Android
@@ -1282,8 +1282,8 @@ and forth until we both agree the idea is good **and** worth the effort. So:
   questions already work (CLUE kind). **Stay bonus stays x1.5 for now**
   (Randy asked about x1.25; Claude: one change at a time -- play another
   night and watch whether winners are mostly stayers). **Run in Neon (Randy):**
-  `pin_drop_hanover.sql`, then tick Hanover under a code's Pin Drop maps;
-  `pin_drop_central_pa_osm.sql` (once; fix pins in the editor after).
+  `pin_drop_hanover.sql`, then tick Hanover under a code's Pin Drop maps.
+  `pin_drop_central_pa_osm.sql` is live (Randy ran it Nov 28).
 - **Local Pin Drop: built Nov 27** (see PIN_DROP). `pin_drop_local.sql`
   is live (Randy ran it Nov 27), and so is
   `pin_drop_central_pa_photos.sql` (21 of Randy's photos in
