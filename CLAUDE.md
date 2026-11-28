@@ -1010,6 +1010,16 @@ Mode keys are used in room votes and in `gameEngine.js`:
     Hanover has 15 names. **They're readable on phones once zoomed a little,
     not on the TV** (about 7 px tall on a 1080p TV's map box); bigger names
     on fewer roads for the TV is an open option for Randy.
+    **The labeling rule (Randy, Nov 29 2026: "always approach it like
+    this"): towns get street names, regions get route numbers.** On a
+    region map the names change every few miles and many name a town
+    (Carlisle Pike, Chambersburg Road), giving town rounds away; numbers
+    stay put. Never town or place names on any map. **Central PA** got
+    route numbers that day (`LABELS=refs`: 46 cream badges, I-83, US 30,
+    PA 34..., about every 15 miles, interstates first, never crowding;
+    same frame, roads checked identical, pins unchanged), which closes the
+    pinned "road numbers" item. The same TV limit applies: readable on a
+    zoomed phone, not on the TV.
     **Hometown heroes** (Nov 28 2026): on a local map, when everyone who
     pinned (2+) lands inside the circle, "This crowd CRUSHED it!" drops
     onto the TV's map with a shake, in the half away from the answer, and
@@ -1283,9 +1293,7 @@ and forth until we both agree the idea is good **and** worth the effort. So:
   distance hint ("about 1,800 miles off", one hint per round, line or
   distance); Randy has an idea or two of his own. Come back to it.
 - **Pop Quiz at 250 is live** (Randy ran `content/sql/pop_quiz.sql`, Nov 28).
-- **Pinned (Randy, Nov 28):** road numbers on the local maps (OSM `ref`
-  tags make shields automatic; town names would give rounds away) until
-  feedback from different groups; phone full screen (iPhones can't; Android
+- **Pinned (Randy, Nov 28):** phone full screen (iPhones can't; Android
   could on Join) while Randy watches how it behaves; a curated "pub night
   stream" (talked through Nov 28, not decided).
 - **Hanover's first family game (Nov 28): "WOW! The family loved it."**

@@ -254,6 +254,113 @@ if (process.env.LABELS === '1') {
         }
     }
 }
+// Route numbers (Nov 29 2026, for Central PA): LABELS=refs puts small
+// cream badges ("I-83", "US 30", "PA 116") along the routes, about every
+// 15 miles, instead of street names. At county scale the names change every
+// few miles and many name a town (Carlisle Pike, Chambersburg Road,
+// Harrisburg Pike) -- answers, on a map whose rounds ask for towns. Numbers
+// stay put and give nothing away. Interstates first, then US, PA and MD
+// routes; a badge too close to another one is left off.
+const badges = [];
+if (process.env.LABELS === 'refs') {
+    const RANK = { I: 0, US: 1, PA: 2, MD: 3 };
+    const tidy = r => {
+        const m = r.trim().match(/^(I|US|PA|MD)\s*(\d+[A-Z]?)(\s+(BUS|Business))?$/i);
+        if (!m) return null;
+        const sys = m[1].toUpperCase();
+        return { sys, text: `${sys === 'I' ? 'I-' : sys + ' '}${m[2]}${m[3] ? ' Bus' : ''}` };
+    };
+    const byRef = {};
+    for (const f of data.features) {
+        const p = f.properties || {}, g = f.geometry;
+        if (!p.ref || !['motorway', 'trunk', 'primary'].includes(p.highway) || !g || g.type !== 'LineString') continue;
+        for (const r of String(p.ref).split(';')) {
+            const t = tidy(r);
+            if (t) (byRef[t.text] = byRef[t.text] || { ...t, pieces: [] }).pieces.push(g.coordinates.map(px));
+        }
+    }
+    const len = pts => pts.reduce((m, q, i) => i ? m + Math.hypot(q[0] - pts[i - 1][0], q[1] - pts[i - 1][1]) : 0, 0);
+    const at = (pts, d) => {
+        let run = 0;
+        for (let i = 1; i < pts.length; i++) {
+            const seg = Math.hypot(pts[i][0] - pts[i - 1][0], pts[i][1] - pts[i - 1][1]);
+            if (run + seg >= d) { const t = seg ? (d - run) / seg : 0; return [pts[i - 1][0] + t * (pts[i][0] - pts[i - 1][0]), pts[i - 1][1] + t * (pts[i][1] - pts[i - 1][1])]; }
+            run += seg;
+        }
+        return pts[pts.length - 1];
+    };
+    const SPACING = 15 * (W / ((east - west) * 69.17 * Math.cos(rad(centerLat)))); // ~15 miles in map pixels
+    const MIN_APART = SPACING * 0.4;
+    // OpenStreetMap splits a route into hundreds of short pieces: join the
+    // ones that share an end (each direction of a divided highway becomes
+    // its own long chain; MIN_APART keeps them from both getting badges).
+    const joinChains = (pieces) => {
+        const k = ([x, y]) => `${Math.round(x)},${Math.round(y)}`;
+        const chains = pieces.map(p => p.slice());
+        const byEnd = new Map();
+        const add = (c) => { for (const e of [k(c[0]), k(c[c.length - 1])]) { if (!byEnd.has(e)) byEnd.set(e, new Set()); byEnd.get(e).add(c); } };
+        const drop = (c) => { for (const e of [k(c[0]), k(c[c.length - 1])]) byEnd.get(e)?.delete(c); };
+        const live = new Set(chains);
+        chains.forEach(add);
+        let changed = true;
+        while (changed) {
+            changed = false;
+            for (const a of [...live]) {
+                if (!live.has(a)) continue;
+                for (const end of ['tail', 'head']) {
+                    const e = end === 'tail' ? k(a[a.length - 1]) : k(a[0]);
+                    const b = [...(byEnd.get(e) || [])].find(c => c !== a && live.has(c));
+                    if (!b) continue;
+                    drop(a); drop(b); live.delete(a); live.delete(b);
+                    let m;
+                    if (end === 'tail') m = k(b[0]) === e ? a.concat(b.slice(1)) : a.concat(b.slice(0, -1).reverse());
+                    else m = k(b[b.length - 1]) === e ? b.concat(a.slice(1)) : b.slice().reverse().concat(a.slice(1));
+                    live.add(m); add(m); changed = true;
+                    break;
+                }
+            }
+        }
+        return [...live];
+    };
+    const routes = Object.values(byRef).map(r => {
+        // Keep only what's on the map, split where a chain leaves it.
+        const parts = [];
+        for (const c of joinChains(r.pieces)) {
+            let cur = [];
+            for (const q of c) {
+                if (q[0] > 80 && q[0] < W - 80 && q[1] > 80 && q[1] < H - 80) cur.push(q);
+                else { if (cur.length > 1) parts.push(cur); cur = []; }
+            }
+            if (cur.length > 1) parts.push(cur);
+        }
+        return { ...r, parts, total: parts.reduce((m, pc) => m + len(pc), 0) };
+    }).filter(r => r.total > SPACING * 0.5)
+      .sort((a, b) => (RANK[a.sys] - RANK[b.sys]) || (b.total - a.total));
+    for (const r of routes) {
+        // Walk the pieces longest first, a badge every SPACING along them.
+        const parts = r.parts.slice().sort((a, b) => len(b) - len(a));
+        let carry = SPACING / 2;
+        for (const pc of parts) {
+            const L = len(pc);
+            for (let d = carry; d < L; d += SPACING) {
+                const pt = at(pc, d);
+                if (badges.some(b => Math.hypot(b.x - pt[0], b.y - pt[1]) < MIN_APART)) continue;
+                badges.push({ x: pt[0], y: pt[1], text: r.text });
+            }
+            carry = Math.max(SPACING / 4, carry - L);
+        }
+    }
+}
+const badgeGroup = () => {
+    if (!badges.length) return '';
+    const f = labelFont, h = f * 1.35;
+    const items = badges.map(b => {
+        const w = b.text.length * f * 0.62 + f * 0.9;
+        return `<g transform="translate(${b.x.toFixed(1)},${b.y.toFixed(1)})"><rect x="${(-w / 2).toFixed(1)}" y="${(-h / 2).toFixed(1)}" width="${w.toFixed(1)}" height="${h.toFixed(1)}" rx="${(h * 0.28).toFixed(1)}"/><text>${b.text}</text></g>`;
+    }).join('\n    ');
+    return `  <g id="route-numbers" inkscape:label="route-numbers" inkscape:groupmode="layer" font-family="DM Sans, Arial, sans-serif" font-weight="800" font-size="${f}" text-anchor="middle" dominant-baseline="central">\n    <style>#route-numbers rect { fill: ${COLORS.major}; stroke: ${COLORS.casing}; stroke-width: ${f * 0.12}; } #route-numbers text { fill: ${COLORS.casing}; }</style>\n    ${items}\n  </g>`;
+};
+
 const labelGroup = () => {
     if (!labels.length) return '';
     const defs = labels.map((l, i) => `<path id="road-name-${i}" d="${l.d}"/>`).join('\n      ');
@@ -285,6 +392,7 @@ ${group('collector-roads', `${roundLine} stroke="${COLORS.collector}"`, layers.c
 ${group('main-roads-edge', `${roundLine} stroke="${COLORS.casing}"`, layers.majorCasing)}
 ${group('main-roads', `${roundLine} stroke="${COLORS.major}"`, layers.major)}
 ${labelGroup()}
+${badgeGroup()}
 </svg>
 `;
 writeFileSync(out, svg);

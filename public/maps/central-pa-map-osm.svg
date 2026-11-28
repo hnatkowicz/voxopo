@@ -19089,4 +19089,54 @@
     <path d="M4114.8,1917.3L4116.2,1917.7" stroke-width="12"/>
     <path d="M4113.3,1916.9L4114.4,1917.2" stroke-width="12"/>
   </g>
+
+  <g id="route-numbers" inkscape:label="route-numbers" inkscape:groupmode="layer" font-family="DM Sans, Arial, sans-serif" font-weight="800" font-size="30" text-anchor="middle" dominant-baseline="central">
+    <style>#route-numbers rect { fill: #f4f1e8; stroke: #0b1424; stroke-width: 3.5999999999999996; } #route-numbers text { fill: #0b1424; }</style>
+    <g transform="translate(2099.5,1176.3)"><rect x="-50.7" y="-20.3" width="101.4" height="40.5" rx="11.3"/><text>I-76</text></g>
+    <g transform="translate(2649.8,1177.5)"><rect x="-50.7" y="-20.3" width="101.4" height="40.5" rx="11.3"/><text>I-76</text></g>
+    <g transform="translate(4061.8,1021.7)"><rect x="-50.7" y="-20.3" width="101.4" height="40.5" rx="11.3"/><text>I-76</text></g>
+    <g transform="translate(3167.1,1107.2)"><rect x="-50.7" y="-20.3" width="101.4" height="40.5" rx="11.3"/><text>I-76</text></g>
+    <g transform="translate(305.3,1206.1)"><rect x="-50.7" y="-20.3" width="101.4" height="40.5" rx="11.3"/><text>I-76</text></g>
+    <g transform="translate(1109.5,1078.8)"><rect x="-50.7" y="-20.3" width="101.4" height="40.5" rx="11.3"/><text>I-76</text></g>
+    <g transform="translate(4493.9,1077.3)"><rect x="-50.7" y="-20.3" width="101.4" height="40.5" rx="11.3"/><text>I-76</text></g>
+    <g transform="translate(2872.4,351.2)"><rect x="-50.7" y="-20.3" width="101.4" height="40.5" rx="11.3"/><text>I-81</text></g>
+    <g transform="translate(2074.5,765.8)"><rect x="-50.7" y="-20.3" width="101.4" height="40.5" rx="11.3"/><text>I-81</text></g>
+    <g transform="translate(278.4,1651.9)"><rect x="-50.7" y="-20.3" width="101.4" height="40.5" rx="11.3"/><text>I-81</text></g>
+    <g transform="translate(2716.0,3100.0)"><rect x="-50.7" y="-20.3" width="101.4" height="40.5" rx="11.3"/><text>I-83</text></g>
+    <g transform="translate(2434.7,1874.3)"><rect x="-50.7" y="-20.3" width="101.4" height="40.5" rx="11.3"/><text>I-83</text></g>
+    <g transform="translate(2296.6,1517.6)"><rect x="-50.7" y="-20.3" width="101.4" height="40.5" rx="11.3"/><text>I-83</text></g>
+    <g transform="translate(2592.7,2584.8)"><rect x="-50.7" y="-20.3" width="101.4" height="40.5" rx="11.3"/><text>I-83</text></g>
+    <g transform="translate(3636.4,108.7)"><rect x="-50.7" y="-20.3" width="101.4" height="40.5" rx="11.3"/><text>I-78</text></g>
+    <g transform="translate(878.3,2983.2)"><rect x="-60.0" y="-20.3" width="120.0" height="40.5" rx="11.3"/><text>US 15</text></g>
+    <g transform="translate(1199.7,2167.7)"><rect x="-60.0" y="-20.3" width="120.0" height="40.5" rx="11.3"/><text>US 15</text></g>
+    <g transform="translate(1409.0,1776.0)"><rect x="-60.0" y="-20.3" width="120.0" height="40.5" rx="11.3"/><text>US 15</text></g>
+    <g transform="translate(1758.6,533.0)"><rect x="-60.0" y="-20.3" width="120.0" height="40.5" rx="11.3"/><text>US 15</text></g>
+    <g transform="translate(1630.2,1328.1)"><rect x="-60.0" y="-20.3" width="120.0" height="40.5" rx="11.3"/><text>US 15</text></g>
+    <g transform="translate(526.1,3364.3)"><rect x="-60.0" y="-20.3" width="120.0" height="40.5" rx="11.3"/><text>US 15</text></g>
+    <g transform="translate(2990.8,1960.7)"><rect x="-60.0" y="-20.3" width="120.0" height="40.5" rx="11.3"/><text>US 30</text></g>
+    <g transform="translate(3853.3,1750.4)"><rect x="-60.0" y="-20.3" width="120.0" height="40.5" rx="11.3"/><text>US 30</text></g>
+    <g transform="translate(308.4,2484.3)"><rect x="-60.0" y="-20.3" width="120.0" height="40.5" rx="11.3"/><text>US 30</text></g>
+    <g transform="translate(1984.7,2373.0)"><rect x="-60.0" y="-20.3" width="120.0" height="40.5" rx="11.3"/><text>US 30</text></g>
+    <g transform="translate(4491.7,2014.9)"><rect x="-60.0" y="-20.3" width="120.0" height="40.5" rx="11.3"/><text>US 30</text></g>
+    <g transform="translate(1202.8,2629.9)"><rect x="-60.0" y="-20.3" width="120.0" height="40.5" rx="11.3"/><text>US 30</text></g>
+    <g transform="translate(4655.3,1519.7)"><rect x="-69.3" y="-20.3" width="138.6" height="40.5" rx="11.3"/><text>US 322</text></g>
+    <g transform="translate(1566.5,169.1)"><rect x="-69.3" y="-20.3" width="138.6" height="40.5" rx="11.3"/><text>US 322</text></g>
+    <g transform="translate(3291.6,255.6)"><rect x="-60.0" y="-20.3" width="120.0" height="40.5" rx="11.3"/><text>US 22</text></g>
+    <g transform="translate(4236.5,2361.0)"><rect x="-69.3" y="-20.3" width="138.6" height="40.5" rx="11.3"/><text>US 222</text></g>
+    <g transform="translate(4369.8,3173.3)"><rect x="-69.3" y="-20.3" width="138.6" height="40.5" rx="11.3"/><text>US 222</text></g>
+    <g transform="translate(3167.6,653.7)"><rect x="-69.3" y="-20.3" width="138.6" height="40.5" rx="11.3"/><text>US 422</text></g>
+    <g transform="translate(3684.8,525.2)"><rect x="-69.3" y="-20.3" width="138.6" height="40.5" rx="11.3"/><text>US 422</text></g>
+    <g transform="translate(4502.7,597.5)"><rect x="-69.3" y="-20.3" width="138.6" height="40.5" rx="11.3"/><text>US 422</text></g>
+    <g transform="translate(4043.5,413.7)"><rect x="-69.3" y="-20.3" width="138.6" height="40.5" rx="11.3"/><text>US 422</text></g>
+    <g transform="translate(3649.8,2851.6)"><rect x="-60.0" y="-20.3" width="120.0" height="40.5" rx="11.3"/><text>PA 74</text></g>
+    <g transform="translate(807.3,2281.3)"><rect x="-60.0" y="-20.3" width="120.0" height="40.5" rx="11.3"/><text>PA 34</text></g>
+    <g transform="translate(979.7,1462.9)"><rect x="-60.0" y="-20.3" width="120.0" height="40.5" rx="11.3"/><text>PA 34</text></g>
+    <g transform="translate(1050.8,515.7)"><rect x="-60.0" y="-20.3" width="120.0" height="40.5" rx="11.3"/><text>PA 34</text></g>
+    <g transform="translate(4215.1,2796.3)"><rect x="-69.3" y="-20.3" width="138.6" height="40.5" rx="11.3"/><text>PA 272</text></g>
+    <g transform="translate(3606.4,1377.0)"><rect x="-60.0" y="-20.3" width="120.0" height="40.5" rx="11.3"/><text>PA 72</text></g>
+    <g transform="translate(1650.0,2857.0)"><rect x="-60.0" y="-20.3" width="120.0" height="40.5" rx="11.3"/><text>PA 94</text></g>
+    <g transform="translate(2996.5,1472.7)"><rect x="-69.3" y="-20.3" width="138.6" height="40.5" rx="11.3"/><text>PA 230</text></g>
+    <g transform="translate(4145.5,1451.2)"><rect x="-69.3" y="-20.3" width="138.6" height="40.5" rx="11.3"/><text>PA 772</text></g>
+    <g transform="translate(1340.5,3137.4)"><rect x="-60.0" y="-20.3" width="120.0" height="40.5" rx="11.3"/><text>PA 97</text></g>
+  </g>
 </svg>
