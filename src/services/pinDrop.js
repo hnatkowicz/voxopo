@@ -53,3 +53,71 @@ export async function refreshPinDropReady() {
 }
 setTimeout(() => { refreshPinDropReady(); }, 2000).unref();
 setInterval(() => { refreshPinDropReady(); }, 60 * 1000).unref();
+
+// ---- The pin editor (/admin/pin-drop, Nov 28 2026) ----
+// Randy fixes a local map's pins and circles by eye, adds places by clicking
+// the map, and retires them (never deletes, like the trivia sheets). It
+// writes straight to the database; its "Export SQL" keeps the repo's files in
+// step. Only local maps: the world's places come from content/pin_drop_source.py.
+const EDITABLE_KINDS = ['PLACE', 'CLUE', 'PHOTO'];
+
+export async function listMapPlaces(mapKey) {
+    const { rows } = await pool.query(
+        `SELECT id, kind, label, prompt, image_url, lat, lon, radius_miles, difficulty, active
+           FROM pin_drop_places WHERE map_key = $1 ORDER BY difficulty, label`, [mapKey]);
+    return rows.map(r => ({
+        id: r.id, kind: r.kind, label: r.label, prompt: r.prompt, imageUrl: r.image_url,
+        lat: Number(r.lat), lon: Number(r.lon), radiusMiles: Number(r.radius_miles) || 0,
+        difficulty: r.difficulty, active: r.active
+    }));
+}
+
+// Checks one place from the editor. Returns { error } or { place } with the
+// cleaned-up fields. `map` is the local map's entry from localMaps.js.
+export function checkEditedPlace(map, body) {
+    const b = body || {};
+    const text = (v, max) => (typeof v === 'string' ? v.trim().replace(/\s+/g, ' ').slice(0, max) : '');
+    const place = {
+        kind: EDITABLE_KINDS.includes(b.kind) ? b.kind : null,
+        label: text(b.label, 120),
+        prompt: text(b.prompt, 200) || null,
+        imageUrl: text(b.imageUrl, 200) || null,
+        lat: Number(b.lat), lon: Number(b.lon),
+        radiusMiles: Number(b.radiusMiles),
+        difficulty: Number(b.difficulty),
+        active: b.active !== false
+    };
+    if (!place.kind) return { error: 'Pick a kind: Place, Clue or Photo.' };
+    if (!place.label) return { error: 'The place needs a name.' };
+    if (place.kind === 'CLUE' && !place.prompt) return { error: 'A Clue needs its question (the prompt).' };
+    if (place.kind === 'PHOTO' && !place.imageUrl) return { error: 'A Photo needs its picture, like /pin-drop/central-pa/name.webp.' };
+    if (place.imageUrl && !/^\/pin-drop\/[a-z0-9\/_.-]+\.(webp|jpg|jpeg|png)$/i.test(place.imageUrl)) return { error: 'The picture should be a file under /pin-drop/, like /pin-drop/central-pa/name.webp.' };
+    if (![1, 2, 3, 4].includes(place.difficulty)) return { error: 'Difficulty is 1 to 4.' };
+    if (!Number.isFinite(place.radiusMiles) || place.radiusMiles < 0 || place.radiusMiles > 5) return { error: 'The circle is 0 to 5 miles.' };
+    if (!Number.isFinite(place.lat) || !Number.isFinite(place.lon)) return { error: 'The pin has no position.' };
+    const { x, y } = map.toMap(place.lat, place.lon);
+    if (!(x >= 0 && x <= map.w && y >= 0 && y <= map.h)) return { error: 'The pin is off the map.' };
+    place.lat = Math.round(place.lat * 1e6) / 1e6;
+    place.lon = Math.round(place.lon * 1e6) / 1e6;
+    place.radiusMiles = Math.round(place.radiusMiles * 1000) / 1000;
+    return { place };
+}
+
+// Adds (id null) or updates one place on a local map. Throws the database's
+// error; 23505 means another place of that kind already has the name.
+export async function saveMapPlace(mapKey, id, p) {
+    const values = [mapKey, p.kind, p.label, p.prompt, p.imageUrl, p.lat, p.lon, p.radiusMiles, p.difficulty, p.active];
+    let row;
+    if (id == null) {
+        row = (await pool.query(
+            `INSERT INTO pin_drop_places (map_key, kind, label, prompt, image_url, lat, lon, radius_miles, difficulty, active)
+             VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10) RETURNING id`, values)).rows[0];
+    } else {
+        row = (await pool.query(
+            `UPDATE pin_drop_places SET kind = $2, label = $3, prompt = $4, image_url = $5, lat = $6, lon = $7,
+                    radius_miles = $8, difficulty = $9, active = $10
+              WHERE id = $11 AND map_key = $1 RETURNING id`, [...values, id])).rows[0];
+    }
+    refreshPinDropReady();
+    return row ? row.id : null;
+}

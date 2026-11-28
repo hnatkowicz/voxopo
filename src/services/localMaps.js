@@ -24,6 +24,7 @@ const unmerc = m => (2 * Math.atan(Math.exp(m)) - Math.PI / 2) * 180 / Math.PI;
 
 function mercatorMap({ A, B, C, D }) {
     return {
+        fit: { A, B, C, D }, // for the pin editor (/admin/pin-drop), which converts in the browser
         toMap: (lat, lon) => ({ x: A * lon + B, y: C * merc(lat) + D }),
         fromMap: (x, y) => ({ lat: unmerc((y - D) / C), lon: (x - B) / A })
     };

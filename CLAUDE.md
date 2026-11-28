@@ -912,8 +912,10 @@ Mode keys are used in room votes and in `gameEngine.js`:
     over from the last puzzle. Check: which round, which letters, and
     whether those letters were on the TV.
 - **PIN_DROP** (Pin Drop, a working name -- Randy will name it once he's
-  seen it play; built Nov 24 2026): find it on the world map. 8 rounds,
-  easy to hard: 5 cities by name and 3 of Randy's landmark photos.
+  seen it play; built Nov 24 2026): find it on the world map. **12 rounds**
+  (8 until Nov 28 2026; Randy: "this could easily be 12"), easy to hard:
+  8 cities by name and 4 of Randy's landmark photos. A local map plays 8
+  until it has 60 places, then 12 (`pinDropTiersFor`).
   Everyone taps the map on their phone at once (40s since Thanksgiving
   2026, was 25s: "people were rushing and losing time"; move it as often
   as you like), then the room's first pins appear as **plain dots, no
@@ -981,7 +983,7 @@ Mode keys are used in room votes and in `gameEngine.js`:
     circles 0.03-0.1 mi, places in one game at least 0.06 mi apart --
     `minApartMiles` per map in `localMaps.js`). **Coordinates are a first
     draft** from Randy's list: Moul Field sits ~1/3 mile from OSM's
-    outline of it, so expect others off until the pin editor. A Snazzy
+    outline of it, so expect others off; the pin editor fixes them. A Snazzy
     Maps screen grab is Google's map and can't be used. On the TV, the
     first-pin dots and the true spot are a set size on screen with a dark
     edge (they had shrunk to a couple of pixels on the detailed map).
@@ -1264,10 +1266,9 @@ and forth until we both agree the idea is good **and** worth the effort. So:
   stream" (talked through Nov 28, not decided).
 - **Hanover's first family game (Nov 28): "WOW! The family loved it."**
   The line got used more at 25%. **Tomorrow's agenda (agreed Nov 28):**
-  (1) **the Pin Drop pin editor** (see below), first for Hanover's pins,
-  incl. widening circles by hand where a place is hard to pinpoint (not a
-  blanket "harder = bigger" rule); (2) **rounds per map** -- 12 for the
-  world (453 places), 8 for a local map until it has ~60 places;
+  (1) **the Pin Drop pin editor** -- built Nov 28 (see Local Pin Drop
+  below); Randy fixes Hanover's pins and widens circles by hand where a
+  place is hard to pinpoint (not a blanket "harder = bigger" rule); (2) **rounds per map** -- done Nov 28;
   (3) an **Overpass query for Central PA's new place kinds**, so their
   coordinates come from OpenStreetMap, not memory: airports, colleges,
   drive-ins, amusement parks, racetracks, viewpoints, famous homes
@@ -1283,10 +1284,19 @@ and forth until we both agree the idea is good **and** worth the effort. So:
   `pin_drop_central_pa_photos.sql` (21 of Randy's photos in
   `public/pin-drop/central-pa/`, 1200x900 WebP q85, placed from his street
   addresses; Sideling Hill Tunnel left out: west of the map). First family
-  test Nov 27: "That's pretty fun! I can see many uses for this!" **Next:** an admin
-  page to see every place's pin and circle on the map and drag or resize
-  them (until then, fix a pin by its lat/lon in the SQL); Randy adds
-  places (40-60 for depth) and his photos. `teams` SQL ran Nov 27.
+  test Nov 27: "That's pretty fun! I can see many uses for this!" **The pin editor** (built Nov 28 2026,
+  `/admin/pin-drop`, `public/admin-pin-drop.html`, linked from /admin;
+  best on a computer): pick a local map, see every place's pin and circle
+  on it, drag a pin, drag the gold handle (or type miles) to size its
+  circle, arrow keys nudge, click the map to add a Place, Clue or Photo,
+  untick "In the game" to retire one (never deleted), "Check on
+  OpenStreetMap" for the real spot. It saves straight to the database
+  (the next game uses it), so **the database is now the master copy of
+  local pins**: the old `pin_drop_*.sql` files say not to re-run them, and
+  the editor's **Export SQL** writes `pin_drop_<map>.sql` to replace them in
+  the repo. Only local maps (the world's places come from
+  `content/pin_drop_source.py`). Randy adds places (60 for 12 rounds) and
+  his photos. `teams` SQL ran Nov 27.
 - **Pinned (Randy, Nov 22: "No bother. Pin it for later."):** the lobby
   draws every mode for a moment before the room's own list arrives, so a
   mode the code doesn't play flashes and vanishes. Fix: wait for the

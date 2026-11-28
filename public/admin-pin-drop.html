@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="stylesheet" href="/theme.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pin Drop Editor</title>
+    <link rel="icon" type="image/x-icon" href="/R.ico" />
+    <link rel="icon" type="image/svg+xml" href="/r-icon.svg">
+    <!-- The Pin Drop pin editor (Nov 28 2026): a local map's places, to move,
+         resize, add and retire by eye. Hanover's first-draft coordinates
+         (Moul Field sat ~1/3 mile off) are why it exists. Best on a computer. -->
+    <style>
+        body { font-family: var(--rm-font-body); background: var(--rm-bg); color: var(--rm-text); margin: 0; padding: 16px; letter-spacing: -0.01em; }
+        a { color: var(--rm-brand); }
+        h1 { font-family: var(--rm-font-display); color: var(--rm-white); font-size: 1.4rem; margin: 4px 0; }
+        .muted { color: var(--rm-text-muted); font-size: 0.85rem; }
+        .notice { background: rgba(var(--rm-yellow-rgb), 0.08); border: 1px solid rgba(var(--rm-yellow-rgb), 0.35); color: var(--rm-yellow); border-radius: 8px; padding: 10px 12px; font-size: 0.88rem; margin: 10px 0; }
+        .toolbar { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin: 10px 0; }
+        .toolbar .gap { flex: 1; }
+        button.b { padding: 7px 12px; border-radius: 6px; border: 1px solid var(--rm-border); background: var(--rm-surface-2); color: var(--rm-text); cursor: pointer; font: inherit; font-size: 0.85rem; }
+        button.b:hover { background: var(--rm-border); }
+        button.b:disabled { opacity: 0.45; cursor: not-allowed; }
+        button.b.on { border-color: var(--rm-brand); color: var(--rm-brand); }
+        button.primary { background: var(--rm-brand); color: var(--rm-bg); border-color: var(--rm-brand); font-weight: 700; }
+        button.primary:hover { background: var(--rm-brand-dark); }
+        select, input[type=text], input[type=number], input[type=search] { padding: 7px 8px; background: var(--rm-surface-2); color: var(--rm-text); border: 1px solid var(--rm-border); border-radius: 6px; font: inherit; font-size: 0.85rem; box-sizing: border-box; }
+        label.check { display: inline-flex; gap: 5px; align-items: center; font-size: 0.85rem; }
+        .main { display: grid; grid-template-columns: 1fr 340px; gap: 14px; }
+        .viewport { position: relative; overflow: hidden; height: calc(100vh - 150px); min-height: 480px; border-radius: 8px; background: var(--rm-surface-2); border: 1px solid var(--rm-border); cursor: grab; touch-action: none; user-select: none; }
+        .viewport.adding { cursor: crosshair; }
+        .viewport.panning { cursor: grabbing; }
+        .world { position: absolute; left: 0; top: 0; transform-origin: 0 0; }
+        .world img { display: block; pointer-events: none; }
+        .world svg { position: absolute; left: 0; top: 0; overflow: visible; }
+        .zoom { position: absolute; right: 10px; top: 10px; display: flex; flex-direction: column; gap: 6px; }
+        .zoom button { width: 34px; height: 34px; padding: 0; font-size: 1.1rem; }
+        .hint { position: absolute; left: 10px; bottom: 10px; background: rgba(var(--rm-bg-rgb), 0.85); padding: 6px 10px; border-radius: 6px; font-size: 0.8rem; color: var(--rm-text-soft); pointer-events: none; }
+        .side { display: flex; flex-direction: column; gap: 12px; min-width: 0; }
+        .card { background: var(--rm-surface); border: 1px solid var(--rm-border); border-radius: 10px; padding: 12px; }
+        .card h2 { font-size: 1rem; color: var(--rm-white); margin: 0 0 8px; }
+        .field { margin: 0 0 8px; }
+        .field > span { display: block; font-size: 0.78rem; color: var(--rm-text-muted); margin-bottom: 3px; }
+        .field input[type=text], .field select { width: 100%; }
+        .row { display: flex; gap: 8px; }
+        .row > .field { flex: 1; }
+        .radius { display: flex; gap: 8px; align-items: center; }
+        .radius input[type=range] { flex: 1; }
+        .radius input[type=number] { width: 80px; }
+        .coords { font-size: 0.8rem; color: var(--rm-text-soft); line-height: 1.5; }
+        .moved { color: var(--rm-brand); }
+        .feedback { font-size: 0.85rem; min-height: 1.2em; margin-top: 6px; }
+        .feedback.error { color: var(--rm-red); }
+        .feedback.success { color: var(--rm-green); }
+        .list { max-height: 38vh; overflow-y: auto; margin-top: 8px; }
+        .item { display: flex; gap: 8px; align-items: baseline; padding: 6px 4px; border-bottom: 1px solid var(--rm-border); cursor: pointer; font-size: 0.85rem; }
+        .item:hover, .item.current { background: var(--rm-surface-2); }
+        .item.current { outline: 1px solid var(--rm-brand); }
+        .item .d { width: 16px; color: var(--rm-text-muted); flex: none; }
+        .item .n { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .item .k { font-size: 0.72rem; color: var(--rm-text-muted); flex: none; }
+        .item.retired .n { color: var(--rm-text-muted); text-decoration: line-through; }
+        .item .dirty { color: var(--rm-brand); flex: none; }
+        .photo { width: 100%; border-radius: 6px; margin: 4px 0 8px; display: block; }
+        #editor { display: none; }
+        /* The marks: colors here, sizes set per zoom in drawMarks. */
+        .m-circle { fill: rgba(var(--rm-white-rgb), 0.08); stroke: var(--rm-text); }
+        .m-pin { fill: var(--rm-text); stroke: var(--rm-bg); cursor: move; }
+        .m-name { fill: var(--rm-text); stroke: var(--rm-bg); paint-order: stroke; pointer-events: none; font-family: var(--rm-font-body); font-weight: 600; }
+        .retired .m-circle { fill: none; stroke: var(--rm-text-muted); }
+        .retired .m-pin, .retired .m-name { fill: var(--rm-text-muted); }
+        .sel .m-circle { fill: rgba(var(--rm-brand-rgb), 0.18); stroke: var(--rm-brand); }
+        .sel .m-pin, .sel .m-name { fill: var(--rm-brand); }
+        .m-arm { stroke: var(--rm-brand); pointer-events: none; }
+        .m-handle { fill: var(--rm-brand); stroke: var(--rm-bg); cursor: ns-resize; }
+        @media (max-width: 900px) { .main { grid-template-columns: 1fr; } .viewport { height: 60vh; } }
+    </style>
+</head>
+<body>
+    <a href="/admin">&larr; Admin</a>
+    <h1>Pin Drop maps</h1>
+    <div id="login-note" class="notice" style="display:none">Log in on <a href="/admin">/admin</a> first, then come back to this page.</div>
+    <div id="load-error" class="notice" style="display:none"></div>
+
+    <div id="editor">
+        <div class="toolbar">
+            <select id="map-pick" aria-label="Map"></select>
+            <input type="search" id="search" placeholder="Find a place" aria-label="Find a place">
+            <label class="check"><input type="checkbox" id="show-names" checked> Names</label>
+            <label class="check"><input type="checkbox" id="show-retired"> Retired</label>
+            <span class="gap"></span>
+            <button class="b" id="add-btn">Add a place</button>
+            <button class="b" id="save-all" disabled>Save all changes</button>
+            <button class="b" id="export-btn">Export SQL</button>
+        </div>
+        <div class="main">
+            <div class="viewport" id="viewport">
+                <div class="world" id="world">
+                    <img id="map-img" alt="">
+                    <svg id="marks" xmlns="http://www.w3.org/2000/svg"></svg>
+                </div>
+                <div class="zoom">
+                    <button class="b" id="zoom-in" title="Zoom in">+</button>
+                    <button class="b" id="zoom-out" title="Zoom out">&minus;</button>
+                    <button class="b" id="zoom-fit" title="Whole map" style="font-size:0.7rem">Fit</button>
+                </div>
+                <div class="hint" id="hint">Drag a pin to move it. Drag the gold handle to size its circle. Arrow keys nudge (Shift = more). Scroll to zoom.</div>
+            </div>
+            <div class="side">
+                <div class="card" id="place-card">
+                    <h2 id="place-title">Pick a place</h2>
+                    <div id="place-form" style="display:none">
+                        <div class="field"><span>Name (shown at the reveal)</span><input type="text" id="f-label" maxlength="120"></div>
+                        <div class="field"><span>The question (blank = the name)</span><input type="text" id="f-prompt" maxlength="200" placeholder="Where was the old Anchor Inn?"></div>
+                        <div class="row">
+                            <div class="field"><span>Kind</span>
+                                <select id="f-kind"><option value="PLACE">Place (asked by name)</option><option value="CLUE">Clue (asked by question)</option><option value="PHOTO">Photo</option></select></div>
+                            <div class="field" style="flex:0 0 90px"><span>Difficulty</span>
+                                <select id="f-difficulty"><option>1</option><option>2</option><option>3</option><option>4</option></select></div>
+                        </div>
+                        <div class="field" id="f-image-wrap"><span>Picture (Photo only)</span><input type="text" id="f-image" maxlength="200" placeholder="/pin-drop/central-pa/name.webp"></div>
+                        <img class="photo" id="f-photo" alt="" style="display:none">
+                        <div class="field"><span>Circle: full points inside it (<span id="f-radius-ft"></span>)</span>
+                            <div class="radius"><input type="range" id="f-radius-range" min="0" max="1" step="0.005"><input type="number" id="f-radius" min="0" max="5" step="0.01"> mi</div></div>
+                        <label class="check" style="margin-bottom:8px"><input type="checkbox" id="f-active"> In the game (untick to retire it)</label>
+                        <div class="coords" id="f-coords"></div>
+                        <div class="toolbar">
+                            <button class="b primary" id="save-btn">Save</button>
+                            <button class="b" id="revert-btn">Undo changes</button>
+                        </div>
+                        <div class="feedback" id="feedback"></div>
+                    </div>
+                </div>
+                <div class="card">
+                    <h2 id="list-title">Places</h2>
+                    <div class="muted">Sorted by difficulty. <span style="color:var(--rm-brand)">&bull;</span> = not saved yet.</div>
+                    <div class="list" id="list"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+<script>
+(() => {
+    const $ = id => document.getElementById(id);
+    const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+    const merc = lat => Math.log(Math.tan(Math.PI / 4 + lat * Math.PI / 360));
+    const unmerc = m => (2 * Math.atan(Math.exp(m)) - Math.PI / 2) * 180 / Math.PI;
+    const milesBetween = (a, b) => {
+        const r = d => d * Math.PI / 180;
+        const h = Math.sin(r(b.lat - a.lat) / 2) ** 2 + Math.cos(r(a.lat)) * Math.cos(r(b.lat)) * Math.sin(r(b.lon - a.lon) / 2) ** 2;
+        return 2 * 3958.8 * Math.asin(Math.sqrt(h));
+    };
+    const feet = mi => mi < 0.2 ? `${Math.round(mi * 5280).toLocaleString()} ft` : `${mi.toFixed(2)} mi`;
+
+    let maps = [], map = null;
+    let saved = {};     // id -> the place as the database has it
+    let drafts = {};    // id -> the place being edited (only while it differs)
+    let order = [];     // ids, list order
+    let selected = null;
+    let adding = false;
+    let newCount = 0;
+    const view = { s: 1, tx: 0, ty: 0 };
+
+    const toMap = (lat, lon) => ({ x: map.fit.A * lon + map.fit.B, y: map.fit.C * merc(lat) + map.fit.D });
+    const fromMap = (x, y) => ({ lat: unmerc((y - map.fit.D) / map.fit.C), lon: (x - map.fit.B) / map.fit.A });
+    const current = id => drafts[id] || saved[id];
+    const isDirty = id => !!drafts[id];
+    const sameAsSaved = (id, p) => {
+        const s = saved[id];
+        if (!s) return false;
+        return ['kind', 'label', 'prompt', 'imageUrl', 'difficulty', 'active'].every(k => (s[k] || null) === (p[k] || null))
+            && Math.abs(s.radiusMiles - p.radiusMiles) < 1e-9 && Math.abs(s.lat - p.lat) < 1e-7 && Math.abs(s.lon - p.lon) < 1e-7;
+    };
+    function edit(id, changes) {
+        const p = { ...current(id), ...changes };
+        if (sameAsSaved(id, p)) delete drafts[id]; else drafts[id] = p;
+        render();
+    }
+
+    async function api(url, body) {
+        const res = await fetch(url, body ? { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) } : {});
+        if (res.status === 401) { $('login-note').style.display = 'block'; $('editor').style.display = 'none'; throw new Error('Log in first.'); }
+        const data = await res.json().catch(() => ({}));
+        if (!res.ok || !data.success) throw new Error(data.error || 'Something went wrong.');
+        return data;
+    }
+
+    async function start() {
+        try {
+            maps = (await api('/api/admin/pin-drop')).maps;
+        } catch (e) { if ($('login-note').style.display !== 'block') showLoadError(e.message); return; }
+        if (!maps.length) { showLoadError('No local maps yet.'); return; }
+        $('map-pick').innerHTML = maps.map(m => `<option value="${esc(m.key)}">${esc(m.name)}</option>`).join('');
+        let remembered = null;
+        try { remembered = localStorage.getItem('rm_pin_editor_map'); } catch {}
+        if (remembered && maps.some(m => m.key === remembered)) $('map-pick').value = remembered;
+        $('editor').style.display = 'block';
+        await openMap($('map-pick').value);
+    }
+    function showLoadError(msg) { $('load-error').textContent = msg; $('load-error').style.display = 'block'; }
+
+    async function openMap(key) {
+        if (Object.keys(drafts).length && !confirm('You have changes that aren\'t saved. Switch maps and lose them?')) { $('map-pick').value = map.key; return; }
+        map = maps.find(m => m.key === key);
+        try { localStorage.setItem('rm_pin_editor_map', key); } catch {}
+        saved = {}; drafts = {}; order = []; selected = null; adding = false;
+        $('map-img').src = map.imageUrl;
+        $('map-img').width = map.w; $('map-img').height = map.h;
+        const svg = $('marks');
+        svg.setAttribute('viewBox', `0 0 ${map.w} ${map.h}`);
+        svg.setAttribute('width', map.w); svg.setAttribute('height', map.h);
+        $('f-radius-range').max = map.unitsPerMile > 300 ? 0.3 : 3;
+        $('f-radius-range').step = map.unitsPerMile > 300 ? 0.005 : 0.05;
+        fitView();
+        try {
+            const { places } = await api(`/api/admin/pin-drop/${encodeURIComponent(key)}/places`);
+            for (const p of places) { p.id = String(p.id); saved[p.id] = p; order.push(p.id); }
+        } catch (e) { showLoadError(e.message); }
+        render();
+    }
+
+    // ---- The view: scale and shift on the map, our own zoom ----
+    const vp = $('viewport');
+    function minScale() { return Math.min(vp.clientWidth / map.w, vp.clientHeight / map.h); }
+    function applyView() {
+        $('world').style.transform = `translate(${view.tx}px, ${view.ty}px) scale(${view.s})`;
+        drawMarks();
+    }
+    function fitView() {
+        view.s = minScale();
+        view.tx = (vp.clientWidth - map.w * view.s) / 2;
+        view.ty = (vp.clientHeight - map.h * view.s) / 2;
+        applyView();
+    }
+    function zoomAt(factor, cx, cy) {
+        const s = Math.max(minScale(), Math.min(2, view.s * factor)); // past 2x the map's own pixels just blur
+        const mx = (cx - view.tx) / view.s, my = (cy - view.ty) / view.s;
+        view.s = s; view.tx = cx - mx * s; view.ty = cy - my * s;
+        applyView();
+    }
+    function centerOn(x, y, scale) {
+        if (scale) view.s = Math.max(view.s, scale);
+        view.tx = vp.clientWidth / 2 - x * view.s;
+        view.ty = vp.clientHeight / 2 - y * view.s;
+        applyView();
+    }
+    const screenToMap = e => {
+        const r = vp.getBoundingClientRect();
+        return { x: (e.clientX - r.left - view.tx) / view.s, y: (e.clientY - r.top - view.ty) / view.s };
+    };
+    vp.addEventListener('wheel', e => {
+        e.preventDefault();
+        const r = vp.getBoundingClientRect();
+        zoomAt(e.deltaY < 0 ? 1.2 : 1 / 1.2, e.clientX - r.left, e.clientY - r.top);
+    }, { passive: false });
+    $('zoom-in').onclick = () => zoomAt(1.5, vp.clientWidth / 2, vp.clientHeight / 2);
+    $('zoom-out').onclick = () => zoomAt(1 / 1.5, vp.clientWidth / 2, vp.clientHeight / 2);
+    $('zoom-fit').onclick = fitView;
+    window.addEventListener('resize', () => { if (map) applyView(); });
+
+    // ---- Dragging: a pin moves it, the handle sizes its circle, the map pans ----
+    let drag = null;
+    vp.addEventListener('pointerdown', e => {
+        if (e.button !== 0 || e.target.closest('.zoom')) return;
+        const pin = e.target.closest('[data-pin]');
+        const handle = e.target.closest('[data-handle]');
+        vp.setPointerCapture(e.pointerId);
+        if (handle) drag = { kind: 'radius', id: handle.dataset.handle };
+        else if (pin) { select(pin.dataset.pin, false); drag = { kind: 'pin', id: pin.dataset.pin, start: screenToMap(e), orig: toMap(current(pin.dataset.pin).lat, current(pin.dataset.pin).lon) }; }
+        else { drag = { kind: 'pan', x: e.clientX, y: e.clientY, tx: view.tx, ty: view.ty, moved: false }; vp.classList.add('panning'); }
+    });
+    vp.addEventListener('pointermove', e => {
+        if (!drag) return;
+        if (drag.kind === 'pan') {
+            if (Math.hypot(e.clientX - drag.x, e.clientY - drag.y) > 4) drag.moved = true;
+            view.tx = drag.tx + e.clientX - drag.x; view.ty = drag.ty + e.clientY - drag.y;
+            applyView();
+        } else if (drag.kind === 'pin') {
+            const m = screenToMap(e);
+            const x = Math.max(0, Math.min(map.w, drag.orig.x + m.x - drag.start.x));
+            const y = Math.max(0, Math.min(map.h, drag.orig.y + m.y - drag.start.y));
+            const { lat, lon } = fromMap(x, y);
+            edit(drag.id, { lat, lon });
+        } else if (drag.kind === 'radius') {
+            const p = current(drag.id), c = toMap(p.lat, p.lon), m = screenToMap(e);
+            const miles = Math.hypot(m.x - c.x, m.y - c.y) / map.unitsPerMile;
+            edit(drag.id, { radiusMiles: Math.round(Math.min(5, miles) * 1000) / 1000 });
+        }
+    });
+    const endDrag = e => {
+        if (!drag) return;
+        if (drag.kind === 'pan' && !drag.moved && adding) addAt(screenToMap(e));
+        vp.classList.remove('panning');
+        drag = null;
+    };
+    vp.addEventListener('pointerup', endDrag);
+    vp.addEventListener('pointercancel', () => { drag = null; vp.classList.remove('panning'); });
+
+    // Arrow keys nudge the picked pin one screen pixel (Shift: ten).
+    document.addEventListener('keydown', e => {
+        if (!selected || /INPUT|SELECT|TEXTAREA/.test(document.activeElement.tagName)) return;
+        const d = { ArrowLeft: [-1, 0], ArrowRight: [1, 0], ArrowUp: [0, -1], ArrowDown: [0, 1] }[e.key];
+        if (!d) return;
+        e.preventDefault();
+        const step = (e.shiftKey ? 10 : 1) / view.s;
+        const p = current(selected), c = toMap(p.lat, p.lon);
+        edit(selected, fromMap(c.x + d[0] * step, c.y + d[1] * step));
+    });
+
+    // ---- Adding a place: click the map where it goes ----
+    $('add-btn').onclick = () => {
+        adding = !adding;
+        $('add-btn').classList.toggle('on', adding);
+        $('add-btn').textContent = adding ? 'Click the map...' : 'Add a place';
+        vp.classList.toggle('adding', adding);
+        $('hint').textContent = adding ? 'Click the map where the new place goes.' : defaultHint;
+    };
+    const defaultHint = $('hint').textContent;
+    function addAt(m) {
+        const id = `new-${++newCount}`;
+        const { lat, lon } = fromMap(m.x, m.y);
+        drafts[id] = { id, kind: 'PLACE', label: '', prompt: null, imageUrl: null, lat, lon,
+            radiusMiles: map.unitsPerMile > 300 ? 0.03 : 0.5, difficulty: 2, active: true, isNew: true };
+        order.unshift(id);
+        $('add-btn').click(); // leave add mode
+        select(id, false);
+        $('f-label').focus();
+    }
+
+    // ---- Drawing ----
+    function drawMarks() {
+        if (!map) return;
+        const s = view.s, showNames = $('show-names').checked && s >= 0.45, // zoomed out, names pile up: hover a pin instead
+             showRetired = $('show-retired').checked;
+        const dot = 7 / s, line = 1.5 / s, font = 13 / s;
+        let back = '', front = '';
+        for (const id of order) {
+            const p = current(id);
+            if (!p.active && !showRetired && id !== selected) continue;
+            const { x, y } = toMap(p.lat, p.lon);
+            const r = p.radiusMiles * map.unitsPerMile;
+            const sel = id === selected;
+            const cls = sel ? 'sel' : p.active ? '' : 'retired';
+            const circle = `<circle class="m-circle" cx="${x}" cy="${y}" r="${r}" stroke-width="${line}" ${p.active ? '' : `stroke-dasharray="${4 / s} ${3 / s}"`}/>`;
+            const mark = `<circle class="m-pin" data-pin="${id}" cx="${x}" cy="${y}" r="${dot}" stroke-width="${line * 1.5}"><title>${esc(p.label || '(new place)')}</title></circle>`;
+            const name = showNames || sel ? `<text class="m-name" x="${x + dot * 1.6}" y="${y + font * 0.35}" font-size="${font}" stroke-width="${3 / s}">${esc(p.label || '(new place)')}${isDirty(id) ? ' \u2022' : ''}</text>` : '';
+            if (sel) {
+                // The size handle sits at the bottom of the circle, clear of the name.
+                const hy = y + Math.max(r, dot * 3);
+                front += `<g class="sel">${circle}<line class="m-arm" x1="${x}" y1="${y}" x2="${x}" y2="${hy}" stroke-width="${line}" stroke-dasharray="${3 / s} ${3 / s}"/>`
+                    + mark + name
+                    + `<rect class="m-handle" data-handle="${id}" x="${x - dot}" y="${hy - dot}" width="${dot * 2}" height="${dot * 2}" stroke-width="${line}"/></g>`;
+            } else back += `<g class="${cls}">${circle}${mark}${name}</g>`;
+        }
+        $('marks').innerHTML = back + front;
+    }
+
+    function renderList() {
+        const q = $('search').value.trim().toLowerCase();
+        const showRetired = $('show-retired').checked;
+        const ids = order.filter(id => {
+            const p = current(id);
+            if (!p.active && !showRetired && id !== selected && !isDirty(id)) return false;
+            return !q || `${p.label} ${p.prompt || ''}`.toLowerCase().includes(q);
+        }).sort((a, b) => {
+            const pa = current(a), pb = current(b);
+            if (pa.isNew !== pb.isNew) return pa.isNew ? -1 : 1;
+            return (pa.difficulty - pb.difficulty) || String(pa.label).localeCompare(pb.label);
+        });
+        const active = order.filter(id => current(id).active && !current(id).isNew).length;
+        $('list-title').textContent = `Places: ${active} in the game`;
+        $('list').innerHTML = ids.map(id => {
+            const p = current(id);
+            return `<div class="item${id === selected ? ' current' : ''}${p.active ? '' : ' retired'}" data-id="${id}">
+                <span class="d">${p.difficulty}</span><span class="n">${esc(p.label || '(new place)')}</span>
+                <span class="k">${p.kind === 'PLACE' ? '' : p.kind.toLowerCase()}</span>${isDirty(id) ? '<span class="dirty">&bull;</span>' : ''}</div>`;
+        }).join('') || '<div class="muted" style="padding:6px 4px">No places.</div>';
+        const dirty = Object.keys(drafts).length;
+        $('save-all').disabled = !dirty;
+        $('save-all').textContent = dirty ? `Save all changes (${dirty})` : 'Save all changes';
+    }
+    $('list').addEventListener('click', e => { const it = e.target.closest('.item'); if (it) select(it.dataset.id, true); });
+
+    function renderForm() {
+        const p = selected && current(selected);
+        $('place-form').style.display = p ? 'block' : 'none';
+        if (!p) { $('place-title').textContent = 'Pick a place'; return; }
+        $('place-title').textContent = p.isNew ? 'New place' : (p.label || '(no name)');
+        const setVal = (el, v) => { if (document.activeElement !== el) el.value = v; };
+        setVal($('f-label'), p.label || '');
+        setVal($('f-prompt'), p.prompt || '');
+        setVal($('f-kind'), p.kind);
+        setVal($('f-difficulty'), String(p.difficulty));
+        setVal($('f-image'), p.imageUrl || '');
+        setVal($('f-radius'), String(p.radiusMiles));
+        setVal($('f-radius-range'), String(p.radiusMiles));
+        $('f-active').checked = p.active;
+        $('f-radius-ft').textContent = p.radiusMiles ? `${feet(p.radiusMiles)} around the pin` : 'no circle';
+        $('f-image-wrap').style.display = p.kind === 'PHOTO' || p.imageUrl ? 'block' : 'none';
+        const photo = $('f-photo');
+        if (p.imageUrl) { if (photo.getAttribute('src') !== p.imageUrl) photo.src = p.imageUrl; photo.style.display = 'block'; }
+        else photo.style.display = 'none';
+        const s = saved[selected];
+        const moved = s ? milesBetween(s, p) : 0;
+        const osm = `https://www.openstreetmap.org/?mlat=${p.lat.toFixed(6)}&mlon=${p.lon.toFixed(6)}#map=18/${p.lat.toFixed(6)}/${p.lon.toFixed(6)}`;
+        $('f-coords').innerHTML = `${p.lat.toFixed(5)}, ${p.lon.toFixed(5)} &middot; <a href="${osm}" target="_blank" rel="noopener">Check on OpenStreetMap</a>`
+            + (moved > 0.0005 ? `<br><span class="moved">Moved ${feet(moved)} from where it was saved.</span>` : '');
+        $('save-btn').disabled = !isDirty(selected);
+        $('revert-btn').disabled = !isDirty(selected);
+    }
+    function render() { drawMarks(); renderList(); renderForm(); }
+
+    function select(id, center) {
+        selected = id;
+        $('feedback').textContent = ''; $('feedback').className = 'feedback';
+        if (center) {
+            const p = current(id), c = toMap(p.lat, p.lon);
+            // Close enough to see the circle and what's around it.
+            const want = Math.min(vp.clientWidth, vp.clientHeight) / Math.max(8 * p.radiusMiles * map.unitsPerMile, 300);
+            centerOn(c.x, c.y, Math.min(1, want));
+        }
+        render();
+    }
+
+    // ---- The form ----
+    $('f-label').oninput = e => edit(selected, { label: e.target.value });
+    $('f-prompt').oninput = e => edit(selected, { prompt: e.target.value.trim() ? e.target.value : null });
+    $('f-kind').onchange = e => edit(selected, { kind: e.target.value });
+    $('f-difficulty').onchange = e => edit(selected, { difficulty: Number(e.target.value) });
+    $('f-image').oninput = e => edit(selected, { imageUrl: e.target.value.trim() || null });
+    $('f-radius').oninput = e => { const v = Number(e.target.value); if (v >= 0 && v <= 5) edit(selected, { radiusMiles: v }); };
+    $('f-radius-range').oninput = e => edit(selected, { radiusMiles: Number(e.target.value) });
+    $('f-active').onchange = e => edit(selected, { active: e.target.checked });
+    $('show-names').onchange = drawMarks;
+    $('show-retired').onchange = render;
+    $('search').oninput = renderList;
+    $('map-pick').onchange = e => openMap(e.target.value);
+
+    $('revert-btn').onclick = () => {
+        if (!selected) return;
+        if (current(selected).isNew) { delete drafts[selected]; order = order.filter(id => id !== selected); selected = null; }
+        else delete drafts[selected];
+        render();
+    };
+
+    async function saveOne(id) {
+        const p = drafts[id];
+        if (!p) return true;
+        const body = { kind: p.kind, label: p.label, prompt: p.prompt, imageUrl: p.imageUrl, lat: p.lat, lon: p.lon, radiusMiles: p.radiusMiles, difficulty: p.difficulty, active: p.active };
+        const data = await api(`/api/admin/pin-drop/${encodeURIComponent(map.key)}/places/${p.isNew ? 'new' : encodeURIComponent(id)}`, body);
+        const realId = String(data.id);
+        delete drafts[id];
+        // The server tidies text (spaces) and rounds; show what it keeps.
+        saved[realId] = { ...body, id: realId, label: body.label.trim().replace(/\s+/g, ' '), prompt: body.prompt ? body.prompt.trim().replace(/\s+/g, ' ') : null,
+            lat: Math.round(body.lat * 1e6) / 1e6, lon: Math.round(body.lon * 1e6) / 1e6, radiusMiles: Math.round(body.radiusMiles * 1000) / 1000 };
+        if (p.isNew) { order = order.map(x => x === id ? realId : x); if (selected === id) selected = realId; }
+        return true;
+    }
+    $('save-btn').onclick = async () => {
+        const fb = $('feedback');
+        try {
+            await saveOne(selected);
+            render();
+            fb.textContent = 'Saved. The next game uses it.'; fb.className = 'feedback success';
+        } catch (e) { fb.textContent = e.message; fb.className = 'feedback error'; }
+    };
+    $('save-all').onclick = async () => {
+        const fb = $('feedback');
+        let done = 0;
+        for (const id of Object.keys(drafts)) {
+            try { await saveOne(id); done++; }
+            catch (e) {
+                select(id, true);
+                fb.textContent = `${current(id).label || 'A new place'}: ${e.message}`; fb.className = 'feedback error';
+                render();
+                return;
+            }
+        }
+        render();
+        fb.textContent = `Saved ${done}. The next game uses them.`; fb.className = 'feedback success';
+    };
+    window.addEventListener('beforeunload', e => { if (Object.keys(drafts).length) { e.preventDefault(); e.returnValue = ''; } });
+
+    // ---- Export SQL: the saved places as a file, so the repo keeps up ----
+    $('export-btn').onclick = () => {
+        if (Object.keys(drafts).length && !confirm('Some changes aren\'t saved, so the file will leave them out. Export anyway?')) return;
+        const q = v => v == null ? 'NULL' : `'${String(v).replace(/'/g, "''")}'`;
+        const ids = order.filter(id => saved[id]).sort((a, b) => (saved[a].difficulty - saved[b].difficulty) || saved[a].label.localeCompare(saved[b].label));
+        const today = new Date().toISOString().slice(0, 10);
+        const lines = ids.map(id => {
+            const p = saved[id];
+            return `INSERT INTO pin_drop_places (map_key, kind, label, prompt, image_url, lat, lon, radius_miles, difficulty, active) VALUES (${q(map.key)}, ${q(p.kind)}, ${q(p.label)}, ${q(p.prompt)}, ${q(p.imageUrl)}, ${p.lat}, ${p.lon}, ${p.radiusMiles}, ${p.difficulty}, ${p.active}) ON CONFLICT (kind, label) DO UPDATE SET map_key = EXCLUDED.map_key, prompt = EXCLUDED.prompt, image_url = EXCLUDED.image_url, lat = EXCLUDED.lat, lon = EXCLUDED.lon, radius_miles = EXCLUDED.radius_miles, difficulty = EXCLUDED.difficulty, active = EXCLUDED.active;`;
+        });
+        const sql = `-- ============================================================================
+-- Pin Drop: every place on the ${map.name} map (${map.key}), exported from the
+-- pin editor (/admin/pin-drop) on ${today}: ${ids.length} places, ${ids.filter(id => saved[id].active).length} in the game.
+--
+-- This is what the database held at export. It replaces the map's older SQL
+-- file in the repo, so a re-run never undoes the editor's fixes.
+-- SAFE TO RE-RUN: each place is added or updated by (kind, label). A place
+-- renamed in the editor after this export would come back under its old
+-- name as a second place, so export again after renaming.
+-- ============================================================================
+
+${lines.join('\n')}
+`;
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(new Blob([sql], { type: 'text/plain' }));
+        a.download = `pin_drop_${map.key.toLowerCase()}.sql`;
+        a.click();
+        setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+    };
+
+    start();
+})();
+</script>
+</body>
+</html>
