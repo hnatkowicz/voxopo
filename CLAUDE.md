@@ -1270,15 +1270,20 @@ and forth until we both agree the idea is good **and** worth the effort. So:
   below); Randy fixes Hanover's pins and widens circles by hand where a
   place is hard to pinpoint (not a blanket "harder = bigger" rule); (2) **rounds per map** -- done Nov 28;
   (3) an **Overpass query for Central PA's new place kinds**, so their
-  coordinates come from OpenStreetMap, not memory: airports, colleges,
-  drive-ins, amusement parks, racetracks, viewpoints, famous homes
-  (Eisenhower farm, Wheatland). Skipped: hospitals (not fun, can be a
+  coordinates come from OpenStreetMap, not memory -- done Nov 28: Randy's
+  export (`content/maps/central-pa-places.geojson`, 306 places) became
+  `pin_drop_central_pa_osm.sql`, 36 places (airports, colleges, Dutch
+  Wonderland, the Ren Faire, speedways, drive-ins, Wheatland and other
+  museums, three lookouts), pins at the middle of each OSM outline and
+  circles from its size, so Central PA reaches 78 places and 12 rounds.
+  The Eisenhower farm isn't tagged as a museum in OSM, so it's not in. Skipped: hospitals (not fun, can be a
   hard memory, mostly inside cities), high schools on Central PA (only
   their district knows them; fine on a town map). Place-as-answer
   questions already work (CLUE kind). **Stay bonus stays x1.5 for now**
   (Randy asked about x1.25; Claude: one change at a time -- play another
   night and watch whether winners are mostly stayers). **Run in Neon (Randy):**
-  `pin_drop_hanover.sql`, then tick Hanover under a code's Pin Drop maps.
+  `pin_drop_hanover.sql`, then tick Hanover under a code's Pin Drop maps;
+  `pin_drop_central_pa_osm.sql` (once; fix pins in the editor after).
 - **Local Pin Drop: built Nov 27** (see PIN_DROP). `pin_drop_local.sql`
   is live (Randy ran it Nov 27), and so is
   `pin_drop_central_pa_photos.sql` (21 of Randy's photos in
