@@ -13758,8 +13758,8 @@ SELECT COUNT(*) FROM questions WHERE game_mode = 'TRIVI_YEAH_II' AND category = 
 -- Thinking Pants category POP_QUIZ. To change a question, change the
 -- spreadsheet and rebuild.
 --
--- Replaces the WHOLE category with the spreadsheet's 200 live questions
--- (100: 50, 200: 50, 300: 50, 400: 50), inside a transaction. Safe to re-run.
+-- Replaces the WHOLE category with the spreadsheet's 250 live questions
+-- (100: 62, 200: 63, 300: 63, 400: 62), inside a transaction. Safe to re-run.
 -- ============================================================================
 
 -- The facts column (shown on the TV after the answer) is added the first
@@ -13972,6 +13972,54 @@ INSERT INTO questions (question_number, game_mode, category, subcategory, factio
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'POP_QUIZ', 'POP_QUIZ_NOV25', NULL,
         'Which board game has you guess grid squares to sink your opponent''s ships?', NULL,
         'Battleship', ARRAY['Stratego', 'Risk', 'Connect Four', 'Mastermind', 'Othello'], 100, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'POP_QUIZ', 'POP_QUIZ_NOV28', NULL,
+        'Which brand''s 40-ounce Quencher tumbler became a must-have craze in 2023 and 2024?', NULL,
+        'Stanley', ARRAY['Yeti', 'Hydro Flask', 'Contigo', 'S''well', 'CamelBak', 'Simple Modern'], 100, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'POP_QUIZ', 'POP_QUIZ_NOV28', NULL,
+        'Which NFL tight end did Taylor Swift announce her engagement to in August 2025?', NULL,
+        'Travis Kelce', ARRAY['Patrick Mahomes', 'Jason Kelce', 'George Kittle', 'Josh Allen', 'Joe Burrow', 'Tom Brady'], 100, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'POP_QUIZ', 'POP_QUIZ_NOV28', NULL,
+        'What is the name of Kim Kardashian''s shapewear and clothing brand?', NULL,
+        'Skims', ARRAY['Spanx', 'Fabletics', 'Good American', 'Kylie Cosmetics', 'Aerie', 'Honeylove'], 100, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'POP_QUIZ', 'POP_QUIZ_NOV28', NULL,
+        'What do Taylor Swift''s fans call themselves?', NULL,
+        'Swifties', ARRAY['Swiftlings', 'Tay-Tays', 'Swifters', 'Taylorites', 'Speak Nows', 'Lovebirds'], 100, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'POP_QUIZ', 'POP_QUIZ_NOV28', NULL,
+        'Inspired by one of her lyrics, what handmade items did fans trade at Taylor Swift''s Eras Tour concerts?', NULL,
+        'Friendship bracelets', ARRAY['Guitar picks', 'Glow sticks', 'Trading cards', 'Enamel pins', 'Sticker sheets', 'Scrunchies'], 100, 'The idea came from her lyric "So make the friendship bracelets" in "You''re On Your Own, Kid."');
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'POP_QUIZ', 'POP_QUIZ_NOV28', NULL,
+        'Which YouTuber, known for giant giveaways and stunts, has the most-subscribed channel on YouTube?', NULL,
+        'MrBeast', ARRAY['PewDiePie', 'Markiplier', 'Logan Paul', 'Dude Perfect', 'KSI', 'Ninja'], 100, 'He passed India''s T-Series in June 2024 to take YouTube''s top spot.');
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'POP_QUIZ', 'POP_QUIZ_NOV28', NULL,
+        'Rihanna''s beauty brand launched in 2017 with 40 shades of foundation. What is it called?', NULL,
+        'Fenty Beauty', ARRAY['Glossier', 'Huda Beauty', 'Kylie Cosmetics', 'Haus Labs', 'Milk Makeup', 'r.e.m. beauty'], 100, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'POP_QUIZ', 'POP_QUIZ_NOV28', NULL,
+        'Which cookie chain is known for its pink boxes and a menu of flavors that changes every week?', NULL,
+        'Crumbl', ARRAY['Insomnia Cookies', 'Tiff''s Treats', 'Mrs. Fields', 'Great American Cookies', 'Levain Bakery', 'Cookies by Design'], 100, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'POP_QUIZ', 'POP_QUIZ_NOV28', NULL,
+        'Short for "charisma," which slang word for charm was Oxford''s 2023 Word of the Year?', NULL,
+        'Rizz', ARRAY['Vibe', 'Drip', 'Slay', 'Swag', 'Sus', 'Cap'], 100, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'POP_QUIZ', 'POP_QUIZ_NOV28', NULL,
+        'Which singer and actress founded the makeup brand Rare Beauty?', NULL,
+        'Selena Gomez', ARRAY['Hailey Bieber', 'Ariana Grande', 'Kylie Jenner', 'Lady Gaga', 'Rihanna', 'Demi Lovato'], 100, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'POP_QUIZ', 'POP_QUIZ_NOV28', NULL,
+        'Which fuzzy, toothy-grinned Pop Mart monster figures sold out around the world in 2025?', NULL,
+        'Labubu', ARRAY['Squishmallows', 'Furby', 'Smiski', 'Tokidoki', 'Molly', 'Ugly Dolls'], 100, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'POP_QUIZ', 'POP_QUIZ_NOV28', NULL,
+        'A 2023 TikTok trend asked men how often they think about which ancient empire?', NULL,
+        'The Roman Empire', ARRAY['The Ottoman Empire', 'The Mongol Empire', 'The Persian Empire', 'The Byzantine Empire', 'The Egyptian Empire', 'The Aztec Empire'], 100, NULL);
 
 -- 200 points
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
@@ -14174,6 +14222,58 @@ INSERT INTO questions (question_number, game_mode, category, subcategory, factio
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'POP_QUIZ', 'POP_QUIZ_NOV25', NULL,
         'Which candy bar''s ads sang "Gimme a break"?', NULL,
         'Kit Kat', ARRAY['Twix', 'Snickers', 'Milky Way', 'Butterfinger', '3 Musketeers'], 200, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'POP_QUIZ', 'POP_QUIZ_NOV28', NULL,
+        'Which baby pygmy hippo from a zoo in Thailand became an internet star in 2024?', NULL,
+        'Moo Deng', ARRAY['Fiona', 'Hugo', 'Bibi', 'Pudding', 'Tamtam', 'Mango'], 200, 'Her name means "bouncy pork" in Thai.');
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'POP_QUIZ', 'POP_QUIZ_NOV28', NULL,
+        'What do the fans of K-pop group BTS call themselves?', NULL,
+        'ARMY', ARRAY['ONCE', 'Stays', 'Carats', 'MOA', 'Monbebe', 'MY'], 200, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'POP_QUIZ', 'POP_QUIZ_NOV28', NULL,
+        'On social media, what does "GRWM" stand for?', NULL,
+        'Get Ready With Me', ARRAY['Get Real With Me', 'Go Rate What''s Mine', 'Glam Routine Without Makeup', 'Give Reviews When Made', 'Go Run With Me', 'Good Reads Worth Mentioning'], 200, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'POP_QUIZ', 'POP_QUIZ_NOV28', NULL,
+        'The slang word "delulu" is short for what?', NULL,
+        'Delusional', ARRAY['Delightful', 'Delicious', 'Deluxe', 'Delayed', 'Delicate', 'Delirious'], 200, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'POP_QUIZ', 'POP_QUIZ_NOV28', NULL,
+        'In Gen Z slang, what does "no cap" mean?', NULL,
+        'No lie', ARRAY['No problem', 'No limit', 'No worries', 'No chance', 'No rules', 'No pressure'], 200, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'POP_QUIZ', 'POP_QUIZ_NOV28', NULL,
+        'What do Beyonce''s fans call themselves?', NULL,
+        'The BeyHive', ARRAY['The Beygency', 'Bey Nation', 'The Queen''s Court', 'The Honeycombs', 'The Beyonders', 'The Sasha Squad'], 200, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'POP_QUIZ', 'POP_QUIZ_NOV28', NULL,
+        'Which 2025 Netflix animated hit follows a K-pop girl group that secretly fights demons?', NULL,
+        'KPop Demon Hunters', ARRAY['Idol Slayers', 'Neon Knights', 'Spirit Squad', 'Starlight Guardians', 'Pop Star Protectors', 'Seoul Sisters'], 200, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'POP_QUIZ', 'POP_QUIZ_NOV28', NULL,
+        'YouTubers Logan Paul and KSI launched which sports drink in 2022?', NULL,
+        'Prime', ARRAY['Gatorade', 'Bodyarmor', 'Celsius', 'Liquid Death', 'Ghost', 'Alani Nu'], 200, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'POP_QUIZ', 'POP_QUIZ_NOV28', NULL,
+        'Which grocery chain''s $2.99 mini canvas tote bags caused a resale frenzy in 2024?', NULL,
+        'Trader Joe''s', ARRAY['Target', 'Whole Foods', 'Aldi', 'Costco', 'Wegmans', 'Publix'], 200, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'POP_QUIZ', 'POP_QUIZ_NOV28', NULL,
+        'Which app sends everyone one surprise alert a day to post a front-and-back camera photo within two minutes?', NULL,
+        'BeReal', ARRAY['Snapchat', 'Locket', 'Instagram', 'Lapse', 'Dispo', 'Poparazzi'], 200, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'POP_QUIZ', 'POP_QUIZ_NOV28', NULL,
+        'Which pistachio-filled chocolate bar with crunchy shredded pastry went viral in 2024, named for its home city?', NULL,
+        'Dubai chocolate', ARRAY['Paris chocolate', 'Istanbul chocolate', 'Swiss chocolate', 'Doha chocolate', 'Beirut chocolate', 'Cairo chocolate'], 200, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'POP_QUIZ', 'POP_QUIZ_NOV28', NULL,
+        'Named for Charli XCX''s 2024 album and summer, which word was Collins Dictionary''s 2024 Word of the Year?', NULL,
+        'Brat', ARRAY['Demure', 'Slay', 'Diva', 'Icon', 'Mother', 'Girlboss'], 200, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'POP_QUIZ', 'POP_QUIZ_NOV28', NULL,
+        'At K-pop concerts, what are the glowing wands that fans wave in their group''s colors called?', NULL,
+        'Lightsticks', ARRAY['Glow wands', 'Fan sabers', 'Starsticks', 'Beam batons', 'Neon wands', 'Idol torches'], 200, NULL);
 
 -- 300 points
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
@@ -14376,6 +14476,58 @@ INSERT INTO questions (question_number, game_mode, category, subcategory, factio
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'POP_QUIZ', 'POP_QUIZ_NOV25', NULL,
         'Which foam ball, launched in 1969 as "the world''s first official indoor ball," grew into a dart-blaster brand?', NULL,
         'Nerf', ARRAY['Koosh', 'Wiffle', 'Super Ball', 'Hacky Sack', 'Spalding'], 300, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'POP_QUIZ', 'POP_QUIZ_NOV28', NULL,
+        'Which Australian breakdancer went viral for her kangaroo-hop routine at the 2024 Paris Olympics?', NULL,
+        'Raygun', ARRAY['B-Girl Rose', 'Neon', 'Kangagirl', 'B-Girl Shay', 'Ripley', 'Breakqueen'], 300, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'POP_QUIZ', 'POP_QUIZ_NOV28', NULL,
+        'Which skincare brand founded by Hailey Bieber was bought by e.l.f. Beauty in 2025?', NULL,
+        'Rhode', ARRAY['Glow Recipe', 'Summer Fridays', 'Drunk Elephant', 'Bubble', 'Tower 28', 'Glossier'], 300, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'POP_QUIZ', 'POP_QUIZ_NOV28', NULL,
+        'Tweens crowding beauty stores for pricey skincare earned what 2024 nickname?', NULL,
+        'Sephora kids', ARRAY['Ulta babies', 'Glow-up kids', 'Skincare tweens', 'Mall minis', 'Serum squad', 'Beauty brats'], 300, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'POP_QUIZ', 'POP_QUIZ_NOV28', NULL,
+        'K-pop fans collect and trade small printed cards of their favorite idols that come packed in albums. What are they called?', NULL,
+        'Photocards', ARRAY['Idol cards', 'Pop cards', 'Star stubs', 'Fan tickets', 'Album slips', 'Mini posters'], 300, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'POP_QUIZ', 'POP_QUIZ_NOV28', NULL,
+        'Which one-word title did a British prince give his 2023 memoir, a nod to "the heir and the ___"?', NULL,
+        'Spare', ARRAY['Second', 'Shadow', 'Brother', 'Backup', 'Reserve', 'Understudy'], 300, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'POP_QUIZ', 'POP_QUIZ_NOV28', NULL,
+        'Which 2023 TikTok trend named a supper made of snacky odds and ends?', NULL,
+        'Girl dinner', ARRAY['Snack night', 'Plate party', 'Boy meal', 'Mood food', 'Lazy feast', 'Grazing gram'], 300, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'POP_QUIZ', 'POP_QUIZ_NOV28', NULL,
+        'Oxford''s 2024 Word of the Year describes what too much scrolling supposedly does to your mind. What is it?', NULL,
+        'Brain rot', ARRAY['Doomscroll', 'Screen fog', 'Mind melt', 'Brain drain', 'Couch brain', 'Data daze'], 300, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'POP_QUIZ', 'POP_QUIZ_NOV28', NULL,
+        'Thanks to a viral "very ___, very mindful" TikTok, which word was Dictionary.com''s 2024 Word of the Year?', NULL,
+        'Demure', ARRAY['Classy', 'Humble', 'Modest', 'Polite', 'Cutesy', 'Dainty'], 300, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'POP_QUIZ', 'POP_QUIZ_NOV28', NULL,
+        'K-pop girl group ILLIT''s 2024 debut hit is named for an irresistible pull, like iron near a lodestone. What''s its one-word title?', NULL,
+        'Magnetic', ARRAY['Gravity', 'Electric', 'Static', 'Kinetic', 'Orbit', 'Polar'], 300, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'POP_QUIZ', 'POP_QUIZ_NOV28', NULL,
+        'The 2024 "Chill Guy" meme shows what kind of animal in a sweater, hands in his pockets?', NULL,
+        'A dog', ARRAY['A cat', 'A frog', 'A bear', 'A capybara', 'A fox', 'A raccoon'], 300, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'POP_QUIZ', 'POP_QUIZ_NOV28', NULL,
+        'Which tiny Japanese baby figurines wear animal and vegetable hats and hide inside blind boxes?', NULL,
+        'Sonny Angels', ARRAY['Smiskis', 'Kewpies', 'Precious Moments', 'Calico Critters', 'Shopkins', 'Cabbage Patch Kids'], 300, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'POP_QUIZ', 'POP_QUIZ_NOV28', NULL,
+        'By June 2025, all seven members of BTS had finished what?', NULL,
+        'Military service', ARRAY['A solo world tour', 'College degrees', 'Their record contracts', 'Acting school', 'A reality show', 'A charity walk'], 300, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'POP_QUIZ', 'POP_QUIZ_NOV28', NULL,
+        'What do the fans of K-pop group BLACKPINK call themselves?', NULL,
+        'BLINK', ARRAY['ONCE', 'Stays', 'Carats', 'MOA', 'Monbebe', 'Bambis'], 300, NULL);
 
 -- 400 points
 INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
@@ -14578,10 +14730,58 @@ INSERT INTO questions (question_number, game_mode, category, subcategory, factio
 VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'POP_QUIZ', 'POP_QUIZ_NOV25', NULL,
         'Which British model, nicknamed for her slim frame, became the face of 1960s Swinging London?', NULL,
         'Twiggy', ARRAY['Jean Shrimpton', 'Kate Moss', 'Penelope Tree', 'Pattie Boyd', 'Mary Quant'], 400, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'POP_QUIZ', 'POP_QUIZ_NOV28', NULL,
+        'Which fuzzy-fruit shade was Pantone''s 2024 Color of the Year?', NULL,
+        'Peach Fuzz', ARRAY['Apricot Crush', 'Coral Kiss', 'Melon Mist', 'Blush Velvet', 'Living Coral', 'Tangerine Dream'], 400, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'POP_QUIZ', 'POP_QUIZ_NOV28', NULL,
+        'Which coffee-and-chocolate brown was Pantone''s 2025 Color of the Year?', NULL,
+        'Mocha Mousse', ARRAY['Latte Cream', 'Cocoa Silk', 'Espresso Swirl', 'Caramel Cafe', 'Hazelnut Haze', 'Truffle Brown'], 400, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'POP_QUIZ', 'POP_QUIZ_NOV28', NULL,
+        'Glasses on, glasses off: the 2024 Olympics'' viral "pommel horse guy" was compared to which superhero''s secret identity?', NULL,
+        'Clark Kent', ARRAY['Peter Parker', 'Bruce Wayne', 'Diana Prince', 'Tony Stark', 'Bruce Banner', 'Steve Rogers'], 400, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'POP_QUIZ', 'POP_QUIZ_NOV28', NULL,
+        'Shooter Yusuf Dikec went viral at the 2024 Olympics for winning silver with one hand in his pocket. Which country did he represent?', NULL,
+        'Turkey', ARRAY['Greece', 'Serbia', 'Azerbaijan', 'Egypt', 'Georgia', 'Bulgaria'], 400, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'POP_QUIZ', 'POP_QUIZ_NOV28', NULL,
+        'What was the name of the giant, fluffy king penguin chick that went viral from a Melbourne aquarium in 2024?', NULL,
+        'Pesto', ARRAY['Pudgy', 'Nugget', 'Mochi', 'Biscuit', 'Waddles', 'Peanut'], 400, 'At nine months he weighed about 50 pounds, more than both of his parents.');
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'POP_QUIZ', 'POP_QUIZ_NOV28', NULL,
+        'Hailey Bieber popularized a dewy, shiny-faced makeup look named after which treat?', NULL,
+        'Glazed donut', ARRAY['Honey bun', 'Cinnamon roll', 'Cream puff', 'Maple bar', 'Jelly bean', 'Sugar cookie'], 400, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'POP_QUIZ', 'POP_QUIZ_NOV28', NULL,
+        'Which brand''s "Brazilian Bum Bum Cream" became a teen must-have body lotion?', NULL,
+        'Sol de Janeiro', ARRAY['Tree Hut', 'Bath & Body Works', 'Glow Recipe', 'Summer Fridays', 'Fenty Skin', 'Kopari'], 400, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'POP_QUIZ', 'POP_QUIZ_NOV28', NULL,
+        'Fur coats, gold jewelry and red lips defined which 2024 TikTok style trend?', NULL,
+        'Mob wife aesthetic', ARRAY['Old money aesthetic', 'Clean girl aesthetic', 'Coastal grandma', 'Quiet luxury', 'Barbiecore', 'Dark academia'], 400, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'POP_QUIZ', 'POP_QUIZ_NOV28', NULL,
+        'Which water bottle brand''s FreeSip lid made it a hot 2024 rival to the Stanley cup craze?', NULL,
+        'Owala', ARRAY['Yeti', 'Hydro Flask', 'Contigo', 'Nalgene', 'CamelBak', 'S''well'], 400, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'POP_QUIZ', 'POP_QUIZ_NOV28', NULL,
+        'Which word describing a deeply divided society was Merriam-Webster''s 2024 Word of the Year?', NULL,
+        'Polarization', ARRAY['Division', 'Gridlock', 'Partisan', 'Tribalism', 'Discord', 'Schism'], 400, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'POP_QUIZ', 'POP_QUIZ_NOV28', NULL,
+        'Pop Mart''s best-selling monster toys come from a series called The Monsters, created by an artist born in which city?', NULL,
+        'Hong Kong', ARRAY['Tokyo', 'Seoul', 'Shanghai', 'Taipei', 'Bangkok', 'Singapore'], 400, NULL);
+INSERT INTO questions (question_number, game_mode, category, subcategory, faction, question_text, visual_asset, correct_answer, wrong_answers, points, facts)
+VALUES ((SELECT COALESCE(MAX(question_number), 0) + 1 FROM questions), 'TRIVI_YEAH_II', 'POP_QUIZ', 'POP_QUIZ_NOV28', NULL,
+        'In K-pop, what Korean word names a group''s youngest member, often a fan favorite?', NULL,
+        'Maknae', ARRAY['Sunbae', 'Dongsaeng', 'Oppa', 'Unnie', 'Hyung', 'Aegyo'], 400, NULL);
 
 COMMIT;
 
--- Check: should return 200.
+-- Check: should return 250.
 SELECT COUNT(*) FROM questions WHERE game_mode = 'TRIVI_YEAH_II' AND category = 'POP_QUIZ';
 
 -- ============================================================================
