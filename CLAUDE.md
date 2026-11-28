@@ -352,8 +352,10 @@ event, for a small fee. That's why hosting is gated behind access codes.
   `/avatars.js` and gives teams their avatars), and the thumbnail Action
   makes its small copy. 40 in the game (Nov 28). **Held back**
   (`AVATARS_HELD_BACK`, files kept): pants (came off at 24), genie (reads
-  as Disney's) and fawkes (the "V for Vendetta"/Anonymous mask is Warner
-  Bros.' design; held Nov 28, Randy decides).
+  as Disney's) and fawkes (Randy drew it from a reference and would like to keep it;
+  on hold by his choice, Nov 28, until he's drawn a few more -- "maybe I
+  won't mind not having it". The mask's design is Warner Bros.' whoever
+  draws it, so it's the genie's question if it comes back).
   Randy: the big avatar on the podium "means a lot when it's yours up
   there", which is why the ones that are so-so small stay. The list is
   `AVATARS` in `public/avatars.js` (writing a name there only sets its
