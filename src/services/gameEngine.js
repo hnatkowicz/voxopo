@@ -4039,6 +4039,7 @@ const PIN_DROP_PLACE_SECONDS = 40; // drop and move your pin (was 25; Thanksgivi
 const PIN_DROP_SHOW_MS = 4000; // everyone's first pins, before the second chance
 const PIN_DROP_MOVE_SECONDS = 35; // stay for the bonus, or move (was 15; Thanksgiving 2026, same reason)
 const PIN_DROP_REVEAL_MS = 9000;
+const PIN_DROP_CRUSHED_EXTRA_MS = 3000; // "This crowd CRUSHED it!" lingers (Randy, Nov 28 2026)
 const PIN_DROP_STAY_BONUS = 1.5;
 const PIN_DROP_MAX_POINTS = 1000;
 // Points fall off with distance: 1000 * e^(-miles / 1000), so ~900 at 100
@@ -4219,6 +4220,10 @@ function revealPinDrop(roomCode) {
         })
         .sort((a, b) => a.miles - b.miles);
     pd.phase = 'REVEAL';
+    // Hometown heroes (Randy, Nov 28 2026): on a local map, when everyone
+    // who pinned (two or more) landed inside the place's circle, the TV
+    // drops "This crowd CRUSHED it!" and the reveal lingers a little.
+    pd.crowdCrushed = pd.map.local && pd.results.length >= 2 && pd.results.every(r => r.miles === 0);
     const best = pd.results[0];
     setPhoneRecap(room, {
         kind: 'PIN_DROP',
@@ -4234,7 +4239,7 @@ function revealPinDrop(roomCode) {
     room.revealTimeout = setTimeout(() => {
         room.revealTimeout = null;
         if (room.pinDrop === pd && pd.index === roundAtReveal) startPinDropRound(roomCode);
-    }, PIN_DROP_REVEAL_MS);
+    }, PIN_DROP_REVEAL_MS + (pd.crowdCrushed ? PIN_DROP_CRUSHED_EXTRA_MS : 0));
 }
 
 // The line through a pin and the true spot, cut where it leaves the map, so
@@ -4347,6 +4352,7 @@ export function pinDropTvState(room) {
         dots: showDots ? Object.values(pd.firstPins) : [],
         truth: revealed ? pd.truth : null,
         results: revealed ? pd.results : null,
+        crowdCrushed: revealed && !!pd.crowdCrushed,
         stayBonus: PIN_DROP_STAY_BONUS
     };
 }
@@ -5562,10 +5568,19 @@ function addToNightTally(room, roomCode, finalStandings) {
         room.nightTally[p.name] = (room.nightTally[p.name] || 0) + (NIGHT_TALLY_POINTS[i] ?? NIGHT_TALLY_FINISHER_POINTS);
     });
     room.nightGames = (room.nightGames || 0) + 1;
+    // Easter eggs (Randy and his oldest daughter, Nov 28 2026): the last
+    // winner's name can stand in for "Rando" in the TV's lobby title, and
+    // three wins in a row earns a hat trick (the muscle icon beside the
+    // name in tonight's standings, for the rest of the night).
+    const winner = finalStandings[0].name;
+    room.lastWinner = winner;
+    room.winStreak = room.winStreak && room.winStreak.name === winner ? { name: winner, count: room.winStreak.count + 1 } : { name: winner, count: 1 };
+    room.hatTricks = room.hatTricks || [];
+    if (room.winStreak.count >= 3 && !room.hatTricks.includes(winner)) room.hatTricks.push(winner);
     broadcastToRoom(roomCode, nightTallyMessage(room));
 }
 export function nightTallyMessage(room) {
-    return { type: 'NIGHT_TALLY', tally: room.nightTally || {}, games: room.nightGames || 0 };
+    return { type: 'NIGHT_TALLY', tally: room.nightTally || {}, games: room.nightGames || 0, lastWinner: room.lastWinner || null, hatTricks: room.hatTricks || [] };
 }
 // One phone's place in tonight's tally (null when there isn't one).
 export function nightTallyFor(room, playerName) {

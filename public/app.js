@@ -322,6 +322,30 @@ if (btnSubmitSpectate) {
                 tvLastSeq = data._seq;
             }
             handleTvMessage(data);
+            updateHudWordmark();
+        }
+
+        // Easter egg (Randy's oldest daughter's idea, Nov 28 2026): in the
+        // lobby, the last game's winner takes over the title, "Rando" swapped
+        // for their name: a name of 3-6 letters drops a last vowel (or y) and
+        // adds "o" -- Laura → LauroMania!, Tom → TomoMania!, and Randy →
+        // RandoMania!, so the title stays put when Randy wins. Every room,
+        // pubs included (Randy: adjust if there are complaints). TV only.
+        let lastWinnerName = null, hatTrickNames = [];
+        function easterEggStem(name) {
+            const n = (name || '').trim();
+            if (!/^[A-Za-z]{3,6}$/.test(n)) return null;
+            const stem = (/[aeiouy]$/i.test(n) ? n.slice(0, -1) : n) + 'o';
+            return stem.charAt(0).toUpperCase() + stem.slice(1).toLowerCase();
+        }
+        function updateHudWordmark() {
+            const img = document.getElementById('hud-logo'), egg = document.getElementById('hud-wordmark-egg');
+            if (!img || !egg) return;
+            const stem = currentGamePhase === 'LOBBY' ? easterEggStem(lastWinnerName) : null;
+            const on = !!stem && stem !== 'Rando';
+            if (on) egg.innerHTML = `<span class="egg-name">${escapeHtml(stem)}</span><span class="egg-mania">Mania!</span>`;
+            img.style.display = on ? 'none' : '';
+            egg.style.display = on ? '' : 'none';
         }
 
         function handleTvMessage(data) {
@@ -417,6 +441,8 @@ if (btnSubmitSpectate) {
                 }
                 if (data.type === 'NIGHT_TALLY') {
                     nightTally = data.tally || null;
+                    lastWinnerName = data.lastWinner || null;
+                    hatTrickNames = data.hatTricks || [];
                 }
                 if (data.type === 'RETURN_VOTE_UPDATE') {
                     const tally = document.getElementById('return-vote-tally');
@@ -1103,7 +1129,7 @@ if (btnSubmitSpectate) {
                         <td class="rail-id"><span class="rail-wrap">
                             <span class="rail-emoji">${avatarHtml(player.emoji, 1.15)}</span>
                             <span class="rail-name">${escapeHtml(player.name)}</span>
-                            <span class="rail-badges">${renderAwardBadges(player.awards)}</span>
+                            <span class="rail-badges">${renderAwardBadges(player.awards)}${currentGamePhase === 'LOBBY' && hatTrickNames.includes(player.name) ? '<span class="award-badge award-badge-native" title="Hat trick: three wins in a row"><img src="/muscle.svg" alt=""></span>' : ''}</span>
                             ${move ? `<span class="rail-move ${move}">${move === 'up' ? '▲' : '▼'}</span>` : ''}
                         </span></td>
                         <td class="rail-score">${(player.score || 0).toLocaleString()}</td>
@@ -2191,6 +2217,10 @@ function pinDropMapHtml(data) {
             marks += `<div class="pd-mark" style="left:${pct(r.x, W)};top:${pct(r.y, H)}">${avatarHtml(r.emoji, 1)}</div>`;
         });
     }
+    // Hometown heroes (Nov 28 2026): everyone inside the circle on a local map.
+    // It sits in whichever half of the map the true spot isn't in, so it
+    // never covers the answer or the pins.
+    if (data.crowdCrushed) marks += `<div class="pd-crushed" style="top:${data.truth && data.truth.y < H / 2 ? 78 : 22}%">This crowd CRUSHED it!</div>`;
     return `<div class="pd-map" data-w="${W}" data-h="${H}" style="aspect-ratio: ${W} / ${H}; width: min(100cqw, calc(100cqh * ${W} / ${H}));"><svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none">${svg}</svg>${marks}</div>`;
 }
 // The TV keeps ONE loaded map image and moves it into each new screen

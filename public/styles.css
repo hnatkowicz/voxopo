@@ -1099,3 +1099,20 @@ body.tp-layout #onboarding-status-slot .arrival-line { font-size: calc(var(--u) 
 
 /* Local Pin Drop maps (Nov 27 2026): the place's circle at the reveal. */
 .pd-truth-area { fill: rgba(var(--rm-brand-rgb), 0.18); stroke: var(--rm-brand); stroke-width: 6; }
+
+/* Easter egg (Nov 28 2026): the last winner's name in the lobby title,
+   drawn in the wordmark's own font and colors. */
+.hud-wordmark-egg { text-decoration: none; font-family: var(--rm-font-display); font-weight: 800; font-size: 24px; line-height: 1; letter-spacing: -0.02em; white-space: nowrap; align-self: center; }
+body.tp-layout .hud-wordmark-egg { font-size: calc(var(--u) * 2.2); }
+.hud-wordmark-egg .egg-name { color: var(--rm-text); }
+.hud-wordmark-egg .egg-mania { color: var(--rm-brand); }
+/* Hometown heroes (Nov 28 2026): drops onto the map, shakes, stays. */
+.pd-crushed { position: absolute; left: 50%; top: 22%; transform: translate(-50%, -50%); z-index: 5; white-space: nowrap;
+    font-family: var(--rm-font-display); font-weight: 800; font-size: calc(var(--u) * 2.2); color: var(--rm-brand-ink);
+    background: var(--rm-brand); padding: calc(var(--u) * 0.6) calc(var(--u) * 1.6); border-radius: calc(var(--u) * 0.8);
+    box-shadow: 0 calc(var(--u) * 0.4) calc(var(--u) * 1.6) rgba(var(--rm-black-rgb), 0.55);
+    animation: pd-crushed-drop 0.55s cubic-bezier(0.2, 1.4, 0.4, 1) both, pd-crushed-shake 0.5s ease-in-out 0.6s 2; }
+@keyframes pd-crushed-drop { from { transform: translate(-50%, -260%) scale(1.2); opacity: 0; } to { transform: translate(-50%, -50%) scale(1); opacity: 1; } }
+@keyframes pd-crushed-shake { 0%, 100% { transform: translate(-50%, -50%) rotate(0); } 25% { transform: translate(-50%, -50%) rotate(-3deg); } 75% { transform: translate(-50%, -50%) rotate(3deg); } }
+@media (prefers-reduced-motion: reduce) { .pd-crushed { animation: none; } }
+.hud-banner a { text-decoration: none; } /* the lobby title egg sits inside the logo link */
